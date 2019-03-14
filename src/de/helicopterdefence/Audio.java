@@ -80,9 +80,9 @@ public class Audio implements Constants
 		
 	private static AudioClip getAudioClip(String string)
 	{
-		URL url = HelicopterDefence.class.getResource("sounds/" +string);
+		URL url2 = HelicopterDefence.class.getResource("sounds/" +string);
 
-		return Applet.newAudioClip(url);	
+		return Applet.newAudioClip(url2);
 	}
     
     static void initialize()
