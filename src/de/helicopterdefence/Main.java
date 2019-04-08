@@ -24,7 +24,7 @@ public class Main implements Constants
 									STANDARD_RESULUTION.height+29); // 460 //489//new Dimension(1030, 492);//  
 			
     static boolean
-    	isFullScreen = false;
+    	isFullScreen = true;
     
     static Dimension
     	display_shift;
@@ -47,48 +47,6 @@ public class Main implements Constants
     {
     	if(TESTMODE)
         {
-        	/*
-        	final int repetitions = 16000;         
-            
-             
-            float x1 = 10.0f;
-            double x2 = 10.0;
-            int x3 = 17, x4 = 2;
-            boolean  test = true;
-            
-            
-            
-            Long time; 
-            time = System.currentTimeMillis();
-            for(int i = 0; i < repetitions; i++)
-            {
-                for(int j = 0; j < repetitions; j++)
-                {
-                	for(int k = 0; k < repetitions; k++)
-                    {
-                		//x4 = MyMath.random(20);
-                		if(x3 == k%20) 
-                		{
-                			x3 = k%20;
-                		}
-                    }
-                }               
-            }
-            System.out.println("Abfrage: " + (System.currentTimeMillis()-time));
-             
-            time = System.currentTimeMillis();
-            for(int i = 0; i < repetitions; i++)
-            {
-                for(int j = 0; j < repetitions; j++)
-                {
-                	for(int k = 0; k < repetitions; k++)
-                    {                		
-                		x3 = k%20;                		
-                    }
-                }                 
-            }
-            System.out.println("Setzen: " + (System.currentTimeMillis()-time)+"\n");   
-            */    
         }
         else
         {
@@ -109,7 +67,7 @@ public class Main implements Constants
                     HelicopterDefence.shut_down();
                 }
             });
-             
+
             app.setLayout(null); 
                      
             device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -119,7 +77,7 @@ public class Main implements Constants
             HelicopterDefence.savegame = Savegame.initialize();
             
             f.setUndecorated(true);            
-            device.setFullScreenWindow(f); 
+            device.setFullScreenWindow(f);
             activate_display_mode();            
             switchDisplayMode(null);
             
@@ -141,7 +99,7 @@ public class Main implements Constants
     
     static void switchDisplayMode(Button current_button)
     {
-        isFullScreen = !isFullScreen;             
+        isFullScreen = !isFullScreen;
         
         Button.STARTSCREEN_MENU_BUTTON[ENGLISH][2][0]
         	= Button.DISPLAY[ENGLISH][isFullScreen ? 0 : 1];

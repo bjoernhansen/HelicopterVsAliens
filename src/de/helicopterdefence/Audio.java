@@ -4,10 +4,12 @@ import java.applet.AudioClip;
 import java.net.URL;
 
 public class Audio implements Constants
-{	
-	static final boolean 
-		MICHAEL_MODE = true;		// Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
-	
+{
+	static final boolean
+		MICHAEL_MODE = false;		// Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
+
+	public static final int NO_OF_ANNOUNCERS = 6;
+
 	static boolean 
 		sound_on = true,			// = true: Hintergrundmusik wird abgespielt
 		standard_bg_music = true;	// = true: Verwenden der Standard-Hintergrund-Musikauswahl 
@@ -80,15 +82,13 @@ public class Audio implements Constants
 		
 	private static AudioClip getAudioClip(String string)
 	{
-		URL url2 = HelicopterDefence.class.getResource("sounds/" +string);
-
-		return Applet.newAudioClip(url2);
+		URL url = HelicopterDefence.class.getResource("sounds/" + string);
+		return Applet.newAudioClip(url);	
 	}
     
     static void initialize()
-    {    	
-    	/*
-        launch1 =			getAudioClip("launch1.wav");
+    {
+    	launch1 =			getAudioClip("launch1.wav");
 		explosion1 = 		getAudioClip("explosion1.wav");
 		explosion2 = 		getAudioClip("explosion2.wav");
 		explosion3 = 		getAudioClip("explosion3.wav");
@@ -126,7 +126,15 @@ public class Audio implements Constants
 		pu_fade1 = 			getAudioClip("pu_fade1.wav");
 		pu_fade2 = 			getAudioClip("pu_fade2.wav");
 		stun_activated =	getAudioClip("stun_activated.wav");
-		
+
+		pu_announcer = new AudioClip[NO_OF_ANNOUNCERS];
+		pu_announcer[TRIPLE_DMG] = getAudioClip("announcer_triple_dmg.wav");
+		pu_announcer[INVINCIBLE] = getAudioClip("announcer_invincible.wav");
+		pu_announcer[UNLIMITRED_ENERGY] = getAudioClip("announcer_unlimited_energy.wav");
+		pu_announcer[BOOSTED_FIRE_RATE] = getAudioClip("announcer_fire_rate_boosted.wav");
+		pu_announcer[REPARATION] = getAudioClip("announcer_reparation.wav");
+		pu_announcer[BONUS_INCOME] = getAudioClip("announcer_bonus_credit.wav");
+
 		if(MICHAEL_MODE)
 		{
 			main_menue =		getAudioClip("main_menu.wav");
@@ -141,28 +149,17 @@ public class Audio implements Constants
 			boss_level =		getAudioClip("boss_level.wav");
 			final_boss_level =	getAudioClip("final_boss_level.wav");
 			victory =			getAudioClip("victory.wav");
-		}		
-						
-		pu_announcer = new AudioClip[6];		
-		pu_announcer[TRIPLE_DMG] = getAudioClip("announcer_triple_dmg.wav");
-		pu_announcer[INVINCIBLE] = getAudioClip("announcer_invincible.wav");
-		pu_announcer[UNLIMITRED_ENERGY] = getAudioClip("announcer_unlimited_energy.wav");
-		pu_announcer[BOOSTED_FIRE_RATE] = getAudioClip("announcer_fire_rate_boosted.wav");
-		pu_announcer[REPARATION] = getAudioClip("announcer_reparation.wav");
-		pu_announcer[BONUS_INCOME] = getAudioClip("announcer_bonus_credit.wav");
-		*/
+		}
     }
            
     static void refresh_bg_music()
     {
-    	/*
         if(current_bg != null){current_bg.stop();}
     	if(sound_on)
     	{
     		current_bg = get_bg_music();
     		current_bg.loop();
     	}
-    	*/
     }    
     
     static void change_bg_music_mode(Savegame savegame)
@@ -253,17 +250,13 @@ public class Audio implements Constants
           
     public static void play(AudioClip clip)
     {
-    	/*
         clip.stop();
     	if(sound_on){clip.play();}
-    	*/
     }   
     
     public static void loop(AudioClip clip)
 	{
-		/*
 	    if(sound_on){clip.loop();}
-	    */
 	}
         
     // Abspielen eines Lob-Sounds entsprechend der Anzahl mit einem Mal besiegter Gegner
@@ -296,9 +289,7 @@ public class Audio implements Constants
     
     private static void stop_applause()
     {
-    	/*
         applause1.stop();
     	applause2.stop();
-    	*/
     }
 }
