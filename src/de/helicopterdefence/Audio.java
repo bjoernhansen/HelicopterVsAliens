@@ -8,11 +8,12 @@ public class Audio implements Constants
 	static final boolean
 		MICHAEL_MODE = false;		// Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
 
-	public static final int NO_OF_ANNOUNCERS = 6;
+	private static final int
+        NO_OF_ANNOUNCERS = 6;
 
 	static boolean 
 		sound_on = true,			// = true: Hintergrundmusik wird abgespielt
-		standard_bg_music = true;	// = true: Verwenden der Standard-Hintergrund-Musikauswahl 
+		standard_bg_music = false;	// = true: Verwenden der Standard-Hintergrund-Musikauswahl
 		
 	public static AudioClip
 	
@@ -164,7 +165,7 @@ public class Audio implements Constants
     
     static void change_bg_music_mode(Savegame savegame)
     {
-    	standard_bg_music = !standard_bg_music; 
+    	standard_bg_music = !standard_bg_music;
     	savegame.standard_bg_music = standard_bg_music;
     	refresh_bg_music();
     	Events.settings_changed = true;
@@ -173,7 +174,7 @@ public class Audio implements Constants
 	// Rückgabe der aktuell zu spielenden Hintergrundmusik
     private static AudioClip get_bg_music()
     {
-    	if(standard_bg_music)
+    	if(!standard_bg_music)
         {
     		if(Events.window == GAME && !Events.is_boss_level()) 
     		{

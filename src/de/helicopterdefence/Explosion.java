@@ -16,8 +16,8 @@ public class Explosion implements Constants, MissileTypes
     public int 
     	time,				// vergangene Zeit [frames] seit Starten der Explosion
     	max_time,			// maximale Dauer einer Explosion / eines EMP 
-    	kills,				// nur f�r Pegasus-Klasse: mit diesem EMP vernichtete Gegner
-    	earned_money;		// nur f�r Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
+    	kills,				// nur für Pegasus-Klasse: mit diesem EMP vernichtete Gegner
+    	earned_money;		// nur für Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
   
 	public Ellipse2D 
 		ellipse = new Ellipse2D.Float();	// Einflussbereich der Explosion

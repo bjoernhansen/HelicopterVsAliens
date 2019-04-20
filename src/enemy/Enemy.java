@@ -629,7 +629,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 							(int) (	horizontal ? thickness_factor * height : rounding * height) );
 	}	
 	
-	// malen der Seitenfl�gel mit Antriebsd�se
+	// malen der Seitenflügel mit Antriebsd�se
 	private void paint_exhaust(Graphics2D g2d, Color color4)
 	{
 		paint_exhaust(g2d, 

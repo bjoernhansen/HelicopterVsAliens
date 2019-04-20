@@ -25,13 +25,13 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	SLOW_TIME = 100,    	
     	TELEPORT_INVU_TIME = 45,
     	NO_COLLISION_DMG_TIME	= 20, 	// Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann 
-    	FIRE_RATE_POWERUP_LEVEL = 3,	// so vielen zus�tzlichen Upgrades der Feuerrate entspricht die tempor�re Steigerung der Feuerrate durch das entsprechende PowerUp
+    	FIRE_RATE_POWERUP_LEVEL = 3,	// so vielen zusätzlichen Upgrades der Feuerrate entspricht die tempor�re Steigerung der Feuerrate durch das entsprechende PowerUp
     	NR_OF_TYPES = 6,				// so viele Helikopter-Klassen gibt es	
     	INVU_DMG_REDUCTION = 80,
-    	ENERGY_DRAIN = 45,				// Energieabzug f�r den Helikopter bei Treffer
+    	ENERGY_DRAIN = 45,				// Energieabzug für den Helikopter bei Treffer
     	REDUCED_ENERGY_DRAIN = 10,  
     	    	    
-    	// Upgrade-Kosten-Level (0 - sehr g�nstig bis 4 - sehr teuer) f�r die Standardupgrades
+    	// Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standardupgrades
     	// f�r jede einzelne Helikopter-Klasse sowie Energiekosten f�r das Energieupgrade
     	COSTS[][] = {{4, 2, 0, 1, 2, 3, 50},	// Phoenix
     	             {1, 3, 4, 0, 4, 2, 30},	// Roch
@@ -75,23 +75,23 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
         
 	public int	
 		missile_drive,						// Geschwindigkeit [Pixel pro Frame] der Raketen			
-		current_firepower,					// akuelle Feuerkraft unter Ber�cksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
+		current_firepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
 		time_between_2_shots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann		 
 		shift_time,							// nur Pegasus-Klasse: Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
 		goliath_plating,					// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erh�ht
-		nr_of_cannons,						// Anzahl der Kanonen; m�gliche Werte: 1, 2 und 3
+		nr_of_cannons,						// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
 		rapidfire,							// nur Kamaitachi-Klasse: SpezialUpgrade; = 2, wenn erforscht, sonst = 0;	
 		
 		// Timer
-		plasma_activation_timer,			// nur Kamaitachi-Klasse: Timer zur �berwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind	 
+		plasma_activation_timer,			// nur Kamaitachi-Klasse: Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
 		generator_timer,					// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgel�sen EMPs liegt
 		slowed_timer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse						
-		recent_dmg_timer,					// aktiv, wenn Helicopter k�rzlich Schaden genommen hat; f�r Animation der Hitpoint-Leiste					
+		recent_dmg_timer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
 		interphase_generator_timer,			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 		enhanced_radiation_timer,				
 		
 		// f�r die Spielstatistik
-		nr_of_crashes,						// Anzahl der Abst�rze 
+		nr_of_crashes,						// Anzahl der Abstürze
 		nr_of_repairs,						// Anzahl der Reparaturen 
 		missile_counter,					// Anzahl der abgeschossenen Raketen 
 		hit_counter,						// Anzahl der getroffenen Gegner 
@@ -100,33 +100,33 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		mini_boss_seen,						// Anzahl der erschienenen Mini-Bosse 
 		mini_boss_killed,					// Anzahl der vernichteten Mini-Bosse
 				
-		// nur f�r Ph�nix- und Kamaitachi-Klasse
-		bonus_kills,						// Anzahl der Kills, f�r den aktuelken Mulikill-Award 
+		// nur für Phönix- und Kamaitachi-Klasse
+		bonus_kills,						// Anzahl der Kills, für den aktuelken Mulikill-Award
 		bonus_kills_money,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen Multikill-Awards ohne Bonus
-		bonus_kills_timer,					// reguliert die Zeit, innerhalb welcher Kills f�r den Multikill-Award ber�cksichtigt werden 
+		bonus_kills_timer,					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
 				
 		powerUp_timer[] = new int [4], 				// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
 		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
-		upgrade_costs[] = new int[6],    			// Preisniveau f�r alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
+		upgrade_costs[] = new int[6],    			// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
 		level_of_upgrade[] = new int[6];			// Upgrade-Level aller 6 StandardUpgrades
 			
     long 
-    	past_teleport_time,						// nur Ph�nix-Klasse: Zeitpunkt der letzten Nutzung des Teleporters
+    	past_teleport_time,						// nur Phönix-Klasse: Zeitpunkt der letzten Nutzung des Teleporters
     	scorescreen_times [] = new long [5];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float 
     	rotor_system,					// legt die aktuelle Geschwindigkeit des Helikopters fest
     	jumbo_missiles,					// Faktor, welcher die Feuerkraft beeinflusst; = jumbo_missle_dmg_factor, wenn Jumbo-Raketen erforscht, sonst = 1
     	current_plating,				// aktuelle Panzerung (immer <= maximale Panzerung)
-    	energy,							// verf�gbare Energie;
+    	energy,							// verfügbare Energie;
     	regeneration_rate,				// Energiezuwachs pro Simulationsschritt
-    	spell_costs,					// Energiekosten f�r die Nutzung des Energie-Upgrades	
-    	rotor_position[] = new float[NR_OF_TYPES];	// Stellung des Helikopter-Hauptrotors f�r alle Klassen; genutzt f�r die Startscreen-Animation
+    	spell_costs,					// Energiekosten für die Nutzung des Energie-Upgrades
+    	rotor_position[] = new float[NR_OF_TYPES];	// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
     		
     public boolean spotlight,					// = true: Helikopter hat Scheinwerfer
-     		has_shortrange_radiation,	// = true: Helikopter verf�gt �ber Nahkampfbestrahlng
-     		has_piercing_warheads,		// = true: Helikopterraketen werden mit Durchsto�-Sprengk�pfen best�ckt
+     		has_shortrange_radiation,	// = true: Helikopter verfügt über Nahkampfbestrahlng
+     		has_piercing_warheads,		// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen best�ckt
      		has_radar_device,			// = true: Helikopter verf�gt �ber eine Radar-Vorrichtung
      		has_interphase_generator,	// = true: Helikopter verf�gt �ber einen Interphasen-Generator
      		has_PowerUp_immobilizer,	// = true: Helikopter verf�gt �ber einen Interphasen-Generator

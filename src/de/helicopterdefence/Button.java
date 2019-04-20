@@ -30,13 +30,13 @@ class Button implements Constants, Fonts, Costs, PriceLevels
 	    
     // Beschriftungen in deutscher und englischer Sprache
 	static final String   
-		REPAIR[] = 			 {"Repair helicopter", "Reparatur durchf�hren"},
+		REPAIR[] = 			 {"Repair helicopter", "Reparatur durchführen"},
 		PRICE[]	= 			 {"Price: ", "Kosten: "},
 		REPAIR_SHOP[] =		 {"Repair shop", "zur Werkstatt"},
-		MAIN_MENU[] = 		 {"Main menu", "Hauptmen�"},
+		MAIN_MENU[] = 		 {"Main menu", "Hauptmenü"},
 		START_NEW_GAME[] = 	 {"Start a new game", "Neues Spiel starten"},
 		QUIT[] = 			 {"Quit", "Spiel beenden"},
-		CANCEL[] = 			 {"Cancel", "zur�ck"},	
+		CANCEL[] = 			 {"Cancel", "zurück"},
 		MISSION[][] = 		 {{"Start overnight mission", "Start daytime mission"},
                              {"Nachteinsatz starten", "Tageinsatz starten"}},
     	SOLD[][] = 			{{"Low salary", "High salary"}, 
@@ -44,7 +44,7 @@ class Button implements Constants, Fonts, Costs, PriceLevels
         DISPLAY[][] = 		{{"Window mode", "Fullscreen mode"},
                              {"Fenstermodus", "Vollbildmodus"}},
         ANTIALIAZING[][] =  {{"Turn off antialiasing", "Turn on antialiasing" }, 
-                             {"Kantengl�ttung aus", "Kantengl�ttung an"}},
+                             {"Kantenglättung aus", "Kantenglättung an"}},
         MUSIC[][] = 		{{"Turn off music", "Turn on music" }, 
                              {"Musik ausschalten", "Musik einschalten"}},
 	
@@ -58,22 +58,22 @@ class Button implements Constants, Fonts, Costs, PriceLevels
 				   "German", "Player name", "",
 				   Audio.MICHAEL_MODE ? "Change music mode": "", ""}, 
 				  {"Contact", "", "", "", "", "", "", ""},
-				  {"General information", "Upgrade costs", "Ph�nix",  "Roch", 
+				  {"General information", "Upgrade costs", "Phönix",  "Roch",
 				   "Orochi", "Kamaitachi", "Pegasus", "Helios"},
 				  {"Record times", "Overall", "Phoenix",  "Roch", "Orochi", 
 				   "Kamaitachi", "Pegasus", "Helios"}},
-				 {{"Handlung", "�nderungen seit 1.0", "Spielanleitung", 
-				   "�nderungen seit 1.1", "Credits", "Copyright", "", ""},    															
+				 {{"Handlung", "Änderungen seit 1.0", "Spielanleitung",
+				   "Änderungen seit 1.1", "Credits", "Copyright", "", ""},
 				  {"Spielbeschreibung", "Finanzen/Reparatur", "Upgrades", 
 				   "Boss-Gegner", "Bedienung", "PowerUps", "Helikopter-Klassen",
 				   "Hardcore-Modus"},   													
 				  {"Fenstermodus", "Antialiasing aus", "Musik ausschalten", 
 				   "Englisch", "Spielername", "",
-				   Audio.MICHAEL_MODE ? "Musik �ndern": "", ""}, 
+				   Audio.MICHAEL_MODE ? "Musik ändern": "", ""},
 				  {"Kontakt", "", "", "", "", "", "", ""},
-				  {"Allgemeines", "Upgrade-Kosten","Ph�nix", "Roch",  "Orochi",
+				  {"Allgemeines", "Upgrade-Kosten","Phönix", "Roch",  "Orochi",
 				   "Kamaitachi", "Pegasus", "Helios"},
-				  {"Bestzeiten", "Gesamt", "Ph�nix",  "Roch", "Orochi", 
+				  {"Bestzeiten", "Gesamt", "Phönix",  "Roch", "Orochi",
 				   "Kamaitachi", "Pegasus", "Helios"}}}, 
 
 		STANDARD_UPGRADE_LABEL[][][]
@@ -90,9 +90,9 @@ class Button implements Constants, Fonts, Costs, PriceLevels
     			  {"Improve", "EMP generator"},
     			  {"Improve", "PU generator"}},
                  {{"Hauptrotor", "verbessern"}, 
-    			  {"Raketenantrieb", "erh�hen"}, 
-    			  {"Panzerung", "vest�rken"}, 
-    			  {"Feuerkraft", "erh�hen"}, 
+    			  {"Raketenantrieb", "erhöhen"},
+    			  {"Panzerung", "vestärken"},
+    			  {"Feuerkraft", "erhöhen"},
     			  {"Schussrate", "steigern"}, 
     			  {"Energie-UPs", "verbessern"},
     			  {"Teleporter", "verbessern"},
@@ -111,7 +111,7 @@ class Button implements Constants, Fonts, Costs, PriceLevels
 	int costs;				// Preis, falls es ein Kauf-Button in der Werkstatt ist	
 	 	
 	boolean 
-		highlighted,	// = true: animierter Button; wird = true gesetzt, wenn Maus �ber Button f�hrt 
+		highlighted,	// = true: animierter Button; wird = true gesetzt, wenn Maus über Button führt
 		enabled,
 		marked;			// farbliche Hervorhebungen bei besonderer Funktion
 	
@@ -123,7 +123,7 @@ class Button implements Constants, Fonts, Costs, PriceLevels
 		cost_color;		// Farbe, falls es ein Upgrade-Button in der Werkstatt ist	
 	
 	Rectangle2D 
-		bounds;		// Ma�e und Koordinaten des Buttons
+		bounds;		// Maße und Koordinaten des Buttons
 	
 	private boolean 
 		cost_button,	// = true: Kaufbutton
@@ -284,7 +284,7 @@ class Button implements Constants, Fonts, Costs, PriceLevels
 	        g2d.setColor(Color.white);
 	        if(this.costs != 0)
 	        {            
-	            g2d.drawString(this.second_label + this.costs + " �", (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
+	            g2d.drawString(this.second_label + this.costs + " €", (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
 	        }
 	        else if(!this.cost_button && this.second_label != null)
 	        {
