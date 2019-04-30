@@ -134,7 +134,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 								   GROUND_Y 
 									- SAVE_ZONE_WIDTH
 									- 2*TURN_DISTANCE.y);
-		
+
+	private static final EnemySelector
+		enemySelector = new EnemySelector();
+
 	// statische Variablen (keine Konstanten)
 	public static int 		
 		boss_selection,		 	// bestimmt, welche Boss-Typ erstellt wird
@@ -305,10 +308,12 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		
 	private Point2D		
 		target_speed_level = new Point2D.Float(),	// Anfangsgeschwindigkeit	
-		speed_level = new Point2D.Float(),			// auf Basis dieses Objektes wird die tats�chliche Geschwindigkeit berechnet
-		speed = new Point2D.Float(),				// tats�chliche Geschwindigkeit		
-		shooting_direction = new Point2D.Float();   // Schussrichtugn von schie�enden Barrier-Gegnern
-    	
+		speed_level = new Point2D.Float(),			// auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
+		speed = new Point2D.Float(),				// tatsächliche Geschwindigkeit
+		shooting_direction = new Point2D.Float();   // Schussrichtugn von schießenden Barrier-Gegnern
+
+	private EnemyTypes enemyType;
+
 	public void paint(Graphics2D g2d, Helicopter helicopter)
 	{				
 		boolean cloaked = (this.cloaking_timer > CLOAKING_TIME && this.cloaking_timer <= CLOAKING_TIME+CLOAKED_TIME);
@@ -1597,7 +1602,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 				
 		if(this.type < 2)
 		{
-			this.farbe1 = MyColor.bleach(Color.green, 0.6f);							
+			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
 			this.is_lasting = true;
 			this.deactivation_prob = 0.25f;
 			
@@ -1614,7 +1619,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		// Level 12
 		else if(this.type == 2)
 		{
-			this.farbe1 = MyColor.bleach(Color.yellow, 0.6f);			
+			this.farbe1 = MyColor.bleach(Color.yellow, 0.6f);
 			this.target_speed_level.setLocation(0, 1 + 2*Math.random());	//d //1
 			this.deactivation_prob = 0.2f;
 			this.set_var_width(65);
@@ -1626,7 +1631,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		// Level 15
 		else if(this.type == 3)
 		{
-			this.farbe1 = MyColor.bleach(new Color(255, 192, 0), 0.0f);		
+			this.farbe1 = MyColor.bleach(new Color(255, 192, 0), 0.0f);
 			this.target_speed_level.setLocation(0.5 + 2*Math.random(), 0); //d			
 			this.deactivation_prob = 0.167f;
 			this.set_var_width(105);			
@@ -1768,276 +1773,278 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	{
 		this.type = MyMath.random(selection);
 		//this.type = 30;
-		
-		// Level 1
-		if( this.type >= 0 && this.type < 3)
-		{			
-			this.farbe1 = new Color((180 + MyMath.random(30)), 
-									(120 + MyMath.random(30)),
-									(0 + MyMath.random(15)));
-			this.hitpoints = 2;			
-			this.set_var_width(110);				
-			this.target_speed_level.setLocation(0.5 + Math.random(), //d
-												  0.5 * Math.random());	//d					
-			this.is_explodable = true;
-			this.dimFactor = 1.2f;
-						
-			this.strength = 1;
-		}	
-		// Level 3
-		else if( this.type >= 3 && this.type < 10)
+		this.enemyType = enemySelector.getType(this.type);
+
+		switch(this.enemyType)
 		{
-			this.farbe1 = new Color((140 + MyMath.random(25)),
-								     (65 + MyMath.random(35)),
-								      (0 + MyMath.random(25)));
-			this.hitpoints = 3 + MyMath.random(3);
-			this.set_var_width(125);
-			this.target_speed_level.setLocation(1 + 1.5*Math.random(), //d
-													  0.5*Math.random());	//d
-			this.is_explodable = true;
-			
-			this.strength = 2;			
-		}
-		// level 5
-		else if( this.type >= 10 && this.type < 25)
-		{
-			this.farbe1 = new Color((100 + MyMath.random(30)), 
-									(100 + MyMath.random(30)),
-									 (40 + MyMath.random(25)));
-			this.hitpoints = 2 + MyMath.random(2);
-			this.set_var_width(100);			
-			this.target_speed_level.setLocation(2 + 2*Math.random(), //d
-												  2.5 + 1.5*Math.random());		//d				
-			this.is_explodable = true;
-			
-			this.strength = 2;				   
-		}		
-		// Level 7
-		else if( this.type >= 25 && this.type < 35)
-		{			
-			this.model = CARGO;			
-			this.farbe1 = new Color((100 + MyMath.random(30)), 
-									 (50 + MyMath.random(30)),
-									 (45 + MyMath.random(20)));
-			this.set_hitpoints(25);			
-			this.set_var_width(145);					
-			this.target_speed_level.setLocation(0.5 + Math.random(), //d
-													  0.5*Math.random());	//d
-			this.can_early_turn = true;
-			this.can_turn = true;
-			
-			this.strength = 4;			
-		}	
-		// Level 11
-		else if( this.type >= 35 && this.type < 75)
-		{
-			this.farbe1 = new Color((135 + MyMath.random(30)), 
-									(80+MyMath.random(20)),
-									(85 + MyMath.random(30)));
-			this.set_hitpoints(16);	
-			this.set_var_width(130);			
-			this.target_speed_level.setLocation(7 + 4*Math.random(), //d
-												   1 + 0.5*Math.random()); //d					
-			this.batch_wise_move = 1;
-			
-			this.strength = 6;
-		}	
-		// Level 13
-		else if( this.type >= 75 && this.type < 135)
-		{
-			this.farbe1 = new Color((185 + MyMath.random(40)),
-									( 70 + MyMath.random(30)),
-									(135 + MyMath.random(40)));
-			this.set_hitpoints(6);	
-			this.set_var_width(110);			
-			this.target_speed_level.setLocation(2.5 + 2.5*Math.random(), 11); //d
-			
-			this.set_initial_y(TURN_FRAME.getCenterY());		
-			this.can_sinus_move = true;			
-			this.is_explodable = true;
-			this.strength = 6;
-		}	
-		// Level 16
-		else if( this.type >= 135 && this.type < 310) 
-		{
-			this.farbe1 = new Color((85 + MyMath.random(20)),
-									(35 + MyMath.random(30)),
-									(95 + MyMath.random(30)));
-			this.set_hitpoints(24);	
-			this.set_var_width(170);			
-			this.target_speed_level.setLocation(1.5 + 1.5*Math.random(), //d
-												      0.5*Math.random());	//d	
-			this.can_dodge = true;
-			
-			this.strength = 9;					  
-		}		
-		// Level 21
-		else if( this.type >= 310 && this.type < 485) 
-		{
-			this.farbe1 = new Color((150 + MyMath.random(20)), 
-								    (130 + MyMath.random(25)),
-								    ( 75 + MyMath.random(30)));
-			this.set_hitpoints(22);	
-			this.set_var_width(125);			
-			this.target_speed_level.setLocation( 3.5 + 1.5*Math.random(), //d
-												   6.5 + 2*Math.random());	//d				
-			this.can_move_chaotic = true;
-			this.is_explodable = true;
-			
-			this.strength = 11;		 
-		}		
-		// Level 24
-		else if( this.type >= 485 && this.type < 660) 
-		{
-			this.farbe1 = new Color((70 + MyMath.random(40)), 
-									(130 + MyMath.random(50)),
-									(30 + MyMath.random(45)));
-			this.set_hitpoints(30);	
-			this.set_var_width(95);			
-			this.target_speed_level.setLocation( 5.5 + 2.5*Math.random(), //d
-												   5 + 2*Math.random());		//d
-			this.is_explodable = true;
-			this.call_back = 1;
-			
-			this.strength = 10;		 
-		}
-		// Level 26
-		else if( this.type >= 660 && this.type < 835) 
-		{			
-			this.model = CARGO;
-			
-			this.farbe1 = new Color(80 + MyMath.random(25), 
-									80 + MyMath.random(25),
-									80 + MyMath.random(25));
-			this.set_hitpoints(60);	
-			this.set_var_width(80);	
-			this.target_speed_level.setLocation( 0.5 + Math.random(), //d
-												   0.5 * Math.random());	//d				
-			this.can_dodge = true;
-			this.shoot_timer = 0;
-			this.shooting_rate = 35;		
-			
-			this.strength = 12;		 
-		}
-		// Level 31
-		else if( this.type >= 835 && this.type < 2175) 
-		{
-			this.model = CARGO;
-			
-			this.farbe1 = MyColor.cloaked;
-			this.set_hitpoints(100);	
-			this.set_var_width(85);			
-			this.target_speed_level.setLocation( 0.5 + Math.random(), //d
-												   1 + 0.5*Math.random());	//d								
-			this.can_learn_kamikaze = true;
-			this.can_instant_turn = true;
-			this.cloaking_timer = CLOAKING_TIME + CLOAKED_TIME;
-			this.uncloaking_speed = 2;
-			this.can_early_turn = true;
-			this.is_explodable = true;
-			
-			this.strength = 16;			  
-		}	
-		// Level 35
-		else if( this.type >= 2175 && this.type < 3740) 
-		{
-			this.create_scampering_vessel(last_carrier != null);
-		}
-		else if( this.type >= 3740 && this.type < 3960) 
-		{
-			this.model = CARGO;		
-			
-			this.farbe1 = new Color(70 + MyMath.random(15), 
-									60 + MyMath.random(10), 
-									45 + MyMath.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
-			this.set_hitpoints(450);	
-			this.set_var_width(165);				
-			this.target_speed_level.setLocation( 0.5 + Math.random(), //d
-					   							   0.5 * Math.random());	//d					
-			this.can_early_turn = true;			
-			this.is_carrier = true;
-			this.can_turn = true;					
-			
-			this.strength = 19;
-		}		
-		// Level 37
-		else if( this.type >= 3960 && this.type < 9710) 
-		{
-			this.farbe1 = new Color((180 + MyMath.random(50)), 
-									(230 + MyMath.random(20)),
-									(20 + MyMath.random(60)));
-			this.set_hitpoints(140);	
-			this.set_var_width(115);			
-			this.target_speed_level.setLocation( 4 + 2.5 * Math.random(), //d
-												   0.5 + Math.random());		//d						
-			this.is_explodable = true;
-			this.can_chaos_speedup = true;
-			this.can_dodge = true;
-			
-			this.strength = 22;		
-		}		
-		// Level 41
-		else if( this.type >= 9710 && this.type < 15235) 
-		{
-			this.farbe1 = new Color( 30 + MyMath.random(40), 
-									 60 + MyMath.random(40), 
-									120 + MyMath.random(40));
-			this.set_hitpoints(150);	
-			this.set_var_width(95);				
-			this.target_speed_level.setLocation( 1 + 1.5*Math.random(), 0); //d
-			
-			this.is_explodable = true;
-			this.speedup = READY;
-									
-			this.strength = 30;	   
-		}
-		// Level 43
-		else if( this.type >= 15235 && this.type < 20760) 
-		{ 
-			this.farbe1 = MyColor.cloaked;
-			this.set_hitpoints(330);	
-			this.set_var_width(105);			
-			this.target_speed_level.setLocation(9, 11);	//d
-			
-			this.direction.y = -1;			
-			this.set_initial_y(TURN_FRAME.getCenterY());		
-			this.cloaking_timer = 0;
-			this.can_loop = true;
-						
-			this.strength = 30;
-		}
-		// Level 45
-		else if( this.type >= 20760 && this.type < 26285) 
-		{
-			this.farbe1 = new Color(  5 + MyMath.random(55), 
-									105 + MyMath.random(40), 
-									 90 + MyMath.random(30));
-			this.set_hitpoints(520);	
-			this.set_var_width(115);			
-			this.target_speed_level.setLocation( 2.5 + 2*Math.random(), //d
-												   4.5 + 1.5*Math.random());//d
-			
-			this.tractor = READY;
-			this.is_explodable = true;
-			
-			this.strength = 30;					
-		}
-		// Level 46
-		else if( this.type >= 26285 && this.type < 31810)
-		{
-			this.model = CARGO;
-			
-			this.farbe1 = new Color(190 + MyMath.random(40), 
-									 10 + MyMath.random(60),
-									 15 + MyMath.random(60));
-			this.set_hitpoints(500);	
-			this.set_var_width(130);			
-			this.target_speed_level.setLocation( 1 + Math.random(), //d
-													   0.5*Math.random());//d		
-			this.teleport_timer = READY;
-			this.can_kamikaze = true;
-			
-			this.strength = 35;			
+			// Level 1
+			case TINY:
+				this.farbe1 = new Color((180 + MyMath.random(30)),
+						(120 + MyMath.random(30)),
+						(0 + MyMath.random(15)));
+				this.hitpoints = 2;
+				this.set_var_width(110);
+				this.target_speed_level.setLocation(0.5 + Math.random(), //d
+						0.5 * Math.random());	//d
+				this.is_explodable = true;
+				this.dimFactor = 1.2f;
+
+				this.strength = 1;
+				break;
+
+			// Level 3
+			case SMALL:
+				this.farbe1 = new Color((140 + MyMath.random(25)),
+						(65 + MyMath.random(35)),
+						(0 + MyMath.random(25)));
+				this.hitpoints = 3 + MyMath.random(3);
+				this.set_var_width(125);
+				this.target_speed_level.setLocation(1 + 1.5*Math.random(), //d
+						0.5*Math.random());	//d
+				this.is_explodable = true;
+
+				this.strength = 2;
+				break;
+
+			// level 5
+			case RUNABOUT:
+				this.farbe1 = new Color((100 + MyMath.random(30)),
+						(100 + MyMath.random(30)),
+						(40 + MyMath.random(25)));
+				this.hitpoints = 2 + MyMath.random(2);
+				this.set_var_width(100);
+				this.target_speed_level.setLocation(2 + 2*Math.random(), //d
+						2.5 + 1.5*Math.random());		//d
+				this.is_explodable = true;
+
+				this.strength = 2;
+				break;
+
+			// Level 7
+			case FREIGHTER:
+				this.model = CARGO;
+				this.farbe1 = new Color((100 + MyMath.random(30)),
+						(50 + MyMath.random(30)),
+						(45 + MyMath.random(20)));
+				this.set_hitpoints(25);
+				this.set_var_width(145);
+				this.target_speed_level.setLocation(0.5 + Math.random(), //d
+						0.5*Math.random());	//d
+				this.can_early_turn = true;
+				this.can_turn = true;
+
+				this.strength = 4;
+				break;
+
+			// Level 11
+			case BATCHWISE:
+				this.farbe1 = new Color((135 + MyMath.random(30)),
+						(80+MyMath.random(20)),
+						(85 + MyMath.random(30)));
+				this.set_hitpoints(16);
+				this.set_var_width(130);
+				this.target_speed_level.setLocation(7 + 4*Math.random(), //d
+						1 + 0.5*Math.random()); //d
+				this.batch_wise_move = 1;
+
+				this.strength = 6;
+				break;
+
+			// Level 13
+			case SINUS:
+				this.farbe1 = new Color((185 + MyMath.random(40)),
+						( 70 + MyMath.random(30)),
+						(135 + MyMath.random(40)));
+				this.set_hitpoints(6);
+				this.set_var_width(110);
+				this.target_speed_level.setLocation(2.5 + 2.5*Math.random(), 11); //d
+
+				this.set_initial_y(TURN_FRAME.getCenterY());
+				this.can_sinus_move = true;
+				this.is_explodable = true;
+				this.strength = 6;
+				break;
+
+			// Level 16
+			case DODGER:
+				this.farbe1 = new Color((85 + MyMath.random(20)),
+						(35 + MyMath.random(30)),
+						(95 + MyMath.random(30)));
+				this.set_hitpoints(24);
+				this.set_var_width(170);
+				this.target_speed_level.setLocation(1.5 + 1.5*Math.random(), //d
+						0.5*Math.random());	//d
+				this.can_dodge = true;
+
+				this.strength = 9;
+				break;
+
+			// Level 21
+			case CHAOS:
+				this.farbe1 = new Color((150 + MyMath.random(20)),
+						(130 + MyMath.random(25)),
+						( 75 + MyMath.random(30)));
+				this.set_hitpoints(22);
+				this.set_var_width(125);
+				this.target_speed_level.setLocation( 3.5 + 1.5*Math.random(), //d
+						6.5 + 2*Math.random());	//d
+				this.can_move_chaotic = true;
+				this.is_explodable = true;
+
+				this.strength = 11;
+				break;
+
+			// Level 24
+			case CALLBACK:
+				this.farbe1 = new Color((70 + MyMath.random(40)),
+						(130 + MyMath.random(50)),
+						(30 + MyMath.random(45)));
+				this.set_hitpoints(30);
+				this.set_var_width(95);
+				this.target_speed_level.setLocation( 5.5 + 2.5*Math.random(), //d
+						5 + 2*Math.random());		//d
+				this.is_explodable = true;
+				this.call_back = 1;
+
+				this.strength = 10;
+				break;
+
+			// Level 26
+			case SHOOTER:
+				this.model = CARGO;
+
+				this.farbe1 = new Color(80 + MyMath.random(25),
+						80 + MyMath.random(25),
+						80 + MyMath.random(25));
+				this.set_hitpoints(60);
+				this.set_var_width(80);
+				this.target_speed_level.setLocation( 0.5 + Math.random(), //d
+						0.5 * Math.random());	//d
+				this.can_dodge = true;
+				this.shoot_timer = 0;
+				this.shooting_rate = 35;
+
+				this.strength = 12;
+				break;
+
+			// Level 31
+			case CLOAK:
+				this.model = CARGO;
+
+				this.farbe1 = MyColor.cloaked;
+				this.set_hitpoints(100);
+				this.set_var_width(85);
+				this.target_speed_level.setLocation( 0.5 + Math.random(), //d
+						1 + 0.5*Math.random());	//d
+				this.can_learn_kamikaze = true;
+				this.can_instant_turn = true;
+				this.cloaking_timer = CLOAKING_TIME + CLOAKED_TIME;
+				this.uncloaking_speed = 2;
+				this.can_early_turn = true;
+				this.is_explodable = true;
+
+				this.strength = 16;
+				break;
+
+			// Level 35
+			case BOLT:
+				this.create_scampering_vessel(last_carrier != null);
+				break;
+
+			case CARRIER:
+				this.model = CARGO;
+
+				this.farbe1 = new Color(70 + MyMath.random(15),
+						60 + MyMath.random(10),
+						45 + MyMath.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
+				this.set_hitpoints(450);
+				this.set_var_width(165);
+				this.target_speed_level.setLocation( 0.5 + Math.random(), //d
+						0.5 * Math.random());	//d
+				this.can_early_turn = true;
+				this.is_carrier = true;
+				this.can_turn = true;
+
+				this.strength = 19;
+				break;
+
+			// Level 37
+			case YELLOW:
+				this.farbe1 = new Color((180 + MyMath.random(50)),
+						(230 + MyMath.random(20)),
+						(20 + MyMath.random(60)));
+				this.set_hitpoints(140);
+				this.set_var_width(115);
+				this.target_speed_level.setLocation( 4 + 2.5 * Math.random(), //d
+						0.5 + Math.random());		//d
+				this.is_explodable = true;
+				this.can_chaos_speedup = true;
+				this.can_dodge = true;
+
+				this.strength = 22;
+				break;
+
+			// Level 41
+			case AMBUSH:
+				this.farbe1 = new Color( 30 + MyMath.random(40),
+						60 + MyMath.random(40),
+						120 + MyMath.random(40));
+				this.set_hitpoints(150);
+				this.set_var_width(95);
+				this.target_speed_level.setLocation( 1 + 1.5*Math.random(), 0); //d
+
+				this.is_explodable = true;
+				this.speedup = READY;
+
+				this.strength = 30;
+				break;
+
+			 // Level 43
+			case LOOPING:
+				this.farbe1 = MyColor.cloaked;
+				this.set_hitpoints(330);
+				this.set_var_width(105);
+				this.target_speed_level.setLocation(9, 11);	//d
+
+				this.direction.y = -1;
+				this.set_initial_y(TURN_FRAME.getCenterY());
+				this.cloaking_timer = 0;
+				this.can_loop = true;
+
+				this.strength = 30;
+				break;
+
+			// Level 45
+			case CAPTURER:
+				this.farbe1 = new Color(  5 + MyMath.random(55),
+						105 + MyMath.random(40),
+						90 + MyMath.random(30));
+				this.set_hitpoints(520);
+				this.set_var_width(115);
+				this.target_speed_level.setLocation( 2.5 + 2*Math.random(), //d
+						4.5 + 1.5*Math.random());//d
+				this.tractor = READY;
+				this.is_explodable = true;
+
+				this.strength = 30;
+				break;
+
+			// Level 46
+			case TELEPORTER:
+				this.model = CARGO;
+
+				this.farbe1 = new Color(190 + MyMath.random(40),
+						10 + MyMath.random(60),
+						15 + MyMath.random(60));
+				this.set_hitpoints(500);
+				this.set_var_width(130);
+				this.target_speed_level.setLocation( 1 + Math.random(), //d
+						0.5*Math.random());//d
+				this.teleport_timer = READY;
+				this.can_kamikaze = true;
+
+				this.strength = 35;
+				break;
 		}
 	}
 	
