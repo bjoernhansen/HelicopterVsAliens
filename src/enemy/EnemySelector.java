@@ -1,24 +1,22 @@
 package enemy;
 
-import java.awt.font.NumericShaper;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class EnemySelector
 {
-    private NavigableMap<Integer, RangeTypePair> map;
-
-    private static final int[] borders  = { 0, 3, 10, 25, 35, 75, 135, 310, 485, 660, 835, 2175, 3740, 3960, 9710,
-                                            15235, 20760, 26285, 31810};
+    private NavigableMap<Integer, RangeTypePair>
+        map = new TreeMap<>();
+    
+    private static final List<Integer>
+        BORDERS = Collections.unmodifiableList(
+            Arrays.asList(0, 3, 10, 25, 35, 75, 135, 310, 485, 660, 835, 2175, 3740, 3960, 9710, 15235, 20760, 26285, 31810));
 
     EnemySelector()
     {
-        map = new TreeMap<>();
         EnemyTypes[] values = EnemyTypes.values();
-        for(int i = 0; i < borders.length-1; i++)
+        for(int i = 0; i < BORDERS.size()-1; i++)
         {
-            map.put(borders[i], new RangeTypePair(borders[i+1]-1, values[i]));
+            map.put(BORDERS.get(i), new RangeTypePair(BORDERS.get(i+1)-1, values[i]));
         }
     }
 

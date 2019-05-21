@@ -17,6 +17,9 @@ public class PowerUp extends MovingObject
 		GAME_SIZE = 30, 
 		MENU_SIZE = 23;
 	
+	public int
+		type;
+	
 	int direction;	
 	
 	boolean 

@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import enemy.BossTypes;
 import enemy.Enemy;
 
+import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+
 interface Costs
 {	
 	static final int 
@@ -496,14 +498,14 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		{
 			if(helicopter.damaged){Menu.block(4);}
 			else if(helicopter.goliath_plating == 2){Menu.block(7);}
-			else if(money < STANDARD_GOLIATH_COSTS && !((helicopter.type == PHOENIX||(helicopter.type == HELIOS && record_time[PHOENIX][4]!=0)) && money >= PHOENIX_GOLIATH_COSTS))
+			else if(money < STANDARD_GOLIATH_COSTS && !((helicopter.helicopterType == PHOENIX_||(helicopter.type == HELIOS && record_time[PHOENIX_.ordinal()][4]!=0)) && money >= PHOENIX_GOLIATH_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);						
-				money -= (helicopter.type == PHOENIX||(helicopter.type == HELIOS && record_time[PHOENIX][4]!=0)) ? PHOENIX_GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
+				money -= (helicopter.helicopterType == PHOENIX_||(helicopter.type == HELIOS && record_time[PHOENIX_.ordinal()][4]!=0)) ? PHOENIX_GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
 				helicopter.goliath_plating = 2;
 				helicopter.current_plating += MyMath.plating(helicopter.level_of_upgrade[PLATING]);
 				helicopter.setPlatingColor();
@@ -889,7 +891,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		}
 		else if(window == GAME && e.getButton() == 3 && !helicopter.damaged)
 		{			
-			if(helicopter.type == PHOENIX)
+			if(helicopter.helicopterType == PHOENIX_)
 			{
 				helicopter.teleport_to(	e.getX()-Main.display_shift.width, 
 										e.getY()-Main.display_shift.height);

@@ -8,11 +8,14 @@ import java.util.LinkedList;
 
 import enemy.BossTypes;
 import enemy.Enemy;
-	
+
+import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+
 
 public class Missile extends MovingObject implements DamageFactors, MissileTypes, BossTypes
 {	
-	public int 
+	public int
+		type,
 		dmg,			// Schaden, den die Rakete beim Gegner anrichtet, wenn sie trifft
 		kills, 			// nur für Roch- und Orochi Klasse: mit dieser Rakete vernichtete Gegner
 		earned_money;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
@@ -68,7 +71,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 			this.sister_kills = 0;
 			this.nr_of_hitting_sisters = 0;			
 		}
-		else if(helicopter.type == PHOENIX)
+		else if(helicopter.helicopterType == PHOENIX_)
 		{
 			this.launching_time = System.currentTimeMillis();
 		}		
@@ -193,7 +196,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 				else
 				{						
 					e.die(hd, helicopter, this, false);
-					if(	helicopter.type == PHOENIX 
+					if(	helicopter.helicopterType == PHOENIX_
 						&& helicopter.bonus_kills_timer > 0 
 						&& this.launching_time > helicopter.past_teleport_time)
 					{

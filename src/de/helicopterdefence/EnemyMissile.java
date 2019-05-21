@@ -19,7 +19,7 @@ public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes
 		speed    = new Point2D.Float(); // Geschwindigkeit der gegnerischen Geschosse
 	
 	private int
-		rgb_color_value,	// aktueller Integer-Farbwert f�r die RGB-Rotkomponente der Geschoss-Farbe [0-255]
+		rgb_color_value,	// aktueller Integer-Farbwert für die RGB-Rotkomponente der Geschoss-Farbe [0-255]
 		diameter,			// Geschoss-Durchmesser
 		type;				// Art des Geschoss
     

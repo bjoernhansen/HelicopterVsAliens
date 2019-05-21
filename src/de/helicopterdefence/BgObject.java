@@ -68,6 +68,8 @@ public class BgObject extends MovingObject
     	cloud_x = 135;				// x-Koordinate der Wolke
     
     // Objekt-Attribute    
+    public int
+        type;
     
     private int 
     	width,	// Gesamtbreite eines Hintergrundobjektes

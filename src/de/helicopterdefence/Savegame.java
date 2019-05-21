@@ -157,7 +157,7 @@ public class Savegame implements Constants, Serializable
 		this.record_time = Events.record_time.clone();
 		this.reached_level_20 = Events.reached_level_20.clone();
 		this.highscore = Events.highscore.clone();
-		this.type = helicopter.type;
+		this.type = helicopter.helicopterType.ordinal();
 		this.level_of_upgrade = helicopter.level_of_upgrade.clone();		
 		this.spotlight = helicopter.spotlight;
 		this.goliath_plating= helicopter.goliath_plating;

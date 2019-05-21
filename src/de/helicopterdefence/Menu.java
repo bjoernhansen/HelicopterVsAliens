@@ -18,6 +18,8 @@ import javax.swing.JTextPane;
 
 import enemy.Enemy;
 
+import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+
 interface Fonts
 {
 	Font
@@ -289,10 +291,11 @@ public class Menu implements Constants, Fonts
 		{
 			if(	helicopter_frame[i].contains(helicopter.destination))
 			{
-				helicopter.type = (i + helicopter_selection)%Helicopter.NR_OF_TYPES;					
+				helicopter.type = (i + helicopter_selection)%Helicopter.NR_OF_TYPES;
+				helicopter.helicopterType = HelicopterTypes.values()[(i + helicopter_selection)%HelicopterTypes.values().length];
 				if(effect_timer[helicopter.type] == 0)
 				{									
-						 if(helicopter.type == PHOENIX)	  {Audio.play(Audio.teleport1);}
+						 if(helicopter.helicopterType == PHOENIX_)	  {Audio.play(Audio.teleport1);}
 					else if(helicopter.type == ROCH)	  {Audio.play(Audio.shield_up);}
 					else if(helicopter.type == OROCHI)	  {Audio.play(Audio.stun_activated);}
 					else if(helicopter.type == KAMAITACHI){Audio.play(Audio.plasma_on);}
@@ -753,10 +756,10 @@ public class Menu implements Constants, Fonts
         if(helicopter.has_5th_special())
         {            
         	g2d.setColor(MyColor.golden);            
-            if(helicopter.type == PHOENIX || helicopter.type == PEGASUS)
+            if(helicopter.helicopterType == PHOENIX_ || helicopter.type == PEGASUS)
             {
-            	if(!helicopter.has_max_upgrade_level[helicopter.type == PHOENIX ? 3 : 4]){g2d.setColor(Color.white);}
-            	g2d.drawString(SPECIALS[language][4 + helicopter.type] + " (" + LEVEL[language] + " " + (helicopter.level_of_upgrade[helicopter.type == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	if(!helicopter.has_max_upgrade_level[helicopter.helicopterType == PHOENIX_ ? 3 : 4]){g2d.setColor(Color.white);}
+            	g2d.drawString(SPECIALS[language][4 + helicopter.type] + " (" + LEVEL[language] + " " + (helicopter.level_of_upgrade[helicopter.helicopterType == PHOENIX_ ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
             else
             {

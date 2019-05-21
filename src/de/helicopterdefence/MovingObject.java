@@ -8,10 +8,7 @@ public abstract class MovingObject implements Constants
 	protected final static int
 		GROUND_Y = 426;
 	
-	public int 
-		type;
-	
-	public Rectangle2D 
+	public Rectangle2D
 		bounds = new Rectangle2D.Float();
 	
 	public Rectangle 

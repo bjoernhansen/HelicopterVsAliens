@@ -62,8 +62,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 
 	private static final float 	
 		RADAR_STRENGTH 				= 0.2f,		// Alpha-Wert: legt fest, wie stark  ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
-		HEIGHT_FACTOR 				= 0.28f,	// legt das Verh�ltnis von H�he und L�nge f�r die meisten Gegner fest
-		HEIGHT_FACTOR_SUPERSIZE 	= 0.65f,	// legt das Verh�ltnis von H�he und L�nge f�r besonders hohe Gegner fest
+		HEIGHT_FACTOR 				= 0.28f,	// legt das Verhältnis von Höhe und Länge für die meisten Gegner fest
+		HEIGHT_FACTOR_SUPERSIZE 	= 0.65f,	// legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
 		BARRIER_BORDER_SIZE 		= 0.23f,
 		BARRIER_EYE_SIZE 			= 0.08f,
 		ROCK_PROB					= 0.05f, 		
@@ -100,7 +100,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	 	SNOOZE_TIME 			= 100,	// Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
 	 	INACTIVATION_TIME		= 150,	 	
 	 	STUNNING_TIME_BASIS 	= 45,	// Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
-	 	SPEED_KILL_BONUS_TIME 	= 15,	// Zeit [frames], innerhalb welcher f�r einen Kamaitachi-Extra-Bonus Gegner besiegt werden m�ssen, erh�ht sich um diesen Wert 
+	 	SPEED_KILL_BONUS_TIME 	= 15,	// Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
 	 	BORROW_TIME				= 65,
 	 	MIN_TURN_TIME			= 31,
 	 	MIN_TURN_NOISELESS_TIME = 15,
@@ -169,7 +169,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		ROP_CLOAKED = new RescaleOp(scales, offsets, null);
     
 	private static boolean	
-		creation_stop			=  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 f�llt
+		creation_stop			=  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
 		make_boss2_servants 	=  false,	// make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
 		make_boss4_servant 		=  false,
 	    make_all_boss5_servants =  false,
@@ -181,28 +181,29 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	                        	   false};	// PROTECTOR
 			
 	public static 
-		Point2D boss = new Point2D.Float();	// Koordinaten vom aktuellen Boss; wichtig f�r Gegner-produzierende Boss-Gegner	
+		Point2D boss = new Point2D.Float();	// Koordinaten vom aktuellen Boss; wichtig für Gegner-produzierende Boss-Gegner	
 		
 	/*
 	 * 	Attribute der Enemy-Objekte	
 	 */
 
 	public int 
+        type,
 		model,							// legt das Aussehen (Model) des Gegners fest
 		hitpoints,						// aktuelle Hitpoints
 		starting_hitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegers)
-		strength,						// St�rke des Gegner, bestimmmt die H�he der Belohnung bei Abschuss
+		strength,						// Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
 		invincible_timer,				// reguliert die Zeit, die ein Gegner unverwundbar ist		
 		teleport_timer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
-		shield,							// nur f�r Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen 		
+		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen 		
 		touched_site,
 		last_touched_site,
 		alpha,
 		borrow_timer,	
 		untouched_counter,	
 		stunning_timer,
-		emp_slowed_timer,			// reguliert die L�nge der Verlangsamung nach EMP-Treffer (Pegasus-Klasse)
-		collision_damage_timer;			// Timer zur �berwachung der Zeit zwischen zwei Helikopter-HP-Abz�gen;
+		emp_slowed_timer,			// reguliert die Länge der Verlangsamung nach EMP-Treffer (Pegasus-Klasse)
+		collision_damage_timer;			// Timer zur überwachung der Zeit zwischen zwei Helikopter-HP-Abzügen;
 	
 	public boolean	
 		is_mini_boss,					// = true: Gegner ist ein Mini-Boss
@@ -224,13 +225,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		is_previous_stopping_barrier;
 		
 	private int 
-		reward_modifier,		// f�r normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
+		reward_modifier,		// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
 		lifetime,				// Anzahl der Frames seit Erstellung des Gegners;  und vergangene Zeit seit Erstellung, Zeit	
 		y_crash_pos,			// Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann  	
 		collision_audio_timer,
 		turn_audio_timer,
-		exploding_timer,		// Timer zur �berwachung der Zeit zwischen Abschuss und Absturz							
-		cloaking_timer,			// reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grunds�tzlich nicht tarnen
+		exploding_timer,		// Timer zur überwachung der Zeit zwischen Abschuss und Absturz
+		cloaking_timer,			// reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
 		uncloaking_speed,		
 		shield_maker_timer,
 		call_back,
@@ -245,7 +246,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		snooze_timer,
 		static_charge_timer,
 		
-		// nur f�r Hindernis-Gegner releavant		
+		// nur für Hindernis-Gegner releavant		
 		rotor_color,
 		barrier_shoot_timer,
 		barrier_teleport_timer,
@@ -267,29 +268,29 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		dimFactor;
 	
 	private boolean
-		can_dodge,				// = true: Gegner kann Sch�ssen ausweichen
+		can_dodge,				// = true: Gegner kann Schüssen ausweichen
 		can_kamikaze,			// = true: Gegner geht auf Kollsionskurs, wenn die Distanz zum Helicopter klein ist
 		can_learn_kamikaze,		// = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
 		can_early_turn,
-		can_move_chaotic, 		// reguliert den zuf�lligen Richtungswechsel bei Chaosflug-Modus
-		can_sinus_move,			// Gegner fliegt in Kurven �hnlicher einer Sinus-Kurve
-		can_turn,				// Gegner �ndert bei Beschuss evtl.    seine Flugrichtung in Richtung Helikopter
-		can_instant_turn,		// Gegner �ndert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter 
+		can_move_chaotic, 		// reguliert den zufälligen Richtungswechsel bei Chaosflug-Modus
+		can_sinus_move,			// Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
+		can_turn,				// Gegner ändert bei Beschuss evtl.    seine Flugrichtung in Richtung Helikopter
+		can_instant_turn,		// Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
 		can_frontal_speedup,	// Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt		
 		can_loop,				// = true: Gegner fliegt Loopings
-		can_chaos_speedup,		// erh�ht die Geschwindigkeit, wenn in Helicoptern�he
+		can_chaos_speedup,		// erhöht die Geschwindigkeit, wenn in Helicopternähe
 		
 		is_speed_boosted,
 		is_destroyed,			// = true: Gegner wurde vernichtet	
 		has_height_set,			// = false --> heigt = height_factor * width; = true --> height wurde manuell festgelegt	
 		has_y_pos_set,			// = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
-		has_crashed, 			// = true: Gegner ist abgest�rzt
+		has_crashed, 			// = true: Gegner ist abgestürzt
 		is_emp_shocked,			// = true: Gegner steht unter EMP-Schock -> ist verlangsamt				
 		is_marked_for_removal,	// = true --> Gegner nicht mehr zu sehen; kann entsorgt werden 
 		is_upper_shield_maker,	// bestimmt die Position der Schild-Aufspannenden Servants von Boss 5	
 		is_explodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
-		is_shielding,			// = true: Gegner spannt gerade ein Schutzschild f�r Boss 5 auf (nur f�r Schild-Generatoren von Boss 5) 
-		is_stunnable,			// = false f�r Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann 
+		is_shielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5) 
+		is_stunnable,			// = false für Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann 
 		is_carrier,				// = true
 		is_clockwise_barrier,	// = true: der Rotor des Hindernis dreht im Uhrzeigersinn
 		is_recovering_speed;
@@ -634,7 +635,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 							(int) (	horizontal ? thickness_factor * height : rounding * height) );
 	}	
 	
-	// malen der Seitenflügel mit Antriebsd�se
+	// malen der Seitenflügel mit Antriebsdüse
 	private void paint_exhaust(Graphics2D g2d, Color color4)
 	{
 		paint_exhaust(g2d, 
@@ -927,7 +928,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 								(int) (0.6f * this.paint_bounds.width),
 								(int) (0.125f * this.paint_bounds.height));
 		
-			// R�ckfl�gel
+			// Rückflügel
 			g2d.fillArc(	(int)(offset_x + (direction_x == 1 ? 0.5f * this.paint_bounds.width : 0)), 
 							(int)(offset_y - 0.3f * this.paint_bounds.height), 
 							(int)(0.5f * this.paint_bounds.width),
@@ -1439,7 +1440,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		this.reward_modifier = this.is_boss() ? 0 : 5 - MyMath.random(11);
 		this.starting_hitpoints = this.hitpoints;
 		
-		// Festlegen der H�he und der y-Position des Gegners
+		// Festlegen der Höhe und der y-Position des Gegners
 		if(!this.has_height_set){this.set_height();}	
 		if(!this.has_y_pos_set){this.set_initial_y();}
 				
@@ -2521,7 +2522,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	}
 
 	/* Die folgende Funktion reguliert die Gegner-Bewegung:
-	 * 1.  Unter Ber�cksichtigung jeglicher Eventualit�ten (special_manoever, ausweichen, etc.)
+	 * 1.  Unter Berücksichtigung jeglicher Eventualitäten (special_manoever, ausweichen, etc.)
 	 *	   werden die neuen Koordinaten berechnet.
 	 * 2.  Der Gegner wird an Stelle seiner neuen Koordinaten gemalt.
 	 */
@@ -3176,7 +3177,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	
 	private void kamikaze(Helicopter helicopter)
     {
-    	// Boss-Gegner mit der F�higkeit "Kamikaze" drehen mit einer bestimmten
+    	// Boss-Gegner mit der Fähigkeit "Kamikaze" drehen mit einer bestimmten
     	// Wahrscheinlichkeit um, wenn sie dem Helikopter das Heck zugekehrt haben.
     	if(	this.is_boss() 
     		&& MyMath.toss_up(0.008f) 
@@ -3806,7 +3807,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 												+ 7.5), 
 										 Math.max(this.speed_level.getY(), 5.5)); //d
 			
-			// Wenn Gegner droht am Boden durch Barrier zerdr�ckt zu werden, dann nimmt Gegner den k�rzesten Weg.
+			// Wenn Gegner droht am Boden durch Barrier zerdrückt zu werden, dann nimmt Gegner den kürzesten Weg.
 			if(this.must_avoid_ground_collision(bottom_turn_line))
 			{
 				this.perform_x_turn_at_barrier();

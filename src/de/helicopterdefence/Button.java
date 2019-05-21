@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
+import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+
 interface PriceLevels
 {
 	static final int
@@ -216,8 +218,8 @@ class Button implements Constants, Fonts, Costs, PriceLevels
 			  + STANDARD_UPGRADE_LABEL[Menu.language][6 + helicopter.type][1];		
 		Menu.repair_shop_button.get("Special" + 0).costs = SPOTLIGHT_COSTS;
 		Menu.repair_shop_button.get("Special" + 0).cost_color = MyColor.costsColor[CHEAP];
-		Menu.repair_shop_button.get("Special" + 1).costs = (helicopter.type == PHOENIX || (helicopter.type == HELIOS && Events.record_time[PHOENIX][4] != 0)) ? PHOENIX_GOLIATH_COSTS  : STANDARD_GOLIATH_COSTS ;
-		Menu.repair_shop_button.get("Special" + 1).cost_color = (helicopter.type == PHOENIX || (helicopter.type == HELIOS && Events.record_time[PHOENIX][4] != 0)) ? MyColor.costsColor[VERY_CHEAP] : MyColor.costsColor[REGULAR];
+		Menu.repair_shop_button.get("Special" + 1).costs = (helicopter.helicopterType == PHOENIX_ || (helicopter.type == HELIOS && Events.record_time[PHOENIX_.ordinal()][4] != 0)) ? PHOENIX_GOLIATH_COSTS  : STANDARD_GOLIATH_COSTS ;
+		Menu.repair_shop_button.get("Special" + 1).cost_color = (helicopter.helicopterType == PHOENIX_ || (helicopter.type == HELIOS && Events.record_time[PHOENIX_.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP] : MyColor.costsColor[REGULAR];
 		Menu.repair_shop_button.get("Special" + 2).costs = (helicopter.type == ROCH || (helicopter.type == HELIOS && Events.record_time[ROCH][4] != 0)) ? CHEAP_SPECIAL_COSTS  : STANDARD_SPECIAL_COSTS ;
 		Menu.repair_shop_button.get("Special" + 2).cost_color = (helicopter.type == ROCH || (helicopter.type == HELIOS && Events.record_time[ROCH][4] != 0)) ? MyColor.costsColor[VERY_CHEAP] : MyColor.costsColor[REGULAR];
 		Menu.repair_shop_button.get("Special" + 3).costs = (helicopter.type == OROCHI || (helicopter.type == HELIOS && Events.record_time[OROCHI][4] != 0)) ? CHEAP_SPECIAL_COSTS  : helicopter.type == ROCH ? ROCH_SECOND_CANNON_COSTS  : STANDARD_SPECIAL_COSTS ;

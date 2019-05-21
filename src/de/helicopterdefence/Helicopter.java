@@ -14,25 +14,27 @@ import java.util.LinkedList;
 
 import enemy.Enemy;
 
+import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+
 public class Helicopter extends MovingObject implements Fonts, DamageFactors, MissileTypes
 {			
 	// Konstanten
     public static final int     			    	   
-    	TELEPORT_KILL_TIME = 15,		// in dieser Zeit [frames] nach einer Teleportation vernichtete Gegner werden f�r den Extra-Bonus gewertet
+    	TELEPORT_KILL_TIME = 15,		// in dieser Zeit [frames] nach einer Teleportation vernichtete Gegner werden für den Extra-Bonus gewertet
     	NICE_CATCH_TIME = 22,			// nur wenn die Zeit [frames] zwischen Teleportation und Gegner-Abschuss kleiner ist, gibt es den "NiceCath-Bonus"
     	POWERUP_DURATION = 930,			// Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
     	RECENT_DMG_TIME = 50,
     	SLOW_TIME = 100,    	
     	TELEPORT_INVU_TIME = 45,
     	NO_COLLISION_DMG_TIME	= 20, 	// Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann 
-    	FIRE_RATE_POWERUP_LEVEL = 3,	// so vielen zusätzlichen Upgrades der Feuerrate entspricht die tempor�re Steigerung der Feuerrate durch das entsprechende PowerUp
+    	FIRE_RATE_POWERUP_LEVEL = 3,	// so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
     	NR_OF_TYPES = 6,				// so viele Helikopter-Klassen gibt es	
     	INVU_DMG_REDUCTION = 80,
     	ENERGY_DRAIN = 45,				// Energieabzug für den Helikopter bei Treffer
     	REDUCED_ENERGY_DRAIN = 10,  
     	    	    
     	// Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standardupgrades
-    	// f�r jede einzelne Helikopter-Klasse sowie Energiekosten f�r das Energieupgrade
+    	// für jede einzelne Helikopter-Klasse sowie Energiekosten für das Energieupgrade
     	COSTS[][] = {{4, 2, 0, 1, 2, 3, 50},	// Phoenix
     	             {1, 3, 4, 0, 4, 2, 30},	// Roch
     	             {0, 0, 1, 2, 3, 4, 20}, 	// Orochi
@@ -73,24 +75,25 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	NOSEDIVE_SPEED = 12f,	// Geschwindigkeit des Helikopters bei Absturz
     	INVU_DMG_FACTOR = 1.0f - INVU_DMG_REDUCTION/100f;
         
-	public int	
+	public int
+		type,
 		missile_drive,						// Geschwindigkeit [Pixel pro Frame] der Raketen			
 		current_firepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
 		time_between_2_shots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann		 
 		shift_time,							// nur Pegasus-Klasse: Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
-		goliath_plating,					// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erh�ht
+		goliath_plating,					// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
 		nr_of_cannons,						// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
 		rapidfire,							// nur Kamaitachi-Klasse: SpezialUpgrade; = 2, wenn erforscht, sonst = 0;	
 		
 		// Timer
 		plasma_activation_timer,			// nur Kamaitachi-Klasse: Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
-		generator_timer,					// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgel�sen EMPs liegt
+		generator_timer,					// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
 		slowed_timer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse						
 		recent_dmg_timer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
 		interphase_generator_timer,			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 		enhanced_radiation_timer,				
 		
-		// f�r die Spielstatistik
+		// für die Spielstatistik
 		nr_of_crashes,						// Anzahl der Abstürze
 		nr_of_repairs,						// Anzahl der Reparaturen 
 		missile_counter,					// Anzahl der abgeschossenen Raketen 
@@ -126,37 +129,40 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     		
     public boolean spotlight,					// = true: Helikopter hat Scheinwerfer
      		has_shortrange_radiation,	// = true: Helikopter verfügt über Nahkampfbestrahlng
-     		has_piercing_warheads,		// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen best�ckt
-     		has_radar_device,			// = true: Helikopter verf�gt �ber eine Radar-Vorrichtung
-     		has_interphase_generator,	// = true: Helikopter verf�gt �ber einen Interphasen-Generator
-     		has_PowerUp_immobilizer,	// = true: Helikopter verf�gt �ber einen Interphasen-Generator
-     		next_missile_is_stunner,   	// = true: die n�chste abgeschossene Rakete wird eine Stopp-Rakete
-     		active,						// = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschie�en, etc. (vor dem ersten Start oder nach Absturz = false)
+     		has_piercing_warheads,		// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen bestückt
+     		has_radar_device,			// = true: Helikopter verfügt über eine Radar-Vorrichtung
+     		has_interphase_generator,	// = true: Helikopter verfügt über einen Interphasen-Generator
+     		has_PowerUp_immobilizer,	// = true: Helikopter verfügt über einen Interphasen-Generator
+     		next_missile_is_stunner,   	// = true: die nächste abgeschossene Rakete wird eine Stopp-Rakete
+     		active,						// = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
      		damaged,    				// = true: Helikopter hat einen Totalschaden erlitten
      		rotor_system_active,		// = true: Propeller dreht sich / Helikopter fliegt
      		continious_fire,			// = true: Dauerfeuer aktiv
-     		search4teleportDestination,	// = true: es wird gerade ein Zielort f�r den Teleportationvorgang ausgew�hlt
+     		search4teleportDestination,	// = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
      		is_moving_left,    		
-     		no_cheats_used,				// = true: Spielstand kann in die Highscore �bernommen werden, da keine cheats angewendet wurden	
-     		has_max_upgrade_level[] = new boolean[6],	// = true: f�r diese Upgrade wurde bereits die maximale Ausbaustufe erreich	 
+     		no_cheats_used,				// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden	
+     		has_max_upgrade_level[] = new boolean[6],	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich	 
      		     		
-     		// nur f�r Roch-Klasse
+     		// nur für Roch-Klasse
      		power_shield_on;				// = true: Power-Shield ist aktiviert    
      
     public Point 
     	destination = new Point(), 				// dorthin fliegt der Helikopter
-  		prior_teleport_location = new Point(); 	// nur f�r Ph�nix-Klasse: Aufenthaltsort vor Teleportation		 
+  		prior_teleport_location = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation		 
   	
   	Point2D 
   		location = new Point2D.Float(),	// exakter Aufenthaltsort	
   		next_location = new Point2D.Float();
     
   	public Enemy 
-  		tractor;			// Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festh�lt
+  		tractor;			// Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
  	    
   	public Explosion 
-  	 	emp_wave;			// Pegasus-Klasse: Referenz auf zuletzt ausgel�ste EMP-Schockwelle
-  	
+  	 	emp_wave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
+	
+	public HelicopterTypes
+		helicopterType;
+	
     private int 
     	fire_rate_timer;  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
     
@@ -185,7 +191,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	gradientCannon2and3,			// Farbe der zweiten und dritten Bordkanone
     	gradientFuss1, 					// Farben der Landekufen
     	gradientFuss2, 					
-    	gradientCannonHole;				// Farbe der Bordkanonen-�ffnung
+    	gradientCannonHole;				// Farbe der Bordkanonen-Öffnung
 	   
     Helicopter()
     {
@@ -233,9 +239,9 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     						&& Menu.effect_timer[KAMAITACHI] >= 35 
     						&& Menu.effect_timer[KAMAITACHI] < 100)
     					 ||
-    					 (heli_nr == PHOENIX 
-    					 	&& Menu.effect_timer[PHOENIX] > 1 
-    					 	&& Menu.effect_timer[PHOENIX] < 55) ))
+    					 (heli_nr == PHOENIX_.ordinal()
+    					 	&& Menu.effect_timer[PHOENIX_.ordinal()] > 1
+    					 	&& Menu.effect_timer[PHOENIX_.ordinal()] < 55) ))
     		{
     			this.inputColorCannon = MyColor.variableGreen;
     		}
@@ -254,9 +260,9 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	this.inputColorHull = unlocked_painting 
     						  || (!this.is_invincible() 
     						     && !(Events.window == STARTSCREEN 
-    						        && heli_nr == PHOENIX
-    						        && Menu.effect_timer[PHOENIX] > 1 
-    						        && Menu.effect_timer[PHOENIX] < 55)) 
+    						        && heli_nr == PHOENIX_.ordinal()
+    						        && Menu.effect_timer[PHOENIX_.ordinal()] > 1
+    						        && Menu.effect_timer[PHOENIX_.ordinal()] < 55))
     						  ? MyColor.helicopterColor[heli_nr][unlocked_painting ? 0 : this.goliath_plating/2] 
     						  : MyColor.variableGreen;
     	this.inputColorWindow = !unlocked_painting 
@@ -314,7 +320,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	g2d.setStroke(new BasicStroke(2));
     	g2d.drawLine(left+(movement_left ? 39 : 83), top+14, left+(movement_left ? 39 : 83), top+29);
     	
-    	// Fu�gestell
+    	// Fußgestell
     	g2d.setPaint(this.gradientFuss2);
         g2d.fillRoundRect(left+(movement_left ? 25 : 54), top+70, 43, 5, 5, 5);
         g2d.setPaint(this.gradientFuss1);
@@ -501,7 +507,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			this.plasma_activation_timer--;
 			if(this.plasma_activation_timer == 30){Audio.play(Audio.plasma_off);}
 		}		
-		if(this.type == PHOENIX || this.type == KAMAITACHI)
+		if(this.helicopterType == PHOENIX_ || this.type == KAMAITACHI)
 		{
 			this.evaluate_bonus_kills();
 		}				
@@ -827,7 +833,11 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	
 	void initialize(boolean new_game, Savegame savegame)
     {
-    	if(!new_game){this.type = savegame.type;}
+    	if(!new_game)
+    	{
+    		this.type = savegame.type;
+    		this.helicopterType = HelicopterTypes.values()[savegame.type];
+    	}
     	for(int i = 0; i < 6; i++)
 	    {
     		this.has_max_upgrade_level[i] = false;
@@ -844,6 +854,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	private void restore_last_game_state(Savegame savegame)
 	{
 		this.type = savegame.type;
+		this.helicopterType = HelicopterTypes.values()[savegame.type];
 		this.level_of_upgrade = savegame.level_of_upgrade.clone();
 		this.spotlight = savegame.spotlight;
 		this.goliath_plating = savegame.goliath_plating;
@@ -952,7 +963,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     void get_some_upgrades()
     {
     	this.spotlight = true;
-    	if(this.type == PHOENIX){this.goliath_plating = 2;}
+    	if(this.helicopterType == PHOENIX_){this.goliath_plating = 2;}
     	else if(this.type == ROCH){this.has_piercing_warheads = true;}
     	else if(this.type == OROCHI && this.nr_of_cannons < 3){this.nr_of_cannons = 2;}
     	this.get_5th_special();
@@ -978,7 +989,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     {
     	switch (this.type)
     	{
-    		case PHOENIX:	
+    		case PHOENIX:
     			if(this.has_shortrange_radiation){return true;}
 				return false;
     		case ROCH:	
@@ -1142,7 +1153,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	if(this.bonus_kills_timer > 0)
 		{
 			this.bonus_kills_timer--;
-			if(	this.type == PHOENIX 
+			if(	this.helicopterType == PHOENIX_
 			    && this.bonus_kills_timer == NICE_CATCH_TIME - TELEPORT_KILL_TIME 
 			    && this.bonus_kills > 1)
 			{
@@ -1301,9 +1312,9 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	public boolean is_unlocked(){return is_unlocked(this.type);}
 	public static boolean is_unlocked(int type)
 	{
-		if(		type == PHOENIX 
+		if(		type == PHOENIX_.ordinal()
 			||	type == ROCH 			
-			|| (type == OROCHI 	   && (Events.reached_level_20[PHOENIX] || Events.reached_level_20[PEGASUS]))
+			|| (type == OROCHI 	   && (Events.reached_level_20[PHOENIX_.ordinal()] || Events.reached_level_20[PEGASUS]))
 			|| (type == KAMAITACHI && (Events.reached_level_20[ROCH]    || Events.reached_level_20[PEGASUS]))
 			|| (type == PEGASUS    && (Events.reached_level_20[OROCHI]  || Events.reached_level_20[KAMAITACHI]))
 			|| (type == HELIOS	   &&  Events.boss1_killed_b4()) )
@@ -1385,8 +1396,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	{
 		Events.reached_level_20[this.type] = true;		
 		
-		if((this.type == PHOENIX && !Events.reached_level_20[PEGASUS]) ||
-		   (this.type == PEGASUS && !Events.reached_level_20[PHOENIX]))
+		if((this.helicopterType == PHOENIX_ && !Events.reached_level_20[PEGASUS]) ||
+		   (this.type == PEGASUS && !Events.reached_level_20[PHOENIX_.ordinal()]))
 		{
 			Menu.unlock(OROCHI);
 		}
@@ -1629,7 +1640,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	void energy_ability_used(ArrayList<LinkedList<PowerUp>> powerUp,
 	                         ArrayList<LinkedList<Explosion>> explosion)
 	{
-		if(	this.type == PHOENIX 
+		if(	this.helicopterType == PHOENIX_
 			&& this.is_energy_ability_activateable())
 		{
 			this.prepare_teleportation();
