@@ -18,7 +18,7 @@ import javax.swing.JTextPane;
 
 import enemy.Enemy;
 
-import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+import static de.helicopterdefence.HelicopterTypes.*;
 
 interface Fonts
 {
@@ -71,7 +71,6 @@ public class Menu implements Constants, Fonts
 		level_display_timer,			// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
 		fps,							// Frames Per Second; wird über die FPS-Anzeige ausgegeben
 		special_info_selection = 0,		// nur für Debugging: Auswahl der anzuzeigenden Informationen
-		unlocked_type,					// Typ des freigeschalteten Helicopters		
 		cross_pos,						// Position des Block-Kreuzes
 		percent_health_display_length,	// Länge des String zur prozentualen Anzeige der Helikopter-Lebenspunkte
 	
@@ -81,7 +80,10 @@ public class Menu implements Constants, Fonts
 		cross_timer,					// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem Startscreen
 		unlocked_timer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters 	
 		effect_timer[] = new int[Helicopter.NR_OF_TYPES];	// regulieren die Helikopter-Animationen im Startscreen-Menü
-    	
+  
+	public static HelicopterTypes
+		unlocked_type;					// Typ des freigeschalteten Helicopters
+	
 	static boolean 		
 		menue_visible,					// = true: Spielmenü ist sichtbar
 		original_resulution = false,
@@ -296,10 +298,10 @@ public class Menu implements Constants, Fonts
 				if(effect_timer[helicopter.type] == 0)
 				{									
 						 if(helicopter.helicopterType == PHOENIX_)	  {Audio.play(Audio.teleport1);}
-					else if(helicopter.type == ROCH)	  {Audio.play(Audio.shield_up);}
-					else if(helicopter.type == OROCHI)	  {Audio.play(Audio.stun_activated);}
-					else if(helicopter.type == KAMAITACHI){Audio.play(Audio.plasma_on);}
-					else if(helicopter.type == PEGASUS)
+					else if(helicopter.helicopterType == ROCH_)	  {Audio.play(Audio.shield_up);}
+					else if(helicopter.helicopterType == OROCHI_)	  {Audio.play(Audio.stun_activated);}
+					else if(helicopter.helicopterType == KAMAITACHI_){Audio.play(Audio.plasma_on);}
+					else if(helicopter.helicopterType == PEGASUS_)
 					{
 						Audio.play(Audio.emp);							
 						helicopter.emp_wave 
@@ -309,11 +311,11 @@ public class Menu implements Constants, Fonts
 											310 
 											+ STARTSCREEN_HELICOPTER_OFFSET_Y);
 					}
-					else if(helicopter.type == HELIOS){Audio.play(Audio.shield_up);}
+					else if(helicopter.helicopterType == HELIOS_){Audio.play(Audio.shield_up);}
 					Arrays.fill(effect_timer, 0);
 					effect_timer[helicopter.type] = 1;						
 				}
-				if(helicopter.type == KAMAITACHI && effect_timer[KAMAITACHI] == 70)
+				if(helicopter.helicopterType == KAMAITACHI_ && effect_timer[KAMAITACHI_.ordinal()] == 70)
 				{
 					Audio.play(Audio.plasma_off);
 				}				
@@ -376,12 +378,12 @@ public class Menu implements Constants, Fonts
             {
             	paint_frame(g2d, helicopter_frame[i], MyColor.darkBlue);
             }
-            helicopter.paint(g2d, 66 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 262 + STARTSCREEN_HELICOPTER_OFFSET_Y, (helicopter_selection+i)%Helicopter.NR_OF_TYPES, 1);
+            helicopter.paint(g2d, 66 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 262 + STARTSCREEN_HELICOPTER_OFFSET_Y, HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES], 1);
             if(!helicopter_frame[i].contains(helicopter.destination.x, helicopter.destination.y))
             {
             	paint_frame(g2d, helicopter_frame[i], MyColor.translucentBlack);
             }
-            if(Events.all_playable || Helicopter.is_unlocked((helicopter_selection+i)%Helicopter.NR_OF_TYPES))
+            if(Events.all_playable || Helicopter.is_unlocked(HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES]))
             {
             	paint_tickmark(g2d, i, 210, 323, 15, 20);
             }
@@ -456,7 +458,7 @@ public class Menu implements Constants, Fonts
         {
         	if(page > 1 && page < 2 + Helicopter.NR_OF_TYPES)
         	{
-        		helicopter.menue_paint(g2d, page-2);
+        		helicopter.menue_paint(g2d, HelicopterTypes.values()[page-2]);
         	}
         	else if(page == 1)
         	{
@@ -530,7 +532,7 @@ public class Menu implements Constants, Fonts
         	{
         		if(page > 1 && page < 2 + Helicopter.NR_OF_TYPES)
             	{
-            		helicopter.menue_paint(g2d, page-2);
+            		helicopter.menue_paint(g2d, HelicopterTypes.values()[page-2]);
             	}        		
         		int column_distance = 114/*135*/, top_line = 125, line_distance = 21, left_column = 55, real_left_column = left_column, x_shift = 10;
         		    			
@@ -551,8 +553,8 @@ public class Menu implements Constants, Fonts
         				g2d.setColor(Color.white);
         				g2d.drawString(to_string_with_space(j+1, false), left_column + x_shift , top_line + j * line_distance);
         				g2d.drawString(temp_entry.player_name, left_column - 46 + x_shift + column_distance, top_line + j * line_distance); 				 		
-        				g2d.setColor(MyColor.brighten_up(MyColor.helicopterColor[temp_entry.helicopter_type][0]));
-        				g2d.drawString(HELICOPTER_INFOS[language][temp_entry.helicopter_type][0],   real_left_column + x_shift + 2 * column_distance, top_line + j * line_distance); 	
+        				g2d.setColor(MyColor.brighten_up(MyColor.helicopterColor[temp_entry.helicopterType.ordinal()][0]));
+        				g2d.drawString(HELICOPTER_INFOS[language][temp_entry.helicopterType.ordinal()][0],   real_left_column + x_shift + 2 * column_distance, top_line + j * line_distance);
         				g2d.setColor(temp_entry.max_level > 50 ? MyColor.hs_green : MyColor.hs_red);
         				int print_level = temp_entry.max_level > 50 ? 50 : temp_entry.max_level;
         				g2d.drawString(to_string_with_space(print_level), real_left_column + x_shift + 3 * column_distance, top_line + j * line_distance); 	
@@ -756,7 +758,7 @@ public class Menu implements Constants, Fonts
         if(helicopter.has_5th_special())
         {            
         	g2d.setColor(MyColor.golden);            
-            if(helicopter.helicopterType == PHOENIX_ || helicopter.type == PEGASUS)
+            if(helicopter.helicopterType == PHOENIX_ || helicopter.helicopterType == PEGASUS_)
             {
             	if(!helicopter.has_max_upgrade_level[helicopter.helicopterType == PHOENIX_ ? 3 : 4]){g2d.setColor(Color.white);}
             	g2d.drawString(SPECIALS[language][4 + helicopter.type] + " (" + LEVEL[language] + " " + (helicopter.level_of_upgrade[helicopter.helicopterType == PHOENIX_ ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
@@ -1297,7 +1299,7 @@ public class Menu implements Constants, Fonts
 			Audio.play(Audio.cash);
 		}
 		helicopter.rotate_propeller(unlocked_type, 7);		
-		if(unlocked_timer == 0){unlocked_type = -1;}	
+		if(unlocked_timer == 0){unlocked_type = null;}
 	}
     
     static int unlocked_display_position(int timer)
@@ -1317,20 +1319,20 @@ public class Menu implements Constants, Fonts
                                                  Helicopter helicopter,
                                                  int x, int y)
     {
-    	paint_helicopter_display(g2d, helicopter, helicopter.type, x, y, true);
+    	paint_helicopter_display(g2d, helicopter, helicopter.helicopterType, x, y, true);
     }
     
     
     private static void paint_helicopter_display(Graphics2D g2d, 
                                                  Helicopter helicopter, 
-                                                 int helicopter_type,
+                                                 HelicopterTypes helicopter_type,
                                                  int x, int y, 
                                                  boolean display_upgrades)
     {
         paint_frame(g2d, 26 + x,  85 + y, 200, 173, Events.window != GAME ? null : MyColor.lightestGray);  
         g2d.setColor(Color.white);
         g2d.setFont(BOLD20);
-        String input_string = HELICOPTER_INFOS [language][helicopter_type][0] + (language == ENGLISH ? " type" : "-Klasse");        
+        String input_string = HELICOPTER_INFOS [language][helicopter_type.ordinal()][0] + (language == ENGLISH ? " type" : "-Klasse");
         g2d.drawString(input_string, 28 + x + (196-g2d.getFontMetrics().stringWidth(input_string))/2, 113 + y);  
         
         helicopter.paint(g2d, 59 + x, 141 + y, helicopter_type, 1, !display_upgrades);      
@@ -1383,7 +1385,7 @@ public class Menu implements Constants, Fonts
     	{
     		paint_frame(g2d,363, 147, 256, 111, MyColor.golden);
     	}  
-    	else if(Events.level < 51 || helicopter.type == HELIOS)
+    	else if(Events.level < 51 || helicopter.helicopterType == HELIOS_)
     	{
     		paint_frame(g2d,363, 112, 256, 146, MyColor.golden);
     	}
@@ -1697,26 +1699,26 @@ public class Menu implements Constants, Fonts
 		}
 	}
 	
-	static void set_ss_message (int nr)
+	static void set_ss_message (HelicopterTypes helicopterType)
 	{		
-		if(nr >= OROCHI && nr <= PEGASUS)
+		if(helicopterType == OROCHI_|| helicopterType == KAMAITACHI_ || helicopterType == PEGASUS_)
 		{			
 			if(language == ENGLISH)
 			{
-				message[0] = HELICOPTER_INFOS[language][nr][0] + " type helicopters are not available yet.";
+				message[0] = HELICOPTER_INFOS[language][helicopterType.ordinal()][0] + " type helicopters are not available yet.";
 				message[1] = "They will be unlocked after you reached level 20 with a";
-				message[2] = HELICOPTER_INFOS[language][nr-2][0] + " or a " + HELICOPTER_INFOS[language][nr == 4 ? 3 : 4][0] + " type helicopter for the first time.";
+				message[2] = HELICOPTER_INFOS[language][helicopterType.ordinal()-2][0] + " or a " + HELICOPTER_INFOS[language][helicopterType == PEGASUS_ ? 3 : 4][0] + " type helicopter for the first time.";
 				message[3] = "";
 			}
 			else
 			{
-				message[0] = "Die " +  HELICOPTER_INFOS[language][nr][0] + "-Klasse ist noch nicht verfügbar.";
+				message[0] = "Die " +  HELICOPTER_INFOS[language][helicopterType.ordinal()][0] + "-Klasse ist noch nicht verfügbar.";
 				message[1] = "Sie wird freigeschaltet, sobald Sie erstmalig mit der " ;				   
-				message[2] = HELICOPTER_INFOS[language][nr-2][0] + "- oder der " + HELICOPTER_INFOS[language][nr == 4 ? 3 : 4][0] + "-Klasse Level 20 erreicht haben.";
+				message[2] = HELICOPTER_INFOS[language][helicopterType.ordinal()-2][0] + "- oder der " + HELICOPTER_INFOS[language][helicopterType == PEGASUS_ ? 3 : 4][0] + "-Klasse Level 20 erreicht haben.";
 				message[3] = "";   
 			}			
 		}
-		else if(nr == HELIOS)
+		else if(helicopterType == HELIOS_)
 		{
 			if(language == ENGLISH)
 			{
@@ -3217,7 +3219,7 @@ public class Menu implements Constants, Fonts
 		repair_shop_button.get("RepairButton").costs = 0;
 	}
 	
-	public static void unlock(int heli_type)
+	public static void unlock(HelicopterTypes heli_type)
 	{
 		unlocked_type = heli_type;
 		unlocked_timer = UNLOCKED_DISPLAY_TIME;	

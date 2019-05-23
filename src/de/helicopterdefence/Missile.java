@@ -10,6 +10,7 @@ import enemy.BossTypes;
 import enemy.Enemy;
 
 import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+import static de.helicopterdefence.HelicopterTypes.ROCH_;
 
 
 public class Missile extends MovingObject implements DamageFactors, MissileTypes, BossTypes
@@ -64,7 +65,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		this.set_dmg(helicopter);
 		this.hits.clear();
 		
-		if(helicopter.type == ROCH || helicopter.type == OROCHI)
+		if(helicopter.helicopterType == ROCH_ || helicopter.type == OROCHI)
 		{
 			this.kills = 0;
 			this.earned_money = 0;
@@ -283,13 +284,13 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	
 	private void inactivate(ArrayList<LinkedList<Missile>> missile, Helicopter helicopter)
 	{							
-		if(helicopter.type == ROCH || helicopter.type == OROCHI)
+		if(helicopter.helicopterType == ROCH_ || helicopter.type == OROCHI)
 		{
 			if(this.sister[0] == null && this.sister[1] == null)
 			{							
 				if(this.kills + this.sister_kills > 1)
 				{
-					if(helicopter.type == ROCH)
+					if(helicopter.helicopterType == ROCH_)
 					{										
 						Events.extra_reward(this.kills + this.sister_kills, this.earned_money, 0.5f, 0.75f, 3.0f);
 					}

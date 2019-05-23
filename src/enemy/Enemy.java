@@ -16,23 +16,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopterdefence.Audio;
-import de.helicopterdefence.BgObject;
-import de.helicopterdefence.DamageFactors;
-import de.helicopterdefence.EnemyMissile;
-import de.helicopterdefence.EnemyMissileTypes;
-import de.helicopterdefence.Events;
-import de.helicopterdefence.Explosion;
-import de.helicopterdefence.Helicopter;
-import de.helicopterdefence.HelicopterDefence;
-import de.helicopterdefence.Main;
-import de.helicopterdefence.Menu;
-import de.helicopterdefence.Missile;
-import de.helicopterdefence.MissileTypes;
-import de.helicopterdefence.MovingObject;
-import de.helicopterdefence.MyColor;
-import de.helicopterdefence.MyMath;
-import de.helicopterdefence.PowerUp;
+import de.helicopterdefence.*;
+
+import static de.helicopterdefence.HelicopterTypes.*;
 
 
 public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
@@ -1151,7 +1137,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			if(( helicopter.no_cheats_used || Events.save_anyway)
 				 && !Events.boss1_killed_b4())
 			{
-				Menu.unlock(HELIOS);
+				Menu.unlock(HELIOS_);
 			}
 			if(real_level_up){Events.determine_highscore_times(helicopter);}	
 		}				
@@ -1463,7 +1449,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			//this.graphics[i].setComposite(AlphaComposite.Src);
 			
 			this.paint_image(this.graphics[i], 1-2*i, null, true);
-			if(this.cloaking_timer != DISABLED && helicopter.type == OROCHI)
+			if(this.cloaking_timer != DISABLED && helicopter.helicopterType == OROCHI_)
 			{
 				BufferedImage 
 					 temp_image = new BufferedImage((int)(1.028f * this.paint_bounds.width), 
@@ -2621,7 +2607,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		this.move();
 		
 		if(helicopter.can_collide_with(this)){this.collision(hd, helicopter);}
-		if(helicopter.type == PEGASUS){this.check_for_EMP_strike(hd, helicopter);}
+		if(helicopter.helicopterType == PEGASUS_){this.check_for_EMP_strike(hd, helicopter);}
 		if(this.has_deadly_ground_contact()){this.destroy(helicopter, hd.powerUp, false);}		
 		if(this.is_to_be_removed()){this.prepare_removal();}
 		this.set_paint_bounds();
@@ -4310,7 +4296,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			Events.overall_earnings += Events.last_bonus;
 			Events.last_extra_bonus = 0;		
 			if(missile != null				
-				&& (helicopter.type == ROCH || helicopter.type == OROCHI))
+				&& (helicopter.helicopterType == ROCH_ || helicopter.helicopterType == OROCHI_))
 			{
 				if(missile.kills > 0
 				   && helicopter.has_piercing_warheads	
@@ -4336,7 +4322,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 				helicopter.bonus_kills++;
 				helicopter.bonus_kills_money += Events.last_bonus;
 			}
-			else if(helicopter.type == KAMAITACHI)
+			else if(helicopter.helicopterType == KAMAITACHI_)
 			{
 				helicopter.bonus_kills_timer+=SPEED_KILL_BONUS_TIME;
 				helicopter.bonus_kills++;

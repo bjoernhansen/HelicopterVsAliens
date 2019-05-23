@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import enemy.BossTypes;
 import enemy.Enemy;
 
-import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
+import static de.helicopterdefence.HelicopterTypes.*;
 
 interface Costs
 {	
@@ -517,14 +517,14 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		{
 			if(helicopter.damaged){Menu.block(4);}
 			else if(helicopter.has_piercing_warheads){Menu.block(7);}
-			else if(money < STANDARD_SPECIAL_COSTS && !((helicopter.type == ROCH||(helicopter.type == HELIOS && record_time[ROCH][4]!=0)) && money >= CHEAP_SPECIAL_COSTS))
+			else if(money < STANDARD_SPECIAL_COSTS && !((helicopter.helicopterType == ROCH_||(helicopter.type == HELIOS && record_time[ROCH_.ordinal()][4]!=0)) && money >= CHEAP_SPECIAL_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				if((helicopter.type == ROCH||(helicopter.type == HELIOS && record_time[ROCH][4]!=0))){money -= CHEAP_SPECIAL_COSTS;}
+				if((helicopter.helicopterType == ROCH_||(helicopter.type == HELIOS && record_time[ROCH_.ordinal()][4]!=0))){money -= CHEAP_SPECIAL_COSTS;}
 				else{money -= STANDARD_SPECIAL_COSTS;}
 				helicopter.has_piercing_warheads = true;
 				Menu.repair_shop_button.get("Special" + 2).costs = 0;
@@ -538,7 +538,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 			{
 				Menu.block(7);
 			}
-			else if(	(money < STANDARD_SPECIAL_COSTS || (helicopter.type == ROCH && money < ROCH_SECOND_CANNON_COSTS)) &&
+			else if(	(money < STANDARD_SPECIAL_COSTS || (helicopter.helicopterType == ROCH_ && money < ROCH_SECOND_CANNON_COSTS)) &&
 						!((helicopter.type == OROCHI||(helicopter.type == HELIOS && record_time[OROCHI][4]!=0)) && money >= CHEAP_SPECIAL_COSTS && helicopter.nr_of_cannons == 1))
 			{
 				Menu.block(6);
@@ -562,7 +562,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 				}
 				else
 				{
-					money -= helicopter.type == ROCH ? ROCH_SECOND_CANNON_COSTS : STANDARD_SPECIAL_COSTS;
+					money -= helicopter.helicopterType == ROCH_ ? ROCH_SECOND_CANNON_COSTS : STANDARD_SPECIAL_COSTS;
 					Menu.repair_shop_button.get("Special" + 3).costs = 0;
 				}
 				helicopter.nr_of_cannons++;			
@@ -573,16 +573,16 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		{
 			if(helicopter.damaged){Menu.block(4);}
 			else if(helicopter.has_5th_special()){Menu.block(7);}
-			else if(money < CHEAP_SPECIAL_COSTS || (helicopter.type == ROCH && money < JUMBO_MISSILE_COSTS))
+			else if(money < CHEAP_SPECIAL_COSTS || (helicopter.helicopterType == ROCH_ && money < JUMBO_MISSILE_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				money -= helicopter.type == ROCH ? JUMBO_MISSILE_COSTS : CHEAP_SPECIAL_COSTS;
+				money -= helicopter.helicopterType == ROCH_ ? JUMBO_MISSILE_COSTS : CHEAP_SPECIAL_COSTS;
 				helicopter.get_5th_special();
-				if(helicopter.type == KAMAITACHI || helicopter.type == PEGASUS){helicopter.adjust_fire_rate(false);}
+				if(helicopter.helicopterType == KAMAITACHI_ || helicopter.helicopterType == PEGASUS_){helicopter.adjust_fire_rate(false);}
 				Menu.repair_shop_button.get("Special" + 4).costs = 0;
 			}
 		}
@@ -682,11 +682,11 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 			else
 			{
 				Audio.play(Audio.block);
-				Menu.cross_pos = (helicopter.type - Menu.helicopter_selection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
+				Menu.cross_pos = (helicopter.helicopterType.ordinal() - Menu.helicopter_selection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
 				Menu.cross = Menu.get_cross_polygon();
 				Menu.cross_timer = 1;
 				Menu.message_timer = 1;
-				Menu.set_ss_message (helicopter.type);				
+				Menu.set_ss_message(helicopter.helicopterType);
 			}
 		}
 		else if(Menu.startscreen_button.get("00").bounds.contains(cursor))
@@ -969,7 +969,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		Audio.play(Audio.choose);
 		
 		helicopter.bonus_kills_timer = 1;
-		if(helicopter.type == KAMAITACHI){helicopter.evaluate_bonus_kills();}
+		if(helicopter.helicopterType == KAMAITACHI_){helicopter.evaluate_bonus_kills();}
 		
 		helicopter.reset_state(total_reset);		
 		boss = null;		

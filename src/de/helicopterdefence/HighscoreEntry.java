@@ -17,19 +17,21 @@ public class HighscoreEntry implements Serializable
 	// Variablen eines Highscore-Eintrages
 	String player_name;
 	
-	int helicopter_type,
-		max_level,	
+	int max_level,
 		crashes,
 		repairs,
 		bonus_income;	
 	
 	long playing_time;
 	
+	HelicopterTypes
+		helicopterType;
+	
 	
 	HighscoreEntry(Savegame savegame)
 	{
 		this.player_name = current_player_name;		
-		this.helicopter_type = savegame.type;
+		this.helicopterType = savegame.helicopterType;
 		this.max_level = savegame.max_level;
 		this.playing_time = savegame.playing_time/60000;
 		this.crashes = savegame.nr_of_crashes;

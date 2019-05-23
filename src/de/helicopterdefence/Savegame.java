@@ -37,8 +37,7 @@ public class Savegame implements Constants, Serializable
 		nr_of_crashes, 
 		nr_of_repairs,
 		missile_counter,
-		hit_counter, 
-		type, 
+		hit_counter,
 		goliath_plating, 
 		nr_of_cannons, 
 		rapidfire, 
@@ -67,6 +66,9 @@ public class Savegame implements Constants, Serializable
 		has_PowerUp_immobilizer,
 		no_cheats_used,
 		reached_level_20[] = new boolean [Helicopter.NR_OF_TYPES];
+	
+	HelicopterTypes
+		helicopterType;
 		
 		
 	private Savegame()
@@ -157,7 +159,7 @@ public class Savegame implements Constants, Serializable
 		this.record_time = Events.record_time.clone();
 		this.reached_level_20 = Events.reached_level_20.clone();
 		this.highscore = Events.highscore.clone();
-		this.type = helicopter.helicopterType.ordinal();
+		this.helicopterType = helicopter.helicopterType;
 		this.level_of_upgrade = helicopter.level_of_upgrade.clone();		
 		this.spotlight = helicopter.spotlight;
 		this.goliath_plating= helicopter.goliath_plating;
@@ -187,7 +189,7 @@ public class Savegame implements Constants, Serializable
 		if(this.valid && (this.no_cheats_used || Events.save_anyway))
 		{				
 			HighscoreEntry temp_entry = new HighscoreEntry(this);
-			HighscoreEntry.put_entry(Events.highscore[this.type], temp_entry);
+			HighscoreEntry.put_entry(Events.highscore[this.helicopterType.ordinal()], temp_entry);
 			HighscoreEntry.put_entry(Events.highscore[OVERALL], temp_entry);
 		}
 	}
