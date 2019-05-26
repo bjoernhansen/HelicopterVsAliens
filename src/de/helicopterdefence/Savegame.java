@@ -9,8 +9,11 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Savegame implements Constants, Serializable
-{		
-	private static final long 
+{
+	private static final int
+		OVERALL_HIGHSCORE_INDEX = 6;
+	
+	private static final long
 		serialVersionUID = 1L;	
 	
 	private static final String 
@@ -159,7 +162,7 @@ public class Savegame implements Constants, Serializable
 		this.record_time = Events.record_time.clone();
 		this.reached_level_20 = Events.reached_level_20.clone();
 		this.highscore = Events.highscore.clone();
-		this.helicopterType = helicopter.helicopterType;
+		this.helicopterType = helicopter.type;
 		this.level_of_upgrade = helicopter.level_of_upgrade.clone();		
 		this.spotlight = helicopter.spotlight;
 		this.goliath_plating= helicopter.goliath_plating;
@@ -190,7 +193,7 @@ public class Savegame implements Constants, Serializable
 		{				
 			HighscoreEntry temp_entry = new HighscoreEntry(this);
 			HighscoreEntry.put_entry(Events.highscore[this.helicopterType.ordinal()], temp_entry);
-			HighscoreEntry.put_entry(Events.highscore[OVERALL], temp_entry);
+			HighscoreEntry.put_entry(Events.highscore[OVERALL_HIGHSCORE_INDEX], temp_entry);
 		}
 	}
 }

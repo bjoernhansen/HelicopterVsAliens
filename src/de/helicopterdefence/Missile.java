@@ -9,8 +9,9 @@ import java.util.LinkedList;
 import enemy.BossTypes;
 import enemy.Enemy;
 
-import static de.helicopterdefence.HelicopterTypes.PHOENIX_;
-import static de.helicopterdefence.HelicopterTypes.ROCH_;
+import static de.helicopterdefence.HelicopterTypes.OROCHI;
+import static de.helicopterdefence.HelicopterTypes.PHOENIX;
+import static de.helicopterdefence.HelicopterTypes.ROCH;
 
 
 public class Missile extends MovingObject implements DamageFactors, MissileTypes, BossTypes
@@ -65,14 +66,14 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		this.set_dmg(helicopter);
 		this.hits.clear();
 		
-		if(helicopter.helicopterType == ROCH_ || helicopter.type == OROCHI)
+		if(helicopter.type == ROCH || helicopter.type == OROCHI)
 		{
 			this.kills = 0;
 			this.earned_money = 0;
 			this.sister_kills = 0;
 			this.nr_of_hitting_sisters = 0;			
 		}
-		else if(helicopter.helicopterType == PHOENIX_)
+		else if(helicopter.type == PHOENIX)
 		{
 			this.launching_time = System.currentTimeMillis();
 		}		
@@ -197,7 +198,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 				else
 				{						
 					e.die(hd, helicopter, this, false);
-					if(	helicopter.helicopterType == PHOENIX_
+					if(	helicopter.type == PHOENIX
 						&& helicopter.bonus_kills_timer > 0 
 						&& this.launching_time > helicopter.past_teleport_time)
 					{
@@ -284,13 +285,13 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	
 	private void inactivate(ArrayList<LinkedList<Missile>> missile, Helicopter helicopter)
 	{							
-		if(helicopter.helicopterType == ROCH_ || helicopter.type == OROCHI)
+		if(helicopter.type == ROCH || helicopter.type == OROCHI)
 		{
 			if(this.sister[0] == null && this.sister[1] == null)
 			{							
 				if(this.kills + this.sister_kills > 1)
 				{
-					if(helicopter.helicopterType == ROCH_)
+					if(helicopter.type == ROCH)
 					{										
 						Events.extra_reward(this.kills + this.sister_kills, this.earned_money, 0.5f, 0.75f, 3.0f);
 					}

@@ -293,15 +293,14 @@ public class Menu implements Constants, Fonts
 		{
 			if(	helicopter_frame[i].contains(helicopter.destination))
 			{
-				helicopter.type = (i + helicopter_selection)%Helicopter.NR_OF_TYPES;
-				helicopter.helicopterType = HelicopterTypes.values()[(i + helicopter_selection)%HelicopterTypes.values().length];
-				if(effect_timer[helicopter.type] == 0)
+				helicopter.type = HelicopterTypes.values()[(i + helicopter_selection)%Helicopter.NR_OF_TYPES];
+				if(effect_timer[helicopter.type.ordinal()] == 0)
 				{									
-						 if(helicopter.helicopterType == PHOENIX_)	  {Audio.play(Audio.teleport1);}
-					else if(helicopter.helicopterType == ROCH_)	  {Audio.play(Audio.shield_up);}
-					else if(helicopter.helicopterType == OROCHI_)	  {Audio.play(Audio.stun_activated);}
-					else if(helicopter.helicopterType == KAMAITACHI_){Audio.play(Audio.plasma_on);}
-					else if(helicopter.helicopterType == PEGASUS_)
+						 if(helicopter.type == PHOENIX)	  {Audio.play(Audio.teleport1);}
+					else if(helicopter.type == ROCH)	  {Audio.play(Audio.shield_up);}
+					else if(helicopter.type == OROCHI)	  {Audio.play(Audio.stun_activated);}
+					else if(helicopter.type == KAMAITACHI){Audio.play(Audio.plasma_on);}
+					else if(helicopter.type == PEGASUS)
 					{
 						Audio.play(Audio.emp);							
 						helicopter.emp_wave 
@@ -311,11 +310,11 @@ public class Menu implements Constants, Fonts
 											310 
 											+ STARTSCREEN_HELICOPTER_OFFSET_Y);
 					}
-					else if(helicopter.helicopterType == HELIOS_){Audio.play(Audio.shield_up);}
+					else if(helicopter.type == HELIOS){Audio.play(Audio.shield_up);}
 					Arrays.fill(effect_timer, 0);
-					effect_timer[helicopter.type] = 1;						
+					effect_timer[helicopter.type.ordinal()] = 1;
 				}
-				if(helicopter.helicopterType == KAMAITACHI_ && effect_timer[KAMAITACHI_.ordinal()] == 70)
+				if(helicopter.type == KAMAITACHI && effect_timer[KAMAITACHI.ordinal()] == 70)
 				{
 					Audio.play(Audio.plasma_off);
 				}				
@@ -361,7 +360,7 @@ public class Menu implements Constants, Fonts
          
         for(int i = 0; i < 4; i++)
         {
-        	if(helicopter.type == (helicopter_selection+i)%Helicopter.NR_OF_TYPES && highlighted_helicopter){g2d.setColor(Color.white);}
+        	if(helicopter.type.ordinal() == (helicopter_selection+i)%Helicopter.NR_OF_TYPES && highlighted_helicopter){g2d.setColor(Color.white);}
             else{g2d.setColor(MyColor.lightGray);}       	
         	g2d.setFont(BOLD20);
         	
@@ -710,7 +709,7 @@ public class Menu implements Constants, Fonts
             if((i != 5 && helicopter.has_max_upgrade_level[i]) 
                 || ( i == ENERGY_ABILITY 
                 	 && helicopter.has_max_upgrade_level[ENERGY_ABILITY] 
-                	 && !(helicopter.type == OROCHI 
+                	 && !(helicopter.type == OROCHI
                 	 	  && !helicopter.has_max_upgrade_level[MISSILE_DRIVE])))
             {
             	g2d.setColor(MyColor.golden);
@@ -758,14 +757,14 @@ public class Menu implements Constants, Fonts
         if(helicopter.has_5th_special())
         {            
         	g2d.setColor(MyColor.golden);            
-            if(helicopter.helicopterType == PHOENIX_ || helicopter.helicopterType == PEGASUS_)
+            if(helicopter.type == PHOENIX || helicopter.type == PEGASUS)
             {
-            	if(!helicopter.has_max_upgrade_level[helicopter.helicopterType == PHOENIX_ ? 3 : 4]){g2d.setColor(Color.white);}
-            	g2d.drawString(SPECIALS[language][4 + helicopter.type] + " (" + LEVEL[language] + " " + (helicopter.level_of_upgrade[helicopter.helicopterType == PHOENIX_ ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	if(!helicopter.has_max_upgrade_level[helicopter.type == PHOENIX ? 3 : 4]){g2d.setColor(Color.white);}
+            	g2d.drawString(SPECIALS[language][4 + helicopter.type.ordinal()] + " (" + LEVEL[language] + " " + (helicopter.level_of_upgrade[helicopter.type == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
             else
             {
-            	g2d.drawString(SPECIALS[language][4 + helicopter.type], STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	g2d.drawString(SPECIALS[language][4 + helicopter.type.ordinal()], STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
         }
         
@@ -1156,7 +1155,7 @@ public class Menu implements Constants, Fonts
 		}   
 		else if(special_info_selection == 13)
 		{
-			info_string = HELICOPTER_INFOS[language][helicopter.type][0] + "-Klasse";
+			info_string = HELICOPTER_INFOS[language][helicopter.type.ordinal()][0] + "-Klasse";
 		}
         g2d.drawString("Info: " + info_string, 20, 155);
     }
@@ -1319,7 +1318,7 @@ public class Menu implements Constants, Fonts
                                                  Helicopter helicopter,
                                                  int x, int y)
     {
-    	paint_helicopter_display(g2d, helicopter, helicopter.helicopterType, x, y, true);
+    	paint_helicopter_display(g2d, helicopter, helicopter.type, x, y, true);
     }
     
     
@@ -1385,7 +1384,7 @@ public class Menu implements Constants, Fonts
     	{
     		paint_frame(g2d,363, 147, 256, 111, MyColor.golden);
     	}  
-    	else if(Events.level < 51 || helicopter.helicopterType == HELIOS_)
+    	else if(Events.level < 51 || helicopter.type == HELIOS)
     	{
     		paint_frame(g2d,363, 112, 256, 146, MyColor.golden);
     	}
@@ -1538,7 +1537,7 @@ public class Menu implements Constants, Fonts
 		{
 			repair_shop_button.get("Special" + 3).label  = THIRD_CANNON[language];
 		}		
-		repair_shop_button.get("Special" + 4).label = SPECIALS[language][4 + helicopter.type];
+		repair_shop_button.get("Special" + 4).label = SPECIALS[language][4 + helicopter.type.ordinal()];
 	}
 
 	
@@ -1701,24 +1700,24 @@ public class Menu implements Constants, Fonts
 	
 	static void set_ss_message (HelicopterTypes helicopterType)
 	{		
-		if(helicopterType == OROCHI_|| helicopterType == KAMAITACHI_ || helicopterType == PEGASUS_)
+		if(helicopterType == OROCHI || helicopterType == KAMAITACHI || helicopterType == PEGASUS)
 		{			
 			if(language == ENGLISH)
 			{
 				message[0] = HELICOPTER_INFOS[language][helicopterType.ordinal()][0] + " type helicopters are not available yet.";
 				message[1] = "They will be unlocked after you reached level 20 with a";
-				message[2] = HELICOPTER_INFOS[language][helicopterType.ordinal()-2][0] + " or a " + HELICOPTER_INFOS[language][helicopterType == PEGASUS_ ? 3 : 4][0] + " type helicopter for the first time.";
+				message[2] = HELICOPTER_INFOS[language][helicopterType.ordinal()-2][0] + " or a " + HELICOPTER_INFOS[language][helicopterType == PEGASUS ? 3 : 4][0] + " type helicopter for the first time.";
 				message[3] = "";
 			}
 			else
 			{
 				message[0] = "Die " +  HELICOPTER_INFOS[language][helicopterType.ordinal()][0] + "-Klasse ist noch nicht verfügbar.";
 				message[1] = "Sie wird freigeschaltet, sobald Sie erstmalig mit der " ;				   
-				message[2] = HELICOPTER_INFOS[language][helicopterType.ordinal()-2][0] + "- oder der " + HELICOPTER_INFOS[language][helicopterType == PEGASUS_ ? 3 : 4][0] + "-Klasse Level 20 erreicht haben.";
+				message[2] = HELICOPTER_INFOS[language][helicopterType.ordinal()-2][0] + "- oder der " + HELICOPTER_INFOS[language][helicopterType == PEGASUS ? 3 : 4][0] + "-Klasse Level 20 erreicht haben.";
 				message[3] = "";   
 			}			
 		}
-		else if(helicopterType == HELIOS_)
+		else if(helicopterType == HELIOS)
 		{
 			if(language == ENGLISH)
 			{
@@ -3184,7 +3183,7 @@ public class Menu implements Constants, Fonts
 		}
 		if(helicopter.nr_of_cannons  != 1)
 		{
-			if(helicopter.nr_of_cannons  == 3 || (helicopter.nr_of_cannons == 2 && helicopter.type != OROCHI))
+			if(helicopter.hasAllCannons())
 	    	{
 	    		repair_shop_button.get("Special" + 3).costs = 0;	
 	    		if(helicopter.nr_of_cannons == 3)
@@ -3211,7 +3210,7 @@ public class Menu implements Constants, Fonts
 			else
 			{
 				repair_shop_button.get("StandardUpgrade" + i).costs 
-					= MyMath.costs(helicopter.type, 
+					= MyMath.costs(helicopter.type,
 								   helicopter.upgrade_costs[i], 
 								   helicopter.level_of_upgrade[i]);
 			}    				    		

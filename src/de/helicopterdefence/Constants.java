@@ -32,15 +32,7 @@ interface Constants extends Positions
 	    BOOSTED_FIRE_RATE = 3,  
 	    REPARATION = 4,
 	    BONUS_INCOME = 5,
-		    
-		PHOENIX = 0,
-		ROCH = 1,
-		OROCHI = 2,
-		KAMAITACHI = 3,
-		PEGASUS = 4,
-		HELIOS = 5,
-		OVERALL = 6, 
-			    
+				
 		ROTOR_SYSTEM = 0,
     	MISSILE_DRIVE = 1,
     	PLATING = 2,

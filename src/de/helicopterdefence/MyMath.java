@@ -128,10 +128,10 @@ public class MyMath implements Positions
      	return (int) (COST_FACTOR[costs] * (COST_LEVEL[level-1]));  	
     }
      
-    // bestimmt die tats�chlichen Kosten f�r ein Upgrades unter Ber�cksichtigung der "additional costs"
-	static int costs(int nr, int costs, int upgrade_level)
+    // bestimmt die tatsächlichen Kosten für ein Upgrades unter Berücksichtigung der "additional costs"
+	static int costs(HelicopterTypes helicopterType, int costs, int upgrade_level)
 	{
-		String key = "" + nr + costs + upgrade_level;
+		String key = "" + helicopterType.ordinal() + costs + upgrade_level;
 		int extra_costs = 0;
 		if(ADDITIONAL_COSTS.containsKey(key))
 		{

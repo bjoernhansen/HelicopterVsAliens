@@ -76,7 +76,6 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	INVU_DMG_FACTOR = 1.0f - INVU_DMG_REDUCTION/100f;
         
 	public int
-		type,
 		missile_drive,						// Geschwindigkeit [Pixel pro Frame] der Raketen			
 		current_firepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
 		time_between_2_shots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann		 
@@ -161,7 +160,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
   	 	emp_wave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
 	
 	public HelicopterTypes
-		helicopterType;
+        type = PHOENIX;     // Helikopter-Klasse
 	
     private int 
     	fire_rate_timer;  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
@@ -201,7 +200,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     
     void paint(Graphics2D g2d, int timeOfDay)
     {
-    	paint(g2d, this.paint_bounds.x, this.paint_bounds.y, this.helicopterType, timeOfDay, false);
+    	paint(g2d, this.paint_bounds.x, this.paint_bounds.y, this.type, timeOfDay, false);
     }
     
     void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay)
@@ -217,31 +216,31 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     		this.inputColorCannon = MyColor.helicopterColor[helicopterType.ordinal()][2+this.goliath_plating/2];
     	}
     	else if(this.plasma_activation_timer >= POWERUP_DURATION/4  || 
-    		(Events.window == STARTSCREEN && helicopterType == KAMAITACHI_ && Menu.effect_timer[KAMAITACHI_.ordinal()] > 0 && Menu.effect_timer[KAMAITACHI_.ordinal()] < 35))
+    		(Events.window == STARTSCREEN && helicopterType == KAMAITACHI && Menu.effect_timer[KAMAITACHI.ordinal()] > 0 && Menu.effect_timer[KAMAITACHI.ordinal()] < 35))
     	{
     		this.inputColorCannon = Color.green;
     	}
     	else if(this.plasma_activation_timer == 0)
     	{
-    		if(helicopterType == OROCHI_
+    		if(helicopterType == OROCHI
     					  &&( (this.next_missile_is_stunner 
     							&& (this.energy >= this.spell_costs
     								|| this.has_unlimited_energy())) 
     						  || 
     						  (Events.window == STARTSCREEN 
-    						  	&& Menu.effect_timer[OROCHI] > 1 
-    						  	&& Menu.effect_timer[OROCHI] < 80)) ) // 70
+    						  	&& Menu.effect_timer[OROCHI.ordinal()] > 1
+    						  	&& Menu.effect_timer[OROCHI.ordinal()] < 80)) ) // 70
     		{
     			this.inputColorCannon = MyColor.variableBlue;
     		}
     		else if(Events.window == STARTSCREEN
-    				&& ( (helicopterType == KAMAITACHI_
-    						&& Menu.effect_timer[KAMAITACHI_.ordinal()] >= 35
-    						&& Menu.effect_timer[KAMAITACHI_.ordinal()] < 100)
+    				&& ( (helicopterType == KAMAITACHI
+    						&& Menu.effect_timer[KAMAITACHI.ordinal()] >= 35
+    						&& Menu.effect_timer[KAMAITACHI.ordinal()] < 100)
     					 ||
-    					 (helicopterType == PHOENIX_
-    					 	&& Menu.effect_timer[PHOENIX_.ordinal()] > 1
-    					 	&& Menu.effect_timer[PHOENIX_.ordinal()] < 55) ))
+    					 (helicopterType == PHOENIX
+    					 	&& Menu.effect_timer[PHOENIX.ordinal()] > 1
+    					 	&& Menu.effect_timer[PHOENIX.ordinal()] < 55) ))
     		{
     			this.inputColorCannon = MyColor.variableGreen;
     		}
@@ -260,18 +259,18 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	this.inputColorHull = unlocked_painting 
     						  || (!this.is_invincible() 
     						     && !(Events.window == STARTSCREEN 
-    						        && helicopterType == PHOENIX_
-    						        && Menu.effect_timer[PHOENIX_.ordinal()] > 1
-    						        && Menu.effect_timer[PHOENIX_.ordinal()] < 55))
+    						        && helicopterType == PHOENIX
+    						        && Menu.effect_timer[PHOENIX.ordinal()] > 1
+    						        && Menu.effect_timer[PHOENIX.ordinal()] < 55))
     						  ? MyColor.helicopterColor[helicopterType.ordinal()][unlocked_painting ? 0 : this.goliath_plating/2]
     						  : MyColor.variableGreen;
     	this.inputColorWindow = !unlocked_painting 
     								&& (this.has_triple_dmg() 
     									|| this.has_boosted_fire_rate()) 
     								|| (Events.window == STARTSCREEN 
-    										&& helicopterType == HELIOS_
-    										&& Menu.effect_timer[HELIOS] > 0 
-    										&& Menu.effect_timer[HELIOS] < 65) 
+    										&& helicopterType == HELIOS
+    										&& Menu.effect_timer[HELIOS.ordinal()] > 0
+    										&& Menu.effect_timer[HELIOS.ordinal()] < 65)
     								? MyColor.variableRed 
     								: MyColor.windowBlue;
     	this.inputColorFuss1 = MyColor.lighterGray;
@@ -393,7 +392,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
         			false);
         
         if(Events.window == STARTSCREEN 
-        	&& helicopterType == PEGASUS_
+        	&& helicopterType == PEGASUS
         	&& Menu.effect_timer[helicopterType.ordinal()] > 0
         	&& this.emp_wave != null)
         {
@@ -412,9 +411,9 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
         if(!unlocked_painting 
         	&& (this.power_shield_on 
     			|| (Events.window == STARTSCREEN 
-    				&& helicopterType == ROCH_
-    				&& Menu.effect_timer[ROCH_.ordinal()] > 0
-    				&& Menu.effect_timer[ROCH_.ordinal()] < 68))) // 60
+    				&& helicopterType == ROCH
+    				&& Menu.effect_timer[ROCH.ordinal()] > 0
+    				&& Menu.effect_timer[ROCH.ordinal()] < 68))) // 60
         {            
             g2d.setColor(MyColor.shieldColor[timeOfDay]);
             g2d.fillOval(left+(movement_left ? -9 : 35), top+19, 96, 54);
@@ -428,7 +427,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
             g2d.drawString(Menu.minuten(Events.record_time[helicopterType.ordinal()][4]),left-27, top+80);
         } 
         
-        if(helicopterType == HELIOS_ && Events.window == STARTSCREEN)
+        if(helicopterType == HELIOS && Events.window == STARTSCREEN)
         {            
             g2d.setFont(BOLD12);
             g2d.setColor(MyColor.brown);
@@ -507,7 +506,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			this.plasma_activation_timer--;
 			if(this.plasma_activation_timer == 30){Audio.play(Audio.plasma_off);}
 		}		
-		if(this.helicopterType == PHOENIX_ || this.helicopterType == KAMAITACHI_)
+		if(this.type == PHOENIX || this.type == KAMAITACHI)
 		{
 			this.evaluate_bonus_kills();
 		}				
@@ -593,7 +592,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			Missile m;					
 			if(i.hasNext()){m = i.next(); i.remove();}	
 			else{m = new Missile();}					
-			if(this.helicopterType == ROCH_ || this.helicopterType == OROCHI_)
+			if(this.type == ROCH || this.type == OROCHI)
 			{
 				m.sister[0] = null;
 				m.sister[1] = null;						
@@ -609,7 +608,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			if(i.hasNext()){m = i.next(); i.remove();}	
 			else{m = new Missile();}											
 			if(  sister != null && sister.sister != null && 
-			    (this.helicopterType == ROCH_ || this.helicopterType == OROCHI_))
+			    (this.type == ROCH || this.type == OROCHI))
 			{
 				m.sister[0] = sister;
 				m.sister[1] = null;	
@@ -626,7 +625,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			if(i.hasNext()){m = i.next(); i.remove();}	
 			else{m = new Missile();}				
 			if(  sister != null && sister.sister != null && 
-			    (this.helicopterType == ROCH_ || this.helicopterType == OROCHI_))
+			    (this.type == ROCH || this.type == OROCHI))
 			{
 				m.sister[0] = sister.sister[0];
 				m.sister[1] = sister;
@@ -835,26 +834,24 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     {
     	if(!new_game)
     	{
-    		this.type = savegame.helicopterType.ordinal();
-    		this.helicopterType = savegame.helicopterType;
+    		this.type = savegame.helicopterType;
     	}
     	for(int i = 0; i < 6; i++)
 	    {
     		this.has_max_upgrade_level[i] = false;
-    		this.upgrade_costs[i] = this.type == HELIOS ? helios_costs(i) : COSTS[this.type][i];
+    		this.upgrade_costs[i] = this.type == HELIOS ? helios_costs(i) : COSTS[this.type.ordinal()][i];
     		if(new_game){this.level_of_upgrade[i] = this.upgrade_costs[i] < 2 ? 2 : 1;}
 	    }
     	if(!new_game){this.restore_last_game_state(savegame);}    	
     	this.update_properties(new_game);
     	this.fire_rate_timer = this.time_between_2_shots;
-        this.rotor_position[this.type] = 0;
+        this.rotor_position[this.type.ordinal()] = 0;
         this.emp_wave = null;
     }
     
 	private void restore_last_game_state(Savegame savegame)
 	{
-		this.type = savegame.helicopterType.ordinal();
-		this.helicopterType = savegame.helicopterType;
+		this.type = savegame.helicopterType;
 		this.level_of_upgrade = savegame.level_of_upgrade.clone();
 		this.spotlight = savegame.spotlight;
 		this.goliath_plating = savegame.goliath_plating;
@@ -883,6 +880,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     
     void reset()
     {
+        
         for(int i=0; i < 4; i++){this.rotor_position[i]=0;}
         this.reset_state();
         this.placeAtStartpos();
@@ -926,7 +924,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		for(int i = 0; i < 4; i++){this.powerUp_timer[i] = 0;}	
 		this.generator_timer = 0;
 		this.emp_wave = null;
-		this.rotor_position[this.type] = 0;
+		this.rotor_position[this.type.ordinal()] = 0;
 		if(reset_start_pos){this.placeAtStartpos();}
 		this.fire_rate_timer = this.time_between_2_shots;
     }
@@ -963,8 +961,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     void get_some_upgrades()
     {
     	this.spotlight = true;
-    	if(this.helicopterType == PHOENIX_){this.goliath_plating = 2;}
-    	else if(this.helicopterType == ROCH_){this.has_piercing_warheads = true;}
+    	if(this.type == PHOENIX){this.goliath_plating = 2;}
+    	else if(this.type == ROCH){this.has_piercing_warheads = true;}
     	else if(this.type == OROCHI && this.nr_of_cannons < 3){this.nr_of_cannons = 2;}
     	this.get_5th_special();
     	for(int i = 0; i < 6; i++)
@@ -992,19 +990,19 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     		case PHOENIX:
     			if(this.has_shortrange_radiation){return true;}
 				return false;
-    		case ROCH:	
+    		case ROCH:
     			if(this.jumbo_missiles > 2){return true;}
 				return false;
-    		case OROCHI:	
+    		case OROCHI:
     			if(this.has_radar_device){return true;}
 				return false;
-    		case KAMAITACHI:	
+    		case KAMAITACHI:
     			if(this.rapidfire == 2){return true;}
 				return false;
-    		case PEGASUS:	
+    		case PEGASUS:
     			if(this.has_interphase_generator){return true;}
 				return false;	
-    		case HELIOS:	
+    		case HELIOS:
     			if(this.has_PowerUp_immobilizer){return true;}
 				return false;		
     		default: return false;
@@ -1015,23 +1013,23 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     {
     	switch (this.type)
     	{
-    		case PHOENIX:	
+    		case PHOENIX:
     			this.has_shortrange_radiation = true;
     			break;
-    		case ROCH:	
+    		case ROCH:
     			this.jumbo_missiles = JUMBO_MISSILE_DMG_FACTOR;
     			this.current_firepower = (int)(this.jumbo_missiles * MyMath.dmg(this.level_of_upgrade[FIREPOWER]));
     			break;
-    		case OROCHI:	
+    		case OROCHI:
     			this.has_radar_device = true;
     			break;
-    		case KAMAITACHI:	
+    		case KAMAITACHI:
     			this.rapidfire = 2;
     			break;
-    		case PEGASUS:	
+    		case PEGASUS:
     			this.has_interphase_generator = true;
     			break;	
-    		case HELIOS:	
+    		case HELIOS:
     			this.has_PowerUp_immobilizer = true;
     			break;    		
     		default:
@@ -1041,13 +1039,18 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     
     private boolean has_all_specials()
     {
-    	if(	this.spotlight && this.goliath_plating == 2 && this.has_piercing_warheads && 
-    		(this.nr_of_cannons == 3 || (this.nr_of_cannons == 2 && this.type != OROCHI)) && has_5th_special())
+    	if(	this.spotlight && this.goliath_plating == 2 && this.has_piercing_warheads &&
+    		this.hasAllCannons() && has_5th_special())
     	{
     		return true;
     	}
 		return false;    	
     }
+    
+    public boolean hasAllCannons()
+	{
+		return this.nr_of_cannons == 3 || (this.nr_of_cannons == 2 && this.type != OROCHI);
+	}
     
     boolean has_all_upgrades()
     {
@@ -1056,7 +1059,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
         return true;
     }
     
-    void rotate_propeller(float rotational_speed){rotate_propeller(this.helicopterType, rotational_speed);}
+    void rotate_propeller(float rotational_speed){rotate_propeller(this.type, rotational_speed);}
     void rotate_propeller(HelicopterTypes type, float rotational_speed)
     {
     	this.rotor_position[type.ordinal()] += rotational_speed;
@@ -1153,7 +1156,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	if(this.bonus_kills_timer > 0)
 		{
 			this.bonus_kills_timer--;
-			if(	this.helicopterType == PHOENIX_
+			if(	this.type == PHOENIX
 			    && this.bonus_kills_timer == NICE_CATCH_TIME - TELEPORT_KILL_TIME 
 			    && this.bonus_kills > 1)
 			{
@@ -1161,7 +1164,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 									this.bonus_kills_money, 
 									0.75f, 0.75f, 3.5f);
 			}
-			else if(this.helicopterType == KAMAITACHI_ && this.bonus_kills_timer == 0)
+			else if(this.type == KAMAITACHI && this.bonus_kills_timer == 0)
 			{
 				if(this.bonus_kills > 1)
 				{
@@ -1281,8 +1284,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 
 	private void set_spell_costs()
 	{
-		this.spell_costs = COSTS[this.type][SPELL] 
-			- (this.type != OROCHI 
+		this.spell_costs = COSTS[this.type.ordinal()][SPELL]
+			- (this.type != OROCHI
 				? 0 
 				: 2 *(this.level_of_upgrade[ENERGY_ABILITY]-1));
 	}
@@ -1309,15 +1312,15 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		}		
 	}
 	
-	public boolean is_unlocked(){return is_unlocked(this.helicopterType);}
+	public boolean is_unlocked(){return is_unlocked(this.type);}
 	public static boolean is_unlocked(HelicopterTypes type)
 	{
-		if(		type == PHOENIX_
-			||	type == ROCH_
-			|| (type == OROCHI_ 	   && (Events.reached_level_20[PHOENIX_.ordinal()] || Events.reached_level_20[PEGASUS_.ordinal()]))
-			|| (type == KAMAITACHI_ && (Events.reached_level_20[ROCH_.ordinal()]    || Events.reached_level_20[PEGASUS_.ordinal()]))
-			|| (type == PEGASUS_    && (Events.reached_level_20[OROCHI_.ordinal()]  || Events.reached_level_20[KAMAITACHI_.ordinal()]))
-			|| (type == HELIOS_	   &&  Events.boss1_killed_b4()) )
+		if(		type == PHOENIX
+			||	type == ROCH
+			|| (type == OROCHI && (Events.reached_level_20[PHOENIX.ordinal()] || Events.reached_level_20[PEGASUS.ordinal()]))
+			|| (type == KAMAITACHI && (Events.reached_level_20[ROCH.ordinal()]    || Events.reached_level_20[PEGASUS.ordinal()]))
+			|| (type == PEGASUS && (Events.reached_level_20[OROCHI.ordinal()]  || Events.reached_level_20[KAMAITACHI.ordinal()]))
+			|| (type == HELIOS &&  Events.boss1_killed_b4()) )
 		{
 			return true;
 		}
@@ -1394,22 +1397,22 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 
 	public void update_unlocked_helicopters()
 	{
-		Events.reached_level_20[this.helicopterType.ordinal()] = true;
+		Events.reached_level_20[this.type.ordinal()] = true;
 		
-		if((this.helicopterType == PHOENIX_ && !Events.reached_level_20[PEGASUS_.ordinal()]) ||
-		   (this.helicopterType == PEGASUS_ && !Events.reached_level_20[PHOENIX_.ordinal()]))
+		if((this.type == PHOENIX && !Events.reached_level_20[PEGASUS.ordinal()]) ||
+		   (this.type == PEGASUS && !Events.reached_level_20[PHOENIX.ordinal()]))
 		{
-			Menu.unlock(OROCHI_);
+			Menu.unlock(OROCHI);
 		}
-		else if((this.helicopterType == ROCH_ && !Events.reached_level_20[PEGASUS_.ordinal()]) ||
-				(this.helicopterType == PEGASUS_ && !Events.reached_level_20[ROCH_.ordinal()]))
+		else if((this.type == ROCH && !Events.reached_level_20[PEGASUS.ordinal()]) ||
+				(this.type == PEGASUS && !Events.reached_level_20[ROCH.ordinal()]))
 		{
-			Menu.unlock(KAMAITACHI_);
+			Menu.unlock(KAMAITACHI);
 		}
-		else if((this.helicopterType == OROCHI_ && !Events.reached_level_20[KAMAITACHI_.ordinal()]) ||
-				(this.helicopterType == KAMAITACHI_ && !Events.reached_level_20[OROCHI_.ordinal()]))
+		else if((this.type == OROCHI && !Events.reached_level_20[KAMAITACHI.ordinal()]) ||
+				(this.type == KAMAITACHI && !Events.reached_level_20[OROCHI.ordinal()]))
 		{
-			Menu.unlock(PEGASUS_);
+			Menu.unlock(PEGASUS);
 		}
 	}
 
@@ -1431,7 +1434,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	public static int helios_costs(int upgrade_number)
 	{
 		int heli;
-		if(upgrade_number <= 1){heli = OROCHI;}
+		if(upgrade_number <= 1){heli = 2;}
 		else if(upgrade_number == 2 || upgrade_number == 3)
 		{
 			heli = upgrade_number - 2;
@@ -1530,7 +1533,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	
 	public boolean is_energy_ability_activateable()
 	{		
-		return  (this.helicopterType == ROCH_ && this.energy >= POWER_SHIELD_ACTIVATION_TRESHOLD)
+		return  (this.type == ROCH && this.energy >= POWER_SHIELD_ACTIVATION_TRESHOLD)
 				|| !(this.generator_timer > 0 
 					 ||(this.energy < this.spell_costs
 					 	&& !this.has_unlimited_energy()));
@@ -1640,7 +1643,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	void energy_ability_used(ArrayList<LinkedList<PowerUp>> powerUp,
 	                         ArrayList<LinkedList<Explosion>> explosion)
 	{
-		if(	this.helicopterType == PHOENIX_
+		if(	this.type == PHOENIX
 			&& this.is_energy_ability_activateable())
 		{
 			this.prepare_teleportation();
@@ -1649,28 +1652,28 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		{
 			this.shut_down_power_shield();	
 		}
-		else if(this.helicopterType == ROCH_
+		else if(this.type == ROCH
 				&& this.is_energy_ability_activateable())
 		{			
 			this.turn_on_power_shield();			
 		}		
-		else if(this.helicopterType == OROCHI_
+		else if(this.type == OROCHI
 				&& !this.next_missile_is_stunner)
 		{
 			Audio.play(Audio.stun_activated);
 			this.next_missile_is_stunner = true;				
 		}
-		else if(this.helicopterType == KAMAITACHI_
+		else if(this.type == KAMAITACHI
 				&& this.is_energy_ability_activateable())
 		{
 			this.activate_plasma();
 		}
-		else if(this.helicopterType == PEGASUS_
+		else if(this.type == PEGASUS
 				&& this.is_energy_ability_activateable())
 		{
 			this.release_EMP(explosion);
 		}		
-		else if(this.helicopterType == HELIOS_
+		else if(this.type == HELIOS
 				&& this.is_energy_ability_activateable())
 		{			
 			this.activate_PU_generator(powerUp);
@@ -1679,7 +1682,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	
 	int ability_id(int i)
     {
-    	return i == 5 ? 1 + i + this.type : i; 
+    	return i == 5 ? 1 + i + this.type.ordinal() : i;
     }
 
 	public void be_affected_by_collision_with(Enemy enemy, 

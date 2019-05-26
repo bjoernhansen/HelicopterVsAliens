@@ -498,14 +498,14 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		{
 			if(helicopter.damaged){Menu.block(4);}
 			else if(helicopter.goliath_plating == 2){Menu.block(7);}
-			else if(money < STANDARD_GOLIATH_COSTS && !((helicopter.helicopterType == PHOENIX_||(helicopter.type == HELIOS && record_time[PHOENIX_.ordinal()][4]!=0)) && money >= PHOENIX_GOLIATH_COSTS))
+			else if(money < STANDARD_GOLIATH_COSTS && !((helicopter.type == PHOENIX ||(helicopter.type == HELIOS && record_time[PHOENIX.ordinal()][4]!=0)) && money >= PHOENIX_GOLIATH_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);						
-				money -= (helicopter.helicopterType == PHOENIX_||(helicopter.type == HELIOS && record_time[PHOENIX_.ordinal()][4]!=0)) ? PHOENIX_GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
+				money -= (helicopter.type == PHOENIX ||(helicopter.type == HELIOS && record_time[PHOENIX.ordinal()][4]!=0)) ? PHOENIX_GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
 				helicopter.goliath_plating = 2;
 				helicopter.current_plating += MyMath.plating(helicopter.level_of_upgrade[PLATING]);
 				helicopter.setPlatingColor();
@@ -517,14 +517,14 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		{
 			if(helicopter.damaged){Menu.block(4);}
 			else if(helicopter.has_piercing_warheads){Menu.block(7);}
-			else if(money < STANDARD_SPECIAL_COSTS && !((helicopter.helicopterType == ROCH_||(helicopter.type == HELIOS && record_time[ROCH_.ordinal()][4]!=0)) && money >= CHEAP_SPECIAL_COSTS))
+			else if(money < STANDARD_SPECIAL_COSTS && !((helicopter.type == ROCH ||(helicopter.type == HELIOS && record_time[ROCH.ordinal()][4]!=0)) && money >= CHEAP_SPECIAL_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				if((helicopter.helicopterType == ROCH_||(helicopter.type == HELIOS && record_time[ROCH_.ordinal()][4]!=0))){money -= CHEAP_SPECIAL_COSTS;}
+				if((helicopter.type == ROCH ||(helicopter.type == HELIOS && record_time[ROCH.ordinal()][4]!=0))){money -= CHEAP_SPECIAL_COSTS;}
 				else{money -= STANDARD_SPECIAL_COSTS;}
 				helicopter.has_piercing_warheads = true;
 				Menu.repair_shop_button.get("Special" + 2).costs = 0;
@@ -534,19 +534,19 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		else if(Menu.repair_shop_button.get("Special3").bounds.contains(cursor))
 		{
 			if(helicopter.damaged){Menu.block(4);}
-			else if((helicopter.nr_of_cannons == 2 && !(helicopter.type == OROCHI)) || helicopter.nr_of_cannons == 3)
+			else if(helicopter.hasAllCannons())
 			{
 				Menu.block(7);
 			}
-			else if(	(money < STANDARD_SPECIAL_COSTS || (helicopter.helicopterType == ROCH_ && money < ROCH_SECOND_CANNON_COSTS)) &&
-						!((helicopter.type == OROCHI||(helicopter.type == HELIOS && record_time[OROCHI][4]!=0)) && money >= CHEAP_SPECIAL_COSTS && helicopter.nr_of_cannons == 1))
+			else if(	(money < STANDARD_SPECIAL_COSTS || (helicopter.type == ROCH && money < ROCH_SECOND_CANNON_COSTS)) &&
+						!((helicopter.type == OROCHI ||(helicopter.type == HELIOS && record_time[OROCHI.ordinal()][4]!=0)) && money >= CHEAP_SPECIAL_COSTS && helicopter.nr_of_cannons == 1))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				if((helicopter.type == OROCHI||(helicopter.type == HELIOS && record_time[OROCHI][4]!=0)) && helicopter.nr_of_cannons == 1)
+				if((helicopter.type == OROCHI ||(helicopter.type == HELIOS && record_time[OROCHI.ordinal()][4]!=0)) && helicopter.nr_of_cannons == 1)
 				{
 					money -= CHEAP_SPECIAL_COSTS;
 					if(helicopter.type == OROCHI)
@@ -562,7 +562,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 				}
 				else
 				{
-					money -= helicopter.helicopterType == ROCH_ ? ROCH_SECOND_CANNON_COSTS : STANDARD_SPECIAL_COSTS;
+					money -= helicopter.type == ROCH ? ROCH_SECOND_CANNON_COSTS : STANDARD_SPECIAL_COSTS;
 					Menu.repair_shop_button.get("Special" + 3).costs = 0;
 				}
 				helicopter.nr_of_cannons++;			
@@ -573,16 +573,16 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		{
 			if(helicopter.damaged){Menu.block(4);}
 			else if(helicopter.has_5th_special()){Menu.block(7);}
-			else if(money < CHEAP_SPECIAL_COSTS || (helicopter.helicopterType == ROCH_ && money < JUMBO_MISSILE_COSTS))
+			else if(money < CHEAP_SPECIAL_COSTS || (helicopter.type == ROCH && money < JUMBO_MISSILE_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				money -= helicopter.helicopterType == ROCH_ ? JUMBO_MISSILE_COSTS : CHEAP_SPECIAL_COSTS;
+				money -= helicopter.type == ROCH ? JUMBO_MISSILE_COSTS : CHEAP_SPECIAL_COSTS;
 				helicopter.get_5th_special();
-				if(helicopter.helicopterType == KAMAITACHI_ || helicopter.helicopterType == PEGASUS_){helicopter.adjust_fire_rate(false);}
+				if(helicopter.type == KAMAITACHI || helicopter.type == PEGASUS){helicopter.adjust_fire_rate(false);}
 				Menu.repair_shop_button.get("Special" + 4).costs = 0;
 			}
 		}
@@ -682,11 +682,11 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 			else
 			{
 				Audio.play(Audio.block);
-				Menu.cross_pos = (helicopter.helicopterType.ordinal() - Menu.helicopter_selection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
+				Menu.cross_pos = (helicopter.type.ordinal() - Menu.helicopter_selection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
 				Menu.cross = Menu.get_cross_polygon();
 				Menu.cross_timer = 1;
 				Menu.message_timer = 1;
-				Menu.set_ss_message(helicopter.helicopterType);
+				Menu.set_ss_message(helicopter.type);
 			}
 		}
 		else if(Menu.startscreen_button.get("00").bounds.contains(cursor))
@@ -891,7 +891,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		}
 		else if(window == GAME && e.getButton() == 3 && !helicopter.damaged)
 		{			
-			if(helicopter.helicopterType == PHOENIX_)
+			if(helicopter.type == PHOENIX)
 			{
 				helicopter.teleport_to(	e.getX()-Main.display_shift.width, 
 										e.getY()-Main.display_shift.height);
@@ -969,7 +969,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		Audio.play(Audio.choose);
 		
 		helicopter.bonus_kills_timer = 1;
-		if(helicopter.helicopterType == KAMAITACHI_){helicopter.evaluate_bonus_kills();}
+		if(helicopter.type == KAMAITACHI){helicopter.evaluate_bonus_kills();}
 		
 		helicopter.reset_state(total_reset);		
 		boss = null;		
@@ -1068,7 +1068,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		changeWindow(GAME);		
 		Audio.play(Audio.choose);	
 		time_aktu = System.currentTimeMillis();
-		helicopter.rotor_position[helicopter.type] = 0;						
+		helicopter.rotor_position[helicopter.type.ordinal()] = 0;
 		HelicopterDefence.savegame.save_to_file(helicopter, true);
 	}
 	
@@ -1232,10 +1232,10 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 				
 		if(helicopter.no_cheats_used||save_anyway)
 		{			
-			record_time[helicopter.type][boss_nr] 
-				= record_time[helicopter.type][boss_nr] == 0 
+			record_time[helicopter.type.ordinal()][boss_nr]
+				= record_time[helicopter.type.ordinal()][boss_nr] == 0
 				  ? highscore_time 
-				  : Math.min(record_time[helicopter.type][boss_nr], highscore_time);	
+				  : Math.min(record_time[helicopter.type.ordinal()][boss_nr], highscore_time);
 			helios_max_money = get_helios_max_money();
 		}			
 	}
