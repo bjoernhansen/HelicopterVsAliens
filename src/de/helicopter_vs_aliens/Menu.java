@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,34 +16,11 @@ import java.util.Iterator;
 
 import javax.swing.JTextPane;
 
+import de.helicopter_vs_aliens.helicopter.Helicopter;
+import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
 import enemy.Enemy;
 
-import static de.helicopterdefence.HelicopterTypes.*;
-
-interface Fonts
-{
-	Font
-		PLAIN14 = new Font("Dialog", Font.PLAIN, 14),
-    	PLAIN15 = new Font("Dialog", Font.PLAIN, 15),
- 		PLAIN18 = new Font("Dialog", Font.PLAIN, 18),    
-    	PLAIN22 = new Font("Dialog", Font.PLAIN, 22),
-    	PLAIN25 = new Font("Dialog", Font.PLAIN, 25),
-    	PLAIN28 = new Font("Dialog", Font.PLAIN, 28),
-    	PLAIN29 = new Font("Dialog", Font.PLAIN, 29),
-    	PLAIN36 = new Font("Dialog", Font.PLAIN, 36),
-    	PLAIN41 = new Font("Dialog", Font.PLAIN, 41),
-    	PLAIN47 = new Font("Dialog", Font.PLAIN, 47),
-    	PLAIN52 = new Font("Dialog", Font.PLAIN, 52),
-    	PLAIN60 = new Font("Dialog", Font.PLAIN, 60),
-    	PLAIN80 = new Font("Dialog", Font.PLAIN, 80),
-    	BOLD12  = new Font("Dialog", Font.BOLD,  12),
-    	BOLD14  = new Font("Dialog", Font.BOLD,  14),
-    	BOLD15  = new Font("Dialog", Font.BOLD,  15),
-    	BOLD16  = new Font("Dialog", Font.BOLD,  16),
-    	BOLD18  = new Font("Dialog", Font.BOLD,  18),
-    	BOLD20  = new Font("Dialog", Font.BOLD,  20),
-    	BOLD_ITALIC15 = new Font("Dialog", Font.ITALIC + Font.BOLD, 15);		 
-}
+import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 public class Menu implements Constants, Fonts
 {
@@ -84,7 +61,7 @@ public class Menu implements Constants, Fonts
 	public static HelicopterTypes
 		unlocked_type;					// Typ des freigeschalteten Helicopters
 	
-	static boolean 		
+	public static boolean
 		menue_visible,					// = true: Spielmenü ist sichtbar
 		original_resulution = false,
 		highlighted_helicopter = false;
@@ -199,11 +176,13 @@ public class Menu implements Constants, Fonts
     static HashMap<String, Button> 
     	inGame_button = new HashMap<>(),
     	startscreen_button = new HashMap<>(), 
-    	startscreen_menu_button = new HashMap<>(), 
-    	repair_shop_button = new HashMap<>();
+    	startscreen_menu_button = new HashMap<>();
+	
+	public static HashMap<String, Button>
+		repair_shop_button = new HashMap<>();
     
     static MyLabel 	   my_label;
-    static PowerUp[]   collected_PowerUp = new PowerUp [4];
+	public static PowerUp[]   collected_PowerUp = new PowerUp [4];
     static Rectangle[] helicopter_frame  = new Rectangle[4];
     
     
@@ -598,8 +577,8 @@ public class Menu implements Constants, Fonts
         		g2d.drawString("(" + (Audio.standard_bg_music ? "Classic" : "Michael" + (language == ENGLISH ? " mode" : "-Modus")) + ")", SETTING_LEFT + SETTING_COLUMN_SPACING + 25, SETTING_TOP + 1 * SETTING_LINE_SPACING);
         	}        	
         	
-        	g2d.setColor(HelicopterDefence.antialiasing ? Color.green : Color.red);
-        	g2d.drawString(activation_state(HelicopterDefence.antialiasing)			, SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 2 * SETTING_LINE_SPACING);
+        	g2d.setColor(Controller.antialiasing ? Color.green : Color.red);
+        	g2d.drawString(activation_state(Controller.antialiasing)			, SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 2 * SETTING_LINE_SPACING);
         	
         	g2d.setColor(MyColor.golden);
         	g2d.drawString(language == ENGLISH ? "English" : "Deutsch"				, SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 3 * SETTING_LINE_SPACING);
@@ -881,8 +860,8 @@ public class Menu implements Constants, Fonts
         g2d.setColor(MyColor.scorescreen[3]);        
         g2d.drawString((language == ENGLISH ? "Hit rate: " : "Raketen-Trefferquote: ") + percentage + "%", SCORESCREEN_X_POS_2, SCORESCREEN_Y_POS + SCORESCREEN_SPACE_BETWEEN_ROWS * 8); //Zielsicherheit
 	}
-   
-	static void update_scorescreen(Helicopter helicopter)
+	
+	public static void update_scorescreen(Helicopter helicopter)
 	{		
     	helicopter.rotate_propeller(7);    	  	
     	if(startscreen_menu_button.get("Cancel").bounds.contains(helicopter.destination))
@@ -891,8 +870,8 @@ public class Menu implements Constants, Fonts
         }
         else{startscreen_menu_button.get("Cancel").highlighted = false;}		
 	}
-
-	static String minuten(long spielzeit)
+	
+	public static String minuten(long spielzeit)
 	{
 		if(spielzeit == 1) return language == ENGLISH ? "1 minute" : "1 Minute";
 		return spielzeit + (language == ENGLISH ? " minutes" : " Minuten");
@@ -945,7 +924,7 @@ public class Menu implements Constants, Fonts
 	
 	static void 
 	paint_background_displays(Graphics2D g2d, 
-	                          HelicopterDefence hd,
+	                          Controller hd,
 	                          Helicopter helicopter)
 	{
 		paint_level_display(g2d, helicopter);		
@@ -1052,7 +1031,7 @@ public class Menu implements Constants, Fonts
     }	
 	
 	private static void paint_special_info_display( Graphics2D g2d, 
-	                                                HelicopterDefence hd,
+	                                                Controller hd,
 	                                                Helicopter helicopter)
     {
         g2d.setColor(MyColor.red);
@@ -1162,7 +1141,7 @@ public class Menu implements Constants, Fonts
 	
 	static void 
 	paint_foreground_displays(Graphics2D g2d,
-	                          HelicopterDefence hd,
+	                          Controller hd,
 	                          Helicopter helicopter, 
 	                          boolean show_fps)
 	{
@@ -3224,7 +3203,7 @@ public class Menu implements Constants, Fonts
 		unlocked_timer = UNLOCKED_DISPLAY_TIME;	
 	}
 
-	public static void paint(Graphics2D g2d, HelicopterDefence hd, Helicopter helicopter)
+	public static void paint(Graphics2D g2d, Controller hd, Helicopter helicopter)
 	{
 		if(Events.window == GAME)
 		{
@@ -3249,7 +3228,7 @@ public class Menu implements Constants, Fonts
 		}		
 	}
 	
-	static void repaint_bg(Graphics g, HelicopterDefence hd)
+	static void repaint_bg(Graphics g, Controller hd)
 	{
 		if(hd.bg_repaint > 1){hd.bg_repaint = DISABLED;}
 		else hd.bg_repaint++;		
@@ -3260,7 +3239,7 @@ public class Menu implements Constants, Fonts
 				   Main.dm_current.getHeight());
 	}
 
-	public static void update(HelicopterDefence hd, Helicopter helicopter)
+	public static void update(Controller hd, Helicopter helicopter)
 	{
 		if(Events.window == REPAIR_SHOP)
 		{			
@@ -3309,7 +3288,7 @@ class MyLabel extends JTextPane
 	{
 		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-								HelicopterDefence.antialiasing ? 
+								Controller.antialiasing ?
 								RenderingHints.VALUE_ANTIALIAS_ON : 
 								RenderingHints.VALUE_ANTIALIAS_OFF);
 		super.paintComponent(g2d);	

@@ -1,4 +1,7 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
+
+import de.helicopter_vs_aliens.helicopter.Helicopter;
+import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,8 +27,8 @@ public class Savegame implements Constants, Serializable
 	
 	HighscoreEntry [][] 
 		highscore = new HighscoreEntry[7][10];
-		
-	int	language,	
+	
+	public int	language,
 		money,
 		kills_after_levelup,
 		level, 
@@ -45,18 +48,18 @@ public class Savegame implements Constants, Serializable
 		nr_of_cannons, 
 		rapidfire, 
 		level_of_upgrade [] = new int[6];
-		
-	long
+	
+	public long
 		playing_time, 
-		record_time[][] = new long [Helicopter.NR_OF_TYPES][5], 
+		record_time[][] = new long [Helicopter.NR_OF_TYPES][5],
 		scorescreen_times[] = new long [Helicopter.NR_OF_TYPES];
 	
-	float
+	public float
 		jumbo_missiles, 
 		current_plating,
 		energy;
-		
-	boolean		
+	
+	public boolean
 		original_resulution,
 		standard_bg_music,
 		sound_on,		
@@ -70,7 +73,7 @@ public class Savegame implements Constants, Serializable
 		no_cheats_used,
 		reached_level_20[] = new boolean [Helicopter.NR_OF_TYPES];
 	
-	HelicopterTypes
+	public HelicopterTypes
 		helicopterType;
 		
 		

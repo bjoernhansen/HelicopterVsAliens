@@ -1,4 +1,6 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
+
+import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
 
 import java.io.Serializable;
 

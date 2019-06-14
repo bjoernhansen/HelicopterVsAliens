@@ -1,4 +1,6 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
+import de.helicopter_vs_aliens.helicopter.Helicopter;
+
 import java.awt.Color;
 import java.awt.GradientPaint;
 
@@ -142,7 +144,7 @@ public class MyColor implements Constants
 								  { dimColor(new Color (39,52,123), BARRIER_NIGHT_DIM_FACTOR), 
 													 new Color (39,52,123)}};
 	
-	static final GradientPaint 
+	public static final GradientPaint
 		cannolHoleGreen = new GradientPaint(0, 0, darkArrowGreen, 0, 0, darkArrowGreen);
     
 	// tagezeitabhängige Gradienten-Farben für Hintergrundobjekte
@@ -262,7 +264,7 @@ public class MyColor implements Constants
     }
     
     static Color percent_color(int percentage){return percent_color(((float)percentage)/100);}
-    static Color percent_color(float percentage)
+	public static Color percent_color(float percentage)
     {
     	float capped_value = Math.min(1, percentage);
     	return new Color((int)(capped_value > 0.5 
@@ -273,8 +275,8 @@ public class MyColor implements Constants
     					 		: 255), 
     					 0);
     }
-    
-    static Color reversed_RandomGreen()
+	
+	public static Color reversed_RandomGreen()
     {
     	return new Color(255 - variableGreen.getRed(), 255, 100);
     }

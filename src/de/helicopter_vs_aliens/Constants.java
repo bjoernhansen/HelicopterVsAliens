@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 
 interface Constants extends Positions
 {	

@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;

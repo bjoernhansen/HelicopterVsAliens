@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.net.URL;
@@ -83,7 +83,7 @@ public class Audio implements Constants
 		
 	private static AudioClip getAudioClip(String string)
 	{
-		URL url = HelicopterDefence.class.getResource("sounds/" + string);
+		URL url = Controller.class.getResource("sounds/" + string);
 		return Applet.newAudioClip(url);	
 	}
     

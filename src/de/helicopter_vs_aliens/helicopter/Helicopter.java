@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens.helicopter;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,9 +12,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.helicopter_vs_aliens.*;
 import enemy.Enemy;
 
-import static de.helicopterdefence.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 public class Helicopter extends MovingObject implements Fonts, DamageFactors, MissileTypes
 {			
@@ -112,8 +113,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
 		upgrade_costs[] = new int[6],    			// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
 		level_of_upgrade[] = new int[6];			// Upgrade-Level aller 6 StandardUpgrades
-			
-    long 
+	
+	public long
     	past_teleport_time,						// nur Phönix-Klasse: Zeitpunkt der letzten Nutzung des Teleporters
     	scorescreen_times [] = new long [5];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
@@ -148,8 +149,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     public Point 
     	destination = new Point(), 				// dorthin fliegt der Helikopter
   		prior_teleport_location = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation		 
-  	
-  	Point2D 
+	
+	public Point2D
   		location = new Point2D.Float(),	// exakter Aufenthaltsort	
   		next_location = new Point2D.Float();
     
@@ -160,7 +161,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
   	 	emp_wave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
 	
 	public HelicopterTypes
-        type = PHOENIX;     // Helikopter-Klasse
+        type = HelicopterTypes.getDefault();     // Helikopter-Klasse
 	
     private int 
     	fire_rate_timer;  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
@@ -192,23 +193,23 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	gradientFuss2, 					
     	gradientCannonHole;				// Farbe der Bordkanonen-Öffnung
 	   
-    Helicopter()
+    public Helicopter()
     {
     	this.paint_bounds.setSize(HELICOPTER_SIZE);
     	this.reset();
     }
     
-    void paint(Graphics2D g2d, int timeOfDay)
+    public void paint(Graphics2D g2d, int timeOfDay)
     {
     	paint(g2d, this.paint_bounds.x, this.paint_bounds.y, this.type, timeOfDay, false);
     }
     
-    void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay)
+    public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay)
     {
     	paint(g2d, left, top, helicopterType, timeOfDay, false);
     }
     
-    void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay, boolean unlocked_painting)
+    public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay, boolean unlocked_painting)
     {
     	// die Farben    	
     	if(unlocked_painting)
@@ -542,12 +543,12 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		return this.powerUp_timer[TRIPLE_DMG] > 0;
 	}
 	
-	boolean is_invincible()
+	public boolean is_invincible()
 	{		
 		return this.powerUp_timer[INVINCIBLE] > 0;
 	}
 	
-	boolean has_unlimited_energy()
+	public boolean has_unlimited_energy()
 	{		
 		return this.powerUp_timer[UNLIMITRED_ENERGY] > 0;
 	}
@@ -830,7 +831,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	   	 	this.bounds.getHeight());
 	}
 	
-	void initialize(boolean new_game, Savegame savegame)
+	public void initialize(boolean new_game, Savegame savegame)
     {
     	if(!new_game)
     	{
@@ -878,7 +879,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		this.scorescreen_times = savegame.scorescreen_times.clone();
 	}	
     
-    void reset()
+    public void reset()
     {
         
         for(int i=0; i < 4; i++){this.rotor_position[i]=0;}
@@ -908,8 +909,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
         Arrays.fill(this.scorescreen_times, 0);
     }
        
-    void reset_state(){reset_state(true);}
-    void reset_state(boolean reset_start_pos)
+    public void reset_state(){reset_state(true);}
+    public void reset_state(boolean reset_start_pos)
     {
     	this.set_activation_state(false);
     	this.search4teleportDestination = false;
@@ -929,7 +930,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		this.fire_rate_timer = this.time_between_2_shots;
     }
     
-    void repair(boolean restore_energy, boolean cheat_repair)
+    public void repair(boolean restore_energy, boolean cheat_repair)
     {
     	Audio.play(Audio.cash);
     	this.nr_of_repairs++;
@@ -941,8 +942,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		if(!cheat_repair){this.placeAtStartpos();}
 		Menu.repair_shop_button.get("RepairButton").costs = 0;
     }
-    
-    void get_all_upgrades()
+	
+	public void get_all_upgrades()
     {
     	for(int i = 0; i < 6; i++)
     	{
@@ -957,8 +958,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	Menu.update_repairShopButtons(this);
     	this.no_cheats_used = false;
     }
-    
-    void get_some_upgrades()
+	
+	public void get_some_upgrades()
     {
     	this.spotlight = true;
     	if(this.type == PHOENIX){this.goliath_plating = 2;}
@@ -974,16 +975,16 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     	Menu.update_repairShopButtons(this);    
     	this.no_cheats_used = false;
     }
-    
-    boolean has_some_upgrades()
+	
+	public boolean has_some_upgrades()
     {
     	for(int i = 0; i < 6; i++){if(this.level_of_upgrade[i] < 6) return false;}
     	if(!this.spotlight) return false;
     	else if(!this.has_5th_special()) return false;
     	else return true;    	
     }
-    
-    boolean has_5th_special()
+	
+	public boolean has_5th_special()
     {
     	switch (this.type)
     	{
@@ -1008,8 +1009,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     		default: return false;
     	}
     }
-    
-    void get_5th_special()
+	
+	public void get_5th_special()
     {
     	switch (this.type)
     	{
@@ -1051,16 +1052,16 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	{
 		return this.nr_of_cannons == 3 || (this.nr_of_cannons == 2 && this.type != OROCHI);
 	}
-    
-    boolean has_all_upgrades()
+	
+	public boolean has_all_upgrades()
     {
         for(int i = 0; i < 6; i++){if(!this.has_max_upgrade_level[i]){return false;}}
     	if(!has_all_specials()){return false;}
         return true;
     }
-    
-    void rotate_propeller(float rotational_speed){rotate_propeller(this.type, rotational_speed);}
-    void rotate_propeller(HelicopterTypes type, float rotational_speed)
+	
+	public void rotate_propeller(float rotational_speed){rotate_propeller(this.type, rotational_speed);}
+	public void rotate_propeller(HelicopterTypes type, float rotational_speed)
     {
     	this.rotor_position[type.ordinal()] += rotational_speed;
 		if(this.rotor_position[type.ordinal()] > 360){this.rotor_position[type.ordinal()] -= 360;}
@@ -1094,7 +1095,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		if(this.tractor != null){this.stop_tractor();}
 		if(this.has_interphase_generator){Audio.phase_shift.stop();}
 		this.nr_of_crashes++;
-		if(this.location.getY() == 407d){this.crashed(HelicopterDefence.object.explosion);}
+		if(this.location.getY() == 407d){this.crashed(Controller.object.explosion);}
 		else{this.nosedive = true;}
     }
     
@@ -1118,8 +1119,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		Events.restart_window_visible = true;
 		this.nosedive = false;
     }
-    
-    void teleport_to(int x, int y)
+	
+	public void teleport_to(int x, int y)
     {
     	this.search4teleportDestination = false;		
 		this.destination.setLocation(x, y);
@@ -1150,8 +1151,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			this.bonus_kills_money = 0; 
 		}
     }
-    
-    void evaluate_bonus_kills()
+	
+	public void evaluate_bonus_kills()
 	{
     	if(this.bonus_kills_timer > 0)
 		{
@@ -1223,8 +1224,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			if(this.tractor != null){this.stop_tractor();}
 		}		
 	}
-    
-    void take_missile_damage()
+	
+	public void take_missile_damage()
     {   	
     	if(!(this.power_shield_on 
     		 && (this.energy >= this.get_dmg_factor() 
@@ -1327,12 +1328,12 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		return false;
 	}
 	
-	void setPlatingColor()
+	public void setPlatingColor()
 	{		
 		MyColor.plating = MyColor.percent_color((this.current_plating)/this.max_plating());
 	}
-
-	void getPowerUp(ArrayList<LinkedList<PowerUp>> powerUp, 
+	
+	public void getPowerUp(ArrayList<LinkedList<PowerUp>> powerUp,
 	                int powerUp_type, 
 	                boolean lasting_effect)
 	{
@@ -1375,13 +1376,13 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		}		
 	}
 	
-	void set_activation_state(boolean activation_state)
+	public void set_activation_state(boolean activation_state)
 	{
 		this.active = activation_state;
 		this.rotor_system_active = activation_state;
 	}
-
-	void adjust_fire_rate(boolean powered_up)
+	
+	public void adjust_fire_rate(boolean powered_up)
 	{
 		this.time_between_2_shots 
 			= MyMath.fire_rate( this.level_of_upgrade[FIRE_RATE] 
@@ -1640,7 +1641,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		this.set_bounds();		
 	}
 	
-	void energy_ability_used(ArrayList<LinkedList<PowerUp>> powerUp,
+	public void energy_ability_used(ArrayList<LinkedList<PowerUp>> powerUp,
 	                         ArrayList<LinkedList<Explosion>> explosion)
 	{
 		if(	this.type == PHOENIX
@@ -1680,13 +1681,13 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		}
 	}
 	
-	int ability_id(int i)
+	public int ability_id(int i)
     {
     	return i == 5 ? 1 + i + this.type.ordinal() : i;
     }
 
 	public void be_affected_by_collision_with(Enemy enemy, 
-	                                          HelicopterDefence hd, 
+	                                          Controller hd,
 	                                          boolean play_collision_sound)
 	{
 		if(!this.is_power_shield_protected(enemy))

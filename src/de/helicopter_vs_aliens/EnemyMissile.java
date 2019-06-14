@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.helicopter_vs_aliens.helicopter.Helicopter;
 import enemy.Enemy;
 
 
@@ -66,7 +67,7 @@ public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.take_missile_damage();    		
-    		Explosion.start(HelicopterDefence.object.explosion, 
+    		Explosion.start(Controller.object.explosion,
     		helicopter, 
     		(int)(helicopter.bounds.getX() 
     				+ (helicopter.is_moving_left 

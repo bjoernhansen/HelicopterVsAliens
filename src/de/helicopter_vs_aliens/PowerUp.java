@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.helicopter_vs_aliens.helicopter.Helicopter;
 import enemy.Enemy;
 
 
@@ -20,9 +21,9 @@ public class PowerUp extends MovingObject
 	public int
 		type;
 	
-	int direction;	
+	int direction;
 	
-	boolean 
+	public boolean
 		collected,		// = true: PowerUp kann in die LinkedList für inaktive PowerUps verschoben werden
 		stopped;		// nur Helios-Klasse; =true: PowerUp fällt zu Boden
 	
@@ -35,7 +36,7 @@ public class PowerUp extends MovingObject
 	private Point2D 
 		speed = new Point2D.Float();	// Geschwindigkeit des PowerUps
 	
-	Color
+	public Color
 		surface,		// Farben des PowerUps, hängen vom Typ ab
 		cross;							
 

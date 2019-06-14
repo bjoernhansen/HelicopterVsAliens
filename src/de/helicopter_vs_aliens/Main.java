@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,8 +50,8 @@ public class Main implements Constants
         }
         else
         {
-            final HelicopterDefence app = new HelicopterDefence();  
-            HelicopterDefence.object = app;
+            final Controller app = new Controller();
+            Controller.object = app;
             f = new JFrame("HelicopterDefence 1.2");
             
             f.setBackground(Color.black);
@@ -64,7 +64,7 @@ public class Main implements Constants
                 @Override
                 public void windowClosing(WindowEvent e)
                 {
-                    HelicopterDefence.shut_down();
+                    Controller.shut_down();
                 }
             });
 
@@ -74,7 +74,7 @@ public class Main implements Constants
             if(!device.isFullScreenSupported()){isFullScreen = false;}
             dm_original = device.getDisplayMode();
                        
-            HelicopterDefence.savegame = Savegame.initialize();
+            Controller.savegame = Savegame.initialize();
             
             f.setUndecorated(true);            
             device.setFullScreenWindow(f);
@@ -149,6 +149,6 @@ public class Main implements Constants
 			Menu.my_label.setBounds(display_shift.width  + 42, 
 					  				display_shift.height + 83, 940, 240);
 		}
-		HelicopterDefence.object.bg_repaint = 0;		
+		Controller.object.bg_repaint = 0;
 	} 
 }

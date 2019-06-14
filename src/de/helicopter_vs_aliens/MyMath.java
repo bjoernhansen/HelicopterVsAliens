@@ -1,11 +1,13 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
+
+import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 
 public class MyMath implements Positions
 {
-	final static double
+	public final static double
 		ROOT05 = Math.sqrt(2)/2;
 	
 	public final static Point2D 
@@ -76,9 +78,9 @@ public class MyMath implements Positions
 	    // Helios
 	    
 		return hashMap;
-	}	
+	}
 	
-	static void randomize()
+	public static void randomize()
     {        
 		int random, temp = 0;
 		for(int i = 0; i < random_order.length; i++)
@@ -90,7 +92,7 @@ public class MyMath implements Positions
 		}
     }
 	
-	static int get_random_order_value(int n)
+	public static int get_random_order_value(int n)
 	{
 		if(n < 0 || n >= random_order.length){return -1;}
 		return random_order[n];
@@ -139,14 +141,14 @@ public class MyMath implements Positions
 		}
 		return increase(costs, upgrade_level) + extra_costs;
 	}
-    
-    static float speed(int n)
+	
+	public static float speed(int n)
     {
     	if(n > 0 && n < 11){return SPEED[n-1];}
 		return 0;
     }
-    
-    static float plating(int n)
+	
+	public static float plating(int n)
     {
     	if(n >= 1 && n <= 10){return PLATING_MULTIPLIER * PLATING[n-1];}
 		return 0;
@@ -156,9 +158,9 @@ public class MyMath implements Positions
     {
     	if(n > 0 && n < 11){return PLASMA_DMG_FACTOR[n-1];}
 		return 0;
-    }    
-    
-    static int missile_drive(int n)
+    }
+	
+	public static int missile_drive(int n)
     {
     	if(n >= 1 && n <= 10){return MISSILE_DRIVE[n-1];}
 		return 0;
@@ -169,8 +171,8 @@ public class MyMath implements Positions
     	if(n > 0 && n < 11){return DMG[n-1];}
 		return 0;
     }
-    
-    static int fire_rate(int n)
+	
+	public static int fire_rate(int n)
     {
     	if(n > 0 && n < 16){return FIRE_RATE[n-1];}
 		return 200;
@@ -180,26 +182,26 @@ public class MyMath implements Positions
     {
         return 5 - 5 * (int)((float)(level-1)/10) + level;
     }
-    
-    static float regeneration(int n)
+	
+	public static float regeneration(int n)
     {
     	if(n >= 1 && n <= 10){return REGENERATION[n-1];}
 		return 0;
     }
-    
-    static int shift_time(int n)
+	
+	public static int shift_time(int n)
     {
     	if(n > 1 && n < 14){return SHIFT_TIME[n-2];}
 		return 500;
     }
-           
-    static int energy(int n)
+	
+	public static int energy(int n)
     {
     	if(n > 0 && n < 11){return START_ENERGY + ENERGY[n-1];}
 		return 0;
     }
-       
-    static int max_level(int upgrade_costs)
+	
+	public static int max_level(int upgrade_costs)
     {
     	return upgrade_costs == 4 ? 6 : upgrade_costs == 3 ? 8 : 10;
     }       

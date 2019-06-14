@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.helicopter_vs_aliens.helicopter.Helicopter;
 import enemy.BossTypes;
 import enemy.Enemy;
 
-import static de.helicopterdefence.HelicopterTypes.OROCHI;
-import static de.helicopterdefence.HelicopterTypes.PHOENIX;
-import static de.helicopterdefence.HelicopterTypes.ROCH;
+import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.OROCHI;
+import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.PHOENIX;
+import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.ROCH;
 
 
 public class Missile extends MovingObject implements DamageFactors, MissileTypes, BossTypes
@@ -47,7 +48,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		flying;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
 	
-	void launch(Helicopter helicopter, boolean stunning_missile, int y)
+	public void launch(Helicopter helicopter, boolean stunning_missile, int y)
 	{
 		this.speed = helicopter.missile_drive * (helicopter.is_moving_left ? -1 : 1);	
 		this.dangerous = false;
@@ -109,7 +110,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 				* (this.extra_dmg ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 
-	static void paint_all_missiles(Graphics2D g2d, HelicopterDefence hd)
+	static void paint_all_missiles(Graphics2D g2d, Controller hd)
 	{
 		for(Iterator<Missile> i = hd.missile.get(ACTIVE).iterator(); i.hasNext();)
 		{
@@ -118,7 +119,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		}		
 	}
 
-	static void update_all(HelicopterDefence hd, Helicopter helicopter)
+	static void update_all(Controller hd, Helicopter helicopter)
 	{
 		for(Iterator<Missile> i = hd.missile.get(ACTIVE).iterator(); i.hasNext();)
 		{
@@ -127,7 +128,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		}
 	}
 
-	private void update(HelicopterDefence hd, Iterator<Missile> i, Helicopter helicopter)
+	private void update(Controller hd, Iterator<Missile> i, Helicopter helicopter)
 	{		
 		this.set_x(this.bounds.getX()							
 					+ this.speed
@@ -159,8 +160,8 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		}
 	}		
 	
-	private void check_for_hit_enemys(HelicopterDefence hd, 
-	                                  Helicopter helicopter)
+	private void check_for_hit_enemys(Controller hd,
+                                      Helicopter helicopter)
 	{
 		for(Iterator<Enemy> i = hd.enemy.get(ACTIVE).iterator(); i.hasNext();)
 		{

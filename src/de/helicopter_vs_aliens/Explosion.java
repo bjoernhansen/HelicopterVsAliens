@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.helicopter_vs_aliens.helicopter.Helicopter;
 import enemy.Enemy;
 
 import java.awt.geom.Ellipse2D;
@@ -62,8 +63,8 @@ public class Explosion implements Constants, MissileTypes
 		}		
 	}
     
-	static void update_all(Helicopter helicopter, 
-	                       ArrayList<LinkedList<Explosion>> explosion)
+	static void update_all(Helicopter helicopter,
+						   ArrayList<LinkedList<Explosion>> explosion)
 	{
     	for(Iterator<Explosion> i = explosion.get(ACTIVE).iterator(); i.hasNext();)
 		{
@@ -86,7 +87,7 @@ public class Explosion implements Constants, MissileTypes
 		}		
 	}
     
-	void paint(Graphics2D g2d)
+	public void paint(Graphics2D g2d)
     {    	
     	if(this.type == STUNNING || this.type == EMP)
 		{
@@ -108,7 +109,7 @@ public class Explosion implements Constants, MissileTypes
         g2d.setStroke(new BasicStroke(1));
     }
     
-    void update()
+    public void update()
 	{
     	this.time += 1;
 		float t = (float)this.time/this.max_time;

@@ -1,4 +1,6 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
+import de.helicopter_vs_aliens.helicopter.Helicopter;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,7 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
-import static de.helicopterdefence.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 interface PriceLevels
 {
@@ -19,7 +21,7 @@ interface PriceLevels
 		EXTORTIONATE = 4;
 }
 
-class Button implements Constants, Fonts, Costs, PriceLevels
+public class Button implements Constants, Fonts, Costs, PriceLevels
 {
 	private static final int 
 		BUTTON_DISTANCE = 60;
@@ -109,8 +111,8 @@ class Button implements Constants, Fonts, Costs, PriceLevels
     			  {"Settings", "Resume last game", "Quit"}},
                  {{"Informationen", "Highscore", "Kontakt"}, 
     			  {"Einstellungen", "Letztes Spiel fortsetzen", "Beenden"}}};
-    
-	int costs;				// Preis, falls es ein Kauf-Button in der Werkstatt ist	
+	
+	public int costs;				// Preis, falls es ein Kauf-Button in der Werkstatt ist
 	 	
 	boolean 
 		highlighted,	// = true: animierter Button; wird = true gesetzt, wenn Maus über Button führt
@@ -187,7 +189,7 @@ class Button implements Constants, Fonts, Costs, PriceLevels
 		}
 				
 		Menu.startscreen_button.get("11").marked = true;   // Der "Letztes Spiel fortsetzen"-Button ist markiert 
-		Menu.startscreen_button.get("11").enabled = HelicopterDefence.savegame.valid ? true : false;
+		Menu.startscreen_button.get("11").enabled = Controller.savegame.valid ? true : false;
 		
 		Menu.startscreen_menu_button.put("Cancel", new Button( 849, 410, 150, 30, CANCEL[Menu.language], null, false, true));
 		

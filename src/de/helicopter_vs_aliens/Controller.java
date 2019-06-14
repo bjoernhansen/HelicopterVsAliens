@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -19,9 +19,10 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
+import de.helicopter_vs_aliens.helicopter.Helicopter;
 import enemy.Enemy;
 
-public class HelicopterDefence extends JPanel implements Runnable, KeyListener,
+public class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
 									   WindowListener, Constants
 {
@@ -38,7 +39,7 @@ public class HelicopterDefence extends JPanel implements Runnable, KeyListener,
 	static boolean 
 		antialiasing = true;
 	
-	static HelicopterDefence 
+	public static Controller
 		object;
 		
 	static Savegame 
@@ -55,7 +56,7 @@ public class HelicopterDefence extends JPanel implements Runnable, KeyListener,
 		show_fps = false,
 		mouse_in_window = true;
 	
-	Helicopter 
+	Helicopter
 		helicopter = new Helicopter();
 	
 	public ArrayList<LinkedList<Enemy>> 		

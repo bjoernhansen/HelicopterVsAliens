@@ -1,4 +1,4 @@
-package de.helicopterdefence;
+package de.helicopter_vs_aliens;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.helicopter_vs_aliens.helicopter.Helicopter;
 import enemy.Enemy;
 
 public class BgObject extends MovingObject
@@ -467,8 +468,8 @@ public class BgObject extends MovingObject
 		paint_bgObjects(g2d, bgObject);		
 	}
 
-	static void update(HelicopterDefence hd,
-	                   ArrayList<LinkedList<BgObject>> bgObject)
+	static void update(Controller hd,
+					   ArrayList<LinkedList<BgObject>> bgObject)
 	{		
 		background_moves = isBackgroundMoving(hd.enemy, hd.helicopter);		
 		for(Iterator<BgObject> i = bgObject.get(ACTIVE).iterator(); i.hasNext();)

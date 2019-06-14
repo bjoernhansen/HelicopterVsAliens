@@ -16,9 +16,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopterdefence.*;
+import de.helicopter_vs_aliens.*;
+import de.helicopter_vs_aliens.helicopter.Helicopter;
 
-import static de.helicopterdefence.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 
 public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
@@ -2515,8 +2516,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	
 	
 		
-	public static void update_all_active(HelicopterDefence hd,
-	                              Helicopter helicopter)
+	public static void update_all_active(Controller hd,
+										 Helicopter helicopter)
 	{
 		if(rock_timer > 0){rock_timer--;}	
 		if(BgObject.background_moves && barrier_timer > 0){barrier_timer--;}		
@@ -2569,7 +2570,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 
 
 	public static void paint_all_active(Graphics2D g2d, 
-	                             HelicopterDefence hd,
+	                             Controller hd,
 	                             Helicopter helicopter)
 	{
 		for(int i = 0; i < current_nr_of_barriers; i++)
@@ -2590,7 +2591,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		}		
 	}
 
-	private void update(HelicopterDefence hd, Helicopter helicopter)
+	private void update(Controller hd, Helicopter helicopter)
 	{												
 		this.lifetime++;		
 		this.update_timer();	
@@ -2732,7 +2733,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	
 
 
-	private void calculate_flight_maneuver(HelicopterDefence hd,
+	private void calculate_flight_maneuver(Controller hd,
 										   Helicopter helicopter)
 	{				
 		// Beschleunigung
@@ -2918,8 +2919,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		else if(this.has_to_turn_at_y_border()){this.change_y_direction();}	
 	}
 	
-	private void check_for_EMP_strike(HelicopterDefence hd, 
-	                                  Helicopter helicopter)
+	private void check_for_EMP_strike(Controller hd,
+									  Helicopter helicopter)
 	{
 		if(helicopter.emp_wave != null)
 		{
@@ -2931,7 +2932,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		else{this.is_emp_shocked = false;}
 	}
 
-	private void emp_shock(HelicopterDefence hd, Helicopter helicopter)
+	private void emp_shock(Controller hd, Helicopter helicopter)
     {
     	this.take_dmg((int)( (this.is_major_boss() 
     							? EMP_DAMAGE_FACTOR_BOSS
@@ -3255,7 +3256,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		}	
 	}
 	
-	private void evaluateShooting(HelicopterDefence hd, Helicopter helicopter)
+	private void evaluateShooting(Controller hd, Helicopter helicopter)
 	{
 		if(	this.shoot_timer == 0 
 			&& !this.is_emp_slowed()	
@@ -3292,8 +3293,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 				|| (this.type == BIG_SHIELD_MAKER && MyMath.toss_up());
 	}
 
-	private void evaluateBarrierShooting(HelicopterDefence hd, 
-	                                     Helicopter helicopter)
+	private void evaluateBarrierShooting(Controller hd,
+										 Helicopter helicopter)
 	{
 		if(this.barrier_shoot_timer == 0)
 		{
@@ -3864,7 +3865,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	}
 	
 	public static void paint_all_destroyed(Graphics2D g2d, 
-					                HelicopterDefence hd,
+					                Controller hd,
 					                Helicopter helicopter)
 	{
 		for(Iterator<Enemy> i = hd.enemy.get(DESTROYED).iterator(); i.hasNext();)
@@ -3874,8 +3875,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		}
 	}
 
-	public static void update_all_destroyed(HelicopterDefence hd,
-	                                 Helicopter helicopter)
+	public static void update_all_destroyed(Controller hd,
+											Helicopter helicopter)
 	{
 		for(Iterator<Enemy> i = hd.enemy.get(DESTROYED).iterator(); i.hasNext();)
 		{
@@ -3971,7 +3972,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 				|| this.is_final_boss_servant();
 	}
 
-	private void collision( HelicopterDefence hd, Helicopter helicopter)
+	private void collision(Controller hd, Helicopter helicopter)
 	{
 		boolean play_collision_sound = this.collision_audio_timer == READY;
 		helicopter.be_affected_by_collision_with(this, hd, play_collision_sound);
@@ -4011,7 +4012,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		}		
 	}
 	
-	public void react_to_radiation(HelicopterDefence hd, Helicopter helicopter)
+	public void react_to_radiation(Controller hd, Helicopter helicopter)
 	{
 		if(	this.teleport_timer == READY){this.teleport();}
 		else if(this.can_take_collison_dmg())
@@ -4252,8 +4253,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		this.cloaking_timer = next_cloaking_state;
 	}
 
-	public void die(HelicopterDefence hd, Helicopter helicopter, 
-		     Missile missile, boolean beam_kill)
+	public void die(Controller hd, Helicopter helicopter,
+					Missile missile, boolean beam_kill)
 	{		
 		this.reward_for(hd.powerUp, missile, helicopter, beam_kill);		
 		this.destroy(helicopter);		
