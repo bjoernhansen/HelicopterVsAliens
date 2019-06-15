@@ -51,13 +51,3 @@ interface Constants extends Positions
 	static final float
 		BG_SPEED = 2.0f;
 }
-
-interface Positions
-{
-	static final int
-		NONE = -1,
-		RIGHT = 0,
-		BOTTOM = 1,
-		LEFT = 2,
-		TOP = 4;
-}

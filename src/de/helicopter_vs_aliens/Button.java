@@ -11,16 +11,6 @@ import java.awt.geom.Rectangle2D;
 
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
-interface PriceLevels
-{
-	static final int
-		VERY_CHEAP = 0,
-		CHEAP = 1,
-		REGULAR = 2,
-		EXPENSIVE = 3,
-		EXTORTIONATE = 4;
-}
-
 public class Button implements Constants, Fonts, Costs, PriceLevels
 {
 	private static final int 
