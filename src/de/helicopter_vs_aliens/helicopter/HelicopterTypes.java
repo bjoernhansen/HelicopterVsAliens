@@ -9,8 +9,21 @@ public enum HelicopterTypes
     PEGASUS,
     HELIOS;
     
+    private String designation;
+    
+    
+    HelicopterTypes()
+    {
+        this.designation = this.name().substring(0,1) + this.name().substring(1, this.name().length()).toLowerCase();
+    }
+    
     public static HelicopterTypes getDefault()
     {
         return PHOENIX;
+    }
+    
+    public String getDesignation()
+    {
+        return this.designation;
     }
 }
