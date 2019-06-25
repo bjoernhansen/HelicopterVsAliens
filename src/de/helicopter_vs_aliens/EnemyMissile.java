@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.helicopter.Helicopter;
-import enemy.Enemy;
+import de.helicopter_vs_aliens.enemy.Enemy;
 
 
 public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes

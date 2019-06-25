@@ -19,7 +19,7 @@ public enum HelicopterTypes
     
     public static HelicopterTypes getDefault()
     {
-        return PHOENIX;
+        return HELIOS;
     }
     
     public String getDesignation()

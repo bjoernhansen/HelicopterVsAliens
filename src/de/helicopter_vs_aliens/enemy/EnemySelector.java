@@ -1,4 +1,4 @@
-package enemy;
+package de.helicopter_vs_aliens.enemy;
 
 import java.util.*;
 

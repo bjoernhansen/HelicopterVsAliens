@@ -9,16 +9,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.swing.JTextPane;
-
 import de.helicopter_vs_aliens.helicopter.Helicopter;
 import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
-import enemy.Enemy;
+import de.helicopter_vs_aliens.enemy.Enemy;
 
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 

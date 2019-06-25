@@ -16,10 +16,8 @@ public final class HelicopterFactory
                 return new Kamaitachi();
             case PEGASUS:
                 return new Pegasus();
-            case HELIOS:
-                return new Helios();
             default:
-                return create(HelicopterTypes.getDefault());
+                return new Helios();
         }
     }
 }

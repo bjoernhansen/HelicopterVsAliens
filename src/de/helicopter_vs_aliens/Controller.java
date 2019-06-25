@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import javax.swing.JPanel;
 
 import de.helicopter_vs_aliens.helicopter.Helicopter;
-import enemy.Enemy;
+import de.helicopter_vs_aliens.enemy.Enemy;
 
 public class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 

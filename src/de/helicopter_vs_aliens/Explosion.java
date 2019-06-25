@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.helicopter.Helicopter;
-import enemy.Enemy;
+import de.helicopter_vs_aliens.enemy.Enemy;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;

@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.helicopter.Helicopter;
-import enemy.BossTypes;
-import enemy.Enemy;
+import de.helicopter_vs_aliens.enemy.BossTypes;
+import de.helicopter_vs_aliens.enemy.Enemy;
 
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
