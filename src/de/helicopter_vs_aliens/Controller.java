@@ -39,8 +39,9 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	static boolean 
 		antialiasing = true;
 	
-	public static Controller
-		object;
+		
+	private static Controller
+		controller = new Controller();
 		
 	static Savegame 
 		savegame;
@@ -55,8 +56,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	boolean 
 		show_fps = false,
 		mouse_in_window = true;
-	
-	Helicopter
+		
+	private Helicopter
 		helicopter = new Helicopter();
 	
 	public ArrayList<LinkedList<Enemy>> 		
@@ -80,6 +81,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	private Shape offscreenClip;
 	private Rectangle2D wholeScreenClip;
 
+	
+	private Controller(){}
 	
 	void init()
 	{					
@@ -342,5 +345,20 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	public void windowActivated(WindowEvent e){}
 
 	@Override
-	public void windowDeactivated(WindowEvent e){}	
+	public void windowDeactivated(WindowEvent e){}
+	
+	public Helicopter getHelicopter()
+	{
+		return helicopter;
+	}
+	
+	public void setHelicopter(Helicopter helicopter)
+	{
+		this.helicopter = helicopter;
+	}
+	
+	public static Controller getInstance()
+	{
+		return controller;
+	}
 }

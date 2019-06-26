@@ -67,7 +67,7 @@ public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.take_missile_damage();    		
-    		Explosion.start(Controller.object.explosion,
+    		Explosion.start(Controller.getInstance().explosion,
     		helicopter, 
     		(int)(helicopter.bounds.getX() 
     				+ (helicopter.is_moving_left 

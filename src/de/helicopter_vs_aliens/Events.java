@@ -181,7 +181,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 										- level;
 						if(is_boss_level()){nr_of_levelUp = 1;}
 						playing_time += (nr_of_levelUp + MyMath.random(nr_of_levelUp)) * 60000;
-						level_up(hd, helicopter, nr_of_levelUp);
+						level_up(hd, nr_of_levelUp);
 						helicopter.no_cheats_used = false;
 					}					
 				}
@@ -190,7 +190,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 					if(level < 50)
 					{
 						playing_time += (1 + (MyMath.toss_up(0.4f) ? 1 : 0)) * 60000;
-						level_up(hd, helicopter, 1);
+						level_up(hd, 1);
 						helicopter.no_cheats_used = false;
 					}
 				}
@@ -288,16 +288,16 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		}	
 	}
 	
-	private static void mousePressedLeft(Controller hd, Helicopter helicopter)
+	private static void mousePressedLeft(Controller controller, Helicopter helicopter)
 	{		
-		hd.bg_repaint = READY;
+		controller.bg_repaint = READY;
 		if(window == GAME)
 		{
-			inGameMousePressedLeft(hd, helicopter);
+			inGameMousePressedLeft(controller, helicopter);
 		}
 		else if(window == REPAIR_SHOP)
 		{
-			repairShopMousePressedLeft(helicopter, hd.enemy, hd.bgObject);
+			repairShopMousePressedLeft(helicopter, controller.enemy, controller.bgObject);
 		}
 		else if(window == STARTSCREEN)
 		{
@@ -305,11 +305,11 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		}
 		else if(Menu.startscreen_menu_button.get("Cancel").bounds.contains(cursor))
 		{
-			cancel(hd.bgObject, helicopter, Controller.savegame);
+			cancel(controller.bgObject, helicopter, Controller.savegame);
 		}
 		else 
 		{		
-			startscreenMenuButtonClicked(hd.offGraphics,
+			startscreenMenuButtonClicked(controller.offGraphics,
 										 helicopter,
 										 Controller.savegame);
 		}
@@ -1111,16 +1111,16 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 	{
 		if( kills_after_levelup >= MyMath.kills(level) && level < 50)
 		{
-			level_up(hd, helicopter, 1);
+			level_up(hd, 1);
 		}
 	}
 
 	// erhöht das Spiel-Level auf "nr_of_levelUp" mit allen Konsequenzen
-	private static void level_up(Controller hd,
-								 Helicopter helicopter,
+	private static void level_up(Controller controller,
 								 int nr_of_levelUp)
 	{
-		Audio.play(level + nr_of_levelUp <= 50 
+		Helicopter helicopter = controller.getHelicopter();
+		Audio.play(level + nr_of_levelUp <= 50
 					? Audio.level_up 
 					: Audio.applause1);
 				
@@ -1128,7 +1128,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		int previous_level = level;
 		level += nr_of_levelUp;	
 				
-		if(is_boss_level()){Enemy.get_rid_of_some_enemies(helicopter, hd.enemy, hd.explosion);}		
+		if(is_boss_level()){Enemy.get_rid_of_some_enemies(helicopter, controller.enemy, controller.explosion);}
 		if(helicopter.type == HELIOS && level > max_level){getHeliosIncome(previous_level);}
 		
 		max_level = level;

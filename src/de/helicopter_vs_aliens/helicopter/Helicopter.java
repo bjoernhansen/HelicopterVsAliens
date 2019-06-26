@@ -1095,7 +1095,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 		if(this.tractor != null){this.stop_tractor();}
 		if(this.has_interphase_generator){Audio.phase_shift.stop();}
 		this.nr_of_crashes++;
-		if(this.location.getY() == 407d){this.crashed(Controller.object.explosion);}
+		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosion);}
 		else{this.nosedive = true;}
     }
     

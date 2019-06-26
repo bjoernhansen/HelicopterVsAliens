@@ -45,14 +45,13 @@ public class Main implements Constants
 		}
         else
         {
-            final Controller app = new Controller();
-            Controller.object = app;
+            final Controller controller = Controller.getInstance();
             f = new JFrame("HelicopterDefence 1.2");
             
             f.setBackground(Color.black);
             
-            f.add("Center", app);
-            f.addKeyListener(app);
+            f.add("Center", controller);
+            f.addKeyListener(controller);
             f.setResizable(false);
             f.addWindowListener(new WindowAdapter()
             {
@@ -63,7 +62,7 @@ public class Main implements Constants
                 }
             });
 
-            app.setLayout(null);
+            controller.setLayout(null);
             
             device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if(!device.isFullScreenSupported()){isFullScreen = false;}
@@ -79,8 +78,8 @@ public class Main implements Constants
             
             f.setVisible(true);
             
-            app.init();
-            app.start();
+            controller.init();
+            controller.start();
         }
     }
 
@@ -144,6 +143,6 @@ public class Main implements Constants
 			Menu.my_label.setBounds(display_shift.width  + 42,
 					  				display_shift.height + 83, 940, 240);
 		}
-		Controller.object.bg_repaint = 0;
+		Controller.getInstance().bg_repaint = 0;
 	}
 }
