@@ -61,7 +61,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		mouse_in_window = true;
 		
 	private Helicopter
-		helicopter = new Helicopter();
+		helicopter;
 	
 	public ArrayList<LinkedList<Enemy>> 		
 		enemy = new ArrayList<>(3);	

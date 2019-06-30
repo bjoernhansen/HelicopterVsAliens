@@ -2,8 +2,9 @@ package de.helicopter_vs_aliens.helicopter;
 
 public final class Kamaitachi extends Helicopter
 {
-    Kamaitachi()
+    @Override
+    public HelicopterTypes getType()
     {
-        this.type = HelicopterTypes.KAMAITACHI;
+        return HelicopterTypes.KAMAITACHI;
     }
 }

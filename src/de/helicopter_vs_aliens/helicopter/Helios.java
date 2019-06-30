@@ -2,8 +2,9 @@ package de.helicopter_vs_aliens.helicopter;
 
 public final class Helios extends Helicopter
 {
-    Helios()
+    @Override
+    public HelicopterTypes getType()
     {
-        this.type = HelicopterTypes.HELIOS;
+        return HelicopterTypes.HELIOS;
     }
 }

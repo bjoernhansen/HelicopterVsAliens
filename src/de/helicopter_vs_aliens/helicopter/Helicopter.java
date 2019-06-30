@@ -17,7 +17,7 @@ import de.helicopter_vs_aliens.enemy.Enemy;
 
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
-public class Helicopter extends MovingObject implements Fonts, DamageFactors, MissileTypes
+public abstract class Helicopter extends MovingObject implements Fonts, DamageFactors, MissileTypes
 {			
 	// Konstanten
     public static final int     			    	   
@@ -161,10 +161,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
   	public Explosion 
   	 	emp_wave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
 	
-	public HelicopterTypes
-        type = HelicopterTypes.getDefault();     // Helikopter-Klasse
-
-    private int
+	private int
     	fire_rate_timer;  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
     
     private float 
@@ -202,7 +199,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     
     public void paint(Graphics2D g2d, int timeOfDay)
     {
-    	paint(g2d, this.paint_bounds.x, this.paint_bounds.y, this.type, timeOfDay, false);
+    	paint(g2d, this.paint_bounds.x, this.paint_bounds.y, this.getType(), timeOfDay, false);
     }
     
     public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay)
@@ -849,7 +846,6 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     
 	private void restore_last_game_state(Savegame savegame)
 	{
-		this.type = savegame.helicopterType;
 		this.level_of_upgrade = savegame.level_of_upgrade.clone();
 		this.spotlight = savegame.spotlight;
 		this.goliath_plating = savegame.goliath_plating;
@@ -1744,4 +1740,6 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	{		
 		return this.bonus_kills_timer > 0 ? true : false;
 	}
+
+	public abstract HelicopterTypes getType();
 }    

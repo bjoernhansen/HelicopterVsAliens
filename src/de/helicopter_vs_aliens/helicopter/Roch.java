@@ -2,8 +2,9 @@ package de.helicopter_vs_aliens.helicopter;
 
 public final class Roch extends Helicopter
 {
-    Roch()
+    @Override
+    public HelicopterTypes getType()
     {
-        this.type = HelicopterTypes.ROCH;
+        return HelicopterTypes.ROCH;
     }
 }
