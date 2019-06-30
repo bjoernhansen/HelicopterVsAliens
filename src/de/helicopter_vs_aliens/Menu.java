@@ -269,7 +269,7 @@ public class Menu implements Constants, Fonts
 		{
 			if(	helicopter_frame[i].contains(helicopter.destination))
 			{
-				helicopter.type = HelicopterTypes.values()[(i + helicopter_selection)%Helicopter.NR_OF_TYPES];
+				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopter_selection)%Helicopter.NR_OF_TYPES];
 				if(effect_timer[helicopter.type.ordinal()] == 0)
 				{
 					Audio.playSpecialSound(helicopter.type);
@@ -348,7 +348,7 @@ public class Menu implements Constants, Fonts
             {
             	paint_frame(g2d, helicopter_frame[i], MyColor.translucentBlack);
             }
-            if(Events.all_playable || Helicopter.is_unlocked(HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES]))
+            if(Events.all_playable || Helicopter.isUnlocked(HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES]))
             {
             	paint_tickmark(g2d, i, 210, 323, 15, 20);
             }

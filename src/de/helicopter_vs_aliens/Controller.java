@@ -21,6 +21,9 @@ import javax.swing.JPanel;
 
 import de.helicopter_vs_aliens.helicopter.Helicopter;
 import de.helicopter_vs_aliens.enemy.Enemy;
+import de.helicopter_vs_aliens.helicopter.HelicopterFactory;
+import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.helicopter.Phoenix;
 
 public class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 

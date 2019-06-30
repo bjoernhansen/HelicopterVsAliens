@@ -163,8 +163,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	
 	public HelicopterTypes
         type = HelicopterTypes.getDefault();     // Helikopter-Klasse
-	
-    private int 
+
+    private int
     	fire_rate_timer;  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
     
     private float 
@@ -834,10 +834,6 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	
 	public void initialize(boolean new_game, Savegame savegame)
     {
-    	if(!new_game)
-    	{
-    		this.type = savegame.helicopterType;
-    	}
     	for(int i = 0; i < 6; i++)
 	    {
     		this.has_max_upgrade_level[i] = false;
@@ -882,7 +878,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     
     public void reset()
     {
-        
+
         for(int i=0; i < 4; i++){this.rotor_position[i]=0;}
         this.reset_state();
         this.placeAtStartpos();
@@ -1313,9 +1309,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 			this.powerUp_timer[i] = Math.min(POWERUP_DURATION/4 + 1, this.powerUp_timer[i]);}
 		}		
 	}
-	
-	public boolean is_unlocked(){return is_unlocked(this.type);}
-	public static boolean is_unlocked(HelicopterTypes type)
+
+	public static boolean isUnlocked(HelicopterTypes type)
 	{
 		if(		type == PHOENIX
 			||	type == ROCH

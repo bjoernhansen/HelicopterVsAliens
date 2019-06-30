@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.helicopter.Helicopter;
 import de.helicopter_vs_aliens.enemy.BossTypes;
 import de.helicopter_vs_aliens.enemy.Enemy;
+import de.helicopter_vs_aliens.helicopter.HelicopterFactory;
+import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
 
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
@@ -20,7 +22,13 @@ import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 public class Events implements Constants, Costs, PriceLevels, BossTypes
 {
-	static HighscoreEntry [][] 
+	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
+	public static final int
+			DAY_BONUS_FACTOR = 60,
+			NIGHT_BONUS_FACTOR = 90,
+			COMPARISON_RECORD_TIME = 60;	// angenommene Bestzeit für besiegen von Boss 5
+
+	static HighscoreEntry [][]
 		highscore = new HighscoreEntry[7][10];
 	
 	static Point 
@@ -67,14 +75,12 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 	private static final String 
 		cheat_code = "+cheats";			// Code, mit welchem Cheats aktiviert werden können
 	
-	public static Enemy boss;	// Referenz auf den aktuellen Endgegner
-		
-	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
-	public static final int 
-		DAY_BONUS_FACTOR = 60, 
-		NIGHT_BONUS_FACTOR = 90, 		
-		COMPARISON_RECORD_TIME = 60;	// angenommene Bestzeit für besiegen von Boss 5
-		
+	public static Enemy
+		boss;	// Referenz auf den aktuellen Endgegner
+
+	public static HelicopterTypes
+		nextHelicopterType = HelicopterTypes.getDefault();
+
 
 	static void keyTyped( KeyEvent e, Controller hd,
 	                      Helicopter helicopter, Savegame savegame)
@@ -666,9 +672,9 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 				Menu.helicopter_frame[2].contains(cursor)||
 				Menu.helicopter_frame[3].contains(cursor))
 		{				
-			if(all_playable || helicopter.is_unlocked())
+			if(all_playable || helicopter.isUnlocked(helicopter.type))
 			{
-				start_game(helicopter, Controller.savegame, true);
+				startGame(Events.nextHelicopterType, Controller.savegame, true);
 			}
 			else
 			{
@@ -706,7 +712,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 			if(Controller.savegame.valid)
 			{
 				Audio.play(Audio.level_up);
-				start_game(helicopter, Controller.savegame, false);
+				startGame(Controller.savegame);
 			}
 			else{Audio.play(Audio.block);}			
 		}		
@@ -1027,9 +1033,17 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		for(int i = 0; i < 4; i++){Menu.collected_PowerUp[i] = null;}		
 	}
 
-	static private void start_game(Helicopter helicopter, Savegame savegame, boolean new_game)
+	static private void startGame(Savegame savegame)
 	{
-		if(new_game)
+		startGame(savegame.helicopterType, savegame, false);
+	}
+
+	static private void startGame(HelicopterTypes helicopterType, Savegame savegame, boolean isNewGame)
+	{
+		Helicopter helicopter = HelicopterFactory.create(helicopterType);
+		Controller.getInstance().setHelicopter(helicopter);
+
+		if(isNewGame)
 		{
 			Audio.play(Audio.applause1);
 			savegame.save_in_highscore();
@@ -1039,11 +1053,11 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 		Menu.cross_timer = 0;
 		Menu.message_timer = 0;
 		Audio.play(Audio.choose);
-		
-		helicopter.initialize(new_game, savegame);
-		initialize(helicopter, savegame, new_game);					
+
+		helicopter.initialize(isNewGame, savegame);
+		initialize(helicopter, savegame, isNewGame);
 		Button.initialize(helicopter);				
-		if(new_game){
+		if(isNewGame){
 			Controller.savegame.save_to_file(helicopter, true);}
 		else{Menu.update_repairShopButtons(helicopter);}		
 	}
