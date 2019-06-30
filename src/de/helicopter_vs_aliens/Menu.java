@@ -73,18 +73,18 @@ public class Menu implements Constants, Fonts
     	STARTSCREEN_OFFSET_X = 4;				// x-Verschiebung der meisten Anzeigen des Startscreens
     
     private static final int 	
-    	STATUS_BAR_X1 = 268, 					// x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü; erste Spalte)
-    	STATUS_BAR_X2 = 421, 					// x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü; zweite Spalte)
-    	STANDUP_OFFSET_Y = 148, 				// y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
-    	SPECUP_OFFSET_Y = 328,					// y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
-    	HEALTH_BAR_LENGTH = 150,				// Länge des Hitpoint-Balken des Helikopters
-    	HTML_SIZE = 5,							// Standard-Schriftgröße der Startscreen-Menuetexte
-		HELICOPTER_DISTANCE = 250,				// Abstand zwischen den Helikopter auf dem Startscreen
-		STARTSCREEN_HELICOPTER_OFFSET_Y = 33,	// y-Verschiebung der Helicopter-Leiste im Startscreen-Menü
-		BONUS_MAX_DISPLAY_TIME = 200,			// Maximale Anzeigezeit des zuletzt erhalten Bonus
-		CROSS_MAX_DISPLAY_TIME = 60,   			// Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
-		UNLOCKED_DISPLAY_TIME = 300,
-    	ENEMY_HEALTH_BAR_WIDTH = 206;	
+    	STATUS_BAR_X1 = 268;                    // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü; erste Spalte)
+    	private static final int STATUS_BAR_X2 = 421;                    // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü; zweite Spalte)
+    	private static final int STANDUP_OFFSET_Y = 148;                // y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
+    	private static final int SPECUP_OFFSET_Y = 328;                    // y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
+    	private static final int HEALTH_BAR_LENGTH = 150;                // Länge des Hitpoint-Balken des Helikopters
+    	private static final int HTML_SIZE = 5;                            // Standard-Schriftgröße der Startscreen-Menuetexte
+		public static final int HELICOPTER_DISTANCE = 250;                // Abstand zwischen den Helikopter auf dem Startscreen
+		public static final int STARTSCREEN_HELICOPTER_OFFSET_Y = 33;    // y-Verschiebung der Helicopter-Leiste im Startscreen-Menü
+		private static final int BONUS_MAX_DISPLAY_TIME = 200;            // Maximale Anzeigezeit des zuletzt erhalten Bonus
+		private static final int CROSS_MAX_DISPLAY_TIME = 60;            // Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
+		private static final int UNLOCKED_DISPLAY_TIME = 300;
+	private static final int ENEMY_HEALTH_BAR_WIDTH = 206;
     
     static final String  
     	HELICOPTER_INFOS[][][] = 
@@ -271,22 +271,12 @@ public class Menu implements Constants, Fonts
 			{
 				helicopter.type = HelicopterTypes.values()[(i + helicopter_selection)%Helicopter.NR_OF_TYPES];
 				if(effect_timer[helicopter.type.ordinal()] == 0)
-				{									
-						 if(helicopter.type == PHOENIX)	  {Audio.play(Audio.teleport1);}
-					else if(helicopter.type == ROCH)	  {Audio.play(Audio.shield_up);}
-					else if(helicopter.type == OROCHI)	  {Audio.play(Audio.stun_activated);}
-					else if(helicopter.type == KAMAITACHI){Audio.play(Audio.plasma_on);}
-					else if(helicopter.type == PEGASUS)
+				{
+					Audio.playSpecialSound(helicopter.type);
+					if(helicopter.type == PEGASUS)
 					{
-						Audio.play(Audio.emp);							
-						helicopter.emp_wave 
-							= new Explosion(149 
-											+ STARTSCREEN_OFFSET_X 
-											+ i * HELICOPTER_DISTANCE, 
-											310 
-											+ STARTSCREEN_HELICOPTER_OFFSET_Y);
+						helicopter.emp_wave = Explosion.createStartscreenExplosion(i);
 					}
-					else if(helicopter.type == HELIOS){Audio.play(Audio.shield_up);}
 					Arrays.fill(effect_timer, 0);
 					effect_timer[helicopter.type.ordinal()] = 1;
 				}

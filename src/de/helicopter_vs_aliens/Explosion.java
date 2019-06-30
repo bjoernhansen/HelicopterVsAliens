@@ -12,6 +12,8 @@ import de.helicopter_vs_aliens.enemy.Enemy;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
+import static de.helicopter_vs_aliens.Menu.*;
+
 public class Explosion implements Constants, MissileTypes
 {
     public int 
@@ -86,8 +88,18 @@ public class Explosion implements Constants, MissileTypes
 	        }
 		}		
 	}
-    
-	public void paint(Graphics2D g2d)
+
+    public static Explosion createStartscreenExplosion(int i)
+    {
+		return new Explosion(
+				149
+				+ STARTSCREEN_OFFSET_X
+				+ i * HELICOPTER_DISTANCE,
+				310
+				+ STARTSCREEN_HELICOPTER_OFFSET_Y);
+    }
+
+    public void paint(Graphics2D g2d)
     {    	
     	if(this.type == STUNNING || this.type == EMP)
 		{

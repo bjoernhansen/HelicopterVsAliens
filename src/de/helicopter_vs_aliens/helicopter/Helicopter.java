@@ -75,7 +75,8 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
     private static final float    
     	NOSEDIVE_SPEED = 12f,	// Geschwindigkeit des Helikopters bei Absturz
     	INVU_DMG_FACTOR = 1.0f - INVU_DMG_REDUCTION/100f;
-        
+
+
 	public int
 		missile_drive,						// Geschwindigkeit [Pixel pro Frame] der Raketen			
 		current_firepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
@@ -490,7 +491,7 @@ public class Helicopter extends MovingObject implements Fonts, DamageFactors, Mi
 	private boolean can_regenerate_energy()
 	{		
 		return 	!this.damaged
-	    		//&& !this.power_shield_on
+	    		&& !this.power_shield_on
 	    		&& !this.next_missile_is_stunner;
 	}
 
