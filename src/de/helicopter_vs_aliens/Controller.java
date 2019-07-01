@@ -41,7 +41,6 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	
 	static boolean 
 		antialiasing = true;
-	
 		
 	private static Controller
 		controller = new Controller();
@@ -61,7 +60,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		mouse_in_window = true;
 		
 	private Helicopter
-		helicopter;
+		helicopter = HelicopterFactory.create(HelicopterTypes.getDefault());
 	
 	public ArrayList<LinkedList<Enemy>> 		
 		enemy = new ArrayList<>(3);	

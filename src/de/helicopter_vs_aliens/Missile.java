@@ -61,20 +61,20 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 			else if(helicopter.jumbo_missiles > 2){this.type = JUMBO;}
 			else{this.type = STANDARD;}									
 		}								
-		else if(helicopter.type == OROCHI){this.type = STUNNING;}
+		else if(helicopter.getType() == OROCHI){this.type = STUNNING;}
 		else{this.type = PHASE_SHIFT;}
 		this.setBounds(helicopter, y);
 		this.set_dmg(helicopter);
 		this.hits.clear();
 		
-		if(helicopter.type == ROCH || helicopter.type == OROCHI)
+		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
 		{
 			this.kills = 0;
 			this.earned_money = 0;
 			this.sister_kills = 0;
 			this.nr_of_hitting_sisters = 0;			
 		}
-		else if(helicopter.type == PHOENIX)
+		else if(helicopter.getType() == PHOENIX)
 		{
 			this.launching_time = System.currentTimeMillis();
 		}		
@@ -199,7 +199,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 				else
 				{						
 					e.die(hd, helicopter, this, false);
-					if(	helicopter.type == PHOENIX
+					if(	helicopter.getType() == PHOENIX
 						&& helicopter.bonus_kills_timer > 0 
 						&& this.launching_time > helicopter.past_teleport_time)
 					{
@@ -286,17 +286,17 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	
 	private void inactivate(ArrayList<LinkedList<Missile>> missile, Helicopter helicopter)
 	{							
-		if(helicopter.type == ROCH || helicopter.type == OROCHI)
+		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
 		{
 			if(this.sister[0] == null && this.sister[1] == null)
 			{							
 				if(this.kills + this.sister_kills > 1)
 				{
-					if(helicopter.type == ROCH)
+					if(helicopter.getType() == ROCH)
 					{										
 						Events.extra_reward(this.kills + this.sister_kills, this.earned_money, 0.5f, 0.75f, 3.0f);
 					}
-					else if(helicopter.type == OROCHI)
+					else if(helicopter.getType() == OROCHI)
 					{
 						int non_failed_shots = (this.kills > 0 ? 1 : 0) + this.nr_of_hitting_sisters;
 						if(non_failed_shots == 1)

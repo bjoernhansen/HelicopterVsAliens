@@ -1164,7 +1164,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			boss_selection = BOSS_2;
 			selection = 0;
 			helicopter.powerUp_decay();
-			if((helicopter.no_cheats_used||Events.save_anyway) && !Events.reached_level_20[helicopter.type.ordinal()])
+			if((helicopter.no_cheats_used||Events.save_anyway) && !Events.reached_level_20[helicopter.getType().ordinal()])
 			{
 				helicopter.update_unlocked_helicopters();
 			}
@@ -1450,7 +1450,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			//this.graphics[i].setComposite(AlphaComposite.Src);
 			
 			this.paint_image(this.graphics[i], 1-2*i, null, true);
-			if(this.cloaking_timer != DISABLED && helicopter.type == OROCHI)
+			if(this.cloaking_timer != DISABLED && helicopter.getType() == OROCHI)
 			{
 				BufferedImage 
 					 temp_image = new BufferedImage((int)(1.028f * this.paint_bounds.width), 
@@ -2608,7 +2608,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		this.move();
 		
 		if(helicopter.can_collide_with(this)){this.collision(hd, helicopter);}
-		if(helicopter.type == PEGASUS){this.check_for_EMP_strike(hd, helicopter);}
+		if(helicopter.getType() == PEGASUS){this.check_for_EMP_strike(hd, helicopter);}
 		if(this.has_deadly_ground_contact()){this.destroy(helicopter, hd.powerUp, false);}		
 		if(this.is_to_be_removed()){this.prepare_removal();}
 		this.set_paint_bounds();
@@ -4290,14 +4290,14 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	                        Helicopter helicopter, 
 	                        boolean beam_kill)
 	{																					   
-		if(helicopter.type != HELIOS)
+		if(helicopter.getType() != HELIOS)
 		{
 			Events.last_bonus = this.calculate_reward(helicopter);
 			Events.money += Events.last_bonus;
 			Events.overall_earnings += Events.last_bonus;
 			Events.last_extra_bonus = 0;		
 			if(missile != null				
-				&& (helicopter.type == ROCH || helicopter.type == OROCHI))
+				&& (helicopter.getType() == ROCH || helicopter.getType() == OROCHI))
 			{
 				if(missile.kills > 0
 				   && helicopter.has_piercing_warheads	
@@ -4323,7 +4323,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 				helicopter.bonus_kills++;
 				helicopter.bonus_kills_money += Events.last_bonus;
 			}
-			else if(helicopter.type == KAMAITACHI)
+			else if(helicopter.getType() == KAMAITACHI)
 			{
 				helicopter.bonus_kills_timer+=SPEED_KILL_BONUS_TIME;
 				helicopter.bonus_kills++;
