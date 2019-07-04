@@ -17,6 +17,7 @@ import de.helicopter_vs_aliens.helicopter.Helicopter;
 import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.enemy.Enemy;
 
+import static de.helicopter_vs_aliens.Windows.*;
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 public class Menu implements Constants, Fonts
@@ -270,17 +271,17 @@ public class Menu implements Constants, Fonts
 			if(	helicopter_frame[i].contains(helicopter.destination))
 			{
 				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopter_selection)%Helicopter.NR_OF_TYPES];
-				if(effect_timer[helicopter.getType().ordinal()] == 0)
+				if(effect_timer[Events.nextHelicopterType.ordinal()] == 0)
 				{
-					Audio.playSpecialSound(helicopter.getType());
-					if(helicopter.getType() == PEGASUS)
+					Audio.playSpecialSound(Events.nextHelicopterType);
+					if(Events.nextHelicopterType == PEGASUS)
 					{
 						helicopter.emp_wave = Explosion.createStartscreenExplosion(i);
 					}
 					Arrays.fill(effect_timer, 0);
-					effect_timer[helicopter.getType().ordinal()] = 1;
+					effect_timer[Events.nextHelicopterType.ordinal()] = 1;
 				}
-				if(helicopter.getType() == KAMAITACHI && effect_timer[KAMAITACHI.ordinal()] == 70)
+				if(Events.nextHelicopterType == KAMAITACHI && effect_timer[KAMAITACHI.ordinal()] == 70)
 				{
 					Audio.play(Audio.plasma_off);
 				}				
@@ -288,9 +289,8 @@ public class Menu implements Constants, Fonts
 				break;
 			}			
 		}		
-		if(highlighted_helicopter){helicopter.rotate_propeller(7);}
-		else{Arrays.fill(effect_timer, 0);}	
-		
+		if(highlighted_helicopter){helicopter.rotate_propeller(Events.nextHelicopterType, 7);}
+		else{Arrays.fill(effect_timer, 0);}
 	}
 
 	static void paint_startscreen(Graphics2D g2d, Helicopter helicopter)
@@ -326,7 +326,7 @@ public class Menu implements Constants, Fonts
          
         for(int i = 0; i < 4; i++)
         {
-        	if(helicopter.getType().ordinal() == (helicopter_selection+i)%Helicopter.NR_OF_TYPES && highlighted_helicopter){g2d.setColor(Color.white);}
+        	if(Events.nextHelicopterType.ordinal() == (helicopter_selection+i)%Helicopter.NR_OF_TYPES && highlighted_helicopter){g2d.setColor(Color.white);}
             else{g2d.setColor(MyColor.lightGray);}       	
         	g2d.setFont(BOLD20);
         	
@@ -527,7 +527,7 @@ public class Menu implements Constants, Fonts
         				g2d.drawString(to_string_with_space((int)temp_entry.playing_time) + " min", real_left_column + x_shift + 4 * column_distance, top_line + j * line_distance); 
     					g2d.drawString(to_string_with_space(temp_entry.crashes), 		  				  real_left_column + x_shift + 5 * column_distance, top_line + j * line_distance); 
     					g2d.drawString(to_string_with_space(temp_entry.repairs),		  				  real_left_column + x_shift + 6 * column_distance, top_line + j * line_distance); 
-    					g2d.setColor(MyColor.percent_color(2*temp_entry.bonus_income));
+    					g2d.setColor(MyColor.percentColor(2*temp_entry.bonus_income));
     					g2d.drawString(to_string_with_space(temp_entry.bonus_income) + "%",		  real_left_column + x_shift + 7 * column_distance, top_line + j * line_distance); 
     				}
         			else break;
@@ -3122,12 +3122,12 @@ public class Menu implements Constants, Fonts
 
 	static void update_collected_powerUps(Helicopter helicopter, PowerUp powerUp)
 	{
-		helicopter.powerUp_timer[powerUp.type] = Math.max(helicopter.powerUp_timer[powerUp.type], Helicopter.POWERUP_DURATION);
-		if(collected_PowerUp[powerUp.type] == null){powerUp.moveToStatusbar();}
+		helicopter.powerUp_timer[powerUp.type.ordinal()] = Math.max(helicopter.powerUp_timer[powerUp.type.ordinal()], Helicopter.POWERUP_DURATION);
+		if(collected_PowerUp[powerUp.type.ordinal()] == null){powerUp.moveToStatusbar();}
 		else
 		{
-			collected_PowerUp[powerUp.type].surface = MyColor.setAlpha(collected_PowerUp[powerUp.type].surface, 255);	
-			collected_PowerUp[powerUp.type].cross = MyColor.setAlpha(collected_PowerUp[powerUp.type].cross, 255);
+			collected_PowerUp[powerUp.type.ordinal()].surface = MyColor.setAlpha(collected_PowerUp[powerUp.type.ordinal()].surface, 255);
+			collected_PowerUp[powerUp.type.ordinal()].cross = MyColor.setAlpha(collected_PowerUp[powerUp.type.ordinal()].cross, 255);
 		}
 	}
 

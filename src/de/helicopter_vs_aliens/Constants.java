@@ -14,25 +14,7 @@ interface Constants extends Positions
 	    READY = 0,
 	    START = 0,
 	    PRE_READY = 1,	    
-	    
-	    INFORMATIONS = 0,
-	    DESCRIPTION = 1,
-	    SETTINGS = 2, 
-	    CONTACT = 3,  
-	    HELICOPTER_TYPES = 4,
-	    HIGHSCORE = 5,
-	    GAME = 6,
-	    REPAIR_SHOP = 7,
-	    STARTSCREEN = 8,
-	    SCORESCREEN = 9,	    
-	    
-	    TRIPLE_DMG = 0,
-	    INVINCIBLE = 1,
-	    UNLIMITRED_ENERGY = 2, 
-	    BOOSTED_FIRE_RATE = 3,  
-	    REPARATION = 4,
-	    BONUS_INCOME = 5,
-				
+	   	
 		ROTOR_SYSTEM = 0,
     	MISSILE_DRIVE = 1,
     	PLATING = 2,

@@ -11,24 +11,24 @@ public abstract class MovingObject implements Constants
 	public Rectangle2D
 		bounds = new Rectangle2D.Float();
 	
-	public Rectangle 
-		paint_bounds = new Rectangle();
+	public Rectangle
+        paintBounds = new Rectangle();
 	
 	
 	protected void set_paint_bounds()
 	{
-		this.set_paint_bounds(this.paint_bounds.width, 
-							  this.paint_bounds.height);
+		this.set_paint_bounds(this.paintBounds.width,
+							  this.paintBounds.height);
 	}
 	
 	protected void set_paint_bounds(int width, int height)
 	{
-		this.paint_bounds.setBounds((int)this.bounds.getX(), 
+		this.paintBounds.setBounds((int)this.bounds.getX(),
 									(int)this.bounds.getY(), 
 									width, 
 									height);
 	}
 	
-	int get_paintMaxX(){return this.paint_bounds.x + this.paint_bounds.width;}
- 	int get_paintMaxY(){return this.paint_bounds.y + this.paint_bounds.height;}
+	int get_paintMaxX(){return this.paintBounds.x + this.paintBounds.width;}
+ 	int get_paintMaxY(){return this.paintBounds.y + this.paintBounds.height;}
 }

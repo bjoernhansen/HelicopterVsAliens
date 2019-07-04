@@ -4,6 +4,8 @@ import de.helicopter_vs_aliens.helicopter.Helicopter;
 import java.awt.Color;
 import java.awt.GradientPaint;
 
+import static de.helicopter_vs_aliens.Windows.*;
+
 public class MyColor implements Constants
 {
 	public static final int 
@@ -257,14 +259,14 @@ public class MyColor implements Constants
     
     static void update_scorescreen_colors(Helicopter helicopter)
     {       
-    	scorescreen[0] = percent_color(Events.bonus_income_percentage());    	
-    	scorescreen[1] = percent_color(MyMath.percentage(helicopter.enemies_killed, helicopter.enemies_seen));    	
-    	scorescreen[2] = percent_color(MyMath.percentage(helicopter.mini_boss_killed, helicopter.mini_boss_seen));    	
-    	scorescreen[3] = percent_color(MyMath.percentage(helicopter.hit_counter, helicopter.missile_counter));
+    	scorescreen[0] = percentColor(Events.bonus_income_percentage());
+    	scorescreen[1] = percentColor(MyMath.percentage(helicopter.enemies_killed, helicopter.enemies_seen));
+    	scorescreen[2] = percentColor(MyMath.percentage(helicopter.mini_boss_killed, helicopter.mini_boss_seen));
+    	scorescreen[3] = percentColor(MyMath.percentage(helicopter.hit_counter, helicopter.missile_counter));
     }
     
-    static Color percent_color(int percentage){return percent_color(((float)percentage)/100);}
-	public static Color percent_color(float percentage)
+    static Color percentColor(int percentage){return percentColor(((float)percentage)/100);}
+	public static Color percentColor(float percentage)
     {
     	float capped_value = Math.min(1, percentage);
     	return new Color((int)(capped_value > 0.5 

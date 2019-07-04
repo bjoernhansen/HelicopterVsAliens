@@ -11,15 +11,14 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.helicopter.Helicopter;
 import de.helicopter_vs_aliens.enemy.Enemy;
 
+import static de.helicopter_vs_aliens.PowerUpTypes.*;
+
 
 public class PowerUp extends MovingObject
 {
 	static final int
 		GAME_SIZE = 30, 
 		MENU_SIZE = 23;
-	
-	public int
-		type;
 	
 	int direction;
 	
@@ -32,6 +31,9 @@ public class PowerUp extends MovingObject
 	
 	private boolean
 		inStatusBar;	// = true: PowerUp befindet sich in der Statusbar
+	
+	public PowerUpTypes
+		type;
 	
 	private Point2D 
 		speed = new Point2D.Float();	// Geschwindigkeit des PowerUps
@@ -68,15 +70,15 @@ public class PowerUp extends MovingObject
 		}	
 	}
 
-	private void paint(Graphics2D g2d){paint(g2d, this.paint_bounds.x);}
+	private void paint(Graphics2D g2d){paint(g2d, this.paintBounds.x);}
     
     void paint(Graphics2D g2d, int x)
 	{
 		paint(	g2d,
 				x, 
-				this.paint_bounds.y, 
-				this.paint_bounds.width,
-				this.paint_bounds.height, 
+				this.paintBounds.y,
+				this.paintBounds.width,
+				this.paintBounds.height,
 				this.surface, this.cross);		
 	}
     
@@ -137,7 +139,7 @@ public class PowerUp extends MovingObject
 		}		
 	}
 	
-	private void make(double x, double y, int powerUp_type, int powerUp_worth, int powerUp_direction)
+	private void make(double x, double y, PowerUpTypes powerUp_type, int powerUp_worth, int powerUp_direction)
 	{
 		this.bounds.setRect(x, y, GAME_SIZE, GAME_SIZE);
 		this.set_paint_bounds(GAME_SIZE, GAME_SIZE);
@@ -184,9 +186,9 @@ public class PowerUp extends MovingObject
 	{
 		this.collected = true;
 		
-		if(this.type > 3 || helicopter.powerUp_timer[this.type] ==  0)
+		if(this.type.ordinal() > 3 || helicopter.powerUp_timer[this.type.ordinal()] ==  0)
 		{
-			Audio.play(Audio.pu_announcer[this.type]);
+			Audio.play(Audio.pu_announcer[this.type.ordinal()]);
 		}
 		
 		if(this.type == TRIPLE_DMG)
@@ -240,7 +242,7 @@ public class PowerUp extends MovingObject
 	
 	void moveToStatusbar()
 	{
-		Menu.collected_PowerUp[this.type] = this;
+		Menu.collected_PowerUp[this.type.ordinal()] = this;
 		this.speed.setLocation(0, 0);
 		this.inStatusBar = true;
 		this.collected = false;
@@ -249,7 +251,7 @@ public class PowerUp extends MovingObject
 	}
 
 	public static void activate(Helicopter helicopter, ArrayList<LinkedList<PowerUp>> powerUp, Enemy enemy, 
-	                     int type, boolean to_status_bar)
+	                     PowerUpTypes type, boolean to_status_bar)
 	{
 		Iterator<PowerUp> i = powerUp.get(INACTIVE).iterator();
 		PowerUp pu;					
@@ -259,7 +261,7 @@ public class PowerUp extends MovingObject
 		{
 			pu.make(enemy.bounds.getX(), 
 					enemy.bounds.getY(), 
-					type, 
+					type,
 					enemy.is_mini_boss 
 						? (int)(1.25f * enemy.strength) 
 						: 5 * enemy.strength, 

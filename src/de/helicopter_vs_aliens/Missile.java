@@ -244,44 +244,44 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	private void paint(Graphics2D g2d)
 	{		
 		g2d.setColor(MyColor.red);
-		g2d.fillRect(this.paint_bounds.x
-							+(this.speed >= 0 ? 0 : this.paint_bounds.width + 3), 
-					 this.paint_bounds.y-2, 					 	         
+		g2d.fillRect(this.paintBounds.x
+							+(this.speed >= 0 ? 0 : this.paintBounds.width + 3),
+					 this.paintBounds.y-2,
 					  2, 
-					 this.paint_bounds.height+4);
+					 this.paintBounds.height+4);
 		
-		g2d.fillRect(this.paint_bounds.x
-							+ (this.speed >= 0 ? 2 : this.paint_bounds.width + 1),
-					 this.paint_bounds.y-1,
+		g2d.fillRect(this.paintBounds.x
+							+ (this.speed >= 0 ? 2 : this.paintBounds.width + 1),
+					 this.paintBounds.y-1,
 					  2,
-					 this.paint_bounds.height+2);
+					 this.paintBounds.height+2);
 		
-		g2d.fillRect(this.paint_bounds.x
+		g2d.fillRect(this.paintBounds.x
 							+(this.speed >= 0 ? 4 : 1),
-					 (this.paint_bounds.y), 
-					 (this.paint_bounds.width),
-					 (this.paint_bounds.height));
+					 (this.paintBounds.y),
+					 (this.paintBounds.width),
+					 (this.paintBounds.height));
 					
 		g2d.setColor(MyColor.pink);
-		g2d.fillRect(this.paint_bounds.x+(this.speed >= 0 ? 2 : 0),
-					 this.paint_bounds.y+1,
-					 this.paint_bounds.width+3,
-					 this.paint_bounds.height-2);
+		g2d.fillRect(this.paintBounds.x+(this.speed >= 0 ? 2 : 0),
+					 this.paintBounds.y+1,
+					 this.paintBounds.width+3,
+					 this.paintBounds.height-2);
 		
 		g2d.setColor(Color.yellow);
-		g2d.fillRect(this.paint_bounds.x
-						+(this.speed >= 0 ? -3 : this.paint_bounds.width+5), 
-					 (this.paint_bounds.y),
+		g2d.fillRect(this.paintBounds.x
+						+(this.speed >= 0 ? -3 : this.paintBounds.width+5),
+					 (this.paintBounds.y),
 					  3,
-					 (this.paint_bounds.height));		
+					 (this.paintBounds.height));
 		
 		g2d.setColor(MyColor.translucentWhite);
 		g2d.fillRect((int)(this.get_paintMaxX()
 						*(this.speed >= 0 ? -this.speed/5 : 1) 
 						+(this.speed >= 0 ? -6 : 11)),
-				     (this.paint_bounds.y),				     
-				     (int)(0.2*Math.abs(this.speed)*this.paint_bounds.width), 				     
-				     (this.paint_bounds.height));		
+				     (this.paintBounds.y),
+				     (int)(0.2*Math.abs(this.speed)*this.paintBounds.width),
+				     (this.paintBounds.height));
 	}
 	
 	private void inactivate(ArrayList<LinkedList<Missile>> missile, Helicopter helicopter)

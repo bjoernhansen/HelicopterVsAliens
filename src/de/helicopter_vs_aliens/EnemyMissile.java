@@ -9,8 +9,11 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.helicopter.Helicopter;
 import de.helicopter_vs_aliens.enemy.Enemy;
 
+import static de.helicopter_vs_aliens.EnemyMissileTypes.BUSTER;
+import static de.helicopter_vs_aliens.EnemyMissileTypes.DISCHARGER;
 
-public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes
+
+public class EnemyMissile implements Constants, MissileTypes
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
@@ -20,18 +23,20 @@ public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes
 		speed    = new Point2D.Float(); // Geschwindigkeit der gegnerischen Geschosse
 	
 	private int
-		rgb_color_value,	// aktueller Integer-Farbwert für die RGB-Rotkomponente der Geschoss-Farbe [0-255]
-		diameter,			// Geschoss-Durchmesser
-		type;				// Art des Geschoss
+		rgbColorValue,	// aktueller Integer-Farbwert für die RGB-Rotkomponente der Geschoss-Farbe [0-255]
+		diameter;			// Geschoss-Durchmesser
     
 	private boolean 
 		has_hit,			// = true: Hat den Helikoper getroffen und kann entsorgt werden
-    	light_up_color; 	// = true: Farbe der gr�nen Geschosse wird heller, sonst dunkler
+    	light_up_color; 	// = true: Farbe der grünen Geschosse wird heller, sonst dunkler
     
 	private Color 	 
-		variableGreen;  	// variable gr�ne Farbe der gegnerischen Geschosse  
+		variableGreen;  	// variable grüne Farbe der gegnerischen Geschosse
     	
-    		
+    private EnemyMissileTypes
+		type;				// Art des Geschoss
+	
+	
     private void paint(Graphics2D g2d)
     {
         g2d.setColor(this.variableGreen);
@@ -89,38 +94,38 @@ public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes
     {
         if(this.light_up_color)
         {
-            this.rgb_color_value = Math.min(this.rgb_color_value + 25, 255);
+            this.rgbColorValue = Math.min(this.rgbColorValue + 25, 255);
         }
         else
         {
-            this.rgb_color_value = Math.max(this.rgb_color_value - 25, 0); 
+            this.rgbColorValue = Math.max(this.rgbColorValue - 25, 0);
         }        
         if(this.type == DISCHARGER)
         {
-        	this.variableGreen = new Color(this.rgb_color_value, 255, 0);
+        	this.variableGreen = new Color(this.rgbColorValue, 255, 0);
         }
         else
         {
-        	this.variableGreen = new Color(255, this.rgb_color_value, (int)(0.65f * this.rgb_color_value));
+        	this.variableGreen = new Color(255, this.rgbColorValue, (int)(0.65f * this.rgbColorValue));
         }  
-        if(this.rgb_color_value == 0){this.light_up_color = true;}
-        else if(this.rgb_color_value == 255){this.light_up_color = false;}
+        if(this.rgbColorValue == 0){this.light_up_color = true;}
+        else if(this.rgbColorValue == 255){this.light_up_color = false;}
     }
     
-    public void launch(Enemy enemy, int missile_type, double shooting_speed, Point2D shooting_direction)
+    public void launch(Enemy enemy, EnemyMissileTypes missileType, double shootingSpeed, Point2D shootingDirection)
     {
-    	this.type = missile_type;   	
+    	this.type = missileType;
     	    	
     	if(enemy.model == BARRIER)
     	{
     		this.location.setLocation(enemy.bounds.getX() + (enemy.bounds.getWidth() -this.diameter)/2,
 					  				  enemy.bounds.getY() + (enemy.bounds.getHeight()-this.diameter)/2);
-    		this.speed.setLocation(	shooting_speed * shooting_direction.getX(), 
-		 							shooting_speed * shooting_direction.getY());    	    	
+    		this.speed.setLocation(	shootingSpeed * shootingDirection.getX(),
+		 							shootingSpeed * shootingDirection.getY());
     	}
     	else
     	{
-    		this.speed.setLocation(	shooting_speed * (enemy.direction.x == -1 ? -1f : 1f), 0);  
+    		this.speed.setLocation(	shootingSpeed * (enemy.direction.x == -1 ? -1f : 1f), 0);
     		    		
     		if(enemy.model == TIT)
     		{
@@ -133,7 +138,7 @@ public class EnemyMissile implements Constants, EnemyMissileTypes, MissileTypes
 	    								  enemy.bounds.getY() + (enemy.bounds.getHeight()-this.diameter)/2);
 	    	}
     	}    	
-    	this.diameter = ((this.type == DISCHARGER) ? DIAMETER : (DIAMETER + 2));		
+    	this.diameter = ((this.type == DISCHARGER) ? DIAMETER : (DIAMETER + 2));
 		this.has_hit = false;
 		this.light_up_color = true;
     }

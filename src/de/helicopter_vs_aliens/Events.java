@@ -1,8 +1,12 @@
 package de.helicopter_vs_aliens;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
+
+import de.helicopter_vs_aliens.enemy.BossTypes;
+import de.helicopter_vs_aliens.enemy.Enemy;
+import de.helicopter_vs_aliens.helicopter.Helicopter;
+import de.helicopter_vs_aliens.helicopter.HelicopterFactory;
+import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -10,17 +14,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.helicopter.Helicopter;
-import de.helicopter_vs_aliens.enemy.BossTypes;
-import de.helicopter_vs_aliens.enemy.Enemy;
-import de.helicopter_vs_aliens.helicopter.HelicopterFactory;
-import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
-
+import static de.helicopter_vs_aliens.PowerUpTypes.*;
+import static de.helicopter_vs_aliens.PriceLevels.REGULAR;
+import static de.helicopter_vs_aliens.Windows.*;
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 
-
-public class Events implements Constants, Costs, PriceLevels, BossTypes
+public class Events implements Constants, Costs, BossTypes
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
@@ -37,7 +37,6 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 	public static int 
 		level = 1,				// aktuelle Level [1 - 51]
 		max_level = 1,			// höchstes erreichtes Level
-		window = STARTSCREEN,	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
 		timeOfDay = 1,			// Tageszeit; = 0: Nacht; = 1: Tag
 		money = 0, 				// Guthaben
 		kills_after_levelup,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
@@ -64,6 +63,9 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
     	all_playable = false,
     	save_anyway = false;
 	
+	public static Windows
+		window = STARTSCREEN;	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
+  
 	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
 	private static boolean 
 		cheating_mode = false,				// = true: Cheat-Modus aktiviert
@@ -550,7 +552,7 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 					{
 						Menu.repair_shop_button.get("Special" + 3).costs = STANDARD_SPECIAL_COSTS;
 						Menu.repair_shop_button.get("Special" + 3).label = Menu.THIRD_CANNON[Menu.language];
-						Menu.repair_shop_button.get("Special" + 3).cost_color = MyColor.costsColor[REGULAR];
+						Menu.repair_shop_button.get("Special" + 3).cost_color = MyColor.costsColor[REGULAR.ordinal()];
 					}
 					else
 					{
@@ -672,18 +674,18 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 				Menu.helicopter_frame[2].contains(cursor)||
 				Menu.helicopter_frame[3].contains(cursor))
 		{				
-			if(all_playable || helicopter.isUnlocked(helicopter.getType()))
+			if(all_playable || helicopter.isUnlocked(Events.nextHelicopterType))
 			{
 				startGame(Events.nextHelicopterType, Controller.savegame, true);
 			}
 			else
 			{
 				Audio.play(Audio.block);
-				Menu.cross_pos = (helicopter.getType().ordinal() - Menu.helicopter_selection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
+				Menu.cross_pos = (Events.nextHelicopterType.ordinal() - Menu.helicopter_selection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
 				Menu.cross = Menu.get_cross_polygon();
 				Menu.cross_timer = 1;
 				Menu.message_timer = 1;
-				Menu.set_ss_message(helicopter.getType());
+				Menu.set_ss_message(Events.nextHelicopterType);
 			}
 		}
 		else if(Menu.startscreen_button.get("00").bounds.contains(cursor))
@@ -1104,14 +1106,14 @@ public class Events implements Constants, Costs, PriceLevels, BossTypes
 								    		- helicopter.current_plating));
 	}
 	
-	private static void changeWindow(int new_window)
+	private static void changeWindow(Windows newWindow)
 	{		
-		window = new_window;	
+		window = newWindow;
 		Audio.refresh_bg_music();
-		MyColor.bg = new_window == GAME && timeOfDay == DAY ? MyColor.sky: Color.black;
+		MyColor.bg = newWindow == GAME && timeOfDay == DAY ? MyColor.sky: Color.black;
 	}
 
-	private static void new_startscreen_menu_window(int new_window, boolean just_entered)
+	private static void new_startscreen_menu_window(Windows new_window, boolean just_entered)
 	{
 		if(just_entered){Menu.stop_button_highlighting(Menu.startscreen_button);}
 		Audio.play(Audio.choose);		

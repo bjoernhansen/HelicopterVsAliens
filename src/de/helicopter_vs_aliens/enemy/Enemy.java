@@ -19,11 +19,13 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.helicopter.Helicopter;
 
+import static de.helicopter_vs_aliens.EnemyMissileTypes.BUSTER;
+import static de.helicopter_vs_aliens.EnemyMissileTypes.DISCHARGER;
+import static de.helicopter_vs_aliens.PowerUpTypes.REPARATION;
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
 
-public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
-											EnemyMissileTypes, BossTypes
+public class Enemy extends MovingObject implements DamageFactors, MissileTypes, BossTypes
 {
 	private class FinalEnemysOperator
     {	
@@ -242,7 +244,6 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		shots_per_cycle,
 		shooting_cycle_length,
 		shot_speed,
-		shot_type,
 		shot_rotation_speed,
 		
 		// Regulation des Stuneffekte nach Treffer durch Stopp-Rakete der Orochi-Klasse
@@ -281,7 +282,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		is_carrier,				// = true
 		is_clockwise_barrier,	// = true: der Rotor des Hindernis dreht im Uhrzeigersinn
 		is_recovering_speed;
-   
+  
+	private EnemyMissileTypes
+		shotType;
+	
 	private GradientPaint 
 		gradientColor;
 	
@@ -320,21 +324,21 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 					scales[3] = ((float)this.alpha)/255;			
 					g2d.drawImage(	this.image[g2d_sel], 
 									new RescaleOp(scales, offsets, null), 
-									this.paint_bounds.x - (this.direction.x == -1 ? this.paint_bounds.width/36 : 0), 
-									this.paint_bounds.y - this.paint_bounds.height/4);
+									this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
+									this.paintBounds.y - this.paintBounds.height/4);
 				}
 				else
 				{
 					g2d.drawImage(	this.image[g2d_sel + 2], 
-									this.paint_bounds.x - (this.direction.x == -1 ? this.paint_bounds.width/36 : 0), 
-									this.paint_bounds.y - this.paint_bounds.height/4, null);
+									this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
+									this.paintBounds.y - this.paintBounds.height/4, null);
 				}			
 			}
 			else
 			{
 				g2d.drawImage(	this.image[g2d_sel],
-								this.paint_bounds.x - (this.direction.x == -1 ? this.paint_bounds.width/36 : 0),
-								this.paint_bounds.y - this.paint_bounds.height/4, null);	
+								this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
+								this.paintBounds.y - this.paintBounds.height/4, null);
 			}
 						
 			// Dach
@@ -345,7 +349,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 						? MyColor.setAlpha(MyColor.variableGreen, this.alpha) 								
 						: MyColor.variableGreen;				
 				
-				this.paint_cannon(g2d, this.paint_bounds.x, this.paint_bounds.y, -this.direction.x, input_color_roof);
+				this.paint_cannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, input_color_roof);
 			}
 						
 			// blinkende Scheibe von Bossen und Mini-Bossen bzw. Eyes bei Hindernissen
@@ -384,7 +388,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		}
 		else if(helicopter.has_radar_device)
 		{
-			g2d.drawImage(this.image[g2d_sel + 2], this.paint_bounds.x - (this.direction.x == -1 ? this.paint_bounds.width/36 : 0), this.paint_bounds.y - this.paint_bounds.height/4, null);
+			g2d.drawImage(this.image[g2d_sel + 2], this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0), this.paintBounds.y - this.paintBounds.height/4, null);
 		}
 		
 		//zu Testzwecken:	
@@ -436,7 +440,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	
 	private void paint_rotor(Graphics2D g2d)
 	{
-		paint_rotor(g2d, this.paint_bounds.x, this.paint_bounds.y);
+		paint_rotor(g2d, this.paintBounds.x, this.paintBounds.y);
 	}
 	
 	private void paint_rotor(Graphics2D g2d, int x, int y)
@@ -445,7 +449,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 								!this.is_destroyed
 									?(MyColor.setAlpha(MyColor.barrierColor[this.rotor_color][Events.timeOfDay], this.alpha))
 									: MyColor.dimColor(MyColor.barrierColor[this.rotor_color][Events.timeOfDay], MyColor.DESTRUCTION_DIM_FACTOR), 
-								x, y, this.paint_bounds.width, this.paint_bounds.height, 5, (this.speed_level.equals(ZERO_SPEED) ? (this.snooze_timer <= SNOOZE_TIME ? 3 : 0) : 8) * (this.is_clockwise_barrier ? -1 : 1) * this.lifetime%360, 
+								x, y, this.paintBounds.width, this.paintBounds.height, 5, (this.speed_level.equals(ZERO_SPEED) ? (this.snooze_timer <= SNOOZE_TIME ? 3 : 0) : 8) * (this.is_clockwise_barrier ? -1 : 1) * this.lifetime%360,
 								24, BARRIER_BORDER_SIZE, this.snooze_timer == 0);
 		this.paint_barrier_cannon(g2d, x, y);
 	}
@@ -464,13 +468,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			if(this.alpha != 255){temp_color = MyColor.setAlpha(temp_color, this.alpha);}								
 			g2d.setColor(temp_color);
 			
-			distance_x = (int) ((0.45f + i * 0.01f) * this.paint_bounds.width);
-			distance_y = (int) ((0.45f + i * 0.01f) * this.paint_bounds.height);
+			distance_x = (int) ((0.45f + i * 0.01f) * this.paintBounds.width);
+			distance_y = (int) ((0.45f + i * 0.01f) * this.paintBounds.height);
 						
 			g2d.fillOval(x + distance_x,
 				 	  	 y + distance_y, 
-				 	  	 this.paint_bounds.width  - 2*distance_x,
-				 	  	 this.paint_bounds.height - 2*distance_y); 		
+				 	  	 this.paintBounds.width  - 2*distance_x,
+				 	  	 this.paintBounds.height - 2*distance_y);
 		}		
 	}	
 
@@ -480,15 +484,15 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		{
 			paint_bar(	g2d, 
 						x,	y, 
-						this.paint_bounds.width, this.paint_bounds.height,
+						this.paintBounds.width, this.paintBounds.height,
 						0.02f, 0.007f, 0.167f, 0.04f, 0.6f,  
 						direction_x, true, input_color);	
 		}
 		else if(this.model == CARGO)
 		{
 			paint_bar(	g2d, 
-						x, (int) (y + 0.48f * this.paint_bounds.height), 
-						this.paint_bounds.width, this.paint_bounds.height,
+						x, (int) (y + 0.48f * this.paintBounds.height),
+						this.paintBounds.width, this.paintBounds.height,
 						0, 0, 0.1f, 0.04f, 0.6f, 
 						direction_x, true, input_color);
 		}
@@ -507,20 +511,20 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 											y, 
 											bg_color, 
 											0, 
-											y + 0.3f*thickness_factor*this.paint_bounds.height, 
+											y + 0.3f*thickness_factor*this.paintBounds.height,
 											MyColor.dimColor(bg_color, 0.85f), 
 											true));
 			
-			g2d.fillRect(x + (int)(thickness_factor/2 * this.paint_bounds.width), 
-				  	     y + (int)(thickness_factor/2 * this.paint_bounds.height), 
-				  	     (int)((1f-thickness_factor)  * this.paint_bounds.width), 
-				  	     (int)((1f-thickness_factor)  * this.paint_bounds.height));
+			g2d.fillRect(x + (int)(thickness_factor/2 * this.paintBounds.width),
+				  	     y + (int)(thickness_factor/2 * this.paintBounds.height),
+				  	     (int)((1f-thickness_factor)  * this.paintBounds.width),
+				  	     (int)((1f-thickness_factor)  * this.paintBounds.height));
 		}
 		
-		int x_shift = (int) (shift * this.paint_bounds.width),
-			y_shift = (int) (shift * this.paint_bounds.height),
-			x_center_shift = (int) (center_shift * this.paint_bounds.width),
-			y_center_shift = (int) (center_shift * this.paint_bounds.height);
+		int x_shift = (int) (shift * this.paintBounds.width),
+			y_shift = (int) (shift * this.paintBounds.height),
+			x_center_shift = (int) (center_shift * this.paintBounds.width),
+			y_center_shift = (int) (center_shift * this.paintBounds.height);
 		
 		
 		if(image_paint || (this.speed_level.getX() != 0 && this.direction.x == 1))
@@ -528,8 +532,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			paint_bar(	g2d, 
 						x + x_center_shift,
 						y + y_shift,
-						this.paint_bounds.width,
-						this.paint_bounds.height - 2 * y_shift,						
+						this.paintBounds.width,
+						this.paintBounds.height - 2 * y_shift,
 						thickness_factor, 
 						0.2f, 
 						dim_factor, 
@@ -539,10 +543,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		if(image_paint || (this.speed_level.getX() != 0 && this.direction.x ==  -1))
 		{
 			paint_bar(	g2d, 
-						(int)(x + 1 + (1f-thickness_factor)*this.paint_bounds.width)-x_center_shift, 
+						(int)(x + 1 + (1f-thickness_factor)*this.paintBounds.width)-x_center_shift,
 						y + y_shift,  
-						this.paint_bounds.width,
-						this.paint_bounds.height - 2 * y_shift,						
+						this.paintBounds.width,
+						this.paintBounds.height - 2 * y_shift,
 						thickness_factor, 
 						0.2f,
 						dim_factor,
@@ -554,8 +558,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			paint_bar(	g2d,
 						x + x_shift,
 						y + y_center_shift,
-						this.paint_bounds.width - 2 * x_shift, 
-						this.paint_bounds.height,						
+						this.paintBounds.width - 2 * x_shift,
+						this.paintBounds.height,
 						thickness_factor,
 						0.2f,
 						dim_factor,
@@ -566,9 +570,9 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		{
 			paint_bar(	g2d,
 						x + x_shift,
-						(int)(y + 1 + (1f-thickness_factor)*this.paint_bounds.height)-y_center_shift, 
-						this.paint_bounds.width - 2 * x_shift,
-						this.paint_bounds.height,						
+						(int)(y + 1 + (1f-thickness_factor)*this.paintBounds.height)-y_center_shift,
+						this.paintBounds.width - 2 * x_shift,
+						this.paintBounds.height,
 						thickness_factor, 
 						0.2f, 
 						dim_factor, 
@@ -626,8 +630,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	private void paint_exhaust(Graphics2D g2d, Color color4)
 	{
 		paint_exhaust(g2d, 
-					   this.paint_bounds.x, 
-					   this.paint_bounds.y, 
+					   this.paintBounds.x,
+					   this.paintBounds.y,
 					   -this.direction.x, 
 					   null,
 					   color4);
@@ -646,7 +650,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		}
 		else if(this.model == BARRIER)
 		{
-			paint_bar_frame(g2d, this.paint_bounds.x, this.paint_bounds.y, 
+			paint_bar_frame(g2d, this.paintBounds.x, this.paintBounds.y,
 							0.07f, 0.35f, 0.04f, 0.7f, color4, null, false);
 		}
 	}
@@ -672,33 +676,33 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	                                  int direction_x, Color color, boolean is_exhaust)
 	{			
 		g2d.setPaint(new GradientPaint(	0, 
-										y + (y_shift + 0.05f)  * this.paint_bounds.height,
+										y + (y_shift + 0.05f)  * this.paintBounds.height,
 										color, 
 										0, 
-										y + (y_shift + height) * this.paint_bounds.height, 
+										y + (y_shift + height) * this.paintBounds.height,
 										MyColor.dimColor(color, 0.5f), 
 										true));
 		
 		g2d.fillRoundRect(	(int) (x + (direction_x == 1 
 										? x_shift 
-										: 1f - x_shift - width)	* this.paint_bounds.width),
-							(int) (y + 	y_shift 			   	* this.paint_bounds.height),
-							(int) (		width  				   	* this.paint_bounds.width), 
-							(int) (		height  			   	* this.paint_bounds.height),
-							(int) ((is_exhaust ? 0f : height/2) * this.paint_bounds.width),
-							(int) ((is_exhaust ? 0f : height  ) * this.paint_bounds.height)  );
+										: 1f - x_shift - width)	* this.paintBounds.width),
+							(int) (y + 	y_shift 			   	* this.paintBounds.height),
+							(int) (		width  				   	* this.paintBounds.width),
+							(int) (		height  			   	* this.paintBounds.height),
+							(int) ((is_exhaust ? 0f : height/2) * this.paintBounds.width),
+							(int) ((is_exhaust ? 0f : height  ) * this.paintBounds.height)  );
 	}
 	
 	
 	private void paint_image(Graphics2D g2d, int direction_x, Color color, boolean image_paint)
 	{	
 		int offset_x = (int)(image_paint 
-								? (direction_x == 1 ? 0.028f * this.paint_bounds.width : 0)
-								: this.paint_bounds.x),
+								? (direction_x == 1 ? 0.028f * this.paintBounds.width : 0)
+								: this.paintBounds.x),
 								
 			offset_y = (int)(image_paint
-								? 0.25f * this.paint_bounds.height
-								: this.paint_bounds.y);
+								? 0.25f * this.paintBounds.height
+								: this.paintBounds.y);
 		
 		boolean getarnt = 	 this.cloaking_timer > CLOAKING_TIME 
 						  && this.cloaking_timer <= CLOAKING_TIME+CLOAKED_TIME;
@@ -793,7 +797,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 					g2d, 
 					offset_x, 
 					(int)(offset_y 
-							+ this.paint_bounds.height
+							+ this.paintBounds.height
 							  *(this.model == TIT ? 0.067f : 0.125f)), 
 					Color.red.equals(color) ? MyColor.cloakedBossEye : null, 
 					direction_x, 
@@ -806,10 +810,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			paint_red_cross(
 					g2d,
 					(int)( offset_x + (direction_x == 1 
-								? 0.7f * this.paint_bounds.width
-								: (1 - 0.7f - 0.18f) * this.paint_bounds.width)),			
-					(int) (offset_y + 0.6f * this.paint_bounds.height), 
-					(int) (			  0.18f * this.paint_bounds.width));
+								? 0.7f * this.paintBounds.width
+								: (1 - 0.7f - 0.18f) * this.paintBounds.width)),
+					(int) (offset_y + 0.6f * this.paintBounds.height),
+					(int) (			  0.18f * this.paintBounds.width));
 		}
 				
 		/*g2d.setColor(Color.red);
@@ -849,33 +853,33 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	private void paint_rotor_interior(Graphics2D g2d, Color main_color_dark,
 	                                  int offset_x, int offset_y)
 	{
-		int distance_x = (int) (BARRIER_BORDER_SIZE * this.paint_bounds.width),
-			distance_y = (int) (BARRIER_BORDER_SIZE * this.paint_bounds.height);
+		int distance_x = (int) (BARRIER_BORDER_SIZE * this.paintBounds.width),
+			distance_y = (int) (BARRIER_BORDER_SIZE * this.paintBounds.height);
 					
 		g2d.setPaint(new GradientPaint(	0, 
 										offset_y, 
 										main_color_dark, 
 										0, 
-										offset_y + 0.045f*this.paint_bounds.height, 
+										offset_y + 0.045f*this.paintBounds.height,
 										MyColor.dimColor(main_color_dark, 0.85f), 
 										true));	
 		
 		g2d.fillOval(offset_x + distance_x, 
 					 offset_y + distance_y, 
-					 this.paint_bounds.width  - 2 * distance_x, 
-					 this.paint_bounds.height - 2 * distance_y);
+					 this.paintBounds.width  - 2 * distance_x,
+					 this.paintBounds.height - 2 * distance_y);
 	}
 
 	private void paint_roof(Graphics2D g2d, Color roof_color, int offset_x,
 							int offset_y, int direction_x)
 	{
 		g2d.setPaint(roof_color);
-		g2d.fillRoundRect(	(int) (offset_x + (direction_x == 1 ? 0.05f :  0.35f) * this.paint_bounds.width), 
+		g2d.fillRoundRect(	(int) (offset_x + (direction_x == 1 ? 0.05f :  0.35f) * this.paintBounds.width),
 							offset_y, 
-							(int) (0.6f   * this.paint_bounds.width),
-							(int) (0.125f * this.paint_bounds.height), 
-							(int) (0.6f   * this.paint_bounds.width),
-							(int) (0.125f * this.paint_bounds.height));
+							(int) (0.6f   * this.paintBounds.width),
+							(int) (0.125f * this.paintBounds.height),
+							(int) (0.6f   * this.paintBounds.width),
+							(int) (0.125f * this.paintBounds.height));
 	}
 
 	// malen des Schiffrumpfes	
@@ -887,39 +891,39 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		if(this.model == TIT)
 		{			
 			g2d.fillArc(offset_x,
-						(int) (offset_y - 0.333f * this.paint_bounds.height - 2),     
-						this.paint_bounds.width,     
-						this.paint_bounds.height, 180, 180);
+						(int) (offset_y - 0.333f * this.paintBounds.height - 2),
+						this.paintBounds.width,
+						this.paintBounds.height, 180, 180);
 			
-			g2d.fillArc((int)(offset_x + (direction_x == 1 ? 0.2f * this.paint_bounds.width : 0)), 
-						(int)(offset_y - 0.667f * this.paint_bounds.height),
-						(int)(			 0.8f   * this.paint_bounds.width), 
-						(int)(			 1.667f * this.paint_bounds.height), 180, 180);
+			g2d.fillArc((int)(offset_x + (direction_x == 1 ? 0.2f * this.paintBounds.width : 0)),
+						(int)(offset_y - 0.667f * this.paintBounds.height),
+						(int)(			 0.8f   * this.paintBounds.width),
+						(int)(			 1.667f * this.paintBounds.height), 180, 180);
 		}
 		else if(this.model == CARGO)
 		{
-			g2d.fillOval(	(int)(offset_x + 0.02f * this.paint_bounds.width), 
-					(int)(offset_y + 0.1f * this.paint_bounds.height), 
-					(int)(0.96f * this.paint_bounds.width), 
-					(int)(0.9f  * this.paint_bounds.height));
+			g2d.fillOval(	(int)(offset_x + 0.02f * this.paintBounds.width),
+					(int)(offset_y + 0.1f * this.paintBounds.height),
+					(int)(0.96f * this.paintBounds.width),
+					(int)(0.9f  * this.paintBounds.height));
 			
-			g2d.fillRect(	(int)(offset_x + (direction_x == 1 ? 0.05f : 0.35f) * this.paint_bounds.width), 
-							(int)(offset_y + 0.094f * this.paint_bounds.height),
-							(int)(0.6f * this.paint_bounds.width),
-							(int)(0.333f * this.paint_bounds.height));
+			g2d.fillRect(	(int)(offset_x + (direction_x == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
+							(int)(offset_y + 0.094f * this.paintBounds.height),
+							(int)(0.6f * this.paintBounds.width),
+							(int)(0.333f * this.paintBounds.height));
 
-			g2d.fillRoundRect(	(int) (offset_x + (direction_x == 1 ? 0.05f : 0.35f) * this.paint_bounds.width), 
-								(int) (offset_y + 0.031 * this.paint_bounds.height), 
-								(int) (0.6f * this.paint_bounds.width),
-								(int) (0.125f * this.paint_bounds.height), 
-								(int) (0.6f * this.paint_bounds.width),
-								(int) (0.125f * this.paint_bounds.height));
+			g2d.fillRoundRect(	(int) (offset_x + (direction_x == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
+								(int) (offset_y + 0.031 * this.paintBounds.height),
+								(int) (0.6f * this.paintBounds.width),
+								(int) (0.125f * this.paintBounds.height),
+								(int) (0.6f * this.paintBounds.width),
+								(int) (0.125f * this.paintBounds.height));
 		
 			// Rückflügel
-			g2d.fillArc(	(int)(offset_x + (direction_x == 1 ? 0.5f * this.paint_bounds.width : 0)), 
-							(int)(offset_y - 0.3f * this.paint_bounds.height), 
-							(int)(0.5f * this.paint_bounds.width),
-							this.paint_bounds.height, 
+			g2d.fillArc(	(int)(offset_x + (direction_x == 1 ? 0.5f * this.paintBounds.width : 0)),
+							(int)(offset_y - 0.3f * this.paintBounds.height),
+							(int)(0.5f * this.paintBounds.width),
+							this.paintBounds.height,
 							direction_x == 1 ? -32 : 155,  
 							57);
 		}
@@ -930,10 +934,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	                                       int direction_x)
 	{
 		g2d.setPaint(this.gradientColor);		
-		g2d.fillArc((int)(offset_x + (direction_x == 1 ? 0.4f : 0.1f) * this.paint_bounds.width), 
-				(int)(offset_y - 						   0.917f * this.paint_bounds.height),
-				(int)(0.5f * this.paint_bounds.width), 
-				 2 * this.paint_bounds.height, direction_x == 1 ? 0 : 160, 20);
+		g2d.fillArc((int)(offset_x + (direction_x == 1 ? 0.4f : 0.1f) * this.paintBounds.width),
+				(int)(offset_y - 						   0.917f * this.paintBounds.height),
+				(int)(0.5f * this.paintBounds.width),
+				 2 * this.paintBounds.height, direction_x == 1 ? 0 : 160, 20);
 	}
 	
 	private void set_airframe_color(Graphics2D g2d, int offset_y,
@@ -941,10 +945,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	{
 		this.gradientColor = new GradientPaint(	
 				0, 
-				offset_y + (this.model == TIT ? 0.25f : 0.375f) * this.paint_bounds.height,
+				offset_y + (this.model == TIT ? 0.25f : 0.375f) * this.paintBounds.height,
 				main_color_light,
 				0,
-				offset_y + this.paint_bounds.height,     
+				offset_y + this.paintBounds.height,
 				MyColor.dimColor(main_color_light, 0.5f),
 				true);
 			
@@ -954,8 +958,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	private void paint_barrier_eyes(Graphics2D g2d)
 	{
 		paint_barrier_eyes(	g2d, 
-							this.paint_bounds.x, 
-							this.paint_bounds.y,
+							this.paintBounds.x,
+							this.paintBounds.y,
 							this.alpha != 255 
 								? MyColor.setAlpha(MyColor.variableRed, this.alpha) 
 								: MyColor.variableRed,
@@ -964,8 +968,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	
 	public void paint_barrier_eyes(Graphics2D g2d, int x, int y, Color color, boolean image_paint)
 	{		
-		int border_distance = (int)(0.85f * BARRIER_BORDER_SIZE * this.paint_bounds.width),
-			eye_size = 		  (int)(	    BARRIER_EYE_SIZE    * this.paint_bounds.width);
+		int border_distance = (int)(0.85f * BARRIER_BORDER_SIZE * this.paintBounds.width),
+			eye_size = 		  (int)(	    BARRIER_EYE_SIZE    * this.paintBounds.width);
 				
 		g2d.setPaint(color);
 		
@@ -973,16 +977,16 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 					 y + border_distance,
 					 eye_size, eye_size);
 		
-		g2d.fillOval(x - border_distance + this.paint_bounds.width  - eye_size, 
-					 y - border_distance + this.paint_bounds.height - eye_size,
+		g2d.fillOval(x - border_distance + this.paintBounds.width  - eye_size,
+					 y - border_distance + this.paintBounds.height - eye_size,
 					 eye_size, eye_size);		
 		
 		if(!image_paint && !(this.snooze_timer > SNOOZE_TIME)){g2d.setPaint(MyColor.reversed_RandomRed(color));}
 		g2d.fillOval(x + border_distance, 
-					 y - border_distance + this.paint_bounds.height - eye_size,
+					 y - border_distance + this.paintBounds.height - eye_size,
 					 eye_size, eye_size);		
 		
-		g2d.fillOval(x - border_distance + this.paint_bounds.width  - eye_size, 
+		g2d.fillOval(x - border_distance + this.paintBounds.width  - eye_size,
 					 y + border_distance,
 					 eye_size, eye_size);
 	}
@@ -1000,8 +1004,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	void paint_tractor_beam(Graphics2D g2d, Helicopter helicopter)
 	{		
 		paint_energy_beam(	g2d,	
-							this.paint_bounds.x, 
-							this.paint_bounds.y + 1, 
+							this.paintBounds.x,
+							this.paintBounds.y + 1,
 							(int)(helicopter.bounds.getX() 
 								+ (helicopter.is_moving_left 
 									? Helicopter.FOCAL_PNT_X_LEFT 
@@ -1012,10 +1016,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	
 	private void paint_shield_beam(Graphics2D g2d)
 	{				
-		paint_energy_beam(g2d,	this.paint_bounds.x + (this.direction.x + 1)/2 * this.paint_bounds.width, 
-								this.paint_bounds.y,
-								Events.boss.paint_bounds.x + Events.boss.paint_bounds.width/48, 
-								Events.boss.paint_bounds.y + Events.boss.paint_bounds.width/48);
+		paint_energy_beam(g2d,	this.paintBounds.x + (this.direction.x + 1)/2 * this.paintBounds.width,
+								this.paintBounds.y,
+								Events.boss.paintBounds.x + Events.boss.paintBounds.width/48,
+								Events.boss.paintBounds.y + Events.boss.paintBounds.width/48);
 	}
 	
 	public static void paint_energy_beam(Graphics2D g2d, int x1, int y1, int x2, int y2)
@@ -1032,9 +1036,9 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	private void paint_window(Graphics2D g2d)
 	{
 		paint_window(g2d, 
-					 this.paint_bounds.x, 
-					 (int) (this.paint_bounds.y 
-							+ this.paint_bounds.height
+					 this.paintBounds.x,
+					 (int) (this.paintBounds.y
+							+ this.paintBounds.height
 							  *(this.model == TIT ? 0.067f : 0.125f)), 
 					 this.alpha != 255 
 						? MyColor.setAlpha(MyColor.variableRed, this.alpha) 
@@ -1050,20 +1054,20 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		if(this.model == TIT)
 		{
 			g2d.fillArc(	(int) (x + (direction_x == 1 ? 0.25f : 0.55f) 
-										* this.paint_bounds.width), 
+										* this.paintBounds.width),
 							y, 
-							(int) (0.2f   * this.paint_bounds.width), 
-							(int) (0.267f * this.paint_bounds.height), 
+							(int) (0.2f   * this.paintBounds.width),
+							(int) (0.267f * this.paintBounds.height),
 							180, 
 							180);
 		}
 		else if(this.model == CARGO)
 		{
 			g2d.fillArc(	(int) (x + (direction_x == 1 ? 0.1 : 0.6) 
-										* this.paint_bounds.width), 
+										* this.paintBounds.width),
 							y, 
-							(int) (0.3f   * this.paint_bounds.width),
-							(int) (0.333f * this.paint_bounds.height), 
+							(int) (0.3f   * this.paintBounds.width),
+							(int) (0.333f * this.paintBounds.height),
 							direction_x == 1 ? 90 : 0,
 							90);
 		}
@@ -1442,8 +1446,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 	{
 		for(int i = 0; i < 2; i++)
 		{
-			this.image[i] = new BufferedImage((int)(1.028f * this.paint_bounds.width), 
-											  (int)(1.250f * this.paint_bounds.height), 
+			this.image[i] = new BufferedImage((int)(1.028f * this.paintBounds.width),
+											  (int)(1.250f * this.paintBounds.height),
 											  BufferedImage.TYPE_INT_ARGB);
 			this.graphics[i] = getGraphics(this.image[i]);			
 			
@@ -1453,12 +1457,12 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 			if(this.cloaking_timer != DISABLED && helicopter.getType() == OROCHI)
 			{
 				BufferedImage 
-					 temp_image = new BufferedImage((int)(1.028f * this.paint_bounds.width), 
-							 						(int)(1.250f * this.paint_bounds.height), 
+					 temp_image = new BufferedImage((int)(1.028f * this.paintBounds.width),
+							 						(int)(1.250f * this.paintBounds.height),
 							 						BufferedImage.TYPE_INT_ARGB);
 				
-				this.image[2+i] = new BufferedImage((int)(1.028f * this.paint_bounds.width),
-													(int)(1.250f * this.paint_bounds.height),
+				this.image[2+i] = new BufferedImage((int)(1.028f * this.paintBounds.width),
+													(int)(1.250f * this.paintBounds.height),
 													BufferedImage.TYPE_INT_ARGB);
 				
 				this.paint_image(getGraphics(temp_image), 1-2*i, Color.red, true);								
@@ -1548,7 +1552,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		this.shooting_cycle_length = 0;				
 		this.shot_speed = 0;		
 		this.shot_rotation_speed = 0;
-		this.shot_type = 0;			
+		this.shotType = DISCHARGER;
 		
 		this.touched_site = NONE;
 		this.last_touched_site = NONE;
@@ -2286,7 +2290,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 											 + this.shooting_rate 
 											   * this.shots_per_cycle;				
 				this.shot_speed = 10;	
-				this.shot_type = BUSTER;		
+				this.shotType = BUSTER;
 				this.is_stunnable = false;			
 				this.farbe2 = MyColor.dimColor(this.farbe1, 0.75f);		
 				if(Events.timeOfDay == NIGHT)
@@ -2381,13 +2385,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		this.shot_speed = 5 + MyMath.random(6);		
 		if(this.barrier_teleport_timer != DISABLED || (MyMath.toss_up(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
 		{
-			if(this.barrier_teleport_timer == DISABLED){this.farbe1 = MyColor.bleach(new Color(170, 0, 255), 0.6f);}	
-			this.shot_type = BUSTER;	
+			if(this.barrier_teleport_timer == DISABLED){this.farbe1 = MyColor.bleach(new Color(170, 0, 255), 0.6f);}
+			this.shotType = BUSTER;
 		}
 		else
 		{
 			this.farbe1 = MyColor.bleach(Color.red, 0.6f);
-			this.shot_type = DISCHARGER;	
+			this.shotType = DISCHARGER;
 		}
 	}
 
@@ -3256,7 +3260,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 		}	
 	}
 	
-	private void evaluateShooting(Controller hd, Helicopter helicopter)
+	private void evaluateShooting(Controller controller, Helicopter helicopter)
 	{
 		if(	this.shoot_timer == 0 
 			&& !this.is_emp_slowed()	
@@ -3277,8 +3281,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 								 		Integer.MAX_VALUE/2, 
 								 		EnemyMissile.DIAMETER+30))))) 
 		{
-			this.shoot(	hd.enemyMissile, 
-						this.has_deadly_shots() ? BUSTER : DISCHARGER, 
+			this.shoot(	controller.enemyMissile,
+						this.has_deadly_shots() ? BUSTER : DISCHARGER,
 						this.shot_speed + 3*Math.random()+5);
 			
 			this.shoot_timer = this.shooting_rate;
@@ -3329,19 +3333,19 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 				this.shooting_direction.setLocation(this.shooting_direction.getX()/distance,
 													this.shooting_direction.getY()/distance);
 			}
-			this.shoot(hd.enemyMissile, this.shot_type, this.shot_speed);
+			this.shoot(hd.enemyMissile, this.shotType, this.shot_speed);
 		}				
 		this.barrier_shoot_timer--;
 	}
 	
-	public void shoot(ArrayList<LinkedList<EnemyMissile>> enemyMissile, int missile_type, double missile_speed)
+	public void shoot(ArrayList<LinkedList<EnemyMissile>> enemyMissiles, EnemyMissileTypes missileType, double missileSpeed)
     {
-    	Iterator<EnemyMissile> i = enemyMissile.get(INACTIVE).iterator();
+    	Iterator<EnemyMissile> i = enemyMissiles.get(INACTIVE).iterator();
 		EnemyMissile em;
-		if(i.hasNext()){em = i.next(); i.remove();}	
-		else{em = new EnemyMissile();}											
-		enemyMissile.get(ACTIVE).add(em);
-		em.launch(this, missile_type, missile_speed, this.shooting_direction);							   
+		if(i.hasNext()){em = i.next(); i.remove();}
+		else{em = new EnemyMissile();}
+		enemyMissiles.get(ACTIVE).add(em);
+		em.launch(this, missileType, missileSpeed, this.shooting_direction);
 		Audio.play(Audio.launch3);
     }
 	
@@ -4359,7 +4363,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes,
 				 this, 
 				 MyMath.toss_up(0.14f)
 					? REPARATION
-					: MyMath.random(this.type < 0 ? 5 : 6), false);
+					: PowerUpTypes.values()[MyMath.random(this.type < 0 ? 5 : 6)], false);
 		
 	}
 	

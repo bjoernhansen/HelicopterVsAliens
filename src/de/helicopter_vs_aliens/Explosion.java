@@ -13,6 +13,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
 import static de.helicopter_vs_aliens.Menu.*;
+import static de.helicopter_vs_aliens.Windows.STARTSCREEN;
 
 public class Explosion implements Constants, MissileTypes
 {

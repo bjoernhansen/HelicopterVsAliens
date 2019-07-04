@@ -5,6 +5,9 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.net.URL;
 
+import static de.helicopter_vs_aliens.PowerUpTypes.*;
+import static de.helicopter_vs_aliens.Windows.*;
+
 
 public class Audio implements Constants
 {
@@ -12,7 +15,7 @@ public class Audio implements Constants
             MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
 
     private static final int
-            NO_OF_ANNOUNCERS = 6;
+        NUMBER_OF_ANNOUNCERS = 6;
 
     static boolean
             sound_on = true,            // = true: Hintergrundmusik wird abgespielt
@@ -23,12 +26,12 @@ public class Audio implements Constants
             current_bg,            // Die aktuell abgespielte Hintergrund-Musik
 
     // Menü-Sounds
-    block,
+            block,
             cash,
             choose,
 
     // Game-Sounds
-    cloak,
+            cloak,
             emp,
             explosion1,
             explosion2,
@@ -53,8 +56,8 @@ public class Audio implements Constants
             teleport2,
             tractor_beam,
 
-    // Announcer
-    applause1,
+            // Announcer
+            applause1,
             applause2,
             nicecatch,
             doublekill,
@@ -64,13 +67,13 @@ public class Audio implements Constants
             monsterkill,
             pu_announcer[],
 
-    // Hintergrundmusik für den Standard-Modus
-    bg_music1,
+            // Hintergrundmusik für den Standard-Modus
+            bg_music1,
             bg_music2,
             bg_music3,
 
-    // Hintergrundmusik für Michael-Modus
-    main_menue,
+            // Hintergrundmusik für Michael-Modus
+            main_menue,
             repair_shop,
             scorescreen,
             level_01_09,
@@ -131,13 +134,13 @@ public class Audio implements Constants
         pu_fade2 = getAudioClip("pu_fade2.wav");
         stun_activated = getAudioClip("stun_activated.wav");
 
-        pu_announcer = new AudioClip[NO_OF_ANNOUNCERS];
-        pu_announcer[TRIPLE_DMG] = getAudioClip("announcer_triple_dmg.wav");
-        pu_announcer[INVINCIBLE] = getAudioClip("announcer_invincible.wav");
-        pu_announcer[UNLIMITRED_ENERGY] = getAudioClip("announcer_unlimited_energy.wav");
-        pu_announcer[BOOSTED_FIRE_RATE] = getAudioClip("announcer_fire_rate_boosted.wav");
-        pu_announcer[REPARATION] = getAudioClip("announcer_reparation.wav");
-        pu_announcer[BONUS_INCOME] = getAudioClip("announcer_bonus_credit.wav");
+        pu_announcer = new AudioClip[NUMBER_OF_ANNOUNCERS];
+        pu_announcer[TRIPLE_DMG.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
+        pu_announcer[INVINCIBLE.ordinal()] = getAudioClip("announcer_invincible.wav");
+        pu_announcer[UNLIMITRED_ENERGY.ordinal()] = getAudioClip("announcer_unlimited_energy.wav");
+        pu_announcer[BOOSTED_FIRE_RATE.ordinal()] = getAudioClip("announcer_fire_rate_boosted.wav");
+        pu_announcer[REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
+        pu_announcer[BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");
 
         if (MICHAEL_MODE)
         {

@@ -9,9 +9,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
+import static de.helicopter_vs_aliens.PriceLevels.*;
 import static de.helicopter_vs_aliens.helicopter.HelicopterTypes.*;
 
-public class Button implements Constants, Fonts, Costs, PriceLevels
+public class Button implements Constants, Fonts, Costs
 {
 	private static final int 
 		BUTTON_DISTANCE = 60;
@@ -209,16 +210,16 @@ public class Button implements Constants, Fonts, Costs, PriceLevels
 			  + " " 
 			  + STANDARD_UPGRADE_LABEL[Menu.language][6 + helicopter.getType().ordinal()][1];
 		Menu.repair_shop_button.get("Special" + 0).costs = SPOTLIGHT_COSTS;
-		Menu.repair_shop_button.get("Special" + 0).cost_color = MyColor.costsColor[CHEAP];
+		Menu.repair_shop_button.get("Special" + 0).cost_color = MyColor.costsColor[CHEAP.ordinal()];
 		Menu.repair_shop_button.get("Special" + 1).costs = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.record_time[PHOENIX.ordinal()][4] != 0)) ? PHOENIX_GOLIATH_COSTS  : STANDARD_GOLIATH_COSTS ;
-		Menu.repair_shop_button.get("Special" + 1).cost_color = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.record_time[PHOENIX.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP] : MyColor.costsColor[REGULAR];
+		Menu.repair_shop_button.get("Special" + 1).cost_color = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.record_time[PHOENIX.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repair_shop_button.get("Special" + 2).costs = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.record_time[ROCH.ordinal()][4] != 0)) ? CHEAP_SPECIAL_COSTS  : STANDARD_SPECIAL_COSTS ;
-		Menu.repair_shop_button.get("Special" + 2).cost_color = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.record_time[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP] : MyColor.costsColor[REGULAR];
+		Menu.repair_shop_button.get("Special" + 2).cost_color = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.record_time[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repair_shop_button.get("Special" + 3).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.record_time[OROCHI.ordinal()][4] != 0)) ? CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? ROCH_SECOND_CANNON_COSTS  : STANDARD_SPECIAL_COSTS ;
-		Menu.repair_shop_button.get("Special" + 3).cost_color = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.record_time[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE] : MyColor.costsColor[REGULAR];
+		Menu.repair_shop_button.get("Special" + 3).cost_color = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.record_time[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repair_shop_button.get("Special" + 3).label = Menu.SPECIALS[Menu.language][3];
 		Menu.repair_shop_button.get("Special" + 4).costs = helicopter.getType() != ROCH ? CHEAP_SPECIAL_COSTS : JUMBO_MISSILE_COSTS ;
-		Menu.repair_shop_button.get("Special" + 4).cost_color = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP] : MyColor.costsColor[CHEAP];
+		Menu.repair_shop_button.get("Special" + 4).cost_color = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[CHEAP.ordinal()];
 		Menu.repair_shop_button.get("Special" + 4).label = Menu.SPECIALS[Menu.language][4 + helicopter.getType().ordinal()];
 	}
 	
@@ -287,11 +288,11 @@ public class Button implements Constants, Fonts, Costs, PriceLevels
     	}
     }
 	
-	static void update_screen_menue_buttons(int window)
+	static void update_screen_menue_buttons(Windows window)
 	{
 		for(int m = 0; m < 8; m++)
 		{
-			Menu.startscreen_menu_button.get(Integer.toString(m)).label = STARTSCREEN_MENU_BUTTON[Menu.language][window][m];
+			Menu.startscreen_menu_button.get(Integer.toString(m)).label = STARTSCREEN_MENU_BUTTON[Menu.language][window.ordinal()][m];
 		}
 	}
 }	
