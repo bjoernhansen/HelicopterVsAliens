@@ -334,7 +334,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			}
 			else if(this.alpha != 255)
 			{
-				if(this.alpha > 51 || !helicopter.has_radar_device)
+				if(this.alpha > 51 || !helicopter.hasRadarDevice)
 				{
 					scales[3] = ((float)this.alpha)/255;			
 					g2d.drawImage(	this.image[g2d_sel], 
@@ -401,7 +401,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 				this.paint_rotor(g2d);				
 			}
 		}
-		else if(helicopter.has_radar_device)
+		else if(helicopter.hasRadarDevice)
 		{
 			g2d.drawImage(this.image[g2d_sel + 2], this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0), this.paintBounds.y - this.paintBounds.height/4, null);
 		}
@@ -497,7 +497,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{
 		if(this.model == TIT)
 		{
-			paint_bar(	g2d, 
+			paintBar(	g2d,
 						x,	y, 
 						this.paintBounds.width, this.paintBounds.height,
 						0.02f, 0.007f, 0.167f, 0.04f, 0.6f,  
@@ -505,7 +505,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		}
 		else if(this.model == CARGO)
 		{
-			paint_bar(	g2d, 
+			paintBar(	g2d,
 						x, (int) (y + 0.48f * this.paintBounds.height),
 						this.paintBounds.width, this.paintBounds.height,
 						0, 0, 0.1f, 0.04f, 0.6f, 
@@ -514,10 +514,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	}	
 	
 	private void paint_bar_frame(Graphics2D g2d, int x, int y, 
-	                             float thickness_factor,
+	                             float thicknessFactor,
 	                             float shift, float center_shift,
-	                             float dim_factor, 
-	                             Color input_color, Color bg_color,
+	                             float dimFactor,
+	                             Color inputColor, Color bg_color,
 	                             boolean image_paint)
 	{		
 		if(bg_color != null)
@@ -526,14 +526,14 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 											y, 
 											bg_color, 
 											0, 
-											y + 0.3f*thickness_factor*this.paintBounds.height,
+											y + 0.3f*thicknessFactor*this.paintBounds.height,
 											MyColor.dimColor(bg_color, 0.85f), 
 											true));
 			
-			g2d.fillRect(x + (int)(thickness_factor/2 * this.paintBounds.width),
-				  	     y + (int)(thickness_factor/2 * this.paintBounds.height),
-				  	     (int)((1f-thickness_factor)  * this.paintBounds.width),
-				  	     (int)((1f-thickness_factor)  * this.paintBounds.height));
+			g2d.fillRect(x + (int)(thicknessFactor/2 * this.paintBounds.width),
+				  	     y + (int)(thicknessFactor/2 * this.paintBounds.height),
+				  	     (int)((1f-thicknessFactor)  * this.paintBounds.width),
+				  	     (int)((1f-thicknessFactor)  * this.paintBounds.height));
 		}
 		
 		int x_shift = (int) (shift * this.paintBounds.width),
@@ -544,86 +544,86 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		
 		if(image_paint || (this.speed_level.getX() != 0 && this.direction.x == 1))
 		{
-			paint_bar(	g2d, 
+			paintBar(	g2d,
 						x + x_center_shift,
 						y + y_shift,
 						this.paintBounds.width,
 						this.paintBounds.height - 2 * y_shift,
-						thickness_factor, 
-						0.2f, 
-						dim_factor, 
+						thicknessFactor,
+						0.2f,
+						dimFactor,
 						false, 
-						input_color);
+						inputColor);
 		}
 		if(image_paint || (this.speed_level.getX() != 0 && this.direction.x ==  -1))
 		{
-			paint_bar(	g2d, 
-						(int)(x + 1 + (1f-thickness_factor)*this.paintBounds.width)-x_center_shift,
+			paintBar(	g2d,
+						(int)(x + 1 + (1f-thicknessFactor)*this.paintBounds.width)-x_center_shift,
 						y + y_shift,  
 						this.paintBounds.width,
 						this.paintBounds.height - 2 * y_shift,
-						thickness_factor, 
+						thicknessFactor,
 						0.2f,
-						dim_factor,
+						dimFactor,
 						false, 
-						input_color);
+						inputColor);
 		}
 		if(image_paint || (this.speed_level.getY() != 0 && this.direction.y ==  1))
 		{
-			paint_bar(	g2d,
+			paintBar(	g2d,
 						x + x_shift,
 						y + y_center_shift,
 						this.paintBounds.width - 2 * x_shift,
 						this.paintBounds.height,
-						thickness_factor,
+						thicknessFactor,
 						0.2f,
-						dim_factor,
+						dimFactor,
 						true,
-						input_color);
+						inputColor);
 		}
 		if(image_paint || (this.speed_level.getY() != 0 && this.direction.y == -1))
 		{
-			paint_bar(	g2d,
+			paintBar(	g2d,
 						x + x_shift,
-						(int)(y + 1 + (1f-thickness_factor)*this.paintBounds.height)-y_center_shift,
+						(int)(y + 1 + (1f-thicknessFactor)*this.paintBounds.height)-y_center_shift,
 						this.paintBounds.width - 2 * x_shift,
 						this.paintBounds.height,
-						thickness_factor, 
-						0.2f, 
-						dim_factor, 
+						thicknessFactor,
+						0.2f,
+						dimFactor,
 						true, 
-						input_color);
+						inputColor);
 		}
 	}	
 	
-	private static void paint_bar(Graphics2D g2d, 
-	                              int x, int y, 
-	                              int width, int height, 
-	                              float thickness_factor, 
-	                              float rounding, 
-	                              float dim_factor,
-	                              boolean horizontal,
-	                              Color input_color)
+	private static void paintBar(Graphics2D g2d,
+								 int x, int y,
+								 int width, int height,
+								 float thickness_factor,
+								 float rounding,
+								 float dimFactor,
+								 boolean horizontal,
+								 Color inputColor)
 	{		
-		paint_bar(	g2d, 
+		paintBar(	g2d,
 					x, y,
 					width, height, 
 					0, 0,
 					thickness_factor,
-					rounding, 
-					dim_factor,
+					rounding,
+					dimFactor,
 					1,
 					horizontal,
-					input_color);
+					inputColor);
 	}
 	
-	private static void paint_bar(	Graphics2D g2d, 
-	                              	int x, int y, 
-	                              	int width, int height,
-	                              	float x_shift_left, float x_shift_right, 
-	                              	float thickness_factor, float rounding,
-	                              	float dim_factor, int direction_x, 
-	                              	boolean horizontal, Color input_color)
+	private static void paintBar(Graphics2D g2d,
+								 int x, int y,
+								 int width, int height,
+								 float x_shift_left, float x_shift_right,
+								 float thickness_factor, float rounding,
+								 float dim_factor, int direction_x,
+								 boolean horizontal, Color input_color)
 	{		
 		g2d.setPaint( new GradientPaint(	(int) (horizontal ? 0 : x + 0.5f * thickness_factor * width), 
 											(int) (horizontal ?     y + 0.5f * thickness_factor * height : 0),
@@ -1183,7 +1183,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			boss_selection = BOSS_2;
 			selection = 0;
 			helicopter.powerUp_decay();
-			if((helicopter.no_cheats_used||Events.save_anyway) && !Events.reached_level_20[helicopter.getType().ordinal()])
+			if((helicopter.no_cheats_used||Events.save_anyway) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
 			{
 				helicopter.update_unlocked_helicopters();
 			}
@@ -1401,17 +1401,17 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
     private static boolean enemy_creation_approved(ArrayList<LinkedList<Enemy>> enemy)
 	{		
 		int nr_of_enemies = enemy.get(ACTIVE).size();
-		return !creation_stop 
+		return !creation_stop
 				&&((Events.last_creation_timer > 20  && !Events.isBossLevel()) ||
-				   (Events.last_creation_timer > 135 &&  Events.isBossLevel()) )
+				   (Events.last_creation_timer > 135 ) )
 				&& nr_of_enemies < (max_nr + max_barrier_nr)
 				&& MyMath.creation_probability(
 						Events.isBossLevel()
-							? 0 
+							? 0
 							: (max_nr + max_barrier_nr) - nr_of_enemies, 1)
 				&& !(Events.level > 50)
-				&& !(!enemy.get(ACTIVE).isEmpty() 
-						&& enemy.get(ACTIVE).getFirst().is_major_boss());
+				&& !(!enemy.get(ACTIVE).isEmpty()
+						&& enemy.get(ACTIVE).getFirst().isMajorBoss());
 	}
     
 	private static void creation(Helicopter helicopter, 
@@ -1430,7 +1430,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	private void create(Helicopter helicopter, int nr_of_enemies)
 	{			
 		this.reset();		
-		if(last_carrier != null){this.create_scampering_vessel(last_carrier != null);}
+		if(last_carrier != null){this.create_scampering_vessel(true);}
 		else if(barrier_creation_approved(nr_of_enemies)){this.create_barrier(helicopter);}
 		else if(rock_creation_approved()){this.create_rock(helicopter);}
 		else if(kaboom_creation_approved()){this.create_kaboom(helicopter);}
@@ -2566,14 +2566,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	private static void count_barriers(ArrayList<LinkedList<Enemy>> enemy)
 	{
 		Arrays.fill(living_barrier, null);
-		current_nr_of_barriers = 0;		
-		for(Iterator<Enemy> i = enemy.get(ACTIVE).iterator(); i.hasNext();)
-		{			
-			Enemy e = i.next();			
-			if(	e.model == BARRIER
-				&& !e.is_destroyed 
+		current_nr_of_barriers = 0;
+		for(Enemy e : enemy.get(ACTIVE))
+		{
+			if (e.model == BARRIER
+				&& !e.is_destroyed
 				&& !e.is_marked_for_removal)
-			{				
+			{
 				living_barrier[current_nr_of_barriers] = e;
 				current_nr_of_barriers++;
 			}
@@ -2595,15 +2594,14 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		for(int i = 0; i < current_nr_of_barriers; i++)
 		{    			
 			living_barrier[i].paint(g2d, helicopter);
-		}	
-		for(Iterator<Enemy> i = controller.enemy.get(ACTIVE).iterator(); i.hasNext();)
+		}
+		for(Enemy e : controller.enemy.get(ACTIVE))
 		{
-			Enemy e = i.next();	
-			if( currentRock != e
+			if (currentRock != e
 				&& e.model != BARRIER
-				&& !( e.cloaking_timer > CLOAKING_TIME 
-					  && e.cloaking_timer <= CLOAKING_TIME + CLOAKED_TIME 
-					  && !helicopter.has_radar_device))
+				&& !(e.cloaking_timer > CLOAKING_TIME
+				&& e.cloaking_timer <= CLOAKING_TIME + CLOAKED_TIME
+				&& !helicopter.hasRadarDevice))
 			{
 				e.paint(g2d, helicopter);
 			}
@@ -2619,7 +2617,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		if(this.stunning_timer == READY)
 		{
 			this.update_stoppable_timer();
-			if(this.is_major_boss()){this.calculate_boss_maneuver(controller.enemy);}
+			if(this.isMajorBoss()){this.calculate_boss_maneuver(controller.enemy);}
 			this.calculate_flight_maneuver(controller, helicopter);
 			this.validate_turns();
 		}		
@@ -2629,7 +2627,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		if(helicopter.can_collide_with(this)){this.collision(controller, helicopter);}
 		if(helicopter.getType() == PEGASUS){this.check_for_EMP_strike(controller, helicopter);}
 		if(this.has_deadly_ground_contact()){this.destroy(helicopter, controller.powerUp, false);}
-		if(this.is_to_be_removed()){this.prepare_removal();}
+		if(this.isToBeRemoved()){this.prepare_removal();}
 		this.set_paint_bounds();
 	}	
 	
@@ -2660,10 +2658,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	private void check_for_barrier_collision()
 	{
 		this.is_previous_stopping_barrier = this.stopping_barrier;
-		if(	this.stopping_barrier == null
-			||
-			(this.stopping_barrier != null
-			 && !this.stopping_barrier.bounds.intersects(this.bounds)))
+		if(this.stopping_barrier == null || !this.stopping_barrier.bounds.intersects(this.bounds))
 		{
 			this.stopping_barrier = null;
 			for(int i = 0; i < current_nr_of_barriers; i++)
@@ -2953,10 +2948,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 
 	private void emp_shock(Controller controller, Helicopter helicopter)
     {
-    	this.take_dmg((int)( (this.is_major_boss() 
+    	this.take_dmg((int)( (this.isMajorBoss()
     							? EMP_DAMAGE_FACTOR_BOSS
     							: EMP_DAMAGE_FACTOR_ORDINARY) 
-    						 * MyMath.dmg(helicopter.level_of_upgrade[ENERGY_ABILITY])));		
+    						 * MyMath.dmg(helicopter.levelOfUpgrade[ENERGY_ABILITY])));
 		this.is_emp_shocked = true;		
 		if(this.type == BOSS_4){this.spawning_hornet_timer = READY;}
 		this.disable_site_effects(helicopter);
@@ -2993,11 +2988,11 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			   //&& this.stopping_barrier == null
 			   && this.turn_timer == READY
 			   &&(	(this.direction.x == -1 
-			   			&&(((this.call_back > 0 || this.is_major_boss()) && this.bounds.getMinX() < TURN_FRAME.getMinX()) 
+			   			&&(((this.call_back > 0 || this.isMajorBoss()) && this.bounds.getMinX() < TURN_FRAME.getMinX())
 			   					|| (this.type == HEALER && this.bounds.getX() < 563)))
 			   		||
 			   		(this.direction.x == 1 
-			   			&&(((this.call_back > 0 || this.is_major_boss()) && this.bounds.getMaxX() > TURN_FRAME.getMaxX() && !this.can_learn_kamikaze) 
+			   			&&(((this.call_back > 0 || this.isMajorBoss()) && this.bounds.getMaxX() > TURN_FRAME.getMaxX() && !this.can_learn_kamikaze)
 			   					|| (this.type == BODYGUARD && (this.bounds.getX() + this.bounds.getWidth() > 660)))));
 	}
 
@@ -3030,12 +3025,12 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		}		
 	}
 
-	private boolean is_to_be_removed()
+	private boolean isToBeRemoved()
 	{		
 		return this.type != BOSS_2_SERVANT
 			   && this.barrier_teleport_timer == DISABLED
 			   && !this.is_dodging()
-			   && (this.call_back == 0 || this.call_back != 0 && !this.speed.equals(ZERO_SPEED))
+			   && (this.call_back == 0 || !this.speed.equals(ZERO_SPEED))
 			   && (    (this.bounds.getMinX() > Main.VIRTUAL_DIMENSION.width + DISAPPEARANCE_DISTANCE
 					   	 && this.direction.x ==  1)
 				    || (this.bounds.getMaxX() < -DISAPPEARANCE_DISTANCE));
@@ -3308,7 +3303,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	private boolean has_deadly_shots()
 	{		
 		return this.type == BOSS_3 
-				|| this.is_mini_boss == true 
+				|| this.is_mini_boss
 				|| (this.type == BIG_SHIELD_MAKER && MyMath.toss_up());
 	}
 
@@ -3485,7 +3480,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{		
 		return 
 			this.tractor == READY
-			&& helicopter.interphase_generator_timer <= helicopter.shift_time
+			&& helicopter.interphaseGeneratorTimer <= helicopter.shift_time
 			&& !this.is_emp_slowed() 
 			&& this.cloaking_timer < ACTIVE 
 			&& helicopter.tractor == null
@@ -3710,11 +3705,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 
 	private boolean can_be_positioned_below_ground()
 	{		
-		return !(this.model == BARRIER 
+		return !(this.model == BARRIER
 			     && this.borrow_timer == DISABLED)
-			   || this.is_destroyed 
-			   || currentRock == this
-			   || this.borrow_timer != DISABLED;
+			   || this.is_destroyed
+			   || currentRock == this;
 	}
 
 	private void calculate_speed_dead()
@@ -3735,7 +3729,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{		
 		if(this.stunning_timer != READY)
 		{
-			this.adjust_speed_to(helicopter.missile_drive);
+			this.adjust_speed_to(helicopter.missileDrive);
 			if(this.stunning_timer == 1)
 			{
 				if(this.model == BARRIER){this.snooze(true);}
@@ -3887,9 +3881,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 										 Controller controller,
 										 Helicopter helicopter)
 	{
-		for(Iterator<Enemy> i = controller.enemy.get(DESTROYED).iterator(); i.hasNext();)
+		for(Enemy e : controller.enemy.get(DESTROYED))
 		{
-			Enemy e = i.next();			
 			e.paint(g2d, helicopter);
 		}
 	}
@@ -3947,14 +3940,14 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 						this.is_kaboom ? true : false);
 	}
 		
-	public boolean is_major_boss()
+	public boolean isMajorBoss()
 	{
 		return this.type < 0;
 	}
 	
 	private boolean is_boss()
 	{
-		return this.is_mini_boss || this.is_major_boss();
+		return this.is_mini_boss || this.isMajorBoss();
 	}
 	
 	boolean is_living_boss()
@@ -3964,7 +3957,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		
 	boolean is_main_boss()
 	{
-		return this.is_major_boss()
+		return this.isMajorBoss()
 			   && !this.is_servant();
 	}
 	
@@ -4014,7 +4007,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 						  	: STANDARD, 
 						  this.is_kaboom);
 			
-			if(	helicopter.has_shortrange_radiation 
+			if(	helicopter.hasShortrangeRadiation
 				&& !this.is_kaboom)
 			{
 				this.reward_for(controller.powerUp,
@@ -4024,7 +4017,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			}
 			this.destroy(helicopter);			
 		}				
-		if(	helicopter.current_plating <= 0 
+		if(	helicopter.currentPlating <= 0
 			&& !helicopter.damaged)
 		{
 			helicopter.crash();
@@ -4037,7 +4030,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		else if(this.can_take_collison_dmg())
 		{
 			this.take_dmg((int)(
-				helicopter.current_firepower 
+				helicopter.currentFirepower
 				* (helicopter.bonus_kills_timer > Helicopter.NICE_CATCH_TIME - Helicopter.TELEPORT_KILL_TIME 
 					? TELEPORT_DAMAGE_FACTOR 
 					: RADIATION_DAMAGE_FACTOR)));				
@@ -4080,7 +4073,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{		
 		return helicopter.get_dmg_factor() 
 			   *(helicopter.power_shield_on && this.is_explodable ? 0.65f : 1.0f)
-			   *(this.is_kaboom && !this.is_destroyed && !helicopter.has_shortrange_radiation 
+			   *(this.is_kaboom && !this.is_destroyed && !helicopter.hasShortrangeRadiation
 			     ? helicopter.kaboom_dmg() 
 			     : (this.is_explodable && !this.is_invincible() && !this.is_destroyed)
 					? 1.0f 
@@ -4143,13 +4136,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		this.speed_level.setLocation( 
 				(this.knock_back_direction == this.direction.x ? 1 : -1)
 				  *(this.is_main_boss() || this.is_final_boss_servant()
-				    ? (10f + helicopter.missile_drive)/(Events.level/10) 
-					:  10f + helicopter.missile_drive), 
+				    ? (10f + helicopter.missileDrive)/(Events.level/10)
+					:  10f + helicopter.missileDrive),
 				0);
 						
 		this.stunning_timer = this.total_stunning_time 
 			= (int)(17 + STUNNING_TIME_BASIS 
-					     * (this.is_major_boss() ? (10f/Events.level) : 2.5f));
+					     * (this.isMajorBoss() ? (10f/Events.level) : 2.5f));
 				
 		this.disable_site_effects(helicopter);
 	}
@@ -4294,7 +4287,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 											  controller.explosion);
 			
 		if(this.is_carrier){last_carrier = this;}		
-		if(missile != null){missile.hits.remove(new Integer(this.hashCode()));}
+		if(missile != null){missile.hits.remove(this.hashCode());}
 	}	
 
 	private void stop_shielding()
@@ -4319,7 +4312,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 				&& (helicopter.getType() == ROCH || helicopter.getType() == OROCHI))
 			{
 				if(missile.kills > 0
-				   && helicopter.has_piercing_warheads	
+				   && helicopter.hasPiercingWarheads
 				   && (     Missile.can_take_credit(missile.sister[0], this)
 						 || Missile.can_take_credit(missile.sister[1], this)))
 				{
@@ -4406,21 +4399,25 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			make_boss2_servants = true;
 		}					
 		else if(this.type == BOSS_4)
-		{						
-			for(Iterator<Enemy> i = enemy.get(ACTIVE).iterator(); i.hasNext();)
+		{
+			for(Enemy e : enemy.get(ACTIVE))
 			{
-				Enemy e = i.next();
 				e.explode(explosion, helicopter);
-				if(e.type != BOSS_4){e.destroy(helicopter);}
+				if (e.type != BOSS_4)
+				{
+					e.destroy(helicopter);
+				}
 			}
 		}
 		else if(this.type == FINAL_BOSS)
 		{
-			for(Iterator<Enemy> i = enemy.get(ACTIVE).iterator(); i.hasNext();)
+			for(Enemy e : enemy.get(ACTIVE))
 			{
-				Enemy e = i.next();
 				e.explode(explosion, helicopter);
-				if(e.type != FINAL_BOSS){e.destroy(helicopter);}
+				if (e.type != FINAL_BOSS)
+				{
+					e.destroy(helicopter);
+				}
 			}
 			Events.restart_window_visible = true;
 			Events.level = 51;
@@ -4573,15 +4570,16 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		                                        ArrayList<LinkedList<Enemy>> enemy,
 												ArrayList<LinkedList<Explosion>> explosion)
 	{
-		for(Iterator<Enemy> i = enemy.get(ACTIVE).iterator(); i.hasNext();)
+		for(Enemy e : enemy.get(ACTIVE))
 		{
-			Enemy e = i.next();
-			if(e.model == BARRIER && e.is_on_screen())
+			if (e.model == BARRIER && e.is_on_screen())
 			{
 				e.explode(explosion, helicopter);
 				e.destroy(helicopter);
+			} else if (!e.is_on_screen())
+			{
+				e.is_marked_for_removal = true;
 			}
-			else if(!e.is_on_screen()){e.is_marked_for_removal = true;}
 		}		
 	}
 

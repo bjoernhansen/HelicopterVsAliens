@@ -60,7 +60,7 @@ public class EnemyMissile implements Constants, MissileTypes
     	this.determine_color();	
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (BackgroundObject.background_moves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
-		if(	helicopter.interphase_generator_timer <= helicopter.shift_time && 
+		if(	helicopter.interphaseGeneratorTimer <= helicopter.shift_time &&
 		helicopter.bounds.intersectsLine( this.location.getX() + this.diameter/2, 
 										  this.location.getY(), 
 										  this.location.getX() + this.diameter/2, 
@@ -153,9 +153,8 @@ public class EnemyMissile implements Constants, MissileTypes
 	paintAll(Graphics2D g2d,
 			 ArrayList<LinkedList<EnemyMissile>> enemyMissile)
 	{
-		for(Iterator<EnemyMissile> i = enemyMissile.get(ACTIVE).iterator(); i.hasNext();)
+		for(EnemyMissile em : enemyMissile.get(ACTIVE))
 		{
-			EnemyMissile em = i.next();
 			em.paint(g2d);
 		}		
 	}

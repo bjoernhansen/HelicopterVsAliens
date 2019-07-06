@@ -213,13 +213,16 @@ public class MyMath implements Positions
     
     public static boolean is_empty(long[][] int_array)
     {
-    	for(int i = 0; i < int_array.length; i++)
-    	{
-    		for(int j = 0; j < int_array[0].length; j++)
-        	{
-        		if(int_array[i][j] != 0){return false;}
-        	}
-    	}
+		for(long[] anInt_array : int_array)
+		{
+			for (int j = 0; j < int_array[0].length; j++)
+			{
+				if (anInt_array[j] != 0)
+				{
+					return false;
+				}
+			}
+		}
     	return true;
     }
     

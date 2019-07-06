@@ -22,15 +22,16 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 
 public class PowerUp extends MovingObject
 {
-	static final int
+	private static final int
 		GAME_SIZE = 30;
 	public static final int MENU_SIZE = 23;
 	
-	int direction;
+	private int
+		direction;
 	
 	public boolean
-		collected,		// = true: PowerUp kann in die LinkedList für inaktive PowerUps verschoben werden
-		stopped;		// nur Helios-Klasse; =true: PowerUp fällt zu Boden
+		collected;        // = true: PowerUp kann in die LinkedList für inaktive PowerUps verschoben werden
+		private boolean stopped;		// nur Helios-Klasse; =true: PowerUp fällt zu Boden
 	
 	private int 
 		worth;			// nur für PowerUps vom Typ 5; bestimmt, wie viel Geld der Spieler für das Einsammeln erhält
@@ -69,10 +70,12 @@ public class PowerUp extends MovingObject
 	paintAll(Graphics2D g2d,
 			 ArrayList<LinkedList<PowerUp>> powerUp)
 	{
-    	for(Iterator<PowerUp> i = powerUp.get(ACTIVE).iterator(); i.hasNext();)
+		for(PowerUp pu : powerUp.get(ACTIVE))
 		{
-			PowerUp pu = i.next();			
-			if(!pu.inStatusBar){pu.paint(g2d);}
+			if (!pu.inStatusBar)
+			{
+				pu.paint(g2d);
+			}
 		}	
 	}
 
@@ -106,7 +109,7 @@ public class PowerUp extends MovingObject
 		if(this.bounds.intersects(helicopter.bounds)){this.collect(helicopter);}		
 		
 		if(!this.stopped 
-		   && helicopter.has_PowerUp_immobilizer
+		   && helicopter.hasPowerUpImmobilizer
 		   && (this.bounds.getX() - this.speed.getX() + 20 > 1004 ))
 		{
 			this.stop();
@@ -118,7 +121,7 @@ public class PowerUp extends MovingObject
 			{
 				double new_y_speed = 0.20 * this.direction * this.speed.getX();
 				this.speed.setLocation(0.25 * this.direction + this.speed.getX(), 
-										helicopter.has_PowerUp_immobilizer
+										helicopter.hasPowerUpImmobilizer
 											? Math.min(new_y_speed, 0.03*(this.bounds.getCenterY()-30))
 											: new_y_speed);
 			}	
@@ -214,10 +217,10 @@ public class PowerUp extends MovingObject
 			if(!Events.isBossLevel())
 			{
 				helicopter.energy 
-					= Math.min(MyMath.energy(helicopter.level_of_upgrade[ENERGY_ABILITY]),
+					= Math.min(MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY]),
 											 helicopter.energy 
 											 	+ Math.max(10, 
-											 			   2*(MyMath.energy(helicopter.level_of_upgrade[5]) 
+											 			   2*(MyMath.energy(helicopter.levelOfUpgrade[5])
 											 				 - helicopter.energy)/3));
 				Menu.update_collected_powerUps(helicopter, this);
 			}				
@@ -227,7 +230,7 @@ public class PowerUp extends MovingObject
 			Audio.play(Audio.shield_up);
 			if(!Events.isBossLevel())
 			{				
-				helicopter.adjust_fire_rate(true);
+				helicopter.adjustFireRate(true);
 				Menu.update_collected_powerUps(helicopter, this);
 			}				
 		}
@@ -273,14 +276,14 @@ public class PowerUp extends MovingObject
 						? (int)(1.25f * enemy.strength) 
 						: 5 * enemy.strength, 
 					helicopter.bounds.getX() > enemy.bounds.getX() 
-					|| helicopter.has_PowerUp_immobilizer ? -1 : 1 );
+					|| helicopter.hasPowerUpImmobilizer ? -1 : 1 );
 		}
 		else{pu.make(0, 0, type, 0, 0);}
 		powerUp.get(ACTIVE).add(pu);
 		if(to_status_bar){pu.moveToStatusbar();}		
 	}
 	
-	void stop()
+	private void stop()
 	{
 		this.stopped = true;
 		this.speed.setLocation(0, 0);

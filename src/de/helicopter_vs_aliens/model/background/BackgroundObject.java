@@ -1,4 +1,5 @@
 package de.helicopter_vs_aliens.model.background;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -433,13 +434,13 @@ public class BackgroundObject extends MovingObject
 		}
     }
     
-    static void move_cloud()
+    private static void moveCloud()
     {    	
     	cloud_x -= background_moves ? 0.5f : 0.125f;
 		if(cloud_x < -250){cloud_x = 1000;}
     }
     
-    static void update_background_timer()
+    private static void updateBackgroundTimer()
     {
     	if(mutual_exclusion_factor == 1 )
 		{
@@ -453,7 +454,7 @@ public class BackgroundObject extends MovingObject
 		if(stone_timer > 0){stone_timer--;}
     }
     
-    void clear_image()
+    private void clearImage()
     {
     	this.image[0] = null; 
         this.image[1] = null;
@@ -476,37 +477,39 @@ public class BackgroundObject extends MovingObject
 			if(background_moves){bgo.x -= BG_SPEED;}
 			if(bgo.x < -(bgo.width + 50))
 			{
-				bgo.clear_image();
+				bgo.clearImage();
 				i.remove();
 				bgObject.get(INACTIVE).add(bgo);
 			}
 		}		
-		move_cloud();
+		moveCloud();
 		generate_new_bgObjects(bgObject);					
-		if(background_moves){update_background_timer();}
+		if(background_moves){
+            updateBackgroundTimer();}
 	}
 
-	private static boolean isBackgroundMoving(ArrayList<LinkedList<Enemy>> enemy,
-	                                          Helicopter helicopter)
+	private static boolean isBackgroundMoving(ArrayList<LinkedList<Enemy>> enemy, Helicopter helicopter)
 	{
-		if( helicopter.rotor_system_active 
-			&& !(!enemy.get(ACTIVE).isEmpty() 
-				 && enemy.get(ACTIVE).getFirst().is_major_boss()) 
-			&& helicopter.tractor == null)
-		{
-			return true;
-		}
-		return false;		
+		return helicopter.rotor_system_active
+				&& !isMajorBossActive(enemy)
+				&& helicopter.tractor == null;
+	}
+	
+	private static boolean isMajorBossActive(ArrayList<LinkedList<Enemy>> enemy)
+    {
+    	return    !enemy.get(ACTIVE).isEmpty()
+				&& enemy.get(ACTIVE).getFirst().isMajorBoss();
 	}
 
-	private static void	paint_bgObjects(Graphics2D g2d, 
-	                   	                ArrayList<LinkedList<BackgroundObject>> bgObject)
+	private static void	paint_bgObjects(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> bgObject)
 	{
-		for(Iterator<BackgroundObject> i = bgObject.get(ACTIVE).iterator(); i.hasNext();)
-		{
-			BackgroundObject bgo = i.next();
-			if(bgo.plane == -1)	{bgo.paint(g2d);}
-		}		
+        for (BackgroundObject bgo : bgObject.get(ACTIVE))
+        {
+            if (bgo.plane == -1)
+            {
+                bgo.paint(g2d);
+            }
+        }
 	}
 
 	private static void generate_new_bgObjects(	ArrayList<LinkedList<BackgroundObject>> bgObject)
@@ -526,8 +529,7 @@ public class BackgroundObject extends MovingObject
 		}
 	}
 
-	public static void paintForeground(Graphics2D g2d,
-									   ArrayList<LinkedList<BackgroundObject>> bgObject)
+	public static void paintForeground(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> bgObject)
 	{
 		// der Boden
 		g2d.setPaint(MyColor.gradientGround[Events.timeOfDay]);
@@ -536,11 +538,13 @@ public class BackgroundObject extends MovingObject
         // Objekte vor dem Helikopter
     	for(int j = 0; j < 3; j++)
 		{
-			for(Iterator<BackgroundObject> i = bgObject.get(ACTIVE).iterator(); i.hasNext();)
-			{
-				BackgroundObject bgo = i.next();
-				if(bgo.plane == j){bgo.paint(g2d);}				
-			}
+            for (BackgroundObject bgo : bgObject.get(ACTIVE))
+            {
+                if (bgo.plane == j)
+                {
+                    bgo.paint(g2d);
+                }
+            }
 		}
 	}
 }

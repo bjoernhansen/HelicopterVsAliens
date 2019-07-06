@@ -150,7 +150,7 @@ public class Button implements Constants, Fonts, Costs
 		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, REPAIR_SHOP[Menu.language], null, false, false));
 		Menu.inGameButton.put("MainMenu",     new Button(897, 431, 121, 25, MAIN_MENU[Menu.language], null, false, false));
 		Menu.inGameButton.put("MMNewGame1",   new Button(385, 116, 211, 35, START_NEW_GAME[Menu.language], null, false, false));
-		Menu.inGameButton.put("MMStopMusic",  new Button(385, 161, 211, 35, MUSIC[Menu.language][Audio.sound_on ? 0 : 1], null, false, false));
+		Menu.inGameButton.put("MMStopMusic",  new Button(385, 161, 211, 35, MUSIC[Menu.language][Audio.isSoundOn ? 0 : 1], null, false, false));
 		Menu.inGameButton.put("MMNewGame2",   new Button(385, 206, 211, 35, QUIT[Menu.language], null, false, false));
 		Menu.inGameButton.put("MMCancel",     new Button(385, 251, 211, 35, CANCEL[Menu.language], null, false, false));
 				
@@ -188,7 +188,7 @@ public class Button implements Constants, Fonts, Costs
 		Menu.startscreen_menu_button.put("Cancel", new Button( 849, 410, 150, 30, CANCEL[Menu.language], null, false, true));
 		
 				
-		if(HighscoreEntry.current_player_name.equals("John Doe"))
+		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
 		{
 			Menu.startscreen_button.get("10").marked = true;
 		}
@@ -204,7 +204,7 @@ public class Button implements Constants, Fonts, Costs
     	{    		
 			if(!helicopter.has_max_upgrade_level[i])
 			{
-				Menu.repairShopButton.get("StandardUpgrade" + i).costs = MyMath.costs(helicopter.getType(), helicopter.upgrade_costs[i], helicopter.level_of_upgrade[i]);
+				Menu.repairShopButton.get("StandardUpgrade" + i).costs = MyMath.costs(helicopter.getType(), helicopter.upgrade_costs[i], helicopter.levelOfUpgrade[i]);
 				Menu.repairShopButton.get("StandardUpgrade" + i).cost_color = MyColor.costsColor[helicopter.upgrade_costs[i]];
 			}
     	}
@@ -214,12 +214,12 @@ public class Button implements Constants, Fonts, Costs
 			  + STANDARD_UPGRADE_LABEL[Menu.language][6 + helicopter.getType().ordinal()][1];
 		Menu.repairShopButton.get("Special" + 0).costs = SPOTLIGHT_COSTS;
 		Menu.repairShopButton.get("Special" + 0).cost_color = MyColor.costsColor[CHEAP.ordinal()];
-		Menu.repairShopButton.get("Special" + 1).costs = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.record_time[PHOENIX.ordinal()][4] != 0)) ? PHOENIX_GOLIATH_COSTS  : STANDARD_GOLIATH_COSTS ;
-		Menu.repairShopButton.get("Special" + 1).cost_color = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.record_time[PHOENIX.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
-		Menu.repairShopButton.get("Special" + 2).costs = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.record_time[ROCH.ordinal()][4] != 0)) ? CHEAP_SPECIAL_COSTS  : STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + 2).cost_color = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.record_time[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
-		Menu.repairShopButton.get("Special" + 3).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.record_time[OROCHI.ordinal()][4] != 0)) ? CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? ROCH_SECOND_CANNON_COSTS  : STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + 3).cost_color = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.record_time[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 1).costs = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? PHOENIX_GOLIATH_COSTS  : STANDARD_GOLIATH_COSTS ;
+		Menu.repairShopButton.get("Special" + 1).cost_color = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 2).costs = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? CHEAP_SPECIAL_COSTS  : STANDARD_SPECIAL_COSTS ;
+		Menu.repairShopButton.get("Special" + 2).cost_color = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 3).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? ROCH_SECOND_CANNON_COSTS  : STANDARD_SPECIAL_COSTS ;
+		Menu.repairShopButton.get("Special" + 3).cost_color = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repairShopButton.get("Special" + 3).label = Menu.SPECIALS[Menu.language][3];
 		Menu.repairShopButton.get("Special" + 4).costs = helicopter.getType() != ROCH ? CHEAP_SPECIAL_COSTS : JUMBO_MISSILE_COSTS ;
 		Menu.repairShopButton.get("Special" + 4).cost_color = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[CHEAP.ordinal()];

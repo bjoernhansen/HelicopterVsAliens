@@ -124,14 +124,14 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{
 		for(int i = 0; i < 2; i++)
 		{
-			this.missile.add(	   i, new LinkedList<Missile>());				
-			this.explosion.add(	   i, new LinkedList<Explosion>());		
-			this.bgObject.add(	   i, new LinkedList<BackgroundObject>());
-			this.enemyMissile.add( i, new LinkedList<EnemyMissile>());
-			this.powerUp.add(	   i, new LinkedList<PowerUp>());
-			this.enemy.add(		   i, new LinkedList<Enemy>());
+			this.missile.add(	   i, new LinkedList<>());
+			this.explosion.add(	   i, new LinkedList<>());
+			this.bgObject.add(	   i, new LinkedList<>());
+			this.enemyMissile.add( i, new LinkedList<>());
+			this.powerUp.add(	   i, new LinkedList<>());
+			this.enemy.add(		   i, new LinkedList<>());
 		}		
-		this.enemy.add(DESTROYED, new LinkedList<Enemy>());
+		this.enemy.add(DESTROYED, new LinkedList<>());
 	}
 	
 	void start()

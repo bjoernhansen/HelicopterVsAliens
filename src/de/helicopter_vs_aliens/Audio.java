@@ -18,8 +18,8 @@ public class Audio implements Constants
         NUMBER_OF_ANNOUNCERS = 6;
 
     public static boolean
-            sound_on = true;            // = true: Hintergrundmusik wird abgespielt
-            public static boolean standard_bg_music = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
+        isSoundOn = true;            // = true: Hintergrundmusik wird abgespielt
+            public static boolean standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
 
     public static AudioClip
 
@@ -165,7 +165,7 @@ public class Audio implements Constants
         {
             current_bg.stop();
         }
-        if (sound_on)
+        if (isSoundOn)
         {
             current_bg = get_bg_music();
             current_bg.loop();
@@ -174,8 +174,8 @@ public class Audio implements Constants
 
     static void change_bg_music_mode(Savegame savegame)
     {
-        standard_bg_music = !standard_bg_music;
-        savegame.standard_bg_music = standard_bg_music;
+        standardBackgroundMusic = !standardBackgroundMusic;
+        savegame.standardBackgroundMusic = standardBackgroundMusic;
         refresh_bg_music();
         Events.settings_changed = true;
     }
@@ -183,7 +183,7 @@ public class Audio implements Constants
     // Rückgabe der aktuell zu spielenden Hintergrundmusik
     private static AudioClip get_bg_music()
     {
-        if (!standard_bg_music)
+        if (!standardBackgroundMusic)
         {
             if (Events.window == GAME && !Events.isBossLevel())
             {
@@ -252,7 +252,7 @@ public class Audio implements Constants
     public static void play(AudioClip clip)
     {
         clip.stop();
-        if (sound_on)
+        if (isSoundOn)
         {
             clip.play();
         }
@@ -260,7 +260,7 @@ public class Audio implements Constants
 
     public static void loop(AudioClip clip)
     {
-        if (sound_on)
+        if (isSoundOn)
         {
             clip.loop();
         }

@@ -23,8 +23,8 @@ public class Savegame implements Constants, Serializable
 	private static final String 
 		FILENAME = "savegame";
 	
-	String 
-		current_player_name;
+	String
+		currentPlayerName;
 	
 	private HighscoreEntry [][]
 		highscore = new HighscoreEntry[7][10];
@@ -45,14 +45,14 @@ public class Savegame implements Constants, Serializable
 		nr_of_repairs,
 		missile_counter,
 		hit_counter,
-		goliath_plating, 
+		platingDurabilityFactor,
 		nr_of_cannons, 
 		rapidfire, 
 		level_of_upgrade [] = new int[6];
 	
 	public long
 		playing_time, 
-		record_time[][] = new long [Helicopter.NR_OF_TYPES][5],
+		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5],
 		scorescreen_times[] = new long [Helicopter.NR_OF_TYPES];
 	
 	public float
@@ -61,9 +61,9 @@ public class Savegame implements Constants, Serializable
 		energy;
 	
 	public boolean
-		original_resulution,
-		standard_bg_music,
-		sound_on,		
+		originalResulution,
+		standardBackgroundMusic,
+		isSoundOn,
 		valid, 
 		has_shortrange_radiation,
 		has_piercing_warheads, 
@@ -72,7 +72,7 @@ public class Savegame implements Constants, Serializable
 		has_interphase_generator,
 		has_PowerUp_immobilizer,
 		no_cheats_used,
-		reached_level_20[] = new boolean [Helicopter.NR_OF_TYPES];
+		reachedLevelTwenty[] = new boolean [Helicopter.NR_OF_TYPES];
 	
 	public HelicopterTypes
 		helicopterType;
@@ -81,7 +81,7 @@ public class Savegame implements Constants, Serializable
 	private Savegame()
 	{
 		this.valid = false;
-		this.current_player_name = new String(HighscoreEntry.current_player_name);
+		this.currentPlayerName = HighscoreEntry.currentPlayerName;
 	}
 	
 	static Savegame initialize()
@@ -91,14 +91,14 @@ public class Savegame implements Constants, Serializable
 		{			
 			Savegame temp = last_game();			
 			
-			HighscoreEntry.current_player_name = new String(temp.current_player_name);			
+			HighscoreEntry.currentPlayerName = temp.currentPlayerName;
 			Menu.language = temp.language;
-			Menu.original_resulution = temp.original_resulution;
-			Audio.standard_bg_music = Audio.MICHAEL_MODE ? temp.standard_bg_music : false;		
-			Audio.sound_on = temp.sound_on;			
-			Events.record_time = temp.record_time.clone();
-			Events.helios_max_money = Events.get_helios_max_money();
-			Events.reached_level_20 = temp.reached_level_20.clone();
+			Menu.originalResulution = temp.originalResulution;
+			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
+			Audio.isSoundOn = temp.isSoundOn;
+			Events.recordTime = temp.recordTime.clone();
+			Events.heliosMaxMoney = Events.get_helios_max_money();
+			Events.reachedLevelTwenty = temp.reachedLevelTwenty.clone();
 			Events.highscore = temp.highscore.clone();
 			output = temp;
 		}		
@@ -145,15 +145,15 @@ public class Savegame implements Constants, Serializable
 		catch ( IOException e ) {System.err.println( e );}
 	}
 
-	void save(Helicopter helicopter, boolean validity)
+	private void save(Helicopter helicopter, boolean validity)
 	{		
 		this.valid = validity;
 		
-		this.current_player_name = HighscoreEntry.current_player_name;				
+		this.currentPlayerName = HighscoreEntry.currentPlayerName;
 		this.language = Menu.language;
-		this.standard_bg_music = Audio.standard_bg_music;	
-		this.original_resulution = Menu.original_resulution;
-		this.sound_on = Audio.sound_on;
+		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
+		this.originalResulution = Menu.originalResulution;
+		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
 		this.kills_after_levelup = Events.kills_after_levelup;
 		this.level = Events.level;
@@ -163,22 +163,22 @@ public class Savegame implements Constants, Serializable
 		this.extra_bonus_counter = Events.extraBonusCounter;
 		this.playing_time = Events.playing_time;		
 		this.scorescreen_times = helicopter.scorescreen_times.clone();
-		this.record_time = Events.record_time.clone();
-		this.reached_level_20 = Events.reached_level_20.clone();
+		this.recordTime = Events.recordTime.clone();
+		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
 		this.highscore = Events.highscore.clone();
 		this.helicopterType = helicopter.getType();
-		this.level_of_upgrade = helicopter.level_of_upgrade.clone();		
+		this.level_of_upgrade = helicopter.levelOfUpgrade.clone();
 		this.spotlight = helicopter.spotlight;
-		this.goliath_plating= helicopter.goliath_plating;
-		this.has_shortrange_radiation = helicopter.has_shortrange_radiation;
-		this.has_piercing_warheads = helicopter.has_piercing_warheads;
-		this.jumbo_missiles = helicopter.jumbo_missiles;
+		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
+		this.has_shortrange_radiation = helicopter.hasShortrangeRadiation;
+		this.has_piercing_warheads = helicopter.hasPiercingWarheads;
+		this.jumbo_missiles = helicopter.jumboMissiles;
 		this.nr_of_cannons = helicopter.nr_of_cannons;
-		this.has_radar_device = helicopter.has_radar_device;
+		this.has_radar_device = helicopter.hasRadarDevice;
 		this.rapidfire = helicopter.rapidfire;
-		this.has_interphase_generator = helicopter.has_interphase_generator;
-		this.has_PowerUp_immobilizer = helicopter.has_PowerUp_immobilizer;
-		this.current_plating = helicopter.current_plating;
+		this.has_interphase_generator = helicopter.hasInterphaseGenerator;
+		this.has_PowerUp_immobilizer = helicopter.hasPowerUpImmobilizer;
+		this.current_plating = helicopter.currentPlating;
 		this.energy = helicopter.energy;
 		this.enemies_seen = helicopter.enemies_seen;
 		this.enemies_killed = helicopter.enemies_killed;

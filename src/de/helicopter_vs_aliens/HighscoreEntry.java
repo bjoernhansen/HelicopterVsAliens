@@ -15,7 +15,7 @@ public class HighscoreEntry implements Serializable
 			NUMBER_OF_ENTRIES = 10;
 	
 	public static String
-		current_player_name = "John Doe";
+        currentPlayerName = "John Doe";
 	
 	// Variablen eines Highscore-Eintrages
 	public String player_name;
@@ -33,7 +33,7 @@ public class HighscoreEntry implements Serializable
 	
 	HighscoreEntry(Savegame savegame)
 	{
-		this.player_name = current_player_name;		
+		this.player_name = currentPlayerName;
 		this.helicopterType = savegame.helicopterType;
 		this.max_level = savegame.max_level;
 		this.playing_time = savegame.playing_time/60000;
@@ -42,7 +42,8 @@ public class HighscoreEntry implements Serializable
 		this.bonus_income = Events.bonusIncomePercentage();
 	}
 	
-	boolean is_better_than(HighscoreEntry entry)
+	// TODO use comparator
+	private boolean isBetterThan(HighscoreEntry entry)
 	{
 			 if(this.max_level > entry.max_level) return true;
 		else if(this.max_level < entry.max_level) return false;
@@ -66,7 +67,7 @@ public class HighscoreEntry implements Serializable
 				highscore[i] = current_entry;
 				break;
 			}
-			else if(current_entry.is_better_than(highscore[i]))
+			else if(current_entry.isBetterThan(highscore[i]))
 			{
 				temp_entry = highscore[i];
 				highscore[i] = current_entry;
@@ -77,15 +78,15 @@ public class HighscoreEntry implements Serializable
 
 	public static void checkName(Savegame savegame)
 	{
-		if(!current_player_name.equals(savegame.current_player_name))
+		if(!currentPlayerName.equals(savegame.currentPlayerName))
 		{
-			if(current_player_name.equals(""))
+			if(currentPlayerName.equals(""))
 			{
-				current_player_name = savegame.current_player_name;
+				currentPlayerName = savegame.currentPlayerName;
 			}
 			else
 			{
-				if(current_player_name.equals("John Doe"))
+				if(currentPlayerName.equals("John Doe"))
 				{
 					Menu.startscreen_menu_button.get("4").marked = true;
 					Menu.startscreen_button.get("10").marked = true;
@@ -95,7 +96,7 @@ public class HighscoreEntry implements Serializable
 					Menu.startscreen_menu_button.get("4").marked = false;
 					Menu.startscreen_button.get("10").marked = false;
 				}
-				savegame.current_player_name = current_player_name;
+				savegame.currentPlayerName = currentPlayerName;
 				Events.settings_changed = true;
 			}
 		}	

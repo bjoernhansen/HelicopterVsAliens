@@ -28,15 +28,15 @@ public class Main implements Constants
     public static Dimension
 			displayShift;
     
-    static GraphicsDevice
+    private static GraphicsDevice
     	device;
     
-    static JFrame
-    	f;
+    private static JFrame
+		frame;
     
-    static DisplayMode
-    	dm_original;
-	static DisplayMode dm_standard = new DisplayMode(  STANDARD_RESULUTION.width,
+    private static DisplayMode
+    	dm_original,
+		dm_standard = new DisplayMode(  STANDARD_RESULUTION.width,
     									STANDARD_RESULUTION.height,
     								  	32, 60);
 	public static DisplayMode dm_current;
@@ -50,14 +50,14 @@ public class Main implements Constants
         else
         {
             final Controller controller = Controller.getInstance();
-            f = new JFrame("HelicopterDefence 1.2");
+            frame = new JFrame("HelicopterDefence 1.2");
             
-            f.setBackground(Color.black);
+            frame.setBackground(Color.black);
             
-            f.add("Center", controller);
-            f.addKeyListener(controller);
-            f.setResizable(false);
-            f.addWindowListener(new WindowAdapter()
+            frame.add("Center", controller);
+            frame.addKeyListener(controller);
+            frame.setResizable(false);
+            frame.addWindowListener(new WindowAdapter()
             {
                 @Override
                 public void windowClosing(WindowEvent e)
@@ -74,13 +74,13 @@ public class Main implements Constants
             
             Controller.savegame = Savegame.initialize();
             
-            f.setUndecorated(true);
-            device.setFullScreenWindow(f);
+            frame.setUndecorated(true);
+            device.setFullScreenWindow(frame);
             activate_display_mode();
             switchDisplayMode(null);
             
             
-            f.setVisible(true);
+            frame.setVisible(true);
             
             controller.init();
             controller.start();
@@ -89,8 +89,8 @@ public class Main implements Constants
 
 	static void switchResolution(Savegame savegame)
 	{
-		de.helicopter_vs_aliens.gui.Menu.original_resulution = !de.helicopter_vs_aliens.gui.Menu.original_resulution;
-		savegame.original_resulution = de.helicopter_vs_aliens.gui.Menu.original_resulution;
+		de.helicopter_vs_aliens.gui.Menu.originalResulution = !de.helicopter_vs_aliens.gui.Menu.originalResulution;
+		savegame.originalResulution = de.helicopter_vs_aliens.gui.Menu.originalResulution;
 		activate_display_mode();
 		Events.settings_changed = true;
 	}
@@ -110,13 +110,13 @@ public class Main implements Constants
 				= Button.DISPLAY[de.helicopter_vs_aliens.gui.Menu.language][isFullScreen ? 0 : 1];
 		}
 		    
-        f.dispose();
-        f.setUndecorated(isFullScreen);
+        frame.dispose();
+        frame.setUndecorated(isFullScreen);
         
         if(isFullScreen)
 		{
     		//Menu.startscreen_menu_button.get("5").enabled = true;
-        	device.setFullScreenWindow(f);
+        	device.setFullScreenWindow(frame);
         	activate_display_mode();
 		}
 		else
@@ -124,18 +124,18 @@ public class Main implements Constants
 			device.setFullScreenWindow(null);
 			if(current_button != null){
 				de.helicopter_vs_aliens.gui.Menu.adapt_to_window_mode(displayShift);}
-	        f.setSize(WINDOW_SIZE);
-	        f.setLocation( (int)(( dm_original.getWidth()
+	        frame.setSize(WINDOW_SIZE);
+	        frame.setLocation( (int)(( dm_original.getWidth()
 	        					  -WINDOW_SIZE.getWidth())/2),
     					   (int)(( dm_original.getHeight()
     							  -WINDOW_SIZE.getHeight())/2));
-	        f.setVisible(true);
+	        frame.setVisible(true);
 		}
     }
     
     private static void activate_display_mode()
 	{
-    	dm_current = de.helicopter_vs_aliens.gui.Menu.original_resulution
+    	dm_current = de.helicopter_vs_aliens.gui.Menu.originalResulution
 				? dm_original
 				: dm_standard;
     	device.setDisplayMode(dm_current);

@@ -30,7 +30,7 @@ public class Explosion implements Constants, MissileTypes
 	public Ellipse2D 
 		ellipse = new Ellipse2D.Float();	// Einflussbereich der Explosion
 	
-	Enemy
+	private Enemy
 		source;
 	
     private int
@@ -49,7 +49,7 @@ public class Explosion implements Constants, MissileTypes
 	     
     private Explosion(){}    
     
-    Explosion(int x, int y)
+    private Explosion(int x, int y)
     {
     	this.center.setLocation(x, y); 	
 		this.time = 0;
@@ -63,9 +63,8 @@ public class Explosion implements Constants, MissileTypes
     public static void paintAll(Graphics2D g2d,
 								ArrayList<LinkedList<Explosion>> explosion)
 	{
-    	for(Iterator<Explosion> i = explosion.get(ACTIVE).iterator(); i.hasNext();)
+		for(Explosion exp : explosion.get(ACTIVE))
 		{
-			Explosion exp = i.next();
 			exp.paint(g2d);
 		}		
 	}
@@ -188,9 +187,9 @@ public class Explosion implements Constants, MissileTypes
 			}
 			else
 			{
-				exp.max_time = 20 + helicopter.level_of_upgrade[ENERGY_ABILITY];
-				exp.max_radius = 75 + (int)((19+3f*helicopter.level_of_upgrade[ENERGY_ABILITY]) * helicopter.level_of_upgrade[ENERGY_ABILITY]);
-				exp.broadness = 30 + 3 * (helicopter.level_of_upgrade[ENERGY_ABILITY]);	  
+				exp.max_time = 20 + helicopter.levelOfUpgrade[ENERGY_ABILITY];
+				exp.max_radius = 75 + (int)((19+3f*helicopter.levelOfUpgrade[ENERGY_ABILITY]) * helicopter.levelOfUpgrade[ENERGY_ABILITY]);
+				exp.broadness = 30 + 3 * (helicopter.levelOfUpgrade[ENERGY_ABILITY]);
 			}			  	
 	    	helicopter.emp_wave = exp;
 	    	exp.earned_money = 0;
