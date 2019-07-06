@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens;
 
-import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 
 import java.io.Serializable;
 
@@ -10,23 +11,23 @@ public class HighscoreEntry implements Serializable
 	private static final long 
 		serialVersionUID = 1L;	
 	
-	static final int 
-		NO_OF_ENTRIES = 10;	
+	public static final int
+			NUMBER_OF_ENTRIES = 10;
 	
-	static String 
+	public static String
 		current_player_name = "John Doe";
 	
 	// Variablen eines Highscore-Eintrages
-	String player_name;
+	public String player_name;
 	
-	int max_level,
-		crashes,
-		repairs,
-		bonus_income;	
+	public int max_level;
+	public int crashes;
+	public int repairs;
+	public int bonus_income;
 	
-	long playing_time;
+	public long playing_time;
 	
-	HelicopterTypes
+	public HelicopterTypes
 		helicopterType;
 	
 	
@@ -38,7 +39,7 @@ public class HighscoreEntry implements Serializable
 		this.playing_time = savegame.playing_time/60000;
 		this.crashes = savegame.nr_of_crashes;
 		this.repairs = savegame.nr_of_repairs;
-		this.bonus_income = Events.bonus_income_percentage();
+		this.bonus_income = Events.bonusIncomePercentage();
 	}
 	
 	boolean is_better_than(HighscoreEntry entry)
@@ -58,7 +59,7 @@ public class HighscoreEntry implements Serializable
 	static void put_entry(HighscoreEntry[] highscore, HighscoreEntry entry)
 	{
 		HighscoreEntry temp_entry, current_entry = entry;
-		for(int i = 0; i < NO_OF_ENTRIES; i++)
+		for(int i = 0; i < NUMBER_OF_ENTRIES; i++)
 		{
 			if(highscore[i] == null)
 			{

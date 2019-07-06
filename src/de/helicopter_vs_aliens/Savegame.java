@@ -1,7 +1,8 @@
 package de.helicopter_vs_aliens;
 
-import de.helicopter_vs_aliens.helicopter.Helicopter;
-import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +26,7 @@ public class Savegame implements Constants, Serializable
 	String 
 		current_player_name;
 	
-	HighscoreEntry [][] 
+	private HighscoreEntry [][]
 		highscore = new HighscoreEntry[7][10];
 	
 	public int	language,
@@ -91,7 +92,7 @@ public class Savegame implements Constants, Serializable
 			Savegame temp = last_game();			
 			
 			HighscoreEntry.current_player_name = new String(temp.current_player_name);			
-			Menu.language = temp.language;	
+			Menu.language = temp.language;
 			Menu.original_resulution = temp.original_resulution;
 			Audio.standard_bg_music = Audio.MICHAEL_MODE ? temp.standard_bg_music : false;		
 			Audio.sound_on = temp.sound_on;			
@@ -158,8 +159,8 @@ public class Savegame implements Constants, Serializable
 		this.level = Events.level;
 		this.max_level = Events.max_level;
 		this.timeOfDay = Events.timeOfDay;
-		this.bonus_counter = Events.overall_earnings;
-		this.extra_bonus_counter = Events.extra_bonus_counter;
+		this.bonus_counter = Events.overallEarnings;
+		this.extra_bonus_counter = Events.extraBonusCounter;
 		this.playing_time = Events.playing_time;		
 		this.scorescreen_times = helicopter.scorescreen_times.clone();
 		this.record_time = Events.record_time.clone();

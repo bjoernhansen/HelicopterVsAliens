@@ -19,13 +19,19 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import de.helicopter_vs_aliens.helicopter.Helicopter;
-import de.helicopter_vs_aliens.enemy.Enemy;
-import de.helicopter_vs_aliens.helicopter.HelicopterFactory;
-import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
-import de.helicopter_vs_aliens.helicopter.Phoenix;
+import de.helicopter_vs_aliens.model.Explosion;
+import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.missile.EnemyMissile;
+import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.util.MyColor;
 
-import static de.helicopter_vs_aliens.Windows.GAME;
+import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 
 public class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
@@ -41,40 +47,40 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	static long	
 		tm;
 	
-	static boolean 
+	public static boolean
 		antialiasing = true;
 		
 	private static Controller
 		controller = new Controller();
 		
-	static Savegame 
+	public static Savegame
 		savegame;
 		
-	int nr_of_frames,		
-		frames_counter = 0,
-		bg_repaint = 0;
+	int nr_of_frames;
+	public int frames_counter = 0;
+	public int bgRepaint = 0;
 	
 	long 
 		fps_start_time;
 	
-	boolean 
-		show_fps = false,
-		mouse_in_window = true;
+	public boolean
+		show_fps = false;
+	public boolean mouse_in_window = true;
 		
 	private Helicopter
 		helicopter = HelicopterFactory.create(HelicopterTypes.getDefault());
 	
 	public ArrayList<LinkedList<Enemy>> 		
 		enemy = new ArrayList<>(3);	
-	public ArrayList<LinkedList<Missile>> 		
+	public ArrayList<LinkedList<Missile>>
 		missile = new ArrayList<>(2);	
-	public ArrayList<LinkedList<Explosion>> 	
+	public ArrayList<LinkedList<Explosion>>
 		explosion =    new ArrayList<>(2);	
-	public ArrayList<LinkedList<EnemyMissile>> 
+	public ArrayList<LinkedList<EnemyMissile>>
 		enemyMissile = new ArrayList<>(2);	
-	public ArrayList<LinkedList<BgObject>> 	
+	public ArrayList<LinkedList<BackgroundObject>>
 		bgObject = 	   new ArrayList<>(2);	
-	public ArrayList<LinkedList<PowerUp>> 		
+	public ArrayList<LinkedList<PowerUp>>
 		powerUp = 	   new ArrayList<>(2);
 		
 	Thread animator;
@@ -104,14 +110,14 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		this.offGraphics.fill(this.wholeScreenClip);
 		this.offGraphics.setClip(this.offscreenClip);	
 						
-		add(Menu.my_label);
+		add(Menu.label);
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);		
 		Menu.initialize_menu(this.helicopter);		
 		Menu.update_button_labels(this.helicopter);		
 		this.initialize_lists();		
-		BgObject.initialize(this.bgObject);
+		BackgroundObject.initialize(this.bgObject);
 	}
 	
 	void initialize_lists()
@@ -120,7 +126,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		{
 			this.missile.add(	   i, new LinkedList<Missile>());				
 			this.explosion.add(	   i, new LinkedList<Explosion>());		
-			this.bgObject.add(	   i, new LinkedList<BgObject>());		
+			this.bgObject.add(	   i, new LinkedList<BackgroundObject>());
 			this.enemyMissile.add( i, new LinkedList<EnemyMissile>());
 			this.powerUp.add(	   i, new LinkedList<PowerUp>());
 			this.enemy.add(		   i, new LinkedList<Enemy>());
@@ -172,10 +178,10 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			if(skip_frame_flag == INACTIVE){skip_frame_flag = DISABLED;}
 			else
 			{					
-				if(this.bg_repaint != DISABLED){Menu.repaint_bg(g, this);}
+				if(this.bgRepaint != DISABLED){Menu.repaintBackground(g, this);}
 				g.drawImage(this.offImage, 
-							Main.display_shift.width, // 0
-							Main.display_shift.height, // 0
+							Main.displayShift.width, // 0
+							Main.displayShift.height, // 0
 							null);
 			}
 			
@@ -189,7 +195,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			else
 			{				
 				//unskipped_counter++;
-				this.offGraphics.setColor(MyColor.bg);				
+				this.offGraphics.setColor(MyColor.bg);
 				this.offGraphics.fill(this.wholeScreenClip);	
 				paintFrame(this.offGraphics);
 			}			
@@ -207,23 +213,23 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			if(!Menu.menue_visible)
 			{				
 		    	MyColor.calculate_variable_game_colors(this.frames_counter);
-				BgObject.update(this, this.bgObject);
+				BackgroundObject.update(this, this.bgObject);
 				Events.update_timer();
 				Menu.update_displays(this.helicopter);				
 				Enemy.update_all_destroyed(this, this.helicopter);
-				Missile.update_all(this, this.helicopter);
-				Enemy.update_all_active(this, this.helicopter);
-				EnemyMissile.update_all(this.enemyMissile, this.helicopter);
-				Events.check_for_levelup(this, this.helicopter);
-				Enemy.generate_new_enemies(this.enemy, this.helicopter);
+				Missile.updateAll(this, this.helicopter);
+				Enemy.updateAllActive(this, this.helicopter);
+				EnemyMissile.updateAll(this.enemyMissile, this.helicopter);
+				Events.checkForLevelup(this, this.helicopter);
+				Enemy.generateNewEnemies(this.enemy, this.helicopter);
 				this.helicopter.update(this.missile, this.explosion);
-				Explosion.update_all(this.helicopter, this.explosion);
-				PowerUp.update_all(this.powerUp, this.helicopter);
+				Explosion.updateAll(this.helicopter, this.explosion);
+				PowerUp.updateAll(this.powerUp, this.helicopter);
 			}			
 		}
 		else
 		{
-			MyColor.calculate_variable_menu_colors(this.frames_counter);
+			MyColor.calculateVariableMenuColors(this.frames_counter);
 			Menu.update(this, this.helicopter);
 		}
 	}
@@ -235,17 +241,17 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		if(Events.window == GAME)
 		{						
 			// zeichnen aller sichtbaren Objekte						
-			BgObject.paint_background(g2d, this.bgObject);			
-			Menu.paint_background_displays( g2d, this, this.helicopter);
-			if(Enemy.current_rock != null){Enemy.current_rock.paint(g2d, this.helicopter);}
-			Enemy.paint_all_destroyed(g2d, this, this.helicopter);			
-			Missile.paint_all_missiles( g2d, this);			
-			Enemy.paint_all_active(g2d, this, this.helicopter);			
-			EnemyMissile.paint_all(g2d, this.enemyMissile);			
+			BackgroundObject.paintBackground(g2d, this.bgObject);
+			Menu.paintBackgroundDisplays( g2d, this, this.helicopter);
+			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d, this.helicopter);}
+			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
+			Missile.paintAllMissiles( g2d, this);
+			Enemy.paintAllActive(g2d, this, this.helicopter);
+			EnemyMissile.paintAll(g2d, this.enemyMissile);
 			this.helicopter.paint(g2d, Events.timeOfDay);			
-			Explosion.paint_all(g2d, this.explosion);			
-			PowerUp.paint_all(g2d, this.powerUp);			
-			BgObject.paintForeground(g2d, this.bgObject);
+			Explosion.paintAll(g2d, this.explosion);
+			PowerUp.paintAll(g2d, this.powerUp);
+			BackgroundObject.paintForeground(g2d, this.bgObject);
 		}
 		Menu.paint(g2d, this, this.helicopter);
 	}
@@ -306,7 +312,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			this.mouse_in_window = true;
 			Events.time_aktu = System.currentTimeMillis();
 		}*/
-		this.bg_repaint = READY;
+		this.bgRepaint = READY;
 	}	
 	
 	@Override

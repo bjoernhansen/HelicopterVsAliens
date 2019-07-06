@@ -1,5 +1,9 @@
 package de.helicopter_vs_aliens;
 
+import de.helicopter_vs_aliens.gui.Button;
+import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.Label;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -18,11 +22,11 @@ public class Main implements Constants
 		WINDOW_SIZE = new Dimension(STANDARD_RESULUTION.width +6,
 									STANDARD_RESULUTION.height+29); // 460 //489//new Dimension(1030, 492);//
 			
-    static boolean
+    public static boolean
     	isFullScreen = true;
     
-    static Dimension
-    	display_shift;
+    public static Dimension
+			displayShift;
     
     static GraphicsDevice
     	device;
@@ -31,11 +35,11 @@ public class Main implements Constants
     	f;
     
     static DisplayMode
-    	dm_original,
-    	dm_standard = new DisplayMode(  STANDARD_RESULUTION.width,
+    	dm_original;
+	static DisplayMode dm_standard = new DisplayMode(  STANDARD_RESULUTION.width,
     									STANDARD_RESULUTION.height,
-    								  	32, 60),
-    	dm_current;
+    								  	32, 60);
+	public static DisplayMode dm_current;
 
 
     public static void main(final String[] args)
@@ -85,25 +89,25 @@ public class Main implements Constants
 
 	static void switchResolution(Savegame savegame)
 	{
-		Menu.original_resulution = !Menu.original_resulution;
-		savegame.original_resulution = Menu.original_resulution;
+		de.helicopter_vs_aliens.gui.Menu.original_resulution = !de.helicopter_vs_aliens.gui.Menu.original_resulution;
+		savegame.original_resulution = de.helicopter_vs_aliens.gui.Menu.original_resulution;
 		activate_display_mode();
 		Events.settings_changed = true;
 	}
     
-    static void switchDisplayMode(Button current_button)
+    static void switchDisplayMode(de.helicopter_vs_aliens.gui.Button current_button)
     {
         isFullScreen = !isFullScreen;
         
-        Button.STARTSCREEN_MENU_BUTTON[ENGLISH][2][0]
-        	= Button.DISPLAY[ENGLISH][isFullScreen ? 0 : 1];
-		Button.STARTSCREEN_MENU_BUTTON[GERMAN ][2][0]
-			= Button.DISPLAY[GERMAN][isFullScreen ? 0 : 1];
+        de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON[ENGLISH][2][0]
+        	= de.helicopter_vs_aliens.gui.Button.DISPLAY[ENGLISH][isFullScreen ? 0 : 1];
+		de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON[GERMAN ][2][0]
+			= de.helicopter_vs_aliens.gui.Button.DISPLAY[GERMAN][isFullScreen ? 0 : 1];
    
 		if(current_button != null)
 		{
 			current_button.label
-				= Button.DISPLAY[Menu.language][isFullScreen ? 0 : 1];
+				= Button.DISPLAY[de.helicopter_vs_aliens.gui.Menu.language][isFullScreen ? 0 : 1];
 		}
 		    
         f.dispose();
@@ -118,7 +122,8 @@ public class Main implements Constants
 		else
 		{
 			device.setFullScreenWindow(null);
-			if(current_button != null){Menu.adapt_to_window_mode(display_shift);}
+			if(current_button != null){
+				de.helicopter_vs_aliens.gui.Menu.adapt_to_window_mode(displayShift);}
 	        f.setSize(WINDOW_SIZE);
 	        f.setLocation( (int)(( dm_original.getWidth()
 	        					  -WINDOW_SIZE.getWidth())/2),
@@ -130,19 +135,20 @@ public class Main implements Constants
     
     private static void activate_display_mode()
 	{
-    	dm_current = Menu.original_resulution
+    	dm_current = de.helicopter_vs_aliens.gui.Menu.original_resulution
 				? dm_original
 				: dm_standard;
     	device.setDisplayMode(dm_current);
 		
-		display_shift = new Dimension((dm_current.getWidth()  - VIRTUAL_DIMENSION.width )/2,
+		displayShift = new Dimension((dm_current.getWidth()  - VIRTUAL_DIMENSION.width )/2,
 									  (dm_current.getHeight() - VIRTUAL_DIMENSION.height)/2);
-		if(Menu.my_label == null){Menu.my_label = new MyLabel();}
+		if(de.helicopter_vs_aliens.gui.Menu.label == null){
+			de.helicopter_vs_aliens.gui.Menu.label = new Label();}
 		else
 		{
-			Menu.my_label.setBounds(display_shift.width  + 42,
-					  				display_shift.height + 83, 940, 240);
+			Menu.label.setBounds(displayShift.width  + 42,
+					  				displayShift.height + 83, 940, 240);
 		}
-		Controller.getInstance().bg_repaint = 0;
+		Controller.getInstance().bgRepaint = 0;
 	}
 }

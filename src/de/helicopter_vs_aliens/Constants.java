@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens;
 
-interface Constants extends Positions
+public interface Constants extends Positions
 {	
-	static final int 		
+	int
 		ENGLISH = 0, 
 		GERMAN = 1,
 	
@@ -24,12 +24,8 @@ interface Constants extends Positions
     	SPELL = 6,
 		
 		NIGHT = 0,
-		DAY = 1,
-	
-		TIT = 0,
-		CARGO = 1, 
-		BARRIER = 2;
+		DAY = 1;
 		
-	static final float
+    float
 		BG_SPEED = 2.0f;
 }

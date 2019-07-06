@@ -1,25 +1,25 @@
 package de.helicopter_vs_aliens;
 
-import de.helicopter_vs_aliens.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.net.URL;
 
-import static de.helicopter_vs_aliens.PowerUpTypes.*;
-import static de.helicopter_vs_aliens.Windows.*;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
+import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 
 
 public class Audio implements Constants
 {
-    static final boolean
+    public static final boolean
             MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
 
     private static final int
         NUMBER_OF_ANNOUNCERS = 6;
 
-    static boolean
-            sound_on = true,            // = true: Hintergrundmusik wird abgespielt
-            standard_bg_music = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
+    public static boolean
+            sound_on = true;            // = true: Hintergrundmusik wird abgespielt
+            public static boolean standard_bg_music = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
 
     public static AudioClip
 
@@ -185,7 +185,7 @@ public class Audio implements Constants
     {
         if (!standard_bg_music)
         {
-            if (Events.window == GAME && !Events.is_boss_level())
+            if (Events.window == GAME && !Events.isBossLevel())
             {
                 return bg_music2;
             } else if (Events.window == REPAIR_SHOP || Events.window == SCORESCREEN)
