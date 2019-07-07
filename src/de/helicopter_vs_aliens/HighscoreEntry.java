@@ -53,8 +53,7 @@ public class HighscoreEntry implements Serializable
 		else if(this.crashes > entry.crashes) return false;
 		else if(this.repairs < entry.repairs) return true;
 		else if(this.repairs > entry.repairs) return false;
-		else if(this.bonus_income > entry.bonus_income) return true;	 
-		return false;
+		else return this.bonus_income > entry.bonus_income;
 	}
 	
 	static void put_entry(HighscoreEntry[] highscore, HighscoreEntry entry)

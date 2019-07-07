@@ -1042,13 +1042,12 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     
     private boolean hasAllSpecials()
     {
-    	if(	this.spotlight && this.hasGoliathPlating() && this.hasPiercingWarheads &&
-    		this.hasAllCannons() && hasFifthSpecial())
-    	{
-    		return true;
-    	}
-		return false;    	
-    }
+		return this.spotlight
+			&& this.hasGoliathPlating()
+			&& this.hasPiercingWarheads
+			&& this.hasAllCannons()
+			&& hasFifthSpecial();
+	}
     
     public boolean hasGoliathPlating()
 	{
@@ -1063,9 +1062,8 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 	public boolean has_all_upgrades()
     {
         for(int i = 0; i < 6; i++){if(!this.has_max_upgrade_level[i]){return false;}}
-    	if(!hasAllSpecials()){return false;}
-        return true;
-    }
+		return hasAllSpecials();
+	}
 	
 	public void rotate_propeller(float rotational_speed){rotate_propeller(this.getType(), rotational_speed);}
 	public void rotate_propeller(HelicopterTypes type, float rotational_speed)
@@ -1322,16 +1320,12 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 
 	public static boolean isUnlocked(HelicopterTypes type)
 	{
-		if(		type == PHOENIX
-			||	type == ROCH
+		return  type == PHOENIX
+			||  type == ROCH
 			|| (type == OROCHI && (Events.reachedLevelTwenty[PHOENIX.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()]))
-			|| (type == KAMAITACHI && (Events.reachedLevelTwenty[ROCH.ordinal()]    || Events.reachedLevelTwenty[PEGASUS.ordinal()]))
-			|| (type == PEGASUS && (Events.reachedLevelTwenty[OROCHI.ordinal()]  || Events.reachedLevelTwenty[KAMAITACHI.ordinal()]))
-			|| (type == HELIOS &&  Events.boss1_killed_b4()) )
-		{
-			return true;
-		}
-		return false;
+			|| (type == KAMAITACHI && (Events.reachedLevelTwenty[ROCH.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()]))
+			|| (type == PEGASUS && (Events.reachedLevelTwenty[OROCHI.ordinal()] || Events.reachedLevelTwenty[KAMAITACHI.ordinal()]))
+			|| (type == HELIOS && Events.boss1_killed_b4());
 	}
 	
 	public void setPlatingColor()
@@ -1751,7 +1745,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 
 	public boolean has_performed_teleport_kill()
 	{		
-		return this.bonus_kills_timer > 0 ? true : false;
+		return this.bonus_kills_timer > 0;
 	}
 
 	public abstract HelicopterTypes getType();

@@ -183,7 +183,7 @@ public class Button implements Constants, Fonts, Costs
 		}
 				
 		Menu.startscreen_button.get("11").marked = true;   // Der "Letztes Spiel fortsetzen"-Button ist markiert 
-		Menu.startscreen_button.get("11").enabled = Controller.savegame.valid ? true : false;
+		Menu.startscreen_button.get("11").enabled = Controller.savegame.valid;
 		
 		Menu.startscreen_menu_button.put("Cancel", new Button( 849, 410, 150, 30, CANCEL[Menu.language], null, false, true));
 		

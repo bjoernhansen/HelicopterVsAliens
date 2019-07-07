@@ -2351,15 +2351,9 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		}		
 	}
 
-	private void place_near_helicopter(Helicopter helicopter)
+	private void placeNearHelicopter(Helicopter helicopter)
 	{		
-		boolean left;
-		if(     helicopter.bounds.getMaxX()  
-			+ (0.5f * this.bounds.getWidth() + BARRIER_DISTANCE) < 1024)
-		{
-			 left = false;
-		}
-		else left = true;
+		boolean isLeftOfHelicopter = !(helicopter.bounds.getMaxX() + (0.5f * this.bounds.getWidth() + BARRIER_DISTANCE) < 1024);
 					
 		int x, 
 			y = (int)(helicopter.bounds.getY() 
@@ -2367,7 +2361,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 				- this.bounds.getWidth()
 				+ Math.random()*this.bounds.getWidth());
 		
-		if(left)
+		if(isLeftOfHelicopter)
 		{
 			x = (int)(helicopter.bounds.getX() 
 				-3*this.bounds.getWidth()/2  
@@ -3395,7 +3389,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{
 		this.barrier_teleport_timer = 2 * CLOAKING_TIME + this.shooting_rate * this.shots_per_cycle;	
 		this.cloaking_timer = CLOAKED_TIME + CLOAKING_TIME;			
-		this.place_near_helicopter(helicopter);		
+		this.placeNearHelicopter(helicopter);
 	}
 
 	private void boss_4_action(ArrayList<LinkedList<Enemy>> enemy)
@@ -3936,8 +3930,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 						helicopter, 
 						this.bounds.getCenterX(),
 						this.bounds.getCenterY(),
-						this.is_kaboom ? JUMBO : STANDARD, 
-						this.is_kaboom ? true : false);
+						this.is_kaboom ? JUMBO : STANDARD,
+						this.is_kaboom);
 	}
 		
 	public boolean isMajorBoss()
@@ -4054,7 +4048,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			if(this.has_HPs_left()){this.react_to_hit(helicopter, null);}
 			else
 			{
-				boolean beam_kill = helicopter.bonus_kills_timer > 0 ? true : false;
+				boolean beam_kill = helicopter.bonus_kills_timer > 0;
 				this.die(controller, helicopter, null, beam_kill);
 			}
 		}		

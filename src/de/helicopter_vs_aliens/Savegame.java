@@ -124,7 +124,7 @@ public class Savegame implements Constants, Serializable
 				e.printStackTrace();
 			}
 		}
-		catch ( IOException e ) {System.err.println( e );}
+		catch ( IOException e ) {e.printStackTrace();}
 		return new Savegame();
 	}
 			
@@ -142,7 +142,10 @@ public class Savegame implements Constants, Serializable
 		{
 			oos.writeObject(this);
 		}
-		catch ( IOException e ) {System.err.println( e );}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void save(Helicopter helicopter, boolean validity)
