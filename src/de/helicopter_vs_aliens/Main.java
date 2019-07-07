@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
+import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
+
 public class Main implements Constants
 {
 	public static final Dimension
@@ -89,25 +92,25 @@ public class Main implements Constants
 
 	static void switchResolution(Savegame savegame)
 	{
-		de.helicopter_vs_aliens.gui.Menu.originalResulution = !de.helicopter_vs_aliens.gui.Menu.originalResulution;
-		savegame.originalResulution = de.helicopter_vs_aliens.gui.Menu.originalResulution;
+		Menu.originalResulution = !Menu.originalResulution;
+		savegame.originalResulution = Menu.originalResulution;
 		activate_display_mode();
-		Events.settings_changed = true;
+		Events.settingsChanged = true;
 	}
     
-    static void switchDisplayMode(de.helicopter_vs_aliens.gui.Button current_button)
+    static void switchDisplayMode(Button current_button)
     {
         isFullScreen = !isFullScreen;
         
-        de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON[ENGLISH][2][0]
-        	= de.helicopter_vs_aliens.gui.Button.DISPLAY[ENGLISH][isFullScreen ? 0 : 1];
-		de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON[GERMAN ][2][0]
-			= de.helicopter_vs_aliens.gui.Button.DISPLAY[GERMAN][isFullScreen ? 0 : 1];
+        Button.STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][2][0]
+        	= Button.DISPLAY[ENGLISH.ordinal()][isFullScreen ? 0 : 1];
+		Button.STARTSCREEN_MENU_BUTTON[GERMAN.ordinal() ][2][0]
+			= Button.DISPLAY[GERMAN.ordinal()][isFullScreen ? 0 : 1];
    
 		if(current_button != null)
 		{
 			current_button.label
-				= Button.DISPLAY[de.helicopter_vs_aliens.gui.Menu.language][isFullScreen ? 0 : 1];
+				= Button.DISPLAY[Menu.language.ordinal()][isFullScreen ? 0 : 1];
 		}
 		    
         frame.dispose();
@@ -123,7 +126,7 @@ public class Main implements Constants
 		{
 			device.setFullScreenWindow(null);
 			if(current_button != null){
-				de.helicopter_vs_aliens.gui.Menu.adapt_to_window_mode(displayShift);}
+				Menu.adapt_to_window_mode(displayShift);}
 	        frame.setSize(WINDOW_SIZE);
 	        frame.setLocation( (int)(( dm_original.getWidth()
 	        					  -WINDOW_SIZE.getWidth())/2),
@@ -135,15 +138,15 @@ public class Main implements Constants
     
     private static void activate_display_mode()
 	{
-    	dm_current = de.helicopter_vs_aliens.gui.Menu.originalResulution
+    	dm_current = Menu.originalResulution
 				? dm_original
 				: dm_standard;
     	device.setDisplayMode(dm_current);
 		
 		displayShift = new Dimension((dm_current.getWidth()  - VIRTUAL_DIMENSION.width )/2,
 									  (dm_current.getHeight() - VIRTUAL_DIMENSION.height)/2);
-		if(de.helicopter_vs_aliens.gui.Menu.label == null){
-			de.helicopter_vs_aliens.gui.Menu.label = new Label();}
+		if(Menu.label == null){
+			Menu.label = new Label();}
 		else
 		{
 			Menu.label.setBounds(displayShift.width  + 42,

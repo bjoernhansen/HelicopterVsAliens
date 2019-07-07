@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.util.dictionary.Languages;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +31,7 @@ public class Savegame implements Constants, Serializable
 	private HighscoreEntry [][]
 		highscore = new HighscoreEntry[7][10];
 	
-	public int	language,
+	public int
 		money,
 		kills_after_levelup,
 		level, 
@@ -77,6 +78,9 @@ public class Savegame implements Constants, Serializable
 	
 	public HelicopterTypes
 		helicopterType;
+	
+	public Languages
+		language;
 		
 		
 	private Savegame()

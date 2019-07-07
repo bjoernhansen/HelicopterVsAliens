@@ -96,7 +96,7 @@ public class HighscoreEntry implements Serializable
 					Menu.startscreen_button.get("10").marked = false;
 				}
 				savegame.currentPlayerName = currentPlayerName;
-				Events.settings_changed = true;
+				Events.settingsChanged = true;
 			}
 		}	
 	}

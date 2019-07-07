@@ -27,6 +27,8 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.PriceLevels.REGULAR;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
+import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 
 public class Events implements Constants, Costs, BossTypes
@@ -68,7 +70,7 @@ public class Events implements Constants, Costs, BossTypes
     public static boolean
     	restart_window_visible,				// = true: Neustart-Fenster wird angezeigt
     	reachedLevelTwenty[] = new boolean[Helicopter.NR_OF_TYPES],
-    	settings_changed = false,
+    	settingsChanged = false,
     	all_playable = false,
     	save_anyway = false;
 	
@@ -429,7 +431,7 @@ public class Events implements Constants, Costs, BossTypes
 			{
 				money -= repair_fee(helicopter, helicopter.damaged);				
 				timeOfDay = (!helicopter.spotlight || MyMath.toss_up(0.33f)) ? DAY : NIGHT;
-				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language][timeOfDay];
+				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay];
 												
 				if(!(level == 50 && helicopter.has_all_upgrades()))
 				{
@@ -486,8 +488,8 @@ public class Events implements Constants, Costs, BossTypes
 				money -= SPOTLIGHT_COSTS;				
 				helicopter.spotlight = true;
 				timeOfDay = NIGHT;				
-				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language][timeOfDay];
-				Menu.repairShopButton.get("Einsatz").second_label = Button.SOLD[Menu.language][helicopter.spotlight ? 1 : 0];
+				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay];
+				Menu.repairShopButton.get("Einsatz").second_label = Button.SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
 				Menu.repairShopButton.get("Special" + 0).costs = 0;
 				for(Enemy e : enemy.get(DESTROYED))
 				{
@@ -568,7 +570,7 @@ public class Events implements Constants, Costs, BossTypes
 					if(helicopter.getType() == OROCHI)
 					{
 						Menu.repairShopButton.get("Special" + 3).costs = STANDARD_SPECIAL_COSTS;
-						Menu.repairShopButton.get("Special" + 3).label = Menu.THIRD_CANNON[Menu.language];
+						Menu.repairShopButton.get("Special" + 3).label = Menu.THIRD_CANNON[Menu.language.ordinal()];
 						Menu.repairShopButton.get("Special" + 3).cost_color = MyColor.costsColor[REGULAR.ordinal()];
 					}
 					else
@@ -782,10 +784,10 @@ public class Events implements Constants, Costs, BossTypes
 			{
 				Menu.startscreen_menu_button.get("4").marked = false;
 				HighscoreEntry.checkName(savegame);										
-				if(settings_changed)
+				if(settingsChanged)
 				{					
 					savegame.writeToFile();
-					settings_changed = false;
+					settingsChanged = false;
 				}
 			}
 			Menu.label.setVisible(false);
@@ -898,12 +900,12 @@ public class Events implements Constants, Costs, BossTypes
 				Controller.antialiasing ?
 					RenderingHints.VALUE_ANTIALIAS_ON : 
 					RenderingHints.VALUE_ANTIALIAS_OFF);
-		STARTSCREEN_MENU_BUTTON[ENGLISH][2][1]
-		    = Button.ANTIALIAZING[ENGLISH][Controller.antialiasing ? 0 : 1];
-		STARTSCREEN_MENU_BUTTON[GERMAN][2][1]
-		    = Button.ANTIALIAZING[GERMAN][Controller.antialiasing ? 0 : 1];
+		STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][2][1]
+		    = Button.ANTIALIAZING[ENGLISH.ordinal()][Controller.antialiasing ? 0 : 1];
+		STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][2][1]
+		    = Button.ANTIALIAZING[GERMAN.ordinal()][Controller.antialiasing ? 0 : 1];
 		current_button.label
-		    = Button.ANTIALIAZING[Menu.language][Controller.antialiasing ? 0 : 1];
+		    = Button.ANTIALIAZING[Menu.language.ordinal()][Controller.antialiasing ? 0 : 1];
 	}
 
 	static void mouseReleased(MouseEvent e, Helicopter helicopter)
@@ -1250,12 +1252,12 @@ public class Events implements Constants, Costs, BossTypes
 	{		
 		Audio.isSoundOn = !Audio.isSoundOn;
 		savegame.isSoundOn = Audio.isSoundOn;
-		settings_changed = true;
+		settingsChanged = true;
 		Audio.refreshBackgroundMusic();
-		STARTSCREEN_MENU_BUTTON[ENGLISH][2][2] = Button.MUSIC[ENGLISH][Audio.isSoundOn ? 0 : 1];
-		STARTSCREEN_MENU_BUTTON[GERMAN][2][2] = Button.MUSIC[GERMAN][Audio.isSoundOn ? 0 : 1];
-		Menu.inGameButton.get("MMStopMusic").label = Button.MUSIC[Menu.language][Audio.isSoundOn ? 0 : 1];
-		Menu.startscreen_menu_button.get("2").label = Button.MUSIC[Menu.language][Audio.isSoundOn ? 0 : 1];
+		STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][2][2] = Button.MUSIC[ENGLISH.ordinal()][Audio.isSoundOn ? 0 : 1];
+		STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][2][2] = Button.MUSIC[GERMAN.ordinal()][Audio.isSoundOn ? 0 : 1];
+		Menu.inGameButton.get("MMStopMusic").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
+		Menu.startscreen_menu_button.get("2").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
 	}
 	
 	

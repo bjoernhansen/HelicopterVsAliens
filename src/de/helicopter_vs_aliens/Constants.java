@@ -3,9 +3,6 @@ package de.helicopter_vs_aliens;
 public interface Constants extends Positions
 {	
 	int
-		ENGLISH = 0, 
-		GERMAN = 1,
-	
 		INACTIVE = 0,
     	ACTIVE = 1,
 	    DESTROYED = 2,

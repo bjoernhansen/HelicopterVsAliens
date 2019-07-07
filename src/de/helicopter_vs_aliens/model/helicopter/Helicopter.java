@@ -31,6 +31,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 
 public abstract class Helicopter extends MovingObject implements Fonts, DamageFactors, MissileTypes
 {			

@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.audio;
 
 import de.helicopter_vs_aliens.Constants;
-import de.helicopter_vs_aliens.Controller;
 import de.helicopter_vs_aliens.Events;
 import de.helicopter_vs_aliens.Savegame;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
@@ -180,7 +179,7 @@ public class Audio implements Constants
         standardBackgroundMusic = !standardBackgroundMusic;
         savegame.standardBackgroundMusic = standardBackgroundMusic;
         refreshBackgroundMusic();
-        Events.settings_changed = true;
+        Events.settingsChanged = true;
     }
 
     // Rückgabe der aktuell zu spielenden Hintergrundmusik
