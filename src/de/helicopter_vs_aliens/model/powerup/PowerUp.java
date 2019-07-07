@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.*;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
@@ -288,5 +289,4 @@ public class PowerUp extends MovingObject
 		this.stopped = true;
 		this.speed.setLocation(0, 0);
 	}
-	
 }

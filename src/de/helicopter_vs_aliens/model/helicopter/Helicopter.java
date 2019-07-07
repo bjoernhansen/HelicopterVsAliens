@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.*;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.Explosion;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -519,7 +520,8 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 		if(this.plasma_activation_timer > 0)
 		{
 			this.plasma_activation_timer--;
-			if(this.plasma_activation_timer == 30){Audio.play(Audio.plasma_off);}
+			if(this.plasma_activation_timer == 30){
+                Audio.play(Audio.plasma_off);}
 		}		
 		if(this.getType() == PHOENIX || this.getType() == KAMAITACHI)
 		{

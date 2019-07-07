@@ -19,6 +19,7 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -138,7 +139,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{
 		this.animator = new Thread(this);
 		this.animator.start();
-		Audio.refresh_bg_music();	
+		Audio.refreshBackgroundMusic();
 	}
 
 	static void shut_down(){System.exit(0);}

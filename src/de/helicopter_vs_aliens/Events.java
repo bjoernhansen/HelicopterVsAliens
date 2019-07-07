@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens;
 
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.BossTypes;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -877,7 +878,7 @@ public class Events implements Constants, Costs, BossTypes
 		}		
 		else if(Menu.page == 6)
 		{
-			Audio.change_bg_music_mode(savegame);			
+			Audio.changeBgMusicMode(savegame);
 		}
 		if(old_page == 4)
 		{
@@ -1136,7 +1137,7 @@ public class Events implements Constants, Costs, BossTypes
 	private static void changeWindow(WindowTypes newWindow)
 	{		
 		window = newWindow;
-		Audio.refresh_bg_music();
+		Audio.refreshBackgroundMusic();
 		MyColor.bg = newWindow == GAME && timeOfDay == DAY ? MyColor.sky: Color.black;
 	}
 
@@ -1179,7 +1180,7 @@ public class Events implements Constants, Costs, BossTypes
 		
 		if(	isBossLevel() || isBossLevel(previous_level) || level == 49)
 		{
-			Audio.refresh_bg_music();
+			Audio.refreshBackgroundMusic();
 			if(previous_level % 10 == 0){Audio.play(Audio.applause1);}
 		}
 		Menu.level_display_timer = START;
@@ -1250,7 +1251,7 @@ public class Events implements Constants, Costs, BossTypes
 		Audio.isSoundOn = !Audio.isSoundOn;
 		savegame.isSoundOn = Audio.isSoundOn;
 		settings_changed = true;
-		Audio.refresh_bg_music();		
+		Audio.refreshBackgroundMusic();
 		STARTSCREEN_MENU_BUTTON[ENGLISH][2][2] = Button.MUSIC[ENGLISH][Audio.isSoundOn ? 0 : 1];
 		STARTSCREEN_MENU_BUTTON[GERMAN][2][2] = Button.MUSIC[GERMAN][Audio.isSoundOn ? 0 : 1];
 		Menu.inGameButton.get("MMStopMusic").label = Button.MUSIC[Menu.language][Audio.isSoundOn ? 0 : 1];

@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.gui;
 import de.helicopter_vs_aliens.*;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;

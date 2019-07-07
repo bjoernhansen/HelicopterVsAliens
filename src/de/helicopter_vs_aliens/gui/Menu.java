@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import de.helicopter_vs_aliens.*;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.Explosion;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;

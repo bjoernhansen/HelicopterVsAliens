@@ -1,5 +1,9 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.audio;
 
+import de.helicopter_vs_aliens.Constants;
+import de.helicopter_vs_aliens.Controller;
+import de.helicopter_vs_aliens.Events;
+import de.helicopter_vs_aliens.Savegame;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -12,88 +16,87 @@ import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 public class Audio implements Constants
 {
     public static final boolean
-            MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
+        MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
 
     private static final int
         NUMBER_OF_ANNOUNCERS = 6;
 
     public static boolean
-        isSoundOn = true;            // = true: Hintergrundmusik wird abgespielt
-            public static boolean standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
+        isSoundOn = true,            // = true: Hintergrundmusik wird abgespielt
+        standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
 
     public static AudioClip
+        current_bg,        // Die aktuell abgespielte Hintergrund-Musik
 
-            current_bg,            // Die aktuell abgespielte Hintergrund-Musik
+        // Menü-Sounds
+        block,
+        cash,
+        choose,
 
-    // Menü-Sounds
-            block,
-            cash,
-            choose,
+        // Game-Sounds
+        cloak,
+        emp,
+        explosion1,
+        explosion2,
+        explosion3,
+        explosion4,
+        explosion5,
+        landing,
+        launch1,
+        launch2,
+        launch3,
+        level_up,
+        phase_shift,
+        plasma_on,
+        plasma_off,
+        pu_fade1,
+        pu_fade2,
+        rebound,
+        shield_up,
+        stun,
+        stun_activated,
+        teleport1,
+        teleport2,
+        tractor_beam,
 
-    // Game-Sounds
-            cloak,
-            emp,
-            explosion1,
-            explosion2,
-            explosion3,
-            explosion4,
-            explosion5,
-            landing,
-            launch1,
-            launch2,
-            launch3,
-            level_up,
-            phase_shift,
-            plasma_on,
-            plasma_off,
-            pu_fade1,
-            pu_fade2,
-            rebound,
-            shield_up,
-            stun,
-            stun_activated,
-            teleport1,
-            teleport2,
-            tractor_beam,
+        // Announcer
+        applause1,
+        applause2,
+        nicecatch,
+        doublekill,
+        tripplekill,
+        multikill,
+        megakill,
+        monsterkill,
+        pu_announcer[],
 
-            // Announcer
-            applause1,
-            applause2,
-            nicecatch,
-            doublekill,
-            tripplekill,
-            multikill,
-            megakill,
-            monsterkill,
-            pu_announcer[],
+        // Hintergrundmusik für den Standard-Modus
+        bg_music1,
+        bg_music2,
+        bg_music3,
 
-            // Hintergrundmusik für den Standard-Modus
-            bg_music1,
-            bg_music2,
-            bg_music3,
-
-            // Hintergrundmusik für Michael-Modus
-            main_menue,
-            repair_shop,
-            scorescreen,
-            level_01_09,
-            level_11_19,
-            level_21_29,
-            level_31_39,
-            level_41_48,
-            level_49,
-            boss_level,
-            final_boss_level,
-            victory;
+        // Hintergrundmusik für Michael-Modus
+        main_menue,
+        repair_shop,
+        scorescreen,
+        level_01_09,
+        level_11_19,
+        level_21_29,
+        level_31_39,
+        level_41_48,
+        level_49,
+        boss_level,
+        final_boss_level,
+        victory;
 
 
     private static AudioClip getAudioClip(String string)
     {
-        URL url = Controller.class.getResource("sounds/" + string);
+        URL url = Audio.class.getResource("sounds/" + string);
         return Applet.newAudioClip(url);
     }
 
-    static void initialize()
+    public static void initialize()
     {
         launch1 = getAudioClip("launch1.wav");
         explosion1 = getAudioClip("explosion1.wav");
@@ -159,7 +162,7 @@ public class Audio implements Constants
         }
     }
 
-    static void refresh_bg_music()
+    public static void refreshBackgroundMusic()
     {
         if (current_bg != null)
         {
@@ -172,11 +175,11 @@ public class Audio implements Constants
         }
     }
 
-    static void change_bg_music_mode(Savegame savegame)
+    public static void changeBgMusicMode(Savegame savegame)
     {
         standardBackgroundMusic = !standardBackgroundMusic;
         savegame.standardBackgroundMusic = standardBackgroundMusic;
-        refresh_bg_music();
+        refreshBackgroundMusic();
         Events.settings_changed = true;
     }
 
@@ -267,7 +270,7 @@ public class Audio implements Constants
     }
 
     // Abspielen eines Lob-Sounds entsprechend der Anzahl mit einem Mal besiegter Gegner
-    static void praise(int nr)
+    public static void praise(int nr)
     {
         if (nr == 1)
         {
