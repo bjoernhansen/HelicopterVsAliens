@@ -23,6 +23,7 @@ import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
 import static de.helicopter_vs_aliens.model.helicopter.Helicopter.GOLIATH_PLATING_STRENGTH;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.PriceLevels.REGULAR;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
@@ -522,7 +523,7 @@ public class Events implements Constants, Costs, BossTypes
 				Audio.play(Audio.cash);						
 				money -= (helicopter.getType() == PHOENIX ||(helicopter.getType() == HELIOS && recordTime[PHOENIX.ordinal()][4]!=0)) ? PHOENIX_GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
 				helicopter.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
-				helicopter.currentPlating += MyMath.plating(helicopter.levelOfUpgrade[PLATING]);
+				helicopter.currentPlating += MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()]);
 				helicopter.setPlatingColor();
 				Menu.repairShopButton.get("Special" + 1).costs = 0;
 			}
@@ -647,23 +648,23 @@ public class Events implements Constants, Costs, BossTypes
 			if(selection == Integer.MIN_VALUE){/**/}
 			else if(selection == 0)
 			{
-				helicopter.rotorSystem = MyMath.speed(helicopter.levelOfUpgrade[ROTOR_SYSTEM]);
+				helicopter.rotorSystem = MyMath.speed(helicopter.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
 			}
 			else if(selection == 1)
 			{
-				helicopter.missileDrive = MyMath.missile_drive(helicopter.levelOfUpgrade[MISSILE_DRIVE]);
+				helicopter.missileDrive = MyMath.missile_drive(helicopter.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
 			}
 			else if(selection == 2)
 			{
 				helicopter.currentPlating
 					+= helicopter.platingDurabilityFactor
-					   * ( MyMath.plating(helicopter.levelOfUpgrade[PLATING])
-						   -MyMath.plating(helicopter.levelOfUpgrade[PLATING]-1));
+					   * ( MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()])
+						   -MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()]-1));
 				helicopter.setPlatingColor();
 			}
 			else if(selection == 3)
 			{
-				helicopter.currentFirepower = (int)(helicopter.jumboMissiles * MyMath.dmg(helicopter.levelOfUpgrade[FIREPOWER]));
+				helicopter.currentFirepower = (int)(helicopter.jumboMissiles * MyMath.dmg(helicopter.levelOfUpgrade[FIREPOWER.ordinal()]));
 			}
 			else if(selection == 4)
 			{

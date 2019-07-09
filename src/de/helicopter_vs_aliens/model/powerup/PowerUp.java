@@ -18,6 +18,8 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 
 
@@ -218,7 +220,7 @@ public class PowerUp extends MovingObject
 			if(!Events.isBossLevel())
 			{
 				helicopter.energy 
-					= Math.min(MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY]),
+					= Math.min(MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
 											 helicopter.energy 
 											 	+ Math.max(10, 
 											 			   2*(MyMath.energy(helicopter.levelOfUpgrade[5])

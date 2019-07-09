@@ -3,6 +3,8 @@ package de.helicopter_vs_aliens;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.Label;
+import de.helicopter_vs_aliens.util.dictionary.Dictionary;
+import de.helicopter_vs_aliens.util.dictionary.Languages;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +20,7 @@ public class Main implements Constants
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = false;
+    	TESTMODE = true;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -49,6 +51,11 @@ public class Main implements Constants
     {
     	if(TESTMODE)
         {
+            Dictionary dictionary = new Dictionary(Languages.GERMAN);
+    
+            System.out.println(dictionary.getWord("upgrades.special.fifth.cxc"));
+            
+            
 		}
         else
         {

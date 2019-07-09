@@ -43,16 +43,19 @@ public class BackgroundObject extends MovingObject
 								+ HILL_FREQUENCY,
 								
 		TOTAL_FREQUENCY =		UP_TO_HILL_FREQUENCY
-								+ DESERT_FREQUENCY; 				    
+								+ DESERT_FREQUENCY;
 	
-	public static boolean 
-    	background_moves;		// = true: bewegter Hintergrund
+	public static final	float
+		BG_SPEED = 2.0f;
 		
 	private static final BufferedImage[]
     	CACTUS_IMG = paint_cactus_image(), 
-    	PALM_CROWN_IMG = paint_palm_crown_image();   
+    	PALM_CROWN_IMG = paint_palm_crown_image();
 	
-	// statische Variablen    			   
+	// statische Variablen
+	public static boolean
+		background_moves;		// = true: bewegter Hintergrund
+	   
     private static int
     	bgObject_selection = TOTAL_FREQUENCY,	   	
     	ground_factor = 3,			// legt fest, wie viele Objekte erscheinen (auf Wüste weniger als auf anderem Boden)
@@ -74,16 +77,16 @@ public class BackgroundObject extends MovingObject
     private int 
     	width,	// Gesamtbreite eines Hintergrundobjektes
     	plane,	// Ebene, in welche das Hintergrundobjekte gezeichnet wird 
-		coordOfComponents[][] = new int[2][4]; 	// definiert Hintergrundobjekt-spezifische Koordinaten und Ma�e 
+		coordOfComponents[][] = new int[2][4]; 	// definiert Hintergrundobjekt-spezifische Koordinaten und Maße
    
 	private float
 		x;		// x-Koordinate
 	
 	private BufferedImage[] 
-		image = new BufferedImage[2];		// Hintergrundobjekt-Bild (f�r Tag- udn Nachteinsatz)
+		image = new BufferedImage[2];		// Hintergrundobjekt-Bild (für Tag- udn Nachteinsatz)
     
 	private Color[] 
-		myColor = new Color[2];  			// nur f�r Palmen: Stammfarbe;   
+		myColor = new Color[2];  			// nur für Palmen: Stammfarbe;
     
                
     private static BufferedImage [] paint_cactus_image()
@@ -277,7 +280,7 @@ public class BackgroundObject extends MovingObject
         }
         else if( random >= UP_TO_PALM_FREQUENCY && random < UP_TO_HILL_FREQUENCY)
         {            
-            // H�gel
+            // Hügel
         	this.type = HILL;
             this.plane = -1;
             for(int i = 0; i < 2; i++)

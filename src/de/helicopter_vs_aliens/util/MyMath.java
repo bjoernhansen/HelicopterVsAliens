@@ -31,7 +31,7 @@ public class MyMath implements Positions
 
 	private static final float[]
 		COST_FACTOR = {0.375f, 0.75f, 1f, 1.5f, 2.5f},
-		PLASMA_DMG_FACTOR = {3.26f, 3.5f, 3.76f, 4.05f, 4.35f, 4.68f, 5.03f, 5.41f, 5.81f, 6.25f},	// Kamaitachi-Klasse: Faktor, um den sich die Schadenswirkung der Raketen erh�ht, wenn diese Plasmaraketen sind
+		PLASMA_DMG_FACTOR = {3.26f, 3.5f, 3.76f, 4.05f, 4.35f, 4.68f, 5.03f, 5.41f, 5.81f, 6.25f},	// Kamaitachi-Klasse: Faktor, um den sich die Schadenswirkung der Raketen erhöht, wenn diese Plasmaraketen sind
 		SPEED = {3f, 3.4f, 3.8f, 4.2f, 4.8f, 5.4f, 6.0f, 6.8f, 7.6f, 8.5f},
 		PLATING = {1.5f, 2.6f, 4.0f, 5.6f, 7.7f, 9.6f, 11.8f, 14.2f, 17.0f, 20f},
 		REGENERATION = {0.030f, 0.036f, 0.044f, 0.053f, 0.063f, 0.076f, 0.092f, 0.111f, 0.134f, 0.162f};
@@ -39,8 +39,8 @@ public class MyMath implements Positions
 	private static int []
 		random_order = {0, 1, 2, 3, 4};
 	
-	// Die Kosten mancher Upgrades weichen f�r manche Helicopterklassen vom Standard ab.
-	// Die HashMap "additional_costs" enth�lt die Modifikationswerte.	
+	// Die Kosten mancher Upgrades weichen für manche Helicopterklassen vom Standard ab.
+	// Die HashMap "additional_costs" enthält die Modifikationswerte.
 	private static final HashMap<String, Integer> 
 		ADDITIONAL_COSTS = set_additional_costs();	
 	

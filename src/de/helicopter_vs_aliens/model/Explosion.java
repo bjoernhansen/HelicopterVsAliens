@@ -18,6 +18,8 @@ import java.awt.geom.Point2D;
 
 import static de.helicopter_vs_aliens.gui.Menu.*;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
+import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 public class Explosion implements Constants, MissileTypes
 {
@@ -42,7 +44,7 @@ public class Explosion implements Constants, MissileTypes
     	progress = new float[2];	// reguliert das Fortschreiten der Explosionsanimation       
     
     private Color 
-    	color;	// Typ- und zeitabh�ngige (time, s.o.) Farbe der Explosion
+    	color;	// Typ- und zeitabhängige (time, s.o.) Farbe der Explosion
     
     private Point2D 
 		center = new Point2D.Float();			// Zentrum der Exploson
@@ -187,9 +189,9 @@ public class Explosion implements Constants, MissileTypes
 			}
 			else
 			{
-				exp.max_time = 20 + helicopter.levelOfUpgrade[ENERGY_ABILITY];
-				exp.max_radius = 75 + (int)((19+3f*helicopter.levelOfUpgrade[ENERGY_ABILITY]) * helicopter.levelOfUpgrade[ENERGY_ABILITY]);
-				exp.broadness = 30 + 3 * (helicopter.levelOfUpgrade[ENERGY_ABILITY]);
+				exp.max_time = 20 + helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()];
+				exp.max_radius = 75 + (int)((19+3f*helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]) * helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+				exp.broadness = 30 + 3 * (helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 			}			  	
 	    	helicopter.emp_wave = exp;
 	    	exp.earned_money = 0;

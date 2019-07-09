@@ -13,6 +13,7 @@ import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
+import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;

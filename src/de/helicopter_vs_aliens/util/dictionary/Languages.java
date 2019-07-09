@@ -4,4 +4,9 @@ public enum Languages
 {
     ENGLISH,
     GERMAN;
+    
+    String getLowercaseName()
+    {
+        return this.name().toLowerCase();
+    }
 }

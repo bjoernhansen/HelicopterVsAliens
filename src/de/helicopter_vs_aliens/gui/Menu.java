@@ -26,6 +26,9 @@ import de.helicopter_vs_aliens.util.dictionary.Languages;
 
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.MISSILE_DRIVE;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ROTOR_SYSTEM;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
@@ -682,16 +685,16 @@ public class Menu implements Constants, Fonts
             			   STATUS_BAR_X1, 
             			   STANDUP_OFFSET_Y + 25 + i * 25);        
            
-            if((i != 5 && helicopter.has_max_upgrade_level[i]) 
-                || ( i == ENERGY_ABILITY 
-                	 && helicopter.has_max_upgrade_level[ENERGY_ABILITY] 
+            if((i != ENERGY_ABILITY.ordinal() && helicopter.has_max_upgrade_level[i])
+                || ( i == ENERGY_ABILITY.ordinal()
+                	 && helicopter.has_max_upgrade_level[ENERGY_ABILITY.ordinal()]
                 	 && !(helicopter.getType() == OROCHI
-                	 	  && !helicopter.has_max_upgrade_level[MISSILE_DRIVE])))
+                	 	  && !helicopter.has_max_upgrade_level[MISSILE_DRIVE.ordinal()])))
             {
             	g2d.setColor(MyColor.golden);
             }
             else{g2d.setColor(Color.white);}            
-            if(i == 5 && helicopter.getType() == OROCHI)
+            if(i == ENERGY_ABILITY.ordinal() && helicopter.getType() == OROCHI)
             {
             	g2d.drawString(LEVEL[language.ordinal()] + " " + helicopter.levelOfUpgrade[i] + " / " + (helicopter.levelOfUpgrade[1]-1), STATUS_BAR_X2, STANDUP_OFFSET_Y + 150);
             }
@@ -1088,7 +1091,7 @@ public class Menu implements Constants, Fonts
 		else if(special_info_selection == 8)
 		{
 			info_string = "Speed level: " 
-						  + helicopter.levelOfUpgrade[ROTOR_SYSTEM]
+						  + helicopter.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]
 						  + " +   Speed: " + helicopter.rotorSystem;
 		}
 		else if(special_info_selection == 9)
@@ -1194,7 +1197,7 @@ public class Menu implements Constants, Fonts
     
     private static void paint_health_bar(Graphics2D g2d, Helicopter helicopter, int x, int y, int length, boolean rahmen)
     {
-    	float relative_energy = helicopter.energy/MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY]);
+    	float relative_energy = helicopter.energy/MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
     	float relative_life = helicopter.currentPlating /helicopter.max_plating();
         if(rahmen)
     	{

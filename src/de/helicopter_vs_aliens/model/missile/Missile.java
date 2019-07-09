@@ -16,10 +16,12 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.TIT;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.OROCHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PHOENIX;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.ROCH;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
 public class Missile extends MovingObject implements DamageFactors, MissileTypes, BossTypes
@@ -112,7 +114,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	{
 		this.dmg = 	(int)(helicopter.currentFirepower
 				* (helicopter.nr_of_cannons == 3 ? OROCHI_XTRA_DMG_FACTOR : 1)
-				* ((helicopter.plasma_activation_timer == 0) ? 1 : MyMath.plasma_dmg_factor(helicopter.levelOfUpgrade[ENERGY_ABILITY]))
+				* ((helicopter.plasma_activation_timer == 0) ? 1 : MyMath.plasma_dmg_factor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
 				* (this.type == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
 				* (this.extra_dmg ? POWERUP_DAMAGE_FACTOR : 1));
 	}
@@ -138,7 +140,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	{		
 		this.set_x(this.bounds.getX()							
 					+ this.speed
-					+ (BackgroundObject.background_moves ? -BG_SPEED : 0));
+					+ (BackgroundObject.background_moves ? - BG_SPEED : 0));
 				
 		if(this.bounds.getX() > 1175 || this.bounds.getX() + 20 < 0){this.flying = false;}
 		else{this.check_for_hit_helicopter(helicopter);}

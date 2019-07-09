@@ -27,6 +27,7 @@ import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
@@ -546,7 +547,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 								? 0
 								: POWER_SHIELD_E_LOSS_RATE
 							: this.regeneration_rate), 
-					MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY])));
+					MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])));
     }
 			
 	private void evaluate_fire(ArrayList<LinkedList<Missile>> missile)
@@ -950,7 +951,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 		this.nosedive = false;
     	this.get_max_plating();
     	this.setPlatingColor();
-		if(restore_energy){this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY]);}
+		if(restore_energy){this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);}
 		if(!cheat_repair){this.placeAtStartpos();}
 		Menu.repairShopButton.get("RepairButton").costs = 0;
     }
@@ -1024,7 +1025,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     			break;
     		case ROCH:
     			this.jumboMissiles = JUMBO_MISSILE_DMG_FACTOR;
-    			this.currentFirepower = (int)(this.jumboMissiles * MyMath.dmg(this.levelOfUpgrade[FIREPOWER]));
+    			this.currentFirepower = (int)(this.jumboMissiles * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
     			break;
     		case OROCHI:
     			this.hasRadarDevice = true;
@@ -1269,17 +1270,17 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
         
     private void update_properties(boolean full_plating)
     {
-    	this.rotorSystem = MyMath.speed(this.levelOfUpgrade[ROTOR_SYSTEM]);
-    	this.missileDrive = MyMath.missile_drive(this.levelOfUpgrade[MISSILE_DRIVE]);
+    	this.rotorSystem = MyMath.speed(this.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
+    	this.missileDrive = MyMath.missile_drive(this.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
     	if(full_plating)
     	{
     		this.get_max_plating();
-    		this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY]);
+    		this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
     	}
     	this.setPlatingColor();
-    	this.currentFirepower = (int)(this.jumboMissiles * MyMath.dmg(this.levelOfUpgrade[FIREPOWER]));
+    	this.currentFirepower = (int)(this.jumboMissiles * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
     	this.adjustFireRate(this.has_boosted_fire_rate());
-		this.regeneration_rate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY]);
+		this.regeneration_rate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 		if(Events.window != GAME){this.fire_rate_timer = this.time_between_2_shots;}
 		for(int i = 0; i < 6; i++)
 		{
@@ -1293,10 +1294,10 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 
 	private void set_spell_costs()
 	{
-		this.spell_costs = COSTS[this.getType().ordinal()][SPELL]
+		this.spell_costs = COSTS[this.getType().ordinal()][SPELL.ordinal()]
 			- (this.getType() != OROCHI
 				? 0 
-				: 2 *(this.levelOfUpgrade[ENERGY_ABILITY]-1));
+				: 2 *(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1));
 	}
 
 	public boolean is_poweredUp()
@@ -1388,13 +1389,13 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 	public void adjustFireRate(boolean powered_up)
 	{
 		this.time_between_2_shots 
-			= MyMath.fire_rate( this.levelOfUpgrade[FIRE_RATE]
+			= MyMath.fire_rate( this.levelOfUpgrade[FIRE_RATE.ordinal()]
 			                    + this.rapidfire 
 		                        + (powered_up ? FIRE_RATE_POWERUP_LEVEL : 0));
 		if(this.hasInterphaseGenerator)
 		{
 			this.shift_time 
-				= MyMath.shift_time( this.levelOfUpgrade[FIRE_RATE]
+				= MyMath.shift_time( this.levelOfUpgrade[FIRE_RATE.ordinal()]
 			                         + (powered_up ? FIRE_RATE_POWERUP_LEVEL : 0));
 		}
 	}
@@ -1472,7 +1473,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 	
 	public float max_plating()
 	{
-		return MyMath.plating(this.levelOfUpgrade[PLATING])
+		return MyMath.plating(this.levelOfUpgrade[PLATING.ordinal()])
 			   * this.platingDurabilityFactor;
 	}
 	
@@ -1545,9 +1546,9 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 
 	public void upgrade_energy_ability()
 	{
-		this.energy += MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY])
-					   - MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY]-1);
-		this.regeneration_rate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY]);
+		this.energy += MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
+					   - MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
+		this.regeneration_rate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 		
 		if(this.getType() == OROCHI)
 		{

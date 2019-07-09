@@ -197,20 +197,20 @@ Versionen:
             explodierbaren Gegnern nach Kollsion mit dem Helicopter nicht an
             der richtigen Position angezeigt wurden.
             Nach Schließen des Explorerfensters wird dir Hintergrundmusik nicht
-            l�nger abgespielt.
-            Der dritte Endgegner wurde gr�ndlich �berarbeitet.
+            länger abgespielt.
+            Der dritte Endgegner wurde gründlich überarbeitet.
             An enigen Gegnern wurden leichte Modifikationen vorgenommen.
-            Einige Gegner k�nnen jetzt Sch�sse abgeben. Wird ein Helicopter 
-            von einem solchen getroffen, so ist sein Bewegungstempo f�r wenige 
-            Sekunden stark eingeschr�nkt.
-            Der Preis f�r die Goliathpanzerung wurde ver�ndert: 75.000 � 
-            (f�r Phoenix-Klasse 6.000 �)
-            Der Preis f�r Panzerungs-Upgrades der Kamaitachi-Klasse wurde 
+            Einige Gegner können jetzt Schüsse abgeben. Wird ein Helicopter 
+            von einem solchen getroffen, so ist sein Bewegungstempo für wenige 
+            Sekunden stark eingeschränkt.
+            Der Preis für die Goliathpanzerung wurde verändert: 75.000 € 
+            (für Phoenix-Klasse 6.000 €)
+            Der Preis für Panzerungs-Upgrades der Kamaitachi-Klasse wurde 
             reduziert.
-            Die Lebenspunkte der Support-Gegner f�r Boss5 wurden reduziert, 
-            der Bonus f�r ihren Abschuss erh�ht.
+            Die Lebenspunkte der Support-Gegner für Boss5 wurden reduziert, 
+            der Bonus für ihren Abschuss erhöht.
             Wenn alle Upgrades erforscht sind, kann der Spieler, sobald
-            er Level 50 einmal erreicht hat, nicht mehr zur�ck fallen.
+            er Level 50 einmal erreicht hat, nicht mehr zurück fallen.
             Ein Fehler, der die Zeitanzeige betraf, wurde behoben.
             Neben dem Gesamtguthaben wird jetzt nach Abschuss eines Gegners auch
             der aktuelle Bonus angezeigt.
@@ -218,84 +218,84 @@ Versionen:
     v1.2    Der Standardschuss-Modus wurde entfernt. 
     		Der Dauerschuss-Modus funktioniert nun auch bei Stillstand des 
     		Helicopters. 
-    		Das Schie�en und das Bet�tigen von Buttons ist nur noch mit der 
-    		linken Maustaste m�glich.
+    		Das Schießen und das Betätigen von Buttons ist nur noch mit der 
+    		linken Maustaste möglich.
     		Die Ermittlung der Preise, der Schussrate und der Feuerkraft in der 
-    		Klasse MyMath erfolgt nicht l�nger rekursiv sondern nun �ber fest 
+    		Klasse MyMath erfolgt nicht länger rekursiv sondern nun über fest 
     		vorgegebene Werte innerhalb einer Switch-Anweisung. 
     		Der relative Abstand zwischen den Preisen unterschiedlicher 
     		Preisniveaus ist jetzt auf allen Ausbaustufen gleich.
     		Statt bisher 3 werden nun 5 verschiedene Farben zur Markierung des 
     		Preisniveaus verwendet. 
-    		Die Helicopter-Klasse verf�gt nun �ber jeweils ein Attribut f�r 
+    		Die Helicopter-Klasse verfügt nun über jeweils ein Attribut für 
     		jedes der 6 Standard-Upgrades. 
     		Die Zuweisung der Startwerte sowie die Festlegung der Preisniveaus 
-    		f�r die die verschiedenen Upgrdes erfolgt ab jetzt �ber diese
+    		Für die die verschiedenen Upgrdes erfolgt ab jetzt über diese
     		Attribute. 
     		Ein Fehler, der bewirkte, dass in Level 21 nur ein Gegner zur Zeit 
     		erschien, wurde behoben. 
-    		Durch die Verwendung von Farb�berg�ngen konnte die grafische 
+    		Durch die Verwendung von Farbübergängen konnte die grafische 
     		Darstellung vieler Objekte verbessert werden.
     		Es kommt ab jetzt Antialiasing zum Einsatz.
-    		Es ist nun m�glich das Applet beliebig zu skalieren.
+    		Es ist nun möglich das Applet beliebig zu skalieren.
     		Es wurde eine bewegte Wolke implementiert.
-    		Zur �berpr�fung der Spielgeschwindigkeit ist es nun m�glich sich 
+    		Zur überprüfung der Spielgeschwindigkeit ist es nun möglich sich 
     		die Frames per Second anzeigen zu lassen.
-    		Als 5. Helicopter-Klasse steht nun die Pegasus-Klasse zur Verf�gung.	
-    		Die Statusleiste in der Werkstatt wurde �bersichtlicher gestaltet.
+    		Als 5. Helicopter-Klasse steht nun die Pegasus-Klasse zur Verfügung.	
+    		Die Statusleiste in der Werkstatt wurde übersichtlicher gestaltet.
     		Zur Erleichterung der Spielentwicklung wurde eine Cheatfunktion 
     		implementiert, mit welcher Guthaben, Lebenspunkte und die 
-    		Energiekosten modifiziert werden k�nnen.
-    		Die Ingame-Status-Anzeige wurde �berarbeitet: Sie �hnelt nun der 
+    		Energiekosten modifiziert werden können.
+    		Die Ingame-Status-Anzeige wurde überarbeitet: Sie ähnelt nun der 
     		Hitpoint-Anzeige der Boss-Gegner und zeigt nun neben dem aktuellen 
     		Leben auch den aktuelle Energie-Stand an.
-    		Die Roch-Klasse verf�gt nun �ber Energie-Schilde und Jumbo-Raketen.
-    		F�r die Ph�nix-Klasse wurde eine Beam-Funktion implementiert.
-    		F�r die Ph�nix-Klasse wurden die Nahkampfbestrahl als weiteres 
+    		Die Roch-Klasse verfügt nun über Energie-Schilde und Jumbo-Raketen.
+    		Für die Phönix-Klasse wurde eine Beam-Funktion implementiert.
+    		Für die Phönix-Klasse wurden die Nahkampfbestrahl als weiteres 
     		Spezial-Upgrade implementiert.
-    		Die Kamaitachi-Klasse verf�gt nun �ber Plasma-Geschosse.
-    		F�r die Orochi-Klasse wurden Stun-Geschosse, die Radaranlage, 
+    		Die Kamaitachi-Klasse verfügt nun über Plasma-Geschosse.
+    		Für die Orochi-Klasse wurden Stun-Geschosse, die Radaranlage, 
     		sowie die dritte Bordkanone implementiert.
     		Explosionen wurden grafisch verbessert.
-     		Die Status-Bar wird nun auch im Werkstatt-Men� angezeigt.
-    		Der Energiebalken in der Status-Bar verf�rbt sich nun, wenn nicht
-    		mehr gen�gend Energie f�r Benutzung der helicopter-spezifischen 
+     		Die Status-Bar wird nun auch im Werkstatt-Menü angezeigt.
+    		Der Energiebalken in der Status-Bar verFürbt sich nun, wenn nicht
+    		mehr genügend Energie für Benutzung der helicopter-spezifischen 
     		Spezialfertigkeit vorhanden ist.
     		Die Cheatfunktion wurde erweitert: Es kann nun auch die Energie
-    		aufgeladen, Unzerst�rbarkeit aktiviert und automatisch in h�here
+    		aufgeladen, Unzerstörbarkeit aktiviert und automatisch in höhere
     		Level aufgestiegen werden.
-    		Kollisionen zwischen Objekten werden jetzt �ber Rectangle.intersect 
-    		abgepr�ft.
-    		F�r die vollst�ndige Aufr�stung eines Helicopters ist jetzt f�r alle
-    		Klassen dasselbe Guthaben n�tig.
+    		Kollisionen zwischen Objekten werden jetzt über Rectangle.intersect 
+    		abgeprüft.
+    		Für die vollständige Aufrüstung eines Helicopters ist jetzt für alle
+    		Klassen dasselbe Guthaben nötig.
     		Gegner, Raketen (eigene und feindliche), Explosionen und die 
-    		Hintergrundobjekte werden nun �ber einen Array sondern eine 
+    		Hintergrundobjekte werden nun über einen Array sondern eine 
     		LinkedList verwaltet.
-    		Raketen wurden grafisch verbesser. Jumboraketen werden gr��er 
+    		Raketen wurden grafisch verbesser. Jumboraketen werden größer 
     		gemalt.
     		Es gibt nun gelegentlichen Mini-Bosse in normalen Levels, die auf 
     		einer der Standard-Gegnerklassen beruhen, aber mehr Hitpoints als
-    		diese haben, gro�er sind, sowie die Sonderfertigkeiten Turn und 
-    		R�ckruf besitzen Abgeschossene Gegner fallen nun auf den Boden und 
-    		sind anschlie�end als Hintergrundobjekt sichtbar.
-    		Die Grafik des Helicopters wurde general�berholt.
-    		Unverwundbarkeit des Helicopter wird grafisch durch gelb-gr�nes 
+    		diese haben, großer sind, sowie die Sonderfertigkeiten Turn und 
+    		Rückruf besitzen Abgeschossene Gegner fallen nun auf den Boden und 
+    		sind anschließend als Hintergrundobjekt sichtbar.
+    		Die Grafik des Helicopters wurde generalüberholt.
+    		Unverwundbarkeit des Helicopter wird grafisch durch gelb-grünes 
     		Blinken dargestellt.
-    		�berarbeitung diverser Gegner-Klassen:
-    		- gr�ne Frontalangreifer sind jetzt anf�nglich getarnt
-    		- die Geschwindigkeitsberechnung f�r looping-fliegende Gegner wurde
+    		überarbeitung diverser Gegner-Klassen:
+    		- grüne Frontalangreifer sind jetzt anfänglich getarnt
+    		- die Geschwindigkeitsberechnung für looping-fliegende Gegner wurde
     		  deutlich vereinfacht
     		- die Diener von Bossgegner 2 sind nun kurze Zeit unverwundbar
-    		- die sich wegbeamenden Gegner sind nun vor�bergehend unverwundbar
+    		- die sich wegbeamenden Gegner sind nun vorübergehend unverwundbar
     		- die blauen stark beschleunigenden Gegner fliegen jetzt einen Bogen
     		Es wurde eine Hindernis-Gegner-Klasse implementiert, welche sich 
     		nicht bewegt und unverwundbar ist.
-    		Die Pegasus-Klasse verf�gt jetzt �ber die EMP-Schockwelle und den
+    		Die Pegasus-Klasse verfügt jetzt über die EMP-Schockwelle und den
     		Phasenmodulator.
-    		Es ist jetzt m�glich H�he und Breite von Gegner separat von einander
+    		Es ist jetzt möglich Höhe und Breite von Gegner separat von einander
     		festzulegen, so dass unterschiedlich geformte Gegner generiert 
-    		werden k�nnen.
-    		Es wurden weitere Versch�nerungen der Hintergrundgrafik vorgenommen 
+    		werden können.
+    		Es wurden weitere Verschönerungen der Hintergrundgrafik vorgenommen 
     		(Steine und Palmen)
     		Mini-Bosse verlieren jetzt je eines von 5 verschiedenen PowerUps:
     		- Unverwundbarkeit (15s)
@@ -307,40 +307,40 @@ Versionen:
     		aufgerufen.
     		Ein Fehler, welches bewirkte, dass nach betreten der Werkstatt 
     		PowerUps in der Taskleiste verblieben, wurde entfernt.
-          	Ein Fehler, welcher dazu f�hrte, dass die Hintergrundmusik
+          	Ein Fehler, welcher dazu führte, dass die Hintergrundmusik
           	verstummt, wurde beseitigt.
-            Bei Abklingen eines PowerUps blinkt dieses nun f�r eine kurze Zeit.
-            Das Startscreen-Menue wurde general�berholt.
-            Neue Funktion f�r die Cheat-Funktion: alles normalen Gegner
+            Bei Abklingen eines PowerUps blinkt dieses nun für eine kurze Zeit.
+            Das Startscreen-Menue wurde generalüberholt.
+            Neue Funktion für die Cheat-Funktion: alles normalen Gegner
             erscheinen als Mini-Bosse.
-            Das Einsammeln von Energy-PowerUps kann nicht mehr dazu f�hren, dass
-            der Energiebalken �ber den Rahmen in der Statusleiste hinaus w�chst.
-            Die Auswahl Tag- oder Nachteinsatz ist nichtmehr verf�gbar. 
-            Stattdessen wird nach dem Erwerb der Scheinwerfer zuf�llig Tag oder 
-            Nacht bestimmt oder jeder der beiden Eins�tze dann mit 50%
-            Verg�tungsbonus belohnt.
+            Das Einsammeln von Energy-PowerUps kann nicht mehr dazu führen, dass
+            der Energiebalken über den Rahmen in der Statusleiste hinaus wächst.
+            Die Auswahl Tag- oder Nachteinsatz ist nichtmehr verfügbar. 
+            Stattdessen wird nach dem Erwerb der Scheinwerfer zufällig Tag oder 
+            Nacht bestimmt oder jeder der beiden Einsätze dann mit 50%
+            Vergütungsbonus belohnt.
             Bei der Pegasus-Klasse verbessert sich mit der Schussrate nun auch 
             der Dimensionsregler sowohl was den Bonus-Schaden als auch was die
             Abklingzeit betrifft. 
             Der maximale Dmg-Output aller Helicopter-Klassen wurde angeglichen.
-           	--> Der Plasma-Bonusschaden-Faktor betr�gt nun 6,25.
-            Das Werkstatt-Men� wurde �berarbeitet.
+           	--> Der Plasma-Bonusschaden-Faktor beträgt nun 6,25.
+            Das Werkstatt-Menü wurde überarbeitet.
             Am Ende des Spiels wird eine Spielstatistik angezeigt.
-            Helicopter der Ph�nix-Klasse k�nnen sich nicht mehr beamen, 
-            nachdem sie abgest�rzt sind.
+            Helicopter der Phönix-Klasse können sich nicht mehr beamen, 
+            nachdem sie abgestürzt sind.
             Nicht nur beim Einsammeln von PowerUps sondern jetzt auch beim 
-            Verwenden der Cheats f�r verst�rkten Schaden, Unverwundbarkeit und
+            Verwenden der Cheats für verstärkten Schaden, Unverwundbarkeit und
             unendlich Energie erscheint jetzt ein PowerUp-Icon neben der
             Helicopter-StatusBar
-            Das Ausklingen der Plasma-Sch�sse (Kamaitachi-Klasse) ist jetzt
+            Das Ausklingen der Plasma-Schüsse (Kamaitachi-Klasse) ist jetzt
             auch bei aktivierter Unverwundbarkeit sicbtbar
             Dass der Helicopter Schaden genommen hat, wird jetzt durch ein
             Blinken der Lebensleiste in der Status-Bar signalisiert.
             Ein Fehler, der bewirkte, dass der Boss Level 1 Endgegner zwei mal
             erscheinen konnte, wurde behoben.
-            F�r folgende Aktionen wurden Cheat-Befehle integriert:
+            Für folgende Aktionen wurden Cheat-Befehle integriert:
             - sofortiger Helikopter-Absturz 
-            - erh�hung der aktuellen Spielzeit 
+            - erhöhung der aktuellen Spielzeit 
             - Aufstieg eines einzelnen Levels 
             Es kann nur noch ein Mini-Boss gleichzeitig erscheinen.
             Es werden auch die HPs von Mini-Bossen angezeigt.
@@ -348,236 +348,236 @@ Versionen:
             jetzt nicht mehr in jedem Simulationsschritt neu gezeichnet sondern
             stat dessen auf einem Image vorgezeichnet.
     		Das Startscreen-Menue ist nun fertig!
-    		Die Darstellung von Traktorstrahlen wurde �berarbeitet.
-    		Der Startscreen wurde an die Aufl�sung 1024   768 angepasst.
-    		Die Speicherfunktion ist nun verf�gbar.
+    		Die Darstellung von Traktorstrahlen wurde überarbeitet.
+    		Der Startscreen wurde an die Auflösung 1024   768 angepasst.
+    		Die Speicherfunktion ist nun verfügbar.
     		Ein Cheat zum Resetten des aktuellen Speicherstand inkl. der 
     		Bestzeiten wurde integriert.
-    		�ber die Spieloptionen kann nun vom Vollbild- in den Fenstermodus 
+    		über die Spieloptionen kann nun vom Vollbild- in den Fenstermodus 
     		gewechselt werden.
     		Ein Fehler, welcher zu fehlerhaften Buttonbeschriftungen im
-    		Optionsmenue gef�hrt hat, w�rde beseitigt.
-    		Ein Fehler, der dazu f�hren konnte, dass nach Absturz die Werkstatt
+    		Optionsmenue geführt hat, würde beseitigt.
+    		Ein Fehler, der dazu führen konnte, dass nach Absturz die Werkstatt
     		nicht betreten werden kann, wurde behoben.
-    		Cheats k�nnen nun �ber einen Code im Hauptmen� aktiviert werden.
+    		Cheats können nun über einen Code im Hauptmenü aktiviert werden.
     
-    v1.2.0  Beginn der Beta-Phase f�r HelicopterDefence 1.2
+    v1.2.0  Beginn der Beta-Phase für HelicopterDefence 1.2
     
     v1.2.1	Ein Fehler, der im Zusammenhang mit dem Betreten der Werkstatt nach
     		Erscheinen des Endgegners in Boss-Level 4 und 5 auftrat wurde
     		beseitigt. 
-    		Die Aktivierungsdauer f�r PowerUps und Plasmaraketen wurde an die
-    		erh�he Spielgeschwindigkeit angepasst.
-    		Der Soundeffekt f�r die Helikopter-Landung wurde ausgetauscht.
-    		F�r das aktivieren der Plasma-Raketen wurde ein Soundeffekt 
-    		eingef�gt.
-    		Nur noch die Ph�nix- und die Roch-Klasse sind von Beginn an 
-    		verf�gbar, die anderen Helikopter-Klassen m�ssen frei gespielt 
+    		Die Aktivierungsdauer für PowerUps und Plasmaraketen wurde an die
+    		erhöhe Spielgeschwindigkeit angepasst.
+    		Der Soundeffekt für die Helikopter-Landung wurde ausgetauscht.
+    		Für das aktivieren der Plasma-Raketen wurde ein Soundeffekt 
+    		eingefügt.
+    		Nur noch die Phönix- und die Roch-Klasse sind von Beginn an 
+    		verfügbar, die anderen Helikopter-Klassen müssen frei gespielt 
     		werden.
-    		Das Startmen� wurde mit weiteren Effekten ausgestattet. 
+    		Das Startmenü wurde mit weiteren Effekten ausgestattet. 
     		Das Aktivieren der Stopp-Rakaten der Orochi-Klasse ist von nun an 
     		grafisch und durch einen Sound-Effekt wahrnehmbar.
-    		Das Spiel verf�gt nun �ber eine englische Sprachversion.
-    		Die Credits wurden �berarbeitet.
+    		Das Spiel verfügt nun über eine englische Sprachversion.
+    		Die Credits wurden überarbeitet.
     		In der Werkstatt befindet sich nun eine Zeitanzeige.
-    		Das Optionsmenue wurde gr�ndlich �berarbeitet.
+    		Das Optionsmenue wurde gründlich überarbeitet.
     		Ein Fehler im Zusammenhang mit der Speicherfunktion, der dazu
-    		f�hrte, dass die Hintergrundfarbe falsch berechnet wurde, konnte 
+    		führte, dass die Hintergrundfarbe falsch berechnet wurde, konnte 
     		behoben werden.
-            Ein Fehler, der dazu f�hrte, dass Level 20 Boss-Gegner in Level 16 
+            Ein Fehler, der dazu führte, dass Level 20 Boss-Gegner in Level 16 
             auftraten, wurde behoben.
             Ein Grafik-Fehler, der in Boss Level 2 (Level 20) auftrat, wurde 
             behoben.	
-  			Das Startscreen-Men� wurde optisch �berarbeitet und um einige Infos 
-  			erg�nzt.
+  			Das Startscreen-Menü wurde optisch überarbeitet und um einige Infos 
+  			ergänzt.
    
-    v1.2.2	Ein 6tes PowerUp, welches die Schussrate tempor�r erh�ht, wurde 
+    v1.2.2	Ein 6tes PowerUp, welches die Schussrate temporär erhöht, wurde 
     		implementiert.
     		Die Schiffs-Dachfarbe von schild-aufspannenden (Helfer von Boss 5), 
-    		schie�enden oder Traktorstrahlen aktivierenden Gegnern wird nun
-			(wieder) gelb-gr�n bliknend dargesellt.
+    		schießenden oder Traktorstrahlen aktivierenden Gegnern wird nun
+			(wieder) gelb-grün bliknend dargesellt.
     		Umgelenkte Raketen die den Helikopter selbst treffen, durchfliegen 
     		den Helikopter nun sofern das Piercing-Warheads-SpezialUpgrade 
     		erworben wurde.
-    		Boss Nr. 2 kann nun auch w�hrend des Fluges nach rechts schie�en.
-    		Die Ausweichf�higkeit der schie�enden Gegner-Klasse wurde 
-    		geschw�cht.
-    		Die Ausweichaktion eines Gegners kann nicht mehr dazu f�hren, dass
-			dieser den rechten Bildschirmrand verl�sst.
-    		Ein Fehler, der dazu f�hrte, dass der 3. Boss-Gegner Raketen
-    		grunds�tzlich nicht auswich, wurde behoben.
-    		Raketen durchfliegen nicht l�nger abgeschossene Gegner.
+    		Boss Nr. 2 kann nun auch während des Fluges nach rechts schießen.
+    		Die Ausweichfähigkeit der schießenden Gegner-Klasse wurde 
+    		geschwächt.
+    		Die Ausweichaktion eines Gegners kann nicht mehr dazu führen, dass
+			dieser den rechten Bildschirmrand verlässt.
+    		Ein Fehler, der dazu führte, dass der 3. Boss-Gegner Raketen
+    		grundsätzlich nicht auswich, wurde behoben.
+    		Raketen durchfliegen nicht länger abgeschossene Gegner.
     		Boss-Gegner erscheinen erst, wenn alle PowerUps abgeklungen sind.
-    		Ein Fehler, der dazu f�hrte, dass Gegner mit der Ausweichf�higkeit
+    		Ein Fehler, der dazu führte, dass Gegner mit der Ausweichfähigkeit
     		bestimmten Raketen nicht auswichen, wurde behoben.
-    		Die Effektivit�t von Stun-Raketen gegen�ber Boss-Gegnern wurde 
+    		Die Effektivität von Stun-Raketen gegenüber Boss-Gegnern wurde 
     		erheblich reduziert.
     		Das Fortsetzen eines Spielstandes ist nun auch von "nicht-sicheren" 
-    		Levels aus m�glich.
-    		Beim Laden eines Spielstandes wird nun auch die zuletzt verf�gbare
-    		Energiemenge ber�cksichtigt.
-    		Endgegner k�nnen keine Bonus-Geld-PowerUps mehr verlieren.
-    		Ein Fehler, der bewirkte, dass die Kamaitachi-Klasse auf h�chster
-    		Ausbaustufe zu schnell schie�t, wurde behoben.
+    		Levels aus möglich.
+    		Beim Laden eines Spielstandes wird nun auch die zuletzt verfügbare
+    		Energiemenge berücksichtigt.
+    		Endgegner können keine Bonus-Geld-PowerUps mehr verlieren.
+    		Ein Fehler, der bewirkte, dass die Kamaitachi-Klasse auf höchster
+    		Ausbaustufe zu schnell schießt, wurde behoben.
     		Ein Fehler im Zusammenhang mit der Cheat-Funktion, der bewirkte,
     		dass die falsche Hintergrund-Musik abgespiel wurde, konnte
     		beseitigt werden.
     		Mehrere Fehler im Zusammenhang mit der Tarnfunktion von Gegnern 
     		wurden behoben.
-    		Ein Fehler, der dazu f�hren konnte, dass abgeschossene Gegnern mit 
-    		der Ausweich-F�higkeit nach oben verschwanden, wurde behoben.
-    		Ein Fehler, welcher die Agressivit�t vom Boss5-Bodyguard
+    		Ein Fehler, der dazu führen konnte, dass abgeschossene Gegnern mit 
+    		der Ausweich-Fähigkeit nach oben verschwanden, wurde behoben.
+    		Ein Fehler, welcher die Agressivität vom Boss5-Bodyguard
     		reduziert hat, wurde behoben.
     		Ein Fehler, welcher zu einer fehlerhaften Berechnung der 
-    		Extra-Boni f�r die Orochi-Klasse gef�hrt hat, wurde behoben.
-   			Der Erhalt des NiceCath-Extra-Boni f�r die Ph�nix-Klasse setzt nun
+    		Extra-Boni für die Orochi-Klasse geführt hat, wurde behoben.
+   			Der Erhalt des NiceCath-Extra-Boni für die Phönix-Klasse setzt nun
    			voraus, dass die Rakete nach dem Beamen abgeschossen wurde.
-   			Die grafische Darstellung abgeschossener Gegner wurde �berarbeitet.
-   			Ein abst�rzender Helikopter kann nicht mehr schie�en.
+   			Die grafische Darstellung abgeschossener Gegner wurde überarbeitet.
+   			Ein abstürzender Helikopter kann nicht mehr schießen.
    			Ein Fehler, der bewirkte, dass beim Boss-Gegner Nr. 2 keine 
    			Servants erschienen, wurde behoben.
    			Ein Fehler, welcher zu einer fehlerhaften Berechnung der Spielzeit
-   			pro Boss in der Spiel-Statistik gef�hrt hat, wurde beseitigt.
+   			pro Boss in der Spiel-Statistik geführt hat, wurde beseitigt.
    			Das Upgrade "Geschwindigkeit" wurde in "Hauptrotor" umbenannt.
-  			Zur Hervorhebung von Buttons mit besonderer Funktion k�nnen Buttons 
+  			Zur Hervorhebung von Buttons mit besonderer Funktion können Buttons 
   			jetzt mit Blinkeffekten dargestellt werden. 
   
     v1.2.3	Ein Fehler, der zu einer fehlerhaften Auswahl von Hintergrund-
-    		Objekten gef�hrt hat, w�rde behoben.
-    		Ein Fehler, der dazu f�hren konnte, dass nach verlassen des Men�s
+    		Objekten geführt hat, würde behoben.
+    		Ein Fehler, der dazu führen konnte, dass nach verlassen des Menüs
     		der Helicopter ohne sich drehenden Propeller fliegt, wurde behoben.
-    		Gegner mit der Teleportf�higkeit beamen sich nun auch weg, wen sie 
-    		durch Nahkmpbestrahlung Schaden nehmen w�rden.
+    		Gegner mit der Teleportfähigkeit beamen sich nun auch weg, wen sie 
+    		durch Nahkmpbestrahlung Schaden nehmen würden.
     		Die sich entarnenden Kamikaze-Flieger ab Level 31 werden nun 
     		schneller sichtbar.
-    		Ein fehler, der dazu f�hrte, dass die sich entarnenden 
+    		Ein fehler, der dazu führte, dass die sich entarnenden 
     		Kamikaze-Flieger als "Mini-Boss" nicht angreifen, wurde behoben.
-    		Ein Fehler, der dazu f�hrte, dass "Mini-Boss"-Gegner mit 
-    		Traktorstrahl sich unsichtbar machen k�nnen, w�hrend der 
+    		Ein Fehler, der dazu führte, dass "Mini-Boss"-Gegner mit 
+    		Traktorstrahl sich unsichtbar machen können, während der 
     		Traktorstrahl aktiviert ist, wurde behoben.
     		Beim Teleport-Angriff richtet die Nahkampfbestrahlung der 
-    		Ph�nix-Klasse jetzt mehr Schaden an, als bei normalen Kollisionen.
-    		Das PowerUp, welches die Schussrate erh�ht, wirkt sich jetzt auch
+    		Phönix-Klasse jetzt mehr Schaden an, als bei normalen Kollisionen.
+    		Das PowerUp, welches die Schussrate erhöht, wirkt sich jetzt auch
     		auf die Aktivierungszeit des Interphasen-Generators aus.
     		Ein Ton-Signal deutet nun an, dass die Plasmaraketen nicht mehr
     		aktiviert sind.
     		Zwei Tonsignale deuten nun an, dass ein PowerUp kurz vor der 
     		Inaktivierung ist bzw. nicht mehr aktiv ist.
     		Die Startanordnung der Helicopter auf dem Startscreen ist nun 
-    		zuf�llig.
+    		zufällig.
     		Ein Fehler, der bewirkte, dass die Boss-Level 2 Servants auch nach
     		Neustart des Spiels aktiv waren, wurde beseitigt.
     		
-    v1.2.4	Ein Fehler, der dazu f�hrte, dass der Spieler nach Abschuss von
-    		Boss 5 zur�ck in die Werkstatt gelangte, wurde behoben.
-    		Gegner k�nnen nicht mehr weniger als 0 Hitpoints haben.
-    		Die Lebensleiste von Boss 5 wird nach dessen Abschuss nicht l�nger
+    v1.2.4	Ein Fehler, der dazu führte, dass der Spieler nach Abschuss von
+    		Boss 5 zurück in die Werkstatt gelangte, wurde behoben.
+    		Gegner können nicht mehr weniger als 0 Hitpoints haben.
+    		Die Lebensleiste von Boss 5 wird nach dessen Abschuss nicht länger
     		angezeigt.
     		Der Cheat zum Reparieren des Helicopters ist nach Besiegen von 
-    		Boss 5 nicht l�nger einsetzbar.
+    		Boss 5 nicht länger einsetzbar.
     		Der Zustand des Helicopters wird in der Werkstatt jetzt prozentual 
     		angegeben (aktuelle HPs / maximale HPs bei aktueller Stufe).
     		Ein Beschriftungsfehler der Einsatz-Buttons bei englischer
     		Sprachauswahl wurde behoben.
-    		Ein gr�nes H�kchen im Startscreen-Men� signalisiert nun die
-    		Verf�gbarkeit einer Helicopter-Klasse.
-    		Die Voraussetzungen f�r das Freispielen der nicht von Beginn an 
-    		verf�gbaren Helikopter-Klassen wurde erleichtert: 
-    		- Orochi: Level 20 erreichen mit Ph�nix- oder Pegasus-Klasse
+    		Ein grünes Häkchen im Startscreen-Menü signalisiert nun die
+    		Verfügbarkeit einer Helicopter-Klasse.
+    		Die Voraussetzungen für das Freispielen der nicht von Beginn an 
+    		verfügbaren Helikopter-Klassen wurde erleichtert: 
+    		- Orochi: Level 20 erreichen mit Phönix- oder Pegasus-Klasse
     		- Kamaitachi: Level 20 erreichen mit Roch- oder Pegasus-Klasse	
     		- Pegasus: Level 20 erreichen mit Orochi- oder Kamaitachi-Klasse
-    		Bei Verlassen des Startscreen-Men�s (Betreten eines Untermen�s oder
-     		Spielstart) werden jetzt alle graphischen Effekte zur�ckgesetzt.
-    		Beim Betreten der Werkstatt, bevor ein Multikill-Event ausgel�st 
+    		Bei Verlassen des Startscreen-Menüs (Betreten eines Untermenüs oder
+     		Spielstart) werden jetzt alle graphischen Effekte zurückgesetzt.
+    		Beim Betreten der Werkstatt, bevor ein Multikill-Event ausgelöst 
     		wurde, wird dieses nun in der Werkstatt und nicht beim Fortsetzen 
-    		des Spiels ausgel�st.
+    		des Spiels ausgelöst.
     		Das Schild der Rochklasse wurde umgestaltet: Das Schild bietet jetzt
     		nur noch Schutz, wenn es zuvor aktiviert wurde. Bei der 
     		Aktivierung und bei Kollisionen wird Energie verbraucht.
-    		Das Energieschild verbraucht au�erdem kontinuierlich Energie, solange
+    		Das Energieschild verbraucht außerdem kontinuierlich Energie, solange
     		es aktiv ist.
     		Bei Aufnahme von PowerUps erklingt jetzt eine Ansage, die die
     		Auswirkung des PowerUps benennt.
-    		Ein Fehler, welcher dazu f�hrte, dass im Spielstatistik-Men� nach
+    		Ein Fehler, welcher dazu führte, dass im Spielstatistik-Menü nach
     		besiegen des 5. Endgegner die falsche Hintergrund-Musik spielte,
     		wurde behoben.
-    		Der Applaus-Sound f�r kleine Errungenschaften wurde verk�rzt.
-    		F�r die Darstellung von Gegnern werden jetzt zwei unterschiedliche
+    		Der Applaus-Sound für kleine Errungenschaften wurde verkürzt.
+    		Für die Darstellung von Gegnern werden jetzt zwei unterschiedliche
     		Modelle verwendet.
     		Ein Fehler beim Abspeichern von Bestzeiten wurde behoben.
     		Die Helfer von Endboss 5 befinden sich nun immer an der richtigen 
     		Position, wenn sie das Schild aufspannen. 
     		Die Helicoperanzeige in Werkstatt und Score-Screen zeigt
     		nun auch die aktuelle Ausbaustufe korrekt an.
-    		Die Highscorezeiten f�r das besiegen jedes einzelnen Helicopters
-    		werden bei Neustart jetzt korrekt zur�ck gesetzt.
-    		Wenn das Spiel-Men� ge�ffnet ist, kann die rechte Maustaste 
+    		Die Highscorezeiten für das besiegen jedes einzelnen Helicopters
+    		werden bei Neustart jetzt korrekt zurück gesetzt.
+    		Wenn das Spiel-Menü geöffnet ist, kann die rechte Maustaste 
     		nicht mehr genutzt werden.
-    		Ein Fehler, der dazu f�hren konnte, dass nach Verwendung von Cheats
-    		in der Werkstatt eine Reparatur nicht m�glich ist, wurde behoben.
+    		Ein Fehler, der dazu führen konnte, dass nach Verwendung von Cheats
+    		in der Werkstatt eine Reparatur nicht möglich ist, wurde behoben.
     		Die Gegnerklasse mit der Eigenschaft "Chaos-SpeedUp" ist nun in der
     		Lage, Geschossen des Helikopters auszuweichen.
-    		Ein Fehler, der dazu f�hren konnte, dass eine EMP-Schockwelle
+    		Ein Fehler, der dazu führen konnte, dass eine EMP-Schockwelle
     		auch bei Spielneustart aktiv blieb, wurde behoben.
     		Mit der Helios-Klasse wurde nun eine 6 Helicopter-Klasse 
-    		eingef�hrt: 
+    		eingeführt: 
     		- Spezial-Upgrade: Power-Stopper (PowerUps fliegen nicht mehr weg)
-    		- Energieverbrauchende F�higkeit: PU-Generator (erzeugt PowerUps)
-     		Das Spiel verf�gt nun �ber eine Highscore, in welcher die besten
-     		10 Spielst�nde f�r jede Helikopter-Klasse sowie eine �bersicht
+    		- Energieverbrauchende Fähigkeit: PU-Generator (erzeugt PowerUps)
+     		Das Spiel verfügt nun über eine Highscore, in welcher die besten
+     		10 Spielstände für jede Helikopter-Klasse sowie eine übersicht
      		zu sehen sind. 
      		Ein Cheat wurde eingebaut, welcher alle Helicopter-Klassen sofort 
      		spielbar macht. 
-     		Spielst�nde, f�r deren erreichen Cheats verwendet wurden, 
-     		erscheinen nicht l�nger in der Highscore.
-     		Als weiterer Spielmodus ist nun der Hardcore-Modus verf�gbar.
+     		Spielstände, für deren erreichen Cheats verwendet wurden, 
+     		erscheinen nicht länger in der Highscore.
+     		Als weiterer Spielmodus ist nun der Hardcore-Modus verfügbar.
      		Dieser wird bei Wahl der Helios-Klasse gespielt. 
      		Im Hardcore-Modus wird nicht der Abschuss von Gegnern sondern 
-     		der Levelaufstieg belohnt. Die H�he der Belohnung h�ngt vom
-     		Erfolg mit den �brigen 5 Helikopter-Klassen up, ebenso wie die 
-     		Kosten f�r den Ausbau einzelner Upgrades.
+     		der Levelaufstieg belohnt. Die Höhe der Belohnung hängt vom
+     		Erfolg mit den übrigen 5 Helikopter-Klassen up, ebenso wie die 
+     		Kosten für den Ausbau einzelner Upgrades.
      		Ein Beschriftungsfehler von Werkstattbuttons wurde behoben.
      		Ein Fehler bei der Darstellung freigeschalteter Helicopter
      		wurde behoben.
      		Scheinwerfer wirken sich jetzt auch auf die Belohnung im 
      		Hardcore-Modus aus.
-     		Ein Fehler, der bewirkte, dass Boss 4 und 5 bei ihrer Zerst�rung 
-     		doppelt gez�hlt wurden, wurde behoben.
+     		Ein Fehler, der bewirkte, dass Boss 4 und 5 bei ihrer Zerstörung 
+     		doppelt gezählt wurden, wurde behoben.
      		Ein Fehler bei der Berechnung der Trefferquote wurde behoben.
      		Ein Fehler, welcher zur Flucht von Minibossen mit der 
-     		F�higkeit "frontal_speedup" gef�hrt hat, wurde behoben.
+     		Fähigkeit "frontal_speedup" geführt hat, wurde behoben.
      		Ein Grafikfehler im Zusammenhang mit der Schussfunktion
      		wurde behoben.
-     		Ein Fehler, der dazu gef�hrt hat, dass die falsche 
+     		Ein Fehler, der dazu geführt hat, dass die falsche 
      		Helikopter-Klasse freigeschaltet wird, wurde behoben.
-     		Im Men� "Helikopter-Klassen" k�nnen jetzt die aktuellen 
+     		Im Menü "Helikopter-Klassen" können jetzt die aktuellen 
      		Upgrade-Kosten der Helios-Klasse eingesehen werden.
-     		Die spielinterne Anleitung enth�lt nun auch Informationen zur
+     		Die spielinterne Anleitung enthält nun auch Informationen zur
      		Helios-Klasse und zum Hardcore-Modus.
      		Eine neue Gegnerklasse, welche nach Abschuss andere Gegner
-     		freisetzt (vgl. Boss 2) wurde eingef�hrt.
+     		freisetzt (vgl. Boss 2) wurde eingeführt.
      		Es gibt nun zwei Arten gegnerischer Geschossen:
      		a) Energie abziehende und verlangsamende und b) Schaden anrichtende 
      		Kamaitachi-Klasse: Der Schaden von Plasma-Raketen erreicht jetzt
-     		erst mit der 10. Ausbaustufe von Plasma-Raketen seine volle St�rke.
-     		Ein Fehler, der dazu f�hrte, dass sich Geschosse bei bewegtem 
+     		erst mit der 10. Ausbaustufe von Plasma-Raketen seine volle Stärke.
+     		Ein Fehler, der dazu führte, dass sich Geschosse bei bewegtem 
      		Hintergrund zu schnell bewegten, wurde behoben.
-     		Das Spiel verf�gt nun �ber eine weitere Klasse von Gegnern, welche
-     		�berwiegend station�r sind oder sich nur sehr begrenzt bewegen. 
-     		Diese Gegner stellen Hindernisse dar, die umflogen werden m�ssen, 
-     		da sie nur schwer zerst�rt werden k�nnen.
-     		Einige von diesen Hindernissen haben die F�higkeit, zu schie�en. 
+     		Das Spiel verfügt nun über eine weitere Klasse von Gegnern, welche
+     		überwiegend stationär sind oder sich nur sehr begrenzt bewegen. 
+     		Diese Gegner stellen Hindernisse dar, die umflogen werden müssen, 
+     		da sie nur schwer zerstört werden können.
+     		Einige von diesen Hindernissen haben die Fähigkeit, zu schießen. 
      		Hindernisse werden bei Beschuss mit einer gewissen 
-     		Wahrscheinlichkeit f�r kurze Zeit inaktiviert.  
+     		Wahrscheinlichkeit für kurze Zeit inaktiviert.  
      		Ein Beschuss mit Plasma-Raketen (Kamaitachi-Klasse) oder eine 
-     		Kollision nach erwerben der Nahkampfbestrahlung (Ph�nix-Klasse)
-     		f�r mit doppelter Wahrscheinlichkeit zu einer Inaktivierung.
-     		Gegner k�nnen durch Beschuss mit Jumbo-Raketen (Roch-Klasse) oder 
-     		Phase-Shift-Raketen (Pegasus-Klasse) zerst�rt werden oder wenn 
-     		der Helikopter �ber das Tripple-Dmg-PowerUp verf�gt.
+     		Kollision nach erwerben der Nahkampfbestrahlung (Phönix-Klasse)
+     		Für mit doppelter Wahrscheinlichkeit zu einer Inaktivierung.
+     		Gegner können durch Beschuss mit Jumbo-Raketen (Roch-Klasse) oder 
+     		Phase-Shift-Raketen (Pegasus-Klasse) zerstört werden oder wenn 
+     		der Helikopter über das Tripple-Dmg-PowerUp verfügt.
      		Ein Darstellungsfehler im Zusammenhang mit dem Abschuss von 
      		Hindernissen wurde behoben. 
-     		Ein Fehler, der dazu f�hrte, dass schie�ende Gegner zu schnell
+     		Ein Fehler, der dazu führte, dass schießende Gegner zu schnell
      		feuern, wurde behoben.
      		Um das Hinzukommen von Hindernis-Gegner zu kompensieren, 
      		wurde die Gegneranzahl in den meisten Levels reduziert.
@@ -588,116 +588,116 @@ Versionen:
        		Position, an der er auch vor Betreten der Werkstatt stand.
        		Ein Fehler im Zusammenhang mit der Inaktivierung von
        		Hindernisgegnern wurde behoben.
-       		Ein Fehler, der dazu f�hrte, dass zu viele Hindernisse auf dem
+       		Ein Fehler, der dazu führte, dass zu viele Hindernisse auf dem
        		Bildschirm erschienen wurde behoben.
-       		Einer Fehler, der dazu f�hrte, dass inaktivierte
-       		Hindernis-Gegner Sch�sse abgeben k�nnen, wurde beseitigt.
-       		Bei der Abschussquote werden Hindernisse nicht mehr ber�cksichtigt.
-       		Der Spielen kann nun in den Optionen einen Namen ausw�hlen.		
-       		Ein Fehler, der dazu f�hrte, dass mehrere Gegner vom Typ "Rock"
+       		Einer Fehler, der dazu führte, dass inaktivierte
+       		Hindernis-Gegner Schüsse abgeben können, wurde beseitigt.
+       		Bei der Abschussquote werden Hindernisse nicht mehr berücksichtigt.
+       		Der Spielen kann nun in den Optionen einen Namen auswählen.		
+       		Ein Fehler, der dazu führte, dass mehrere Gegner vom Typ "Rock"
     		gleichzeitig erscheinen konnten, wurde behoben.   
-    		Nach �nderung des Spielernamens wird dieser nun sofort gespeichert.
-    		Die Geschosse der Gegner wurden garfisch �berarbeitet, 
-    		gr�ne Geschosse sind noch auch bei Tag leichter zu erkennen.
+    		Nach Änderung des Spielernamens wird dieser nun sofort gespeichert.
+    		Die Geschosse der Gegner wurden garfisch überarbeitet, 
+    		grüne Geschosse sind noch auch bei Tag leichter zu erkennen.
     		Nach Erwerb der Scheinwerfer haben Hindernisgegner die richtige
     		Farbe entsprechend der neuen Tageszeit (Nacht).
-    		Ein Fehler, der dazu f�hrte, dass Gegner in die falsche 
+    		Ein Fehler, der dazu führte, dass Gegner in die falsche 
     		Richtung schossen, wurde behoben.
     		Gegnerische Geschosse werden jetzt immer vor den Gegnern gezeichnet.
-    		Mit nicht vollst�ndig enttarnten Hindernissen kann es keine 
+    		Mit nicht vollständig enttarnten Hindernissen kann es keine 
     		Kollisionen mehr gebebn.
-    		Helicopter der Phoenix-Klasse k�nnen jetzt mit Dmg-PU 
-    		Hindernisse zerst�ren, Nahkampfbestrahlung erforscht.
-    		Die Texte nach besiegen des letzten Endgegners wurden �berarbeitet.
+    		Helicopter der Phoenix-Klasse können jetzt mit Dmg-PU 
+    		Hindernisse zerstören, Nahkampfbestrahlung erforscht.
+    		Die Texte nach besiegen des letzten Endgegners wurden überarbeitet.
     		Mit vergraben Hindernissen gibt es keine Kollision mehr.
-   			Sich tarnende Hindernisse schie�en nicht mehr in Inaktivierung. 
-   			"Rock"-Gegner werden nun grunds�tzlich im Hintergrund gezeichnet.
+   			Sich tarnende Hindernisse schießen nicht mehr in Inaktivierung. 
+   			"Rock"-Gegner werden nun grundsätzlich im Hintergrund gezeichnet.
    			Ein Farbfehler beim Neuzeichnen von Gegnern (in abgedunkelter 
    			Farbe) nach Abschuss wurde behoben.
    			Der Helicopter kann nun die Richtung wechseln.
    			Auch nach links fliegende Raketen haben nun einen Raketenschweif.
-   			Der Startpunkt f�r abgeschossene Raketen wurde optimiert.
-   			Als weiterere Belohnungsansage wurde der Mega Kill eingef�hrt.
-   			Auch nach links fliegende Raketen k�nnen nun an unverwundbaren
+   			Der Startpunkt für abgeschossene Raketen wurde optimiert.
+   			Als weiterere Belohnungsansage wurde der Mega Kill eingeführt.
+   			Auch nach links fliegende Raketen können nun an unverwundbaren
    			Gegnern abprallen.
    			Ausweichende Gegner weichen nun auch Raketen aus, die nach 
    			links fliegen.
-   			Es gibt nun einen f�nften Boss5-Servant (schie�endes Hindernis),
+   			Es gibt nun einen fünften Boss5-Servant (schießendes Hindernis),
    			der es erschwert, von rechts aus anzugreifen.
-   			Ein Fehler, der dazu f�hrte, dass der schie�ende Schildgenerator
-   			in Boss-Level 5 in zu hoher Rate schie�t, wurde behoben.
-   			Solange kein Spielername ausgew�hlt wurde, werden die Buttons f�r 
-   			die Einstellung und die Namens�nderung durch Blinken ervorgehoben.
+   			Ein Fehler, der dazu führte, dass der schießende Schildgenerator
+   			in Boss-Level 5 in zu hoher Rate schießt, wurde behoben.
+   			Solange kein Spielername ausgewählt wurde, werden die Buttons für
+   			die Einstellung und die Namensänderung durch Blinken ervorgehoben.
    			Reduzierung des Schwierigkeitsgrades vor dem ersten Endgegner.
-   			Die Spielanleitung wurde an die ver�nderte Bedienung 
+   			Die Spielanleitung wurde an die veränderte Bedienung
    			(Wendung des Helikopters) angepasst.
-   			Das Einstellungsmen� wurde erweitert: 
-   			Es kann nun zwischen den Aufl�sungen 1024x768 und 1280x720 
+   			Das Einstellungsmenü wurde erweitert: 
+   			Es kann nun zwischen den Auflösungen 1024x768 und 1280x720
    			gewechselt werden.
    			Es kann nun zwischen wei Hindergrundmusikauswahlen 
    			gewechselt werden.
-   			Ein Fehler, der dazu f�hrte, dass nach Verlassen der Werkstatt
+   			Ein Fehler, der dazu führte, dass nach Verlassen der Werkstatt
    			kein Hindernis-Gegner mehr erscheinen, wurde behoben.
    			Das Centrum der Explosion liegt bei Hindernis-Gegnern nun immer 
    			mittig.
-   			Eine neue Gegnerklasse, die auf Bodenh�he fliegt und bei 
+   			Eine neue Gegnerklasse, die auf Bodenhöhe fliegt und bei
    			Kollisionen schweren Schaden anrichtet, wurde implementiert.
    			Ein Fehler, der bewirkte, dass abprallende Raketen, den 
-   			Helicopter sofort zerst�ren, wurde behoben.
+   			Helicopter sofort zerstören, wurde behoben.
    			Der Panzerungszuwachs nimmt mit steigendem Level nicht mehr liear 
-   			zu: Bei h�heren Levels ist der Zuwachs pro Level gr��er. 
-   			Die maximale Panzerung f�r alle Helikopter ist nun gr��er.
-   			Der Schaden f�r Kollisonen mit nicht-explodierenden Gegnern wurde
+   			zu: Bei höheren Levels ist der Zuwachs pro Level größer.
+   			Die maximale Panzerung für alle Helikopter ist nun größer.
+   			Der Schaden für Kollisonen mit nicht-explodierenden Gegnern wurde
    			um 35% gesenkt, der Schaden, den eigene oder feindliche Geschosse
    			beim Helikopter anrichten wurde um 50% gesenkt.
-   			Bei Kollisonen mit nicht-explodierenden und abst�rzenden Wracks 
+   			Bei Kollisonen mit nicht-explodierenden und abstürzenden Wracks
    			nimmt die Helikopter Panzerung nun kontinuierlich und nicht mehr
    			stufenweise ab.
    			Ein Fehler, durch den das nach Absturz erscheinende Fenster 
-   			zu gro�dargestellt wurde, konnte behoben werden.
-   			Die vom Spieler gew�hlten Einstellungen (Sprache, Aufl�sung, 
+   			zu großdargestellt wurde, konnte behoben werden.
+   			Die vom Spieler gewählten Einstellungen (Sprache, Auflösung,
    			Hintergrundmusik) werden jetzt gespeichert.
-   			Ein Fehler, der dazu f�hrte, dass sich nach besiegen eines 
+   			Ein Fehler, der dazu führte, dass sich nach besiegen eines 
    			Endgegners der Hintergrund nicht wieder bewegt, wurde behoben.
    			Der Helicopter kann nun auf der rechten Bildschirmseite nicht 
-   			mehr au�erhalb des sichtbaren Bereichs gelenkt werden.
+   			mehr außerhalb des sichtbaren Bereichs gelenkt werden.
       		Der Helikopter kann nicht mehr durch Barrier-Gegner hindurch 
       		fliegen.
-      		Ein Fehler, der dazu f�hrte, dass nach Schlie�en des Spielmen�s
-      		keine Kollsionen mit Gegnern m�glich waren, bis der Helikopter
+      		Ein Fehler, der dazu führte, dass nach Schließen des Spielmenüs
+      		keine Kollsionen mit Gegnern möglich waren, bis der Helikopter
       		gestartet ist, wurde behoben.
-      		Ein Fehler, der dazu f�hrte, dass sich PowerUps auch bei
+      		Ein Fehler, der dazu führte, dass sich PowerUps auch bei
       		aktivierter Pause-Funktion noch bewegten, wurde behoben.
       		Die auf und ab fliegende Barrier-Gegner-Klasse besitzt nun die 
-      		F�higkeit "Static charge". Diese wird bei Ber�hrung mit dem 
-      		Helikopter ausgel�st, zieht Energie ab und verlangsam den 
+      		Fähigkeit "Static charge". Diese wird bei Berührung mit dem 
+      		Helikopter ausgelöst, zieht Energie ab und verlangsam den 
       		Helikopter.
-      		Ein Fehler, der dazu gef�hrt hat, dass sich die Extra-Boni-Ausbeute
-      		f�r Helikopter der Orochi-Klasse verschlechtert hat, sobald
-      		Durchstopsprengk�pfe erforscht waren, wurde behoben.    	
-      		Ein Fehler, der dazu f�hrte, dass die Nahkampfbestrahlung viel zu 
+      		Ein Fehler, der dazu geführt hat, dass sich die Extra-Boni-Ausbeute
+      		Für Helikopter der Orochi-Klasse verschlechtert hat, sobald
+      		Durchstopsprengköpfe erforscht waren, wurde behoben.    	
+      		Ein Fehler, der dazu führte, dass die Nahkampfbestrahlung viel zu 
       		hohen Schaden beim Gegner verursacht, wurde behoben.	
-      		Kollisionen zwischen einem abgest�rzten Helikopter und Gegnern 
-      		sind nicht mehr m�glich.
+      		Kollisionen zwischen einem abgestürzten Helikopter und Gegnern 
+      		sind nicht mehr möglich.
       		Ein Fehler, der bewirkte, dass bereits entfernte "Rock"-Gegner
       		nach Reparatur und verlassen der Werkstatt noch zu sehen waren
       		konnte beseitigt werden.
-      		Ein Fehler, der dazu f�hrte, dass manche von links erscheindenen 
+      		Ein Fehler, der dazu führte, dass manche von links erscheindenen 
       		Barrier-Gegner zu langsam flogen und somit nie sichtbar wurden, 
       		konnte beseitigt werden.
-      		Ein Fehler, der dazu f�hrte, dass Helikopter der Ph�nix-Klasse
-      		bei Kollisionen Barrier-Gegner sofort inaktivieren, k�nnte 
+      		Ein Fehler, der dazu führte, dass Helikopter der Phönix-Klasse
+      		bei Kollisionen Barrier-Gegner sofort inaktivieren, könnte 
       		beseitigt werden.
       		Ein Fehler, der zu einer fehlerhaften Beschriftung der 
-      		Buttons gef�hrt hat, wurde beseitigt.
+      		Buttons geführt hat, wurde beseitigt.
       		Ein farblicher Darstellungsfehler in der Highscore wurde behoben.
-      		Barrier-Gegner mit der Teleport-Funktion bleiben nun l�nger aktiv.
+      		Barrier-Gegner mit der Teleport-Funktion bleiben nun länger aktiv.
       		Es ist nun leichter PowerUps einzusammeln.
-      		Ein Fehelr, der dazu f�hrte, dass der Helicopter bei Kollsionen 
+      		Ein Fehelr, der dazu führte, dass der Helicopter bei Kollsionen 
       		mit den von Carrier-Gegnern freigesetzen Gegnern nahm, wurde
       		beseitigt.
-      		Gegner vom Typ Carrier wurden abgeschw�cht: es werden nach 
-      		Zerst�rung weniger gegnerische Flugk�rer freigesetzt und diese
+      		Gegner vom Typ Carrier wurden abgeschwächt: es werden nach 
+      		Zerstörung weniger gegnerische Flugkörper freigesetzt und diese
       		fliegen etwas langsamer. 
       		Die Anzahl der maximal gleichzeitig zu sehenden Gegner in 
       		den Leveln 36 bis 39 wurde jeweils um einen reduziert. 
@@ -706,185 +706,185 @@ Versionen:
       		enttarnen ein Audio-Signal abgespielt.
       		Einige Fehler im Zusammenhang mit sich tarnenden Hindernissen
       		wurden behoben.
-      		Gegner au�erhalb des sichtbaren Bereiches schie�en nicht mehr.
-      		Unverwundbarkeit h�lt nur noch 80% des erlittenen Schadens ab.
-      		Die Gr��en f�r Modelle vom Typ CARGO wurden angepasst.
-  			Minibosse mit der Traktor-Funktion k�nnen diese nicht mehr
-  			einsetzen, falls sie nicht vollst�ndig enttarnt sind.
-  			Von nicht mehr vollst�ndig im sichtbaren Bildschirmbereich 
+      		Gegner außerhalb des sichtbaren Bereiches schießen nicht mehr.
+      		Unverwundbarkeit hält nur noch 80% des erlittenen Schadens ab.
+      		Die Größen für Modelle vom Typ CARGO wurden angepasst.
+  			Minibosse mit der Traktor-Funktion können diese nicht mehr
+  			einsetzen, falls sie nicht vollständig enttarnt sind.
+  			Von nicht mehr vollständig im sichtbaren Bildschirmbereich 
   			befindlichen Gegnern verlorene PowerUps verschwinden nicht mehr 
   			sofort.
-  			Ein Fehler, der dazu f�hrte, dass die Verlangsamung durch 
+  			Ein Fehler, der dazu führte, dass die Verlangsamung durch 
   			Kollsionen mit Barrier-Gegnern nach Betreten der Werkstatt nicht verschwand, 
   			wurde behoben.
   			Ein Grafikfehler bei der Darstellung des Energieschildes wurde 
   			behoben.
-  			Bei aktiviertem Energieschild f�llt der Energieabzug durch 
+  			Bei aktiviertem Energieschild fällt der Energieabzug durch 
   			Geschosse und "Static charge" nun geringer aus.
   			Der Energieverbrauch des Energieschildes bei Kollsionen wurde 
   			reduziert.
   			Die maximale Schussrate von zielenden Barrier-Gegnern wurde
   			reduziert.
   			Die Bedienung des Energie-Schildes der Rock-Klasse wurde 
-  			�berarbeitet.
-  			Ab jetzt verlieren alle aktivien Gegner mit der F�higkeit 
-  			"call_back" diese F�higkeit,sobald ein Boss-Level erreicht wurde.
-  			Ein Fehler, der dazu f�hrte, dass Gegner ihre Tarnf�higkeit bei 
+  			überarbeitet.
+  			Ab jetzt verlieren alle aktivien Gegner mit der Fähigkeit 
+  			"call_back" diese Fähigkeit,sobald ein Boss-Level erreicht wurde.
+  			Ein Fehler, der dazu führte, dass Gegner ihre Tarnfähigkeit bei 
   			Beschuss mit Stopper-Raketen verlieren, wurde behoben. 
-  		 	Das Powershield wurde �berarbeitet: 
-  			Die Aktivierung kostet nun keine Energie mehr, daf�r ist 
+  		 	Das Powershield wurde überarbeitet: 
+  			Die Aktivierung kostet nun keine Energie mehr, dafür ist 
   			die Regeneration ausgesetzt solange es aktiv ist.
   			Discharger-Geschosse haben bei aktiviertem Powershiled
   			nun keine Auswirkung mehr auf den Helikopter.
-  			Die Eneregiekosten f�r Stoppraketen sinken nun mit h�heren 
+  			Die Eneregiekosten für Stoppraketen sinken nun mit höheren 
   			Levels des Energie-Upgrades.
   			Das Spezial-Upgrade PowerUp-Stopper ist nun noch effizienter:
  			PUs werden nun immer nahe dem rechten Bildschirmrand platziert,
  			so dass es der Spieler leichter hat diese einzusammeln.
   
-  	v1.3.0	Beginn der Beta-Phase f�r HelicopterDefence 1.3
+  	v1.3.0	Beginn der Beta-Phase für HelicopterDefence 1.3
       
-    v1.3.1	Die Geschwindigkeit des Spiels wurde um ca. 13% erh�ht.
- 			Servants von Boss 5 werden von der EMP-Schockwelle nicht l�nger 
+    v1.3.1	Die Geschwindigkeit des Spiels wurde um ca. 13% erhöht.
+ 			Servants von Boss 5 werden von der EMP-Schockwelle nicht länger 
  			verlangsamt, wenn sie ein Schild aufspannen.
  			Stopp-Raketen haben keinen Bonus-Schaden mehr.
- 			Auch der Ton von Soundeffekten l�sst sich jetzt deaktivieren.
- 			Es wurde eine Option eingebaut, die es erm�glicht zu zeichnende 
+ 			Auch der Ton von Soundeffekten lässt sich jetzt deaktivieren.
+ 			Es wurde eine Option eingebaut, die es ermöglicht zu zeichnende 
  			
- 	v1.3.2	Bilder zu �berspringen, wenn dadurch Zeit eingespart wird.
+ 	v1.3.2	Bilder zu überspringen, wenn dadurch Zeit eingespart wird.
  			Ein Bewegungsfehler bei Verwendung der Teleport-Funktion von 
  			nach links fliegenden Helicoptern (Phoenix) wurde behoben.
    			Folgende Koordinaten werden nun entsprechend der Flugrichtung des
    			Helicopters korrekt berechnet: Zentrum der Explosion (EMP,
    			Absturz des Helikopters, Treffer feindlicher Geschosse am 
    			Helikopter, Ansatz Punkt des Traktorstrahls am Helicopter, 
-   			Zielkoordinaten f�r feindliche Geschosse
-   			Es kann nun auch vom Fenstermodus in den Vollbildmodus zur�ck 
+   			Zielkoordinaten für feindliche Geschosse
+   			Es kann nun auch vom Fenstermodus in den Vollbildmodus zurück 
    			geschaltet werden.
-   			Die Aufl�sung im Vollbildmodus kann nicht l�nger auf 1024x768 
+   			Die Auflösung im Vollbildmodus kann nicht länger auf 1024x768 
    			umgestellt werden.
    			Der Hintergrund bleibt jetzt schwarz, wenn nach Fensterminimierung
-   			wieder in den Vollbildmodus zur�ck gekehrt wird.
-   			Das Spiel stoppt nun, wenn der Mauszeiger sich w�hrend 
+   			wieder in den Vollbildmodus zurück gekehrt wird.
+   			Das Spiel stoppt nun, wenn der Mauszeiger sich während 
    			Verwendung des Fenstermodus aus dem Fenster heraus bewegt.
    			An unverwundbaren Gegnern abgepralle Raketen fliegen jetzt 
    			mit minimaler Raketengeschwindigkeit.
-   			Der Spieler kann nun seine urspr�ngliche Bildschirmaufl�sung
+   			Der Spieler kann nun seine ursprüngliche Bildschirmauflösung
    			auch im Vollbildmodus verwenden.
    			Der Spieler kann den Helikopter nun auch mit der Leertaste drehen.
    			Darstellungsfehler im Zusammenhang mit der Position der Schrift
-   			im Startscreen-Menue bei �nderung der Aufl�sung wurden behoben.
-   			DieZ�hlvariable "Kills nach dem letzten LevelUp" (Voraussetzung 
-   			f�r LevelUp) wird nun auch im Savegame gespeichert.
+   			im Startscreen-Menue bei Änderung der Auflösung wurden behoben.
+   			Die Zählvariable "Kills nach dem letzten LevelUp" (Voraussetzung 
+   			Für LevelUp) wird nun auch im Savegame gespeichert.
    			Um das Erscheinen der Boss-Gegners zu beschleunigen, werden 
-   			alle Barrier nach erreichen des Boss-Levels automatisch zerst�rt.
-   			Gegner k�nnen nicht l�nger durch station�re Hindernis-Gegner
+   			alle Barrier nach erreichen des Boss-Levels automatisch zerstört.
+   			Gegner können nicht länger durch stationäre Hindernis-Gegner
    			hindurch fliegen.
-   			Die Berechnungsmethode f�r die Geschwindigkeit von Gegnern 
+   			Die Berechnungsmethode für die Geschwindigkeit von Gegnern 
    			wurde gegen eine effizientere ausgetauscht.
    			Ein Fehler der zu einer fehlerhaften Bewegung von Gegnern mit der 
-   			Eigenschaft "loop" gef�hrt hat, wurde behoben. 
-   			laut Werkstattanzeige hatten selbst vollst�ndig reparierte 
+   			Eigenschaft "loop" geführt hat, wurde behoben. 
+   			laut Werkstattanzeige hatten selbst vollständig reparierte 
    			Helickopter zum Teil nur 99% Lebenskraft. Dieser Fehler wurde 
    			behoben.
    			Die update-Methoden der Gegnerklasse wurde besser strukturiert.
-   			Gegner wenden sich nur noch bei Ber�hrungen mit Barrieren, 
+   			Gegner wenden sich nur noch bei Berührungen mit Barrieren, 
    			wenn sie sich dadurch vom Gegner abwenden.
-   			Neu erschienene Gegner k�nnen jetzt nicht mehr verschwinden, ohne
+   			Neu erschienene Gegner können jetzt nicht mehr verschwinden, ohne
    			jemals sichtbar gewesen zu sein.
-   			Gegner, die durch Barries auf den Boden gedr�ckt werden, 
+   			Gegner, die durch Barries auf den Boden gedrückt werden, 
    			explodieren. 
-   			Kaboom-Gegner explodieren mit einer gro�en Explosion.
-   			Die sich vertikal bewegenden Barriers l�sen beim Aufprall auf dem 
+   			Kaboom-Gegner explodieren mit einer großen Explosion.
+   			Die sich vertikal bewegenden Barriers lösen beim Aufprall auf dem 
    			Boden einen Sound aus.
    			Sound-Effekte vom Zusammenprall zwischen Gegnern und Barriers sind 
-   			nur noch h�rbar, wenn sich sowohl Gegner als auch Barrier im 
+   			nur noch hörbar, wenn sich sowohl Gegner als auch Barrier im 
    			sichtbaren Bereich befinden.
    			Es wurde eine maximale Rate festgelegt, mit der 
-   			Barrier-Zusammenprall-Sounds erklingen k�nnen.
-   			Ein Fehler, der das auftreten von zerst�rten Gegnern vom Typ
-   			"Rock" erm�glichte, wurde behoben.
+   			Barrier-Zusammenprall-Sounds erklingen können.
+   			Ein Fehler, der das auftreten von zerstörten Gegnern vom Typ
+   			"Rock" ermöglichte, wurde behoben.
    			Es kann nicht mehr passieren, dass langsame nach rechts fliegende 
-   			Gegner nie verschwinden, obwohl sie au�er Sicht sind.
+   			Gegner nie verschwinden, obwohl sie außer Sicht sind.
    			Bei erreichen eines Boss-Levels werden nicht mehr zu sehende 
    			Gegner nun entfernt, sodass der Boss schneller erscheint.   
-   			Barriers k�nnen andere Barriers nicht mehr unter die
-   			Bodenlinie oder �ber den sichtbaren Bereich dr�cken.
-   			Kollisionen mit Gegnern f�hren jetzt grunds�tzlich zu einer 
+   			Barriers können andere Barriers nicht mehr unter die
+   			Bodenlinie oder über den sichtbaren Bereich drücken.
+   			Kollisionen mit Gegnern führen jetzt grundsätzlich zu einer 
    			sehr kurzen Verlangsamung.
    			Die Berechnung der Geschwindigkeiten wurde vereinheitlicht: 
    			Zwischen Startgeschwindigkeitslevel, Geschwindigkeitslevel und
-   			aktueller Geschwindigkeit ist nun keine Umrechnung mehr n�tig.	
+   			aktueller Geschwindigkeit ist nun keine Umrechnung mehr nötig.	
    			Ein Fehler, durch den der Helikopter gelegentlich Schaden 
-   			bei Kollision mit bereits abges�rzten Gegnern erleiden konnte, 
+   			bei Kollision mit bereits abgesürzten Gegnern erleiden konnte, 
    			wurde behoben.	
    			Ein Fehler, durch den ein Vergraben von Hindernisgegnern mit der
-   			F�higkeit "Borrow" sowie ein fehlerhafte Platzierung von Gegnern 
+   			Fähigkeit "Borrow" sowie ein fehlerhafte Platzierung von Gegnern 
    			vom Typ "Rock" verursacht wurde, konnte behoben werden.
   			Ein Fehler, der zu einer zu schnellen Flugweise von Gegnern mit 
-  			der Eigenschaft "Sinus-Flug" gef�hrt hat, wurde behoben.
+  			der Eigenschaft "Sinus-Flug" geführt hat, wurde behoben.
   			Standard-Gegner werden jetzt immer vor den Hindernissen gemalt.
   			Kollsionen mit Gegnern, die sich nicht auf dem Bildschirm befinden, 
-  			sind nicht l�nger m�glich.
-  			Die gro�en am Boden liegenden Barriers k�nnen nicht l�nger von 
+  			sind nicht länger möglich.
+  			Die großen am Boden liegenden Barriers können nicht länger von 
   			anderen Barrier-Gegnern verschoben werden.
-  			Ein Fehler, der dazu f�hrte, dass Barriers mit der Geschwindigkeit
+  			Ein Fehler, der dazu führte, dass Barriers mit der Geschwindigkeit
   			(0, 0) nicht nach verlassen des sichtbaren Bildschirmbereichs 
   			entfernt wurden, konnte beseitigt werden.
   			Ein Fehler innerhalb der Geschwindigkeitsanpassung bei 
-  			Zusammenst��en mit Barriers wurde behoben.
-  			Stopp-Raketen erm�glichen nicht l�nger eine �berlagerung von 
+  			Zusammenstößen mit Barriers wurde behoben.
+  			Stopp-Raketen ermöglichen nicht länger eine überlagerung von 
   			Hindernis-Gegnern (Barriers)
   			Die Implentierung der Stopp-Raketen wurde verbessert.
-  			Ein Fehler, der dazu f�hrte, dass sich Minibosse w�hrend sie unter
-  			dem Effekt einer Stopp-Rakete stehen, drehen k�nnen, wurde behoben.
+  			Ein Fehler, der dazu führte, dass sich Minibosse während sie unter
+  			dem Effekt einer Stopp-Rakete stehen, drehen können, wurde behoben.
   			Die Zeit in der ein Gegner nach Beschuss von Stopp-Raketen wieder
-  			schrittweise seine urspr�ngliche Geschwindigkeit erreicht, wurde 
-  			erh�ht.
-  			Die Preise f�r Reparaturen wurden reduziert.
+  			schrittweise seine ursprüngliche Geschwindigkeit erreicht, wurde 
+  			erhöht.
+  			Die Preise für Reparaturen wurden reduziert.
   			Einige Fehler, die zu fehlerhaften Aufenthaltsorten von 
-  			Hindernis-Gegnern mit der Vergraben-F�higkeit wurden behoben.
-  			Der Tarnvorgang kann f�r Boss-Gegner 3 nicht mehr durch 
+  			Hindernis-Gegnern mit der Vergraben-Fähigkeit wurden behoben.
+  			Der Tarnvorgang kann für Boss-Gegner 3 nicht mehr durch 
   			Stopp-Raketen aufgehalten werden.
   			Getarnte Gegner, die von einer EMP-Schockwelle getroffen werden, 
   			werden nun automatisch enttarnt.
   			Wie bei Beschuss durch Raketen setzt sich Boss-Gegner 4 nun auch 
   			bei Treffer durch eine EMP-Schockwelle wieder in Bewegung.
   			Fehler im Zusammenhang mit den Schutzschild-Servants, die dazu 
-  			f�hrte, dass
+  			führte, dass
   			- diese innerhalb von Boss 5 zum Stehen kommen konnten 
-			- diese sich bewegen konnten, w�hrend sie das Schild aufspannten
+			- diese sich bewegen konnten, während sie das Schild aufspannten
 			wurden behoben. 
   			Der Protektor vom finalen Boss kann nicht mehr durch Stopp-Raketen
   			verschoben werden und wird nach EMP-Treffern schneller wieder
   			einsatzbereit.
-  			Durch eine EMP-Schockwelle verlangsamte Gegner k�nnen Geschossen
-  			nicht l�nger ausweichen.
+  			Durch eine EMP-Schockwelle verlangsamte Gegner können Geschossen
+  			nicht länger ausweichen.
   			Boss-Gegner, die auf Kollisionskurs steuern verlangsamen nun 
   			kurzfristig nach einem Richtungswechsel in X-Richtung.
   			Gegner vom Typ "Carrier" sind jetzt kleiner.
-  			Ein Fehler, der dazu f�hrte, dass ein aktiviertes Energieschild 
-  			zu keinen kontinuierlichem Energieverlust mehr f�hrte, wurde 
+  			Ein Fehler, der dazu führte, dass ein aktiviertes Energieschild 
+  			zu keinen kontinuierlichem Energieverlust mehr führte, wurde 
   			behoben.
   			Der Schaden von Phase-Shift-Geschossen (Pegasus-Klasse) wurde um
-  			20% erh�ht.
-  			Die Slow-Wirkung von EMP-Schockwellen wurde f�r Boss-Gegner, aber 
+  			20% erhöht.
+  			Die Slow-Wirkung von EMP-Schockwellen wurde für Boss-Gegner, aber 
   			nicht Boss-Servants, um 43% gesenkt.
   			Bei Reparatur eines voll ausgebauten Helicopters in Level 50
-  			wird auch die Energie wieder voll aufgef�llt.
+  			wird auch die Energie wieder voll aufgefüllt.
   			Die Rahmenbreite im Fenstermodus wurde erhoht.
-  			Ein Button-Beschriftungsfehler im Optionen-Men� wurde behoben.
+  			Ein Button-Beschriftungsfehler im Optionen-Menü wurde behoben.
   			Wenn einer Gegner den Helikopter mit einen Traktorstrahl fest
-  			h�lt und gleichzeitig in Y-Richtung von eiem Hindernis-Gegner
+  			hält und gleichzeitig in Y-Richtung von eiem Hindernis-Gegner
   			verschoben wird, dann beendet dies den Traktor.
-  			Von Stopp-Raketen und EMP-Schockwellen getroffene Gegner k�nnen 
+  			Von Stopp-Raketen und EMP-Schockwellen getroffene Gegner können 
   			sich nicht mehr weg teleportieren.
   			Gegner mit der Teleporter-Funktion nutzen diese jetzt auch, um 
   			einer EMP-Schockwelle zu entkommen.
-  			Ein Fehle der dazu f�hrte das sich getarnte Gegner mit der F�higkeit
+  			Ein Fehle der dazu führte das sich getarnte Gegner mit der Fähigkeit
   			Kamikaze nach Beschuss beim Angriff nicht entarnen wurde behoben.
-  			Durch Barrier zerst�rte Gegner k�nnen auch PowerUps verlieren.
-  			Zerst�rte Barriers k�nnen keine PowerUps mehr verlieren.
+  			Durch Barrier zerstörte Gegner können auch PowerUps verlieren.
+  			Zerstörte Barriers können keine PowerUps mehr verlieren.
   			Bei Wechsel in den Fenstermodus erscheitn das Spielfenster nun in
   			der Mitte des Bildschirms.  	
   			Das Spiel wird nun standardmäßig im Fenstermodus geöffnet.
@@ -902,4 +902,4 @@ Versionen:
 			Hintergrundfarbe geführt hat, wurde behoben.
   		
    			   			
-Letzte �nderung: 18.03.2016
+Letzte Änderung: 18.03.2016

@@ -12,17 +12,6 @@ public interface Constants extends Positions
 	    START = 0,
 	    PRE_READY = 1,	    
 	   	
-		ROTOR_SYSTEM = 0,
-    	MISSILE_DRIVE = 1,
-    	PLATING = 2,
-    	FIREPOWER = 3,
-    	FIRE_RATE = 4,
-    	ENERGY_ABILITY = 5,
-    	SPELL = 6,
-		
 		NIGHT = 0,
 		DAY = 1;
-		
-    float
-		BG_SPEED = 2.0f;
 }

@@ -32,7 +32,9 @@ import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
@@ -2946,7 +2948,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
     	this.take_dmg((int)( (this.isMajorBoss()
     							? EMP_DAMAGE_FACTOR_BOSS
     							: EMP_DAMAGE_FACTOR_ORDINARY) 
-    						 * MyMath.dmg(helicopter.levelOfUpgrade[ENERGY_ABILITY])));
+    						 * MyMath.dmg(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])));
 		this.is_emp_shocked = true;		
 		if(this.type == BOSS_4){this.spawning_hornet_timer = READY;}
 		this.disable_site_effects(helicopter);
