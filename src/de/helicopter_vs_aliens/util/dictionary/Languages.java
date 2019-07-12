@@ -2,11 +2,19 @@ package de.helicopter_vs_aliens.util.dictionary;
 
 public enum Languages
 {
-    ENGLISH,
-    GERMAN;
+    ENGLISH("en"),
+    GERMAN("de");
     
-    String getLowercaseName()
+    private String code;
+    
+    
+    Languages(String code)
     {
-        return this.name().toLowerCase();
+        this.code = code;
+    }
+    
+    String getCode()
+    {
+        return this.code;
     }
 }

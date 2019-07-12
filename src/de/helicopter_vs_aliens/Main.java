@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.Label;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Languages;
 
@@ -10,7 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
@@ -51,16 +54,27 @@ public class Main implements Constants
     {
     	if(TESTMODE)
         {
-            Dictionary dictionary = new Dictionary(Languages.GERMAN);
+            Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
+            
+            List<String> list = dictionary.getSpecialUpgrades();
+            list.forEach(System.out::println);
+            
     
-            System.out.println(dictionary.getWord("upgrades.special.fifth.cxc"));
+            dictionary.setLanguage(ENGLISH);
             
-            
+            list.forEach(System.out::println);
+
+    
+    
+            dictionary.setHelicopterType(HELIOS);
+    
+            list.forEach(System.out::println);
+   
 		}
         else
         {
             final Controller controller = Controller.getInstance();
-            frame = new JFrame("HelicopterDefence 1.2");
+            frame = new JFrame("Helicopter vs. Aliens");
             
             frame.setBackground(Color.black);
             

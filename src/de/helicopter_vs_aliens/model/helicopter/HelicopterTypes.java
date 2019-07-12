@@ -9,21 +9,16 @@ public enum HelicopterTypes
     PEGASUS,
     HELIOS;
     
-    private String designation;
-
+    private static final String[] SPECIAL_UPGRADES = {"radiation", "jumbo", "radar", "rapidfire", "generator", "immobilizer"};
     
-    HelicopterTypes()
-    {
-        this.designation = this.name().substring(0,1) + this.name().substring(1).toLowerCase();
-    }
     
     public static HelicopterTypes getDefault()
     {
         return HELIOS;
     }
     
-    public String getDesignation()
+    public String getSpecialUpgrade()
     {
-        return this.designation;
+        return SPECIAL_UPGRADES[this.ordinal()];
     }
 }
