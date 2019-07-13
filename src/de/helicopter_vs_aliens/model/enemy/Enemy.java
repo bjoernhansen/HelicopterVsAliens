@@ -34,6 +34,8 @@ import de.helicopter_vs_aliens.util.MyMath;
 
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
+import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
@@ -211,7 +213,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	
 	public boolean	
 		is_mini_boss,					// = true: Gegner ist ein Mini-Boss
-		is_kaboom,		
+		isKaboom,
 		is_lasting,		
 		is_touching_helicopter,
 		has_unresolved_intersection;		
@@ -428,7 +430,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{
 		return  !this.is_destroyed 
 				&& (this.is_boss()
-					|| this.is_kaboom
+					|| this.isKaboom
 					|| (this.model == BARRIER 
 						&& this.snooze_timer <= SNOOZE_TIME + 75));
 	}
@@ -1531,7 +1533,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		this.can_instant_turn = false;
 		this.is_carrier = false;	
 		this.is_recovering_speed = false;
-		this.is_kaboom = false;
+		this.isKaboom = false;
 		this.has_height_set = false;
 		this.has_y_pos_set = false;		
 		this.is_emp_shocked = false;
@@ -1767,7 +1769,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	private void create_kaboom(Helicopter helicopter)
 	{
 		this.type = Integer.MAX_VALUE;
-		this.is_kaboom = true;
+		this.isKaboom = true;
 		this.farbe1 = Color.white;
 		this.hitpoints = Integer.MAX_VALUE;	
 		this.set_var_width(KABOOM_WIDTH);
@@ -2328,7 +2330,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 				&& Events.level > 4 
 				&& this.model != BARRIER
 				&& !(currentRock == this)
-				&& !this.is_kaboom
+				&& !this.isKaboom
 				&& MyMath.toss_up(miniboss_prob) 
 				&& this.type > 2;
 	}
@@ -3780,7 +3782,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	
 	private void evaluate_speed_boost()
 	{		
-		int bottom_turn_line = this.is_kaboom 
+		int bottom_turn_line = this.isKaboom
 								  ? KABOOM_Y_TURN_LINE 
 								  : (int)TURN_FRAME.getMaxY();
 									
@@ -3928,13 +3930,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		this.speed_level.setLocation(ZERO_SPEED);
 		this.set_y(this.y_crash_pos - this.bounds.getHeight());			
 		if(this.is_servant()){this.is_marked_for_removal = true;}
-		Audio.play(this.is_kaboom ? Audio.explosion4 : Audio.explosion3);
+		Audio.play(this.isKaboom ? Audio.explosion4 : Audio.explosion3);
 		Explosion.start(explosion, 
 						helicopter, 
 						this.bounds.getCenterX(),
 						this.bounds.getCenterY(),
-						this.is_kaboom ? JUMBO : STANDARD,
-						this.is_kaboom);
+						this.isKaboom ? JUMBO : STANDARD,
+						this.isKaboom);
 	}
 		
 	public boolean isMajorBoss()
@@ -3984,7 +3986,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	private void collision(Controller controller, Helicopter helicopter)
 	{
 		boolean play_collision_sound = this.collision_audio_timer == READY;
-		helicopter.be_affected_by_collision_with(this, controller, play_collision_sound);
+		helicopter.beAffectedByCollisionWith(this, controller, play_collision_sound);
 				
 		if(play_collision_sound)
 		{
@@ -3999,13 +4001,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			this.explode( controller.explosion,
 						  helicopter, 
 						  0, 
-						  this.is_kaboom 
+						  this.isKaboom
 						  	? JUMBO 
 						  	: STANDARD, 
-						  this.is_kaboom);
+						  this.isKaboom);
 			
 			if(	helicopter.hasShortrangeRadiation
-				&& !this.is_kaboom)
+				&& !this.isKaboom)
 			{
 				this.reward_for(controller.powerUp,
 								null, 
@@ -4028,7 +4030,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		{
 			this.take_dmg((int)(
 				helicopter.currentFirepower
-				* (helicopter.bonus_kills_timer > Helicopter.NICE_CATCH_TIME - Helicopter.TELEPORT_KILL_TIME 
+				* (helicopter.bonus_kills_timer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
 					? TELEPORT_DAMAGE_FACTOR 
 					: RADIATION_DAMAGE_FACTOR)));				
 							
@@ -4038,12 +4040,12 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 					&&  MyMath.toss_up(
 							this.deactivation_prob
 							*(helicopter.bonus_kills_timer 
-								> Helicopter.NICE_CATCH_TIME 
-								  - Helicopter.TELEPORT_KILL_TIME ? 2 : 1)))
+								> NICE_CATCH_TIME
+								  - TELEPORT_KILL_TIME ? 2 : 1)))
 				{
 					this.hitpoints = 0;
 				}
-				else if(MyMath.toss_up(this.deactivation_prob*(helicopter.bonus_kills_timer > Helicopter.NICE_CATCH_TIME - Helicopter.TELEPORT_KILL_TIME ? 4 : 2)))
+				else if(MyMath.toss_up(this.deactivation_prob*(helicopter.bonus_kills_timer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
 				{
 					this.snooze(true);
 				}
@@ -4070,7 +4072,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{		
 		return helicopter.get_dmg_factor() 
 			   *(helicopter.power_shield_on && this.is_explodable ? 0.65f : 1.0f)
-			   *(this.is_kaboom && !this.is_destroyed && !helicopter.hasShortrangeRadiation
+			   *(this.isKaboom && !this.is_destroyed && !helicopter.hasShortrangeRadiation
 			     ? helicopter.kaboom_dmg() 
 			     : (this.is_explodable && !this.is_invincible() && !this.is_destroyed)
 					? 1.0f 

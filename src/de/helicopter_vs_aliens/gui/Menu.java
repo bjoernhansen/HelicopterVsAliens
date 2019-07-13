@@ -180,7 +180,7 @@ public class Menu implements Constants, Fonts
     // Menu Objects
     public static String
 			repairShopTime;
-	static String highlighted_button = "";
+	static String highlightedButton = "";
 	static String message[] = new String [4];
     
     static GradientPaint  [] 
@@ -264,7 +264,7 @@ public class Menu implements Constants, Fonts
     static void update_startscreen(Helicopter helicopter, int counter)
 	{    	
     	MyColor.calculate_variable_game_colors(counter);
-    	identify_highlighted_buttons(helicopter, startscreen_button);       
+    	identifyHighlightedButtons(helicopter, startscreen_button);
         if(crossTimer > CROSS_MAX_DISPLAY_TIME){
 			crossTimer = 0;}
         else if(crossTimer > 0 ){
@@ -615,7 +615,7 @@ public class Menu implements Constants, Fonts
     
     static void update_repair_shop(Helicopter helicopter)
 	{
-    	identify_highlighted_buttons(helicopter, repairShopButton);
+    	identifyHighlightedButtons(helicopter, repairShopButton);
 		
 		if(messageTimer != 0){
 			messageTimer++;}
@@ -1520,22 +1520,22 @@ public class Menu implements Constants, Fonts
 	}
 
 	
-	static void identify_highlighted_buttons(Helicopter helicopter, HashMap<String, Button> button)
+	static void identifyHighlightedButtons(Helicopter helicopter, HashMap<String, Button> button)
 	{
-    	if(	highlighted_button.equals("")
-        	|| !button.get(highlighted_button).bounds.contains(helicopter.destination))
+    	if(	highlightedButton.equals("")
+        	|| !button.get(highlightedButton).bounds.contains(helicopter.destination))
         {
-        	if(!highlighted_button.equals(""))
+        	if(!highlightedButton.equals(""))
         	{
-        		button.get(highlighted_button).highlighted = false;
-        		highlighted_button = ""; 
+        		button.get(highlightedButton).highlighted = false;
+        		highlightedButton = "";
         	}
 			for(String key : button.keySet())
 			{
 				if (button.get(key).bounds.contains(helicopter.destination.x, helicopter.destination.y))
 				{
 					button.get(key).highlighted = true;
-					highlighted_button = key;
+					highlightedButton = key;
 					break;
 				}
 			}
@@ -3127,10 +3127,10 @@ public class Menu implements Constants, Fonts
 	
 	public static void stopButtonHighlighting(HashMap<String, Button> button)
 	{
-		if(!highlighted_button.equals(""))
+		if(!highlightedButton.equals(""))
 		{
-			button.get(highlighted_button).highlighted = false;
-			highlighted_button = "";
+			button.get(highlightedButton).highlighted = false;
+			highlightedButton = "";
 		}
 	}
 
@@ -3256,7 +3256,7 @@ public class Menu implements Constants, Fonts
 		}		
 		else
 		{				
-			identify_highlighted_buttons(helicopter, startscreen_menu_button);
+			identifyHighlightedButtons(helicopter, startscreen_menu_button);
 		}		
 	}
 

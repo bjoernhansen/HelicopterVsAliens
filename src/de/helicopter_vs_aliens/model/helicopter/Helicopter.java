@@ -27,6 +27,8 @@ import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
+import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
+import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
@@ -37,23 +39,20 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 public abstract class Helicopter extends MovingObject implements Fonts, DamageFactors, MissileTypes
 {			
 	// Konstanten
-    public static final int     			    	   
-    	TELEPORT_KILL_TIME = 15,		// in dieser Zeit [frames] nach einer Teleportation vernichtete Gegner werden für den Extra-Bonus gewertet
-    	NICE_CATCH_TIME = 22,			// nur wenn die Zeit [frames] zwischen Teleportation und Gegner-Abschuss kleiner ist, gibt es den "NiceCath-Bonus"
-    	POWERUP_DURATION = 930,			// Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
+    public static final int
+		POWERUP_DURATION = 930,            // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
     	RECENT_DMG_TIME = 50,
-    	SLOW_TIME = 100,    	
-    	TELEPORT_INVU_TIME = 45,
-    	NO_COLLISION_DMG_TIME	= 20, 	// Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann 
-    	FIRE_RATE_POWERUP_LEVEL = 3,	// so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
-    	NR_OF_TYPES = HelicopterTypes.values().length,				// so viele Helikopter-Klassen gibt es
-    	INVU_DMG_REDUCTION = 80,
-    	ENERGY_DRAIN = 45,				// Energieabzug für den Helikopter bei Treffer
+		SLOW_TIME = 100,
+		NO_COLLISION_DMG_TIME	= 20,    // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
+    	FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
+    	NR_OF_TYPES = HelicopterTypes.values().length,                // so viele Helikopter-Klassen gibt es
+    	INVU_DMG_REDUCTION = 80,        // %-Wert der Schadensreduzierung bei Unverwundbarleit
+    	ENERGY_DRAIN = 45,                // Energieabzug für den Helikopter bei Treffer
     	REDUCED_ENERGY_DRAIN = 10,
 		STANDARD_PLATING_STRENGTH = 1,
-		GOLIATH_PLATING_STRENGTH = 2,
-    	    	    
-    	// Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standardupgrades
+		GOLIATH_PLATING_STRENGTH = 2;
+
+	public static final int// Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standardupgrades
     	// für jede einzelne Helikopter-Klasse sowie Energiekosten für das Energieupgrade
     	COSTS[][] = {{4, 2, 0, 1, 2, 3, 50},	// Phoenix
     	             {1, 3, 4, 0, 4, 2, 30},	// Roch
@@ -111,7 +110,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 		slowed_timer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse						
 		recent_dmg_timer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
 			interphaseGeneratorTimer,			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
-		enhanced_radiation_timer,				
+			enhancedRadiationTimer,
 		
 		// für die Spielstatistik
 		nr_of_crashes,						// Anzahl der Abstürze
@@ -326,7 +325,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     	// Nahkampfbestrahlung 
     	if(!unlockedPainting && this.hasShortrangeRadiation)
         {            
-            g2d.setColor(this.enhanced_radiation_timer == 0 
+            g2d.setColor(this.enhancedRadiationTimer == 0
             				? MyColor.radiation[Events.timeOfDay]
             				: MyColor.enhanced_radiation[Events.timeOfDay]);
             g2d.fillOval(left+(movement_left ? -9 : 35), top+19, 96, 54);
@@ -514,7 +513,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 	private void update_timer()
 	{
 		if(this.recent_dmg_timer	     > 0){this.recent_dmg_timer--;}	
-		if(this.enhanced_radiation_timer > 0){this.enhanced_radiation_timer--;}
+		if(this.enhancedRadiationTimer > 0){this.enhancedRadiationTimer--;}
 		if(this.generator_timer		     > 0){this.generator_timer--;}
 		if(this.slowed_timer		     > 0){this.slowed_timer--;}	
 			
@@ -934,7 +933,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 		this.power_shield_on = false;
 		this.slowed_timer = 0;		
 		this.recent_dmg_timer = 0; 
-		this.enhanced_radiation_timer = 0;
+		this.enhancedRadiationTimer = 0;
 		for(int i = 0; i < 4; i++){this.powerUp_timer[i] = 0;}	
 		this.generator_timer = 0;
 		this.emp_wave = null;
@@ -1153,9 +1152,9 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 						
 			if(!this.active || !this.rotor_system_active){this.set_activation_state(true);}
 			if(this.tractor != null){this.stop_tractor();}
-			this.powerUp_timer[INVINCIBLE.ordinal()] = Math.max(this.powerUp_timer[INVINCIBLE.ordinal()], TELEPORT_INVU_TIME);
+			this.powerUp_timer[INVINCIBLE.ordinal()] = Math.max(this.powerUp_timer[INVINCIBLE.ordinal()], Phoenix.TELEPORT_INVU_TIME);
 			this.bonus_kills = 0; 
-			this.enhanced_radiation_timer = TELEPORT_INVU_TIME;
+			this.enhancedRadiationTimer = Phoenix.TELEPORT_INVU_TIME;
 			this.bonus_kills_timer = NICE_CATCH_TIME;
 			this.bonus_kills_money = 0; 
 		}
@@ -1243,7 +1242,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     			 || this.has_unlimited_energy())))
 		{
 			this.currentPlating = Math.max(this.currentPlating - this.get_dmg_factor() * MISSILE_DMG, 0f);
-			if(this.enhanced_radiation_timer == 0)
+			if(this.enhancedRadiationTimer == 0)
 			{
 				this.recent_dmg_timer = RECENT_DMG_TIME;
 			}
@@ -1458,7 +1457,7 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     	this.paint(g2d, 692, 360, helicopterType, 1);
 	}
 
-	public boolean is_power_shield_protected(Enemy enemy)
+	public boolean isPowerShieldProtected(Enemy enemy)
 	{		
 		return this.power_shield_on 
 			   && (this.has_unlimited_energy()
@@ -1520,19 +1519,19 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 	
 	public float get_dmg_factor()
 	{		
-		return this.enhanced_radiation_timer == READY 
+		return this.enhancedRadiationTimer == READY
 					? this.is_invincible() 
 						? INVU_DMG_FACTOR
 						: 1.0f 
 					: 0.0f;
 	}
 
-	public boolean enhanced_radiation_approved(Enemy enemy)
+	public boolean enhancedRadiationApproved(Enemy enemy)
 	{		
 		return this.hasShortrangeRadiation
 				&& enemy.collision_damage_timer == 0 
-				&& !enemy.is_kaboom
-				&& this.enhanced_radiation_timer == READY
+				&& !enemy.isKaboom
+				&& this.enhancedRadiationTimer == READY
 				&& MyMath.toss_up(ENHANCED_RADIATION_PROB);
 	}
 	
@@ -1689,30 +1688,30 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     	return i == 5 ? 1 + i + this.getType().ordinal() : i;
     }
 
-	public void be_affected_by_collision_with(Enemy enemy, 
-	                                          Controller controller,
-	                                          boolean play_collision_sound)
+	public void beAffectedByCollisionWith(Enemy enemy,
+										  Controller controller,
+										  boolean playCollisionSound)
 	{
-		if(!this.is_power_shield_protected(enemy))
+		if(!this.isPowerShieldProtected(enemy))
 		{			
-			if(play_collision_sound)
+			if(playCollisionSound)
 			{
-				Audio.play(enemy.is_kaboom 
+				Audio.play(enemy.isKaboom
 							? Audio.explosion4 
-							: this.enhanced_radiation_timer == 0
+							: this.enhancedRadiationTimer == 0
 								? Audio.explosion1
 								: Audio.explosion2);
 			}			
 			
 			this.slowed_timer = 2;
 			
-			if(this.enhanced_radiation_approved(enemy))
+			if(this.enhancedRadiationApproved(enemy))
 			{
-				this.enhanced_radiation_timer 
-					= Math.max(	this.enhanced_radiation_timer, 
+				this.enhancedRadiationTimer
+					= Math.max(	this.enhancedRadiationTimer,
 								NO_COLLISION_DMG_TIME);
 			}
-			else if(this.enhanced_radiation_timer == 0)
+			else if(this.enhancedRadiationTimer == 0)
 			{					
 				this.recent_dmg_timer = RECENT_DMG_TIME; 
 			}
@@ -1741,9 +1740,9 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 					: this.spell_costs * enemy.collision_dmg(this);
 			if(this.is_invincible())
 			{
-				if(play_collision_sound){Audio.play(Audio.shield_up);}				
+				if(playCollisionSound){Audio.play(Audio.shield_up);}
 			}		
-			else if(play_collision_sound){Audio.play(Audio.explosion1);}
+			else if(playCollisionSound){Audio.play(Audio.explosion1);}
 		}		
 	}
 

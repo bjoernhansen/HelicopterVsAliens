@@ -28,24 +28,26 @@ public class Button implements Constants, Fonts, Costs
 		UPGRADE_BUTTON_SIZE = new Dimension(193, 50);
 	    
     // Beschriftungen in deutscher und englischer Sprache
-	static final String   
-		REPAIR[] = 			 {"Repair helicopter", "Reparatur durchführen"};
-	static final String PRICE[]	= 			 {"Price: ", "Kosten: "};
-	static final String REPAIR_SHOP[] =		 {"Repair shop", "zur Werkstatt"};
-	static final String MAIN_MENU[] = 		 {"Main menu", "Hauptmenü"};
-	static final String START_NEW_GAME[] = 	 {"Start a new game", "Neues Spiel starten"};
-	static final String QUIT[] = 			 {"Quit", "Spiel beenden"};
-	static final String CANCEL[] = 			 {"Cancel", "zurück"};
-	public static final String[][] MISSION = 		 {{"Start overnight mission", "Start daytime mission"},
-                             {"Nachteinsatz starten", "Tageinsatz starten"}};
-	public static final String[][] SOLD = 			{{"Low salary", "High salary"},
-                             {"geringer Sold", "hoher Sold"}};
-	public static final String[][] DISPLAY = 		{{"Window mode", "Fullscreen mode"},
-                             {"Fenstermodus", "Vollbildmodus"}};
-	public static final String[][] ANTIALIAZING =  {{"Turn off antialiasing", "Turn on antialiasing" },
-                             {"Kantenglättung aus", "Kantenglättung an"}};
-	public static final String[][] MUSIC = 		{{"Turn off music", "Turn on music" },
-                             {"Musik ausschalten", "Musik einschalten"}};
+	static final String 
+		REPAIR[] = 			 {"Repair helicopter", "Reparatur durchführen"},
+		PRICE[]	= 			 {"Price: ", "Kosten: "},
+		REPAIR_SHOP[] =		 {"Repair shop", "zur Werkstatt"},
+		MAIN_MENU[] = 		 {"Main menu", "Hauptmenü"},
+		START_NEW_GAME[] = 	 {"Start a new game", "Neues Spiel starten"},
+		QUIT[] = 			 {"Quit", "Spiel beenden"},
+		CANCEL[] = 			 {"Cancel", "zurück"};
+	
+	public static final String[][] 
+		MISSION = 		{{"Start overnight mission", "Start daytime mission"},
+                         {"Nachteinsatz starten", "Tageinsatz starten"}},
+		SOLD = 			{{"Low salary", "High salary"},
+                         {"geringer Sold", "hoher Sold"}},
+		DISPLAY = 		{{"Window mode", "Fullscreen mode"},
+                         {"Fenstermodus", "Vollbildmodus"}},
+		ANTIALIAZING =  {{"Turn off antialiasing", "Turn on antialiasing" },
+                         {"Kantenglättung aus", "Kantenglättung an"}},
+		MUSIC = 		{{"Turn off music", "Turn on music" },
+                         {"Musik ausschalten", "Musik einschalten"}};
 
 	public static final String[][][] STARTSCREEN_MENU_BUTTON
 			=	{{{"Plot", "Changes since 1.0", "Game instructions", 
