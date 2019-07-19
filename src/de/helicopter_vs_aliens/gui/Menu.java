@@ -360,7 +360,7 @@ public class Menu implements Constants, Fonts
             {
             	paint_frame(g2d, helicopter_frame[i], MyColor.translucentBlack);
             }
-            if(Events.all_playable || Helicopter.isUnlocked(HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES]))
+            if(Events.allPlayable || Helicopter.isUnlocked(HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES]))
             {
             	paint_tickmark(g2d, i, 210, 323, 15, 20);
             }

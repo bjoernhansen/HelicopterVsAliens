@@ -50,7 +50,10 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     	ENERGY_DRAIN = 45,                // Energieabzug für den Helikopter bei Treffer
     	REDUCED_ENERGY_DRAIN = 10,
 		STANDARD_PLATING_STRENGTH = 1,
-		GOLIATH_PLATING_STRENGTH = 2;
+		GOLIATH_PLATING_STRENGTH = 2,
+		STANDARD_GOLIATH_COSTS = 75000,
+		STANDARD_SPECIAL_COSTS = 125000,
+		CHEAP_SPECIAL_COSTS = 10000;
 
 	public static final int// Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standardupgrades
     	// für jede einzelne Helikopter-Klasse sowie Energiekosten für das Energieupgrade
@@ -59,9 +62,9 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
     	             {0, 0, 1, 2, 3, 4, 20}, 	// Orochi
     	             {2, 1, 3, 4, 0, 1, 200}, 	// Kamaitachi
     	             {3, 4, 2, 3, 1, 0, 75}, 	// Pegasus
-    	             {2, 2, 2, 2, 2, 2, 250}};	// Helios	       
-    	 
-    static final float     	
+    	             {2, 2, 2, 2, 2, 2, 250}};	// Helios
+	
+	static final float
     	MISSILE_DMG 			 =  0.5f,
     	ENHANCED_RADIATION_PROB	 =  0.25f,
     	POWER_SHIELD_E_LOSS_RATE = -0.06f;
@@ -1752,4 +1755,26 @@ public abstract class Helicopter extends MovingObject implements Fonts, DamageFa
 	}
 
 	public abstract HelicopterTypes getType();
-}    
+	
+	public void installGoliathPlating()
+	{
+		this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
+		this.currentPlating += MyMath.plating(this.levelOfUpgrade[PLATING.ordinal()]);
+		this.setPlatingColor();
+	}
+	
+	public int getGoliathCosts()
+	{
+		return STANDARD_GOLIATH_COSTS;
+	}
+	
+	public int getPiercingWarheadsCosts()
+	{
+		return STANDARD_SPECIAL_COSTS;
+	}
+	
+	public void installPiercingWarheads()
+	{
+		this.hasPiercingWarheads = true;
+	}
+}

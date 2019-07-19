@@ -1,5 +1,8 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PHOENIX;
+
 public final class Phoenix extends Helicopter
 {
     public static final int
@@ -13,5 +16,11 @@ public final class Phoenix extends Helicopter
     public HelicopterTypes getType()
     {
         return HelicopterTypes.PHOENIX;
+    }
+    
+    @Override
+    public int getGoliathCosts()
+    {
+        return GOLIATH_COSTS;
     }
 }

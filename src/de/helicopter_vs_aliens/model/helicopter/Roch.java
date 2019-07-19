@@ -1,5 +1,8 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.ROCH;
+
 public final class Roch extends Helicopter
 {
     public static final int
@@ -11,5 +14,11 @@ public final class Roch extends Helicopter
     public HelicopterTypes getType()
     {
         return HelicopterTypes.ROCH;
+    }
+    
+    @Override
+    public int getPiercingWarheadsCosts()
+    {
+         return CHEAP_SPECIAL_COSTS;
     }
 }

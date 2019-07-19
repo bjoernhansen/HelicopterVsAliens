@@ -201,7 +201,7 @@ public class Savegame implements Constants, Serializable
 	
 	void save_in_highscore()
 	{
-		if(this.valid && (this.no_cheats_used || Events.save_anyway))
+		if(this.valid && (this.no_cheats_used || Events.saveAnyway))
 		{				
 			HighscoreEntry temp_entry = new HighscoreEntry(this);
 			HighscoreEntry.put_entry(Events.highscore[this.helicopterType.ordinal()], temp_entry);

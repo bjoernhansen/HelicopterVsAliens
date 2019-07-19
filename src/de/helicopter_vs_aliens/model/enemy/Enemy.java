@@ -1161,7 +1161,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			maxBarrierNr = 1;
 			selection_barrier = 2;
 			
-			if(( helicopter.isPlayedWithoutCheats || Events.save_anyway)
+			if(( helicopter.isPlayedWithoutCheats || Events.saveAnyway)
 				 && !Events.boss1_killed_b4())
 			{
 				Menu.unlock(HELIOS);
@@ -1192,7 +1192,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			bossSelection = BOSS_2;
 			selection = 0;
 			helicopter.powerUp_decay();
-			if((helicopter.isPlayedWithoutCheats ||Events.save_anyway) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
+			if((helicopter.isPlayedWithoutCheats ||Events.saveAnyway) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
 			{
 				helicopter.update_unlocked_helicopters();
 			}
