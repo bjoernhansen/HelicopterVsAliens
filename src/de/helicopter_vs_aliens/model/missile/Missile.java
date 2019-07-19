@@ -59,7 +59,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	
 	public void launch(Helicopter helicopter, boolean stunning_missile, int y)
 	{
-		this.speed = helicopter.missileDrive * (helicopter.is_moving_left ? -1 : 1);
+		this.speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
 		this.dangerous = false;
 		this.bounced = false;
 		this.flying = true;	
@@ -92,7 +92,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	private void setBounds(Helicopter helicopter, int y)
 	{
 		this.bounds.setRect(helicopter.location.getX() 
-								- (helicopter.is_moving_left 
+								- (helicopter.isMovingLeft
 									? (this.type == JUMBO ? 30 : 20) 
 									: 0), 
 							helicopter.bounds.getY() + y, 
@@ -113,7 +113,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	private void set_dmg(Helicopter helicopter)
 	{
 		this.dmg = 	(int)(helicopter.currentFirepower
-				* (helicopter.nr_of_cannons == 3 ? OROCHI_XTRA_DMG_FACTOR : 1)
+				* (helicopter.numberOfCannons == 3 ? OROCHI_XTRA_DMG_FACTOR : 1)
 				* ((helicopter.plasma_activation_timer == 0) ? 1 : MyMath.plasma_dmg_factor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
 				* (this.type == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
 				* (this.extra_dmg ? POWERUP_DAMAGE_FACTOR : 1));
@@ -204,8 +204,8 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 				{
 					e.die(controller, helicopter, this, false);
 					if (helicopter.getType() == PHOENIX
-						&& helicopter.bonus_kills_timer > 0
-						&& this.launching_time > helicopter.past_teleport_time)
+						&& helicopter.bonusKillsTimer > 0
+						&& this.launching_time > helicopter.pastTeleportTime)
 					{
 						Events.extra_reward(1,
 							e.strength

@@ -211,7 +211,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			calculate_fps();
 			
 			// aktualisieren aller sichtbaren Objekte
-			if(!Menu.menue_visible)
+			if(!Menu.isMenueVisible)
 			{				
 		    	MyColor.calculate_variable_game_colors(this.frames_counter);
 				BackgroundObject.update(this, this.bgObject);

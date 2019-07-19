@@ -62,7 +62,7 @@ public class EnemyMissile implements Constants, MissileTypes
     	this.determine_color();	
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (BackgroundObject.background_moves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
-		if(	helicopter.interphaseGeneratorTimer <= helicopter.shift_time &&
+		if(	helicopter.interphaseGeneratorTimer <= helicopter.shiftTime &&
 		helicopter.bounds.intersectsLine( this.location.getX() + this.diameter/2, 
 										  this.location.getY(), 
 										  this.location.getX() + this.diameter/2, 
@@ -81,7 +81,7 @@ public class EnemyMissile implements Constants, MissileTypes
     		Explosion.start(Controller.getInstance().explosion,
     		helicopter, 
     		(int)(helicopter.bounds.getX() 
-    				+ (helicopter.is_moving_left 
+    				+ (helicopter.isMovingLeft
     					? Helicopter.FOCAL_PNT_X_LEFT 
     					: Helicopter.FOCAL_PNT_X_RIGHT)), 
     		(int)(helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP), 

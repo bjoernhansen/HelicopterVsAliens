@@ -7,9 +7,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.WindowTypes;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
@@ -37,7 +35,9 @@ public class Events implements Constants, Costs, BossTypes
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
 			DAY_BONUS_FACTOR = 60,
-			NIGHT_BONUS_FACTOR = 90,
+			NIGHT_BONUS_FACTOR = 90;
+	
+	private static final int
 			COMPARISON_RECORD_TIME = 60;	// angenommene Bestzeit für besiegen von Boss 5
 
 	public static HighscoreEntry [][]
@@ -54,16 +54,16 @@ public class Events implements Constants, Costs, BossTypes
 		kills_after_levelup,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
 		last_creation_timer,	// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
         overallEarnings, 		// Gesamtverdienst
-        extraBonusCounter, 	// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
+        extraBonusCounter, 		// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
 		last_bonus, 			// für die Guthabenanzeige: zuletzt erhaltener Standard-Verdienst
 		last_extra_bonus,		// für die Guthabenanzeige: zuletzt erhaltener Extra-Bonus
 		last_multi_kill,		// für die Multi-Kill-Anzeige: Art des letzten Multi-Kill 
-            commendationTimer,		// reguliert, wie lange die Multi-Kill-Anzeige zu sehen ist
+        commendationTimer,		// reguliert, wie lange die Multi-Kill-Anzeige zu sehen ist
 		heliosMaxMoney;
 	
     public static long
-    	playing_time;            // bisher vergangene Spielzeit
-    	public static long time_aktu;				// Zeitpunkt der letzten Aktualisierung von playing_time
+		playingTime;            		// bisher vergangene Spielzeit
+    	public static long time_aktu;	// Zeitpunkt der letzten Aktualisierung von playing_time
 	
 	public static long
 		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
@@ -99,7 +99,7 @@ public class Events implements Constants, Costs, BossTypes
 	static void keyTyped( KeyEvent e, Controller controller,
 	                      Helicopter helicopter, Savegame savegame)
 	{	
-		if(e.getKeyCode() == KeyEvent.VK_ESCAPE && !helicopter.damaged)
+		if(e.getKeyCode() == KeyEvent.VK_ESCAPE && !helicopter.isDamaged)
 		{
 			if(window == GAME){changeVisibilityOfInGameMenu(helicopter);}
 			else if(window == STARTSCREEN){
@@ -140,7 +140,7 @@ public class Events implements Constants, Costs, BossTypes
 		}		
 		else if(e.getKeyChar() =='p')
 		{
-			if(window == GAME && !helicopter.damaged)
+			if(window == GAME && !helicopter.isDamaged)
 			{
 				changeVisibilityOfInGameMenu(helicopter);
 			}
@@ -148,9 +148,9 @@ public class Events implements Constants, Costs, BossTypes
 		else if(e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
 			if(	window == GAME
-				&&	helicopter.active
-				&& !helicopter.damaged 
-				&& !Menu.menue_visible)
+				&&	helicopter.isActive
+				&& !helicopter.isDamaged
+				&& !Menu.isMenueVisible)
 			{
 				helicopter.turn_around();
 			}
@@ -165,7 +165,7 @@ public class Events implements Constants, Costs, BossTypes
 					{
 						if(window == GAME){last_bonus = MAX_MONEY - money;}
 						money = MAX_MONEY;
-						helicopter.no_cheats_used = false;
+						helicopter.isPlayedWithoutCheats = false;
 					}
 					else
 					{
@@ -200,18 +200,18 @@ public class Events implements Constants, Costs, BossTypes
 										+ (nr_of_levelUp%10 == 0 ? 0 : 1) 
 										- level;
 						if(isBossLevel()){nr_of_levelUp = 1;}
-						playing_time += (nr_of_levelUp + MyMath.random(nr_of_levelUp)) * 60000;
+						playingTime += (nr_of_levelUp + MyMath.random(nr_of_levelUp)) * 60000;
 						level_up(controller, nr_of_levelUp);
-						helicopter.no_cheats_used = false;
+						helicopter.isPlayedWithoutCheats = false;
 					}					
 				}
 				else if(e.getKeyChar() == '+')
 				{
 					if(level < 50)
 					{
-						playing_time += (1 + (MyMath.toss_up(0.4f) ? 1 : 0)) * 60000;
+						playingTime += (1 + (MyMath.toss_up(0.4f) ? 1 : 0)) * 60000;
 						level_up(controller, 1);
-						helicopter.no_cheats_used = false;
+						helicopter.isPlayedWithoutCheats = false;
 					}
 				}
 				else if(e.getKeyChar() =='s')
@@ -228,20 +228,21 @@ public class Events implements Constants, Costs, BossTypes
 					{
 						helicopter.repair(true, true);
 						restart_window_visible = false;	
-						helicopter.no_cheats_used = false;
+						helicopter.isPlayedWithoutCheats = false;
 					}								
 				}
 				else if(e.getKeyChar() == 'm')
 				{
 					Enemy.miniboss_prob = Enemy.miniboss_prob == 0.05f ? 1.0f : 0.05f;
-					helicopter.no_cheats_used = false;
+					helicopter.isPlayedWithoutCheats = false;
 				}
 				else if(e.getKeyChar() == 'n')
 				{
 					helicopter.currentPlating = 0f;
 					helicopter.crash();
 				}
-				else if(e.getKeyChar() == 't'){playing_time += 60000;}
+				else if(e.getKeyChar() == 't'){
+					playingTime += 60000;}
 			}
 			else if(window == STARTSCREEN)
 			{
@@ -267,7 +268,7 @@ public class Events implements Constants, Costs, BossTypes
 				}
 				else if(e.getKeyChar() == '#')
 				{					
-					if((helicopter.no_cheats_used || save_anyway) && savegame.valid)
+					if((helicopter.isPlayedWithoutCheats || save_anyway) && savegame.valid)
 					{
 						savegame.save_in_highscore();
 					}
@@ -296,9 +297,9 @@ public class Events implements Constants, Costs, BossTypes
 		}
 		else if( 	
 					window == GAME
-					&&	helicopter.active
-					&& !helicopter.damaged 
-					&& !Menu.menue_visible)
+					&&	helicopter.isActive
+					&& !helicopter.isDamaged
+					&& !Menu.isMenueVisible)
 		{
 			if(e.getButton() == 3)
 			{
@@ -337,9 +338,9 @@ public class Events implements Constants, Costs, BossTypes
 
 	private static void inGameMousePressedLeft(Controller controller, Helicopter helicopter)
 	{
-		if(!helicopter.damaged)
+		if(!helicopter.isDamaged)
 		{
-			if(Menu.menue_visible)
+			if(Menu.isMenueVisible)
 			{
 				if(Menu.inGameButton.get("MMNewGame1").bounds.contains(cursor))
 				{					
@@ -377,37 +378,37 @@ public class Events implements Constants, Costs, BossTypes
 				{
 					changeVisibilityOfInGameMenu(helicopter);
 				}				
-				else if(!helicopter.active && cursor.y < 426)
+				else if(!helicopter.isActive && cursor.y < 426)
 				{
 					helicopter.set_activation_state(true);
 				}
 			}
-			else if(helicopter.active){helicopter.continious_fire = true;}
+			else if(helicopter.isActive){helicopter.isContiniousFireEnabled = true;}
 		}
 		else if(	Menu.inGameButton.get("MMNewGame2").bounds.contains(cursor)
 				 && restart_window_visible)
 		{
 			// Betreten der Werkstatt nach Absturz bzw. Neustart bei Geldmangel				
 			conditionalReset(controller, helicopter, true);
-			if(money < repair_fee(helicopter, true) || level > 50)
+			if(money < repairFee(helicopter, true) || level > 50)
 			{
 				if(level > 50)
 				{
-					playing_time = 60000 * helicopter.scorescreen_times[4];
+					playingTime = 60000 * helicopter.scorescreenTimes[4];
 				}
 				else
 				{
-					playing_time = playing_time 
+					playingTime = playingTime
 						     	   + System.currentTimeMillis() 
 						           - time_aktu;
-					helicopter.scorescreen_times[4] = playing_time/60000;
+					helicopter.scorescreenTimes[4] = playingTime /60000;
 				}				
 							   
 				changeWindow(SCORESCREEN);	
 															
-				helicopter.damaged = false;
+				helicopter.isDamaged = false;
 				Controller.savegame.save_to_file(helicopter, true);
-				MyColor.update_scorescreen_colors(helicopter);
+				MyColor.updateScorescreenColors(helicopter);
 			}
 			else{enterRepairShop(helicopter);}
 		}
@@ -424,13 +425,13 @@ public class Events implements Constants, Costs, BossTypes
 			{
 				Menu.block(1);
 			}
-			else if(money < repair_fee(helicopter, helicopter.damaged))
+			else if(money < repairFee(helicopter, helicopter.isDamaged))
 			{
 				Menu.block(9);
 			}
 			else
 			{
-				money -= repair_fee(helicopter, helicopter.damaged);				
+				money -= repairFee(helicopter, helicopter.isDamaged);
 				timeOfDay = (!helicopter.spotlight || MyMath.toss_up(0.33f)) ? DAY : NIGHT;
 				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay];
 												
@@ -450,9 +451,9 @@ public class Events implements Constants, Costs, BossTypes
 				}
 				else
 				{
-					Enemy.boss_selection = -7;
-					Enemy.max_nr = 1;
-					Enemy.max_barrier_nr = 0;
+					Enemy.bossSelection = -7;
+					Enemy.maxNr = 1;
+					Enemy.maxBarrierNr = 0;
 				}
 				
 				helicopter.repair(level == 50, false);
@@ -461,7 +462,7 @@ public class Events implements Constants, Costs, BossTypes
 		// Einsatz fliegen
 		else if(Menu.repairShopButton.get("Einsatz").bounds.contains(cursor))
 		{
-			if(helicopter.damaged){
+			if(helicopter.isDamaged){
 				Menu.block(2);}
 			else
 			{				
@@ -477,7 +478,7 @@ public class Events implements Constants, Costs, BossTypes
 		// Scheinwerfer
 		else if(Menu.repairShopButton.get("Special0").bounds.contains(cursor))
 		{
-			if(helicopter.damaged){
+			if(helicopter.isDamaged){
 				Menu.block(4);}
 			else if(helicopter.spotlight){
 				Menu.block(7);}
@@ -510,18 +511,18 @@ public class Events implements Constants, Costs, BossTypes
 		// Goliath-Panzerung
 		else if(Menu.repairShopButton.get("Special1").bounds.contains(cursor))
 		{
-			if(helicopter.damaged){
+			if(helicopter.isDamaged){
 				Menu.block(4);}
 			else if(helicopter.hasGoliathPlating()){
 				Menu.block(7);}
-			else if(money < STANDARD_GOLIATH_COSTS && !((helicopter.getType() == PHOENIX ||(helicopter.getType() == HELIOS && recordTime[PHOENIX.ordinal()][4]!=0)) && money >= PHOENIX_GOLIATH_COSTS))
+			else if(money < STANDARD_GOLIATH_COSTS && !((helicopter.getType() == PHOENIX ||(helicopter.getType() == HELIOS && recordTime[PHOENIX.ordinal()][4]!=0)) && money >= Phoenix.GOLIATH_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);						
-				money -= (helicopter.getType() == PHOENIX ||(helicopter.getType() == HELIOS && recordTime[PHOENIX.ordinal()][4]!=0)) ? PHOENIX_GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
+				money -= (helicopter.getType() == PHOENIX ||(helicopter.getType() == HELIOS && recordTime[PHOENIX.ordinal()][4]!=0)) ? Phoenix.GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
 				helicopter.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
 				helicopter.currentPlating += MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()]);
 				helicopter.setPlatingColor();
@@ -531,7 +532,7 @@ public class Events implements Constants, Costs, BossTypes
 		// Durchstoßsprengköpfe
 		else if(Menu.repairShopButton.get("Special2").bounds.contains(cursor))
 		{
-			if(helicopter.damaged){
+			if(helicopter.isDamaged){
 				Menu.block(4);}
 			else if(helicopter.hasPiercingWarheads){
 				Menu.block(7);}
@@ -551,21 +552,21 @@ public class Events implements Constants, Costs, BossTypes
 		// zusätzliche Bordkanonen
 		else if(Menu.repairShopButton.get("Special3").bounds.contains(cursor))
 		{
-			if(helicopter.damaged){
+			if(helicopter.isDamaged){
 				Menu.block(4);}
 			else if(helicopter.hasAllCannons())
 			{
 				Menu.block(7);
 			}
-			else if(	(money < STANDARD_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < ROCH_SECOND_CANNON_COSTS)) &&
-						!((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && recordTime[OROCHI.ordinal()][4]!=0)) && money >= CHEAP_SPECIAL_COSTS && helicopter.nr_of_cannons == 1))
+			else if(	(money < STANDARD_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < Roch.ROCH_SECOND_CANNON_COSTS)) &&
+						!((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && recordTime[OROCHI.ordinal()][4]!=0)) && money >= CHEAP_SPECIAL_COSTS && helicopter.numberOfCannons == 1))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				if((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && recordTime[OROCHI.ordinal()][4]!=0)) && helicopter.nr_of_cannons == 1)
+				if((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && recordTime[OROCHI.ordinal()][4]!=0)) && helicopter.numberOfCannons == 1)
 				{
 					money -= CHEAP_SPECIAL_COSTS;
 					if(helicopter.getType() == OROCHI)
@@ -581,27 +582,27 @@ public class Events implements Constants, Costs, BossTypes
 				}
 				else
 				{
-					money -= helicopter.getType() == ROCH ? ROCH_SECOND_CANNON_COSTS : STANDARD_SPECIAL_COSTS;
+					money -= helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS : STANDARD_SPECIAL_COSTS;
 					Menu.repairShopButton.get("Special" + 3).costs = 0;
 				}
-				helicopter.nr_of_cannons++;			
+				helicopter.numberOfCannons++;
 			}
 		}
 		// das klassenspezifische SpezialUpgrade
 		else if(Menu.repairShopButton.get("Special4").bounds.contains(cursor))
 		{
-			if(helicopter.damaged){
+			if(helicopter.isDamaged){
 				Menu.block(4);}
 			else if(helicopter.hasFifthSpecial()){
 				Menu.block(7);}
-			else if(money < CHEAP_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < JUMBO_MISSILE_COSTS))
+			else if(money < CHEAP_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < Roch.JUMBO_MISSILE_COSTS))
 			{
 				Menu.block(6);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				money -= helicopter.getType() == ROCH ? JUMBO_MISSILE_COSTS : CHEAP_SPECIAL_COSTS;
+				money -= helicopter.getType() == ROCH ? Roch.JUMBO_MISSILE_COSTS : CHEAP_SPECIAL_COSTS;
 				helicopter.obtainFifthSpecial();
 				if(helicopter.getType() == KAMAITACHI || helicopter.getType() == PEGASUS){helicopter.adjustFireRate(false);}
 				Menu.repairShopButton.get("Special" + 4).costs = 0;
@@ -618,27 +619,27 @@ public class Events implements Constants, Costs, BossTypes
 			{
 				if(Menu.repairShopButton.get("StandardUpgrade" + i).bounds.contains(cursor))
 				{
-					if(helicopter.damaged){
+					if(helicopter.isDamaged){
 						Menu.block(4);}
-					else if(helicopter.has_max_upgrade_level[i]){
+					else if(helicopter.hasMaxUpgradeLevel[i]){
 						Menu.block(5);}
-					else if(money < MyMath.costs(helicopter.getType(), helicopter.upgrade_costs[i], helicopter.levelOfUpgrade[i]))
+					else if(money < MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]))
 					{
 						Menu.block(6);
 					}
 					else
 					{
 						Audio.play(Audio.cash);
-						money -= MyMath.costs(helicopter.getType(), helicopter.upgrade_costs[i], helicopter.levelOfUpgrade[i]);
+						money -= MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]);
 						helicopter.levelOfUpgrade[i]++;
-						if(helicopter.levelOfUpgrade[i] >= MyMath.max_level(helicopter.upgrade_costs[i]))
+						if(helicopter.levelOfUpgrade[i] >= MyMath.max_level(helicopter.upgradeCosts[i]))
 						{
-							helicopter.has_max_upgrade_level[i] = true;
+							helicopter.hasMaxUpgradeLevel[i] = true;
 							Menu.repairShopButton.get("StandardUpgrade" + i).costs = 0;
 						}
 						else
 						{
-							Menu.repairShopButton.get("StandardUpgrade" + i).costs = MyMath.costs(helicopter.getType(), helicopter.upgrade_costs[i], helicopter.levelOfUpgrade[i]);
+							Menu.repairShopButton.get("StandardUpgrade" + i).costs = MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]);
 						}
 						selection = i;
 					}					
@@ -913,9 +914,9 @@ public class Events implements Constants, Costs, BossTypes
 	{
 		if(e.getButton() == 1)
 		{
-			helicopter.continious_fire = false;
+			helicopter.isContiniousFireEnabled = false;
 		}
-		else if(window == GAME && e.getButton() == 3 && !helicopter.damaged)
+		else if(window == GAME && e.getButton() == 3 && !helicopter.isDamaged)
 		{			
 			if(helicopter.getType() == PHOENIX)
 			{
@@ -924,7 +925,7 @@ public class Events implements Constants, Costs, BossTypes
 			}			
 			else if(helicopter.getType() == OROCHI)
 			{
-				helicopter.next_missile_is_stunner = false;
+				helicopter.isNextMissileStunner = false;
 			}		
 		}		
 	}
@@ -932,9 +933,9 @@ public class Events implements Constants, Costs, BossTypes
 	// Aktualisierung der Ziel-Koordinaten, auf welche der Helikopter zufliegt
 	static void mouseMovedOrDragged(MouseEvent e, Helicopter helicopter)
 	{		
-		if(!helicopter.damaged || window == REPAIR_SHOP)
+		if(!helicopter.isDamaged || window == REPAIR_SHOP)
 		{
-			if(!helicopter.search4teleportDestination)
+			if(!helicopter.isSearchingForTeleportDestination)
 			{
 				helicopter.destination.setLocation(
 						e.getX()-Main.displayShift.width,
@@ -942,7 +943,7 @@ public class Events implements Constants, Costs, BossTypes
 			}
 			else
 			{
-				helicopter.destination.setLocation(helicopter.prior_teleport_location);
+				helicopter.destination.setLocation(helicopter.priorTeleportLocation);
 			}
 		}	
 	}
@@ -970,7 +971,7 @@ public class Events implements Constants, Costs, BossTypes
 		timeOfDay = DAY;
 		overallEarnings = 0;
 		extraBonusCounter = 0;
-		playing_time = 0;
+		playingTime = 0;
 	}
 
 	// Wiederherstellen einiger Variablen anhand eines gespeicherten Spielstandes
@@ -983,7 +984,7 @@ public class Events implements Constants, Costs, BossTypes
 		timeOfDay = savegame.timeOfDay;
 		overallEarnings = savegame.bonus_counter;
 		extraBonusCounter = savegame.extra_bonus_counter;					
-		playing_time = savegame.playing_time;
+		playingTime = savegame.playing_time;
 	}
 
 	/* Reset: Zurücksetzem diverser spielinterner Variablen; 
@@ -994,7 +995,7 @@ public class Events implements Constants, Costs, BossTypes
 	{
 		Audio.play(Audio.choose);
 		
-		helicopter.bonus_kills_timer = 1;
+		helicopter.bonusKillsTimer = 1;
 		if(helicopter.getType() == KAMAITACHI){helicopter.evaluate_bonus_kills();}
 		
 		helicopter.reset_state(total_reset);		
@@ -1003,7 +1004,7 @@ public class Events implements Constants, Costs, BossTypes
 		last_multi_kill = 0;
 		commendationTimer = 0;		
 		restart_window_visible = false;
-		Menu.menue_visible = false;
+		Menu.isMenueVisible = false;
 		last_bonus = 0;
 		Menu.money_display_timer = DISABLED;
 		Menu.level_display_timer = START;
@@ -1016,9 +1017,9 @@ public class Events implements Constants, Costs, BossTypes
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
 			{
-				Enemy.boss_selection = level == 40 ? -4 : -7;
-				Enemy.max_nr = 1;
-				Enemy.max_barrier_nr = 0;
+				Enemy.bossSelection = level == 40 ? -4 : -7;
+				Enemy.maxNr = 1;
+				Enemy.maxBarrierNr = 0;
 			}			
 			if(total_reset)
 			{
@@ -1106,7 +1107,7 @@ public class Events implements Constants, Costs, BossTypes
 		changeWindow(GAME);		
 		Audio.play(Audio.choose);	
 		time_aktu = System.currentTimeMillis();
-		helicopter.rotor_position[helicopter.getType().ordinal()] = 0;
+		helicopter.rotorPosition[helicopter.getType().ordinal()] = 0;
 		Controller.savegame.save_to_file(helicopter, true);
 	}
 	
@@ -1115,12 +1116,12 @@ public class Events implements Constants, Costs, BossTypes
 		changeWindow(REPAIR_SHOP);		
 		
 		Audio.applause1.stop();
-		playing_time += System.currentTimeMillis() - time_aktu;
-		Menu.repairShopTime = Menu.returnTimeDisplayText(playing_time);
+		playingTime += System.currentTimeMillis() - time_aktu;
+		Menu.repairShopTime = Menu.returnTimeDisplayText(playingTime);
 		helicopter.setPlatingColor();					
 		if(helicopter.currentPlating < helicopter.max_plating())
 	    {
-			Menu.repairShopButton.get("RepairButton").costs = repair_fee(helicopter, helicopter.damaged);
+			Menu.repairShopButton.get("RepairButton").costs = repairFee(helicopter, helicopter.isDamaged);
 	    }
 		else{
 			Menu.repairShopButton.get("RepairButton").costs = 0;}
@@ -1128,7 +1129,7 @@ public class Events implements Constants, Costs, BossTypes
 		Menu.messageTimer = 0;
 	}
 
-	public static int repair_fee(Helicopter helicopter, boolean total_loss)
+	public static int repairFee(Helicopter helicopter, boolean total_loss)
 	{		
 		return (total_loss 
 					? TOTAL_LOSS_REPAIR_BASE_FEE 
@@ -1232,15 +1233,15 @@ public class Events implements Constants, Costs, BossTypes
 	static private void changeVisibilityOfInGameMenu(Helicopter helicopter)
 	{
 		Audio.play(Audio.choose);
-		if(!Menu.menue_visible)
+		if(!Menu.isMenueVisible)
 		{
-			Menu.menue_visible = true;
+			Menu.isMenueVisible = true;
 			BackgroundObject.background_moves = false;
-			playing_time += System.currentTimeMillis() - time_aktu;
+			playingTime += System.currentTimeMillis() - time_aktu;
 		}
 		else
 		{
-			Menu.menue_visible = false;
+			Menu.isMenueVisible = false;
 			time_aktu = System.currentTimeMillis();
 			if(helicopter.is_on_the_ground())
 			{
@@ -1267,10 +1268,10 @@ public class Events implements Constants, Costs, BossTypes
 	public static void determine_highscore_times(Helicopter helicopter)
 	{
 		int boss_nr = get_boss_nr();
-		long highscore_time = (playing_time + System.currentTimeMillis() - time_aktu)/60000;
-		helicopter.scorescreen_times[boss_nr] = highscore_time;			
+		long highscore_time = (playingTime + System.currentTimeMillis() - time_aktu)/60000;
+		helicopter.scorescreenTimes[boss_nr] = highscore_time;
 				
-		if(helicopter.no_cheats_used||save_anyway)
+		if(helicopter.isPlayedWithoutCheats ||save_anyway)
 		{			
 			recordTime[helicopter.getType().ordinal()][boss_nr]
 				= recordTime[helicopter.getType().ordinal()][boss_nr] == 0

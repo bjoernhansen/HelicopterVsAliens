@@ -84,7 +84,7 @@ public class Explosion implements Constants, MissileTypes
 				i.remove();
 				if(exp.type == EMP)
 				{
-					helicopter.emp_wave = null;
+					helicopter.empWave = null;
 					if(exp.kills > 1)
 					{
 						Events.extra_reward(exp.kills, exp.earned_money, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
@@ -193,7 +193,7 @@ public class Explosion implements Constants, MissileTypes
 				exp.max_radius = 75 + (int)((19+3f*helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]) * helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 				exp.broadness = 30 + 3 * (helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 			}			  	
-	    	helicopter.emp_wave = exp;
+	    	helicopter.empWave = exp;
 	    	exp.earned_money = 0;
 	    	exp.kills = 0;
 		}			

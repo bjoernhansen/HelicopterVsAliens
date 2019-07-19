@@ -493,7 +493,7 @@ public class BackgroundObject extends MovingObject
 
 	private static boolean isBackgroundMoving(ArrayList<LinkedList<Enemy>> enemy, Helicopter helicopter)
 	{
-		return helicopter.rotor_system_active
+		return helicopter.isRotorSystemActive
 				&& !isMajorBossActive(enemy)
 				&& helicopter.tractor == null;
 	}

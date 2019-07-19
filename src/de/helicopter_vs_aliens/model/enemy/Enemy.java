@@ -146,10 +146,10 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		enemySelector = new EnemySelector();
 
 	// statische Variablen (keine Konstanten)
-	public static int 		
-		boss_selection,		 	// bestimmt, welche Boss-Typ erstellt wird
-		max_nr,				 	// bestimmt wie viele Standard-Gegner gleichzeitig erscheinen können
-		max_barrier_nr,			// bestimmt wie viele Hindernis-Gegner gleichzeitig erscheinen können
+	public static int
+		bossSelection,		 	// bestimmt, welche Boss-Typ erstellt wird
+		maxNr,				 	// bestimmt wie viele Standard-Gegner gleichzeitig erscheinen können
+		maxBarrierNr,			// bestimmt wie viele Hindernis-Gegner gleichzeitig erscheinen können
 		current_nr_of_barriers; // aktuelle Anzahl von "lebenden" Hindernis-Gegnern
 	
 	public static float 	
@@ -1027,7 +1027,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 							this.paintBounds.x,
 							this.paintBounds.y + 1,
 							(int)(helicopter.bounds.getX() 
-								+ (helicopter.is_moving_left 
+								+ (helicopter.isMovingLeft
 									? Helicopter.FOCAL_PNT_X_LEFT 
 									: Helicopter.FOCAL_PNT_X_RIGHT)),  // 114 
 							(int)(helicopter.bounds.getY() 
@@ -1116,50 +1116,52 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{		
 		if(level == 1)
 		{
-			max_nr = 2;
-			boss_selection = STANDARD;
+			maxNr = 2;
+			bossSelection = STANDARD;
 			selection = 3;
-			max_barrier_nr = 0;
+			maxBarrierNr = 0;
 			selection_barrier = 1;
 		}
-		else if(level == 2){max_nr = 3;}
+		else if(level == 2){
+			maxNr = 3;}
 		else if(level == 3){selection = 6;}
-		else if(level == 4){selection = 10; max_barrier_nr = 1;}
+		else if(level == 4){selection = 10; maxBarrierNr = 1;}
 		else if(level == 5){selection = 15;}
 		else if(level == 6)
 		{			
 			creation_stop = false;
-			max_nr = 3;			
-			boss_selection = STANDARD;
+			maxNr = 3;
+			bossSelection = STANDARD;
 			selection = 25;
-			max_barrier_nr = 1;
+			maxBarrierNr = 1;
 			selection_barrier = 2;
 			
 		}
-		else if(level == 7){selection = 30; max_barrier_nr = 2;}
-		else if(level == 8){max_nr = 4;}				
+		else if(level == 7){selection = 30; maxBarrierNr = 2;}
+		else if(level == 8){
+			maxNr = 4;}
 		else if(level == 9)
 		{
 			selection = 35; 
-			max_nr = 3;
-			max_barrier_nr = 3;
+			maxNr = 3;
+			maxBarrierNr = 3;
 		}
 		else if(level == 10)
 		{
 			creation_stop = true;
-			boss_selection = BOSS_1;
+			bossSelection = BOSS_1;
 			selection = 0;
 			helicopter.powerUp_decay();
 		}	  
 		else if(level == 11)
 		{
-			max_nr = 3;
-			boss_selection = STANDARD;
+			maxNr = 3;
+			bossSelection = STANDARD;
 			selection = 75;
-			max_barrier_nr = 1;
+			maxBarrierNr = 1;
 			selection_barrier = 2;
 			
-			if(( helicopter.no_cheats_used || Events.save_anyway)
+			if(( helicopter.isPlayedWithoutCheats || Events.save_anyway)
 				 && !Events.boss1_killed_b4())
 			{
 				Menu.unlock(HELIOS);
@@ -1167,128 +1169,139 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			if(real_level_up){Events.determine_highscore_times(helicopter);}	
 		}				
 		else if(level == 12){selection_barrier = 3;}
-		else if(level == 13){max_barrier_nr = 2; selection = 105;}
+		else if(level == 13){
+			maxBarrierNr = 2; selection = 105;}
 		else if(level == 14){selection = 135;} 
 		else if(level == 15){selection_barrier = 4;}
 		else if(level == 16)
 		{			
 			creation_stop = false;
-			max_nr = 4;
-			boss_selection = STANDARD;
+			maxNr = 4;
+			bossSelection = STANDARD;
 			selection = 155;	
-			max_barrier_nr = 2;
+			maxBarrierNr = 2;
 			selection_barrier = 4;
 		}
 		else if(level == 17){selection = 175;}
 		else if(level == 18){selection_barrier = 5;}
-		else if(level == 19){max_barrier_nr = 3;}
+		else if(level == 19){
+			maxBarrierNr = 3;}
 		else if(level == 20)
 		{
 			creation_stop = true; 
-			boss_selection = BOSS_2;
+			bossSelection = BOSS_2;
 			selection = 0;
 			helicopter.powerUp_decay();
-			if((helicopter.no_cheats_used||Events.save_anyway) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
+			if((helicopter.isPlayedWithoutCheats ||Events.save_anyway) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
 			{
 				helicopter.update_unlocked_helicopters();
 			}
 		}
 		else if(level == 21)
 		{
-			max_nr = 3;
-			boss_selection = STANDARD;
+			maxNr = 3;
+			bossSelection = STANDARD;
 			selection = 400;
-			max_barrier_nr = 2;
+			maxBarrierNr = 2;
 			selection_barrier = 5;
 			
 			if(real_level_up){Events.determine_highscore_times(helicopter);}	
 		}
 		else if(level == 22){selection = 485;}
 		else if(level == 23){selection = 570;}
-		else if(level == 24){max_nr = 4;}
+		else if(level == 24){
+			maxNr = 4;}
 		else if(level == 25){selection = 660;}		
 		else if(level == 26)
 		{
 			creation_stop = false;
-			max_nr = 4;
-			boss_selection = STANDARD;
+			maxNr = 4;
+			bossSelection = STANDARD;
 			selection = 735;	
-			max_barrier_nr = 2;
+			maxBarrierNr = 2;
 			selection_barrier = 5;
 		}		 
 		else if(level == 27){selection = 835;}
-		else if(level == 28){max_nr = 5;}
-		else if(level == 29){max_nr = 4; max_barrier_nr = 3;}
+		else if(level == 28){
+			maxNr = 5;}
+		else if(level == 29){
+			maxNr = 4; maxBarrierNr = 3;}
 		else if(level == 30)
 		{
 			creation_stop = true; 
-			boss_selection = BOSS_3;
+			bossSelection = BOSS_3;
 			selection = 0;	
 			helicopter.powerUp_decay();
 		}
 		else if(level == 31)
 		{
-			max_nr = 3;
-			boss_selection = STANDARD;
+			maxNr = 3;
+			bossSelection = STANDARD;
 			selection = 1670;
-			max_barrier_nr = 2;
+			maxBarrierNr = 2;
 			selection_barrier = 5;
 			
 			if(real_level_up){Events.determine_highscore_times(helicopter);}		
 		}
 		else if(level == 32){selection_barrier = 6;}
 		else if(level == 33){selection = 2175;}
-		else if(level == 34){max_nr = 4;} 
+		else if(level == 34){
+			maxNr = 4;}
 		else if(level == 35){selection = 3180;} 
 		else if(level == 36)
 		{
 			creation_stop = false;
-			max_nr = 4;
-			boss_selection = STANDARD;
+			maxNr = 4;
+			bossSelection = STANDARD;
 			selection = 4185;
-			max_barrier_nr = 2;
+			maxBarrierNr = 2;
 			selection_barrier = 6;
 		} 
 		else if(level == 37){selection = 5525;} 
-		else if(level == 38){max_nr = 5;} 
-		else if(level == 39){max_nr = 4; max_barrier_nr = 3;}
+		else if(level == 38){
+			maxNr = 5;}
+		else if(level == 39){
+			maxNr = 4; maxBarrierNr = 3;}
 		else if(level == 40)
 		{
 			creation_stop = true; 
-			boss_selection = BOSS_4;
+			bossSelection = BOSS_4;
 			selection = 0;
 			helicopter.powerUp_decay();
 		}			  
 		else if(level == 41)
 		{
-			max_nr = 3;
-			boss_selection = STANDARD;
+			maxNr = 3;
+			bossSelection = STANDARD;
 			selection = 15235;	
-			max_barrier_nr = 2;
+			maxBarrierNr = 2;
 			selection_barrier = 6;
 			
 			if(real_level_up){Events.determine_highscore_times(helicopter);}	
 		}
-		else if(level == 42){selection_barrier = 7; max_nr = 4;}
+		else if(level == 42){selection_barrier = 7; maxNr = 4;}
 		else if(level == 43){selection = 20760;}
-		else if(level == 44){selection_barrier = 8; max_nr = 5;}
+		else if(level == 44){selection_barrier = 8; maxNr = 5;}
 		else if(level == 45){selection = 26285;}
 		else if(level == 46)
 		{
 			creation_stop = false;
-			max_nr = 5;
-			boss_selection = STANDARD;
+			maxNr = 5;
+			bossSelection = STANDARD;
 			selection = 31810;
-			max_barrier_nr = 2 ;
+			maxBarrierNr = 2 ;
 			selection_barrier = 8;
 		}
-		else if(level == 47){max_nr = 6;} 
-		else if(level == 48){max_barrier_nr = 3;}
-		else if(level == 49){max_nr = 7;}
+		else if(level == 47){
+			maxNr = 6;}
+		else if(level == 48){
+			maxBarrierNr = 3;}
+		else if(level == 49){
+			maxNr = 7;}
 		else if(level == 50)
 		{
 			creation_stop = true; 
-			boss_selection = FINAL_BOSS;
+			bossSelection = FINAL_BOSS;
 			selection = 0;
 			helicopter.powerUp_decay();
 		}
@@ -1331,8 +1344,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			creation_stop = false;
 			if(Events.isBossLevel())
 			{
-				max_nr = 1;
-				max_barrier_nr = 0;
+				maxNr = 1;
+				maxBarrierNr = 0;
 				Events.set_boss_level_up_conditions();
 			}
 		}
@@ -1376,7 +1389,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			if(make_boss5_servant[type])
 			{
 				make_boss5_servant[type] = false;
-				boss_selection = id(type);						
+				bossSelection = id(type);
 				creation(helicopter, enemy);	
 			}
 		}			
@@ -1387,9 +1400,9 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
     {
     	make_boss2_servants = false;
 		creation_stop = true; 
-		boss_selection = BOSS_2_SERVANT;
-		max_nr = 12;
-		for(int m = 0; m < max_nr; m++){creation(helicopter, enemy);}
+		bossSelection = BOSS_2_SERVANT;
+		maxNr = 12;
+		for(int m = 0; m < maxNr; m++){creation(helicopter, enemy);}
     }
     
     private static void create_all_boss5_servants(Helicopter helicopter, 
@@ -1398,7 +1411,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
     	make_all_boss5_servants = false;
     	for(int i = -8; i > -13; i--)
     	{
-    		boss_selection = i;
+    		bossSelection = i;
     		creation(helicopter, enemy);
     	}
     }	
@@ -1409,11 +1422,11 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		return !creation_stop
 				&&((Events.last_creation_timer > 20  && !Events.isBossLevel()) ||
 				   (Events.last_creation_timer > 135 ) )
-				&& nr_of_enemies < (max_nr + max_barrier_nr)
+				&& nr_of_enemies < (maxNr + maxBarrierNr)
 				&& MyMath.creation_probability(
 						Events.isBossLevel()
 							? 0
-							: (max_nr + max_barrier_nr) - nr_of_enemies, 1)
+							: (maxNr + maxBarrierNr) - nr_of_enemies, 1)
 				&& !(Events.level > 50)
 				&& !(!enemy.get(ACTIVE).isEmpty()
 						&& enemy.get(ACTIVE).getFirst().isMajorBoss());
@@ -1428,7 +1441,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		else{e = new Enemy();}
 		enemy.get(ACTIVE).add(e);
 		Events.last_creation_timer = 0;
-		helicopter.enemies_seen++;
+		helicopter.numberOfEnemiesSeen++;
 		e.create(helicopter, enemy.get(ACTIVE).size());
 	}	
     	
@@ -1439,7 +1452,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		else if(barrier_creation_approved(nr_of_enemies)){this.create_barrier(helicopter);}
 		else if(rock_creation_approved()){this.create_rock(helicopter);}
 		else if(kaboom_creation_approved()){this.create_kaboom(helicopter);}
-		else if(boss_selection == 0){this.create_standard_enemy();}
+		else if(bossSelection == 0){this.create_standard_enemy();}
 		else{this.create_boss(helicopter);}
 		
 		if(this.model != BARRIER)
@@ -1592,8 +1605,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 				&& !Events.isBossLevel()
 				&& barrier_timer == 0  
 				&& (MyMath.toss_up(0.35f) 
-					|| (nr_of_enemies - current_nr_of_barriers >= max_nr))
-				&& current_nr_of_barriers < max_barrier_nr;
+					|| (nr_of_enemies - current_nr_of_barriers >= maxNr))
+				&& current_nr_of_barriers < maxBarrierNr;
 	}
 	
 	private void create_barrier(Helicopter helicopter)
@@ -1607,7 +1620,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		//this.type = (MyMath.toss_up() ? 2 : 5);
 		//this.type = 2;
 		
-		helicopter.enemies_seen--;
+		helicopter.numberOfEnemiesSeen--;
 		this.hitpoints = Integer.MAX_VALUE;
 		this.rotor_color = 1;
 		this.is_clockwise_barrier = MyMath.toss_up();
@@ -1743,7 +1756,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		currentRock = this;
 		this.type = Integer.MAX_VALUE;
 		this.model = CARGO;	
-		helicopter.enemies_seen--;
+		helicopter.numberOfEnemiesSeen--;
 		this.farbe1 = new Color((180 + MyMath.random(30)), (120 + MyMath.random(30)),(0 + MyMath.random(15)));
 		this.hitpoints = 1;
 		this.invincible_timer = Integer.MAX_VALUE;
@@ -1773,7 +1786,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		this.farbe1 = Color.white;
 		this.hitpoints = Integer.MAX_VALUE;	
 		this.set_var_width(KABOOM_WIDTH);
-		helicopter.enemies_seen--;				
+		helicopter.numberOfEnemiesSeen--;
 		this.target_speed_level.setLocation(0.5 + 0.5*Math.random(), 0); //d
 		this.is_explodable = true;		
 		this.set_initial_y(GROUND_Y - 2*this.bounds.getWidth()*HEIGHT_FACTOR);
@@ -2097,7 +2110,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	
 	private void create_boss(Helicopter helicopter)
 	{
-		this.type = boss_selection;
+		this.type = bossSelection;
 		
 		// Level 10	
 		if( this.type == BOSS_1)
@@ -2176,8 +2189,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			this.target_speed_level.setLocation(10, 10); //d
 
 			this.spawning_hornet_timer = 30;
-			boss_selection = BOSS_4_SERVANT;
-			max_nr = 15;	
+			bossSelection = BOSS_4_SERVANT;
+			maxNr = 15;
 			this.can_turn = true;
 			
 			this.strength = 1250;
@@ -2211,7 +2224,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			this.hitpoints = 25000;	
 			this.target_speed_level.setLocation(23.5, 0); //d
 
-			max_nr = 5;
+			maxNr = 5;
 			this.operator = new FinalEnemysOperator();
 			this.is_stunnable = false;
 			this.dimFactor = 1.3f;
@@ -2296,7 +2309,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 									PROTECTOR_WIDTH, 
 									this.bounds.getHeight());
 				
-				helicopter.enemies_seen--;
+				helicopter.numberOfEnemiesSeen--;
 				this.hitpoints = Integer.MAX_VALUE;
 				this.is_clockwise_barrier = MyMath.toss_up();					
 				this.farbe1 = MyColor.bleach(new Color(170, 0, 255), 0.6f);
@@ -2337,7 +2350,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 
 	private void turn_into_miniboss(Helicopter helicopter)
 	{
-		helicopter.mini_boss_seen++;
+		helicopter.numberOfMiniBossSeen++;
 		current_mini_boss = this;
 		this.hitpoints = 1+5*this.hitpoints;		
 		this.bounds.setRect(this.bounds.getX(),
@@ -2935,7 +2948,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	private void check_for_EMP_strike(Controller controller,
 									  Helicopter helicopter)
 	{
-		if(helicopter.emp_wave != null)
+		if(helicopter.empWave != null)
 		{
 			if(this.is_emp_shockable(helicopter))
 			{
@@ -2975,8 +2988,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		else
 		{
 			Audio.play(Audio.explosion2);
-			helicopter.emp_wave.kills++;			
-			helicopter.emp_wave.earned_money += this.calculate_reward(helicopter);
+			helicopter.empWave.kills++;
+			helicopter.empWave.earned_money += this.calculate_reward(helicopter);
 			this.die(controller, helicopter, null, false);
 		}
     }
@@ -3066,7 +3079,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 				&& !this.is_destroyed 
 				&& !this.is_invincible()
 				&& !(this.barrier_teleport_timer != DISABLED && this.barrier_shoot_timer == DISABLED)
-				&& helicopter.emp_wave.ellipse.intersects(this.bounds);
+				&& helicopter.empWave.ellipse.intersects(this.bounds);
 	}	
 
 	private void evaluate_speedup(Helicopter helicopter)
@@ -3334,7 +3347,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			{
 				// Schussrichtung wird auf Helicopter ausgerichtet
 				this.shooting_direction.setLocation(
-						( (helicopter.bounds.getX() + (helicopter.is_moving_left ? Helicopter.FOCAL_PNT_X_LEFT : Helicopter.FOCAL_PNT_X_RIGHT)) 
+						( (helicopter.bounds.getX() + (helicopter.isMovingLeft ? Helicopter.FOCAL_PNT_X_LEFT : Helicopter.FOCAL_PNT_X_RIGHT))
 							  - (this.bounds.getX() +       this.bounds.getWidth()/2)), 
 						  (helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP) 
 						  	  - (this.bounds.getY() +       this.bounds.getHeight()/2)) ;
@@ -3479,7 +3492,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{		
 		return 
 			this.tractor == READY
-			&& helicopter.interphaseGeneratorTimer <= helicopter.shift_time
+			&& helicopter.interphaseGeneratorTimer <= helicopter.shiftTime
 			&& !this.is_emp_slowed() 
 			&& this.cloaking_timer < ACTIVE 
 			&& helicopter.tractor == null
@@ -4017,7 +4030,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			this.destroy(helicopter);			
 		}				
 		if(	helicopter.currentPlating <= 0
-			&& !helicopter.damaged)
+			&& !helicopter.isDamaged)
 		{
 			helicopter.crash();
 		}		
@@ -4030,7 +4043,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 		{
 			this.take_dmg((int)(
 				helicopter.currentFirepower
-				* (helicopter.bonus_kills_timer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
+				* (helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
 					? TELEPORT_DAMAGE_FACTOR 
 					: RADIATION_DAMAGE_FACTOR)));				
 							
@@ -4039,13 +4052,13 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 				if(	helicopter.has_triple_dmg() 
 					&&  MyMath.toss_up(
 							this.deactivation_prob
-							*(helicopter.bonus_kills_timer 
+							*(helicopter.bonusKillsTimer
 								> NICE_CATCH_TIME
 								  - TELEPORT_KILL_TIME ? 2 : 1)))
 				{
 					this.hitpoints = 0;
 				}
-				else if(MyMath.toss_up(this.deactivation_prob*(helicopter.bonus_kills_timer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
+				else if(MyMath.toss_up(this.deactivation_prob*(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
 				{
 					this.snooze(true);
 				}
@@ -4053,7 +4066,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			if(this.has_HPs_left()){this.react_to_hit(helicopter, null);}
 			else
 			{
-				boolean beam_kill = helicopter.bonus_kills_timer > 0;
+				boolean beam_kill = helicopter.bonusKillsTimer > 0;
 				this.die(controller, helicopter, null, beam_kill);
 			}
 		}		
@@ -4071,7 +4084,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	public float collision_dmg(Helicopter helicopter)
 	{		
 		return helicopter.get_dmg_factor() 
-			   *(helicopter.power_shield_on && this.is_explodable ? 0.65f : 1.0f)
+			   *(helicopter.isPowerShieldActivated && this.is_explodable ? 0.65f : 1.0f)
 			   *(this.isKaboom && !this.is_destroyed && !helicopter.hasShortrangeRadiation
 			     ? helicopter.kaboom_dmg() 
 			     : (this.is_explodable && !this.is_invincible() && !this.is_destroyed)
@@ -4089,7 +4102,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	
 	public void hit_by_missile(Helicopter helicopter, Missile missile, ArrayList<LinkedList<Explosion>> explosion)
 	{		
-		helicopter.hit_counter++;
+		helicopter.hitCounter++;
 		if( missile.type == JUMBO  
 			|| missile.type == PHASE_SHIFT 
 			|| missile.extra_dmg)
@@ -4225,8 +4238,8 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 	{
 		if(was_destroyed_by_player)
 		{
-			if(this.model != BARRIER){helicopter.enemies_killed++;}
-			if(this.is_mini_boss){helicopter.mini_boss_killed++;}
+			if(this.model != BARRIER){helicopter.numberOfEnemiesKilled++;}
+			if(this.is_mini_boss){helicopter.numberOfMiniBossKilled++;}
 		}	
 		else
 		{
@@ -4331,14 +4344,14 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			}
 			else if(beam_kill)
 			{
-				helicopter.bonus_kills++;
-				helicopter.bonus_kills_money += Events.last_bonus;
+				helicopter.bonusKills++;
+				helicopter.bonusKillsMoney += Events.last_bonus;
 			}
 			else if(helicopter.getType() == KAMAITACHI)
 			{
-				helicopter.bonus_kills_timer+=SPEED_KILL_BONUS_TIME;
-				helicopter.bonus_kills++;
-				helicopter.bonus_kills_money += Events.last_bonus;
+				helicopter.bonusKillsTimer +=SPEED_KILL_BONUS_TIME;
+				helicopter.bonusKills++;
+				helicopter.bonusKillsMoney += Events.last_bonus;
 			}
 			Menu.money_display_timer = 0;	
 		}
@@ -4421,7 +4434,7 @@ public class Enemy extends MovingObject implements DamageFactors, MissileTypes, 
 			Events.restart_window_visible = true;
 			Events.level = 51;
 			Events.max_level = Events.level;
-			helicopter.damaged = true;
+			helicopter.isDamaged = true;
 		
 			helicopter.destination.setLocation(helicopter.bounds.getX()+40, 
 											   520.0);	

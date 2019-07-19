@@ -198,7 +198,7 @@ public class PowerUp extends MovingObject
 	{
 		this.collected = true;
 		
-		if(this.type.ordinal() > 3 || helicopter.powerUp_timer[this.type.ordinal()] ==  0)
+		if(this.type.ordinal() > 3 || helicopter.powerUpTimer[this.type.ordinal()] ==  0)
 		{
 			Audio.play(Audio.pu_announcer[this.type.ordinal()]);
 		}

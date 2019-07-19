@@ -169,8 +169,8 @@ public class Savegame implements Constants, Serializable
 		this.timeOfDay = Events.timeOfDay;
 		this.bonus_counter = Events.overallEarnings;
 		this.extra_bonus_counter = Events.extraBonusCounter;
-		this.playing_time = Events.playing_time;		
-		this.scorescreen_times = helicopter.scorescreen_times.clone();
+		this.playing_time = Events.playingTime;
+		this.scorescreen_times = helicopter.scorescreenTimes.clone();
 		this.recordTime = Events.recordTime.clone();
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
 		this.highscore = Events.highscore.clone();
@@ -181,22 +181,22 @@ public class Savegame implements Constants, Serializable
 		this.has_shortrange_radiation = helicopter.hasShortrangeRadiation;
 		this.has_piercing_warheads = helicopter.hasPiercingWarheads;
 		this.jumbo_missiles = helicopter.jumboMissiles;
-		this.nr_of_cannons = helicopter.nr_of_cannons;
+		this.nr_of_cannons = helicopter.numberOfCannons;
 		this.has_radar_device = helicopter.hasRadarDevice;
 		this.rapidfire = helicopter.rapidfire;
 		this.has_interphase_generator = helicopter.hasInterphaseGenerator;
 		this.has_PowerUp_immobilizer = helicopter.hasPowerUpImmobilizer;
 		this.current_plating = helicopter.currentPlating;
 		this.energy = helicopter.energy;
-		this.enemies_seen = helicopter.enemies_seen;
-		this.enemies_killed = helicopter.enemies_killed;
-		this.mini_boss_seen = helicopter.mini_boss_seen;
-		this.mini_boss_killed = helicopter.mini_boss_killed;
-		this.nr_of_crashes = helicopter.nr_of_crashes; 
-		this.nr_of_repairs = helicopter.nr_of_repairs;
-		this.no_cheats_used = helicopter.no_cheats_used;
-		this.missile_counter = helicopter.missile_counter;
-		this.hit_counter = helicopter.hit_counter;
+		this.enemies_seen = helicopter.numberOfEnemiesSeen;
+		this.enemies_killed = helicopter.numberOfEnemiesKilled;
+		this.mini_boss_seen = helicopter.numberOfMiniBossSeen;
+		this.mini_boss_killed = helicopter.numberOfMiniBossKilled;
+		this.nr_of_crashes = helicopter.numberOfCrashes;
+		this.nr_of_repairs = helicopter.numberOfRepairs;
+		this.no_cheats_used = helicopter.isPlayedWithoutCheats;
+		this.missile_counter = helicopter.missileCounter;
+		this.hit_counter = helicopter.hitCounter;
 	}	
 	
 	void save_in_highscore()

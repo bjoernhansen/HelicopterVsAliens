@@ -259,12 +259,12 @@ public class MyColor implements Constants
 		}		
 	}
     
-    public static void update_scorescreen_colors(Helicopter helicopter)
+    public static void updateScorescreenColors(Helicopter helicopter)
     {       
     	scorescreen[0] = percentColor(Events.bonusIncomePercentage());
-    	scorescreen[1] = percentColor(MyMath.percentage(helicopter.enemies_killed, helicopter.enemies_seen));
-    	scorescreen[2] = percentColor(MyMath.percentage(helicopter.mini_boss_killed, helicopter.mini_boss_seen));
-    	scorescreen[3] = percentColor(MyMath.percentage(helicopter.hit_counter, helicopter.missile_counter));
+    	scorescreen[1] = percentColor(MyMath.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
+    	scorescreen[2] = percentColor(MyMath.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
+    	scorescreen[3] = percentColor(MyMath.percentage(helicopter.hitCounter, helicopter.missileCounter));
     }
     
     static Color percentColor(int percentage){return percentColor(((float)percentage)/100);}
