@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
@@ -102,7 +103,7 @@ public class Savegame implements Constants, Serializable
 			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
 			Audio.isSoundOn = temp.isSoundOn;
 			Events.recordTime = temp.recordTime.clone();
-			Events.heliosMaxMoney = Events.get_helios_max_money();
+			Events.heliosMaxMoney = Events.getHeliosMaxMoney();
 			Events.reachedLevelTwenty = temp.reachedLevelTwenty.clone();
 			Events.highscore = temp.highscore.clone();
 			output = temp;
@@ -133,7 +134,7 @@ public class Savegame implements Constants, Serializable
 		return new Savegame();
 	}
 			
-	void save_to_file(Helicopter helicopter, boolean validity)
+	public void saveToFile(Helicopter helicopter, boolean validity)
 	{				
 		this.save(helicopter, validity);
 		Menu.startscreen_button.get("11").enabled = validity;
@@ -141,7 +142,7 @@ public class Savegame implements Constants, Serializable
 	}
 		
 	
-	void writeToFile()
+	public void writeToFile()
 	{
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILENAME)))
 		{
@@ -180,7 +181,7 @@ public class Savegame implements Constants, Serializable
 		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
 		this.has_shortrange_radiation = helicopter.hasShortrangeRadiation;
 		this.has_piercing_warheads = helicopter.hasPiercingWarheads;
-		this.jumbo_missiles = helicopter.jumboMissiles;
+		this.jumbo_missiles = helicopter.missileDamageFactor;
 		this.nr_of_cannons = helicopter.numberOfCannons;
 		this.has_radar_device = helicopter.hasRadarDevice;
 		this.rapidfire = helicopter.rapidfire;
@@ -199,7 +200,7 @@ public class Savegame implements Constants, Serializable
 		this.hit_counter = helicopter.hitCounter;
 	}	
 	
-	void save_in_highscore()
+	public void saveInHighscore()
 	{
 		if(this.valid && (this.no_cheats_used || Events.saveAnyway))
 		{				

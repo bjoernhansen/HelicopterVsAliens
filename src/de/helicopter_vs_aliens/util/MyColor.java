@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.util;
 import de.helicopter_vs_aliens.Constants;
-import de.helicopter_vs_aliens.Events;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 import java.awt.Color;
@@ -197,7 +197,7 @@ public class MyColor implements Constants
     
    
     
-    public static void calculate_variable_game_colors(int counter)
+    public static void calculateVariableGameColors(int counter)
     {    	
     	if(counter%20 > 9)
     	{

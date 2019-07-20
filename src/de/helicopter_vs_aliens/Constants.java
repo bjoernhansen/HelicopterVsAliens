@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens;
 
-public interface Constants extends Positions
+public interface Constants
 {	
 	int
 		INACTIVE = 0,
@@ -11,7 +11,8 @@ public interface Constants extends Positions
 	    READY = 0,
 	    START = 0,
 	    PRE_READY = 1,	    
-	   	
+
+		// TODO enum für Day/Night machen
 		NIGHT = 0,
 		DAY = 1;
 }

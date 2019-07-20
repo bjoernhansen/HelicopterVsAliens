@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import de.helicopter_vs_aliens.Events;
+import de.helicopter_vs_aliens.control.Events;
 
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PHOENIX;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.ROCH;

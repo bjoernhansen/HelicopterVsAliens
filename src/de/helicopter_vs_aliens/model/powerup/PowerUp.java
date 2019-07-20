@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
@@ -147,14 +147,14 @@ public class PowerUp extends MovingObject
 			{
 				this.collected = true;
 			}
-			this.set_paint_bounds();
+			this.setPaintBounds();
 		}		
 	}
 	
 	private void make(double x, double y, PowerUpTypes powerUp_type, int powerUp_worth, int powerUp_direction)
 	{
 		this.bounds.setRect(x, y, GAME_SIZE, GAME_SIZE);
-		this.set_paint_bounds(GAME_SIZE, GAME_SIZE);
+		this.setPaintBounds(GAME_SIZE, GAME_SIZE);
 		this.collected = false;
 		this.stopped = false;
 		this.inStatusBar = false;
@@ -245,11 +245,11 @@ public class PowerUp extends MovingObject
 		{
 			Audio.play(Audio.cash);
 			Events.last_extra_bonus = 0;
-			Menu.money_display_timer = START;	
-			Events.last_bonus = (int)(1.5f*(helicopter.spotlight ? Events.NIGHT_BONUS_FACTOR : Events.DAY_BONUS_FACTOR) * this.worth);
-			Events.money += Events.last_bonus;
-			Events.overallEarnings += Events.last_bonus;
-			Events.extraBonusCounter += Events.last_bonus;
+			Menu.moneyDisplayTimer = START;
+			Events.lastBonus = (int)(1.5f*(helicopter.spotlight ? Events.NIGHT_BONUS_FACTOR : Events.DAY_BONUS_FACTOR) * this.worth);
+			Events.money += Events.lastBonus;
+			Events.overallEarnings += Events.lastBonus;
+			Events.extraBonusCounter += Events.lastBonus;
 		}
 	}
 	
@@ -260,7 +260,7 @@ public class PowerUp extends MovingObject
 		this.inStatusBar = true;
 		this.collected = false;
 		this.bounds.setRect(100, 432, MENU_SIZE, MENU_SIZE);	
-		this.set_paint_bounds(MENU_SIZE, MENU_SIZE);
+		this.setPaintBounds(MENU_SIZE, MENU_SIZE);
 	}
 
 	public static void activate(Helicopter helicopter, ArrayList<LinkedList<PowerUp>> powerUp, Enemy enemy, 
@@ -275,7 +275,7 @@ public class PowerUp extends MovingObject
 			pu.make(enemy.bounds.getX(), 
 					enemy.bounds.getY(), 
 					type,
-					enemy.is_mini_boss 
+					enemy.isMiniBoss
 						? (int)(1.25f * enemy.strength) 
 						: 5 * enemy.strength, 
 					helicopter.bounds.getX() > enemy.bounds.getX() 

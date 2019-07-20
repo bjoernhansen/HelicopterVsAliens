@@ -2,6 +2,8 @@ package de.helicopter_vs_aliens.model.enemy;
 
 public interface BossTypes
 {
+	// TODO durch Enum ersetzen
+	// BOSS 3 und 4 ID verstauschen
 	int
 		BOSS_1					= -1,
 	 	BOSS_2					= -2,

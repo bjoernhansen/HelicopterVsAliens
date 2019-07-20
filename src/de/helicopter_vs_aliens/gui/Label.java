@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui;
 
-import de.helicopter_vs_aliens.Controller;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.Main;
 
 import javax.swing.*;

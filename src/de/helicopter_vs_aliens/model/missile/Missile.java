@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -24,8 +25,13 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.ROCH;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
-public class Missile extends MovingObject implements DamageFactors, MissileTypes, BossTypes
+public class Missile extends MovingObject implements MissileTypes, BossTypes
 {	
+	private static final float
+		POWERUP_DAMAGE_FACTOR = 3f,				// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
+		OROCHI_EXTRA_DAMAGE_FACTOR = 1.03f, 	// Orochi-Klasse: Faktor, um den sich die Schadenswirkung von Raketen erhöht wird
+		SHIFT_DAMAGE_FACTOR = 8.9f;				// Pegasus-Klasse: Faktor, um den sich die Schadenswirkung einer Rakete erhöht, wenn diese abgeschossen wird, während der Interphasen-Generator aktiviert ist
+
 	public int
 		type,
 		dmg,			// Schaden, den die Rakete beim Gegner anrichtet, wenn sie trifft
@@ -36,7 +42,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		speed;			// Geschwindigkeit der Rakete
 	
 	public boolean
-		extra_dmg,		// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
+		extraDamage,		// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
 		dangerous,		// = true: kann den Helicopter beschädigen
 		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
@@ -63,11 +69,11 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 		this.dangerous = false;
 		this.bounced = false;
 		this.flying = true;	
-		this.extra_dmg = helicopter.has_triple_dmg();
+		this.extraDamage = helicopter.has_triple_dmg();
 		if(!stunning_missile)
 		{
-			if(helicopter.plasma_activation_timer > 0){this.type = PLASMA;}
-			else if(helicopter.jumboMissiles > 2){this.type = JUMBO;}
+			if(helicopter.plasmaActivationTimer > 0){this.type = PLASMA;}
+			else if(helicopter.hasJumboMissiles()){this.type = JUMBO;}
 			else{this.type = STANDARD;}									
 		}								
 		else if(helicopter.getType() == OROCHI){this.type = STUNNING;}
@@ -98,7 +104,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 							helicopter.bounds.getY() + y, 
 							this.type == JUMBO  ? 30 : 20, 
 							this.type == JUMBO ? 6 : 4);
-		this.set_paint_bounds((int)this.bounds.getWidth(),
+		this.setPaintBounds((int)this.bounds.getWidth(),
 							  (int)this.bounds.getHeight());
 	}
 	
@@ -113,10 +119,10 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	private void set_dmg(Helicopter helicopter)
 	{
 		this.dmg = 	(int)(helicopter.currentFirepower
-				* (helicopter.numberOfCannons == 3 ? OROCHI_XTRA_DMG_FACTOR : 1)
-				* ((helicopter.plasma_activation_timer == 0) ? 1 : MyMath.plasma_dmg_factor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
+				* (helicopter.numberOfCannons == 3 ? OROCHI_EXTRA_DAMAGE_FACTOR : 1.0f)
+				* ((helicopter.plasmaActivationTimer == 0) ? 1 : MyMath.plasma_dmg_factor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
 				* (this.type == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
-				* (this.extra_dmg ? POWERUP_DAMAGE_FACTOR : 1));
+				* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 
 	public static void paintAllMissiles(Graphics2D g2d, Controller controller)
@@ -150,7 +156,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 			i.remove();	
 			this.inactivate(controller.missile, helicopter);
 		}
-		this.set_paint_bounds();
+		this.setPaintBounds();
 	}
 	
 	private void check_for_hit_helicopter(Helicopter helicopter)
@@ -173,18 +179,18 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	{
 		for(Enemy e : controller.enemy.get(ACTIVE))
 		{
-			if (e.is_hitable(this))
+			if (e.isHitable(this))
 			{
-				if (e.teleport_timer == READY
-					&& e.stunning_timer == READY
-					&& e.emp_slowed_timer == READY)
+				if (e.teleportTimer == READY
+					&& e.stunningTimer == READY
+					&& e.empSlowedTimer == READY)
 				{
 					e.teleport();
-				} else if (!e.is_invincible())
+				} else if (!e.isInvincible())
 				{
-					e.hit_by_missile(helicopter, this, controller.explosion);
+					e.hitByMissile(helicopter, this, controller.explosion);
 				} else if (!this.bounced
-					&& e.teleport_timer < 1
+					&& e.teleportTimer < 1
 					&& !(e.type == BOSS_2_SERVANT))
 				{
 					Audio.play(Audio.rebound);
@@ -194,11 +200,11 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 					this.bounced = true;
 				}
 				
-				if (e.has_HPs_left())
+				if (e.hasHPsLeft())
 				{
-					if (e.stunning_timer == READY)
+					if (e.stunningTimer == READY)
 					{
-						e.react_to_hit(helicopter, this);
+						e.reactToHit(helicopter, this);
 					}
 				} else
 				{
@@ -218,13 +224,13 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 					}
 				}
 				if (!helicopter.hasPiercingWarheads
-					&& !e.is_invincible())
+					&& !e.isInvincible())
 				{
 					this.flying = false;
 					break;
 				}
 			}
-			if (this.could_hit(e) && e.is_ready_to_dodge(helicopter))
+			if (this.could_hit(e) && e.isReadyToDodge(helicopter))
 			{
 				e.dodge();
 			}
@@ -357,7 +363,7 @@ public class Missile extends MovingObject implements DamageFactors, MissileTypes
 	public void credit()
 	{
 		this.kills++;
-		this.earned_money += Events.last_bonus;
+		this.earned_money += Events.lastBonus;
 	}
 
 	private boolean could_hit(Enemy enemy)

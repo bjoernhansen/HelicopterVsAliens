@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.control;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -19,6 +19,9 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
+import de.helicopter_vs_aliens.Constants;
+import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
@@ -59,7 +62,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		
 	int nr_of_frames;
 	public int frames_counter = 0;
-	public int bgRepaint = 0;
+	public int backgroundRepaint = 0;
 	
 	long 
 		fps_start_time;
@@ -95,7 +98,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	
 	private Controller(){}
 	
-	void init()
+	public void init()
 	{					
 		Audio.initialize();
 		
@@ -135,14 +138,14 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		this.enemy.add(DESTROYED, new LinkedList<>());
 	}
 	
-	void start()
+	public void start()
 	{
 		this.animator = new Thread(this);
 		this.animator.start();
 		Audio.refreshBackgroundMusic();
 	}
 
-	static void shut_down(){System.exit(0);}
+	public static void shutDown(){System.exit(0);}
 	
 	
 	@Override
@@ -179,7 +182,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			if(skip_frame_flag == INACTIVE){skip_frame_flag = DISABLED;}
 			else
 			{					
-				if(this.bgRepaint != DISABLED){Menu.repaintBackground(g, this);}
+				if(this.backgroundRepaint != DISABLED){Menu.repaintBackground(g, this);}
 				g.drawImage(this.offImage, 
 							Main.displayShift.width, // 0
 							Main.displayShift.height, // 0
@@ -213,11 +216,11 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			// aktualisieren aller sichtbaren Objekte
 			if(!Menu.isMenueVisible)
 			{				
-		    	MyColor.calculate_variable_game_colors(this.frames_counter);
+		    	MyColor.calculateVariableGameColors(this.frames_counter);
 				BackgroundObject.update(this, this.bgObject);
 				Events.update_timer();
 				Menu.update_displays(this.helicopter);				
-				Enemy.update_all_destroyed(this, this.helicopter);
+				Enemy.updateAllDestroyed(this, this.helicopter);
 				Missile.updateAll(this, this.helicopter);
 				Enemy.updateAllActive(this, this.helicopter);
 				EnemyMissile.updateAll(this.enemyMissile, this.helicopter);
@@ -313,7 +316,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			this.mouse_in_window = true;
 			Events.time_aktu = System.currentTimeMillis();
 		}*/
-		this.bgRepaint = READY;
+		this.backgroundRepaint = READY;
 	}	
 	
 	@Override

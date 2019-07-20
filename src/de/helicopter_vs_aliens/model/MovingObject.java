@@ -17,13 +17,13 @@ public abstract class MovingObject implements Constants
         paintBounds = new Rectangle();
 	
 	
-	protected void set_paint_bounds()
+	protected void setPaintBounds()
 	{
-		this.set_paint_bounds(this.paintBounds.width,
+		this.setPaintBounds(this.paintBounds.width,
 							  this.paintBounds.height);
 	}
 	
-	protected void set_paint_bounds(int width, int height)
+	protected void setPaintBounds(int width, int height)
 	{
 		this.paintBounds.setBounds((int)this.bounds.getX(),
 									(int)this.bounds.getY(), 

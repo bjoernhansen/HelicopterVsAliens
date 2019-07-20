@@ -1,5 +1,7 @@
 package de.helicopter_vs_aliens;
 
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.Label;
@@ -23,7 +25,7 @@ public class Main implements Constants
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = false;
+    	TESTMODE = true;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -43,11 +45,11 @@ public class Main implements Constants
 		frame;
     
     private static DisplayMode
-    	dm_original,
-		dm_standard = new DisplayMode(  STANDARD_RESULUTION.width,
+		originalDisplayMode,
+		standardDisplayMode = new DisplayMode(  STANDARD_RESULUTION.width,
     									STANDARD_RESULUTION.height,
     								  	32, 60);
-	public static DisplayMode dm_current;
+	public static DisplayMode currentDisplayMode;
 
 
     public static void main(final String[] args)
@@ -86,7 +88,7 @@ public class Main implements Constants
                 @Override
                 public void windowClosing(WindowEvent e)
                 {
-                    Controller.shut_down();
+                    Controller.shutDown();
                 }
             });
 
@@ -94,13 +96,13 @@ public class Main implements Constants
             
             device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if(!device.isFullScreenSupported()){isFullScreen = false;}
-            dm_original = device.getDisplayMode();
+            originalDisplayMode = device.getDisplayMode();
             
             Controller.savegame = Savegame.initialize();
             
             frame.setUndecorated(true);
             device.setFullScreenWindow(frame);
-            activate_display_mode();
+            activateDisplayMode();
             switchDisplayMode(null);
             
             
@@ -115,11 +117,11 @@ public class Main implements Constants
 	{
 		Menu.originalResulution = !Menu.originalResulution;
 		savegame.originalResulution = Menu.originalResulution;
-		activate_display_mode();
+		activateDisplayMode();
 		Events.settingsChanged = true;
 	}
     
-    static void switchDisplayMode(Button current_button)
+    public static void switchDisplayMode(Button current_button)
     {
         isFullScreen = !isFullScreen;
         
@@ -141,7 +143,7 @@ public class Main implements Constants
 		{
     		//Menu.startscreen_menu_button.get("5").enabled = true;
         	device.setFullScreenWindow(frame);
-        	activate_display_mode();
+        	activateDisplayMode();
 		}
 		else
 		{
@@ -149,23 +151,23 @@ public class Main implements Constants
 			if(current_button != null){
 				Menu.adapt_to_window_mode(displayShift);}
 	        frame.setSize(WINDOW_SIZE);
-	        frame.setLocation( (int)(( dm_original.getWidth()
+	        frame.setLocation( (int)(( originalDisplayMode.getWidth()
 	        					  -WINDOW_SIZE.getWidth())/2),
-    					   (int)(( dm_original.getHeight()
+    					   (int)(( originalDisplayMode.getHeight()
     							  -WINDOW_SIZE.getHeight())/2));
 	        frame.setVisible(true);
 		}
     }
     
-    private static void activate_display_mode()
+    private static void activateDisplayMode()
 	{
-    	dm_current = Menu.originalResulution
-				? dm_original
-				: dm_standard;
-    	device.setDisplayMode(dm_current);
+    	currentDisplayMode = Menu.originalResulution
+				? originalDisplayMode
+				: standardDisplayMode;
+    	device.setDisplayMode(currentDisplayMode);
 		
-		displayShift = new Dimension((dm_current.getWidth()  - VIRTUAL_DIMENSION.width )/2,
-									  (dm_current.getHeight() - VIRTUAL_DIMENSION.height)/2);
+		displayShift = new Dimension((currentDisplayMode.getWidth()  - VIRTUAL_DIMENSION.width )/2,
+									  (currentDisplayMode.getHeight() - VIRTUAL_DIMENSION.height)/2);
 		if(Menu.label == null){
 			Menu.label = new Label();}
 		else
@@ -173,6 +175,6 @@ public class Main implements Constants
 			Menu.label.setBounds(displayShift.width  + 42,
 					  				displayShift.height + 83, 940, 240);
 		}
-		Controller.getInstance().bgRepaint = 0;
+		Controller.getInstance().backgroundRepaint = 0;
 	}
 }

@@ -1,7 +1,8 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.model.enemy;
 
-public interface Positions
+interface Positions
 {
+    // durch ENUM ersetzen
     int
         NONE = -1,
         RIGHT = 0,

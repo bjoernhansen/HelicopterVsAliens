@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens;
 
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 

@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.*;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -471,7 +473,7 @@ public class BackgroundObject extends MovingObject
 	}
 
 	public static void update(Controller controller,
-							  ArrayList<LinkedList<BackgroundObject>> bgObject)
+                              ArrayList<LinkedList<BackgroundObject>> bgObject)
 	{		
 		background_moves = isBackgroundMoving(controller.enemy, controller.getHelicopter());
 		for(Iterator<BackgroundObject> i = bgObject.get(ACTIVE).iterator(); i.hasNext();)

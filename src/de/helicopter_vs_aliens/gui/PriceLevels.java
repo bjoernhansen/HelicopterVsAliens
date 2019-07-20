@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.gui;
 
 public enum PriceLevels
 {

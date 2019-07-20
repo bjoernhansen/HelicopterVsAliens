@@ -1,23 +1,23 @@
 package de.helicopter_vs_aliens.gui;
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-import static de.helicopter_vs_aliens.PriceLevels.*;
+import static de.helicopter_vs_aliens.control.Events.SPOTLIGHT_COSTS;
+import static de.helicopter_vs_aliens.gui.PriceLevels.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
-public class Button implements Constants, Fonts, Costs
+// TODO Vererbung auch für Buttons, Enums für Button-Typen
+
+public class Button implements Constants
 {
 	private static final int 
 		BUTTON_DISTANCE = 60;
@@ -216,6 +216,7 @@ public class Button implements Constants, Fonts, Costs
 			= STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][6 + helicopter.getType().ordinal()][0]
 			  + " " 
 			  + STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][6 + helicopter.getType().ordinal()][1];
+		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden
 		Menu.repairShopButton.get("Special" + 0).costs = SPOTLIGHT_COSTS;
 		Menu.repairShopButton.get("Special" + 0).cost_color = MyColor.costsColor[CHEAP.ordinal()];
 		Menu.repairShopButton.get("Special" + 1).costs = (helicopter.getGoliathCosts());
@@ -262,21 +263,20 @@ public class Button implements Constants, Fonts, Costs
 	        {	        	
 	        	if(this.cost_color == null){g2d.setColor(MyColor.lightOrange);}
 	            else{g2d.setColor(this.cost_color);}
-	            
-	        	g2d.setFont(BOLD14);        	          
+	        	g2d.setFont(Menu.fontProvider.getBold(14));
 	        	g2d.drawString(used_label, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 20);
 	        }
 	        else
 	        {
 	        	if(this.translucent)
 	        	{
-	        		g2d.setFont(BOLD15);	        		
+	        		g2d.setFont(Menu.fontProvider.getBold(15));
 	        		if(this.enabled){g2d.setColor(this.marked ? MyColor.variableMarkedButton : Color.yellow); }
 		        	else{g2d.setColor(MyColor.lightGray);} 		
 	        	}
 	        	else
 	        	{
-	        		g2d.setFont(PLAIN18); 
+	        		g2d.setFont(Menu.fontProvider.getPlain(18));
 	        		g2d.setColor(Color.black);
 	        	}        		
 	        	FontMetrics fm = g2d.getFontMetrics();        	

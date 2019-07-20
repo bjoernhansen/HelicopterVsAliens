@@ -1,12 +1,11 @@
 package de.helicopter_vs_aliens.util;
 
-import de.helicopter_vs_aliens.Positions;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 
-public class MyMath implements Positions
+public class MyMath
 {
 	public final static double
 		ROOT05 = Math.sqrt(2)/2;
@@ -236,13 +235,9 @@ public class MyMath implements Positions
 		return base > 0 ? 100*amount/base : 0;
 	} 
 	
-	public static double get_intersection_length(double e_min, double e_max, 
-	                                      double b_min, double b_max)
+	public static double getIntersectionLength(double e_min, double e_max,
+                                               double b_min, double b_max)
 	{		
 		return Math.min(e_max, b_max) - Math.max(e_min, b_min);
 	}
-	
-	
-	
-	
 }

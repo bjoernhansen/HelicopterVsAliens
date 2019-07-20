@@ -1,5 +1,9 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.control;
 
+import de.helicopter_vs_aliens.Constants;
+import de.helicopter_vs_aliens.HighscoreEntry;
+import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.BossTypes;
@@ -22,24 +26,28 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
-import static de.helicopter_vs_aliens.PriceLevels.REGULAR;
+import static de.helicopter_vs_aliens.gui.PriceLevels.REGULAR;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 
-public class Events implements Constants, Costs, BossTypes
+public class Events implements Constants, BossTypes
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
-			DAY_BONUS_FACTOR = 60,
-			NIGHT_BONUS_FACTOR = 90;
+		DAY_BONUS_FACTOR = 60,
+		NIGHT_BONUS_FACTOR = 90,
+		SPOTLIGHT_COSTS = 35000;
 	
 	private static final int
-			COMPARISON_RECORD_TIME = 60;	// angenommene Bestzeit für besiegen von Boss 5
+		COMPARISON_RECORD_TIME = 60,	// angenommene Bestzeit für besiegen von Boss 5
+		TOTAL_LOSS_REPAIR_BASE_FEE = 875,
+		DEFAULT_REPAIR_BASE_FEE = 350,
+		MAX_MONEY = 5540500;			// für Komplettausbau erforderliche Geldmenge
 
-	public static HighscoreEntry [][]
+	public static HighscoreEntry[][]
 		highscore = new HighscoreEntry[7][10];
 	
 	static Point 
@@ -54,9 +62,9 @@ public class Events implements Constants, Costs, BossTypes
 		last_creation_timer,	// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
         overallEarnings, 		// Gesamtverdienst
         extraBonusCounter, 		// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
-		last_bonus, 			// für die Guthabenanzeige: zuletzt erhaltener Standard-Verdienst
+		lastBonus, 			// für die Guthabenanzeige: zuletzt erhaltener Standard-Verdienst
 		last_extra_bonus,		// für die Guthabenanzeige: zuletzt erhaltener Extra-Bonus
-		last_multi_kill,		// für die Multi-Kill-Anzeige: Art des letzten Multi-Kill 
+        lastMultiKill,		// für die Multi-Kill-Anzeige: Art des letzten Multi-Kill
         commendationTimer,		// reguliert, wie lange die Multi-Kill-Anzeige zu sehen ist
 		heliosMaxMoney;
 	
@@ -68,7 +76,7 @@ public class Events implements Constants, Costs, BossTypes
 		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
     
     public static boolean
-    	restart_window_visible,				// = true: Neustart-Fenster wird angezeigt
+		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
     	reachedLevelTwenty[] = new boolean[Helicopter.NR_OF_TYPES],
     	settingsChanged = false,
     	allPlayable = false,
@@ -102,7 +110,7 @@ public class Events implements Constants, Costs, BossTypes
 		{
 			if(window == GAME){changeVisibilityOfInGameMenu(helicopter);}
 			else if(window == STARTSCREEN){
-				Controller.shut_down();}
+				Controller.shutDown();}
 			else if(window != REPAIR_SHOP)
 			{
 				cancel(controller.bgObject, helicopter, savegame);
@@ -162,16 +170,19 @@ public class Events implements Constants, Costs, BossTypes
 				{
 					if(money == 0)
 					{
-						if(window == GAME){last_bonus = MAX_MONEY - money;}
+						if(window == GAME)
+						{
+							lastBonus = MAX_MONEY - money;
+						}
 						money = MAX_MONEY;
 						helicopter.isPlayedWithoutCheats = false;
 					}
 					else
 					{
-						last_bonus = 0;
+						lastBonus = 0;
 						money = 0;					
 					}				
-					Menu.money_display_timer = START;
+					Menu.moneyDisplayTimer = START;
 				}
 			}				
 			else if(e.getKeyChar() == 'u')
@@ -215,7 +226,7 @@ public class Events implements Constants, Costs, BossTypes
 				}
 				else if(e.getKeyChar() =='s')
 				{
-					Menu.special_info_selection = (Menu.special_info_selection+1)%14;
+					Menu.specialInfoSelection = (Menu.specialInfoSelection +1)%14;
 				}
 				else if(e.getKeyChar() == 'd'){helicopter.getPowerUp(controller.powerUp, TRIPLE_DMG, 	   true);}
 				else if(e.getKeyChar() == 'i'){helicopter.getPowerUp(controller.powerUp, INVINCIBLE, 	   true);}
@@ -226,7 +237,7 @@ public class Events implements Constants, Costs, BossTypes
 					if(level < 51)
 					{
 						helicopter.repair(true, true);
-						restart_window_visible = false;	
+						isRestartWindowVisible = false;
 						helicopter.isPlayedWithoutCheats = false;
 					}								
 				}
@@ -259,9 +270,9 @@ public class Events implements Constants, Costs, BossTypes
 							Arrays.fill(recordTime[i], 0);
 							reachedLevelTwenty[i] = false;
 						}
-						heliosMaxMoney = get_helios_max_money();
-						savegame.save_in_highscore();
-						savegame.save_to_file(helicopter, false);
+						heliosMaxMoney = getHeliosMaxMoney();
+						savegame.saveInHighscore();
+						savegame.saveToFile(helicopter, false);
 						Audio.play(Audio.emp);
 					}
 				}
@@ -269,9 +280,9 @@ public class Events implements Constants, Costs, BossTypes
 				{					
 					if((helicopter.isPlayedWithoutCheats || saveAnyway) && savegame.valid)
 					{
-						savegame.save_in_highscore();
+						savegame.saveInHighscore();
 					}
-					savegame.save_to_file(helicopter, false);
+					savegame.saveToFile(helicopter, false);
 					Audio.play(Audio.emp);
 				}
 			}
@@ -290,7 +301,7 @@ public class Events implements Constants, Costs, BossTypes
 	{
 		if(e.getButton() == 1)
 		{
-			cursor.setLocation(e.getX()-Main.displayShift.width,
+			cursor.setLocation(e.getX()- Main.displayShift.width,
 							   e.getY()-Main.displayShift.height);
 			mousePressedLeft(controller, helicopter);
 		}
@@ -310,7 +321,7 @@ public class Events implements Constants, Costs, BossTypes
 	
 	private static void mousePressedLeft(Controller controller, Helicopter helicopter)
 	{		
-		controller.bgRepaint = READY;
+		controller.backgroundRepaint = READY;
 		if(window == GAME)
 		{
 			inGameMousePressedLeft(controller, helicopter);
@@ -343,7 +354,7 @@ public class Events implements Constants, Costs, BossTypes
 			{
 				if(Menu.inGameButton.get("MMNewGame1").bounds.contains(cursor))
 				{					
-					Controller.savegame.save_to_file(helicopter, true);
+					Controller.savegame.saveToFile(helicopter, true);
 					conditionalReset(controller, helicopter, true);
 					restart_game(helicopter, controller.bgObject);
 					Audio.applause1.stop();
@@ -355,17 +366,17 @@ public class Events implements Constants, Costs, BossTypes
 				}
 				else if(Menu.inGameButton.get("MMNewGame2").bounds.contains(cursor))
 				{					
-					Controller.savegame.save_to_file(helicopter, true);
-					Controller.shut_down();
+					Controller.savegame.saveToFile(helicopter, true);
+					Controller.shutDown();
 				}
 				else if( 	(Menu.inGameButton.get("MainMenu").bounds.contains(cursor)
-							&& helicopter.is_on_the_ground())
+							&& helicopter.isOnTheGround())
 						 || (Menu.inGameButton.get("MMCancel").bounds.contains(cursor)))
 				{
 					changeVisibilityOfInGameMenu(helicopter);
 				}
 			}			
-			else if(helicopter.is_on_the_ground())
+			else if(helicopter.isOnTheGround())
 			{
 				if(Menu.inGameButton.get("RepairShop").bounds.contains(cursor))
 				{
@@ -385,7 +396,7 @@ public class Events implements Constants, Costs, BossTypes
 			else if(helicopter.isActive){helicopter.isContiniousFireEnabled = true;}
 		}
 		else if(	Menu.inGameButton.get("MMNewGame2").bounds.contains(cursor)
-				 && restart_window_visible)
+				 && isRestartWindowVisible)
 		{
 			// Betreten der Werkstatt nach Absturz bzw. Neustart bei Geldmangel				
 			conditionalReset(controller, helicopter, true);
@@ -406,7 +417,7 @@ public class Events implements Constants, Costs, BossTypes
 				changeWindow(SCORESCREEN);	
 															
 				helicopter.isDamaged = false;
-				Controller.savegame.save_to_file(helicopter, true);
+				Controller.savegame.saveToFile(helicopter, true);
 				MyColor.updateScorescreenColors(helicopter);
 			}
 			else{enterRepairShop(helicopter);}
@@ -661,7 +672,7 @@ public class Events implements Constants, Costs, BossTypes
 			}
 			else if(selection == 3)
 			{
-				helicopter.currentFirepower = (int)(helicopter.jumboMissiles * MyMath.dmg(helicopter.levelOfUpgrade[FIREPOWER.ordinal()]));
+				helicopter.currentFirepower = (int)(helicopter.missileDamageFactor * MyMath.dmg(helicopter.levelOfUpgrade[FIREPOWER.ordinal()]));
 			}
 			else if(selection == 4)
 			{
@@ -690,10 +701,10 @@ public class Events implements Constants, Costs, BossTypes
 			Menu.helicopter_selection = (Menu.helicopter_selection + 1)%Helicopter.NR_OF_TYPES;
 			Audio.play(Audio.choose);
 		}
-		else if(Menu.helicopter_frame[0].contains(cursor)||
-				Menu.helicopter_frame[1].contains(cursor)||
-				Menu.helicopter_frame[2].contains(cursor)||
-				Menu.helicopter_frame[3].contains(cursor))
+		else if(Menu.helicopterFrame[0].contains(cursor)||
+				Menu.helicopterFrame[1].contains(cursor)||
+				Menu.helicopterFrame[2].contains(cursor)||
+				Menu.helicopterFrame[3].contains(cursor))
 		{				
 			if(allPlayable || Helicopter.isUnlocked(Events.nextHelicopterType))
 			{
@@ -741,7 +752,7 @@ public class Events implements Constants, Costs, BossTypes
 		}		
 		else if(Menu.startscreen_button.get("12").bounds.contains(cursor))
 		{					
-			Controller.shut_down();
+			Controller.shutDown();
 		}		
 	}
 	
@@ -751,9 +762,9 @@ public class Events implements Constants, Costs, BossTypes
 		Audio.play(Audio.choose);
 		if(window == SCORESCREEN)
 		{				
-			savegame.save_in_highscore();
+			savegame.saveInHighscore();
 			restart_game(helicopter, bgObject);	
-			savegame.save_to_file(helicopter, false);										
+			savegame.saveToFile(helicopter, false);
 			Menu.startscreen_menu_button.get("Cancel").highlighted = false;
 		}
 		else if(window == DESCRIPTION)
@@ -997,12 +1008,12 @@ public class Events implements Constants, Costs, BossTypes
 		helicopter.reset_state(total_reset);		
 		boss = null;		
 		last_extra_bonus = 0;
-		last_multi_kill = 0;
+		lastMultiKill = 0;
 		commendationTimer = 0;		
-		restart_window_visible = false;
+		isRestartWindowVisible = false;
 		Menu.isMenueVisible = false;
-		last_bonus = 0;
-		Menu.money_display_timer = DISABLED;
+		lastBonus = 0;
+		Menu.moneyDisplayTimer = DISABLED;
 		Menu.level_display_timer = START;
 		Menu.unlocked_timer = 0;
 				
@@ -1028,14 +1039,14 @@ public class Events implements Constants, Costs, BossTypes
 				for(Iterator<Enemy> i = controller.enemy.get(ACTIVE).iterator(); i.hasNext();)
 				{
 					Enemy e = i.next();					
-					if(!e.is_lasting)
+					if(!e.isLasting)
 					{
 						controller.enemy.get(INACTIVE).add(e);
 						i.remove();
 					}
 				}
 			}
-			Enemy.current_mini_boss = null;
+			Enemy.currentMiniBoss = null;
 		}
 		if(total_reset)
 		{
@@ -1074,7 +1085,7 @@ public class Events implements Constants, Costs, BossTypes
 		if(isNewGame)
 		{
 			Audio.play(Audio.applause1);
-			savegame.save_in_highscore();
+			savegame.saveInHighscore();
 		}
 		Menu.stopButtonHighlighting(Menu.startscreen_button);
 		Menu.cross = null;
@@ -1086,7 +1097,7 @@ public class Events implements Constants, Costs, BossTypes
 		initialize(helicopter, savegame, isNewGame);
 		Button.initialize(helicopter);
 		if(isNewGame){
-			Controller.savegame.save_to_file(helicopter, true);}
+			Controller.savegame.saveToFile(helicopter, true);}
 		else{
 			Menu.update_repairShopButtons(helicopter);}
 	}
@@ -1104,7 +1115,7 @@ public class Events implements Constants, Costs, BossTypes
 		Audio.play(Audio.choose);	
 		time_aktu = System.currentTimeMillis();
 		helicopter.rotorPosition[helicopter.getType().ordinal()] = 0;
-		Controller.savegame.save_to_file(helicopter, true);
+		Controller.savegame.saveToFile(helicopter, true);
 	}
 	
 	private static void enterRepairShop(Helicopter helicopter)
@@ -1173,7 +1184,7 @@ public class Events implements Constants, Costs, BossTypes
 		int previous_level = level;
 		level += nr_of_levelUp;	
 				
-		if(isBossLevel()){Enemy.get_rid_of_some_enemies(helicopter, controller.enemy, controller.explosion);}
+		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemy, controller.explosion);}
 		if(helicopter.getType() == HELIOS && level > max_level){getHeliosIncome(previous_level);}
 		
 		max_level = level;
@@ -1194,10 +1205,10 @@ public class Events implements Constants, Costs, BossTypes
 		{
 			bonus_sum += (int)((i/1225f)* heliosMaxMoney);
 		}
-		last_bonus = (int) (bonus_sum * (timeOfDay == NIGHT ? 1 : ((float)DAY_BONUS_FACTOR)/NIGHT_BONUS_FACTOR));
-		money += last_bonus;
-		overallEarnings += last_bonus;			
-		Menu.money_display_timer = START;
+		lastBonus = (int) (bonus_sum * (timeOfDay == NIGHT ? 1 : ((float)DAY_BONUS_FACTOR)/NIGHT_BONUS_FACTOR));
+		money += lastBonus;
+		overallEarnings += lastBonus;
+		Menu.moneyDisplayTimer = START;
 	}
 
 	// Stellt sicher, dass mit dem Besiegen des End-Gegners direkt das nächste Level erreicht wird
@@ -1214,14 +1225,15 @@ public class Events implements Constants, Costs, BossTypes
 	public static void extra_reward( int kills, int earned_money, float basis,
 	                          float increase, float limit)
 	{
-		Menu.money_display_timer = START;
-		if(kills > 1){last_bonus = earned_money;}
+		Menu.moneyDisplayTimer = START;
+		if(kills > 1){
+			lastBonus = earned_money;}
 		last_extra_bonus = (int)(Math.min(basis + increase * (kills-2), limit) * earned_money);
 		last_extra_bonus = Math.round(last_extra_bonus/10f)*10;
 		money += last_extra_bonus;
 		overallEarnings += last_extra_bonus;
 		extraBonusCounter += last_extra_bonus;
-		last_multi_kill = kills;
+		lastMultiKill = kills;
 		commendationTimer = 90 + (Math.max(kills, 6)-2) * 25; 
 		Audio.praise(kills);
 	}
@@ -1239,7 +1251,7 @@ public class Events implements Constants, Costs, BossTypes
 		{
 			Menu.isMenueVisible = false;
 			time_aktu = System.currentTimeMillis();
-			if(helicopter.is_on_the_ground())
+			if(helicopter.isOnTheGround())
 			{
 				helicopter.set_activation_state(false);
 			}
@@ -1261,7 +1273,7 @@ public class Events implements Constants, Costs, BossTypes
 	
 	
 
-	public static void determine_highscore_times(Helicopter helicopter)
+	public static void determineHighscoreTimes(Helicopter helicopter)
 	{
 		int boss_nr = get_boss_nr();
 		long highscore_time = (playingTime + System.currentTimeMillis() - time_aktu)/60000;
@@ -1273,7 +1285,7 @@ public class Events implements Constants, Costs, BossTypes
 				= recordTime[helicopter.getType().ordinal()][boss_nr] == 0
 				  ? highscore_time 
 				  : Math.min(recordTime[helicopter.getType().ordinal()][boss_nr], highscore_time);
-			heliosMaxMoney = get_helios_max_money();
+			heliosMaxMoney = getHeliosMaxMoney();
 		}			
 	}
 	
@@ -1292,7 +1304,7 @@ public class Events implements Constants, Costs, BossTypes
 		return false;
 	}
 	
-	public static int get_helios_max_money()
+	public static int getHeliosMaxMoney()
 	{
 		int max_helios_money = 0;
 		for(int i = 0; i < Helicopter.NR_OF_TYPES - 1; i++)
