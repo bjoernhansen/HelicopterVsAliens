@@ -1,11 +1,10 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 
 import java.io.Serializable;
-
 
 public class HighscoreEntry implements Serializable
 {		
@@ -57,21 +56,21 @@ public class HighscoreEntry implements Serializable
 		else return this.bonus_income > entry.bonus_income;
 	}
 	
-	static void put_entry(HighscoreEntry[] highscore, HighscoreEntry entry)
+	static void putEntry(HighscoreEntry[] highscore, HighscoreEntry entry)
 	{
-		HighscoreEntry temp_entry, current_entry = entry;
+		HighscoreEntry highscoreEntry, currentEntry = entry;
 		for(int i = 0; i < NUMBER_OF_ENTRIES; i++)
 		{
 			if(highscore[i] == null)
 			{
-				highscore[i] = current_entry;
+				highscore[i] = currentEntry;
 				break;
 			}
-			else if(current_entry.isBetterThan(highscore[i]))
+			else if(currentEntry.isBetterThan(highscore[i]))
 			{
-				temp_entry = highscore[i];
-				highscore[i] = current_entry;
-				current_entry = temp_entry;
+				highscoreEntry = highscore[i];
+				highscore[i] = currentEntry;
+				currentEntry = highscoreEntry;
 			}
 		}
 	}

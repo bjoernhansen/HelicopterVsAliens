@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.audio;
 
 import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.Savegame;
+import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import java.applet.Applet;
 import java.applet.AudioClip;

@@ -81,7 +81,6 @@ public final class Dictionary
             reloadLanguageProperties();
             accountForChange();
         }
-
     }
 
     public void setHelicopterType(HelicopterTypes helicopterType)

@@ -46,7 +46,6 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 
-// TODO Use CamelCase for all method and variable identifier
 public class Enemy extends MovingObject implements MissileTypes, BossTypes
 {
 	private class FinalEnemysOperator
@@ -167,15 +166,15 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		
 	public static Enemy
 		currentMiniBoss,	// Referenz auf den aktuellen Boss-Gegner
-			currentRock,
-		last_carrier,  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
+		currentRock,
+		lastCarrier,  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
 		livingBarrier[] = new Enemy [MAX_BARRIER_NUMBER];
 	
 	private static int 
 		selection,			// bestimmt welche Typen von Gegnern zufällig erscheinen können	
 		selectionBarrier, 	// bestimmt den Typ der Hinernis-Gegner
 		rock_timer,			// reguliert das Erscheinen von "Rock"-Gegnern
-		barrier_timer;		// reguliert das Erscheinen von Hindernis-Gegnern
+		barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
 		
 	// für die Tarnung nötige Variablen
     private static float[] 
@@ -185,13 +184,13 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
     private static final RescaleOp 
 		ROP_CLOAKED = new RescaleOp(scales, offsets, null);
     
-	private static boolean	
-		creation_stop			=  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
+	private static boolean
+		creationStop =  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
 		makeBossTwoServants =  false,	// make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
 		makeBoss4Servant =  false,
 	    makeAllBoss5Servants =  false,
 	    
-	    make_boss5_servant[]	= {false,	// SMALL_SHIELD_MAKER
+	    makeBoss5Servant[]	= 	  {false,	// SMALL_SHIELD_MAKER
 	                        	   false,	// BIG_SHIELD_MAKER
 	                        	   false,	// BODYGUARD
 	                        	   false,	// HEALER
@@ -207,7 +206,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	public int 
         type,
 		hitpoints,						// aktuelle Hitpoints
-		starting_hitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegers)
+		startingHitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegers)
 		strength,						// Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
@@ -243,8 +242,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		stoppingBarrier,		// Hindernis-Gegner, der diesen Gegner aufgehalten hat
 		isPreviousStoppingBarrier;
 		
-	private int 
-		reward_modifier,		// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
+	private int
+		rewardModifier,		// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
 		lifetime,				// Anzahl der Frames seit Erstellung des Gegners;  und vergangene Zeit seit Erstellung, Zeit	
 		y_crash_pos,			// Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann  	
 		collisionAudioTimer,
@@ -267,18 +266,18 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		
 		// nur für Hindernis-Gegner releavant		
 		rotorColor,
-			barrierShootTimer,
-			barrierTeleportTimer,
-			shootPause,
-			shootingRate,
-			shotsPerCycle,
-			shootingCycleLength,
-			shotSpeed,
-			shotRotationSpeed,
+		barrierShootTimer,
+		barrierTeleportTimer,
+		shootPause,
+		shootingRate,
+		shotsPerCycle,
+		shootingCycleLength,
+		shotSpeed,
+		shotRotationSpeed,
 		
 		// Regulation des Stuneffekte nach Treffer durch Stopp-Rakete der Orochi-Klasse
 		nonStunableTimer,
-			totalStunningTime,
+		totalStunningTime,
 		knockBackDirection;
 		
 	private float
@@ -299,17 +298,17 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		canChaosSpeedup,		// erhöht die Geschwindigkeit, wenn in Helicopternähe
 
 	isSpeedBoosted,
-			isDestroyed,			// = true: Gegner wurde vernichtet
+		isDestroyed,			// = true: Gegner wurde vernichtet
 		hasHeightSet,			// = false --> heigt = height_factor * width; = true --> height wurde manuell festgelegt
 		hasYPosSet,			// = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
 		hasCrashed, 			// = true: Gegner ist abgestürzt
 		isEmpShocked,			// = true: Gegner steht unter EMP-Schock -> ist verlangsamt
 		isMarkedForRemoval,	// = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
 		is_upper_shield_maker,	// bestimmt die Position der Schild-Aufspannenden Servants von Boss 5	
-			isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
-			isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
+		isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
+		isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
 		isStunnable,			// = false für Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann
-			isCarrier,				// = true
+		isCarrier,				// = true
 		isClockwiseBarrier,	// = true: der Rotor des Hindernis dreht im Uhrzeigersinn
 		isRecoveringSpeed;
   
@@ -329,10 +328,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		image = new BufferedImage[4];
 		
 	private Point2D
-		targetSpeedLevel = new Point2D.Float(),	// Anfangsgeschwindigkeit
+		targetSpeedLevel = new Point2D.Float(),		// Anfangsgeschwindigkeit
 		speedLevel = new Point2D.Float(),			// auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
 		speed = new Point2D.Float(),				// tatsächliche Geschwindigkeit
-		shootingDirection = new Point2D.Float();   // Schussrichtugn von schießenden Barrier-Gegnern
+		shootingDirection = new Point2D.Float();   	// Schussrichtugn von schießenden Barrier-Gegnern
 
 	private EnemyTypes enemyType;
 
@@ -345,7 +344,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{
 			if(this.isInvincible())
 			{	
-				this.paint_image(g2d, -this.direction.x, MyColor.variableGreen, false);
+				this.paintImage(g2d, -this.direction.x, MyColor.variableGreen, false);
 			}
 			else if(this.alpha != 255)
 			{
@@ -379,14 +378,14 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						? MyColor.setAlpha(MyColor.variableGreen, this.alpha) 								
 						: MyColor.variableGreen;				
 				
-				this.paint_cannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, input_color_roof);
+				this.paintCannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, input_color_roof);
 			}
 						
 			// blinkende Scheibe von Bossen und Mini-Bossen bzw. Eyes bei Hindernissen
-			if(this.has_glowing_eyes())
+			if(this.hasGlowingEyes())
 			{				
-				if(this.model != BARRIER){this.paint_window(g2d);}
-				else{this.paint_barrier_eyes(g2d);}
+				if(this.model != BARRIER){this.paintWindow(g2d);}
+				else{this.paintBarrierEyes(g2d);}
 			}			
 						
 			// Auspuff			
@@ -394,11 +393,11 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			{
 				int temp = 63 - (((int)(2 + 0.1f * Math.abs(this.speedLevel.getX())) * this.lifetime)%32); //d
 				Color color_temp = new Color(255, 192+temp, 129+temp, this.alpha);							
-				this.paint_exhaust(g2d, color_temp);				
+				this.paintExhaust(g2d, color_temp);
 			}			
 					
 			// die Schild- und Traktorstrahlen
-			if(this.tractor > 0){this.paint_tractor_beam(g2d, helicopter);}
+			if(this.tractor > 0){this.paintTractorBeam(g2d, helicopter);}
 			else if(this.type == FINAL_BOSS)
 			{
 				for(int servantType = id(SMALL_SHIELD_MAKER); servantType <= id(BIG_SHIELD_MAKER); servantType++)
@@ -406,14 +405,14 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 					if( this.operator.servants[servantType] != null && 
 						this.operator.servants[servantType].isShielding)
 					{
-						this.operator.servants[servantType].paint_shield_beam(g2d);
+						this.operator.servants[servantType].paintShieldBeam(g2d);
 					}
 				}
 			}
 			
 			if(this.model == BARRIER && !this.isDestroyed)
 			{
-				this.paint_rotor(g2d);				
+				this.paintRotor(g2d);
 			}
 		}
 		else if(helicopter.hasRadarDevice)
@@ -436,7 +435,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
         //g2d.draw(TURN_FRAME);
 	}
 	
-	private boolean has_glowing_eyes()
+	private boolean hasGlowingEyes()
 	{
 		return  !this.isDestroyed
 				&& (this.isBoss()
@@ -445,7 +444,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						&& this.snooze_timer <= SNOOZE_TIME + 75));
 	}
 
-	private void clear_image()
+	private void clearImage()
     {
     	for(int i = 0; i < this.image.length; i++)
     	{
@@ -464,18 +463,18 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.graphics[j].setColor(MyColor.translucentDarkestBlack);
 				this.graphics[j].fillRect(0, 0, this.image[j].getWidth(), this.image[j].getHeight());
 			}			
-			this.paint_image(this.graphics[j], 1-2*j, null, true);
+			this.paintImage(this.graphics[j], 1-2*j, null, true);
 		}
 	}		
 	
-	private void paint_rotor(Graphics2D g2d)
+	private void paintRotor(Graphics2D g2d)
 	{
-		paint_rotor(g2d, this.paintBounds.x, this.paintBounds.y);
+		paintRotor(g2d, this.paintBounds.x, this.paintBounds.y);
 	}
 	
-	private void paint_rotor(Graphics2D g2d, int x, int y)
+	private void paintRotor(Graphics2D g2d, int x, int y)
 	{
-		Helicopter.paint_rotor(	g2d, 
+		Helicopter.paintRotor(	g2d,
 								!this.isDestroyed
 									?(MyColor.setAlpha(MyColor.barrierColor[this.rotorColor][Events.timeOfDay], this.alpha))
 									: MyColor.dimColor(MyColor.barrierColor[this.rotorColor][Events.timeOfDay], MyColor.DESTRUCTION_DIM_FACTOR),
@@ -486,29 +485,29 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	private void paint_barrier_cannon(Graphics2D g2d, int x, int y)
 	{		
-		Color temp_color;
-		int distance_x, distance_y;			
+		Color tempColor;
+		int distanceX, distanceY;
 		for(int i = 0; i < 3; i++)
 		{
-			temp_color = (this.barrierShootTimer != DISABLED && this.barrierShootTimer <= this.shotsPerCycle * this.shootingRate && i != 0 && !this.isDestroyed)
+			tempColor = (this.barrierShootTimer != DISABLED && this.barrierShootTimer <= this.shotsPerCycle * this.shootingRate && i != 0 && !this.isDestroyed)
 							?  MyColor.variableGreen
 							: !this.isDestroyed
 								? MyColor.barrierColor[i][Events.timeOfDay]
 								: MyColor.dimColor(MyColor.barrierColor[i][Events.timeOfDay], MyColor.DESTRUCTION_DIM_FACTOR);
-			if(this.alpha != 255){temp_color = MyColor.setAlpha(temp_color, this.alpha);}								
-			g2d.setColor(temp_color);
+			if(this.alpha != 255){tempColor = MyColor.setAlpha(tempColor, this.alpha);}
+			g2d.setColor(tempColor);
 			
-			distance_x = (int) ((0.45f + i * 0.01f) * this.paintBounds.width);
-			distance_y = (int) ((0.45f + i * 0.01f) * this.paintBounds.height);
+			distanceX = (int) ((0.45f + i * 0.01f) * this.paintBounds.width);
+			distanceY = (int) ((0.45f + i * 0.01f) * this.paintBounds.height);
 						
-			g2d.fillOval(x + distance_x,
-				 	  	 y + distance_y, 
-				 	  	 this.paintBounds.width  - 2*distance_x,
-				 	  	 this.paintBounds.height - 2*distance_y);
+			g2d.fillOval(x + distanceX,
+				 	  	 y + distanceY,
+				 	  	 this.paintBounds.width  - 2*distanceX,
+				 	  	 this.paintBounds.height - 2*distanceY);
 		}		
 	}	
 
-	private void paint_cannon(Graphics2D g2d, int x, int y, int direction_x, Color input_color)
+	private void paintCannon(Graphics2D g2d, int x, int y, int directionX, Color inputColor)
 	{
 		if(this.model == TIT)
 		{
@@ -516,7 +515,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						x,	y, 
 						this.paintBounds.width, this.paintBounds.height,
 						0.02f, 0.007f, 0.167f, 0.04f, 0.6f,  
-						direction_x, true, input_color);	
+						directionX, true, inputColor);
 		}
 		else if(this.model == CARGO)
 		{
@@ -524,25 +523,25 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						x, (int) (y + 0.48f * this.paintBounds.height),
 						this.paintBounds.width, this.paintBounds.height,
 						0, 0, 0.1f, 0.04f, 0.6f, 
-						direction_x, true, input_color);
+						directionX, true, inputColor);
 		}
 	}	
 	
-	private void paint_bar_frame(Graphics2D g2d, int x, int y, 
-	                             float thicknessFactor,
-	                             float shift, float center_shift,
-	                             float dimFactor,
-	                             Color inputColor, Color bg_color,
-	                             boolean image_paint)
+	private void paintBarFrame(Graphics2D g2d, int x, int y,
+							   float thicknessFactor,
+							   float shift, float center_shift,
+							   float dimFactor,
+							   Color inputColor, Color backgroundColor,
+							   boolean imagePaint)
 	{		
-		if(bg_color != null)
+		if(backgroundColor != null)
 		{
 			g2d.setPaint(new GradientPaint(	0, 
 											y, 
-											bg_color, 
+											backgroundColor,
 											0, 
 											y + 0.3f*thicknessFactor*this.paintBounds.height,
-											MyColor.dimColor(bg_color, 0.85f), 
+											MyColor.dimColor(backgroundColor, 0.85f),
 											true));
 			
 			g2d.fillRect(x + (int)(thicknessFactor/2 * this.paintBounds.width),
@@ -551,44 +550,44 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				  	     (int)((1f-thicknessFactor)  * this.paintBounds.height));
 		}
 		
-		int x_shift = (int) (shift * this.paintBounds.width),
-			y_shift = (int) (shift * this.paintBounds.height),
-			x_center_shift = (int) (center_shift * this.paintBounds.width),
-			y_center_shift = (int) (center_shift * this.paintBounds.height);
+		int xShift = (int) (shift * this.paintBounds.width),
+			yShift = (int) (shift * this.paintBounds.height),
+			xCenterShift = (int) (center_shift * this.paintBounds.width),
+			yCenterShift = (int) (center_shift * this.paintBounds.height);
 		
 		
-		if(image_paint || (this.speedLevel.getX() != 0 && this.direction.x == 1))
+		if(imagePaint || (this.speedLevel.getX() != 0 && this.direction.x == 1))
 		{
 			paintBar(	g2d,
-						x + x_center_shift,
-						y + y_shift,
+						x + xCenterShift,
+						y + yShift,
 						this.paintBounds.width,
-						this.paintBounds.height - 2 * y_shift,
+						this.paintBounds.height - 2 * yShift,
 						thicknessFactor,
 						0.2f,
 						dimFactor,
 						false, 
 						inputColor);
 		}
-		if(image_paint || (this.speedLevel.getX() != 0 && this.direction.x ==  -1))
+		if(imagePaint || (this.speedLevel.getX() != 0 && this.direction.x ==  -1))
 		{
 			paintBar(	g2d,
-						(int)(x + 1 + (1f-thicknessFactor)*this.paintBounds.width)-x_center_shift,
-						y + y_shift,  
+						(int)(x + 1 + (1f-thicknessFactor)*this.paintBounds.width)-xCenterShift,
+						y + yShift,
 						this.paintBounds.width,
-						this.paintBounds.height - 2 * y_shift,
+						this.paintBounds.height - 2 * yShift,
 						thicknessFactor,
 						0.2f,
 						dimFactor,
 						false, 
 						inputColor);
 		}
-		if(image_paint || (this.speedLevel.getY() != 0 && this.direction.y ==  1))
+		if(imagePaint || (this.speedLevel.getY() != 0 && this.direction.y ==  1))
 		{
 			paintBar(	g2d,
-						x + x_shift,
-						y + y_center_shift,
-						this.paintBounds.width - 2 * x_shift,
+						x + xShift,
+						y + yCenterShift,
+						this.paintBounds.width - 2 * xShift,
 						this.paintBounds.height,
 						thicknessFactor,
 						0.2f,
@@ -596,12 +595,12 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						true,
 						inputColor);
 		}
-		if(image_paint || (this.speedLevel.getY() != 0 && this.direction.y == -1))
+		if(imagePaint || (this.speedLevel.getY() != 0 && this.direction.y == -1))
 		{
 			paintBar(	g2d,
-						x + x_shift,
-						(int)(y + 1 + (1f-thicknessFactor)*this.paintBounds.height)-y_center_shift,
-						this.paintBounds.width - 2 * x_shift,
+						x + xShift,
+						(int)(y + 1 + (1f-thicknessFactor)*this.paintBounds.height)-yCenterShift,
+						this.paintBounds.width - 2 * xShift,
 						this.paintBounds.height,
 						thicknessFactor,
 						0.2f,
@@ -635,52 +634,54 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	private static void paintBar(Graphics2D g2d,
 								 int x, int y,
 								 int width, int height,
-								 float x_shift_left, float x_shift_right,
-								 float thickness_factor, float rounding,
-								 float dim_factor, int direction_x,
-								 boolean horizontal, Color input_color)
+								 float xShiftLeft, float xShiftRight,
+								 float thicknessFactor, float rounding,
+								 float dimFactor, int directionX,
+								 boolean horizontal, Color inputColor)
 	{		
-		g2d.setPaint( new GradientPaint(	(int) (horizontal ? 0 : x + 0.5f * thickness_factor * width), 
-											(int) (horizontal ?     y + 0.5f * thickness_factor * height : 0),
-											input_color, 
-											(int) (horizontal ? 0 : x + 1.0f * thickness_factor * width), 
-											(int) (horizontal ?     y + 1.0f * thickness_factor * height : 0),
-											MyColor.dimColor(input_color, dim_factor), 
+		g2d.setPaint( new GradientPaint(	(int) (horizontal ? 0 : x + 0.5f * thicknessFactor * width),
+											(int) (horizontal ?     y + 0.5f * thicknessFactor * height : 0),
+											inputColor,
+											(int) (horizontal ? 0 : x + 1.0f * thicknessFactor * width),
+											(int) (horizontal ?     y + 1.0f * thicknessFactor * height : 0),
+											MyColor.dimColor(inputColor, dimFactor),
 											true));		
 		
-		g2d.fillRoundRect(	(int) (x - (direction_x == 1 ? x_shift_left : x_shift_right) * width), 
+		g2d.fillRoundRect(	(int) (x - (directionX == 1 ? xShiftLeft : xShiftRight) * width),
 							y,  
-							(int) (	horizontal ? (1 + x_shift_left + x_shift_right) * width : thickness_factor * width), 
-							(int) (	horizontal ? thickness_factor * height : (1 + x_shift_left + x_shift_right) * height ), 
-							(int) (	horizontal ? rounding * width : thickness_factor * width), 
-							(int) (	horizontal ? thickness_factor * height : rounding * height) );
+							(int) (	horizontal ? (1 + xShiftLeft + xShiftRight) * width : thicknessFactor * width),
+							(int) (	horizontal ? thicknessFactor * height : (1 + xShiftLeft + xShiftRight) * height ),
+							(int) (	horizontal ? rounding * width : thicknessFactor * width),
+							(int) (	horizontal ? thicknessFactor * height : rounding * height) );
 	}	
 	
 	// malen der Seitenflügel mit Antriebsdüse
-	private void paint_exhaust(Graphics2D g2d, Color color4)
+	// TODO besseren Namen vergeben
+	private void paintExhaust(Graphics2D g2d, Color color4)
 	{
-		paint_exhaust(g2d, 
+		paintExhaust(g2d,
 					   this.paintBounds.x,
 					   this.paintBounds.y,
 					   -this.direction.x, 
 					   null,
 					   color4);
 	}
-	
-	private void paint_exhaust(Graphics2D g2d, int x, int y, int direction_x, Color color2, Color color4)
+
+	// TODO bessere Namen für Bezeichner color2 , color 4
+	private void paintExhaust(Graphics2D g2d, int x, int y, int directionX, Color color2, Color color4)
 	{			
 		if(this.model == TIT)
 		{			
-			paint_engine(g2d, x, y, 0.45f, 0.27f, 0.5f, 0.4f, direction_x, color2, color4);	
+			paint_engine(g2d, x, y, 0.45f, 0.27f, 0.5f, 0.4f, directionX, color2, color4);
 		}
 		else if(this.model == CARGO)
 		{	
-			paint_engine(g2d, x, y, 0.45f, 0.17f, 0.45f, 0.22f, direction_x, color2, color4);		
-			paint_engine(g2d, x, y, 0.45f, 0.17f, 0.25f, 0.70f, direction_x, color2, color4);		
+			paint_engine(g2d, x, y, 0.45f, 0.17f, 0.45f, 0.22f, directionX, color2, color4);
+			paint_engine(g2d, x, y, 0.45f, 0.17f, 0.25f, 0.70f, directionX, color2, color4);
 		}
 		else if(this.model == BARRIER)
 		{
-			paint_bar_frame(g2d, this.paintBounds.x, this.paintBounds.y,
+			paintBarFrame(g2d, this.paintBounds.x, this.paintBounds.y,
 							0.07f, 0.35f, 0.04f, 0.7f, color4, null, false);
 		}
 	}
@@ -688,49 +689,49 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	private void paint_engine(Graphics2D g2d, 
                               int x, int y, 
                               float width, float height,
-                              float x_shift, float y_shift, 
-                              int direction_x, 
+                              float xShift, float yShift,
+                              int directionX,
                               Color color2, Color color4)
 	{			
 		if(color2 != null)
 		{
-			paint_pipe(g2d, x, y, width, height, x_shift, 				  y_shift, direction_x, color2, false);				
+			paintPipe(g2d, x, y, width, height, xShift, 				  yShift, directionX, color2, false);
 		}
-			paint_pipe(g2d, x, y, 0.05f, height, x_shift + width - 0.05f, y_shift, direction_x, color4, true);
+			paintPipe(g2d, x, y, 0.05f, height, xShift + width - 0.05f, yShift, directionX, color4, true);
 	}		
 	
-	private void paint_pipe(Graphics2D g2d, 
-	                                  int x, int y, 
-	                                  float width, float height,
-	                                  float x_shift, float y_shift, 
-	                                  int direction_x, Color color, boolean is_exhaust)
+	private void paintPipe(Graphics2D g2d,
+						   int x, int y,
+						   float width, float height,
+						   float x_shift, float yShift,
+						   int direction_x, Color color, boolean isExhaust)
 	{			
 		g2d.setPaint(new GradientPaint(	0, 
-										y + (y_shift + 0.05f)  * this.paintBounds.height,
+										y + (yShift + 0.05f)  * this.paintBounds.height,
 										color, 
 										0, 
-										y + (y_shift + height) * this.paintBounds.height,
+										y + (yShift + height) * this.paintBounds.height,
 										MyColor.dimColor(color, 0.5f), 
 										true));
 		
 		g2d.fillRoundRect(	(int) (x + (direction_x == 1 
 										? x_shift 
 										: 1f - x_shift - width)	* this.paintBounds.width),
-							(int) (y + 	y_shift 			   	* this.paintBounds.height),
+							(int) (y + 	yShift 			   	* this.paintBounds.height),
 							(int) (		width  				   	* this.paintBounds.width),
 							(int) (		height  			   	* this.paintBounds.height),
-							(int) ((is_exhaust ? 0f : height/2) * this.paintBounds.width),
-							(int) ((is_exhaust ? 0f : height  ) * this.paintBounds.height)  );
+							(int) ((isExhaust ? 0f : height/2) * this.paintBounds.width),
+							(int) ((isExhaust ? 0f : height  ) * this.paintBounds.height)  );
 	}
 	
 	
-	private void paint_image(Graphics2D g2d, int direction_x, Color color, boolean image_paint)
+	private void paintImage(Graphics2D g2d, int directionX, Color color, boolean imagePaint)
 	{	
-		int offset_x = (int)(image_paint 
-								? (direction_x == 1 ? 0.028f * this.paintBounds.width : 0)
+		int offsetX = (int)(imagePaint
+								? (directionX == 1 ? 0.028f * this.paintBounds.width : 0)
 								: this.paintBounds.x),
 								
-			offset_y = (int)(image_paint
+			offsetY = (int)(imagePaint
 								? 0.25f * this.paintBounds.height
 								: this.paintBounds.y);
 		
@@ -740,109 +741,109 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		/*
 		 * Festlegen der Farben
 		 */
-		Color main_color_light, main_color_dark, bar_color, inactive_nozzle_color;		
+		Color mainColorLight, mainColorDark, barColor, inactiveNozzleColor;
 		
 		if(color == null)
 		{
 			if(this.isDestroyed && Events.timeOfDay == NIGHT)
 			{
-				main_color_light = MyColor.dimColor(this.farbe1, 1.3f * MyColor.NIGHT_DIM_FACTOR);
-				main_color_dark  = MyColor.dimColor(this.farbe2, 1.3f * MyColor.NIGHT_DIM_FACTOR);
+				mainColorLight = MyColor.dimColor(this.farbe1, 1.3f * MyColor.NIGHT_DIM_FACTOR);
+				mainColorDark  = MyColor.dimColor(this.farbe2, 1.3f * MyColor.NIGHT_DIM_FACTOR);
 			}
 			else
 			{
-				main_color_light = this.farbe1;
-				main_color_dark  = this.farbe2;
+				mainColorLight = this.farbe1;
+				mainColorDark  = this.farbe2;
 			}
 		}
 		else
 		{
-			main_color_light = color;
-			main_color_dark = MyColor.dimColor(color, 1.5f);
+			mainColorLight = color;
+			mainColorDark = MyColor.dimColor(color, 1.5f);
 		}		
 		
-		if(this.model == BARRIER){bar_color = MyColor.barrierColor[MyColor.FRAME][Events.timeOfDay];}
-		else if(!this.isDestroyed && (this.tractor == ACTIVE || this.shoot_timer > 0 || this.isShielding)){bar_color = MyColor.variableGreen;}
-		else if(!this.isDestroyed && !image_paint && this.isInvincible()){bar_color = Color.green;}
-		else if(this.isMiniBoss){bar_color = this.farbe2;}
-		else{bar_color = MyColor.enemyGray;}			
-		inactive_nozzle_color = MyColor.inactive_nozzle;
+		if(this.model == BARRIER){barColor = MyColor.barrierColor[MyColor.FRAME][Events.timeOfDay];}
+		else if(!this.isDestroyed && (this.tractor == ACTIVE || this.shoot_timer > 0 || this.isShielding)){barColor = MyColor.variableGreen;}
+		else if(!this.isDestroyed && !imagePaint && this.isInvincible()){barColor = Color.green;}
+		else if(this.isMiniBoss){barColor = this.farbe2;}
+		else{barColor = MyColor.enemyGray;}
+		inactiveNozzleColor = MyColor.inactive_nozzle;
 		
 		if(this.model == BARRIER && Events.timeOfDay == NIGHT)
 		{
-			inactive_nozzle_color = MyColor.barrierColor[MyColor.NOZZLE][Events.timeOfDay];
+			inactiveNozzleColor = MyColor.barrierColor[MyColor.NOZZLE][Events.timeOfDay];
 		}
 		
 		if(this.isDestroyed)
 		{
-			bar_color = MyColor.dimColor(bar_color, Events.timeOfDay == NIGHT ? 1.3f * MyColor.NIGHT_DIM_FACTOR : 1);
-			inactive_nozzle_color = MyColor.dimColor(inactive_nozzle_color, Events.timeOfDay == NIGHT ? 1.3f * MyColor.NIGHT_DIM_FACTOR : 1);
+			barColor = MyColor.dimColor(barColor, Events.timeOfDay == NIGHT ? 1.3f * MyColor.NIGHT_DIM_FACTOR : 1);
+			inactiveNozzleColor = MyColor.dimColor(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * MyColor.NIGHT_DIM_FACTOR : 1);
 		}
 				
 		//Malen des Gegners
 		if(this.model != BARRIER)
 		{
 			paint_vessel(	g2d, 
-							offset_x, offset_y, 
-							direction_x, 
+							offsetX, offsetY,
+							directionX,
 							color, 
-							getarnt, image_paint, 
-							main_color_light, main_color_dark, 
-							bar_color, inactive_nozzle_color);
+							getarnt, imagePaint,
+							mainColorLight, mainColorDark,
+							barColor, inactiveNozzleColor);
 		}
 		else
 		{
-			paint_barrier(	g2d, 
-							offset_x, offset_y, 
-							image_paint, 
-							main_color_light, main_color_dark, 
-							bar_color, inactive_nozzle_color);
+			paintBarrier(	g2d,
+							offsetX, offsetY,
+							imagePaint,
+							mainColorLight, mainColorDark,
+							barColor, inactiveNozzleColor);
 		}
 	}	
 	
-	private void paint_vessel( Graphics2D g2d, int offset_x, int offset_y, 
-	                           int direction_x, Color color, boolean getarnt, 
-	                           boolean image_paint,
-	                           Color main_color_light, 
-	                           Color main_color_dark,
-	                           Color cannon_color, 
-	                           Color inactive_nozzle_color)
+	private void paint_vessel( Graphics2D g2d, int offsetX, int offsetY,
+	                           int directionX, Color color, boolean getarnt,
+	                           boolean imagePaint,
+	                           Color mainColorLight,
+	                           Color mainColorDark,
+	                           Color cannonColor,
+	                           Color inactiveNozzleColor)
 	{	
 		if(this.model == CARGO)
 		{
-			this.paint_roof(g2d, cannon_color, offset_x, offset_y, direction_x);				
+			this.paintRoof(g2d, cannonColor, offsetX, offsetY, directionX);
 		}
-		this.paint_airframe(g2d, main_color_light, offset_x, offset_y, direction_x);
-		this.paint_cannon(g2d, offset_x, offset_y, direction_x, cannon_color);		
+		this.paintAirframe(g2d, mainColorLight, offsetX, offsetY, directionX);
+		this.paintCannon(g2d, offsetX, offsetY, directionX, cannonColor);
 		if(this.model == TIT)
 		{
-			this.paint_vertical_stabilizer(g2d, offset_x, offset_y, direction_x);
+			this.paintVerticalStabilizer(g2d, offsetX, offsetY, directionX);
 		}		
-		this.paint_exhaust(	g2d, offset_x, offset_y, direction_x, 
-							main_color_dark, inactive_nozzle_color);
+		this.paintExhaust(	g2d, offsetX, offsetY, directionX,
+							mainColorDark, inactiveNozzleColor);
 		
 		if(Color.red.equals(color) || !this.isLivingBoss())
 		{		
-			this.paint_window(	
+			this.paintWindow(
 					g2d, 
-					offset_x, 
-					(int)(offset_y 
+					offsetX,
+					(int)(offsetY
 							+ this.paintBounds.height
 							  *(this.model == TIT ? 0.067f : 0.125f)), 
 					Color.red.equals(color) ? MyColor.cloakedBossEye : null, 
-					direction_x, 
-					getarnt && !image_paint);
+					directionX,
+					getarnt && !imagePaint);
 		}		
 		
 		// das rote Kreuz		
 		if(this.type == HEALER)
 		{
-			paint_red_cross(
+			paintRedCross(
 					g2d,
-					(int)( offset_x + (direction_x == 1 
+					(int)( offsetX + (directionX == 1
 								? 0.7f * this.paintBounds.width
 								: (1 - 0.7f - 0.18f) * this.paintBounds.width)),
-					(int) (offset_y + 0.6f * this.paintBounds.height),
+					(int) (offsetY + 0.6f * this.paintBounds.height),
 					(int) (			  0.18f * this.paintBounds.width));
 		}
 				
@@ -850,29 +851,29 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		g2d.draw3DRect(offset_x, offset_y, this.bounds.getWidth() - 1, this.bounds.getHeight() - 1, true);*/
 	}
 	
-	private void paint_barrier(Graphics2D g2d,
-	                           int offset_x, int offset_y, 
-	                           boolean image_paint, 
-	                           Color main_color_light, 
-	                           Color main_color_dark, 
-	                           Color bar_color, 
-	                           Color inactive_nozzle_color)
+	private void paintBarrier(Graphics2D g2d,
+							  int offsetX, int offsetY,
+							  boolean imagePaint,
+							  Color mainColorLight,
+							  Color mainColorDark,
+							  Color barColor,
+							  Color inactiveNozzleColor)
 	{		
 		// Rahmen & Antriebsbalken
-		paint_bar_frame(g2d, offset_x, offset_y, 0.15f, 0f,    0f,    0.5f, bar_color, main_color_light, true);			
-		paint_bar_frame(g2d, offset_x, offset_y, 0.07f, 0.35f, 0.04f, 0.7f, inactive_nozzle_color, null, true);
+		paintBarFrame(g2d, offsetX, offsetY, 0.15f, 0f,    0f,    0.5f, barColor, mainColorLight, true);
+		paintBarFrame(g2d, offsetX, offsetY, 0.07f, 0.35f, 0.04f, 0.7f, inactiveNozzleColor, null, true);
 		
 		// "Augen"
-		this.paint_barrier_eyes(g2d, 
-								offset_x, 
-								offset_y, 
+		this.paintBarrierEyes(g2d,
+								offsetX,
+								offsetY,
 								MyColor.barrierColor[MyColor.EYES][Events.timeOfDay], 
-								image_paint);
+								imagePaint);
 		
 		// Turbinen-Innenraum
-		this.paint_rotor_interior(g2d, main_color_dark, offset_x, offset_y );
+		this.paintRotorInterior(g2d, mainColorDark, offsetX, offsetY );
 		
-		if(this.isDestroyed){this.paint_rotor(g2d, offset_x, offset_y);}
+		if(this.isDestroyed){this.paintRotor(g2d, offsetX, offsetY);}
 		
 		//g2d.setPaint(Color.red);	
 		//g2d.drawRoundRect(offset_x, offset_y, this.bounds.getWidth()-1, this.bounds.getHeight()-1, this.bounds.getWidth()/2, this.bounds.getHeight()/2);
@@ -880,32 +881,32 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		//Menu.paint_frame(g2d, offset_x, offset_y, this.bounds.getWidth() - 4, this.bounds.getHeight() - 4, Color.yellow);
 	}
 	
-	private void paint_rotor_interior(Graphics2D g2d, Color main_color_dark,
-	                                  int offset_x, int offset_y)
+	private void paintRotorInterior(Graphics2D g2d, Color mainColorDark,
+									int offsetX, int offsetY)
 	{
 		int distance_x = (int) (BARRIER_BORDER_SIZE * this.paintBounds.width),
 			distance_y = (int) (BARRIER_BORDER_SIZE * this.paintBounds.height);
 					
 		g2d.setPaint(new GradientPaint(	0, 
-										offset_y, 
-										main_color_dark, 
+										offsetY,
+										mainColorDark,
 										0, 
-										offset_y + 0.045f*this.paintBounds.height,
-										MyColor.dimColor(main_color_dark, 0.85f), 
+										offsetY + 0.045f*this.paintBounds.height,
+										MyColor.dimColor(mainColorDark, 0.85f),
 										true));	
 		
-		g2d.fillOval(offset_x + distance_x, 
-					 offset_y + distance_y, 
+		g2d.fillOval(offsetX + distance_x,
+					 offsetY + distance_y,
 					 this.paintBounds.width  - 2 * distance_x,
 					 this.paintBounds.height - 2 * distance_y);
 	}
 
-	private void paint_roof(Graphics2D g2d, Color roof_color, int offset_x,
-							int offset_y, int direction_x)
+	private void paintRoof(Graphics2D g2d, Color roofColor, int offsetX,
+						   int offsetY, int directionX)
 	{
-		g2d.setPaint(roof_color);
-		g2d.fillRoundRect(	(int) (offset_x + (direction_x == 1 ? 0.05f :  0.35f) * this.paintBounds.width),
-							offset_y, 
+		g2d.setPaint(roofColor);
+		g2d.fillRoundRect(	(int) (offsetX + (directionX == 1 ? 0.05f :  0.35f) * this.paintBounds.width),
+							offsetY,
 							(int) (0.6f   * this.paintBounds.width),
 							(int) (0.125f * this.paintBounds.height),
 							(int) (0.6f   * this.paintBounds.width),
@@ -913,81 +914,81 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	}
 
 	// malen des Schiffrumpfes	
-	private void paint_airframe(Graphics2D g2d, Color main_color_light,
-	                            int offset_x, int offset_y, int direction_x)
+	private void paintAirframe(Graphics2D g2d, Color mainColorLight,
+							   int offsetX, int offsetY, int directionX)
 	{		
-		this.set_airframe_color(g2d, offset_y, main_color_light);
+		this.setAirframeColor(g2d, offsetY, mainColorLight);
 		
 		if(this.model == TIT)
 		{			
-			g2d.fillArc(offset_x,
-						(int) (offset_y - 0.333f * this.paintBounds.height - 2),
+			g2d.fillArc(offsetX,
+						(int) (offsetY - 0.333f * this.paintBounds.height - 2),
 						this.paintBounds.width,
 						this.paintBounds.height, 180, 180);
 			
-			g2d.fillArc((int)(offset_x + (direction_x == 1 ? 0.2f * this.paintBounds.width : 0)),
-						(int)(offset_y - 0.667f * this.paintBounds.height),
+			g2d.fillArc((int)(offsetX + (directionX == 1 ? 0.2f * this.paintBounds.width : 0)),
+						(int)(offsetY - 0.667f * this.paintBounds.height),
 						(int)(			 0.8f   * this.paintBounds.width),
 						(int)(			 1.667f * this.paintBounds.height), 180, 180);
 		}
 		else if(this.model == CARGO)
 		{
-			g2d.fillOval(	(int)(offset_x + 0.02f * this.paintBounds.width),
-					(int)(offset_y + 0.1f * this.paintBounds.height),
+			g2d.fillOval(	(int)(offsetX + 0.02f * this.paintBounds.width),
+					(int)(offsetY + 0.1f * this.paintBounds.height),
 					(int)(0.96f * this.paintBounds.width),
 					(int)(0.9f  * this.paintBounds.height));
 			
-			g2d.fillRect(	(int)(offset_x + (direction_x == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
-							(int)(offset_y + 0.094f * this.paintBounds.height),
+			g2d.fillRect(	(int)(offsetX + (directionX == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
+							(int)(offsetY + 0.094f * this.paintBounds.height),
 							(int)(0.6f * this.paintBounds.width),
 							(int)(0.333f * this.paintBounds.height));
 
-			g2d.fillRoundRect(	(int) (offset_x + (direction_x == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
-								(int) (offset_y + 0.031 * this.paintBounds.height),
+			g2d.fillRoundRect(	(int) (offsetX + (directionX == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
+								(int) (offsetY + 0.031 * this.paintBounds.height),
 								(int) (0.6f * this.paintBounds.width),
 								(int) (0.125f * this.paintBounds.height),
 								(int) (0.6f * this.paintBounds.width),
 								(int) (0.125f * this.paintBounds.height));
 		
 			// Rückflügel
-			g2d.fillArc(	(int)(offset_x + (direction_x == 1 ? 0.5f * this.paintBounds.width : 0)),
-							(int)(offset_y - 0.3f * this.paintBounds.height),
+			g2d.fillArc(	(int)(offsetX + (directionX == 1 ? 0.5f * this.paintBounds.width : 0)),
+							(int)(offsetY - 0.3f * this.paintBounds.height),
 							(int)(0.5f * this.paintBounds.width),
 							this.paintBounds.height,
-							direction_x == 1 ? -32 : 155,  
+							directionX == 1 ? -32 : 155,
 							57);
 		}
 	}
 
-	private void paint_vertical_stabilizer(Graphics2D g2d, 
-	                                       int offset_x, int offset_y,
-	                                       int direction_x)
+	private void paintVerticalStabilizer(Graphics2D g2d,
+										 int offsetX, int offsetY,
+										 int directionX)
 	{
 		g2d.setPaint(this.gradientColor);		
-		g2d.fillArc((int)(offset_x + (direction_x == 1 ? 0.4f : 0.1f) * this.paintBounds.width),
-				(int)(offset_y - 						   0.917f * this.paintBounds.height),
+		g2d.fillArc((int)(offsetX + (directionX == 1 ? 0.4f : 0.1f) * this.paintBounds.width),
+				(int)(offsetY - 						   0.917f * this.paintBounds.height),
 				(int)(0.5f * this.paintBounds.width),
-				 2 * this.paintBounds.height, direction_x == 1 ? 0 : 160, 20);
+				 2 * this.paintBounds.height, directionX == 1 ? 0 : 160, 20);
 	}
 	
-	private void set_airframe_color(Graphics2D g2d, int offset_y,
-									Color main_color_light)
+	private void setAirframeColor(Graphics2D g2d, int offsetY,
+								  Color mainColorLight)
 	{
 		this.gradientColor = new GradientPaint(	
 				0, 
-				offset_y + (this.model == TIT ? 0.25f : 0.375f) * this.paintBounds.height,
-				main_color_light,
+				offsetY + (this.model == TIT ? 0.25f : 0.375f) * this.paintBounds.height,
+				mainColorLight,
 				0,
-				offset_y + this.paintBounds.height,
-				MyColor.dimColor(main_color_light, 0.5f),
+				offsetY + this.paintBounds.height,
+				MyColor.dimColor(mainColorLight, 0.5f),
 				true);
 			
 		g2d.setPaint(this.gradientColor);		
 	}	
 	
-	private void paint_barrier_eyes(Graphics2D g2d)
+	private void paintBarrierEyes(Graphics2D g2d)
 	{
-		paint_barrier_eyes(	g2d, 
+		paintBarrierEyes(	g2d,
 							this.paintBounds.x,
 							this.paintBounds.y,
 							this.alpha != 255 
@@ -996,32 +997,32 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 							false);
 	}
 	
-	public void paint_barrier_eyes(Graphics2D g2d, int x, int y, Color color, boolean image_paint)
+	public void paintBarrierEyes(Graphics2D g2d, int x, int y, Color color, boolean image_paint)
 	{		
-		int border_distance = (int)(0.85f * BARRIER_BORDER_SIZE * this.paintBounds.width),
-			eye_size = 		  (int)(	    BARRIER_EYE_SIZE    * this.paintBounds.width);
+		int borderDistance = (int)(0.85f * BARRIER_BORDER_SIZE * this.paintBounds.width),
+			eyeSize = 		  (int)(	    BARRIER_EYE_SIZE    * this.paintBounds.width);
 				
 		g2d.setPaint(color);
 		
-		g2d.fillOval(x + border_distance, 
-					 y + border_distance,
-					 eye_size, eye_size);
+		g2d.fillOval(x + borderDistance,
+					 y + borderDistance,
+					 eyeSize, eyeSize);
 		
-		g2d.fillOval(x - border_distance + this.paintBounds.width  - eye_size,
-					 y - border_distance + this.paintBounds.height - eye_size,
-					 eye_size, eye_size);		
+		g2d.fillOval(x - borderDistance + this.paintBounds.width  - eyeSize,
+					 y - borderDistance + this.paintBounds.height - eyeSize,
+					 eyeSize, eyeSize);
 		
 		if(!image_paint && !(this.snooze_timer > SNOOZE_TIME)){g2d.setPaint(MyColor.reversed_RandomRed(color));}
-		g2d.fillOval(x + border_distance, 
-					 y - border_distance + this.paintBounds.height - eye_size,
-					 eye_size, eye_size);		
+		g2d.fillOval(x + borderDistance,
+					 y - borderDistance + this.paintBounds.height - eyeSize,
+					 eyeSize, eyeSize);
 		
-		g2d.fillOval(x - border_distance + this.paintBounds.width  - eye_size,
-					 y + border_distance,
-					 eye_size, eye_size);
+		g2d.fillOval(x - borderDistance + this.paintBounds.width  - eyeSize,
+					 y + borderDistance,
+					 eyeSize, eyeSize);
 	}
 
-	private static void paint_red_cross(Graphics2D g2d, int x, int y, int height)
+	private static void paintRedCross(Graphics2D g2d, int x, int y, int height)
 	{
 		g2d.setColor(Color.red);				
 		g2d.setStroke(new BasicStroke(height/5, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));				
@@ -1031,9 +1032,9 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		//g2d.drawRect(x, y, height, height);
 	}
 
-	void paint_tractor_beam(Graphics2D g2d, Helicopter helicopter)
+	void paintTractorBeam(Graphics2D g2d, Helicopter helicopter)
 	{		
-		paint_energy_beam(	g2d,	
+		paintEnergyBeam(	g2d,
 							this.paintBounds.x,
 							this.paintBounds.y + 1,
 							(int)(helicopter.bounds.getX() 
@@ -1044,15 +1045,15 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 								+ Helicopter.FOCAL_PNT_Y_EXP));
 	}
 	
-	private void paint_shield_beam(Graphics2D g2d)
+	private void paintShieldBeam(Graphics2D g2d)
 	{				
-		paint_energy_beam(g2d,	this.paintBounds.x + (this.direction.x + 1)/2 * this.paintBounds.width,
+		paintEnergyBeam(g2d,	this.paintBounds.x + (this.direction.x + 1)/2 * this.paintBounds.width,
 								this.paintBounds.y,
 								Events.boss.paintBounds.x + Events.boss.paintBounds.width/48,
 								Events.boss.paintBounds.y + Events.boss.paintBounds.width/48);
 	}
 	
-	public static void paint_energy_beam(Graphics2D g2d, int x1, int y1, int x2, int y2)
+	public static void paintEnergyBeam(Graphics2D g2d, int x1, int y1, int x2, int y2)
 	{
 		g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g2d.setColor(MyColor.green);
@@ -1063,9 +1064,9 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 	}	
 	
-	private void paint_window(Graphics2D g2d)
+	private void paintWindow(Graphics2D g2d)
 	{
-		paint_window(g2d, 
+		paintWindow(g2d,
 					 this.paintBounds.x,
 					 (int) (this.paintBounds.y
 							+ this.paintBounds.height
@@ -1077,9 +1078,9 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 					 false);
 	}
 	
-	public void paint_window(Graphics2D g2d, int x, int y, Color color, int direction_x, boolean getarnt)
+	public void paintWindow(Graphics2D g2d, int x, int y, Color color, int direction_x, boolean getarnt)
 	{
-		this.set_window_color(g2d, color, getarnt);
+		this.setWindowColor(g2d, color, getarnt);
 						
 		if(this.model == TIT)
 		{
@@ -1103,7 +1104,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		}
 	}
 	
-	private void set_window_color(Graphics2D g2d, Color color, boolean getarnt)
+	private void setWindowColor(Graphics2D g2d, Color color, boolean getarnt)
 	{
 		if(color == null && !getarnt)
 		{
@@ -1122,7 +1123,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	 ** 	Level-Anpassung
 	 **/
 	
-	public static void adapt_to_level(Helicopter helicopter, int level, boolean real_level_up)
+	public static void adaptToLevel(Helicopter helicopter, int level, boolean isRealLevelUp)
 	{		
 		if(level == 1)
 		{
@@ -1139,7 +1140,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 5){selection = 15;}
 		else if(level == 6)
 		{			
-			creation_stop = false;
+			creationStop = false;
 			maxNr = 3;
 			bossSelection = STANDARD;
 			selection = 25;
@@ -1158,10 +1159,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		}
 		else if(level == 10)
 		{
-			creation_stop = true;
+			creationStop = true;
 			bossSelection = BOSS_1;
 			selection = 0;
-			helicopter.powerUp_decay();
+			helicopter.powerUpDecay();
 		}	  
 		else if(level == 11)
 		{
@@ -1171,12 +1172,12 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxBarrierNr = 1;
 			selectionBarrier = 2;
 			
-			if(( helicopter.isPlayedWithoutCheats || Events.saveAnyway)
+			if(( helicopter.isPlayedWithoutCheats || Events.SAVE_ANYWAY)
 				 && !Events.boss1_killed_b4())
 			{
 				Menu.unlock(HELIOS);
 			}
-			if(real_level_up){Events.determineHighscoreTimes(helicopter);}
+			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
 		}				
 		else if(level == 12){
 			selectionBarrier = 3;}
@@ -1187,7 +1188,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			selectionBarrier = 4;}
 		else if(level == 16)
 		{			
-			creation_stop = false;
+			creationStop = false;
 			maxNr = 4;
 			bossSelection = STANDARD;
 			selection = 155;	
@@ -1201,11 +1202,11 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxBarrierNr = 3;}
 		else if(level == 20)
 		{
-			creation_stop = true; 
+			creationStop = true;
 			bossSelection = BOSS_2;
 			selection = 0;
-			helicopter.powerUp_decay();
-			if((helicopter.isPlayedWithoutCheats ||Events.saveAnyway) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
+			helicopter.powerUpDecay();
+			if((helicopter.isPlayedWithoutCheats ||Events.SAVE_ANYWAY) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
 			{
 				helicopter.update_unlocked_helicopters();
 			}
@@ -1218,7 +1219,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
 			
-			if(real_level_up){Events.determineHighscoreTimes(helicopter);}
+			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
 		}
 		else if(level == 22){selection = 485;}
 		else if(level == 23){selection = 570;}
@@ -1227,7 +1228,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 25){selection = 660;}		
 		else if(level == 26)
 		{
-			creation_stop = false;
+			creationStop = false;
 			maxNr = 4;
 			bossSelection = STANDARD;
 			selection = 735;	
@@ -1241,10 +1242,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxNr = 4; maxBarrierNr = 3;}
 		else if(level == 30)
 		{
-			creation_stop = true; 
+			creationStop = true;
 			bossSelection = BOSS_3;
 			selection = 0;	
-			helicopter.powerUp_decay();
+			helicopter.powerUpDecay();
 		}
 		else if(level == 31)
 		{
@@ -1254,7 +1255,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
 			
-			if(real_level_up){Events.determineHighscoreTimes(helicopter);}
+			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
 		}
 		else if(level == 32){
 			selectionBarrier = 6;}
@@ -1264,7 +1265,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 35){selection = 3180;} 
 		else if(level == 36)
 		{
-			creation_stop = false;
+			creationStop = false;
 			maxNr = 4;
 			bossSelection = STANDARD;
 			selection = 4185;
@@ -1278,10 +1279,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxNr = 4; maxBarrierNr = 3;}
 		else if(level == 40)
 		{
-			creation_stop = true; 
+			creationStop = true;
 			bossSelection = BOSS_4;
 			selection = 0;
-			helicopter.powerUp_decay();
+			helicopter.powerUpDecay();
 		}			  
 		else if(level == 41)
 		{
@@ -1291,7 +1292,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxBarrierNr = 2;
 			selectionBarrier = 6;
 			
-			if(real_level_up){Events.determineHighscoreTimes(helicopter);}
+			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
 		}
 		else if(level == 42){
 			selectionBarrier = 7; maxNr = 4;}
@@ -1301,7 +1302,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 45){selection = 26285;}
 		else if(level == 46)
 		{
-			creation_stop = false;
+			creationStop = false;
 			maxNr = 5;
 			bossSelection = STANDARD;
 			selection = 31810;
@@ -1316,10 +1317,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			maxNr = 7;}
 		else if(level == 50)
 		{
-			creation_stop = true; 
+			creationStop = true;
 			bossSelection = FINAL_BOSS;
 			selection = 0;
-			helicopter.powerUp_decay();
+			helicopter.powerUpDecay();
 		}
 	}
 	
@@ -1328,68 +1329,71 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	public static void generateNewEnemies(ArrayList<LinkedList<Enemy>> enemy, Helicopter helicopter)
 	{
-		Events.last_creation_timer++;
-		if(last_carrier != null){create_carrier_servants(helicopter, enemy);}
-		else if(creation_stop){verify_creation_stop(enemy, helicopter);}		
-		if(boss_servant_creation_approved()){create_boss_servant(helicopter, enemy);}
-		else if(enemy_creation_approved(enemy)){creation(helicopter, enemy);}
+		Events.lastCreationTimer++;
+		if(lastCarrier != null){
+			createCarrierServants(helicopter, enemy);}
+		else if(creationStop){
+			verifyCreationStop(enemy, helicopter);}
+		if(bossServantCreationApproved()){
+			createBossServant(helicopter, enemy);}
+		else if(enemyCreationApproved(enemy)){creation(helicopter, enemy);}
 	}
 	
-	private static void create_carrier_servants(Helicopter helicopter,
-												ArrayList<LinkedList<Enemy>> enemy)
+	private static void createCarrierServants(Helicopter helicopter,
+											  ArrayList<LinkedList<Enemy>> enemy)
 	{
 		for(int m = 0; 
-				m < (last_carrier.isMiniBoss
+				m < (lastCarrier.isMiniBoss
 						? 5 + MyMath.random(3)
 						: 2 + MyMath.random(2)); 
 				m++)
 			{
 				creation(helicopter, enemy);
 			}			
-			last_carrier = null;		
+			lastCarrier = null;
 	}
 
-	private static void verify_creation_stop(ArrayList<LinkedList<Enemy>> enemy, 
-	                                         Helicopter helicopter)
+	private static void verifyCreationStop(ArrayList<LinkedList<Enemy>> enemy,
+										   Helicopter helicopter)
 	{
 		if(	enemy.get(ACTIVE).isEmpty() 
-			&& last_carrier == null 
-			&& !(helicopter.is_poweredUp() 
+			&& lastCarrier == null
+			&& !(helicopter.isPoweredUp()
 				 && Events.isBossLevel()) )
 		{
-			creation_stop = false;
+			creationStop = false;
 			if(Events.isBossLevel())
 			{
 				maxNr = 1;
 				maxBarrierNr = 0;
-				Events.set_boss_level_up_conditions();
+				Events.setBossLevelUpConditions();
 			}
 		}
 	}	
 		
-	private static boolean boss_servant_creation_approved()
+	private static boolean bossServantCreationApproved()
 	{
 		return     makeBossTwoServants
 				|| makeBoss4Servant
 				|| makeAllBoss5Servants
-				|| has_to_make_boss_5_servants();
+				|| hasToMakeBoss5Servants();
 	}
 	
-	private static boolean has_to_make_boss_5_servants()
+	private static boolean hasToMakeBoss5Servants()
 	{			
 		for(int type = 0; type < NR_OF_BOSS_5_SERVANTS; type++)
 		{
-			if(make_boss5_servant[type]){return true;}
+			if(makeBoss5Servant[type]){return true;}
 		}
 		return false;
 	}
 	
-	private static void create_boss_servant(Helicopter helicopter, 
-	                                        ArrayList<LinkedList<Enemy>> enemy)
+	private static void createBossServant(Helicopter helicopter,
+										  ArrayList<LinkedList<Enemy>> enemy)
 	{
 		if(makeBossTwoServants)
 		{
-			create_boss2_servants(helicopter, enemy);
+			createBoss2Servants(helicopter, enemy);
 		}
 		else if(makeBoss4Servant)
 		{								 
@@ -1398,31 +1402,31 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		}
 		else if(makeAllBoss5Servants)
 		{
-			create_all_boss5_servants(helicopter, enemy);							
+			createAllBoss5Servants(helicopter, enemy);
 		}
 		else for(int type = 0; type < NR_OF_BOSS_5_SERVANTS; type++)
 		{
-			if(make_boss5_servant[type])
+			if(makeBoss5Servant[type])
 			{
-				make_boss5_servant[type] = false;
+				makeBoss5Servant[type] = false;
 				bossSelection = id(type);
 				creation(helicopter, enemy);	
 			}
 		}			
 	}
 	
-	private static void create_boss2_servants(Helicopter helicopter, 
-	                                          ArrayList<LinkedList<Enemy>> enemy)
+	private static void createBoss2Servants(Helicopter helicopter,
+											ArrayList<LinkedList<Enemy>> enemy)
     {
     	makeBossTwoServants = false;
-		creation_stop = true; 
+		creationStop = true;
 		bossSelection = BOSS_2_SERVANT;
 		maxNr = 12;
 		for(int m = 0; m < maxNr; m++){creation(helicopter, enemy);}
     }
     
-    private static void create_all_boss5_servants(Helicopter helicopter, 
-                                                  ArrayList<LinkedList<Enemy>> enemy)
+    private static void createAllBoss5Servants(Helicopter helicopter,
+											   ArrayList<LinkedList<Enemy>> enemy)
     {
     	makeAllBoss5Servants = false;
     	for(int i = -8; i > -13; i--)
@@ -1432,17 +1436,17 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
     	}
     }	
 
-    private static boolean enemy_creation_approved(ArrayList<LinkedList<Enemy>> enemy)
+    private static boolean enemyCreationApproved(ArrayList<LinkedList<Enemy>> enemy)
 	{		
-		int nr_of_enemies = enemy.get(ACTIVE).size();
-		return !creation_stop
-				&&((Events.last_creation_timer > 20  && !Events.isBossLevel()) ||
-				   (Events.last_creation_timer > 135 ) )
-				&& nr_of_enemies < (maxNr + maxBarrierNr)
-				&& MyMath.creation_probability(
+		int nrOfEnemies = enemy.get(ACTIVE).size();
+		return !creationStop
+				&&((Events.lastCreationTimer > 20  && !Events.isBossLevel()) ||
+				   (Events.lastCreationTimer > 135 ) )
+				&& nrOfEnemies < (maxNr + maxBarrierNr)
+				&& MyMath.creationProbability(
 						Events.isBossLevel()
 							? 0
-							: (maxNr + maxBarrierNr) - nr_of_enemies, 1)
+							: (maxNr + maxBarrierNr) - nrOfEnemies, 1)
 				&& !(Events.level > 50)
 				&& !(!enemy.get(ACTIVE).isEmpty()
 						&& enemy.get(ACTIVE).getFirst().isMajorBoss());
@@ -1456,42 +1460,42 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		if(i.hasNext()){e = i.next(); i.remove();}	
 		else{e = new Enemy();}
 		enemy.get(ACTIVE).add(e);
-		Events.last_creation_timer = 0;
+		Events.lastCreationTimer = 0;
 		helicopter.numberOfEnemiesSeen++;
 		e.create(helicopter, enemy.get(ACTIVE).size());
 	}	
     	
-	private void create(Helicopter helicopter, int nr_of_enemies)
+	private void create(Helicopter helicopter, int nrOfEnemies)
 	{			
 		this.reset();		
-		if(last_carrier != null){this.create_scampering_vessel(true);}
-		else if(barrierCreationApproved(nr_of_enemies)){this.createBarrier(helicopter);}
-		else if(rock_creation_approved()){this.create_rock(helicopter);}
-		else if(kaboom_creation_approved()){this.create_kaboom(helicopter);}
-		else if(bossSelection == 0){this.create_standard_enemy();}
-		else{this.create_boss(helicopter);}
+		if(lastCarrier != null){this.createScamperingVessel(true);}
+		else if(barrierCreationApproved(nrOfEnemies)){this.createBarrier(helicopter);}
+		else if(rockCreationApproved()){this.createRock(helicopter);}
+		else if(kaboomCreationApproved()){this.createKaboom(helicopter);}
+		else if(bossSelection == 0){this.createStandardEnemy();}
+		else{this.createBoss(helicopter);}
 		
 		if(this.model != BARRIER)
 		{
 			this.farbe1 = MyColor.dimColor(this.farbe1, 1.3f);
 			this.farbe2 = MyColor.dimColor(this.farbe1, this.dimFactor);
 		}		
-		if(this.can_become_miniboss()){this.turn_into_miniboss(helicopter);}		
-		this.reward_modifier = this.isBoss() ? 0 : 5 - MyMath.random(11);
-		this.starting_hitpoints = this.hitpoints;
+		if(this.canBecomeMiniboss()){this.turnIntoMiniboss(helicopter);}
+		this.rewardModifier = this.isBoss() ? 0 : 5 - MyMath.random(11);
+		this.startingHitpoints = this.hitpoints;
 		
 		// Festlegen der Höhe und der y-Position des Gegners
 		if(!this.hasHeightSet){this.set_height();}
-		if(!this.hasYPosSet){this.set_initial_y();}
+		if(!this.hasYPosSet){this.setInitialY();}
 				
 		this.initializeShootDirection();
 		this.speedLevel.setLocation(this.targetSpeedLevel);
 		this.setPaintBounds((int)this.bounds.getWidth(),
 							  (int)this.bounds.getHeight());
-		this.assign_image(helicopter);
+		this.assignImage(helicopter);
 	}
 
-	private void assign_image(Helicopter helicopter)
+	private void assignImage(Helicopter helicopter)
 	{
 		for(int i = 0; i < 2; i++)
 		{
@@ -1502,7 +1506,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			
 			//this.graphics[i].setComposite(AlphaComposite.Src);
 			
-			this.paint_image(this.graphics[i], 1-2*i, null, true);
+			this.paintImage(this.graphics[i], 1-2*i, null, true);
 			if(this.cloakingTimer != DISABLED && helicopter.getType() == OROCHI)
 			{
 				BufferedImage 
@@ -1514,7 +1518,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 													(int)(1.250f * this.paintBounds.height),
 													BufferedImage.TYPE_INT_ARGB);
 				
-				this.paint_image(getGraphics(temp_image), 1-2*i, Color.red, true);								
+				this.paintImage(getGraphics(temp_image), 1-2*i, Color.red, true);
 				(getGraphics(this.image[2+i])).drawImage(temp_image, ROP_CLOAKED, 0, 0);
 			}
 		}		
@@ -1527,7 +1531,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		this.model = TIT;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
 		this.set_x(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
-		this.direction.setLocation(-1, MyMath.random_direction());	
+		this.direction.setLocation(-1, MyMath.randomDirection());
 		this.strength = 0;				
 		this.call_back = 0;
 		this.shield = 0;
@@ -1619,7 +1623,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	{		
 		return Events.level >= MIN_BARRIER_LEVEL 
 				&& !Events.isBossLevel()
-				&& barrier_timer == 0  
+				&& barrierTimer == 0
 				&& (MyMath.toss_up(0.35f) 
 					|| (numberOfEnemies - currentNumberOfBarriers >= maxNr))
 				&& currentNumberOfBarriers < maxBarrierNr;
@@ -1646,13 +1650,13 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.deactivationProb = 0.25f;
 			
 			// Level 2
-			if(this.type == 0){this.set_var_width(65);}
+			if(this.type == 0){this.setVarWidth(65);}
 			
 			// Level 6
 			else if(this.type == 1)
 			{
-				this.set_var_width(150);				
-				this.set_initial_y(GROUND_Y - this.bounds.getWidth());
+				this.setVarWidth(150);
+				this.setInitialY(GROUND_Y - this.bounds.getWidth());
 			}
 		}	
 		// Level 12
@@ -1661,7 +1665,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.farbe1 = MyColor.bleach(Color.yellow, 0.6f);
 			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());	//d //1
 			this.deactivationProb = 0.2f;
-			this.set_var_width(65);
+			this.setVarWidth(65);
 			
 			this.rotorColor = 2;
 			this.staticChargeTimer = READY;
@@ -1673,10 +1677,9 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.farbe1 = MyColor.bleach(new Color(255, 192, 0), 0.0f);
 			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0); //d
 			this.deactivationProb = 0.167f;
-			this.set_var_width(105);			
+			this.setVarWidth(105);
 			if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
-			
-			
+
 			this.set_location(this.targetSpeedLevel.getX() >= 5
 									? -this.bounds.getWidth()-APPEARANCE_DISTANCE
 									: this.bounds.getX(),
@@ -1687,13 +1690,13 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(this.type == 4)
 		{									
 			this.deactivationProb = 0.143f;
-			this.set_var_width(85);		
+			this.setVarWidth(85);
 			this.hasYPosSet = true;
 			this.barrierShootTimer = READY;
-			this.set_barrier_shooting_properties();
+			this.setBarrierShootingProperties();
 			this.shotRotationSpeed
 				= MyMath.toss_up(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL 
-					? MyMath.random_direction()*(this.shootingRate /3 + MyMath.random(10))
+					? MyMath.randomDirection()*(this.shootingRate /3 + MyMath.random(10))
 					: 0;	
 			
 			this.isLasting = true;
@@ -1703,11 +1706,11 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{					
 			this.deactivationProb = 0.11f;
 			
-			this.set_var_width(80);				
-			this.set_initial_y(GROUND_Y - this.bounds.getWidth()/8);
+			this.setVarWidth(80);
+			this.setInitialY(GROUND_Y - this.bounds.getWidth()/8);
 			
 			this.borrowTimer = READY;
-			this.set_barrier_shooting_properties();		
+			this.setBarrierShootingProperties();
 									
 			this.isLasting = true;
 		}
@@ -1717,7 +1720,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			//this.farbe1 = MyColor.bleach(new Color(0, 255, 255), 0.6f);			
 			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
 			this.deactivationProb = 0.25f;
-			this.set_var_width(80);	
+			this.setVarWidth(80);
 			
 			this.isLasting = true;
 		}
@@ -1727,10 +1730,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.farbe1 = MyColor.bleach(MyColor.cloaked, 0.6f);	
 			//this.farbe1 = new Color(MyMath.random(255), MyMath.random(255), MyMath.random(255));	
 			this.deactivationProb = 0.067f;
-			this.set_var_width(100);	
+			this.setVarWidth(100);
 						
 			this.barrierTeleportTimer = READY;
-			this.set_barrier_shooting_properties();	
+			this.setBarrierShootingProperties();
 			this.startBarrierUncloaking(helicopter);
 						
 			this.hasYPosSet = true;
@@ -1744,7 +1747,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.farbe1 = MyColor.dimColor(this.farbe1, MyColor.BARRIER_NIGHT_DIM_FACTOR);
 			this.farbe2 = MyColor.dimColor(this.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
 		}		
-		barrier_timer = (int)((helicopter.bounds.getWidth() + this.bounds.getWidth())/2);		
+		barrierTimer = (int)((helicopter.bounds.getWidth() + this.bounds.getWidth())/2);
 		this.strength = (int)(1.0f/this.deactivationProb);
 	}
 	
@@ -1756,7 +1759,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		this.set_y(GROUND_Y + 2 * this.bounds.getWidth());
 	}
 
-	private static boolean rock_creation_approved()
+	private static boolean rockCreationApproved()
 	{
 		return currentRock == null
 				&& Events.level >= MIN_ROCK_LEVEL 
@@ -1765,7 +1768,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				&& MyMath.toss_up(ROCK_PROB);
 	}
 	
-	private void create_rock(Helicopter helicopter)
+	private void createRock(Helicopter helicopter)
 	{
 		currentRock = this;
 		this.type = Integer.MAX_VALUE;
@@ -1786,29 +1789,29 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		this.strength = 0;	
 	}
 	
-	private static boolean kaboom_creation_approved()
+	private static boolean kaboomCreationApproved()
 	{		
 		return Events.level >= MIN_KABOOM_LEVEL 
 				&& !Events.isBossLevel()
 				&& MyMath.toss_up(KABOOM_PROB);
 	}
 	
-	private void create_kaboom(Helicopter helicopter)
+	private void createKaboom(Helicopter helicopter)
 	{
 		this.type = Integer.MAX_VALUE;
 		this.isKaboom = true;
 		this.farbe1 = Color.white;
 		this.hitpoints = Integer.MAX_VALUE;	
-		this.set_var_width(KABOOM_WIDTH);
+		this.setVarWidth(KABOOM_WIDTH);
 		helicopter.numberOfEnemiesSeen--;
 		this.targetSpeedLevel.setLocation(0.5 + 0.5*Math.random(), 0); //d
 		this.isExplodable = true;
-		this.set_initial_y(GROUND_Y - 2*this.bounds.getWidth()*HEIGHT_FACTOR);
+		this.setInitialY(GROUND_Y - 2*this.bounds.getWidth()*HEIGHT_FACTOR);
 				
 		this.strength = 0;		
 	}
 	
-	private void create_standard_enemy()
+	private void createStandardEnemy()
 	{
 		this.type = MyMath.random(selection);
 		//this.type = 30;
@@ -1822,7 +1825,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						(120 + MyMath.random(30)),
 						(0 + MyMath.random(15)));
 				this.hitpoints = 2;
-				this.set_var_width(110);
+				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
 						0.5 * Math.random());	//d
 				this.isExplodable = true;
@@ -1837,7 +1840,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						(65 + MyMath.random(35)),
 						(0 + MyMath.random(25)));
 				this.hitpoints = 3 + MyMath.random(3);
-				this.set_var_width(125);
+				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(), //d
 						0.5*Math.random());	//d
 				this.isExplodable = true;
@@ -1851,7 +1854,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						(100 + MyMath.random(30)),
 						(40 + MyMath.random(25)));
 				this.hitpoints = 2 + MyMath.random(2);
-				this.set_var_width(100);
+				this.setVarWidth(100);
 				this.targetSpeedLevel.setLocation(2 + 2*Math.random(), //d
 						2.5 + 1.5*Math.random());		//d
 				this.isExplodable = true;
@@ -1865,8 +1868,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color((100 + MyMath.random(30)),
 						(50 + MyMath.random(30)),
 						(45 + MyMath.random(20)));
-				this.set_hitpoints(25);
-				this.set_var_width(145);
+				this.setHitpoints(25);
+				this.setVarWidth(145);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
 						0.5*Math.random());	//d
 				this.canEarlyTurn = true;
@@ -1880,8 +1883,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color((135 + MyMath.random(30)),
 						(80+MyMath.random(20)),
 						(85 + MyMath.random(30)));
-				this.set_hitpoints(16);
-				this.set_var_width(130);
+				this.setHitpoints(16);
+				this.setVarWidth(130);
 				this.targetSpeedLevel.setLocation(7 + 4*Math.random(), //d
 						1 + 0.5*Math.random()); //d
 				this.batchWiseMove = 1;
@@ -1894,11 +1897,11 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color((185 + MyMath.random(40)),
 						( 70 + MyMath.random(30)),
 						(135 + MyMath.random(40)));
-				this.set_hitpoints(6);
-				this.set_var_width(110);
+				this.setHitpoints(6);
+				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(2.5 + 2.5*Math.random(), 11); //d
 
-				this.set_initial_y(TURN_FRAME.getCenterY());
+				this.setInitialY(TURN_FRAME.getCenterY());
 				this.canSinusMove = true;
 				this.isExplodable = true;
 				this.strength = 6;
@@ -1909,8 +1912,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color((85 + MyMath.random(20)),
 						(35 + MyMath.random(30)),
 						(95 + MyMath.random(30)));
-				this.set_hitpoints(24);
-				this.set_var_width(170);
+				this.setHitpoints(24);
+				this.setVarWidth(170);
 				this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(), //d
 						0.5*Math.random());	//d
 				this.canDodge = true;
@@ -1923,8 +1926,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color((150 + MyMath.random(20)),
 						(130 + MyMath.random(25)),
 						( 75 + MyMath.random(30)));
-				this.set_hitpoints(22);
-				this.set_var_width(125);
+				this.setHitpoints(22);
+				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(), //d
 						6.5 + 2*Math.random());	//d
 				this.canMoveChaotic = true;
@@ -1938,8 +1941,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color((70 + MyMath.random(40)),
 						(130 + MyMath.random(50)),
 						(30 + MyMath.random(45)));
-				this.set_hitpoints(30);
-				this.set_var_width(95);
+				this.setHitpoints(30);
+				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(), //d
 						5 + 2*Math.random());		//d
 				this.isExplodable = true;
@@ -1955,8 +1958,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color(80 + MyMath.random(25),
 						80 + MyMath.random(25),
 						80 + MyMath.random(25));
-				this.set_hitpoints(60);
-				this.set_var_width(80);
+				this.setHitpoints(60);
+				this.setVarWidth(80);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
 						0.5 * Math.random());	//d
 				this.canDodge = true;
@@ -1971,8 +1974,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.model = CARGO;
 
 				this.farbe1 = MyColor.cloaked;
-				this.set_hitpoints(100);
-				this.set_var_width(85);
+				this.setHitpoints(100);
+				this.setVarWidth(85);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
 						1 + 0.5*Math.random());	//d
 				this.canLearnKamikaze = true;
@@ -1987,7 +1990,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 
 			// Level 35
 			case BOLT:
-				this.create_scampering_vessel(last_carrier != null);
+				this.createScamperingVessel(lastCarrier != null);
 				break;
 
 			case CARRIER:
@@ -1996,8 +1999,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color(70 + MyMath.random(15),
 						60 + MyMath.random(10),
 						45 + MyMath.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
-				this.set_hitpoints(450);
-				this.set_var_width(165);
+				this.setHitpoints(450);
+				this.setVarWidth(165);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
 						0.5 * Math.random());	//d
 				this.canEarlyTurn = true;
@@ -2012,8 +2015,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color((180 + MyMath.random(50)),
 						(230 + MyMath.random(20)),
 						(20 + MyMath.random(60)));
-				this.set_hitpoints(140);
-				this.set_var_width(115);
+				this.setHitpoints(140);
+				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(), //d
 						0.5 + Math.random());		//d
 				this.isExplodable = true;
@@ -2028,8 +2031,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color( 30 + MyMath.random(40),
 						60 + MyMath.random(40),
 						120 + MyMath.random(40));
-				this.set_hitpoints(150);
-				this.set_var_width(95);
+				this.setHitpoints(150);
+				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0); //d
 
 				this.isExplodable = true;
@@ -2041,12 +2044,12 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			 // Level 43
 			case LOOPING:
 				this.farbe1 = MyColor.cloaked;
-				this.set_hitpoints(330);
-				this.set_var_width(105);
+				this.setHitpoints(330);
+				this.setVarWidth(105);
 				this.targetSpeedLevel.setLocation(9, 11);	//d
 
 				this.direction.y = -1;
-				this.set_initial_y(TURN_FRAME.getCenterY());
+				this.setInitialY(TURN_FRAME.getCenterY());
 				this.cloakingTimer = 0;
 				this.canLoop = true;
 
@@ -2058,8 +2061,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color(  5 + MyMath.random(55),
 						105 + MyMath.random(40),
 						90 + MyMath.random(30));
-				this.set_hitpoints(520);
-				this.set_var_width(115);
+				this.setHitpoints(520);
+				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(), //d
 						4.5 + 1.5*Math.random());//d
 				this.tractor = READY;
@@ -2075,8 +2078,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.farbe1 = new Color(190 + MyMath.random(40),
 						10 + MyMath.random(60),
 						15 + MyMath.random(60));
-				this.set_hitpoints(500);
-				this.set_var_width(130);
+				this.setHitpoints(500);
+				this.setVarWidth(130);
 				this.targetSpeedLevel.setLocation( 1 + Math.random(), //d
 						0.5*Math.random());//d
 				this.teleportTimer = READY;
@@ -2087,20 +2090,20 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		}
 	}
 	
-	private void create_scampering_vessel(boolean explosion_creation)
+	private void createScamperingVessel(boolean explosion_creation)
 	{
 		if(explosion_creation){this.type = 3000;}
 		
 		this.farbe1 = new Color(75 + MyMath.random(30), 
 								75 + MyMath.random(30), 
 								75 + MyMath.random(30) );
-		this.set_hitpoints(26);	
-		this.set_var_width(70);
+		this.setHitpoints(26);
+		this.setVarWidth(70);
 		
 		if(explosion_creation)
 		{
-			this.set_location(last_carrier.bounds.getCenterX(), 			
-							  last_carrier.bounds.getCenterY());
+			this.set_location(lastCarrier.bounds.getCenterX(),
+							  lastCarrier.bounds.getCenterY());
 			this.hasYPosSet = true;
 		}
 		this.isExplodable = true;
@@ -2109,7 +2112,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.targetSpeedLevel.setLocation( 10 + 7.5*Math.random(), //d
 													0.5 + 3*Math.random());			//d	
 			this.call_back = 1 + MyMath.random(3);
-			this.direction.x = MyMath.random_direction();
+			this.direction.x = MyMath.randomDirection();
 			this.invincibleTimer = 67;
 		}
 		else 
@@ -2122,7 +2125,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		this.strength = 14;
 	}
 	
-	private void create_boss(Helicopter helicopter)
+	private void createBoss(Helicopter helicopter)
 	{
 		this.type = bossSelection;
 		
@@ -2169,7 +2172,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.targetSpeedLevel.setLocation(3 + 10.5*Math.random(), //d
 												  3 + 10.5*Math.random()); //d
 		
-			this.direction.x = MyMath.random_direction();
+			this.direction.x = MyMath.randomDirection();
 			this.invincibleTimer = 67;
 			
 			this.strength = 5;
@@ -2221,7 +2224,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.hitpoints = 100 + MyMath.random(50);					
 			this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(), //d
 												  6 + 2.5*Math.random()); //d
-			this.direction.x = MyMath.random_direction();
+			this.direction.x = MyMath.randomDirection();
 			this.isExplodable = true;
 			
 			this.strength = 1;			
@@ -2257,7 +2260,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 									boss.getY(),
 									this.type == SMALL_SHIELD_MAKER ? 125 : 145,
 								    this.bounds.getHeight());			
-				this.direction.x = MyMath.random_direction();
+				this.direction.x = MyMath.randomDirection();
 				
 				this.shieldMakerTimer = READY;
 				this.setShieldingPosition();
@@ -2351,7 +2354,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		}	
 	}
 
-	private boolean can_become_miniboss()
+	private boolean canBecomeMiniboss()
 	{		
 		return 	currentMiniBoss == null
 				&& Events.level > 4 
@@ -2362,7 +2365,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				&& this.type > 2;
 	}
 
-	private void turn_into_miniboss(Helicopter helicopter)
+	private void turnIntoMiniboss(Helicopter helicopter)
 	{
 		helicopter.numberOfMiniBossSeen++;
 		currentMiniBoss = this;
@@ -2409,7 +2412,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 						  Math.max(0, Math.min(y, GROUND_Y-this.bounds.getWidth())));
 	}
 	
-	private void set_barrier_shooting_properties()
+	private void setBarrierShootingProperties()
 	{
 		if(this.barrierTeleportTimer != DISABLED || this.borrowTimer != DISABLED)
 		{
@@ -2436,7 +2439,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		}
 	}
 
-	private void set_hitpoints(int hitpoints)
+	private void setHitpoints(int hitpoints)
 	{
 		this.hitpoints = hitpoints + MyMath.random(hitpoints/2);		
 	}
@@ -2473,7 +2476,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 							this.bounds.getHeight());
 	}
 	
-	private void set_var_width(int width)
+	private void setVarWidth(int width)
 	{
 		set_width(width + MyMath.random(width/(this.model == BARRIER ? 5 : 10)));
 	}
@@ -2497,19 +2500,19 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 							height);
 	}
 	
-	private void set_initial_y()
+	private void setInitialY()
 	{
 		if(this.model == BARRIER)
 		{
-			set_initial_y(Math.random()*(GROUND_Y - this.bounds.getHeight()));
+			setInitialY(Math.random()*(GROUND_Y - this.bounds.getHeight()));
 		}
 		else
 		{
-			set_initial_y(90 + Math.random()*(220 - this.bounds.getHeight()));
+			setInitialY(90 + Math.random()*(220 - this.bounds.getHeight()));
 		}
 	}	
 	
-	private void set_initial_y(double y)
+	private void setInitialY(double y)
 	{
 		this.set_y(y);
 		this.hasYPosSet = true;
@@ -2563,7 +2566,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 									   Helicopter helicopter)
 	{
 		if(rock_timer > 0){rock_timer--;}	
-		if(BackgroundObject.background_moves && barrier_timer > 0){barrier_timer--;}
+		if(BackgroundObject.background_moves && barrierTimer > 0){
+			barrierTimer--;}
 		countBarriers(controller.enemy);
 		
 		for(Iterator<Enemy> i = controller.enemy.get(ACTIVE).iterator(); i.hasNext();)
@@ -2580,7 +2584,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			}			
 			else
 			{
-				enemy.clear_image();
+				enemy.clearImage();
 				i.remove(); 
 				controller.enemy.get(INACTIVE).add(enemy);
 			}			
@@ -3156,7 +3160,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				if(MyMath.toss_up(RETURN_PROB[serantType])
 					&& this.operator.timeSinceDeath[serantType] > MIN_ABSENT_TIME[serantType])
 				{
-					make_boss5_servant[serantType] = true;
+					makeBoss5Servant[serantType] = true;
 				}
 				else{this.operator.timeSinceDeath[serantType]++;}
 			}
@@ -3622,7 +3626,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 
 	private void healerAction()
     {    	
-		if(Events.boss.hitpoints < Events.boss.starting_hitpoints)
+		if(Events.boss.hitpoints < Events.boss.startingHitpoints)
 		{						
 			if(this.speedLevel.getX() != 0)
 			{
@@ -3664,7 +3668,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			{
 				Events.boss.hitpoints 
 					= Math.min(Events.boss.hitpoints + BOSS_5_HEAL_RATE, 
-							   Events.boss.starting_hitpoints);
+							   Events.boss.startingHitpoints);
 			}						 
 		}
 		else
@@ -3931,7 +3935,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			}				
 			if(e.isMarkedForRemoval)
 			{
-				e.clear_image();
+				e.clearImage();
 				i.remove(); 
 				controller.enemy.get(INACTIVE).add(e);
 			}				
@@ -4315,7 +4319,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 											  controller.enemy,
 											  controller.explosion);
 			
-		if(this.isCarrier){last_carrier = this;}
+		if(this.isCarrier){
+			lastCarrier = this;}
 		if(missile != null){missile.hits.remove(this.hashCode());}
 	}	
 
@@ -4410,7 +4415,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			   * (helicopter.spotlight 
 					? Events.NIGHT_BONUS_FACTOR 
 					: Events.DAY_BONUS_FACTOR) 
-			   + this.reward_modifier;
+			   + this.rewardModifier;
 	}
 
 	private void evaluateBossDestructionEffect(Helicopter helicopter,

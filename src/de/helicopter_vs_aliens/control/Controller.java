@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 
 import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.Main;
-import de.helicopter_vs_aliens.Savegame;
+import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;

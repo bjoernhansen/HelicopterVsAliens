@@ -22,6 +22,8 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.score.HighscoreEntry;
+import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 import de.helicopter_vs_aliens.util.dictionary.Languages;
@@ -401,13 +403,13 @@ public class Menu implements Constants
     
     private static void paint_tickmark(Graphics2D g2d, int i, int x, int y, int w, int h)
 	{
-    	Enemy.paint_energy_beam(g2d, 
+    	Enemy.paintEnergyBeam(g2d,
 				x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 
 				y + h/2 + STARTSCREEN_HELICOPTER_OFFSET_Y, 
 				x + w/3 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 
 				y + h + STARTSCREEN_HELICOPTER_OFFSET_Y);
 
-    	Enemy.paint_energy_beam(g2d, 
+    	Enemy.paintEnergyBeam(g2d,
 				x + w + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 
 				y + STARTSCREEN_HELICOPTER_OFFSET_Y, 
 				x + w/3 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 
@@ -1159,10 +1161,10 @@ public class Menu implements Constants
 	private static void paint_boss_health_bar(Graphics2D g2d, Enemy boss)
     {
         g2d.setColor(MyColor.hitpoints);
-        g2d.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.starting_hitpoints, 10);
+        g2d.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.startingHitpoints, 10);
         if(Events.timeOfDay == NIGHT){g2d.setColor(Color.red);}
         else{g2d.setColor(MyColor.red);}
-        g2d.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.starting_hitpoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.starting_hitpoints, 10);
+        g2d.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.startingHitpoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.startingHitpoints, 10);
         if(Events.timeOfDay == NIGHT){g2d.setColor(Color.white);}
         else{g2d.setColor(Color.black);}        
         g2d.drawRect(813, 5, ENEMY_HEALTH_BAR_WIDTH, 10);

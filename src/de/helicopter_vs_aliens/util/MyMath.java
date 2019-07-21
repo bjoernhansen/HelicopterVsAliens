@@ -113,12 +113,12 @@ public class MyMath
 		return Math.random() < n;
 	}
 	
-	public static int random_direction()
+	public static int randomDirection()
 	{
 		return toss_up() ? 1 : -1;
 	}
 	
-	public static boolean creation_probability(int difference, int factor)
+	public static boolean creationProbability(int difference, int factor)
     {
     	int value; 
     	if(difference > 0 && difference < 16)

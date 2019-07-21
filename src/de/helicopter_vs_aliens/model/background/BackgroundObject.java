@@ -247,7 +247,7 @@ public class BackgroundObject extends MovingObject
             // Kaktus
         	this.type = CACTUS; 
             this.width = 50;
-            this.plane = MyMath.random_direction();
+            this.plane = MyMath.randomDirection();
             cactus_timer = 125;
         }                
         else if( random >= CACTUS_FREQUENCY && random < UP_TO_STONE_FREQUENCY)
@@ -520,7 +520,7 @@ public class BackgroundObject extends MovingObject
 	private static void generate_new_bgObjects(	ArrayList<LinkedList<BackgroundObject>> bgObject)
 	{
 		int nr_of_bgObjects = bgObject.get(ACTIVE).size();
-		if( nr_of_bgObjects < 20 && MyMath.creation_probability( 20 - nr_of_bgObjects,
+		if( nr_of_bgObjects < 20 && MyMath.creationProbability( 20 - nr_of_bgObjects,
 													ground_factor) &&
 			generalObject_timer == 0 && background_moves)
 		{

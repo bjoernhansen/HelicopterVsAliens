@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
@@ -18,6 +17,7 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.missile.MissileTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
+import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
@@ -389,7 +389,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         }        
                 
         //die Propeller        
-        paint_rotor(g2d, 
+        paintRotor(g2d,
         			this.inputGray, 
         			left+(movement_left ? -36 : 8), 
         			top-5, 
@@ -399,7 +399,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         			this.isRotorSystemActive,
         			false);
         
-        paint_rotor(g2d, 
+        paintRotor(g2d,
         			this.inputGray,
         			left+(movement_left ?  107 : -22),
         			top+14,
@@ -459,14 +459,14 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         g2d.fillOval((int) this.location.getX()-2, (int) this.location.getY()-2, 4, 4); */
     }
 
-	public static void paint_rotor(Graphics2D g2d, Color color, 
-                            int x, int y, int width, int height, 
-	                        int nr_of_blades, int pos, int blade_width,
-	                        float border_distance, boolean active)
+	public static void paintRotor(Graphics2D g2d, Color color,
+								  int x, int y, int width, int height,
+								  int nr_of_blades, int pos, int blade_width,
+								  float border_distance, boolean active)
 	{
     	int distance_x = (int) (border_distance * width),
     		distance_y = (int) (border_distance * height);
-    	paint_rotor(g2d, color, 
+    	paintRotor(g2d, color,
     				x+distance_x,
     				y+distance_y, 
     				width-2*distance_x,
@@ -474,10 +474,10 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     				nr_of_blades, pos, blade_width, active, true);
 	}   
     
-	static void paint_rotor(Graphics2D g2d, Color color, 
-	                        int x, int y, int width, int height, 
-	                        int nr_of_blades, int pos, int blade_width,
-	                        boolean active, boolean enemie_paint)
+	static void paintRotor(Graphics2D g2d, Color color,
+						   int x, int y, int width, int height,
+						   int nr_of_blades, int pos, int blade_width,
+						   boolean active, boolean enemie_paint)
 	{
 		if(active)
 	    {
@@ -1117,7 +1117,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     private void crashed(ArrayList<LinkedList<Explosion>> explosion)
     {
     	this.isActive = false;
-    	this.powerUp_decay();
+    	this.powerUpDecay();
 		if(Events.level < 51 && explosion != null)
 		{
 			Audio.play(Audio.explosion3);
@@ -1306,7 +1306,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 				: 2 *(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1));
 	}
 
-	public boolean is_poweredUp()
+	public boolean isPoweredUp()
 	{
 		if(this.getType() == HELIOS){return false;}
 		for(int i = 0; i < 4; i++)
@@ -1320,7 +1320,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		return false;
 	}
 
-	public void powerUp_decay()
+	public void powerUpDecay()
 	{
 		for(int i = 0; i < 4; i++){if(this.powerUpTimer[i] < Integer.MAX_VALUE/2)
 		{

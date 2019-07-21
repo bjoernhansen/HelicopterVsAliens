@@ -1,5 +1,6 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.score;
 
+import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -29,7 +30,7 @@ public class Savegame implements Constants, Serializable
 	String
 		currentPlayerName;
 	
-	private HighscoreEntry [][]
+	private HighscoreEntry[][]
 		highscore = new HighscoreEntry[7][10];
 	
 	public int
@@ -90,7 +91,7 @@ public class Savegame implements Constants, Serializable
 		this.currentPlayerName = HighscoreEntry.currentPlayerName;
 	}
 	
-	static Savegame initialize()
+	public static Savegame initialize()
 	{
 		Savegame output;
 		if((new File(FILENAME)).exists())
@@ -202,11 +203,11 @@ public class Savegame implements Constants, Serializable
 	
 	public void saveInHighscore()
 	{
-		if(this.valid && (this.no_cheats_used || Events.saveAnyway))
+		if(this.valid && (this.no_cheats_used || Events.SAVE_ANYWAY))
 		{				
 			HighscoreEntry temp_entry = new HighscoreEntry(this);
-			HighscoreEntry.put_entry(Events.highscore[this.helicopterType.ordinal()], temp_entry);
-			HighscoreEntry.put_entry(Events.highscore[OVERALL_HIGHSCORE_INDEX], temp_entry);
+			HighscoreEntry.putEntry(Events.highscore[this.helicopterType.ordinal()], temp_entry);
+			HighscoreEntry.putEntry(Events.highscore[OVERALL_HIGHSCORE_INDEX], temp_entry);
 		}
 	}
 }

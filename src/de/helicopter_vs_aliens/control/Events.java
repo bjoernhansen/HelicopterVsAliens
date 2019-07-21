@@ -1,9 +1,9 @@
 package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.Constants;
-import de.helicopter_vs_aliens.HighscoreEntry;
+import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.Main;
-import de.helicopter_vs_aliens.Savegame;
+import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.BossTypes;
@@ -47,6 +47,10 @@ public class Events implements Constants, BossTypes
 		DEFAULT_REPAIR_BASE_FEE = 350,
 		MAX_MONEY = 5540500;			// für Komplettausbau erforderliche Geldmenge
 
+	public static final boolean
+		CHEATS_ACTIVATABLE = true,
+		SAVE_ANYWAY = false;
+
 	public static HighscoreEntry[][]
 		highscore = new HighscoreEntry[7][10];
 	
@@ -59,7 +63,7 @@ public class Events implements Constants, BossTypes
 		timeOfDay = 1,			// Tageszeit; = 0: Nacht; = 1: Tag
 		money = 0, 				// Guthaben
 		kills_after_levelup,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
-		last_creation_timer,	// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
+		lastCreationTimer,	// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
         overallEarnings, 		// Gesamtverdienst
         extraBonusCounter, 		// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
 		lastBonus, 			// für die Guthabenanzeige: zuletzt erhaltener Standard-Verdienst
@@ -79,16 +83,14 @@ public class Events implements Constants, BossTypes
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
     	reachedLevelTwenty[] = new boolean[Helicopter.NR_OF_TYPES],
     	settingsChanged = false,
-    	allPlayable = false,
-    	saveAnyway = true;
+    	allPlayable = false;
 	
 	public static WindowTypes
 		window = STARTSCREEN;	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
   
 	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
 	private static boolean 
-		cheating_mode = false,				// = true: Cheat-Modus aktiviert
-		cheats_activatable = true;
+		cheating_mode = false;				// = true: Cheat-Modus aktiviert
 
 	private static String 
 		cheat_string = "";					
@@ -278,7 +280,7 @@ public class Events implements Constants, BossTypes
 				}
 				else if(e.getKeyChar() == '#')
 				{					
-					if((helicopter.isPlayedWithoutCheats || saveAnyway) && savegame.valid)
+					if((helicopter.isPlayedWithoutCheats || SAVE_ANYWAY) && savegame.valid)
 					{
 						savegame.saveInHighscore();
 					}
@@ -287,7 +289,7 @@ public class Events implements Constants, BossTypes
 				}
 			}
 		}
-		else if(cheats_activatable)
+		else if(CHEATS_ACTIVATABLE)
 		{
 			if(e.getKeyChar() == cheat_code.charAt(cheat_string.length())){cheat_string += e.getKeyChar();}
 			else{cheat_string = "";}
@@ -450,7 +452,7 @@ public class Events implements Constants, BossTypes
 					enemy.get(INACTIVE).addAll(enemy.get(ACTIVE));
 					enemy.get(ACTIVE).clear();			
 					level = level - ((level - 1) % 5);						
-					Enemy.adapt_to_level(helicopter, level, false);
+					Enemy.adaptToLevel(helicopter, level, false);
 					if(level < 6){
 						BackgroundObject.reset(bgObject);}
 					kills_after_levelup = 0;
@@ -965,7 +967,7 @@ public class Events implements Constants, BossTypes
 		time_aktu = System.currentTimeMillis();			
 		for(int i =  level - ((level - 1) % 5); i <= level; i++)
 		{
-			Enemy.adapt_to_level(helicopter, i, false);
+			Enemy.adaptToLevel(helicopter, i, false);
 		}
 	}
 
@@ -1195,7 +1197,7 @@ public class Events implements Constants, BossTypes
 			if(previous_level % 10 == 0){Audio.play(Audio.applause1);}
 		}
 		Menu.level_display_timer = START;
-		Enemy.adapt_to_level(helicopter, level, true);
+		Enemy.adaptToLevel(helicopter, level, true);
 	}
 
 	private static void getHeliosIncome(int previous_level)
@@ -1212,7 +1214,7 @@ public class Events implements Constants, BossTypes
 	}
 
 	// Stellt sicher, dass mit dem Besiegen des End-Gegners direkt das nächste Level erreicht wird
-	public static void set_boss_level_up_conditions()
+	public static void setBossLevelUpConditions()
 	{
 			 if(level == 10){kills_after_levelup = 14;}
 		else if(level == 20){kills_after_levelup = 7;}
@@ -1279,7 +1281,7 @@ public class Events implements Constants, BossTypes
 		long highscore_time = (playingTime + System.currentTimeMillis() - time_aktu)/60000;
 		helicopter.scorescreenTimes[boss_nr] = highscore_time;
 				
-		if(helicopter.isPlayedWithoutCheats || saveAnyway)
+		if(helicopter.isPlayedWithoutCheats || SAVE_ANYWAY)
 		{			
 			recordTime[helicopter.getType().ordinal()][boss_nr]
 				= recordTime[helicopter.getType().ordinal()][boss_nr] == 0
