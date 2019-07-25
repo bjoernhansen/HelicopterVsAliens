@@ -28,7 +28,7 @@ public final class Dictionary
         helicopterType = HelicopterTypes.getDefault();
 
     private List<String>
-        specialUpgrades = new ArrayList<>();
+        specialUpgrades = new ArrayList<>(5);
 
 
     public Dictionary(Languages language, HelicopterTypes helicopterType)
@@ -62,16 +62,21 @@ public final class Dictionary
         }
     }
 
-    private void accountForChange()
+    private void accountForLanguageChange()
     {
-        // TODO methode splitten für Helicopter change und Language change
         specialUpgrades.clear();
         specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.spotlight"));
         specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.goliath"));
         specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.warheads"));
         specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.secondcannon"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade()));
+        accountForHelicopterChange();
     }
+    
+    private void accountForHelicopterChange()
+    {
+        specialUpgrades.set(4, this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade()));
+    }
+    
 
     public void setLanguage(Languages language)
     {
@@ -79,7 +84,7 @@ public final class Dictionary
         {
             this.language = language;
             reloadLanguageProperties();
-            accountForChange();
+            accountForLanguageChange();
         }
     }
 
@@ -88,7 +93,7 @@ public final class Dictionary
         if(this.helicopterType != helicopterType)
         {
             this.helicopterType = helicopterType;
-            accountForChange();
+            accountForHelicopterChange();
         }
     }
 
