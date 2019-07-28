@@ -28,6 +28,8 @@ import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 import de.helicopter_vs_aliens.util.dictionary.Languages;
 
+import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
+import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
@@ -36,6 +38,8 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ROTO
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
+
+// TODO all identifiier to camelCase
 public class Menu implements Constants
 {
 	private static final String
@@ -57,7 +61,7 @@ public class Menu implements Constants
 
 	public static int 
 		page, 							// ausgewählte Seite im Startscreen-Menü
-		helicopter_selection,			// Helicopterauswahl im Startscreen-Menü
+			helicopterSelection,			// Helicopterauswahl im Startscreen-Menü
 		level_display_timer,			// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
 		fps,							// Frames Per Second; wird über die FPS-Anzeige ausgegeben
 		specialInfoSelection = 0,		// nur für Debugging: Auswahl der anzuzeigenden Informationen
@@ -66,9 +70,9 @@ public class Menu implements Constants
 	
 		// Menu-Timer
 		messageTimer, 					// regulieren die Dauer [frames] der Nachrichtenanzeige im Werkstatt-Menü
-			moneyDisplayTimer,			// regulieren die Dauer [frames] der Geld-Anzeige im Spiel
-				crossTimer,					// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem Startscreen
-		unlocked_timer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters 	
+		moneyDisplayTimer,			// regulieren die Dauer [frames] der Geld-Anzeige im Spiel
+		crossTimer,					// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem Startscreen
+		unlockedTimer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 		effectTimer[] = new int[Helicopter.NR_OF_TYPES];	// regulieren die Helikopter-Animationen im Startscreen-Menü
   
 	public static Languages
@@ -76,12 +80,12 @@ public class Menu implements Constants
 	
 	
 	private static HelicopterTypes
-		unlocked_type;					// Typ des freigeschalteten Helicopters
+		unlockedType;					// Typ des freigeschalteten Helicopters
 	
 	public static boolean
 		isMenueVisible,					// = true: Spielmenü ist sichtbar
 		originalResulution = false,
-		highlighted_helicopter = false;
+		highlightedHelicopter = false;
 	
     // Auf dem Startscreen gezeichnete Polygone
     public static Polygon
@@ -104,7 +108,7 @@ public class Menu implements Constants
 		private static final int BONUS_MAX_DISPLAY_TIME = 200;            // Maximale Anzeigezeit des zuletzt erhalten Bonus
 		private static final int CROSS_MAX_DISPLAY_TIME = 60;            // Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
 		private static final int UNLOCKED_DISPLAY_TIME = 300;
-	private static final int ENEMY_HEALTH_BAR_WIDTH = 206;
+		private static final int ENEMY_HEALTH_BAR_WIDTH = 206;
     
     static final String  
     	HELICOPTER_INFOS[][][] = 
@@ -175,28 +179,31 @@ public class Menu implements Constants
     		"Reparaturen",			
     		"Extra-Boni"}};
 
-	public static final String[] THIRD_CANNON = 			{"Third cannon", "Dritte Bordkanone"};
-	static final String SECOND_AND_THIRD_CANNON[] = {"Second and third cannon",
-                               		 "zweite und dritte Boardkanone"};
-	static final String PLAYING_TIME[] =			{"Playing time: ", "Spielzeit: "};
-	static final String LEVEL[] =					{"Level", "Stufe"};
+	public static final String[]
+		THIRD_CANNON = 			{"Third cannon", "Dritte Bordkanone"};
+
+	static final String
+		SECOND_AND_THIRD_CANNON[] = {"Second and third cannon",
+                               		 "zweite und dritte Boardkanone"},
+		PLAYING_TIME[] =			{"Playing time: ", "Spielzeit: "},
+		LEVEL[] =					{"Level", "Stufe"};
         
     // Menu Objects
     public static String
 			repairShopTime;
-	static String highlightedButton = "";
-	static String message[] = new String [4];
+
+    static String
+		highlightedButton = "",
+		message[] = new String [4];
     
     static GradientPaint  [] 
     	myRahmen = 	new GradientPaint[4];	    
     
     public static HashMap<String, Button>
-			inGameButton = new HashMap<>();
-	public static HashMap<String, Button> startscreen_button = new HashMap<>();
-	public static HashMap<String, Button> startscreen_menu_button = new HashMap<>();
-	
-	public static HashMap<String, Button>
-			repairShopButton = new HashMap<>();
+		inGameButton = new HashMap<>(),
+		startscreenButton = new HashMap<>(),
+		startscreenMenuButton = new HashMap<>(),
+		repairShopButton = new HashMap<>();
     
     public static Label label;
 	public static PowerUp[]   collected_PowerUp = new PowerUp [4];
@@ -207,7 +214,7 @@ public class Menu implements Constants
     
     public static void initialize_menu(Helicopter helicopter)
     {
-    	helicopter_selection = (3 + MyMath.random(Helicopter.NR_OF_TYPES-1))
+    	helicopterSelection = (3 + MyMath.random(Helicopter.NR_OF_TYPES-1))
     						   %Helicopter.NR_OF_TYPES;
     	
     	int px1[] = {19 , 19 , 5};
@@ -228,15 +235,15 @@ public class Menu implements Constants
 	    }
     }    
 	    
-    static void paint_GUI(Graphics2D g2d, Helicopter helicopter)
+    static void paintGui(Graphics2D g2d, Helicopter helicopter)
 	{
 		// Werkstatt-Button						
 		if(Events.isRestartWindowVisible)
 		{
-			boolean game_over;
-			game_over = Events.money <= Events.repairFee(helicopter, helicopter.isDamaged)
+			boolean gameOver;
+			gameOver = Events.money <= Events.repairFee(helicopter, helicopter.isDamaged)
 						|| Events.level >= 51;
-			paint_restart_window(g2d, helicopter, game_over);
+			paintRestartWindow(g2d, helicopter, gameOver);
 		}	
 		else
 		{	
@@ -253,7 +260,7 @@ public class Menu implements Constants
 	
 	private static void paintIngameMenue(Graphics2D g2d)
     {      
-    	paint_frame(g2d,363, 77, 256, 231, MyColor.golden);
+    	paintFrame(g2d,363, 77, 256, 231, MyColor.golden);
         g2d.setColor(MyColor.red);
         g2d.setFont(fontProvider.getPlain(25));
         g2d.drawString(Button.MAIN_MENU[language.ordinal()], 422 + (language == ENGLISH ? 6 : 0), 106);
@@ -271,7 +278,7 @@ public class Menu implements Constants
     static void updateStartscreen(Helicopter helicopter, int counter)
 	{    	
     	MyColor.calculateVariableGameColors(counter);
-    	identifyHighlightedButtons(helicopter, startscreen_button);
+    	identifyHighlightedButtons(helicopter, startscreenButton);
         if(crossTimer > CROSS_MAX_DISPLAY_TIME){
 			crossTimer = 0;}
         else if(crossTimer > 0 ){
@@ -285,12 +292,12 @@ public class Menu implements Constants
         	if(effectTimer[i] > 0){
 				effectTimer[i]++;}
         }      	
-		highlighted_helicopter = false;
+		highlightedHelicopter = false;
 		for(int i = 0; i < 4; i++)
 		{
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
-				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopter_selection)%Helicopter.NR_OF_TYPES];
+				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopterSelection)%Helicopter.NR_OF_TYPES];
 				if(effectTimer[Events.nextHelicopterType.ordinal()] == 0)
 				{
 					Audio.playSpecialSound(Events.nextHelicopterType);
@@ -305,11 +312,11 @@ public class Menu implements Constants
 				{
 					Audio.play(Audio.plasma_off);
 				}				
-				highlighted_helicopter = true;
+				highlightedHelicopter = true;
 				break;
 			}			
 		}		
-		if(highlighted_helicopter){helicopter.rotate_propeller(Events.nextHelicopterType, 7);}
+		if(highlightedHelicopter){helicopter.rotatePropeller(Events.nextHelicopterType, 7);}
 		else{Arrays.fill(effectTimer, 0);}
 	}
 
@@ -346,36 +353,37 @@ public class Menu implements Constants
          
         for(int i = 0; i < 4; i++)
         {
-        	if(Events.nextHelicopterType.ordinal() == (helicopter_selection+i)%Helicopter.NR_OF_TYPES && highlighted_helicopter){g2d.setColor(Color.white);}
+        	if(Events.nextHelicopterType.ordinal() == (helicopterSelection +i)%Helicopter.NR_OF_TYPES && highlightedHelicopter){g2d.setColor(Color.white);}
             else{g2d.setColor(MyColor.lightGray);}       	
         	g2d.setFont(fontProvider.getBold(20));
         	
-        	String class_name = HELICOPTER_INFOS[language.ordinal()][(helicopter_selection+i)%Helicopter.NR_OF_TYPES][0] + (language == ENGLISH ? " type" : "-Klasse");
+        	String class_name = HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][0] + (language == ENGLISH ? " type" : "-Klasse");
         	int sw = g2d.getFontMetrics().stringWidth(class_name);        	
         	g2d.drawString(class_name, 30 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE + (206-sw)/2, 225 + STARTSCREEN_HELICOPTER_OFFSET_Y);       
         	
         	g2d.setFont(new Font("Dialog", Font.BOLD, 15));
-            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopter_selection+i)%Helicopter.NR_OF_TYPES][1], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + STARTSCREEN_HELICOPTER_OFFSET_Y);
-            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopter_selection+i)%Helicopter.NR_OF_TYPES][2], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 400 + STARTSCREEN_HELICOPTER_OFFSET_Y);
-            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopter_selection+i)%Helicopter.NR_OF_TYPES][3], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 420 + STARTSCREEN_HELICOPTER_OFFSET_Y);          
+            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][1], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + STARTSCREEN_HELICOPTER_OFFSET_Y);
+            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][2], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 400 + STARTSCREEN_HELICOPTER_OFFSET_Y);
+            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][3], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 420 + STARTSCREEN_HELICOPTER_OFFSET_Y);
             
             if(	helicopterFrame[i].contains(helicopter.destination))
             {
-            	paint_frame(g2d, helicopterFrame[i], MyColor.darkBlue);
+            	paintFrame(g2d, helicopterFrame[i], MyColor.darkBlue);
             }
-            helicopter.paint(g2d, 66 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 262 + STARTSCREEN_HELICOPTER_OFFSET_Y, HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES], 1);
+            helicopter.paint(g2d, 66 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 262 + STARTSCREEN_HELICOPTER_OFFSET_Y, HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES], DAY);
             if(!helicopterFrame[i].contains(helicopter.destination.x, helicopter.destination.y))
             {
-            	paint_frame(g2d, helicopterFrame[i], MyColor.translucentBlack);
+            	paintFrame(g2d, helicopterFrame[i], MyColor.translucentBlack);
             }
-            if(Events.allPlayable || Helicopter.isUnlocked(HelicopterTypes.values()[(helicopter_selection+i)%Helicopter.NR_OF_TYPES]))
+            if(Events.allPlayable || Helicopter.isUnlocked(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]))
             {
             	paint_tickmark(g2d, i, 210, 323, 15, 20);
             }
         }
         
         // die Buttons        
-        for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++){startscreen_button.get(Integer.toString(i)+j).paint(g2d);}}
+        for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++){
+			startscreenButton.get(Integer.toString(i)+j).paint(g2d);}}
                    
         // die grünen Pfeile
         for(int i = 0; i < 2; i++)
@@ -426,18 +434,18 @@ public class Menu implements Constants
         {
         	g2d.drawString(language == ENGLISH ? "Settings" : "Optionen", 40, 55);           
         }
-        else{g2d.drawString(startscreen_menu_button.get(Integer.toString(page)).label, 40, 55);}
+        else{g2d.drawString(startscreenMenuButton.get(Integer.toString(page)).label, 40, 55);}
        
         paint_frame_line(g2d, 26, 67, 971); 
-        paint_frame(g2d, 26, 21, 971, 317); 
+        paintFrame(g2d, 26, 21, 971, 317);
                 
         // die Buttons        
-        boolean loner = startscreen_menu_button.get("1").label.equals("");
+        boolean loner = startscreenMenuButton.get("1").label.equals("");
         for(int m = 0; m < 8; m++)
 		{
-        	startscreen_menu_button.get(Integer.toString(m)).paint(g2d, loner);
+        	startscreenMenuButton.get(Integer.toString(m)).paint(g2d, loner);
         }
-        startscreen_menu_button.get("Cancel").paint(g2d);
+        startscreenMenuButton.get("Cancel").paint(g2d);
         
         if(Events.window == HELICOPTER_TYPES)
         {
@@ -632,7 +640,7 @@ public class Menu implements Constants
 			message[0] = message[1] = message[2] = message[3] = "";
 			messageTimer = 0;
 		}
-		if(!helicopter.isDamaged){helicopter.rotate_propeller(7);}
+		if(!helicopter.isDamaged){helicopter.rotatePropeller(7);}
 	}
 
 	static void 
@@ -651,7 +659,7 @@ public class Menu implements Constants
         g2d.drawString(PLAYING_TIME[language.ordinal()] + repairShopTime, 27, 75);
               
         // Helicopter-Anzeige
-        paint_helicopter_display(g2d, helicopter, 0, 10); //58
+        paintHelicopterDisplay(g2d, helicopter, 0, 10); //58
         
         // Reparatur-Button
         repairShopButton.get("RepairButton").paint(g2d);
@@ -664,7 +672,7 @@ public class Menu implements Constants
         repairShopButton.get("Einsatz").paint(g2d);
                        
         // Die Status-Leiste     
-        paint_frame(g2d, 251, 117, 285, 326);
+        paintFrame(g2d, 251, 117, 285, 326);
         
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
@@ -777,7 +785,7 @@ public class Menu implements Constants
     
     private static void paint_message_frame(Graphics2D g2d)
     {
-    	paint_frame(g2d, 773, 11, 181, 98);
+    	paintFrame(g2d, 773, 11, 181, 98);
     	g2d.setColor(MyColor.golden);
         g2d.setFont(fontProvider.getBold(14));
         for(int i = 0; i < 4; i++){g2d.drawString(message[i], 785, 35 + i * 20); }
@@ -786,20 +794,20 @@ public class Menu implements Constants
 	static void paint_scorescreen(Graphics2D g2d, Helicopter helicopter)
 	{    	
     	// Helikopter-Anzeige
-    	paint_helicopter_display(g2d, helicopter, 0, 5); 	
+    	paintHelicopterDisplay(g2d, helicopter, 0, 5);
     	
     	g2d.setPaint(MyColor.gradientVariableWhite);
         g2d.setFont(fontProvider.getPlain(60));
         String temporary_string = language == ENGLISH ? "Game statistics" : "Spielstatistik"; 
         g2d.drawString((temporary_string), (981-g2d.getFontMetrics().stringWidth(temporary_string))/2, 65);
          
-        paint_frame(g2d, 619, 90, 376, 298); 
+        paintFrame(g2d, 619, 90, 376, 298);
         paint_frame_line(g2d, 621, 140, 372);
         paint_frame_line(g2d, 621, 249, 372);
-        paint_frame(g2d, 297, 90, 250, 200); 
+        paintFrame(g2d, 297, 90, 250, 200);
         
         
-        startscreen_menu_button.get("Cancel").paint(g2d);       
+        startscreenMenuButton.get("Cancel").paint(g2d);
 		
 		if(Events.level > 50)
 		{
@@ -873,8 +881,8 @@ public class Menu implements Constants
 	
 	public static void update_scorescreen(Helicopter helicopter)
 	{		
-    	helicopter.rotate_propeller(7);
-		startscreen_menu_button.get("Cancel").highlighted = startscreen_menu_button.get("Cancel").bounds.contains(helicopter.destination);
+    	helicopter.rotatePropeller(7);
+		startscreenMenuButton.get("Cancel").highlighted = startscreenMenuButton.get("Cancel").bounds.contains(helicopter.destination);
 	}
 	
 	public static String minuten(long spielzeit)
@@ -922,9 +930,9 @@ public class Menu implements Constants
 	
 	private static void update_foreground_displays(Helicopter helicopter)
 	{
-		if(unlocked_timer > 0)
+		if(unlockedTimer > 0)
     	{
-			update_unlocked_info(helicopter);
+			updateUnlockedInfo(helicopter);
 		}		
 	}
 	
@@ -1018,7 +1026,7 @@ public class Menu implements Constants
         if(specialInfoSelection == 1)
 		{
 			info_string = "Kills bis LevelUp: " 
-						  + Events.kills_after_levelup
+						  + Events.killsAfterLevelup
 						  + "/"
 						  + MyMath.kills(Events.level);
 		}
@@ -1134,14 +1142,14 @@ public class Menu implements Constants
 			{
 				paint_time_display(g2d, Events.playingTime
 											 + System.currentTimeMillis()
-											 - Events.time_aktu);
+											 - Events.timeAktu);
 			}
 			else{paint_time_display(g2d, Events.playingTime);}
 		}		
-		if(unlocked_timer > 0)
+		if(unlockedTimer > 0)
     	{
-    		paint_helicopter_display(g2d, helicopter, unlocked_type, 
-    								 unlocked_display_position(unlocked_timer), 
+    		paintHelicopterDisplay(g2d, helicopter, unlockedType,
+    								 unlockedDisplayPosition(unlockedTimer),
     								 -50, false);
 		}		
 	}
@@ -1247,18 +1255,19 @@ public class Menu implements Constants
 		   		+ ":" + (sek%60  > 9?"":"0") + (sek%60);
     }
     
-    static void update_unlocked_info(Helicopter helicopter)
+    static void updateUnlockedInfo(Helicopter helicopter)
 	{    	
-		unlocked_timer--;
-		if(unlocked_timer ==  UNLOCKED_DISPLAY_TIME - 50)
+		unlockedTimer--;
+		if(unlockedTimer ==  UNLOCKED_DISPLAY_TIME - 50)
 		{
 			Audio.play(Audio.cash);
 		}
-		helicopter.rotate_propeller(unlocked_type, 7);		
-		if(unlocked_timer == 0){unlocked_type = null;}
+		helicopter.rotatePropeller(unlockedType, 7);
+		if(unlockedTimer == 0){
+			unlockedType = null;}
 	}
     
-    static int unlocked_display_position(int timer)
+    static int unlockedDisplayPosition(int timer)
 	{
 		if(timer < 50)
 		{
@@ -1271,27 +1280,27 @@ public class Menu implements Constants
 		else return 789;
 	}
     	
-    private static void paint_helicopter_display(Graphics2D g2d, 
-                                                 Helicopter helicopter,
-                                                 int x, int y)
+    private static void paintHelicopterDisplay(Graphics2D g2d,
+											   Helicopter helicopter,
+											   int x, int y)
     {
-    	paint_helicopter_display(g2d, helicopter, helicopter.getType(), x, y, true);
+    	paintHelicopterDisplay(g2d, helicopter, helicopter.getType(), x, y, true);
     }
     
     
-    private static void paint_helicopter_display(Graphics2D g2d, 
-                                                 Helicopter helicopter, 
-                                                 HelicopterTypes helicopter_type,
-                                                 int x, int y, 
-                                                 boolean display_upgrades)
+    private static void paintHelicopterDisplay(Graphics2D g2d,
+											   Helicopter helicopter,
+											   HelicopterTypes helicopter_type,
+											   int x, int y,
+											   boolean display_upgrades)
     {
-        paint_frame(g2d, 26 + x,  85 + y, 200, 173, Events.window != GAME ? null : MyColor.lightestGray);  
+        paintFrame(g2d, 26 + x,  85 + y, 200, 173, Events.window != GAME ? null : MyColor.lightestGray);
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getBold(20));
-        String input_string = HELICOPTER_INFOS [language.ordinal()][helicopter_type.ordinal()][0] + (language == ENGLISH ? " type" : "-Klasse");
-        g2d.drawString(input_string, 28 + x + (196-g2d.getFontMetrics().stringWidth(input_string))/2, 113 + y);  
+        String inputString = HELICOPTER_INFOS [language.ordinal()][helicopter_type.ordinal()][0] + (language == ENGLISH ? " type" : "-Klasse");
+        g2d.drawString(inputString, 28 + x + (196-g2d.getFontMetrics().stringWidth(inputString))/2, 113 + y);
         
-        helicopter.paint(g2d, 59 + x, 141 + y, helicopter_type, 1, !display_upgrades);      
+        helicopter.paint(g2d, 59 + x, 141 + y, helicopter_type, DAY, !display_upgrades);
                 
         paint_frame_line(g2d, 28 + x, 126 + y, 196);
     	paint_frame_line(g2d, 28 + x, 226 + y, 196);
@@ -1303,17 +1312,17 @@ public class Menu implements Constants
         else
         {       	
             g2d.setFont(fontProvider.getBold(18));
-            if(unlocked_timer > UNLOCKED_DISPLAY_TIME - 50)
+            if(unlockedTimer > UNLOCKED_DISPLAY_TIME - 50)
             {
             	g2d.setColor(MyColor.red);
-            	input_string = (language == ENGLISH ? "not available" : "nicht verfügbar");
+            	inputString = (language == ENGLISH ? "not available" : "nicht verfügbar");
             }
             else
             {
             	g2d.setColor(MyColor.darkArrowGreen);
-            	input_string = (language == ENGLISH ? "unlocked" : "freigeschaltet");
+            	inputString = (language == ENGLISH ? "unlocked" : "freigeschaltet");
             }
-            g2d.drawString(input_string, 28 + x + (196-g2d.getFontMetrics().stringWidth(input_string))/2, 249 + y);  
+            g2d.drawString(inputString, 28 + x + (196-g2d.getFontMetrics().stringWidth(inputString))/2, 249 + y);
         }
                
         if(Events.window == REPAIR_SHOP)
@@ -1333,25 +1342,25 @@ public class Menu implements Constants
         }        
     }    
               
-    private static void paint_restart_window(Graphics2D g2d, 
-                                             Helicopter helicopter, 
-                                             boolean game_over)
+    private static void paintRestartWindow(Graphics2D g2d,
+										   Helicopter helicopter,
+										   boolean game_over)
     {   	
     	if(!game_over)
     	{
-    		paint_frame(g2d,363, 147, 256, 111, MyColor.golden);
+    		paintFrame(g2d,363, 147, 256, 111, MyColor.golden);
     	}  
     	else if(Events.level < 51 || helicopter.getType() == HELIOS)
     	{
-    		paint_frame(g2d,363, 112, 256, 146, MyColor.golden);
+    		paintFrame(g2d,363, 112, 256, 146, MyColor.golden);
     	}
     	else if(language == ENGLISH)
     	{
-    		paint_frame(g2d,363, 100, 256, 158, MyColor.golden);
+    		paintFrame(g2d,363, 100, 256, 158, MyColor.golden);
     	}
     	else
     	{
-    		paint_frame(g2d,363, 64, 256, 194, MyColor.golden);
+    		paintFrame(g2d,363, 64, 256, 194, MyColor.golden);
     	}
     	      
         g2d.setFont(fontProvider.getPlain(18));
@@ -1400,17 +1409,17 @@ public class Menu implements Constants
     
 /** Grafical objects **/
     
-    private static void paint_frame(Graphics2D g2d, Rectangle frame, Color filled_color)
+    private static void paintFrame(Graphics2D g2d, Rectangle frame, Color filled_color)
     {  
-    	paint_frame(g2d, frame.x, frame.y, frame.width, frame.height, filled_color);
+    	paintFrame(g2d, frame.x, frame.y, frame.width, frame.height, filled_color);
     }    
     
-    private static void paint_frame(Graphics2D g2d, int left, int top, int width, int height)
+    private static void paintFrame(Graphics2D g2d, int left, int top, int width, int height)
     {
-    	paint_frame(g2d, left, top, width, height, null);
+    	paintFrame(g2d, left, top, width, height, null);
     }
         
-    static void paint_frame(Graphics2D g2d, int left, int top, int width, int height, Color filled_color)
+    static void paintFrame(Graphics2D g2d, int left, int top, int width, int height, Color filled_color)
     {                          
     	myRahmen[0] = new GradientPaint(0, top-1, Color.white, 0, top+4, MyColor.darkestGray, true); 
     	myRahmen[1] = new GradientPaint(0, top+height-1, Color.white, 0, top+height+4, MyColor.darkestGray, true);
@@ -1456,8 +1465,8 @@ public class Menu implements Constants
 	{
 		repairShopButton.get("RepairButton").label = Button.REPAIR[language.ordinal()];
 		repairShopButton.get("RepairButton").second_label = Button.PRICE[language.ordinal()];
-		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay];
-		repairShopButton.get("Einsatz").second_label = Button.SOLD[language.ordinal()][Events.timeOfDay];
+		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()];
+		repairShopButton.get("Einsatz").second_label = Button.SOLD[language.ordinal()][Events.timeOfDay.ordinal()];
 		
 		inGameButton.get("RepairShop").label =  Button.REPAIR_SHOP[language.ordinal()];
 		inGameButton.get("MainMenu").label =    Button.MAIN_MENU[language.ordinal()];
@@ -1468,16 +1477,16 @@ public class Menu implements Constants
 				
 		for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++)
 		{
-			startscreen_button.get(Integer.toString(i)+j).label = 
+			startscreenButton.get(Integer.toString(i)+j).label =
 				Button.STARTSCREEN_BUTTON_LABEL[language.ordinal()][i][j];
 		}}	
 		
 		for(int m = 0; m < 8; m++)
 		{						
-			startscreen_menu_button.get(Integer.toString(m)).label =  
+			startscreenMenuButton.get(Integer.toString(m)).label =
 				Button.STARTSCREEN_MENU_BUTTON[language.ordinal()][2][m];
 		}
-		startscreen_menu_button.get("Cancel").label = Button.CANCEL[language.ordinal()];
+		startscreenMenuButton.get("Cancel").label = Button.CANCEL[language.ordinal()];
 		
 		for(int i = 0; i < 6; i ++)
 		{
@@ -3102,7 +3111,7 @@ public class Menu implements Constants
 		crossTimer = 0;
 		messageTimer = 0;
 		if(just_entered){
-			stopButtonHighlighting(startscreen_button);}
+			stopButtonHighlighting(startscreenButton);}
 	}
 	
 	public static void stopButtonHighlighting(HashMap<String, Button> button)
@@ -3127,7 +3136,7 @@ public class Menu implements Constants
 
 	public static void update_repairShopButtons(Helicopter helicopter)
 	{
-		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay];
+		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()];
 		repairShopButton.get("Einsatz").second_label = Button.SOLD[language.ordinal()][helicopter.spotlight ? 1 : 0];
 		if(helicopter.spotlight)
 		{
@@ -3180,8 +3189,8 @@ public class Menu implements Constants
 	
 	public static void unlock(HelicopterTypes heli_type)
 	{
-		unlocked_type = heli_type;
-		unlocked_timer = UNLOCKED_DISPLAY_TIME;	
+		unlockedType = heli_type;
+		unlockedTimer = UNLOCKED_DISPLAY_TIME;
 	}
 
 	public static void paint(Graphics2D g2d, Controller controller, Helicopter helicopter)
@@ -3189,7 +3198,7 @@ public class Menu implements Constants
 		if(Events.window == GAME)
 		{
 			paint_foreground_displays(g2d, controller, helicopter, controller.show_fps);
-			paint_GUI(g2d, helicopter);		
+			paintGui(g2d, helicopter);
 		}			
 		else if(Events.window == REPAIR_SHOP)
 		{				
@@ -3236,7 +3245,7 @@ public class Menu implements Constants
 		}		
 		else
 		{				
-			identifyHighlightedButtons(helicopter, startscreen_menu_button);
+			identifyHighlightedButtons(helicopter, startscreenMenuButton);
 		}		
 	}
 

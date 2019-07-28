@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.TimesOfDay;
 import de.helicopter_vs_aliens.model.Explosion;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -21,6 +22,8 @@ import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
+import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
@@ -216,17 +219,17 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	this.reset();
     }
     
-    public void paint(Graphics2D g2d, int timeOfDay)
+    public void paint(Graphics2D g2d, TimesOfDay timeOfDay)
     {
     	paint(g2d, this.paintBounds.x, this.paintBounds.y, this.getType(), timeOfDay, false);
     }
     
-    public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay)
+    public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay)
     {
     	paint(g2d, left, top, helicopterType, timeOfDay, false);
     }
     
-    public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, int timeOfDay, boolean unlockedPainting)
+    public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay, boolean unlockedPainting)
     {
     	// die Farben    	
     	if(unlockedPainting)
@@ -299,14 +302,14 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	    	
     	if(!unlockedPainting && this.interphaseGeneratorTimer > this.shiftTime)
     	{    		
-    		this.inputColorCannon = MyColor.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay]);
-    		this.inputColorHull =   MyColor.setAlpha(this.inputColorHull, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay]);
-    		this.inputColorWindow = MyColor.setAlpha(this.inputColorWindow, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay] );
-    		this.inputColorFuss1 =  MyColor.setAlpha(this.inputColorFuss1, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay]);
-    		this.inputColorFuss2 =  MyColor.setAlpha(this.inputColorFuss2, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay]);
-    		this.inputGray = 		MyColor.setAlpha(this.inputGray, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay]);
-    		this.inputLightGray = 	MyColor.setAlpha(this.inputLightGray, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay]);
-    		this.inputLamp = 		MyColor.setAlpha(this.inputLamp, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay]);
+    		this.inputColorCannon = MyColor.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+    		this.inputColorHull =   MyColor.setAlpha(this.inputColorHull, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+    		this.inputColorWindow = MyColor.setAlpha(this.inputColorWindow, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()] );
+    		this.inputColorFuss1 =  MyColor.setAlpha(this.inputColorFuss1, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+    		this.inputColorFuss2 =  MyColor.setAlpha(this.inputColorFuss2, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+    		this.inputGray = 		MyColor.setAlpha(this.inputGray, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+    		this.inputLightGray = 	MyColor.setAlpha(this.inputLightGray, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+    		this.inputLamp = 		MyColor.setAlpha(this.inputLamp, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
     	}   	
     	
     	this.gradientHull = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorHull, 1.65f),
@@ -327,8 +330,8 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	if(!unlockedPainting && this.hasShortrangeRadiation)
         {            
             g2d.setColor(this.enhancedRadiationTimer == 0
-            				? MyColor.radiation[Events.timeOfDay]
-            				: MyColor.enhanced_radiation[Events.timeOfDay]);
+            				? MyColor.radiation[Events.timeOfDay.ordinal()]
+            				: MyColor.enhanced_radiation[Events.timeOfDay.ordinal()]);
             g2d.fillOval(left+(movement_left ? -9 : 35), top+19, 96, 54);
         }
     	    	
@@ -433,7 +436,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     				&& Menu.effectTimer[ROCH.ordinal()] > 0
     				&& Menu.effectTimer[ROCH.ordinal()] < 68))) // 60
         {            
-            g2d.setColor(MyColor.shieldColor[timeOfDay]);
+            g2d.setColor(MyColor.shieldColor[timeOfDay.ordinal()]);
             g2d.fillOval(left+(movement_left ? -9 : 35), top+19, 96, 54);
         }
                
@@ -758,7 +761,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         		this.crashed(explosion);
         	}
     	}
-    	if(this.isRotorSystemActive){this.rotate_propeller(12);}
+    	if(this.isRotorSystemActive){this.rotatePropeller(12);}
     	this.setPaintBounds();
     }
    
@@ -1075,8 +1078,9 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		return hasAllSpecials();
 	}
 	
-	public void rotate_propeller(float rotational_speed){rotate_propeller(this.getType(), rotational_speed);}
-	public void rotate_propeller(HelicopterTypes type, float rotational_speed)
+	public void rotatePropeller(float rotational_speed){
+		rotatePropeller(this.getType(), rotational_speed);}
+	public void rotatePropeller(HelicopterTypes type, float rotational_speed)
     {
     	this.rotorPosition[type.ordinal()] += rotational_speed;
 		if(this.rotorPosition[type.ordinal()] > 360){this.rotorPosition[type.ordinal()] -= 360;}
@@ -1460,8 +1464,8 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 
 	public void menue_paint(Graphics2D g2d, HelicopterTypes helicopterType)
 	{		
-    	this.rotate_propeller(helicopterType, 7);
-    	this.paint(g2d, 692, 360, helicopterType, 1);
+    	this.rotatePropeller(helicopterType, 7);
+    	this.paint(g2d, 692, 360, helicopterType, DAY);
 	}
 
 	public boolean isPowerShieldProtected(Enemy enemy)

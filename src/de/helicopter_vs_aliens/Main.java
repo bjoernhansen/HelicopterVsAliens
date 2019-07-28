@@ -26,7 +26,7 @@ public class Main implements Constants
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = true;
+    	TESTMODE = false;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -63,13 +63,13 @@ public class Main implements Constants
             list.forEach(System.out::println);
             
     
-            dictionary.setLanguage(ENGLISH);
+            dictionary.switchLanguageTo(ENGLISH);
             
             list.forEach(System.out::println);
 
     
     
-            dictionary.setHelicopterType(HELIOS);
+            dictionary.switchHelicopterTypeTo(HELIOS);
     
             list.forEach(System.out::println);
    

@@ -10,9 +10,5 @@ public interface Constants
 	    DISABLED = -1,
 	    READY = 0,
 	    START = 0,
-	    PRE_READY = 1,	    
-
-		// TODO enum für Day/Night machen
-		NIGHT = 0,
-		DAY = 1;
+	    PRE_READY = 1;
 }

@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
+import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
@@ -59,10 +61,9 @@ public class Events implements Constants, BossTypes
 	
 	public static int 
 		level = 1,				// aktuelle Level [1 - 51]
-		max_level = 1,			// höchstes erreichtes Level
-		timeOfDay = 1,			// Tageszeit; = 0: Nacht; = 1: Tag
+		maxLevel = 1,			// höchstes erreichtes Level
 		money = 0, 				// Guthaben
-		kills_after_levelup,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
+		killsAfterLevelup,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
 		lastCreationTimer,	// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
         overallEarnings, 		// Gesamtverdienst
         extraBonusCounter, 		// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
@@ -71,10 +72,10 @@ public class Events implements Constants, BossTypes
         lastMultiKill,		// für die Multi-Kill-Anzeige: Art des letzten Multi-Kill
         commendationTimer,		// reguliert, wie lange die Multi-Kill-Anzeige zu sehen ist
 		heliosMaxMoney;
-	
-    public static long
+
+	public static long
 		playingTime;            		// bisher vergangene Spielzeit
-    	public static long time_aktu;	// Zeitpunkt der letzten Aktualisierung von playing_time
+    	public static long timeAktu;	// Zeitpunkt der letzten Aktualisierung von playing_time
 	
 	public static long
 		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
@@ -87,16 +88,19 @@ public class Events implements Constants, BossTypes
 	
 	public static WindowTypes
 		window = STARTSCREEN;	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
-  
-	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
-	private static boolean 
-		cheating_mode = false;				// = true: Cheat-Modus aktiviert
 
-	private static String 
-		cheat_string = "";					
+	public static TimesOfDay
+		timeOfDay = DAY;		// Tageszeit [DAY, NIGHT]
+
+	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
+	private static boolean
+		cheatingMode = false;				// = true: Cheat-Modus aktiviert
+
+	private static String
+		cheatString = "";
 	
-	private static final String 
-		cheat_code = "+cheats";			// Code, mit welchem Cheats aktiviert werden können
+	private static final String
+		cheatCode = "+cheats";			// Code, mit welchem Cheats aktiviert werden können
 	
 	public static Enemy
 		boss;	// Referenz auf den aktuellen Endgegner
@@ -164,7 +168,7 @@ public class Events implements Constants, BossTypes
 				helicopter.turn_around();
 			}
 		}		
-		else if(cheating_mode)
+		else if(cheatingMode)
 		{			
 			if(e.getKeyChar() == 'e')
 			{
@@ -291,9 +295,12 @@ public class Events implements Constants, BossTypes
 		}
 		else if(CHEATS_ACTIVATABLE)
 		{
-			if(e.getKeyChar() == cheat_code.charAt(cheat_string.length())){cheat_string += e.getKeyChar();}
-			else{cheat_string = "";}
-			if(cheat_string.equals(cheat_code)){cheating_mode = true;}		
+			if(e.getKeyChar() == cheatCode.charAt(cheatString.length())){
+				cheatString += e.getKeyChar();}
+			else{
+				cheatString = "";}
+			if(cheatString.equals(cheatCode)){
+				cheatingMode = true;}
 		}		
 	}
 	
@@ -336,7 +343,7 @@ public class Events implements Constants, BossTypes
 		{
 			startscreenMousePressedLeft(helicopter);
 		}
-		else if(Menu.startscreen_menu_button.get("Cancel").bounds.contains(cursor))
+		else if(Menu.startscreenMenuButton.get("Cancel").bounds.contains(cursor))
 		{
 			cancel(controller.bgObject, helicopter, Controller.savegame);
 		}
@@ -412,7 +419,7 @@ public class Events implements Constants, BossTypes
 				{
 					playingTime = playingTime
 						     	   + System.currentTimeMillis() 
-						           - time_aktu;
+						           - timeAktu;
 					helicopter.scorescreenTimes[4] = playingTime /60000;
 				}				
 							   
@@ -445,7 +452,7 @@ public class Events implements Constants, BossTypes
 			{
 				money -= repairFee(helicopter, helicopter.isDamaged);
 				timeOfDay = (!helicopter.spotlight || MyMath.toss_up(0.33f)) ? DAY : NIGHT;
-				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay];
+				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
 												
 				if(!(level == 50 && helicopter.has_all_upgrades()))
 				{
@@ -455,7 +462,7 @@ public class Events implements Constants, BossTypes
 					Enemy.adaptToLevel(helicopter, level, false);
 					if(level < 6){
 						BackgroundObject.reset(bgObject);}
-					kills_after_levelup = 0;
+					killsAfterLevelup = 0;
 					enemy.get(INACTIVE).addAll(enemy.get(DESTROYED));
 					enemy.get(DESTROYED).clear();
 					Menu.repairShopButton.get("RepairButton").costs = 0;
@@ -501,8 +508,8 @@ public class Events implements Constants, BossTypes
 				Audio.play(Audio.cash);
 				money -= SPOTLIGHT_COSTS;				
 				helicopter.spotlight = true;
-				timeOfDay = NIGHT;				
-				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay];
+				timeOfDay = NIGHT;
+				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
 				Menu.repairShopButton.get("Einsatz").second_label = Button.SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
 				Menu.repairShopButton.get("Special" + 0).costs = 0;
 				for(Enemy e : enemy.get(DESTROYED))
@@ -693,14 +700,14 @@ public class Events implements Constants, BossTypes
 		{
 			Menu.crossPosition = (Menu.crossPosition + 1)%Helicopter.NR_OF_TYPES;
 			Menu.cross = Menu.getCrossPolygon();
-			Menu.helicopter_selection = (Menu.helicopter_selection + Helicopter.NR_OF_TYPES - 1)%Helicopter.NR_OF_TYPES;
+			Menu.helicopterSelection = (Menu.helicopterSelection + Helicopter.NR_OF_TYPES - 1)%Helicopter.NR_OF_TYPES;
 			Audio.play(Audio.choose);
 		}
 		else if(Menu.triangle[1].contains(cursor))
 		{
 			Menu.crossPosition = (Menu.crossPosition + Helicopter.NR_OF_TYPES - 1)%Helicopter.NR_OF_TYPES;
 			Menu.cross = Menu.getCrossPolygon();
-			Menu.helicopter_selection = (Menu.helicopter_selection + 1)%Helicopter.NR_OF_TYPES;
+			Menu.helicopterSelection = (Menu.helicopterSelection + 1)%Helicopter.NR_OF_TYPES;
 			Audio.play(Audio.choose);
 		}
 		else if(Menu.helicopterFrame[0].contains(cursor)||
@@ -715,35 +722,35 @@ public class Events implements Constants, BossTypes
 			else
 			{
 				Audio.play(Audio.block);
-				Menu.crossPosition = (Events.nextHelicopterType.ordinal() - Menu.helicopter_selection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
+				Menu.crossPosition = (Events.nextHelicopterType.ordinal() - Menu.helicopterSelection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
 				Menu.cross = Menu.getCrossPolygon();
 				Menu.crossTimer = 1;
 				Menu.messageTimer = 1;
 				Menu.setStartscreenMessage(Events.nextHelicopterType);
 			}
 		}
-		else if(Menu.startscreen_button.get("00").bounds.contains(cursor))
+		else if(Menu.startscreenButton.get("00").bounds.contains(cursor))
 		{			
 			newStartscreenMenuWindow(INFORMATIONS, true);
-			Menu.startscreen_menu_button.get("2").marked = true;
+			Menu.startscreenMenuButton.get("2").marked = true;
 		}
-		else if(Menu.startscreen_button.get("01").bounds.contains(cursor))
+		else if(Menu.startscreenButton.get("01").bounds.contains(cursor))
 		{			
 			newStartscreenMenuWindow(HIGHSCORE, true);
 		}
-		else if(Menu.startscreen_button.get("02").bounds.contains(cursor))
+		else if(Menu.startscreenButton.get("02").bounds.contains(cursor))
 		{			
 			newStartscreenMenuWindow(CONTACT, true);
 		}
-		else if(Menu.startscreen_button.get("10").bounds.contains(cursor))
+		else if(Menu.startscreenButton.get("10").bounds.contains(cursor))
 		{			
 			newStartscreenMenuWindow(SETTINGS, true);
 			if(HighscoreEntry.currentPlayerName.equals("John Doe"))
 			{
-				Menu.startscreen_menu_button.get("4").marked = true;
+				Menu.startscreenMenuButton.get("4").marked = true;
 			}
 		}
-		else if(Menu.startscreen_button.get("11").bounds.contains(cursor))
+		else if(Menu.startscreenButton.get("11").bounds.contains(cursor))
 		{
 			if(Controller.savegame.valid)
 			{
@@ -752,7 +759,7 @@ public class Events implements Constants, BossTypes
 			}
 			else{Audio.play(Audio.block);}			
 		}		
-		else if(Menu.startscreen_button.get("12").bounds.contains(cursor))
+		else if(Menu.startscreenButton.get("12").bounds.contains(cursor))
 		{					
 			Controller.shutDown();
 		}		
@@ -767,7 +774,7 @@ public class Events implements Constants, BossTypes
 			savegame.saveInHighscore();
 			restart_game(helicopter, bgObject);	
 			savegame.saveToFile(helicopter, false);
-			Menu.startscreen_menu_button.get("Cancel").highlighted = false;
+			Menu.startscreenMenuButton.get("Cancel").highlighted = false;
 		}
 		else if(window == DESCRIPTION)
 		{
@@ -775,25 +782,25 @@ public class Events implements Constants, BossTypes
 				Menu.label.setBounds(Main.displayShift.width  + 42,
 													   Main.displayShift.height + 83, 940, 240);}
 			newStartscreenMenuWindow(INFORMATIONS, false);
-			Menu.startscreen_menu_button.get("2").marked = true;
-			Menu.startscreen_menu_button.get("6").marked = false;
+			Menu.startscreenMenuButton.get("2").marked = true;
+			Menu.startscreenMenuButton.get("6").marked = false;
 		}
 		else if(window == HELICOPTER_TYPES)
 		{
 			if(Menu.page == 1){
 				Menu.label.setVisible(true);}
 			newStartscreenMenuWindow(DESCRIPTION, false);
-			Menu.startscreen_menu_button.get("6").marked = true;
+			Menu.startscreenMenuButton.get("6").marked = true;
 		}
 		else
 		{
 			if(window == INFORMATIONS)
 			{
-				Menu.startscreen_menu_button.get("2").marked = false;
+				Menu.startscreenMenuButton.get("2").marked = false;
 			}
 			else if(window == SETTINGS)
 			{
-				Menu.startscreen_menu_button.get("4").marked = false;
+				Menu.startscreenMenuButton.get("4").marked = false;
 				HighscoreEntry.checkName(savegame);										
 				if(settingsChanged)
 				{					
@@ -802,7 +809,7 @@ public class Events implements Constants, BossTypes
 				}
 			}
 			Menu.label.setVisible(false);
-			Menu.stopButtonHighlighting(Menu.startscreen_menu_button);
+			Menu.stopButtonHighlighting(Menu.startscreenMenuButton);
 			window = STARTSCREEN;
 		}
 	}
@@ -813,7 +820,7 @@ public class Events implements Constants, BossTypes
 	{
 		for(int m = 0; m < 8; m++)
 		{
-			Button current_button = Menu.startscreen_menu_button.get(Integer.toString(m));
+			Button current_button = Menu.startscreenMenuButton.get(Integer.toString(m));
 			if(	 current_button.bounds.contains(cursor) && 
 				 !current_button.label.equals("") && 
 				(Menu.page != m || window == SETTINGS))
@@ -841,13 +848,13 @@ public class Events implements Constants, BossTypes
 				if(window == INFORMATIONS && Menu.page == 2)
 				{							
 					newStartscreenMenuWindow(DESCRIPTION, false);	
-					Menu.startscreen_menu_button.get("2").marked = false;
-					Menu.startscreen_menu_button.get("6").marked = true;
+					Menu.startscreenMenuButton.get("2").marked = false;
+					Menu.startscreenMenuButton.get("6").marked = true;
 				}
 				else if(window == DESCRIPTION && Menu.page == 6)
 				{
 					newStartscreenMenuWindow(HELICOPTER_TYPES, false);
-					Menu.startscreen_menu_button.get("6").marked = false;
+					Menu.startscreenMenuButton.get("6").marked = false;
 				}
 				else if(window == SETTINGS)
 				{					
@@ -964,7 +971,7 @@ public class Events implements Constants, BossTypes
 		if(new_game){reset();}
 		else{restore(savegame);}
 		changeWindow(GAME);	
-		time_aktu = System.currentTimeMillis();			
+		timeAktu = System.currentTimeMillis();
 		for(int i =  level - ((level - 1) % 5); i <= level; i++)
 		{
 			Enemy.adaptToLevel(helicopter, i, false);
@@ -976,7 +983,7 @@ public class Events implements Constants, BossTypes
 	{
 		money = 0;
 		level = 1;
-		max_level = 1;
+		maxLevel = 1;
 		timeOfDay = DAY;
 		overallEarnings = 0;
 		extraBonusCounter = 0;
@@ -987,9 +994,9 @@ public class Events implements Constants, BossTypes
 	private static void restore(Savegame savegame)
 	{
 		money = savegame.money;
-		kills_after_levelup = savegame.kills_after_levelup;
+		killsAfterLevelup = savegame.kills_after_levelup;
 		level = savegame.level;
-		max_level = savegame.max_level;
+		maxLevel = savegame.max_level;
 		timeOfDay = savegame.timeOfDay;
 		overallEarnings = savegame.bonus_counter;
 		extraBonusCounter = savegame.extra_bonus_counter;					
@@ -1017,7 +1024,7 @@ public class Events implements Constants, BossTypes
 		lastBonus = 0;
 		Menu.moneyDisplayTimer = DISABLED;
 		Menu.level_display_timer = START;
-		Menu.unlocked_timer = 0;
+		Menu.unlockedTimer = 0;
 				
 		// kein "active enemy"-Reset, wenn Bossgegner 2 Servants aktiv
 		if(!controller.enemy.get(ACTIVE).isEmpty()
@@ -1052,7 +1059,7 @@ public class Events implements Constants, BossTypes
 		}
 		if(total_reset)
 		{
-			kills_after_levelup = 0;
+			killsAfterLevelup = 0;
 			controller.enemy.get(INACTIVE).addAll(controller.enemy.get(DESTROYED));
 			controller.enemy.get(DESTROYED).clear();
 			if(level < 6){
@@ -1089,7 +1096,7 @@ public class Events implements Constants, BossTypes
 			Audio.play(Audio.applause1);
 			savegame.saveInHighscore();
 		}
-		Menu.stopButtonHighlighting(Menu.startscreen_button);
+		Menu.stopButtonHighlighting(Menu.startscreenButton);
 		Menu.cross = null;
 		Menu.crossTimer = 0;
 		Menu.messageTimer = 0;
@@ -1115,7 +1122,7 @@ public class Events implements Constants, BossTypes
 	{		
 		changeWindow(GAME);		
 		Audio.play(Audio.choose);	
-		time_aktu = System.currentTimeMillis();
+		timeAktu = System.currentTimeMillis();
 		helicopter.rotorPosition[helicopter.getType().ordinal()] = 0;
 		Controller.savegame.saveToFile(helicopter, true);
 	}
@@ -1125,7 +1132,7 @@ public class Events implements Constants, BossTypes
 		changeWindow(REPAIR_SHOP);		
 		
 		Audio.applause1.stop();
-		playingTime += System.currentTimeMillis() - time_aktu;
+		playingTime += System.currentTimeMillis() - timeAktu;
 		Menu.repairShopTime = Menu.returnTimeDisplayText(playingTime);
 		helicopter.setPlatingColor();					
 		if(helicopter.currentPlating < helicopter.max_plating())
@@ -1157,7 +1164,7 @@ public class Events implements Constants, BossTypes
 	private static void newStartscreenMenuWindow(WindowTypes new_window, boolean hasJustEntered)
 	{
 		if(hasJustEntered){
-			Menu.stopButtonHighlighting(Menu.startscreen_button);}
+			Menu.stopButtonHighlighting(Menu.startscreenButton);}
 		Audio.play(Audio.choose);		
 		window = new_window;
 		Menu.adaptToNewWindow(hasJustEntered);
@@ -1167,7 +1174,7 @@ public class Events implements Constants, BossTypes
 	// überprüfen, ob Level-Up Voraussetzungen erfüll. Wenn ja: Schwierigkeitssteigerung
 	static void checkForLevelup(Controller controller, Helicopter helicopter)
 	{
-		if( kills_after_levelup >= MyMath.kills(level) && level < 50)
+		if( killsAfterLevelup >= MyMath.kills(level) && level < 50)
 		{
 			level_up(controller, 1);
 		}
@@ -1182,14 +1189,14 @@ public class Events implements Constants, BossTypes
 					? Audio.level_up 
 					: Audio.applause1);
 				
-		kills_after_levelup = 0;
+		killsAfterLevelup = 0;
 		int previous_level = level;
 		level += nr_of_levelUp;	
 				
 		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemy, controller.explosion);}
-		if(helicopter.getType() == HELIOS && level > max_level){getHeliosIncome(previous_level);}
+		if(helicopter.getType() == HELIOS && level > maxLevel){getHeliosIncome(previous_level);}
 		
-		max_level = level;
+		maxLevel = level;
 		
 		if(	isBossLevel() || isBossLevel(previous_level) || level == 49)
 		{
@@ -1203,7 +1210,7 @@ public class Events implements Constants, BossTypes
 	private static void getHeliosIncome(int previous_level)
 	{
 		int bonus_sum = 0;
-		for(int i = Math.max(previous_level, max_level); i < level; i++)
+		for(int i = Math.max(previous_level, maxLevel); i < level; i++)
 		{
 			bonus_sum += (int)((i/1225f)* heliosMaxMoney);
 		}
@@ -1216,11 +1223,16 @@ public class Events implements Constants, BossTypes
 	// Stellt sicher, dass mit dem Besiegen des End-Gegners direkt das nächste Level erreicht wird
 	public static void setBossLevelUpConditions()
 	{
-			 if(level == 10){kills_after_levelup = 14;}
-		else if(level == 20){kills_after_levelup = 7;}
-		else if(level == 30){kills_after_levelup = 24;}
-		else if(level == 40){kills_after_levelup = 29;}
-		else if(level == 50){kills_after_levelup = 34;}
+			 if(level == 10){
+				 killsAfterLevelup = 14;}
+		else if(level == 20){
+				 killsAfterLevelup = 7;}
+		else if(level == 30){
+				 killsAfterLevelup = 24;}
+		else if(level == 40){
+				 killsAfterLevelup = 29;}
+		else if(level == 50){
+				 killsAfterLevelup = 34;}
 	}
 	
 	// Bonus-Verdienst bei Multi-Kill
@@ -1247,12 +1259,12 @@ public class Events implements Constants, BossTypes
 		{
 			Menu.isMenueVisible = true;
 			BackgroundObject.background_moves = false;
-			playingTime += System.currentTimeMillis() - time_aktu;
+			playingTime += System.currentTimeMillis() - timeAktu;
 		}
 		else
 		{
 			Menu.isMenueVisible = false;
-			time_aktu = System.currentTimeMillis();
+			timeAktu = System.currentTimeMillis();
 			if(helicopter.isOnTheGround())
 			{
 				helicopter.set_activation_state(false);
@@ -1269,7 +1281,7 @@ public class Events implements Constants, BossTypes
 		STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][2][2] = Button.MUSIC[ENGLISH.ordinal()][Audio.isSoundOn ? 0 : 1];
 		STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][2][2] = Button.MUSIC[GERMAN.ordinal()][Audio.isSoundOn ? 0 : 1];
 		Menu.inGameButton.get("MMStopMusic").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
-		Menu.startscreen_menu_button.get("2").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
+		Menu.startscreenMenuButton.get("2").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
 	}
 	
 	
@@ -1278,7 +1290,7 @@ public class Events implements Constants, BossTypes
 	public static void determineHighscoreTimes(Helicopter helicopter)
 	{
 		int boss_nr = get_boss_nr();
-		long highscore_time = (playingTime + System.currentTimeMillis() - time_aktu)/60000;
+		long highscore_time = (playingTime + System.currentTimeMillis() - timeAktu)/60000;
 		helicopter.scorescreenTimes[boss_nr] = highscore_time;
 				
 		if(helicopter.isPlayedWithoutCheats || SAVE_ANYWAY)

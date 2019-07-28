@@ -34,8 +34,8 @@ public final class Dictionary
     public Dictionary(Languages language, HelicopterTypes helicopterType)
     {
         loadDefaultLanguageProperties();
-        this.setLanguage(language);
-        this.setHelicopterType(helicopterType);
+        this.switchLanguageTo(language);
+        this.switchHelicopterTypeTo(helicopterType);
     }
 
     private void loadDefaultLanguageProperties()
@@ -62,23 +62,12 @@ public final class Dictionary
         }
     }
 
-    private void accountForLanguageChange()
+    private String getFilename(Languages language)
     {
-        specialUpgrades.clear();
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.spotlight"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.goliath"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.warheads"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.secondcannon"));
-        accountForHelicopterChange();
+        return FILENAME_PREFIX + language.getCode() + FILENAME_EXTENSION;
     }
-    
-    private void accountForHelicopterChange()
-    {
-        specialUpgrades.set(4, this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade()));
-    }
-    
 
-    public void setLanguage(Languages language)
+    public void switchLanguageTo(Languages language)
     {
         if(this.language != language)
         {
@@ -88,13 +77,33 @@ public final class Dictionary
         }
     }
 
-    public void setHelicopterType(HelicopterTypes helicopterType)
+    public void switchHelicopterTypeTo(HelicopterTypes helicopterType)
     {
         if(this.helicopterType != helicopterType)
         {
             this.helicopterType = helicopterType;
             accountForHelicopterChange();
         }
+    }
+
+    private void accountForLanguageChange()
+    {
+        specialUpgrades.clear();
+        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.spotlight"));
+        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.goliath"));
+        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.warheads"));
+        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.secondcannon"));
+        specialUpgrades.add(determineFifthSpacial());
+    }
+
+    private void accountForHelicopterChange()
+    {
+        specialUpgrades.set(4, determineFifthSpacial());
+    }
+
+    private String determineFifthSpacial()
+    {
+        return this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade());
     }
 
     public List<String> getSpecialUpgrades()
@@ -105,10 +114,5 @@ public final class Dictionary
     public String getWord(String key)
     {
         return this.languageProperties.getProperty(key);
-    }
-    
-    private String getFilename(Languages language)
-    {
-        return FILENAME_PREFIX + language.getCode() + FILENAME_EXTENSION;
     }
 }

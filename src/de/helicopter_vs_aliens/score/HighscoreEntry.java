@@ -87,13 +87,13 @@ public class HighscoreEntry implements Serializable
 			{
 				if(currentPlayerName.equals("John Doe"))
 				{
-					Menu.startscreen_menu_button.get("4").marked = true;
-					Menu.startscreen_button.get("10").marked = true;
+					Menu.startscreenMenuButton.get("4").marked = true;
+					Menu.startscreenButton.get("10").marked = true;
 				}
 				else
 				{
-					Menu.startscreen_menu_button.get("4").marked = false;
-					Menu.startscreen_button.get("10").marked = false;
+					Menu.startscreenMenuButton.get("4").marked = false;
+					Menu.startscreenButton.get("10").marked = false;
 				}
 				savegame.currentPlayerName = currentPlayerName;
 				Events.settingsChanged = true;

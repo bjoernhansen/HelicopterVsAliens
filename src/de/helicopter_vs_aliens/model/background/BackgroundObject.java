@@ -19,6 +19,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundTypes.*;
 
 public class BackgroundObject extends MovingObject
@@ -182,13 +183,13 @@ public class BackgroundObject extends MovingObject
     	// Kaktus
         if(this.type == CACTUS)
         {        	
-        	g2d.drawImage(CACTUS_IMG[Events.timeOfDay], (int) this.x, 235, null);
+        	g2d.drawImage(CACTUS_IMG[Events.timeOfDay.ordinal()], (int) this.x, 235, null);
         }
         
         // Steine
         if(this.type == STONE)
         { 
-        	g2d.setPaint(MyColor.gradientStones[Events.timeOfDay]);
+        	g2d.setPaint(MyColor.gradientStones[Events.timeOfDay.ordinal()]);
             g2d.fillOval( (int)(this.x + this.coordOfComponents[0][0]), 
             			  400 + this.coordOfComponents[0][1],
             			  this.coordOfComponents[0][2], 
@@ -198,7 +199,7 @@ public class BackgroundObject extends MovingObject
         // Berge im Hintergrund in Bodenfarbe
         if(this.type == HILL)
         {        	
-        	g2d.setPaint(MyColor.gradientHills[Events.timeOfDay]);
+        	g2d.setPaint(MyColor.gradientHills[Events.timeOfDay.ordinal()]);
             g2d.fillArc( (int)(this.x + this.coordOfComponents[0][0]), 
             			 400 + this.coordOfComponents[0][1], 
             			 this.coordOfComponents[0][2], 
@@ -212,15 +213,15 @@ public class BackgroundObject extends MovingObject
         // Sand
         if(this.type == DESERT)
         {
-        	g2d.drawImage(this.image[Events.timeOfDay], (int)this.x, 426, null);
+        	g2d.drawImage(this.image[Events.timeOfDay.ordinal()], (int)this.x, 426, null);
         }
         
         // Palme
         if(this.type == PALM)
         {
-        	g2d.drawImage( this.image[Events.timeOfDay], (int)(this.x + 110), 
+        	g2d.drawImage( this.image[Events.timeOfDay.ordinal()], (int)(this.x + 110),
         				   350 - this.coordOfComponents[0][0], null);
-        	g2d.drawImage( PALM_CROWN_IMG[Events.timeOfDay], (int)this.x, 
+        	g2d.drawImage( PALM_CROWN_IMG[Events.timeOfDay.ordinal()], (int)this.x,
         				   340 - this.coordOfComponents[0][0], null);        	
         }
     }    
@@ -351,7 +352,7 @@ public class BackgroundObject extends MovingObject
         }
         
         // Wolke
-        g2d.setPaint(MyColor.gradientCloud[Events.timeOfDay]);
+        g2d.setPaint(MyColor.gradientCloud[Events.timeOfDay.ordinal()]);
         g2d.fillOval((int) cloud_x      , 51,  82, 45);                           
         g2d.fillOval((int)(cloud_x + 41), 63, 150, 60);                               
         g2d.fillOval((int)(cloud_x + 68), 40,  60, 53); 
@@ -537,7 +538,7 @@ public class BackgroundObject extends MovingObject
 	public static void paintForeground(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> bgObject)
 	{
 		// der Boden
-		g2d.setPaint(MyColor.gradientGround[Events.timeOfDay]);
+		g2d.setPaint(MyColor.gradientGround[Events.timeOfDay.ordinal()]);
         g2d.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
         
         // Objekte vor dem Helikopter

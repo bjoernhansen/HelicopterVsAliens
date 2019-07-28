@@ -151,7 +151,7 @@ public class Button implements Constants
 	static void initialize_buttons(Helicopter helicopter)
 	{
 		Menu.repairShopButton.put("RepairButton", new Button(23, 287, 205, 50, REPAIR[Menu.language.ordinal()], PRICE[Menu.language.ordinal()], true, true));
-		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay], SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0], false, true));
+		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()], SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0], false, true));
 		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, REPAIR_SHOP[Menu.language.ordinal()], null, false, false));
 		Menu.inGameButton.put("MainMenu",     new Button(897, 431, 121, 25, MAIN_MENU[Menu.language.ordinal()], null, false, false));
 		Menu.inGameButton.put("MMNewGame1",   new Button(385, 116, 211, 35, START_NEW_GAME[Menu.language.ordinal()], null, false, false));
@@ -161,7 +161,7 @@ public class Button implements Constants
 				
 		for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++)
 		{
-			Menu.startscreen_button.put( Integer.toString(i)+j, 
+			Menu.startscreenButton.put( Integer.toString(i)+j,
 										 new Button(  27 + Menu.STARTSCREEN_OFFSET_X + i * 750, 
 												 	 110 + j * 40, 211, 30, 
 												 	 STARTSCREEN_BUTTON_LABEL[Menu.language.ordinal()][i][j], 
@@ -184,25 +184,25 @@ public class Button implements Constants
 		for(int m = 0; m < 8; m++)
 		{				
 			int i = m/2, j = m%2;			
-			Menu.startscreen_menu_button.put(Integer.toString(m), new Button( 23 + i * 160, 370 + j * 40, 150, 30, "", null, false, true));
+			Menu.startscreenMenuButton.put(Integer.toString(m), new Button( 23 + i * 160, 370 + j * 40, 150, 30, "", null, false, true));
 		}
 				
-		Menu.startscreen_button.get("11").marked = true;   // Der "Letztes Spiel fortsetzen"-Button ist markiert 
-		Menu.startscreen_button.get("11").enabled = Controller.savegame.valid;
+		Menu.startscreenButton.get("11").marked = true;   // Der "Letztes Spiel fortsetzen"-Button ist markiert
+		Menu.startscreenButton.get("11").enabled = Controller.savegame.valid;
 		
-		Menu.startscreen_menu_button.put("Cancel", new Button( 849, 410, 150, 30, CANCEL[Menu.language.ordinal()], null, false, true));
+		Menu.startscreenMenuButton.put("Cancel", new Button( 849, 410, 150, 30, CANCEL[Menu.language.ordinal()], null, false, true));
 		
 				
 		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
 		{
-			Menu.startscreen_button.get("10").marked = true;
+			Menu.startscreenButton.get("10").marked = true;
 		}
 	}
     
 	// Helicopter-spezifische Anpassung der Werkstatt-Button-Beschriftungen
 	public static void initialize(Helicopter helicopter)
 	{
-		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay];
+		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
 		Menu.repairShopButton.get("Einsatz").second_label = SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
 		
 		for(int i = 0; i < 6; i++)
@@ -300,7 +300,7 @@ public class Button implements Constants
 	{
 		for(int m = 0; m < 8; m++)
 		{
-			Menu.startscreen_menu_button.get(Integer.toString(m)).label = STARTSCREEN_MENU_BUTTON[Menu.language.ordinal()][window.ordinal()][m];
+			Menu.startscreenMenuButton.get(Integer.toString(m)).label = STARTSCREEN_MENU_BUTTON[Menu.language.ordinal()][window.ordinal()][m];
 		}
 	}
 }	

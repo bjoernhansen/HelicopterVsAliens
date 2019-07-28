@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.score;
 import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.TimesOfDay;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
@@ -38,7 +39,6 @@ public class Savegame implements Constants, Serializable
 		kills_after_levelup,
 		level, 
 		max_level,
-		timeOfDay, 
 		bonus_counter,
 		extra_bonus_counter,		
 		enemies_seen, 
@@ -83,6 +83,9 @@ public class Savegame implements Constants, Serializable
 	
 	public Languages
 		language;
+
+	public TimesOfDay
+		timeOfDay;
 		
 		
 	private Savegame()
@@ -138,7 +141,7 @@ public class Savegame implements Constants, Serializable
 	public void saveToFile(Helicopter helicopter, boolean validity)
 	{				
 		this.save(helicopter, validity);
-		Menu.startscreen_button.get("11").enabled = validity;
+		Menu.startscreenButton.get("11").enabled = validity;
 		writeToFile();			
 	}
 		
@@ -165,9 +168,9 @@ public class Savegame implements Constants, Serializable
 		this.originalResulution = Menu.originalResulution;
 		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
-		this.kills_after_levelup = Events.kills_after_levelup;
+		this.kills_after_levelup = Events.killsAfterLevelup;
 		this.level = Events.level;
-		this.max_level = Events.max_level;
+		this.max_level = Events.maxLevel;
 		this.timeOfDay = Events.timeOfDay;
 		this.bonus_counter = Events.overallEarnings;
 		this.extra_bonus_counter = Events.extraBonusCounter;
