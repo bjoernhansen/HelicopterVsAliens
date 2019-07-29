@@ -470,7 +470,7 @@ public class Events implements Constants, BossTypes
 				}
 				else
 				{
-					Enemy.bossSelection = -7;
+					Enemy.bossSelection = FINAL_BOSS;
 					Enemy.maxNr = 1;
 					Enemy.maxBarrierNr = 0;
 				}
@@ -1033,7 +1033,7 @@ public class Events implements Constants, BossTypes
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
 			{
-				Enemy.bossSelection = level == 40 ? -4 : -7;
+				Enemy.bossSelection = level == 40 ? BOSS_4 : FINAL_BOSS;
 				Enemy.maxNr = 1;
 				Enemy.maxBarrierNr = 0;
 			}			

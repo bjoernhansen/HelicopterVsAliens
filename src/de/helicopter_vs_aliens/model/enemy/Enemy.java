@@ -1430,7 +1430,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 											   ArrayList<LinkedList<Enemy>> enemy)
     {
     	makeAllBoss5Servants = false;
-    	for(int i = -8; i > -13; i--)
+    	for(int i = SMALL_SHIELD_MAKER; i >=PROTECTOR; i--)
     	{
     		bossSelection = i;
     		creation(helicopter, enemy);
@@ -3169,7 +3169,8 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	}
     
 	private static int id(int type)
-	{		
+	{
+		// TODO entsprechend anpassen, wenn BossTypes enum wird
 		return -type-8;
 	}	
 		
