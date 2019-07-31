@@ -1,31 +1,29 @@
 package de.helicopter_vs_aliens.model.missile;
-import java.awt.Color;
-import java.awt.Graphics2D;
+
+import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.util.MyColor;
+import de.helicopter_vs_aliens.util.MyMath;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
-import de.helicopter_vs_aliens.model.MovingObject;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.enemy.BossTypes;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
-
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.TIT;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PHOENIX;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.ROCH;
+import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_2_SERVANT;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
-public class Missile extends MovingObject implements MissileTypes, BossTypes
+public class Missile extends MovingObject implements MissileTypes
 {	
 	private static final float
 		POWERUP_DAMAGE_FACTOR = 3f,				// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
@@ -36,7 +34,7 @@ public class Missile extends MovingObject implements MissileTypes, BossTypes
 		type,
 		dmg,			// Schaden, den die Rakete beim Gegner anrichtet, wenn sie trifft
 		kills, 			// nur für Roch- und Orochi Klasse: mit dieser Rakete vernichtete Gegner
-		earned_money;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
+		earnedMoney;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
 	
 	public double 
 		speed;			// Geschwindigkeit der Rakete
@@ -52,12 +50,12 @@ public class Missile extends MovingObject implements MissileTypes, BossTypes
 	public HashMap<Integer, Enemy> 
 		hits = new HashMap<> ();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
 	
-	private int 
-		sister_kills,			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n) 
-		nr_of_hitting_sisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
+	private int
+		sisterKills,			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
+		nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
 	
-	private long 
-		launching_time; 		// nur für Phönix-Klasse relevant
+	private long
+		launchingTime; 		// nur für Phönix-Klasse relevant
 	
 	private boolean 
 		flying;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
@@ -85,13 +83,13 @@ public class Missile extends MovingObject implements MissileTypes, BossTypes
 		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
 		{
 			this.kills = 0;
-			this.earned_money = 0;
-			this.sister_kills = 0;
-			this.nr_of_hitting_sisters = 0;			
+			this.earnedMoney = 0;
+			this.sisterKills = 0;
+			this.nrOfHittingSisters = 0;
 		}
 		else if(helicopter.getType() == PHOENIX)
 		{
-			this.launching_time = System.currentTimeMillis();
+			this.launchingTime = System.currentTimeMillis();
 		}		
 	}
 	
@@ -211,7 +209,7 @@ public class Missile extends MovingObject implements MissileTypes, BossTypes
 					e.die(controller, helicopter, this, false);
 					if (helicopter.getType() == PHOENIX
 						&& helicopter.bonusKillsTimer > 0
-						&& this.launching_time > helicopter.pastTeleportTime)
+						&& this.launchingTime > helicopter.pastTeleportTime)
 					{
 						Events.extra_reward(1,
 							e.strength
@@ -303,40 +301,40 @@ public class Missile extends MovingObject implements MissileTypes, BossTypes
 		{
 			if(this.sister[0] == null && this.sister[1] == null)
 			{							
-				if(this.kills + this.sister_kills > 1)
+				if(this.kills + this.sisterKills > 1)
 				{
 					if(helicopter.getType() == ROCH)
 					{										
-						Events.extra_reward(this.kills + this.sister_kills, this.earned_money, 0.5f, 0.75f, 3.0f);
+						Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 0.5f, 0.75f, 3.0f);
 					}
 					else if(helicopter.getType() == OROCHI)
 					{
-						int non_failed_shots = (this.kills > 0 ? 1 : 0) + this.nr_of_hitting_sisters;
+						int non_failed_shots = (this.kills > 0 ? 1 : 0) + this.nrOfHittingSisters;
 						if(non_failed_shots == 1)
 						{										
-							Events.extra_reward(this.kills + this.sister_kills, this.earned_money, 0.25f, 0.0f, 0.25f);
+							Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 0.25f, 0.0f, 0.25f);
 						}
 						if(non_failed_shots == 2)
 						{										
-							Events.extra_reward(this.kills + this.sister_kills, this.earned_money, 1.5f, 0.0f, 1.5f);
+							Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 1.5f, 0.0f, 1.5f);
 						}
 						else if(non_failed_shots == 3)
 						{										
-							Events.extra_reward(this.kills + this.sister_kills, this.earned_money, 4f, 0.0f, 4f);
+							Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 4f, 0.0f, 4f);
 						}
 						else assert false;
 					}	
 				}
 			}
-			else if(this.kills + this.sister_kills > 0)
+			else if(this.kills + this.sisterKills > 0)
 			{
 				for(int j = 0; true; j++)
 				{
 					if(this.sister[j] != null)
 					{
-						this.sister[j].earned_money += this.earned_money;
-						this.sister[j].sister_kills += this.kills + this.sister_kills;
-						this.sister[j].nr_of_hitting_sisters += ((this.kills > 0 ? 1 : 0) + this.nr_of_hitting_sisters);
+						this.sister[j].earnedMoney += this.earnedMoney;
+						this.sister[j].sisterKills += this.kills + this.sisterKills;
+						this.sister[j].nrOfHittingSisters += ((this.kills > 0 ? 1 : 0) + this.nrOfHittingSisters);
 						break;
 					}
 				}							
@@ -363,7 +361,7 @@ public class Missile extends MovingObject implements MissileTypes, BossTypes
 	public void credit()
 	{
 		this.kills++;
-		this.earned_money += Events.lastBonus;
+		this.earnedMoney += Events.lastBonus;
 	}
 
 	private boolean could_hit(Enemy enemy)

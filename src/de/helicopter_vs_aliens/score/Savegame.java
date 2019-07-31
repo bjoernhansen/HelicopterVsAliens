@@ -168,7 +168,7 @@ public class Savegame implements Constants, Serializable
 		this.originalResulution = Menu.originalResulution;
 		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
-		this.kills_after_levelup = Events.killsAfterLevelup;
+		this.kills_after_levelup = Events.killsAfterLevelUp;
 		this.level = Events.level;
 		this.max_level = Events.maxLevel;
 		this.timeOfDay = Events.timeOfDay;

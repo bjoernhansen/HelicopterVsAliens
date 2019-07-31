@@ -25,6 +25,7 @@ import de.helicopter_vs_aliens.util.MyMath;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
+import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
@@ -1541,7 +1542,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	{		
 		return this.hasShortrangeRadiation
 				&& enemy.collisionDamageTimer == 0
-				&& !enemy.isKaboom
+				&& !(enemy.type == KABOOM)
 				&& this.enhancedRadiationTimer == READY
 				&& MyMath.toss_up(ENHANCED_RADIATION_PROB);
 	}
@@ -1707,7 +1708,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		{			
 			if(playCollisionSound)
 			{
-				Audio.play(enemy.isKaboom
+				Audio.play(enemy.type == KABOOM
 							? Audio.explosion4 
 							: this.enhancedRadiationTimer == 0
 								? Audio.explosion1

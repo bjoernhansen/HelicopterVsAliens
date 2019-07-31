@@ -504,7 +504,7 @@ public class BackgroundObject extends MovingObject
 	private static boolean isMajorBossActive(ArrayList<LinkedList<Enemy>> enemy)
     {
     	return    !enemy.get(ACTIVE).isEmpty()
-				&& enemy.get(ACTIVE).getFirst().isMajorBoss();
+				&& enemy.get(ACTIVE).getFirst().type.isMajorBoss();
 	}
 
 	private static void	paint_bgObjects(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> bgObject)

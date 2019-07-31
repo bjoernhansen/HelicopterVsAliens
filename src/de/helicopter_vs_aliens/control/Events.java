@@ -6,7 +6,6 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
-import de.helicopter_vs_aliens.model.enemy.BossTypes;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -26,6 +25,9 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
+import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_2_SERVANT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_4;
+import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.FINAL_BOSS;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.gui.PriceLevels.REGULAR;
@@ -35,7 +37,7 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 
-public class Events implements Constants, BossTypes
+public class Events implements Constants
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
@@ -63,7 +65,7 @@ public class Events implements Constants, BossTypes
 		level = 1,				// aktuelle Level [1 - 51]
 		maxLevel = 1,			// höchstes erreichtes Level
 		money = 0, 				// Guthaben
-		killsAfterLevelup,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
+		killsAfterLevelUp,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
 		lastCreationTimer,	// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
         overallEarnings, 		// Gesamtverdienst
         extraBonusCounter, 		// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
@@ -249,7 +251,7 @@ public class Events implements Constants, BossTypes
 				}
 				else if(e.getKeyChar() == 'm')
 				{
-					Enemy.miniboss_prob = Enemy.miniboss_prob == 0.05f ? 1.0f : 0.05f;
+					Enemy.changeMiniBossProb();
 					helicopter.isPlayedWithoutCheats = false;
 				}
 				else if(e.getKeyChar() == 'n')
@@ -462,7 +464,7 @@ public class Events implements Constants, BossTypes
 					Enemy.adaptToLevel(helicopter, level, false);
 					if(level < 6){
 						BackgroundObject.reset(bgObject);}
-					killsAfterLevelup = 0;
+					killsAfterLevelUp = 0;
 					enemy.get(INACTIVE).addAll(enemy.get(DESTROYED));
 					enemy.get(DESTROYED).clear();
 					Menu.repairShopButton.get("RepairButton").costs = 0;
@@ -994,7 +996,7 @@ public class Events implements Constants, BossTypes
 	private static void restore(Savegame savegame)
 	{
 		money = savegame.money;
-		killsAfterLevelup = savegame.kills_after_levelup;
+		killsAfterLevelUp = savegame.kills_after_levelup;
 		level = savegame.level;
 		maxLevel = savegame.max_level;
 		timeOfDay = savegame.timeOfDay;
@@ -1059,7 +1061,7 @@ public class Events implements Constants, BossTypes
 		}
 		if(total_reset)
 		{
-			killsAfterLevelup = 0;
+			killsAfterLevelUp = 0;
 			controller.enemy.get(INACTIVE).addAll(controller.enemy.get(DESTROYED));
 			controller.enemy.get(DESTROYED).clear();
 			if(level < 6){
@@ -1174,7 +1176,7 @@ public class Events implements Constants, BossTypes
 	// überprüfen, ob Level-Up Voraussetzungen erfüll. Wenn ja: Schwierigkeitssteigerung
 	static void checkForLevelup(Controller controller, Helicopter helicopter)
 	{
-		if( killsAfterLevelup >= MyMath.kills(level) && level < 50)
+		if( killsAfterLevelUp >= MyMath.kills(level) && level < 50)
 		{
 			level_up(controller, 1);
 		}
@@ -1189,7 +1191,7 @@ public class Events implements Constants, BossTypes
 					? Audio.level_up 
 					: Audio.applause1);
 				
-		killsAfterLevelup = 0;
+		killsAfterLevelUp = 0;
 		int previous_level = level;
 		level += nr_of_levelUp;	
 				
@@ -1224,15 +1226,15 @@ public class Events implements Constants, BossTypes
 	public static void setBossLevelUpConditions()
 	{
 			 if(level == 10){
-				 killsAfterLevelup = 14;}
+				 killsAfterLevelUp = 14;}
 		else if(level == 20){
-				 killsAfterLevelup = 7;}
+				 killsAfterLevelUp = 7;}
 		else if(level == 30){
-				 killsAfterLevelup = 24;}
+				 killsAfterLevelUp = 24;}
 		else if(level == 40){
-				 killsAfterLevelup = 29;}
+				 killsAfterLevelUp = 29;}
 		else if(level == 50){
-				 killsAfterLevelup = 34;}
+				 killsAfterLevelUp = 34;}
 	}
 	
 	// Bonus-Verdienst bei Multi-Kill

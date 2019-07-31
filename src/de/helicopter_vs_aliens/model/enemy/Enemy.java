@@ -37,6 +37,7 @@ import de.helicopter_vs_aliens.util.MyMath;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
+import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.*;
 import static de.helicopter_vs_aliens.model.enemy.Positions.*;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
@@ -47,7 +48,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 
-public class Enemy extends MovingObject implements MissileTypes, BossTypes
+public class Enemy extends MovingObject implements MissileTypes
 {
 	private class FinalEnemysOperator
     {	
@@ -77,7 +78,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		HEIGHT_FACTOR_SUPERSIZE 	= 0.65f,	// legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
 		BARRIER_BORDER_SIZE 		= 0.23f,
 		BARRIER_EYE_SIZE 			= 0.08f,
-		ROCK_PROB					= 0.05f, 		
+		ROCK_PROB					= 0.05f,
 		KABOOM_PROB				    = 0.02f,	// Rate mit der Kaboom-Gegner erscheinen 
 		POWER_UP_PROB				= 0.02f, 
 		SPIN_SHOOTER_RATE 		   	= 0.55f,
@@ -93,7 +94,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
              			    0.013f,  	// BIG_SHIELD_MAKER
              			    0.007f,  	// BODYGUARD
              			    0.01f,  	// HEALER
-             			    0.04f}; 	// PROTECTOR
+             			    0.04f}, 	// PROTECTOR
+	
+		STANDARD_MINI_BOSS_PROB = 0.05f,
+		CHEAT_MINI_BOSS_PROB = 1.0f;
 		
 	private static final int 				
 		// Raum-Konstanten
@@ -157,19 +161,21 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 
 	// statische Variablen (keine Konstanten)
 	public static int
-		bossSelection,		 	// bestimmt, welche Boss-Typ erstellt wird
 		maxNr,				 	// bestimmt wie viele Standard-Gegner gleichzeitig erscheinen können
 		maxBarrierNr,			// bestimmt wie viele Hindernis-Gegner gleichzeitig erscheinen können
 		currentNumberOfBarriers; // aktuelle Anzahl von "lebenden" Hindernis-Gegnern
 	
-	public static float 	
-		miniboss_prob = 0.05f;// bestimmt die Häufigkeit, mit der Mini-Bosse erscheinen
+	public static float
+		miniBossProb = 0.05f;// bestimmt die Häufigkeit, mit der Mini-Bosse erscheinen
 		
 	public static Enemy
 		currentMiniBoss,	// Referenz auf den aktuellen Boss-Gegner
 		currentRock,
 		lastCarrier,  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
 		livingBarrier[] = new Enemy [MAX_BARRIER_NUMBER];
+	
+	public static EnemyTypes
+		bossSelection;		 	// bestimmt, welche Boss-Typ erstellt wird
 	
 	private static int 
 		selection,			// bestimmt welche Typen von Gegnern zufällig erscheinen können	
@@ -204,8 +210,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	 * 	Attribute der Enemy-Objekte	
 	 */
 
-	public int 
-        type,
+	public int
 		hitpoints,						// aktuelle Hitpoints
 		startingHitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegers)
 		strength,						// Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
@@ -223,10 +228,12 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	public boolean
 		isMiniBoss,					// = true: Gegner ist ein Mini-Boss
-		isKaboom,
 		isLasting,
 		isTouchingHelicopter,
 		hasUnresolvedIntersection;
+	
+	public EnemyTypes
+		type;
 	
 	// Farben
     public Color 
@@ -333,9 +340,13 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		speedLevel = new Point2D.Float(),			// auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
 		speed = new Point2D.Float(),				// tatsächliche Geschwindigkeit
 		shootingDirection = new Point2D.Float();   	// Schussrichtugn von schießenden Barrier-Gegnern
-
-	private EnemyTypes enemyType;
-
+	
+	
+	public static void changeMiniBossProb()
+	{
+		miniBossProb = miniBossProb == STANDARD_MINI_BOSS_PROB ? CHEAT_MINI_BOSS_PROB: STANDARD_MINI_BOSS_PROB;
+	}
+	
 	public void paint(Graphics2D g2d, Helicopter helicopter)
 	{				
 		boolean cloaked = (this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME+CLOAKED_TIME);
@@ -440,7 +451,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	{
 		return  !this.isDestroyed
 				&& (this.isBoss()
-					|| this.isKaboom
+					|| this.type == KABOOM
 					|| (this.model == BARRIER 
 						&& this.snoozeTimer <= SNOOZE_TIME + 75));
 	}
@@ -1129,7 +1140,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		if(level == 1)
 		{
 			maxNr = 2;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 3;
 			maxBarrierNr = 0;
 			selectionBarrier = 1;
@@ -1143,7 +1154,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{			
 			creationStop = false;
 			maxNr = 3;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 25;
 			maxBarrierNr = 1;
 			selectionBarrier = 2;
@@ -1168,7 +1179,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 11)
 		{
 			maxNr = 3;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 75;
 			maxBarrierNr = 1;
 			selectionBarrier = 2;
@@ -1191,7 +1202,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{			
 			creationStop = false;
 			maxNr = 4;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 155;	
 			maxBarrierNr = 2;
 			selectionBarrier = 4;
@@ -1215,7 +1226,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 21)
 		{
 			maxNr = 3;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 400;
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
@@ -1231,7 +1242,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{
 			creationStop = false;
 			maxNr = 4;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 735;	
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
@@ -1251,7 +1262,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 31)
 		{
 			maxNr = 3;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 1670;
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
@@ -1268,7 +1279,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{
 			creationStop = false;
 			maxNr = 4;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 4185;
 			maxBarrierNr = 2;
 			selectionBarrier = 6;
@@ -1288,7 +1299,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(level == 41)
 		{
 			maxNr = 3;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 15235;	
 			maxBarrierNr = 2;
 			selectionBarrier = 6;
@@ -1305,7 +1316,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{
 			creationStop = false;
 			maxNr = 5;
-			bossSelection = STANDARD;
+			bossSelection = null;
 			selection = 31810;
 			maxBarrierNr = 2 ;
 			selectionBarrier = 8;
@@ -1405,15 +1416,17 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		{
 			createAllBoss5Servants(helicopter, enemy);
 		}
-		else for(int type = 0; type < NR_OF_BOSS_5_SERVANTS; type++)
+		else
 		{
-			if(makeBoss5Servant[type])
-			{
-				makeBoss5Servant[type] = false;
-				bossSelection = id(type);
-				creation(helicopter, enemy);	
-			}
-		}			
+			EnemyTypes.getFinalBossServantTypes().forEach(type -> {
+				if(makeBoss5Servant[id(type)])
+				{
+					makeBoss5Servant[id(type)] = false;
+					bossSelection = type;
+					creation(helicopter, enemy);
+				}
+			});
+		}
 	}
 	
 	private static void createBoss2Servants(Helicopter helicopter,
@@ -1430,11 +1443,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 											   ArrayList<LinkedList<Enemy>> enemy)
     {
     	makeAllBoss5Servants = false;
-    	for(int i = SMALL_SHIELD_MAKER; i >=PROTECTOR; i--)
-    	{
-    		bossSelection = i;
-    		creation(helicopter, enemy);
-    	}
+    	EnemyTypes.getFinalBossServantTypes().forEach(type -> {
+			bossSelection = type;
+			creation(helicopter, enemy);
+		});
     }	
 
     private static boolean enemyCreationApproved(ArrayList<LinkedList<Enemy>> enemy)
@@ -1450,7 +1462,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 							: (maxNr + maxBarrierNr) - nrOfEnemies, 1)
 				&& !(Events.level > 50)
 				&& !(!enemy.get(ACTIVE).isEmpty()
-						&& enemy.get(ACTIVE).getFirst().isMajorBoss());
+						&& enemy.get(ACTIVE).getFirst().type.isMajorBoss());
 	}
     
 	private static void creation(Helicopter helicopter, 
@@ -1473,7 +1485,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		else if(barrierCreationApproved(nrOfEnemies)){this.createBarrier(helicopter);}
 		else if(rockCreationApproved()){this.createRock(helicopter);}
 		else if(kaboomCreationApproved()){this.createKaboom(helicopter);}
-		else if(bossSelection == 0){this.createStandardEnemy();}
+		else if(bossSelection == null){this.createStandardEnemy();}
 		else{this.createBoss(helicopter);}
 		
 		if(this.model != BARRIER)
@@ -1481,7 +1493,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.farbe1 = MyColor.dimColor(this.farbe1, 1.3f);
 			this.farbe2 = MyColor.dimColor(this.farbe1, this.dimFactor);
 		}		
-		if(this.canBecomeMiniboss()){this.turnIntoMiniboss(helicopter);}
+		if(this.canBecomeMiniBoss()){this.turnIntoMiniBoss(helicopter);}
 		this.rewardModifier = this.isBoss() ? 0 : 5 - MyMath.random(11);
 		this.startingHitpoints = this.hitpoints;
 		
@@ -1528,7 +1540,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	private void reset()
 	{
 		this.lifetime = 0;
-		this.type = STANDARD;
+		this.type = TINY;
 		this.model = TIT;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
 		this.set_x(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
@@ -1567,7 +1579,6 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		this.canInstantTurn = false;
 		this.isCarrier = false;
 		this.isRecoveringSpeed = false;
-		this.isKaboom = false;
 		this.hasHeightSet = false;
 		this.hasYPosSet = false;
 		this.isEmpShocked = false;
@@ -1632,36 +1643,32 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	private void createBarrier(Helicopter helicopter)
 	{
-		this.model = BARRIER;
-		this.type = MyMath.random(selectionBarrier);
-		if(MyMath.toss_up(0.05f) && Events.level >= MIN_FUTURE_LEVEL)
-		{
-			this.type = Math.min(selectionBarrier + MyMath.random(2), 7);
-		}
+        this.model = BARRIER;
+		this.assignRandomBarrierType();
 		
 		helicopter.numberOfEnemiesSeen--;
 		this.hitpoints = Integer.MAX_VALUE;
 		this.rotorColor = 1;
 		this.isClockwiseBarrier = MyMath.toss_up();
 				
-		if(this.type < 2)
+		if(this.type == BARRIER_0 || this.type == BARRIER_1)
 		{
 			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
 			this.isLasting = true;
 			this.deactivationProb = 0.25f;
 			
 			// Level 2
-			if(this.type == 0){this.setVarWidth(65);}
+			if(this.type == BARRIER_0){this.setVarWidth(65);}
 			
 			// Level 6
-			else if(this.type == 1)
+			else if(this.type == BARRIER_1)
 			{
 				this.setVarWidth(150);
 				this.setInitialY(GROUND_Y - this.bounds.getWidth());
 			}
 		}	
 		// Level 12
-		else if(this.type == 2)
+		else if(this.type == BARRIER_2)
 		{
 			this.farbe1 = MyColor.bleach(Color.yellow, 0.6f);
 			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());	//d //1
@@ -1673,7 +1680,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.isLasting = true;
 		}
 		// Level 15
-		else if(this.type == 3)
+		else if(this.type == BARRIER_3)
 		{
 			this.farbe1 = MyColor.bleach(new Color(255, 192, 0), 0.0f);
 			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0); //d
@@ -1688,7 +1695,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.hasYPosSet = true;
 		}
 		// Level 18
-		else if(this.type == 4)
+		else if(this.type == BARRIER_4)
 		{									
 			this.deactivationProb = 0.143f;
 			this.setVarWidth(85);
@@ -1703,7 +1710,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.isLasting = true;
 		}
 		// Level 32
-		else if(this.type == 5)
+		else if(this.type == BARRIER_5)
 		{					
 			this.deactivationProb = 0.11f;
 			
@@ -1716,7 +1723,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.isLasting = true;
 		}
 		// Level 42
-		else if(this.type == 6)
+		else if(this.type == BARRIER_6)
 		{
 			//this.farbe1 = MyColor.bleach(new Color(0, 255, 255), 0.6f);			
 			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
@@ -1726,7 +1733,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.isLasting = true;
 		}
 		// Level 44
-		else if(this.type == 7)
+		else if(this.type == BARRIER_7)
 		{
 			this.farbe1 = MyColor.bleach(MyColor.cloaked, 0.6f);	
 			//this.farbe1 = new Color(MyMath.random(255), MyMath.random(255), MyMath.random(255));	
@@ -1751,8 +1758,22 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		barrierTimer = (int)((helicopter.bounds.getWidth() + this.bounds.getWidth())/2);
 		this.strength = (int)(1.0f/this.deactivationProb);
 	}
-	
-	private void placeAtPausePosition()
+    
+    private void assignRandomBarrierType()
+    {
+        int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
+            ? MyMath.random(3)
+            : 0;
+        int selectedBarrierIndex = MyMath.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, 7));
+        this.type = (EnemyTypes) EnemyTypes.getBarrierTypes().toArray()[selectedBarrierIndex];
+    }
+    
+    private boolean isBarrierFromFutureCreationApproved()
+    {
+        return MyMath.toss_up(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
+    }
+    
+    private void placeAtPausePosition()
 	{
 		this.callBack--;
 		this.uncloak(DISABLED);
@@ -1772,7 +1793,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	private void createRock(Helicopter helicopter)
 	{
 		currentRock = this;
-		this.type = Integer.MAX_VALUE;
+		this.type = ROCK;
 		this.model = CARGO;	
 		helicopter.numberOfEnemiesSeen--;
 		this.farbe1 = new Color((180 + MyMath.random(30)), (120 + MyMath.random(30)),(0 + MyMath.random(15)));
@@ -1799,8 +1820,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	private void createKaboom(Helicopter helicopter)
 	{
-		this.type = Integer.MAX_VALUE;
-		this.isKaboom = true;
+		this.type = KABOOM;
 		this.farbe1 = Color.white;
 		this.hitpoints = Integer.MAX_VALUE;	
 		this.setVarWidth(KABOOM_WIDTH);
@@ -1814,11 +1834,10 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	private void createStandardEnemy()
 	{
-		this.type = MyMath.random(selection);
-		//this.type = 30;
-		this.enemyType = enemySelector.getType(this.type);
+		this.type = enemySelector.getType(MyMath.random(selection));
+		//this.type = CARRIER;
 
-		switch(this.enemyType)
+		switch(this.type)
 		{
 			// Level 1
 			case TINY:
@@ -2093,7 +2112,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	private void createScamperingVessel(boolean explosion_creation)
 	{
-		if(explosion_creation){this.type = 3000;}
+		if(explosion_creation){this.type = BOLT;}
 		
 		this.farbe1 = new Color(75 + MyMath.random(30), 
 								75 + MyMath.random(30), 
@@ -2250,12 +2269,12 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.strength = 5000;
 			Events.boss = this;
 		}		
-		else if(this.isFinalBossServant())
+		else if(this.type.isFinalBossServant())
 		{
-			Events.boss.operator.servants[id(this.type)] = this;
+			Events.boss.operator.servants[this.id()] = this;
 			this.hasYPosSet = true;
 			
-			if(this.isShieldMaker())
+			if(this.type.isShieldMaker())
 			{			
 				this.bounds.setRect(boss.getX(),
 									boss.getY(),
@@ -2299,7 +2318,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.canInstantTurn = true;
 				
 				this.strength = 150;			
-				Events.boss.operator.servants[id(BODYGUARD)] = this;
+				Events.boss.operator.servants[this.id()] = this;
 			}		
 			else if(this.type == HEALER)
 			{				
@@ -2316,7 +2335,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				this.canDodge = true;
 				
 				this.strength = 65;			
-				Events.boss.operator.servants[id(HEALER)] = this;
+				Events.boss.operator.servants[this.id()] = this;
 			}
 			else if(this.type == PROTECTOR)
 			{
@@ -2350,23 +2369,23 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 					this.farbe2 = MyColor.dimColor(this.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
 				}			
 				this.strength = (int)(1.0f/this.deactivationProb);
-				Events.boss.operator.servants[id(PROTECTOR)] = this;			
+				Events.boss.operator.servants[this.id()] = this;
 			}			
 		}	
 	}
 
-	private boolean canBecomeMiniboss()
+	private boolean canBecomeMiniBoss()
 	{		
 		return 	currentMiniBoss == null
 				&& Events.level > 4 
 				&& this.model != BARRIER
 				&& !(currentRock == this)
-				&& !this.isKaboom
-				&& MyMath.toss_up(miniboss_prob) 
-				&& this.type > 2;
+				&& !(this.type == KABOOM)
+				&& MyMath.toss_up(miniBossProb)
+				&& this.type.isSuitableMiniBoss();
 	}
 
-	private void turnIntoMiniboss(Helicopter helicopter)
+	private void turnIntoMiniBoss(Helicopter helicopter)
 	{
 		helicopter.numberOfMiniBossSeen++;
 		currentMiniBoss = this;
@@ -2380,7 +2399,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		this.strength  *= 4;
 		this.callBack += 2;
 		this.canTurn = true;
-		if(  (this.type >= 2175 && !this.canLearnKamikaze && MyMath.toss_up(0.2f)) ||
+		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && MyMath.toss_up(0.2f)) ||
 		      this.shootTimer == 0 )
 		{
 			this.cloakingTimer = 0;
@@ -2647,7 +2666,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		if(this.stunningTimer == READY)
 		{
 			this.updateStoppableTimer();
-			if(this.isMajorBoss()){this.calculateBossManeuver(controller.enemy);}
+			if(this.type.isMajorBoss()){this.calculateBossManeuver(controller.enemy);}
 			this.calculateFlightManeuver(controller, helicopter);
 			this.validateTurns();
 		}		
@@ -2797,7 +2816,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			&& this.dodgeTimer == READY)
 		{
 			if( MyMath.toss_up(0.2f)
-			    && this.isShieldMaker())
+			    && this.type.isShieldMaker())
 			{
 				this.direction.x = -this.direction.x;
 			}
@@ -2981,7 +3000,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 
 	private void empShock(Controller controller, Helicopter helicopter)
     {
-    	this.takeDamage((int)( (this.isMajorBoss()
+    	this.takeDamage((int)( (this.type.isMajorBoss()
     							? EMP_DAMAGE_FACTOR_BOSS
     							: EMP_DAMAGE_FACTOR_ORDINARY) 
     						 * MyMath.dmg(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])));
@@ -2996,7 +3015,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			else if(this.teleportTimer == READY ){this.teleport();}
 			else if(this.isStunnable && !this.isShielding)
 			{
-				this.empSlowedTimer = this.isMainBoss()
+				this.empSlowedTimer = this.type.isMainBoss()
 											? EMP_SLOW_TIME_BOSS 
 											: EMP_SLOW_TIME;
 			}
@@ -3021,11 +3040,11 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			   //&& this.stoppingBarrier == null
 			   && this.turnTimer == READY
 			   &&(	(this.direction.x == -1 
-			   			&&(((this.callBack > 0 || this.isMajorBoss()) && this.bounds.getMinX() < TURN_FRAME.getMinX())
+			   			&&(((this.callBack > 0 || this.type.isMajorBoss()) && this.bounds.getMinX() < TURN_FRAME.getMinX())
 			   					|| (this.type == HEALER && this.bounds.getX() < 563)))
 			   		||
 			   		(this.direction.x == 1 
-			   			&&(((this.callBack > 0 || this.isMajorBoss()) && this.bounds.getMaxX() > TURN_FRAME.getMaxX() && !this.canLearnKamikaze)
+			   			&&(((this.callBack > 0 || this.type.isMajorBoss()) && this.bounds.getMaxX() > TURN_FRAME.getMaxX() && !this.canLearnKamikaze)
 			   					|| (this.type == BODYGUARD && (this.bounds.getX() + this.bounds.getWidth() > 660)))));
 	}
 
@@ -3167,11 +3186,29 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			}
 		}		
 	}
-    
-	private static int id(int type)
+	
+	private int id()
 	{
-		// TODO entsprechend anpassen, wenn BossTypes enum wird
-		return -type-8;
+		return id(this.type);
+	}
+	
+	private static int id(EnemyTypes type)
+	{
+		switch(type)
+		{
+			case SMALL_SHIELD_MAKER:
+				return 0;
+			case BIG_SHIELD_MAKER:
+				return 1;
+			case BODYGUARD:
+				return 2;
+			case HEALER:
+				return 3;
+			case PROTECTOR:
+				return 4;
+			default:
+				return -1;
+		}
 	}	
 		
 	private void evaluateBatchWiseMove()
@@ -3788,7 +3825,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				
 		if(	this.stoppingBarrier != null
 			&& this.borrowTimer == DISABLED
-			&& !(this.model == BARRIER && this.type == 1))
+			&& !(this.model == BARRIER && this.type == BARRIER_1))
 		{
 			this.adjustSpeedToBarrier(helicopter);
 		}
@@ -3818,7 +3855,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	
 	private void evaluateSpeedBoost()
 	{		
-		int bottomTurnLine = this.isKaboom
+		int bottomTurnLine = this.type == KABOOM
 								  ? KABOOM_Y_TURN_LINE 
 								  : (int)TURN_FRAME.getMaxY();
 									
@@ -3965,58 +4002,24 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		this.hasCrashed = true;
 		this.speedLevel.setLocation(ZERO_SPEED);
 		this.set_y(this.yCrashPos - this.bounds.getHeight());
-		if(this.isServant()){this.isMarkedForRemoval = true;}
-		Audio.play(this.isKaboom ? Audio.explosion4 : Audio.explosion3);
+		if(this.type.isServant()){this.isMarkedForRemoval = true;}
+		Audio.play(this.type == KABOOM ? Audio.explosion4 : Audio.explosion3);
 		Explosion.start(explosion, 
 						helicopter, 
 						this.bounds.getCenterX(),
 						this.bounds.getCenterY(),
-						this.isKaboom ? JUMBO : STANDARD,
-						this.isKaboom);
-	}
-		
-	public boolean isMajorBoss()
-	{
-		return this.type < 0;
+						this.type == KABOOM ? JUMBO : STANDARD,
+						this.type == KABOOM);
 	}
 	
 	private boolean isBoss()
 	{
-		return this.isMiniBoss || this.isMajorBoss();
+		return this.isMiniBoss || this.type.isMajorBoss();
 	}
 	
 	boolean isLivingBoss()
 	{		
 		return this.isBoss() && !this.isDestroyed;
-	}
-		
-	boolean isMainBoss()
-	{
-		return this.isMajorBoss()
-			   && !this.isServant();
-	}
-	
-	boolean isMinorServant()
-	{		
-		return this.type == BOSS_2_SERVANT 
-			   || this.type == BOSS_4_SERVANT;
-	}
-	
-	private boolean isShieldMaker()
-	{		
-		return this.type == SMALL_SHIELD_MAKER 
-			   || this.type == BIG_SHIELD_MAKER;
-	}
-	
-	boolean isFinalBossServant()
-	{
-		return this.type < FINAL_BOSS;
-	}
-	
-	boolean isServant()
-	{		
-		return	this.isMinorServant()
-				|| this.isFinalBossServant();
 	}
 
 	private void collision(Controller controller, Helicopter helicopter)
@@ -4037,13 +4040,13 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			this.explode( controller.explosion,
 						  helicopter, 
 						  0, 
-						  this.isKaboom
+						  this.type == KABOOM
 						  	? JUMBO 
 						  	: STANDARD, 
-						  this.isKaboom);
+						  this.type == KABOOM);
 			
 			if(	helicopter.hasShortrangeRadiation
-				&& !this.isKaboom)
+				&& !(this.type == KABOOM))
 			{
 				this.rewardFor(controller.powerUp,
 								null, 
@@ -4108,7 +4111,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	{		
 		return helicopter.get_dmg_factor() 
 			   *(helicopter.isPowerShieldActivated && this.isExplodable ? 0.65f : 1.0f)
-			   *(this.isKaboom && !this.isDestroyed && !helicopter.hasShortrangeRadiation
+			   *(this.type == KABOOM && !this.isDestroyed && !helicopter.hasShortrangeRadiation
 			     ? helicopter.kaboom_dmg() 
 			     : (this.isExplodable && !this.isInvincible() && !this.isDestroyed)
 					? 1.0f 
@@ -4163,21 +4166,21 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 	{
 		if(this.hasHPsLeft()){Audio.play(Audio.stun);}
 		this.explode(explosion, helicopter, missile);	
-		this.nonStunableTimer = (int)(this.isMainBoss() || this.isFinalBossServant()
+		this.nonStunableTimer = (int)(this.type.isMainBoss() || this.type.isFinalBossServant()
 										  ? 2.25f*Events.level 
 										  : 0);
 		this.knockBackDirection = missile.speed > 0 ? 1 : -1;
 				
 		this.speedLevel.setLocation(
 				(this.knockBackDirection == this.direction.x ? 1 : -1)
-				  *(this.isMainBoss() || this.isFinalBossServant()
+				  *(this.type.isMainBoss() || this.type.isFinalBossServant()
 				    ? (10f + helicopter.missileDrive)/(Events.level/10)
 					:  10f + helicopter.missileDrive),
 				0);
 						
 		this.stunningTimer = this.totalStunningTime
 			= (int)(17 + STUNNING_TIME_BASIS 
-					     * (this.isMajorBoss() ? (10f/Events.level) : 2.5f));
+					     * (this.type.isMajorBoss() ? (10f/Events.level) : 2.5f));
 				
 		this.disableSiteEffects(helicopter);
 	}
@@ -4379,15 +4382,20 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 			}
 			Menu.moneyDisplayTimer = 0;
 		}
-		if(this.type != BOSS_4_SERVANT && this.type >= FINAL_BOSS)
+		if(this.canCountForKillsAfterLevelUp())
 		{
-			Events.killsAfterLevelup++;
+			Events.killsAfterLevelUp++;
 		}		
 		if(this.canDropPowerUp()){this.dropPowerUp(helicopter, powerUp);}
 		if(this.isMiniBoss){Audio.play(Audio.applause2);}
 	}
-	
-	private boolean canDropPowerUp()
+    
+    private boolean canCountForKillsAfterLevelUp()
+    {
+        return this.type != BOSS_4_SERVANT && !this.type.isFinalBossServant();
+    }
+    
+    private boolean canDropPowerUp()
 	{		
 		return this.model != BARRIER
 			   &&( (!Events.isBossLevel()
@@ -4407,7 +4415,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 				 this, 
 				 MyMath.toss_up(0.14f)
 					? REPARATION
-					: PowerUpTypes.values()[MyMath.random(this.type < 0 ? 5 : 6)], false);
+					: PowerUpTypes.values()[MyMath.random(this.type.isMajorBoss() ? 5 : 6)], false);
 		
 	}
 	
@@ -4464,12 +4472,12 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 											   520.0);	
 			Events.determineHighscoreTimes(helicopter);
 		}
-		else if(this.isFinalBossServant())
+		else if(this.type.isFinalBossServant())
 		{
-			Events.boss.operator.servants[id(this.type)] = null;
-			Events.boss.operator.timeSinceDeath[id(this.type)] = 0;
+			Events.boss.operator.servants[this.id()] = null;
+			Events.boss.operator.timeSinceDeath[this.id()] = 0;
 		}
-		if(this.isMainBoss() && this.type != FINAL_BOSS){Events.boss = null;}
+		if(this.type.isMainBoss() && this.type != FINAL_BOSS){Events.boss = null;}
 	}
 
 	public void dodge()
@@ -4494,7 +4502,7 @@ public class Enemy extends MovingObject implements MissileTypes, BossTypes
 		if(this.bounds.getY() > 143){this.direction.y = -1;}
 		else{this.direction.y = 1;}
 		
-		if(this.isShieldMaker()){this.stampedeShieldMaker();}
+		if(this.type.isShieldMaker()){this.stampedeShieldMaker();}
 		else if(this.type == HEALER){this.canDodge = false;}
 	}
 	

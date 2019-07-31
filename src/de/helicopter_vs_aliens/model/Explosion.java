@@ -21,6 +21,7 @@ import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
+// Todo alle Identifier in camelCase überführen
 public class Explosion implements Constants, MissileTypes
 {
     public int 

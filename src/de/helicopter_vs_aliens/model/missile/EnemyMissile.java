@@ -80,14 +80,14 @@ public class EnemyMissile implements Constants, MissileTypes
     		Audio.play(Audio.explosion2);
     		helicopter.take_missile_damage();    		
     		Explosion.start(Controller.getInstance().explosion,
-    		helicopter, 
-    		(int)(helicopter.bounds.getX() 
-    				+ (helicopter.isMovingLeft
-    					? Helicopter.FOCAL_PNT_X_LEFT 
-    					: Helicopter.FOCAL_PNT_X_RIGHT)), 
-    		(int)(helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP), 
-    		STANDARD, 
-    		false);
+    						helicopter,
+							(int)(helicopter.bounds.getX()
+									+ (helicopter.isMovingLeft
+										? Helicopter.FOCAL_PNT_X_LEFT
+										: Helicopter.FOCAL_PNT_X_RIGHT)),
+							(int)(helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP),
+							STANDARD,
+							false);
     	}
     	else 
     	{

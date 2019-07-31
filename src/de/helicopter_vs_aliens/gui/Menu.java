@@ -1026,7 +1026,7 @@ public class Menu implements Constants
         if(specialInfoSelection == 1)
 		{
 			info_string = "Kills bis LevelUp: " 
-						  + Events.killsAfterLevelup
+						  + Events.killsAfterLevelUp
 						  + "/"
 						  + MyMath.kills(Events.level);
 		}
