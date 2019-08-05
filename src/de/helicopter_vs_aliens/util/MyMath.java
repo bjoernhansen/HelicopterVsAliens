@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
+import java.util.Random;
 
 public class MyMath
 {
@@ -41,7 +42,10 @@ public class MyMath
 	// Die Kosten mancher Upgrades weichen für manche Helicopterklassen vom Standard ab.
 	// Die HashMap "additional_costs" enthält die Modifikationswerte.
 	private static final HashMap<String, Integer> 
-		ADDITIONAL_COSTS = set_additional_costs();	
+		ADDITIONAL_COSTS = set_additional_costs();
+	
+	private static Random random = new Random();
+	
 	
 	private static HashMap<String, Integer> set_additional_costs()
 	{
@@ -103,8 +107,8 @@ public class MyMath
 	}
 	
 	public static int random(int value_range)
-    {        
-        return (int)(Math.random() * value_range);  
+    {
+        return random.nextInt(value_range);
     }
 	
 	public static boolean toss_up(){return toss_up(0.5f);}

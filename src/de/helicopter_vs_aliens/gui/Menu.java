@@ -11,6 +11,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
@@ -1509,22 +1510,22 @@ public class Menu implements Constants
 	}
 
 	
-	static void identifyHighlightedButtons(Helicopter helicopter, HashMap<String, Button> button)
+	static void identifyHighlightedButtons(Helicopter helicopter, HashMap<String, Button> buttons)
 	{
     	if(	highlightedButton.equals("")
-        	|| !button.get(highlightedButton).bounds.contains(helicopter.destination))
+        	|| !buttons.get(highlightedButton).bounds.contains(helicopter.destination))
         {
         	if(!highlightedButton.equals(""))
         	{
-        		button.get(highlightedButton).highlighted = false;
+        		buttons.get(highlightedButton).highlighted = false;
         		highlightedButton = "";
         	}
-			for(String key : button.keySet())
+			for(Map.Entry<String, Button> buttonEntry : buttons.entrySet())
 			{
-				if (button.get(key).bounds.contains(helicopter.destination.x, helicopter.destination.y))
+				if (buttonEntry.getValue().bounds.contains(helicopter.destination.x, helicopter.destination.y))
 				{
-					button.get(key).highlighted = true;
-					highlightedButton = key;
+					buttonEntry.getValue().highlighted = true;
+					highlightedButton = buttonEntry.getKey();
 					break;
 				}
 			}

@@ -7,6 +7,7 @@ import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.score.Savegame;
+import de.helicopter_vs_aliens.util.MyMath;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Languages;
 
@@ -57,7 +58,8 @@ public class Main implements Constants
     {
     	if(TESTMODE)
         {
-            Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
+        	/*
+        	Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
             
             List<String> list = dictionary.getSpecialUpgrades();
             list.forEach(System.out::println);
@@ -72,6 +74,7 @@ public class Main implements Constants
             dictionary.switchHelicopterTypeTo(HELIOS);
     
             list.forEach(System.out::println);
+            */
    
 		}
         else

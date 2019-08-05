@@ -1341,7 +1341,8 @@ public class Events implements Constants
 		{			
 			if(array[i] == 0)
 			{
-				index = i-1; 
+				// TODO warum wird hier index gesetzt aber nie wieder verwendet?
+				index = i-1;
 				index_set = true;
 				break;
 			}

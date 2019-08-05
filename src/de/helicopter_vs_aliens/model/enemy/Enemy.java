@@ -50,7 +50,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 public class Enemy extends MovingObject implements MissileTypes
 {
-	private class FinalEnemysOperator
+	private static class FinalEnemysOperator
     {	
 		Enemy[] servants;
     	int [] timeSinceDeath;
