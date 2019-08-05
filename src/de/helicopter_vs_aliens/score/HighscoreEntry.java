@@ -37,8 +37,8 @@ public class HighscoreEntry implements Serializable
 		this.helicopterType = savegame.helicopterType;
 		this.max_level = savegame.max_level;
 		this.playing_time = savegame.playing_time/60000;
-		this.crashes = savegame.nr_of_crashes;
-		this.repairs = savegame.nr_of_repairs;
+		this.crashes = savegame.numberOfCrashes;
+		this.repairs = savegame.numberOfRepairs;
 		this.bonus_income = Events.bonusIncomePercentage();
 	}
 	

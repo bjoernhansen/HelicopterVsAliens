@@ -39,29 +39,20 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 {			
 	// Konstanten
     public static final int
-		POWERUP_DURATION = 930,            // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
+		POWERUP_DURATION = 930,         // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
     	RECENT_DMG_TIME = 50,
 		SLOW_TIME = 100,
-		NO_COLLISION_DMG_TIME	= 20,    // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
+		NO_COLLISION_DMG_TIME	= 20,   // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
     	FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
     	NR_OF_TYPES = HelicopterTypes.values().length,                // so viele Helikopter-Klassen gibt es
     	INVU_DMG_REDUCTION = 80,        // %-Wert der Schadensreduzierung bei Unverwundbarleit
-    	ENERGY_DRAIN = 45,                // Energieabzug für den Helikopter bei Treffer
+    	ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
     	REDUCED_ENERGY_DRAIN = 10,
 		STANDARD_PLATING_STRENGTH = 1,
 		GOLIATH_PLATING_STRENGTH = 2,
 		STANDARD_GOLIATH_COSTS = 75000,
 		STANDARD_SPECIAL_COSTS = 125000,
 		CHEAP_SPECIAL_COSTS = 10000;
-
-	public static final int// Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standardupgrades
-    	// für jede einzelne Helikopter-Klasse sowie Energiekosten für das Energieupgrade
-    	COSTS[][] = {{4, 2, 0, 1, 2, 3, 50},	// Phoenix
-    	             {1, 3, 4, 0, 4, 2, 30},	// Roch
-    	             {0, 0, 1, 2, 3, 4, 20}, 	// Orochi
-    	             {2, 1, 3, 4, 0, 1, 200}, 	// Kamaitachi
-    	             {3, 4, 2, 3, 1, 0, 75}, 	// Pegasus
-    	             {2, 2, 2, 2, 2, 2, 250}};	// Helios
 	
 	static final float
     	MISSILE_DMG 			 =  0.5f,
@@ -105,34 +96,34 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		currentFirepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
 		timeBetweenTwoShots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
 		shiftTime,							// nur Pegasus-Klasse: Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
-		platingDurabilityFactor,					// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
-		numberOfCannons,						// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
+		platingDurabilityFactor,			// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
+		numberOfCannons,					// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
 		rapidfire,							// nur Kamaitachi-Klasse: SpezialUpgrade; = 2, wenn erforscht, sonst = 0;	
 		
 		// Timer
-		plasmaActivationTimer,			// nur Kamaitachi-Klasse: Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
-		generator_timer,					// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
+		plasmaActivationTimer,				// nur Kamaitachi-Klasse: Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
+		generatorTimer,						// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
 		slowed_timer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse						
 		recent_dmg_timer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
 		interphaseGeneratorTimer,			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 		enhancedRadiationTimer,
 		
 		// für die Spielstatistik
-		numberOfCrashes,				// Anzahl der Abstürze
-		numberOfRepairs,				// Anzahl der Reparaturen
-		missileCounter,					// Anzahl der abgeschossenen Raketen
-		hitCounter,						// Anzahl der getroffenen Gegner
-		numberOfEnemiesSeen,			// Anzahl der erschienenen Gegner
-		numberOfEnemiesKilled,			// Anzahl der vernichteten Gegner
-		numberOfMiniBossSeen,			// Anzahl der erschienenen Mini-Bosse
-		numberOfMiniBossKilled,			// Anzahl der vernichteten Mini-Bosse
+		numberOfCrashes,					// Anzahl der Abstürze
+		numberOfRepairs,					// Anzahl der Reparaturen
+		missileCounter,						// Anzahl der abgeschossenen Raketen
+		hitCounter,							// Anzahl der getroffenen Gegner
+		numberOfEnemiesSeen,				// Anzahl der erschienenen Gegner
+		numberOfEnemiesKilled,				// Anzahl der vernichteten Gegner
+		numberOfMiniBossSeen,				// Anzahl der erschienenen Mini-Bosse
+		numberOfMiniBossKilled,				// Anzahl der vernichteten Mini-Bosse
 				
 		// nur für Phönix- und Kamaitachi-Klasse
-		bonusKills,						// Anzahl der Kills, für den aktuelken Mulikill-Award
+		bonusKills,							// Anzahl der Kills, für den aktuelken Mulikill-Award
 		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen Multikill-Awards ohne Bonus
 		bonusKillsTimer,					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
 				
-		powerUpTimer[] = new int [4], 				// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
+		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
 		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
 		upgradeCosts[] = new int[6],    			// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
@@ -502,7 +493,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		if(this.can_regenerate_energy()){this.regenerate_energy();}
 		if(this.isPowerShieldActivated && this.energy == 0)
 		{
-			this.shut_down_power_shield();
+			this.shutDownPowerShield();
 		}
 		this.evaluate_fire(missile);
 		this.move(explosion);
@@ -519,7 +510,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	{
 		if(this.recent_dmg_timer	     > 0){this.recent_dmg_timer--;}	
 		if(this.enhancedRadiationTimer > 0){this.enhancedRadiationTimer--;}
-		if(this.generator_timer		     > 0){this.generator_timer--;}
+		if(this.generatorTimer > 0){this.generatorTimer--;}
 		if(this.slowed_timer		     > 0){this.slowed_timer--;}	
 			
 		this.evaluate_power_up_activation_states();				
@@ -839,10 +830,10 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			Math.max(40, Math.min(1024, this.nextLocation.getX())),
 			Math.max(32, Math.min(407, this.nextLocation.getY()))
 		);    	    	
-   	 	this.set_bounds();
+   	 	this.setBounds();
 	}
 
-	void set_bounds()
+	void setBounds()
 	{
 		this.bounds.setRect(
 	   	 	this.location.getX() 
@@ -854,47 +845,52 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	   	 	this.bounds.getHeight());
 	}
 	
-	public void initialize(boolean new_game, Savegame savegame)
+	public void initialize(boolean newGame, Savegame savegame)
     {
     	for(int i = 0; i < 6; i++)
 	    {
     		this.hasMaxUpgradeLevel[i] = false;
-    		this.upgradeCosts[i] = this.getType() == HELIOS ? helios_costs(i) : COSTS[this.getType().ordinal()][i];
-    		if(new_game){this.levelOfUpgrade[i] = this.upgradeCosts[i] < 2 ? 2 : 1;}
+    		this.upgradeCosts[i] =  getUpgradeCosts(i);
+    		if(newGame){this.levelOfUpgrade[i] = this.upgradeCosts[i] < 2 ? 2 : 1;}
 	    }
-    	if(!new_game){this.restore_last_game_state(savegame);}    	
-    	this.updateProperties(new_game);
+    	if(!newGame){this.restoreLastGameState(savegame);}
+    	this.updateProperties(newGame);
     	this.fireRateTimer = this.timeBetweenTwoShots;
         this.rotorPosition[this.getType().ordinal()] = 0;
         this.empWave = null;
     }
-    
-	private void restore_last_game_state(Savegame savegame)
+	
+	int getUpgradeCosts(int i)
 	{
-		this.levelOfUpgrade = savegame.level_of_upgrade.clone();
+		return this.getType().getUpgradeCosts(i);
+	}
+	
+	private void restoreLastGameState(Savegame savegame)
+	{
+		this.levelOfUpgrade = savegame.levelOfUpgrade.clone();
 		this.spotlight = savegame.spotlight;
 		this.platingDurabilityFactor = savegame.platingDurabilityFactor;
-		this.hasShortrangeRadiation = savegame.has_shortrange_radiation;
-		this.hasPiercingWarheads = savegame.has_piercing_warheads;
-		this.missileDamageFactor = savegame.jumbo_missiles;
-		this.numberOfCannons = savegame.nr_of_cannons;
-		this.hasRadarDevice = savegame.has_radar_device;
+		this.hasShortrangeRadiation = savegame.hasShortrangeRadiation;
+		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
+		this.missileDamageFactor = savegame.jumboMissiles;
+		this.numberOfCannons = savegame.numberOfCannons;
+		this.hasRadarDevice = savegame.hasRadarDevice;
 		this.rapidfire = savegame.rapidfire;
-		this.hasInterphaseGenerator = savegame.has_interphase_generator;
-		this.hasPowerUpImmobilizer = savegame.has_PowerUp_immobilizer;
-		this.currentPlating = savegame.current_plating;
+		this.hasInterphaseGenerator = savegame.hasInterphaseGenerator;
+		this.hasPowerUpImmobilizer = savegame.hasPowerUpImmobilizer;
+		this.currentPlating = savegame.currentPlating;
 		this.energy = savegame.energy;		
-		this.numberOfEnemiesSeen = savegame.enemies_seen;
-		this.numberOfEnemiesKilled = savegame.enemies_killed;
-		this.numberOfMiniBossSeen = savegame.mini_boss_seen;
-		this.numberOfMiniBossKilled = savegame.mini_boss_killed;
-		this.numberOfCrashes = savegame.nr_of_crashes;
-		this.numberOfRepairs = savegame.nr_of_repairs;
-		this.isPlayedWithoutCheats = savegame.no_cheats_used;
-		this.missileCounter = savegame.missile_counter;
-		this.hitCounter = savegame.hit_counter;
+		this.numberOfEnemiesSeen = savegame.enemiesSeen;
+		this.numberOfEnemiesKilled = savegame.enemiesKilled;
+		this.numberOfMiniBossSeen = savegame.miniBossSeen;
+		this.numberOfMiniBossKilled = savegame.miniBossKilled;
+		this.numberOfCrashes = savegame.numberOfCrashes;
+		this.numberOfRepairs = savegame.numberOfRepairs;
+		this.isPlayedWithoutCheats = savegame.noCheatsUsed;
+		this.missileCounter = savegame.missileCounter;
+		this.hitCounter = savegame.hitCounter;
 		
-		this.scorescreenTimes = savegame.scorescreen_times.clone();
+		this.scorescreenTimes = savegame.scorescreenTimes.clone();
 	}	
     
     public void reset()
@@ -941,7 +937,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		this.recent_dmg_timer = 0; 
 		this.enhancedRadiationTimer = 0;
 		for(int i = 0; i < 4; i++){this.powerUpTimer[i] = 0;}
-		this.generator_timer = 0;
+		this.generatorTimer = 0;
 		this.empWave = null;
 		this.rotorPosition[this.getType().ordinal()] = 0;
 		if(reset_start_pos){this.placeAtStartpos();}
@@ -1111,7 +1107,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		this.destination.setLocation(this.bounds.getX() + 40, 520);	
 		this.plasmaActivationTimer = 0;
 		
-		if(this.isPowerShieldActivated){this.shut_down_power_shield();}
+		if(this.isPowerShieldActivated){this.shutDownPowerShield();}
 		if(this.tractor != null){this.stop_tractor();}
 		if(this.hasInterphaseGenerator){Audio.phase_shift.stop();}
 		this.numberOfCrashes++;
@@ -1260,7 +1256,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			}
 			if(this.isPowerShieldActivated)
 			{						
-				this.shut_down_power_shield();
+				this.shutDownPowerShield();
 				this.energy = 0;
 			}
 			if(this.currentPlating <= 0 && !this.isDamaged)
@@ -1300,15 +1296,12 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 				this.hasMaxUpgradeLevel[i] = true;
 			}
 		}
-		this.set_spell_costs();
+		this.setSpellCosts();
 	}      
 
-	private void set_spell_costs()
+	void setSpellCosts()
 	{
-		this.spellCosts = COSTS[this.getType().ordinal()][SPELL.ordinal()]
-			- (this.getType() != OROCHI
-				? 0 
-				: 2 *(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1));
+		this.spellCosts = this.getType().getSpellCosts();
 	}
 
 	public boolean isPoweredUp()
@@ -1447,7 +1440,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}
 	}
 	
-	public static int helios_costs(int upgrade_number)
+	public static int heliosCosts(int upgrade_number)
 	{
 		int heli;
 		if(upgrade_number <= 1){heli = 2;}
@@ -1550,12 +1543,12 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	public boolean is_energy_ability_activateable()
 	{		
 		return  (this.getType() == ROCH && this.energy >= POWER_SHIELD_ACTIVATION_TRESHOLD)
-				|| !(this.generator_timer > 0 
+				|| !(this.generatorTimer > 0
 					 ||(this.energy < this.spellCosts
 					 	&& !this.has_unlimited_energy()));
 	}
 
-	public void upgrade_energy_ability()
+	public void upgradeEnergyAbility()
 	{
 		this.energy += MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
 					   - MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
@@ -1563,7 +1556,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		
 		if(this.getType() == OROCHI)
 		{
-			this.set_spell_costs();
+			this.setSpellCosts();
 		}
 	}
 
@@ -1576,7 +1569,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			this.bounds.getY() + FOCAL_PNT_Y_EXP);
 	}
 
-	public void prepare_teleportation()
+	public void prepareTeleportation()
 	{
 		this.isSearchingForTeleportDestination = true;
 		this.priorTeleportLocation.setLocation(
@@ -1586,28 +1579,28 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			this.bounds.getY() + FOCAL_PNT_Y_POS);
 	}
 	
-	public void turn_on_power_shield()
+	public void turnOnPowerShield()
 	{
     	Audio.play(Audio.shield_up);
 		this.isPowerShieldActivated = true;
 	}
 	    
-    void shut_down_power_shield()
+    void shutDownPowerShield()
     {
     	Audio.play(Audio.plasma_off);
 		this.isPowerShieldActivated = false;
     }
     
-    public void activate_plasma()
+    public void activatePlasma()
 	{
 		Audio.play(Audio.plasma_on);
 		this.energy -= this.has_unlimited_energy() ? 0 : this.spellCosts;
 		this.plasmaActivationTimer = POWERUP_DURATION;
 	}	
 
-	public void release_EMP(ArrayList<LinkedList<Explosion>> explosion)
+	public void releaseEMP(ArrayList<LinkedList<Explosion>> explosion)
 	{
-		this.generator_timer = 67;
+		this.generatorTimer = 67;
 		this.energy -= this.has_unlimited_energy() ? 0 : this.spellCosts;
 		Audio.play(Audio.emp);
 		Explosion.start(explosion, 
@@ -1623,9 +1616,9 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		this.interphaseGeneratorTimer = 0;
 	}
 
-	public void activate_PU_generator(ArrayList<LinkedList<PowerUp>> powerUp)
+	public void activatePowerUpGenerator(ArrayList<LinkedList<PowerUp>> powerUp)
 	{
-		this.generator_timer = (int)(0.4f * POWERUP_DURATION);			
+		this.generatorTimer = (int)(0.4f * POWERUP_DURATION);
 		this.energy -= this.has_unlimited_energy() ? 0 : this.spellCosts;
 		MyMath.randomize();			
 		for(int i = 0; i < 3; i++)
@@ -1652,7 +1645,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	public void turn_around()
 	{
 		this.isMovingLeft = !this.isMovingLeft;
-		this.set_bounds();		
+		this.setBounds();
 	}
 	
 	public void energy_ability_used(ArrayList<LinkedList<PowerUp>> powerUp,
@@ -1661,16 +1654,16 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		if(	this.getType() == PHOENIX
 			&& this.is_energy_ability_activateable())
 		{
-			this.prepare_teleportation();
+			this.prepareTeleportation();
 		}		
 		else if(this.isPowerShieldActivated)
 		{
-			this.shut_down_power_shield();	
+			this.shutDownPowerShield();
 		}
 		else if(this.getType() == ROCH
 				&& this.is_energy_ability_activateable())
 		{			
-			this.turn_on_power_shield();			
+			this.turnOnPowerShield();
 		}		
 		else if(this.getType() == OROCHI
 				&& !this.isNextMissileStunner)
@@ -1681,17 +1674,17 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		else if(this.getType() == KAMAITACHI
 				&& this.is_energy_ability_activateable())
 		{
-			this.activate_plasma();
+			this.activatePlasma();
 		}
 		else if(this.getType() == PEGASUS
 				&& this.is_energy_ability_activateable())
 		{
-			this.release_EMP(explosion);
+			this.releaseEMP(explosion);
 		}		
 		else if(this.getType() == HELIOS
 				&& this.is_energy_ability_activateable())
 		{			
-			this.activate_PU_generator(powerUp);
+			this.activatePowerUpGenerator(powerUp);
 		}
 	}
 	
@@ -1735,7 +1728,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 						
 			if(this.isPowerShieldActivated)
 			{						
-				this.shut_down_power_shield();
+				this.shutDownPowerShield();
 				this.energy = 0;
 			}
 			

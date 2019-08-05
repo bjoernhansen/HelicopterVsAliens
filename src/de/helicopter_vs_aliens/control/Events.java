@@ -53,7 +53,7 @@ public class Events implements Constants
 
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
-		SAVE_ANYWAY = false;
+		SAVE_ANYWAY = true;
 
 	public static HighscoreEntry[][]
 		highscore = new HighscoreEntry[7][10];
@@ -65,13 +65,13 @@ public class Events implements Constants
 		level = 1,				// aktuelle Level [1 - 51]
 		maxLevel = 1,			// höchstes erreichtes Level
 		money = 0, 				// Guthaben
-		killsAfterLevelUp,	// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
-		lastCreationTimer,	// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
+		killsAfterLevelUp,		// Anhand dieser Anzahl wird ermittelt, ob ein Level-Up erfolgen muss.
+		lastCreationTimer,		// Timer stellt sicher, dass ein zeitlicher Mindestabstand zwischen der Erstellung zweier Gegner liegt
         overallEarnings, 		// Gesamtverdienst
         extraBonusCounter, 		// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
-		lastBonus, 			// für die Guthabenanzeige: zuletzt erhaltener Standard-Verdienst
+		lastBonus, 				// für die Guthabenanzeige: zuletzt erhaltener Standard-Verdienst
 		last_extra_bonus,		// für die Guthabenanzeige: zuletzt erhaltener Extra-Bonus
-        lastMultiKill,		// für die Multi-Kill-Anzeige: Art des letzten Multi-Kill
+        lastMultiKill,			// für die Multi-Kill-Anzeige: Art des letzten Multi-Kill
         commendationTimer,		// reguliert, wie lange die Multi-Kill-Anzeige zu sehen ist
 		heliosMaxMoney;
 
@@ -691,7 +691,7 @@ public class Events implements Constants
 			}
 			else if(selection == 5)
 			{
-				helicopter.upgrade_energy_ability();
+				helicopter.upgradeEnergyAbility();
 			}
 		}
 	}

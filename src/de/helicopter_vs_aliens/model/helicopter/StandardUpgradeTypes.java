@@ -7,6 +7,5 @@ public enum StandardUpgradeTypes
     PLATING,
     FIREPOWER,
     FIRE_RATE,
-    ENERGY_ABILITY,
-    SPELL
+    ENERGY_ABILITY
 }

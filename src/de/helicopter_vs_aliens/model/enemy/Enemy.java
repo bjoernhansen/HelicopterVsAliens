@@ -180,7 +180,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	private static int 
 		selection,			// bestimmt welche Typen von Gegnern zufällig erscheinen können	
 		selectionBarrier, 	// bestimmt den Typ der Hinernis-Gegner
-		rock_timer,			// reguliert das Erscheinen von "Rock"-Gegnern
+		rockTimer,			// reguliert das Erscheinen von "Rock"-Gegnern
 		barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
 		
 	// für die Tarnung nötige Variablen
@@ -1786,7 +1786,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		return currentRock == null
 				&& Events.level >= MIN_ROCK_LEVEL 
 				&& !Events.isBossLevel()
-				&& rock_timer == 0 
+				&& rockTimer == 0
 				&& MyMath.toss_up(ROCK_PROB);
 	}
 	
@@ -2585,7 +2585,8 @@ public class Enemy extends MovingObject implements MissileTypes
 	public static void updateAllActive(Controller controller,
 									   Helicopter helicopter)
 	{
-		if(rock_timer > 0){rock_timer--;}	
+		if(rockTimer > 0){
+			rockTimer--;}
 		if(BackgroundObject.background_moves && barrierTimer > 0){
 			barrierTimer--;}
 		countBarriers(controller.enemy);
@@ -3105,7 +3106,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		if(currentRock == this)
 		{
 			currentRock = null;
-			rock_timer = ROCKFREE_TIME;
+			rockTimer = ROCKFREE_TIME;
 		}
 		else if(this.isMiniBoss)
 		{

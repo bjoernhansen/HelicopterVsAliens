@@ -378,7 +378,7 @@ public class Menu implements Constants
             }
             if(Events.allPlayable || Helicopter.isUnlocked(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]))
             {
-            	paint_tickmark(g2d, i, 210, 323, 15, 20);
+            	paintTickmark(g2d, i, 210, 323, 15, 20);
             }
         }
         
@@ -410,7 +410,7 @@ public class Menu implements Constants
 	    }	    
     }    
     
-    private static void paint_tickmark(Graphics2D g2d, int i, int x, int y, int w, int h)
+    private static void paintTickmark(Graphics2D g2d, int i, int x, int y, int w, int h)
 	{
     	Enemy.paintEnergyBeam(g2d,
 				x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 
@@ -425,9 +425,9 @@ public class Menu implements Constants
 				y + h + STARTSCREEN_HELICOPTER_OFFSET_Y);
 	}
     
-    static void update_and_paint_startscreen_menu(Graphics2D g2d, 
-                                                  Helicopter helicopter, 
-                                                  int counter)
+    static void updateAndPaintStartscreenMenu(Graphics2D g2d,
+											  Helicopter helicopter,
+											  int counter)
     {    	
     	g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(29));
@@ -473,13 +473,13 @@ public class Menu implements Constants
             			}
             			else if(j == 6)
             			{
-            				g2d.setColor(MyColor.costsColor[Helicopter.helios_costs(i-1)]);
-            				temp_string = PRICE_LEVELS[language.ordinal()][Helicopter.helios_costs(i-1)];
+            				g2d.setColor(MyColor.costsColor[Helicopter.heliosCosts(i-1)]);
+            				temp_string = PRICE_LEVELS[language.ordinal()][Helicopter.heliosCosts(i-1)];
             			}
             			else if(i != 0)
             			{
-            				g2d.setColor(MyColor.costsColor[Helicopter.COSTS[j-1][i-1]]);
-            				temp_string = PRICE_LEVELS[language.ordinal()][Helicopter.COSTS[j-1][i-1]];
+            				g2d.setColor(MyColor.costsColor[HelicopterTypes.values()[j-1].getUpgradeCosts(i-1)]);
+            				temp_string = PRICE_LEVELS[language.ordinal()][HelicopterTypes.values()[j-1].getUpgradeCosts(i-1)];
             			}
             			g2d.drawString(temp_string, 200 + (j-1) * 135, 140 + (i == 0 ? 0 : 5) + (i-1) * 32);
             		}
@@ -3215,7 +3215,7 @@ public class Menu implements Constants
 		}		
 		else
 		{				
-			update_and_paint_startscreen_menu(g2d, helicopter, controller.frames_counter);
+			updateAndPaintStartscreenMenu(g2d, helicopter, controller.frames_counter);
 		}		
 	}
 	

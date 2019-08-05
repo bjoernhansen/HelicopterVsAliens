@@ -40,42 +40,42 @@ public class Savegame implements Constants, Serializable
 		level, 
 		max_level,
 		bonus_counter,
-		extra_bonus_counter,		
-		enemies_seen, 
-		enemies_killed,
-		mini_boss_seen,
-		mini_boss_killed, 
-		nr_of_crashes, 
-		nr_of_repairs,
-		missile_counter,
-		hit_counter,
+		extra_bonus_counter,
+		enemiesSeen,
+		enemiesKilled,
+		miniBossSeen,
+		miniBossKilled,
+		numberOfCrashes,
+		numberOfRepairs,
+		missileCounter,
+		hitCounter,
 		platingDurabilityFactor,
-		nr_of_cannons, 
+		numberOfCannons,
 		rapidfire, 
-		level_of_upgrade [] = new int[6];
+		levelOfUpgrade[] = new int[6];
 	
 	public long
 		playing_time, 
 		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5],
-		scorescreen_times[] = new long [Helicopter.NR_OF_TYPES];
+		scorescreenTimes[] = new long [Helicopter.NR_OF_TYPES];
 	
 	public float
-		jumbo_missiles, 
-		current_plating,
+		jumboMissiles,
+		currentPlating,
 		energy;
 	
 	public boolean
 		originalResulution,
 		standardBackgroundMusic,
 		isSoundOn,
-		valid, 
-		has_shortrange_radiation,
-		has_piercing_warheads, 
+		valid,
+		hasShortrangeRadiation,
+		hasPiercingWarheads,
 		spotlight,
-		has_radar_device,
-		has_interphase_generator,
-		has_PowerUp_immobilizer,
-		no_cheats_used,
+		hasRadarDevice,
+		hasInterphaseGenerator,
+		hasPowerUpImmobilizer,
+		noCheatsUsed,
 		reachedLevelTwenty[] = new boolean [Helicopter.NR_OF_TYPES];
 	
 	public HelicopterTypes
@@ -175,38 +175,38 @@ public class Savegame implements Constants, Serializable
 		this.bonus_counter = Events.overallEarnings;
 		this.extra_bonus_counter = Events.extraBonusCounter;
 		this.playing_time = Events.playingTime;
-		this.scorescreen_times = helicopter.scorescreenTimes.clone();
+		this.scorescreenTimes = helicopter.scorescreenTimes.clone();
 		this.recordTime = Events.recordTime.clone();
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
 		this.highscore = Events.highscore.clone();
 		this.helicopterType = helicopter.getType();
-		this.level_of_upgrade = helicopter.levelOfUpgrade.clone();
+		this.levelOfUpgrade = helicopter.levelOfUpgrade.clone();
 		this.spotlight = helicopter.spotlight;
 		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
-		this.has_shortrange_radiation = helicopter.hasShortrangeRadiation;
-		this.has_piercing_warheads = helicopter.hasPiercingWarheads;
-		this.jumbo_missiles = helicopter.missileDamageFactor;
-		this.nr_of_cannons = helicopter.numberOfCannons;
-		this.has_radar_device = helicopter.hasRadarDevice;
+		this.hasShortrangeRadiation = helicopter.hasShortrangeRadiation;
+		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
+		this.jumboMissiles = helicopter.missileDamageFactor;
+		this.numberOfCannons = helicopter.numberOfCannons;
+		this.hasRadarDevice = helicopter.hasRadarDevice;
 		this.rapidfire = helicopter.rapidfire;
-		this.has_interphase_generator = helicopter.hasInterphaseGenerator;
-		this.has_PowerUp_immobilizer = helicopter.hasPowerUpImmobilizer;
-		this.current_plating = helicopter.currentPlating;
+		this.hasInterphaseGenerator = helicopter.hasInterphaseGenerator;
+		this.hasPowerUpImmobilizer = helicopter.hasPowerUpImmobilizer;
+		this.currentPlating = helicopter.currentPlating;
 		this.energy = helicopter.energy;
-		this.enemies_seen = helicopter.numberOfEnemiesSeen;
-		this.enemies_killed = helicopter.numberOfEnemiesKilled;
-		this.mini_boss_seen = helicopter.numberOfMiniBossSeen;
-		this.mini_boss_killed = helicopter.numberOfMiniBossKilled;
-		this.nr_of_crashes = helicopter.numberOfCrashes;
-		this.nr_of_repairs = helicopter.numberOfRepairs;
-		this.no_cheats_used = helicopter.isPlayedWithoutCheats;
-		this.missile_counter = helicopter.missileCounter;
-		this.hit_counter = helicopter.hitCounter;
+		this.enemiesSeen = helicopter.numberOfEnemiesSeen;
+		this.enemiesKilled = helicopter.numberOfEnemiesKilled;
+		this.miniBossSeen = helicopter.numberOfMiniBossSeen;
+		this.miniBossKilled = helicopter.numberOfMiniBossKilled;
+		this.numberOfCrashes = helicopter.numberOfCrashes;
+		this.numberOfRepairs = helicopter.numberOfRepairs;
+		this.noCheatsUsed = helicopter.isPlayedWithoutCheats;
+		this.missileCounter = helicopter.missileCounter;
+		this.hitCounter = helicopter.hitCounter;
 	}	
 	
 	public void saveInHighscore()
 	{
-		if(this.valid && (this.no_cheats_used || Events.SAVE_ANYWAY))
+		if(this.valid && (this.noCheatsUsed || Events.SAVE_ANYWAY))
 		{				
 			HighscoreEntry temp_entry = new HighscoreEntry(this);
 			HighscoreEntry.putEntry(Events.highscore[this.helicopterType.ordinal()], temp_entry);
