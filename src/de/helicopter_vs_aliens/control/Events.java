@@ -25,9 +25,7 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_2_SERVANT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_4;
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.FINAL_BOSS;
+import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.gui.PriceLevels.REGULAR;
@@ -339,7 +337,7 @@ public class Events implements Constants
 		}
 		else if(window == REPAIR_SHOP)
 		{
-			repairShopMousePressedLeft(helicopter, controller.enemy, controller.bgObject);
+			repairShopMousePressedLeft(helicopter, controller.enemies, controller.bgObject);
 		}
 		else if(window == STARTSCREEN)
 		{
@@ -436,7 +434,7 @@ public class Events implements Constants
 	}
 	
 	private static void repairShopMousePressedLeft( Helicopter helicopter, 
-	                                                ArrayList<LinkedList<Enemy>> enemy, 
+	                                                ArrayList<LinkedList<Enemy>> enemies,
 	                                                ArrayList<LinkedList<BackgroundObject>> bgObject)
 	{
 		// Reparatur des Helikopters
@@ -458,15 +456,15 @@ public class Events implements Constants
 												
 				if(!(level == 50 && helicopter.has_all_upgrades()))
 				{
-					enemy.get(INACTIVE).addAll(enemy.get(ACTIVE));
-					enemy.get(ACTIVE).clear();			
+					enemies.get(INACTIVE).addAll(enemies.get(ACTIVE));
+					enemies.get(ACTIVE).clear();
 					level = level - ((level - 1) % 5);						
 					Enemy.adaptToLevel(helicopter, level, false);
 					if(level < 6){
 						BackgroundObject.reset(bgObject);}
 					killsAfterLevelUp = 0;
-					enemy.get(INACTIVE).addAll(enemy.get(DESTROYED));
-					enemy.get(DESTROYED).clear();
+					enemies.get(INACTIVE).addAll(enemies.get(DESTROYED));
+					enemies.get(DESTROYED).clear();
 					Menu.repairShopButton.get("RepairButton").costs = 0;
 					Enemy.currentRock = null;
 				}
@@ -514,17 +512,17 @@ public class Events implements Constants
 				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
 				Menu.repairShopButton.get("Einsatz").second_label = Button.SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
 				Menu.repairShopButton.get("Special" + 0).costs = 0;
-				for(Enemy e : enemy.get(DESTROYED))
+				for(Enemy enemy : enemies.get(DESTROYED))
 				{
-					e.repaint();
+					enemy.repaint();
 				}
-				for(Enemy e : enemy.get(ACTIVE))
+				for(Enemy enemy : enemies.get(ACTIVE))
 				{
-					if (Enemy.currentRock != e)
+					if (enemy.type != ROCK)
 					{
-						e.farbe1 = MyColor.dimColor(e.farbe1, MyColor.BARRIER_NIGHT_DIM_FACTOR);
-						e.farbe2 = MyColor.dimColor(e.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
-						e.repaint();
+						enemy.farbe1 = MyColor.dimColor(enemy.farbe1, MyColor.BARRIER_NIGHT_DIM_FACTOR);
+						enemy.farbe2 = MyColor.dimColor(enemy.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
+						enemy.repaint();
 					}
 				}
 			}
@@ -1029,8 +1027,8 @@ public class Events implements Constants
 		Menu.unlockedTimer = 0;
 				
 		// kein "active enemy"-Reset, wenn Bossgegner 2 Servants aktiv
-		if(!controller.enemy.get(ACTIVE).isEmpty()
-		   && !(!total_reset && controller.enemy.get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
+		if(!controller.enemies.get(ACTIVE).isEmpty()
+		   && !(!total_reset && controller.enemies.get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
 		{
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
@@ -1041,18 +1039,18 @@ public class Events implements Constants
 			}			
 			if(total_reset)
 			{
-				controller.enemy.get(INACTIVE).addAll(controller.enemy.get(ACTIVE));
-				controller.enemy.get(ACTIVE).clear();
+				controller.enemies.get(INACTIVE).addAll(controller.enemies.get(ACTIVE));
+				controller.enemies.get(ACTIVE).clear();
 				Enemy.currentRock = null;
 			}
 			else
 			{
-				for(Iterator<Enemy> i = controller.enemy.get(ACTIVE).iterator(); i.hasNext();)
+				for(Iterator<Enemy> i = controller.enemies.get(ACTIVE).iterator(); i.hasNext();)
 				{
 					Enemy e = i.next();					
 					if(!e.isLasting)
 					{
-						controller.enemy.get(INACTIVE).add(e);
+						controller.enemies.get(INACTIVE).add(e);
 						i.remove();
 					}
 				}
@@ -1062,8 +1060,8 @@ public class Events implements Constants
 		if(total_reset)
 		{
 			killsAfterLevelUp = 0;
-			controller.enemy.get(INACTIVE).addAll(controller.enemy.get(DESTROYED));
-			controller.enemy.get(DESTROYED).clear();
+			controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
+			controller.enemies.get(DESTROYED).clear();
 			if(level < 6){
 				BackgroundObject.reset(controller.bgObject);}
 		}									
@@ -1195,7 +1193,7 @@ public class Events implements Constants
 		int previous_level = level;
 		level += nr_of_levelUp;	
 				
-		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemy, controller.explosion);}
+		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemies, controller.explosion);}
 		if(helicopter.getType() == HELIOS && level > maxLevel){getHeliosIncome(previous_level);}
 		
 		maxLevel = level;

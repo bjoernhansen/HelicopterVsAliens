@@ -7,51 +7,51 @@ import java.util.Set;
 public enum EnemyTypes
 {
     // Standard-Gegner
-    TINY,
-    SMALL,
-    RUNABOUT,
-    FREIGHTER,
-    BATCHWISE,
-    SINUS,
-    DODGER,
-    CHAOS,
-    CALLBACK,
-    SHOOTER,
-    CLOAK,
-    BOLT,
-    CARRIER,
-    YELLOW,
-    AMBUSH,
-    LOOPING,
-    CAPTURER,
-    TELEPORTER,
+    TINY(1),
+    SMALL(2),
+    RUNABOUT(2),
+    FREIGHTER(4),
+    BATCHWISE(6),
+    SINUS(6),
+    DODGER(9),
+    CHAOS(11),
+    CALLBACK(10),
+    SHOOTER(12),
+    CLOAK(16),
+    BOLT(14),
+    CARRIER(19),
+    YELLOW(22),
+    AMBUSH(30),
+    LOOPING(30),
+    CAPTURER(30),
+    TELEPORTER(35),
     
     // Boss-Gegner
-    BOSS_1,
-    BOSS_2,
-    BOSS_2_SERVANT,
-    BOSS_3,
-    BOSS_4_SERVANT,
-    BOSS_4,
-    FINAL_BOSS,
-    SMALL_SHIELD_MAKER,
-    BIG_SHIELD_MAKER,
-    BODYGUARD,
-    HEALER,
-    PROTECTOR,
+    BOSS_1(75),
+    BOSS_2(100),
+    BOSS_2_SERVANT(5),
+    BOSS_3(500),
+    BOSS_4_SERVANT(1),
+    BOSS_4(1250),
+    FINAL_BOSS(5000),
+    SMALL_SHIELD_MAKER(55),
+    BIG_SHIELD_MAKER(80),
+    BODYGUARD(150),
+    HEALER(65),
+    PROTECTOR(25),
     
     // Hindernisse
-    ROCK,
-    BARRIER_0,
-    BARRIER_1,
-    BARRIER_2,
-    BARRIER_3,
-    BARRIER_4,
-    BARRIER_5,
-    BARRIER_6,
-    BARRIER_7,
+    ROCK(0),
+    BARRIER_0(4),
+    BARRIER_1(4),
+    BARRIER_2(5),
+    BARRIER_3(6),
+    BARRIER_4(7),
+    BARRIER_5(9),
+    BARRIER_6(4),
+    BARRIER_7(15),
     
-    KABOOM;
+    KABOOM(0);
     
     
     private final static Set<EnemyTypes>
@@ -60,13 +60,21 @@ public enum EnemyTypes
         FINAL_BOSS_SERVANT_TYPES = Collections.unmodifiableSet(EnumSet.range(SMALL_SHIELD_MAKER, PROTECTOR)),
         BARRIER = Collections.unmodifiableSet(EnumSet.range(BARRIER_0, BARRIER_7)),
         CLOAKABLE_AS_MINI_BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOLT, TELEPORTER));
-        
-    public static Set<EnemyTypes> getFinalBossServantTypes()
+      
+    private final int strength; // Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
+    
+    
+    EnemyTypes(int strength)
+    {
+        this.strength = strength;
+    }
+    
+    static Set<EnemyTypes> getFinalBossServantTypes()
     {
         return FINAL_BOSS_SERVANT_TYPES;
     }
     
-    public static Set<EnemyTypes> getBarrierTypes()
+    static Set<EnemyTypes> getBarrierTypes()
     {
         return BARRIER;
     }
@@ -109,5 +117,10 @@ public enum EnemyTypes
     boolean isCloakableAsMiniBoss()
     {
         return CLOAKABLE_AS_MINI_BOSS_TYPES.contains(this);
+    }
+    
+    public int getStrength()
+    {
+        return this.strength;
     }
 }

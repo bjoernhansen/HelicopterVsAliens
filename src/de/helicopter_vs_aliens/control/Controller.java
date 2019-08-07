@@ -74,8 +74,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	private Helicopter
 		helicopter = HelicopterFactory.create(HelicopterTypes.getDefault());
 	
-	public ArrayList<LinkedList<Enemy>> 		
-		enemy = new ArrayList<>(3);	
+	public ArrayList<LinkedList<Enemy>>
+		enemies = new ArrayList<>(3);
 	public ArrayList<LinkedList<Missile>>
 		missile = new ArrayList<>(2);	
 	public ArrayList<LinkedList<Explosion>>
@@ -133,9 +133,9 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			this.bgObject.add(	   i, new LinkedList<>());
 			this.enemyMissile.add( i, new LinkedList<>());
 			this.powerUp.add(	   i, new LinkedList<>());
-			this.enemy.add(		   i, new LinkedList<>());
+			this.enemies.add(		   i, new LinkedList<>());
 		}		
-		this.enemy.add(DESTROYED, new LinkedList<>());
+		this.enemies.add(DESTROYED, new LinkedList<>());
 	}
 	
 	public void start()
@@ -225,7 +225,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 				Enemy.updateAllActive(this, this.helicopter);
 				EnemyMissile.updateAll(this.enemyMissile, this.helicopter);
 				Events.checkForLevelup(this, this.helicopter);
-				Enemy.generateNewEnemies(this.enemy, this.helicopter);
+				Enemy.generateNewEnemies(this.enemies, this.helicopter);
 				this.helicopter.update(this.missile, this.explosion);
 				Explosion.updateAll(this.helicopter, this.explosion);
 				PowerUp.updateAll(this.powerUp, this.helicopter);

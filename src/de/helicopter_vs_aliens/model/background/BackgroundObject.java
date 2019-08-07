@@ -476,7 +476,7 @@ public class BackgroundObject extends MovingObject
 	public static void update(Controller controller,
                               ArrayList<LinkedList<BackgroundObject>> bgObject)
 	{		
-		background_moves = isBackgroundMoving(controller.enemy, controller.getHelicopter());
+		background_moves = isBackgroundMoving(controller.enemies, controller.getHelicopter());
 		for(Iterator<BackgroundObject> i = bgObject.get(ACTIVE).iterator(); i.hasNext();)
 		{
 			BackgroundObject bgo = i.next();

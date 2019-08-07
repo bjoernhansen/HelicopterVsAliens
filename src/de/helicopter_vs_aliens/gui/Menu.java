@@ -1048,13 +1048,13 @@ public class Menu implements Constants
 		else if(specialInfoSelection == 4)
 		{
 			info_string = "Aktive Gegner: " 
-						  + (controller.enemy.get(ACTIVE).size()-Enemy.currentNumberOfBarriers)  + " / " + (Enemy.maxNr)
+						  + (controller.enemies.get(ACTIVE).size()-Enemy.currentNumberOfBarriers)  + " / " + (Enemy.maxNr)
 						  + ";   Zerstörte Gegner: "
-						  + controller.enemy.get(DESTROYED).size()
+						  + controller.enemies.get(DESTROYED).size()
 						  + ";   Hindernisse: "
 						  + Enemy.currentNumberOfBarriers + " / " + Enemy.maxBarrierNr
 						  + ";   Inaktive Gegner: "
-						  + controller.enemy.get(INACTIVE).size();
+						  + controller.enemies.get(INACTIVE).size();
 		}
 		else if(specialInfoSelection == 5)
 		{

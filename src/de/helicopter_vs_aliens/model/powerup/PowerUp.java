@@ -27,7 +27,12 @@ public class PowerUp extends MovingObject
 {
 	private static final int
 		GAME_SIZE = 30;
-	public static final int MENU_SIZE = 23;
+	
+	public static final int
+		MENU_SIZE = 23;
+	
+	public static final double
+		POWER_UP_WORTH_MULTIPLIER = 1.25;
 	
 	private int
 		direction;
@@ -151,7 +156,7 @@ public class PowerUp extends MovingObject
 		}		
 	}
 	
-	private void make(double x, double y, PowerUpTypes powerUp_type, int powerUp_worth, int powerUp_direction)
+	private void make(double x, double y, PowerUpTypes powerUpType, int powerUpWorth, int powerUpDirection)
 	{
 		this.bounds.setRect(x, y, GAME_SIZE, GAME_SIZE);
 		this.setPaintBounds(GAME_SIZE, GAME_SIZE);
@@ -159,8 +164,8 @@ public class PowerUp extends MovingObject
 		this.stopped = false;
 		this.inStatusBar = false;
 		this.speed.setLocation(0, 0);
-		this.direction = powerUp_direction;
-		this.type = powerUp_type;		
+		this.direction = powerUpDirection;
+		this.type = powerUpType;
 		if(this.type == TRIPLE_DMG)
 		{
 			this.surface = Color.magenta;
@@ -190,7 +195,7 @@ public class PowerUp extends MovingObject
 		{
 			this.surface = Color.orange;
 			this.cross = MyColor.golden;
-			this.worth = powerUp_worth;
+			this.worth = powerUpWorth;
 		} 
 	}
 	
@@ -275,9 +280,7 @@ public class PowerUp extends MovingObject
 			pu.make(enemy.bounds.getX(), 
 					enemy.bounds.getY(), 
 					type,
-					enemy.isMiniBoss
-						? (int)(1.25f * enemy.strength) 
-						: 5 * enemy.strength, 
+					(int)(POWER_UP_WORTH_MULTIPLIER * enemy.getEffectiveStrength()),
 					helicopter.bounds.getX() > enemy.bounds.getX() 
 					|| helicopter.hasPowerUpImmobilizer ? -1 : 1 );
 		}

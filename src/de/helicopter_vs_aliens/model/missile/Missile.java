@@ -175,21 +175,21 @@ public class Missile extends MovingObject implements MissileTypes
 	private void check_for_hit_enemys(Controller controller,
                                       Helicopter helicopter)
 	{
-		for(Enemy e : controller.enemy.get(ACTIVE))
+		for(Enemy enemy : controller.enemies.get(ACTIVE))
 		{
-			if (e.isHitable(this))
+			if (enemy.isHitable(this))
 			{
-				if (e.teleportTimer == READY
-					&& e.stunningTimer == READY
-					&& e.empSlowedTimer == READY)
+				if (enemy.teleportTimer == READY
+					&& enemy.stunningTimer == READY
+					&& enemy.empSlowedTimer == READY)
 				{
-					e.teleport();
-				} else if (!e.isInvincible())
+					enemy.teleport();
+				} else if (!enemy.isInvincible())
 				{
-					e.hitByMissile(helicopter, this, controller.explosion);
+					enemy.hitByMissile(helicopter, this, controller.explosion);
 				} else if (!this.bounced
-					&& e.teleportTimer < 1
-					&& !(e.type == BOSS_2_SERVANT))
+					&& enemy.teleportTimer < 1
+					&& !(enemy.type == BOSS_2_SERVANT))
 				{
 					Audio.play(Audio.rebound);
 					this.speed = -Math.signum(this.speed)
@@ -198,21 +198,23 @@ public class Missile extends MovingObject implements MissileTypes
 					this.bounced = true;
 				}
 				
-				if (e.hasHPsLeft())
+				if (enemy.hasHPsLeft())
 				{
-					if (e.stunningTimer == READY)
+					if (enemy.stunningTimer == READY)
 					{
-						e.reactToHit(helicopter, this);
+						enemy.reactToHit(helicopter, this);
 					}
 				} else
 				{
-					e.die(controller, helicopter, this, false);
+					enemy.die(controller, helicopter, this, false);
 					if (helicopter.getType() == PHOENIX
 						&& helicopter.bonusKillsTimer > 0
 						&& this.launchingTime > helicopter.pastTeleportTime)
 					{
+						
+						// TODO komtrollieren wo getStrenth für Minibosse mal 4 sein muss, nutze effectiveStrength Method
 						Events.extra_reward(1,
-							e.strength
+							enemy.type.getStrength()
 								* (helicopter.spotlight
 								? Events.NIGHT_BONUS_FACTOR
 								: Events.DAY_BONUS_FACTOR),
@@ -222,15 +224,15 @@ public class Missile extends MovingObject implements MissileTypes
 					}
 				}
 				if (!helicopter.hasPiercingWarheads
-					&& !e.isInvincible())
+					&& !enemy.isInvincible())
 				{
 					this.flying = false;
 					break;
 				}
 			}
-			if (this.could_hit(e) && e.isReadyToDodge(helicopter))
+			if (this.could_hit(enemy) && enemy.isReadyToDodge(helicopter))
 			{
-				e.dodge();
+				enemy.dodge();
 			}
 		}	
 	}

@@ -213,7 +213,6 @@ public class Enemy extends MovingObject implements MissileTypes
 	public int
 		hitpoints,						// aktuelle Hitpoints
 		startingHitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegers)
-		strength,						// Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
 		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen 		
@@ -251,12 +250,12 @@ public class Enemy extends MovingObject implements MissileTypes
 		isPreviousStoppingBarrier;
 		
 	private int
-		rewardModifier,		// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
+		rewardModifier,			// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
 		lifetime,				// Anzahl der Frames seit Erstellung des Gegners;  und vergangene Zeit seit Erstellung, Zeit	
 			yCrashPos,			// Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
 		collisionAudioTimer,
 		turnAudioTimer,
-		explodingTimer,		// Timer zur überwachung der Zeit zwischen Abschuss und Absturz
+		explodingTimer,			// Timer zur überwachung der Zeit zwischen Abschuss und Absturz
 		cloakingTimer,			// reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
 		uncloakingSpeed,
 		shieldMakerTimer,
@@ -1545,7 +1544,6 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
 		this.set_x(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
 		this.direction.setLocation(-1, MyMath.randomDirection());
-		this.strength = 0;				
 		this.callBack = 0;
 		this.shield = 0;
 		this.dimFactor = 1.5f;
@@ -1655,7 +1653,6 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
 			this.isLasting = true;
-			this.deactivationProb = 0.25f;
 			
 			// Level 2
 			if(this.type == BARRIER_0){this.setVarWidth(65);}
@@ -1671,8 +1668,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		else if(this.type == BARRIER_2)
 		{
 			this.farbe1 = MyColor.bleach(Color.yellow, 0.6f);
-			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());	//d //1
-			this.deactivationProb = 0.2f;
+			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
 			this.setVarWidth(65);
 			
 			this.rotorColor = 2;
@@ -1683,8 +1679,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		else if(this.type == BARRIER_3)
 		{
 			this.farbe1 = MyColor.bleach(new Color(255, 192, 0), 0.0f);
-			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0); //d
-			this.deactivationProb = 0.167f;
+			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
 			this.setVarWidth(105);
 			if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
 
@@ -1696,8 +1691,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 		// Level 18
 		else if(this.type == BARRIER_4)
-		{									
-			this.deactivationProb = 0.143f;
+		{
 			this.setVarWidth(85);
 			this.hasYPosSet = true;
 			this.barrierShootTimer = READY;
@@ -1711,9 +1705,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 		// Level 32
 		else if(this.type == BARRIER_5)
-		{					
-			this.deactivationProb = 0.11f;
-			
+		{
 			this.setVarWidth(80);
 			this.setInitialY(GROUND_Y - this.bounds.getWidth()/8);
 			
@@ -1725,9 +1717,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		// Level 42
 		else if(this.type == BARRIER_6)
 		{
-			//this.farbe1 = MyColor.bleach(new Color(0, 255, 255), 0.6f);			
 			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
-			this.deactivationProb = 0.25f;
 			this.setVarWidth(80);
 			
 			this.isLasting = true;
@@ -1735,9 +1725,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		// Level 44
 		else if(this.type == BARRIER_7)
 		{
-			this.farbe1 = MyColor.bleach(MyColor.cloaked, 0.6f);	
-			//this.farbe1 = new Color(MyMath.random(255), MyMath.random(255), MyMath.random(255));	
-			this.deactivationProb = 0.067f;
+			this.farbe1 = MyColor.bleach(MyColor.cloaked, 0.6f);
 			this.setVarWidth(100);
 						
 			this.barrierTeleportTimer = READY;
@@ -1748,7 +1736,8 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.callBack = 1 + MyMath.random(4);
 		}
 		
-		this.farbe2 = MyColor.dimColor(this.farbe1, 0.75f);		
+		this.farbe2 = MyColor.dimColor(this.farbe1, 0.75f);
+		this.deactivationProb = 1.0f / this.type.getStrength();
 				
 		if(Events.timeOfDay == NIGHT)
 		{
@@ -1756,7 +1745,6 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.farbe2 = MyColor.dimColor(this.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
 		}		
 		barrierTimer = (int)((helicopter.bounds.getWidth() + this.bounds.getWidth())/2);
-		this.strength = (int)(1.0f/this.deactivationProb);
 	}
     
     private void assignRandomBarrierType()
@@ -1807,8 +1795,6 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.hasHeightSet = true;
 		this.hasYPosSet = true;
 		this.isLasting = true;
-		
-		this.strength = 0;	
 	}
 	
 	private static boolean kaboomCreationApproved()
@@ -1828,8 +1814,6 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.targetSpeedLevel.setLocation(0.5 + 0.5*Math.random(), 0); //d
 		this.isExplodable = true;
 		this.setInitialY(GROUND_Y - 2*this.bounds.getWidth()*HEIGHT_FACTOR);
-				
-		this.strength = 0;		
 	}
 	
 	private void createStandardEnemy()
@@ -1850,8 +1834,7 @@ public class Enemy extends MovingObject implements MissileTypes
 						0.5 * Math.random());	//d
 				this.isExplodable = true;
 				this.dimFactor = 1.2f;
-
-				this.strength = 1;
+				
 				break;
 
 			// Level 3
@@ -1864,8 +1847,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(), //d
 						0.5*Math.random());	//d
 				this.isExplodable = true;
-
-				this.strength = 2;
+				
 				break;
 
 			// level 5
@@ -1878,8 +1860,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.targetSpeedLevel.setLocation(2 + 2*Math.random(), //d
 						2.5 + 1.5*Math.random());		//d
 				this.isExplodable = true;
-
-				this.strength = 2;
+				
 				break;
 
 			// Level 7
@@ -1894,8 +1875,7 @@ public class Enemy extends MovingObject implements MissileTypes
 						0.5*Math.random());	//d
 				this.canEarlyTurn = true;
 				this.canTurn = true;
-
-				this.strength = 4;
+				
 				break;
 
 			// Level 11
@@ -1908,8 +1888,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.targetSpeedLevel.setLocation(7 + 4*Math.random(), //d
 						1 + 0.5*Math.random()); //d
 				this.batchWiseMove = 1;
-
-				this.strength = 6;
+				
 				break;
 
 			// Level 13
@@ -1924,7 +1903,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.setInitialY(TURN_FRAME.getCenterY());
 				this.canSinusMove = true;
 				this.isExplodable = true;
-				this.strength = 6;
+				
 				break;
 
 			// Level 16
@@ -1937,8 +1916,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(), //d
 						0.5*Math.random());	//d
 				this.canDodge = true;
-
-				this.strength = 9;
+				
 				break;
 
 			// Level 21
@@ -1952,8 +1930,7 @@ public class Enemy extends MovingObject implements MissileTypes
 						6.5 + 2*Math.random());	//d
 				this.canMoveChaotic = true;
 				this.isExplodable = true;
-
-				this.strength = 11;
+				
 				break;
 
 			// Level 24
@@ -1967,8 +1944,7 @@ public class Enemy extends MovingObject implements MissileTypes
 						5 + 2*Math.random());		//d
 				this.isExplodable = true;
 				this.callBack = 1;
-
-				this.strength = 10;
+				
 				break;
 
 			// Level 26
@@ -1985,8 +1961,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.canDodge = true;
 				this.shootTimer = 0;
 				this.shootingRate = 35;
-
-				this.strength = 12;
+				
 				break;
 
 			// Level 31
@@ -2004,8 +1979,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.uncloakingSpeed = 2;
 				this.canEarlyTurn = true;
 				this.isExplodable = true;
-
-				this.strength = 16;
+				
 				break;
 
 			// Level 35
@@ -2026,8 +2000,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.canEarlyTurn = true;
 				this.isCarrier = true;
 				this.canTurn = true;
-
-				this.strength = 19;
+				
 				break;
 
 			// Level 37
@@ -2042,8 +2015,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.isExplodable = true;
 				this.canChaosSpeedup = true;
 				this.canDodge = true;
-
-				this.strength = 22;
+				
 				break;
 
 			// Level 41
@@ -2057,8 +2029,7 @@ public class Enemy extends MovingObject implements MissileTypes
 
 				this.isExplodable = true;
 				this.speedup = READY;
-
-				this.strength = 30;
+				
 				break;
 
 			 // Level 43
@@ -2072,8 +2043,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.setInitialY(TURN_FRAME.getCenterY());
 				this.cloakingTimer = 0;
 				this.canLoop = true;
-
-				this.strength = 30;
+				
 				break;
 
 			// Level 45
@@ -2087,8 +2057,7 @@ public class Enemy extends MovingObject implements MissileTypes
 						4.5 + 1.5*Math.random());//d
 				this.tractor = READY;
 				this.isExplodable = true;
-
-				this.strength = 30;
+				
 				break;
 
 			// Level 46
@@ -2104,8 +2073,7 @@ public class Enemy extends MovingObject implements MissileTypes
 						0.5*Math.random());//d
 				this.teleportTimer = READY;
 				this.canKamikaze = true;
-
-				this.strength = 35;
+				
 				break;
 		}
 	}
@@ -2140,9 +2108,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.targetSpeedLevel.setLocation( 12 + 3.5*Math.random(), //d
 													0.5 + 3*Math.random());		//d			
 			if(MyMath.toss_up()){this.callBack = 1;}
-		}		
-		
-		this.strength = 14;
+		}
 	}
 	
 	private void createBoss(Helicopter helicopter)
@@ -2159,7 +2125,6 @@ public class Enemy extends MovingObject implements MissileTypes
 			
 			this.canKamikaze = true;
 			
-			this.strength = 75;		
 			Events.boss = this;
 		}		
 		// Level 20
@@ -2177,7 +2142,6 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.shotSpeed = 3;
 			this.canInstantTurn = true;
 			
-			this.strength = 100;		
 			Events.boss = this;
 		}		
 		else if( this.type == BOSS_2_SERVANT)
@@ -2194,8 +2158,6 @@ public class Enemy extends MovingObject implements MissileTypes
 		
 			this.direction.x = MyMath.randomDirection();
 			this.invincibleTimer = 67;
-			
-			this.strength = 5;
 		}
 		// Level 30
 		else if( this.type == BOSS_3)
@@ -2214,7 +2176,6 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.shotSpeed = 10;
 			this.canInstantTurn = true;
 			
-			this.strength = 500;
 			Events.boss = this;
 		}
 		// Level 40
@@ -2230,7 +2191,6 @@ public class Enemy extends MovingObject implements MissileTypes
 			maxNr = 15;
 			this.canTurn = true;
 			
-			this.strength = 1250;
 			Events.boss = this;
 		}		
 		else if(this.type == BOSS_4_SERVANT)
@@ -2246,8 +2206,6 @@ public class Enemy extends MovingObject implements MissileTypes
 												  6 + 2.5*Math.random()); //d
 			this.direction.x = MyMath.randomDirection();
 			this.isExplodable = true;
-			
-			this.strength = 1;			
 		}	
 		// Level 50
 		else if(this.type == FINAL_BOSS)
@@ -2266,7 +2224,6 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.isStunnable = false;
 			this.dimFactor = 1.3f;
 			
-			this.strength = 5000;
 			Events.boss = this;
 		}		
 		else if(this.type.isFinalBossServant())
@@ -2289,15 +2246,13 @@ public class Enemy extends MovingObject implements MissileTypes
 				{				
 					this.targetSpeedLevel.setLocation(7, 6.5); //d
 					this.farbe1 = new Color(25, 125, 105);				
-					this.hitpoints = 3000;								
-					this.strength = 55;
+					this.hitpoints = 3000;
 				}			
 				else
 				{				
 					this.targetSpeedLevel.setLocation(6.5, 7); //d
 					this.farbe1 = new Color(105, 135, 65);				
-					this.hitpoints = 4250; 				
-					this.strength = 80;	
+					this.hitpoints = 4250;
 					
 					this.shootTimer = 0;
 					this.shootingRate = 25;
@@ -2317,7 +2272,6 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.cloakingTimer = 0;
 				this.canInstantTurn = true;
 				
-				this.strength = 150;			
 				Events.boss.operator.servants[this.id()] = this;
 			}		
 			else if(this.type == HEALER)
@@ -2334,7 +2288,6 @@ public class Enemy extends MovingObject implements MissileTypes
 				
 				this.canDodge = true;
 				
-				this.strength = 65;			
 				Events.boss.operator.servants[this.id()] = this;
 			}
 			else if(this.type == PROTECTOR)
@@ -2367,8 +2320,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				{
 					this.farbe1 = MyColor.dimColor(this.farbe1, MyColor.BARRIER_NIGHT_DIM_FACTOR);
 					this.farbe2 = MyColor.dimColor(this.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
-				}			
-				this.strength = (int)(1.0f/this.deactivationProb);
+				}
 				Events.boss.operator.servants[this.id()] = this;
 			}			
 		}	
@@ -2379,7 +2331,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		return 	currentMiniBoss == null
 				&& Events.level > 4 
 				&& this.model != BARRIER
-				&& !(currentRock == this)
+				&& !(this.type == ROCK)
 				&& !(this.type == KABOOM)
 				&& MyMath.toss_up(miniBossProb)
 				&& this.type.isSuitableMiniBoss();
@@ -2396,7 +2348,6 @@ public class Enemy extends MovingObject implements MissileTypes
 							1.44 * this.bounds.getHeight());		
 		this.isMiniBoss = true;
 		this.isExplodable = false;
-		this.strength  *= 4;
 		this.callBack += 2;
 		this.canTurn = true;
 		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && MyMath.toss_up(0.2f)) ||
@@ -2589,9 +2540,9 @@ public class Enemy extends MovingObject implements MissileTypes
 			rockTimer--;}
 		if(BackgroundObject.background_moves && barrierTimer > 0){
 			barrierTimer--;}
-		countBarriers(controller.enemy);
+		countBarriers(controller.enemies);
 		
-		for(Iterator<Enemy> i = controller.enemy.get(ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<Enemy> i = controller.enemies.get(ACTIVE).iterator(); i.hasNext();)
 		{
 			Enemy enemy = i.next();			
 			if(!enemy.isDestroyed && !enemy.isMarkedForRemoval)
@@ -2601,13 +2552,13 @@ public class Enemy extends MovingObject implements MissileTypes
 			else if(enemy.isDestroyed)
 			{
 				i.remove(); 
-				controller.enemy.get(DESTROYED).add(enemy);
+				controller.enemies.get(DESTROYED).add(enemy);
 			}			
 			else
 			{
 				enemy.clearImage();
 				i.remove(); 
-				controller.enemy.get(INACTIVE).add(enemy);
+				controller.enemies.get(INACTIVE).add(enemy);
 			}			
 		}
 	}	
@@ -2644,30 +2595,35 @@ public class Enemy extends MovingObject implements MissileTypes
 		{    			
 			livingBarrier[i].paint(g2d, helicopter);
 		}
-		for(Enemy e : controller.enemy.get(ACTIVE))
+		for(Enemy enemy : controller.enemies.get(ACTIVE))
 		{
-			if (currentRock != e
-				&& e.model != BARRIER
-				&& !(e.cloakingTimer > CLOAKING_TIME
-				&& e.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME
-				&& !helicopter.hasRadarDevice))
+			if(enemy.isVisableNonBarricadeVessel(helicopter.hasRadarDevice))
 			{
-				e.paint(g2d, helicopter);
+				enemy.paint(g2d, helicopter);
 			}
-		}		
+		}
 	}
-
+	
+	private boolean isVisableNonBarricadeVessel(boolean hasRadarDevice)
+	{
+		return this.type != ROCK
+			&& this.model != BARRIER
+			&& !(this.cloakingTimer > CLOAKING_TIME
+				&& this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME
+				&& !hasRadarDevice);
+	}
+	
 	private void update(Controller controller, Helicopter helicopter)
 	{												
 		this.lifetime++;		
 		this.updateTimer();
 		if(this.callBack > 0 && Events.isBossLevel()){this.callBack = 0;}
-		if(currentRock != this){
+		if(this.type != ROCK){
 			checkForBarrierCollision();}
 		if(this.stunningTimer == READY)
 		{
 			this.updateStoppableTimer();
-			if(this.type.isMajorBoss()){this.calculateBossManeuver(controller.enemy);}
+			if(this.type.isMajorBoss()){this.calculateBossManeuver(controller.enemies);}
 			this.calculateFlightManeuver(controller, helicopter);
 			this.validateTurns();
 		}		
@@ -2692,7 +2648,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		return this.bounds.getMaxY() > GROUND_Y
 			   && this.model != BARRIER 
 			   && !this.isDestroyed
-			   && currentRock != this;
+			   && this.type != ROCK;
 	}
 
 	private void calculateBossManeuver(ArrayList<LinkedList<Enemy>> enemy)
@@ -3030,7 +2986,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			Audio.play(Audio.explosion2);
 			helicopter.empWave.kills++;
-			helicopter.empWave.earned_money += this.calculate_reward(helicopter);
+			helicopter.empWave.earned_money += this.calculateReward(helicopter);
 			this.die(controller, helicopter, null, false);
 		}
     }
@@ -3103,7 +3059,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	private void prepareRemoval()
 	{
 		this.isMarkedForRemoval = true;
-		if(currentRock == this)
+		if(this.type == ROCK)
 		{
 			currentRock = null;
 			rockTimer = ROCKFREE_TIME;
@@ -3766,7 +3722,7 @@ public class Enemy extends MovingObject implements MissileTypes
 						+ this.direction.x * this.speed.getX() 
 						- (BackgroundObject.background_moves ? BG_SPEED : 0),
 					Math.max( this.model == BARRIER ? 0 : Integer.MIN_VALUE,
-							currentRock == this ? this.bounds.getY() :
+							this.type == ROCK ? this.bounds.getY() :
 								Math.min( this.canBePositionedBelowGround()
 											? Integer.MAX_VALUE
 											: GROUND_Y - this.bounds.getHeight(),
@@ -3781,7 +3737,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		return !(this.model == BARRIER
 			     && this.borrowTimer == DISABLED)
 			   || this.isDestroyed
-			   || currentRock == this;
+			   || this.type == ROCK;
 	}
 
 	private void calculateSpeedDead()
@@ -3954,7 +3910,7 @@ public class Enemy extends MovingObject implements MissileTypes
 										 Controller controller,
 										 Helicopter helicopter)
 	{
-		for(Enemy e : controller.enemy.get(DESTROYED))
+		for(Enemy e : controller.enemies.get(DESTROYED))
 		{
 			e.paint(g2d, helicopter);
 		}
@@ -3963,7 +3919,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	public static void updateAllDestroyed(Controller controller,
 										  Helicopter helicopter)
 	{
-		for(Iterator<Enemy> i = controller.enemy.get(DESTROYED).iterator(); i.hasNext();)
+		for(Iterator<Enemy> i = controller.enemies.get(DESTROYED).iterator(); i.hasNext();)
 		{
 			Enemy e = i.next();
 			e.updateDead(controller.explosion, helicopter);
@@ -3977,7 +3933,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			{
 				e.clearImage();
 				i.remove(); 
-				controller.enemy.get(INACTIVE).add(e);
+				controller.enemies.get(INACTIVE).add(e);
 			}				
 		}		// this.slowed_timer
 	}
@@ -4322,7 +4278,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		}		
 		
 		this.evaluateBossDestructionEffect(helicopter,
-											  controller.enemy,
+											  controller.enemies,
 											  controller.explosion);
 			
 		if(this.isCarrier){
@@ -4344,7 +4300,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	{																					   
 		if(helicopter.getType() != HELIOS)
 		{
-			Events.lastBonus = this.calculate_reward(helicopter);
+			Events.lastBonus = this.calculateReward(helicopter);
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;
 			Events.last_extra_bonus = 0;		
@@ -4420,12 +4376,13 @@ public class Enemy extends MovingObject implements MissileTypes
 		
 	}
 	
-	private int calculate_reward(Helicopter helicopter)
+	private int calculateReward(Helicopter helicopter)
 	{		
-		return this.strength  
+		return this.type.getStrength()
 			   * (helicopter.spotlight 
 					? Events.NIGHT_BONUS_FACTOR 
-					: Events.DAY_BONUS_FACTOR) 
+					: Events.DAY_BONUS_FACTOR)
+			   * (this.isMiniBoss ? 4 : 1)
 			   + this.rewardModifier;
 	}
 
@@ -4626,6 +4583,11 @@ public class Enemy extends MovingObject implements MissileTypes
 				e.isMarkedForRemoval = true;
 			}
 		}		
+	}
+	
+	public int getEffectiveStrength()
+	{
+		return this.type.getStrength() * (this.isMiniBoss ? 1 : 4);
 	}
 
 	public boolean hasHPsLeft()
