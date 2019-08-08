@@ -67,10 +67,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         
     private static final int
     	NO_COLLISION_HEIGHT		= 6;
-
-    private static final float
-		JUMBO_MISSILE_DMG_FACTOR = 2.36363637f;	// Roch-Klasse: Faktor, um den sich die Schadenswirkung der Raketen erhöht, nachdem das Jumbo-Raketen-Spezial-Upgrade erworben wurde
-    
+   
     private static final Dimension
 		HELICOPTER_SIZE = new Dimension(122, 69);
     
@@ -965,20 +962,21 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	}
     	this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
     	this.hasPiercingWarheads = true;
-    	if(this.getType() == OROCHI){this.numberOfCannons = 3;}
-    	else{this.numberOfCannons = 2;}
+    	this.getMaximumNumberOfCannons();
     	this.updateProperties(true);
 		this.isDamaged = false;
     	Menu.update_repairShopButtons(this);
     	this.isPlayedWithoutCheats = false;
     }
 	
+	void getMaximumNumberOfCannons()
+	{
+		this.numberOfCannons = 2;
+	}
+	
 	public void obtainSomeUpgrades()
     {
-    	this.spotlight = true;
-    	if(this.getType() == PHOENIX){this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;}
-    	else if(this.getType() == ROCH){this.hasPiercingWarheads = true;}
-    	else if(this.getType() == OROCHI && this.numberOfCannons < 3){this.numberOfCannons = 2;}
+		this.spotlight = true;
     	this.obtainFifthSpecial();
     	for(int i = 0; i < 6; i++)
     	{
@@ -997,58 +995,14 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	else return this.hasFifthSpecial();
     }
 	
-	public boolean hasFifthSpecial()
-    {
-    	switch (this.getType())
-    	{
-    		case PHOENIX:
-				return this.hasShortrangeRadiation;
-			case ROCH:
-				return this.hasJumboMissiles();
-			case OROCHI:
-				return this.hasRadarDevice;
-			case KAMAITACHI:
-				return this.rapidfire == 2;
-			case PEGASUS:
-				return this.hasInterphaseGenerator;
-			case HELIOS:
-				return this.hasPowerUpImmobilizer;
-			default: return false;
-    	}
-    }
+	abstract public boolean hasFifthSpecial();
 
 	public boolean hasJumboMissiles()
 	{
 		return missileDamageFactor > 2;
 	}
 
-	public void obtainFifthSpecial()
-    {
-    	switch (this.getType())
-    	{
-    		case PHOENIX:
-    			this.hasShortrangeRadiation = true;
-    			break;
-    		case ROCH:
-    			this.missileDamageFactor = JUMBO_MISSILE_DMG_FACTOR;
-    			this.currentFirepower = (int)(this.missileDamageFactor * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
-    			break;
-    		case OROCHI:
-    			this.hasRadarDevice = true;
-    			break;
-    		case KAMAITACHI:
-    			this.rapidfire = 2;
-    			break;
-    		case PEGASUS:
-    			this.hasInterphaseGenerator = true;
-    			break;	
-    		case HELIOS:
-    			this.hasPowerUpImmobilizer = true;
-    			break;    		
-    		default:
-				break;
-    	}
-    }
+	abstract public void obtainFifthSpecial();
     
     private boolean hasAllSpecials()
     {
@@ -1066,7 +1020,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     
     public boolean hasAllCannons()
 	{
-		return this.numberOfCannons == 3 || (this.numberOfCannons == 2 && this.getType() != OROCHI);
+		return this.numberOfCannons == 2;
 	}
 	
 	public boolean has_all_upgrades()
@@ -1404,7 +1358,8 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}
 	}
 
-	public void update_unlocked_helicopters()
+	// TODO Easy to intrduce inheritance
+	public void updateUnlockedHelicopters()
 	{
 		Events.reachedLevelTwenty[this.getType().ordinal()] = true;
 		
@@ -1425,7 +1380,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}
 	}
 
-	public void use_reparation_PU()
+	public void useReparationPowerUp()
 	{
 		Audio.play(Audio.cash);
 		float max_plating = this.max_plating();
@@ -1626,7 +1581,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			if(MyMath.get_random_order_value(i) == REPARATION.ordinal())
 			{
 				if(i == 0){Audio.play(Audio.pu_announcer[REPARATION.ordinal()]);}
-				this.use_reparation_PU();
+				this.useReparationPowerUp();
 			}
 			else
 			{

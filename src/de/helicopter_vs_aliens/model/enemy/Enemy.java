@@ -50,7 +50,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 public class Enemy extends MovingObject implements MissileTypes
 {
-	private static class FinalEnemysOperator
+    private static class FinalEnemysOperator
     {	
 		Enemy[] servants;
     	int [] timeSinceDeath;
@@ -140,6 +140,8 @@ public class Enemy extends MovingObject implements MissileTypes
 	 	// für Boss-Gegner
 	 	NR_OF_BOSS_5_SERVANTS 	= 5,
 	 	BOSS_5_HEAL_RATE		= 11,
+		STANDARD_REWARD_FACTOR	= 1,
+		MINI_BOSS_REWARD_FACTOR	= 4,
 	 	
 		MIN_ABSENT_TIME[]		= {175,	// SMALL_SHIELD_MAKER
 		                 		   175, // BIG_SHIELD_MAKER
@@ -1219,7 +1221,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			helicopter.powerUpDecay();
 			if((helicopter.isPlayedWithoutCheats ||Events.SAVE_ANYWAY) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
 			{
-				helicopter.update_unlocked_helicopters();
+				helicopter.updateUnlockedHelicopters();
 			}
 		}
 		else if(level == 21)
@@ -4309,14 +4311,14 @@ public class Enemy extends MovingObject implements MissileTypes
 			{
 				if(missile.kills > 0
 				   && helicopter.hasPiercingWarheads
-				   && (     Missile.can_take_credit(missile.sister[0], this)
-						 || Missile.can_take_credit(missile.sister[1], this)))
+				   && (     Missile.canTakeCredit(missile.sister[0], this)
+						 || Missile.canTakeCredit(missile.sister[1], this)))
 				{
-					if(Missile.can_take_credit(missile.sister[0], this))
+					if(Missile.canTakeCredit(missile.sister[0], this))
 					{
 						missile.sister[0].credit();
 					}
-					else if(Missile.can_take_credit(missile.sister[1], this))
+					else if(Missile.canTakeCredit(missile.sister[1], this))
 					{
 						missile.sister[1].credit();
 					}	
@@ -4378,14 +4380,23 @@ public class Enemy extends MovingObject implements MissileTypes
 	
 	private int calculateReward(Helicopter helicopter)
 	{		
-		return this.type.getStrength()
-			   * (helicopter.spotlight 
+		return this.getEffectiveStrength()
+		        * (helicopter.spotlight
 					? Events.NIGHT_BONUS_FACTOR 
 					: Events.DAY_BONUS_FACTOR)
-			   * (this.isMiniBoss ? 4 : 1)
-			   + this.rewardModifier;
+			    + this.rewardModifier;
 	}
-
+	
+    public int getEffectiveStrength()
+    {
+        return this.type.getStrength() * this.getRewardFactor();
+    }
+    
+	private int getRewardFactor()
+	{
+		return this.isMiniBoss ? MINI_BOSS_REWARD_FACTOR : STANDARD_REWARD_FACTOR;
+	}
+ 
 	private void evaluateBossDestructionEffect(Helicopter helicopter,
 											   ArrayList<LinkedList<Enemy>> enemy,
 											   ArrayList<LinkedList<Explosion>> explosion)
@@ -4585,11 +4596,6 @@ public class Enemy extends MovingObject implements MissileTypes
 		}		
 	}
 	
-	public int getEffectiveStrength()
-	{
-		return this.type.getStrength() * (this.isMiniBoss ? 1 : 4);
-	}
-
 	public boolean hasHPsLeft()
 	{
 		return this.hitpoints >= 1;

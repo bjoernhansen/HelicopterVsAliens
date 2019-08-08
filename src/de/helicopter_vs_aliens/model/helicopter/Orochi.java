@@ -16,4 +16,35 @@ public final class Orochi extends Helicopter
     {
         this.spellCosts = OROCHI.getSpellCosts() - 2 *(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
     }
+    
+    @Override
+    void getMaximumNumberOfCannons()
+    {
+        this.numberOfCannons = 3;
+    }
+    
+    @Override
+    public void obtainSomeUpgrades()
+    {
+        if(this.numberOfCannons < 3){this.numberOfCannons = 2;}
+        super.obtainSomeUpgrades();
+    }
+    
+    @Override
+    public boolean hasFifthSpecial()
+    {
+        return this.hasRadarDevice;
+    }
+    
+    @Override
+    public void obtainFifthSpecial()
+    {
+        this.hasRadarDevice = true;
+    }
+    
+    @Override
+    public boolean hasAllCannons()
+    {
+        return this.numberOfCannons == 3;
+    }
 }

@@ -31,4 +31,16 @@ public final class Helios extends Helicopter
     {
         return heliosCosts(i);
     }
+    
+    @Override
+    public boolean hasFifthSpecial()
+    {
+        return this.hasPowerUpImmobilizer;
+    }
+    
+    @Override
+    public void obtainFifthSpecial()
+    {
+        this.hasPowerUpImmobilizer = true;
+    }
 }

@@ -77,7 +77,7 @@ public class Missile extends MovingObject implements MissileTypes
 		else if(helicopter.getType() == OROCHI){this.type = STUNNING;}
 		else{this.type = PHASE_SHIFT;}
 		this.setBounds(helicopter, y);
-		this.set_dmg(helicopter);
+		this.setDmg(helicopter);
 		this.hits.clear();
 		
 		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
@@ -106,7 +106,7 @@ public class Missile extends MovingObject implements MissileTypes
 							  (int)this.bounds.getHeight());
 	}
 	
-	private void set_x(double x)
+	private void setX(double x)
 	{
 		this.bounds.setRect(x,
 							this.bounds.getY(),
@@ -114,7 +114,7 @@ public class Missile extends MovingObject implements MissileTypes
 							this.bounds.getHeight());	
 	}
 	
-	private void set_dmg(Helicopter helicopter)
+	private void setDmg(Helicopter helicopter)
 	{
 		this.dmg = 	(int)(helicopter.currentFirepower
 				* (helicopter.numberOfCannons == 3 ? OROCHI_EXTRA_DAMAGE_FACTOR : 1.0f)
@@ -142,13 +142,13 @@ public class Missile extends MovingObject implements MissileTypes
 
 	private void update(Controller controller, Iterator<Missile> i, Helicopter helicopter)
 	{		
-		this.set_x(this.bounds.getX()							
+		this.setX(this.bounds.getX()
 					+ this.speed
 					+ (BackgroundObject.background_moves ? - BG_SPEED : 0));
 				
 		if(this.bounds.getX() > 1175 || this.bounds.getX() + 20 < 0){this.flying = false;}
-		else{this.check_for_hit_helicopter(helicopter);}
-		this.check_for_hit_enemys(controller, helicopter);
+		else{this.checkForHitHelicopter(helicopter);}
+		this.checkForHitEnemys(controller, helicopter);
 		if(!this.flying)
 		{
 			i.remove();	
@@ -157,7 +157,7 @@ public class Missile extends MovingObject implements MissileTypes
 		this.setPaintBounds();
 	}
 	
-	private void check_for_hit_helicopter(Helicopter helicopter)
+	private void checkForHitHelicopter(Helicopter helicopter)
 	{
 		if(	this.dangerous 
 			&& helicopter.bounds.intersects(this.bounds))
@@ -172,8 +172,8 @@ public class Missile extends MovingObject implements MissileTypes
 		}
 	}		
 	
-	private void check_for_hit_enemys(Controller controller,
-                                      Helicopter helicopter)
+	private void checkForHitEnemys(Controller controller,
+								   Helicopter helicopter)
 	{
 		for(Enemy enemy : controller.enemies.get(ACTIVE))
 		{
@@ -211,10 +211,8 @@ public class Missile extends MovingObject implements MissileTypes
 						&& helicopter.bonusKillsTimer > 0
 						&& this.launchingTime > helicopter.pastTeleportTime)
 					{
-						
-						// TODO komtrollieren wo getStrenth für Minibosse mal 4 sein muss, nutze effectiveStrength Method
 						Events.extra_reward(1,
-							enemy.type.getStrength()
+							enemy.getEffectiveStrength()
 								* (helicopter.spotlight
 								? Events.NIGHT_BONUS_FACTOR
 								: Events.DAY_BONUS_FACTOR),
@@ -230,7 +228,7 @@ public class Missile extends MovingObject implements MissileTypes
 					break;
 				}
 			}
-			if (this.could_hit(enemy) && enemy.isReadyToDodge(helicopter))
+			if (this.couldHit(enemy) && enemy.isReadyToDodge(helicopter))
 			{
 				enemy.dodge();
 			}
@@ -354,7 +352,7 @@ public class Missile extends MovingObject implements MissileTypes
 		missile.get(INACTIVE).add(this);		
 	}
 	
-	public static boolean can_take_credit(Missile missile, Enemy enemy)
+	public static boolean canTakeCredit(Missile missile, Enemy enemy)
 	{		
 		return missile != null 
 			   && missile.intersects(enemy);
@@ -366,7 +364,7 @@ public class Missile extends MovingObject implements MissileTypes
 		this.earnedMoney += Events.lastBonus;
 	}
 
-	private boolean could_hit(Enemy enemy)
+	private boolean couldHit(Enemy enemy)
 	{		
 		return 	  (this.speed > 0 
 				   && enemy.bounds.intersects(	this.bounds.getX(), 
@@ -379,4 +377,4 @@ public class Missile extends MovingObject implements MissileTypes
 												-20 * this.speed,
 												this.bounds.getWidth()+2));
 	}
-}	
+}

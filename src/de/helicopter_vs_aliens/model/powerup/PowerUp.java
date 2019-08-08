@@ -244,7 +244,7 @@ public class PowerUp extends MovingObject
 		}
 		else if(this.type == REPARATION)
 		{
-			helicopter.use_reparation_PU();
+			helicopter.useReparationPowerUp();
 		}
 		else if(this.type == BONUS_INCOME)
 		{

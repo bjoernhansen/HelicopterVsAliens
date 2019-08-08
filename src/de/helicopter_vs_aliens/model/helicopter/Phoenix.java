@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PHOENIX;
 
 public final class Phoenix extends Helicopter
@@ -15,12 +14,31 @@ public final class Phoenix extends Helicopter
     @Override
     public HelicopterTypes getType()
     {
-        return HelicopterTypes.PHOENIX;
+        return PHOENIX;
     }
     
     @Override
     public int getGoliathCosts()
     {
         return GOLIATH_COSTS;
+    }
+    
+    @Override
+    public void obtainSomeUpgrades()
+    {
+        this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
+        super.obtainSomeUpgrades();
+    }
+    
+    @Override
+    public boolean hasFifthSpecial()
+    {
+        return this.hasShortrangeRadiation;
+    }
+    
+    @Override
+    public void obtainFifthSpecial()
+    {
+        this.hasShortrangeRadiation = true;
     }
 }

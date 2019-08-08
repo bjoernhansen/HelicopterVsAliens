@@ -7,4 +7,16 @@ public final class Pegasus extends Helicopter
     {
         return HelicopterTypes.PEGASUS;
     }
+    
+    @Override
+    public boolean hasFifthSpecial()
+    {
+        return this.hasInterphaseGenerator;
+    }
+    
+    @Override
+    public void obtainFifthSpecial()
+    {
+        this.hasInterphaseGenerator = true;
+    }
 }
