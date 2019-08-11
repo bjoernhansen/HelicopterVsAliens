@@ -20,7 +20,7 @@ import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.Explosion;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
@@ -28,7 +28,7 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.EnemyMissileTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.missile.MissileTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.util.MyColor;
@@ -48,7 +48,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 
-public class Enemy extends MovingObject implements MissileTypes
+public class Enemy extends MovingObject implements ExplosionTypes
 {
     private static class FinalEnemysOperator
     {	
@@ -313,7 +313,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		hasCrashed, 			// = true: Gegner ist abgestürzt
 		isEmpShocked,			// = true: Gegner steht unter EMP-Schock -> ist verlangsamt
 		isMarkedForRemoval,	// = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
-		is_upper_shield_maker,	// bestimmt die Position der Schild-Aufspannenden Servants von Boss 5	
+		isUpperShieldMaker,	// bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
 		isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
 		isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
 		isStunnable,			// = false für Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann
@@ -351,7 +351,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	public void paint(Graphics2D g2d, Helicopter helicopter)
 	{				
 		boolean cloaked = (this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME+CLOAKED_TIME);
-		int g2d_sel = this.direction.x == -1 ? 0 : 1;
+		int g2DSel = this.direction.x == -1 ? 0 : 1;
 		
 		if(!cloaked)
 		{
@@ -364,21 +364,21 @@ public class Enemy extends MovingObject implements MissileTypes
 				if(this.alpha > 51 || !helicopter.hasRadarDevice)
 				{
 					scales[3] = ((float)this.alpha)/255;			
-					g2d.drawImage(	this.image[g2d_sel], 
+					g2d.drawImage(	this.image[g2DSel],
 									new RescaleOp(scales, offsets, null), 
 									this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
 									this.paintBounds.y - this.paintBounds.height/4);
 				}
 				else
 				{
-					g2d.drawImage(	this.image[g2d_sel + 2], 
+					g2d.drawImage(	this.image[g2DSel + 2],
 									this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
 									this.paintBounds.y - this.paintBounds.height/4, null);
 				}			
 			}
 			else
 			{
-				g2d.drawImage(	this.image[g2d_sel],
+				g2d.drawImage(	this.image[g2DSel],
 								this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
 								this.paintBounds.y - this.paintBounds.height/4, null);
 			}
@@ -386,12 +386,12 @@ public class Enemy extends MovingObject implements MissileTypes
 			// Dach
 			if(!this.isDestroyed && (this.tractor == ACTIVE || this.shootTimer > 0 || this.isShielding))
 			{
-				Color input_color_roof 
+				Color inputColorRoof
 					= this.alpha < 255 
 						? MyColor.setAlpha(MyColor.variableGreen, this.alpha) 								
 						: MyColor.variableGreen;				
 				
-				this.paintCannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, input_color_roof);
+				this.paintCannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, inputColorRoof);
 			}
 						
 			// blinkende Scheibe von Bossen und Mini-Bossen bzw. Eyes bei Hindernissen
@@ -405,8 +405,8 @@ public class Enemy extends MovingObject implements MissileTypes
 			if(!(this.isDestroyed || this.stunningTimer > 0))
 			{
 				int temp = 63 - (((int)(2 + 0.1f * Math.abs(this.speedLevel.getX())) * this.lifetime)%32); //d
-				Color color_temp = new Color(255, 192+temp, 129+temp, this.alpha);							
-				this.paintExhaust(g2d, color_temp);
+				Color colorTemp = new Color(255, 192+temp, 129+temp, this.alpha);
+				this.paintExhaustPipe(g2d, colorTemp);
 			}			
 					
 			// die Schild- und Traktorstrahlen
@@ -430,7 +430,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 		else if(helicopter.hasRadarDevice)
 		{
-			g2d.drawImage(this.image[g2d_sel + 2], this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0), this.paintBounds.y - this.paintBounds.height/4, null);
+			g2d.drawImage(this.image[g2DSel + 2], this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0), this.paintBounds.y - this.paintBounds.height/4, null);
 		}
 		
 		//zu Testzwecken:	
@@ -669,10 +669,9 @@ public class Enemy extends MovingObject implements MissileTypes
 	}	
 	
 	// malen der Seitenflügel mit Antriebsdüse
-	// TODO besseren Namen vergeben
-	private void paintExhaust(Graphics2D g2d, Color color4)
+	private void paintExhaustPipe(Graphics2D g2d, Color color4)
 	{
-		paintExhaust(g2d,
+		paintExhaustPipe(g2d,
 					   this.paintBounds.x,
 					   this.paintBounds.y,
 					   -this.direction.x, 
@@ -681,16 +680,16 @@ public class Enemy extends MovingObject implements MissileTypes
 	}
 
 	// TODO bessere Namen für Bezeichner color2 , color 4
-	private void paintExhaust(Graphics2D g2d, int x, int y, int directionX, Color color2, Color color4)
+	private void paintExhaustPipe(Graphics2D g2d, int x, int y, int directionX, Color color2, Color color4)
 	{			
 		if(this.model == TIT)
 		{			
-			paint_engine(g2d, x, y, 0.45f, 0.27f, 0.5f, 0.4f, directionX, color2, color4);
+			paintEngine(g2d, x, y, 0.45f, 0.27f, 0.5f, 0.4f, directionX, color2, color4);
 		}
 		else if(this.model == CARGO)
 		{	
-			paint_engine(g2d, x, y, 0.45f, 0.17f, 0.45f, 0.22f, directionX, color2, color4);
-			paint_engine(g2d, x, y, 0.45f, 0.17f, 0.25f, 0.70f, directionX, color2, color4);
+			paintEngine(g2d, x, y, 0.45f, 0.17f, 0.45f, 0.22f, directionX, color2, color4);
+			paintEngine(g2d, x, y, 0.45f, 0.17f, 0.25f, 0.70f, directionX, color2, color4);
 		}
 		else if(this.model == BARRIER)
 		{
@@ -699,12 +698,12 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 	}
 		
-	private void paint_engine(Graphics2D g2d, 
-                              int x, int y, 
-                              float width, float height,
-                              float xShift, float yShift,
-                              int directionX,
-                              Color color2, Color color4)
+	private void paintEngine(Graphics2D g2d,
+							 int x, int y,
+							 float width, float height,
+							 float xShift, float yShift,
+							 int directionX,
+							 Color color2, Color color4)
 	{			
 		if(color2 != null)
 		{
@@ -716,8 +715,8 @@ public class Enemy extends MovingObject implements MissileTypes
 	private void paintPipe(Graphics2D g2d,
 						   int x, int y,
 						   float width, float height,
-						   float x_shift, float yShift,
-						   int direction_x, Color color, boolean isExhaust)
+						   float xShift, float yShift,
+						   int directionX, Color color, boolean isExhaust)
 	{			
 		g2d.setPaint(new GradientPaint(	0, 
 										y + (yShift + 0.05f)  * this.paintBounds.height,
@@ -727,9 +726,9 @@ public class Enemy extends MovingObject implements MissileTypes
 										MyColor.dimColor(color, 0.5f), 
 										true));
 		
-		g2d.fillRoundRect(	(int) (x + (direction_x == 1 
-										? x_shift 
-										: 1f - x_shift - width)	* this.paintBounds.width),
+		g2d.fillRoundRect(	(int) (x + (directionX == 1
+										? xShift
+										: 1f - xShift - width)	* this.paintBounds.width),
 							(int) (y + 	yShift 			   	* this.paintBounds.height),
 							(int) (		width  				   	* this.paintBounds.width),
 							(int) (		height  			   	* this.paintBounds.height),
@@ -780,7 +779,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		else if(!this.isDestroyed && !imagePaint && this.isInvincible()){barColor = Color.green;}
 		else if(this.isMiniBoss){barColor = this.farbe2;}
 		else{barColor = MyColor.enemyGray;}
-		inactiveNozzleColor = MyColor.inactive_nozzle;
+		inactiveNozzleColor = MyColor.INACTIVE_NOZZLE;
 		
 		if(this.model == BARRIER && Events.timeOfDay == NIGHT)
 		{
@@ -796,7 +795,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		//Malen des Gegners
 		if(this.model != BARRIER)
 		{
-			paint_vessel(	g2d, 
+			paintVessel(	g2d,
 							offsetX, offsetY,
 							directionX,
 							color, 
@@ -814,13 +813,13 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 	}	
 	
-	private void paint_vessel( Graphics2D g2d, int offsetX, int offsetY,
-	                           int directionX, Color color, boolean getarnt,
-	                           boolean imagePaint,
-	                           Color mainColorLight,
-	                           Color mainColorDark,
-	                           Color cannonColor,
-	                           Color inactiveNozzleColor)
+	private void paintVessel(Graphics2D g2d, int offsetX, int offsetY,
+							 int directionX, Color color, boolean getarnt,
+							 boolean imagePaint,
+							 Color mainColorLight,
+							 Color mainColorDark,
+							 Color cannonColor,
+							 Color inactiveNozzleColor)
 	{	
 		if(this.model == CARGO)
 		{
@@ -832,7 +831,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			this.paintVerticalStabilizer(g2d, offsetX, offsetY, directionX);
 		}		
-		this.paintExhaust(	g2d, offsetX, offsetY, directionX,
+		this.paintExhaustPipe(	g2d, offsetX, offsetY, directionX,
 							mainColorDark, inactiveNozzleColor);
 		
 		if(Color.red.equals(color) || !this.isLivingBoss())
@@ -897,8 +896,8 @@ public class Enemy extends MovingObject implements MissileTypes
 	private void paintRotorInterior(Graphics2D g2d, Color mainColorDark,
 									int offsetX, int offsetY)
 	{
-		int distance_x = (int) (BARRIER_BORDER_SIZE * this.paintBounds.width),
-			distance_y = (int) (BARRIER_BORDER_SIZE * this.paintBounds.height);
+		int distanceX = (int) (BARRIER_BORDER_SIZE * this.paintBounds.width),
+			distanceY = (int) (BARRIER_BORDER_SIZE * this.paintBounds.height);
 					
 		g2d.setPaint(new GradientPaint(	0, 
 										offsetY,
@@ -908,10 +907,10 @@ public class Enemy extends MovingObject implements MissileTypes
 										MyColor.dimColor(mainColorDark, 0.85f),
 										true));	
 		
-		g2d.fillOval(offsetX + distance_x,
-					 offsetY + distance_y,
-					 this.paintBounds.width  - 2 * distance_x,
-					 this.paintBounds.height - 2 * distance_y);
+		g2d.fillOval(offsetX + distanceX,
+					 offsetY + distanceY,
+					 this.paintBounds.width  - 2 * distanceX,
+					 this.paintBounds.height - 2 * distanceY);
 	}
 
 	private void paintRoof(Graphics2D g2d, Color roofColor, int offsetX,
@@ -1010,7 +1009,7 @@ public class Enemy extends MovingObject implements MissileTypes
 							false);
 	}
 	
-	public void paintBarrierEyes(Graphics2D g2d, int x, int y, Color color, boolean image_paint)
+	public void paintBarrierEyes(Graphics2D g2d, int x, int y, Color color, boolean imagePaint)
 	{		
 		int borderDistance = (int)(0.85f * BARRIER_BORDER_SIZE * this.paintBounds.width),
 			eyeSize = 		  (int)(	    BARRIER_EYE_SIZE    * this.paintBounds.width);
@@ -1025,7 +1024,7 @@ public class Enemy extends MovingObject implements MissileTypes
 					 y - borderDistance + this.paintBounds.height - eyeSize,
 					 eyeSize, eyeSize);
 		
-		if(!image_paint && !(this.snoozeTimer > SNOOZE_TIME)){g2d.setPaint(MyColor.reversed_RandomRed(color));}
+		if(!imagePaint && !(this.snoozeTimer > SNOOZE_TIME)){g2d.setPaint(MyColor.reversedRandomRed(color));}
 		g2d.fillOval(x + borderDistance,
 					 y - borderDistance + this.paintBounds.height - eyeSize,
 					 eyeSize, eyeSize);
@@ -1091,13 +1090,13 @@ public class Enemy extends MovingObject implements MissileTypes
 					 false);
 	}
 	
-	public void paintWindow(Graphics2D g2d, int x, int y, Color color, int direction_x, boolean getarnt)
+	public void paintWindow(Graphics2D g2d, int x, int y, Color color, int directionX, boolean getarnt)
 	{
 		this.setWindowColor(g2d, color, getarnt);
 						
 		if(this.model == TIT)
 		{
-			g2d.fillArc(	(int) (x + (direction_x == 1 ? 0.25f : 0.55f) 
+			g2d.fillArc(	(int) (x + (directionX == 1 ? 0.25f : 0.55f)
 										* this.paintBounds.width),
 							y, 
 							(int) (0.2f   * this.paintBounds.width),
@@ -1107,12 +1106,12 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 		else if(this.model == CARGO)
 		{
-			g2d.fillArc(	(int) (x + (direction_x == 1 ? 0.1 : 0.6) 
+			g2d.fillArc(	(int) (x + (directionX == 1 ? 0.1 : 0.6)
 										* this.paintBounds.width),
 							y, 
 							(int) (0.3f   * this.paintBounds.width),
 							(int) (0.333f * this.paintBounds.height),
-							direction_x == 1 ? 90 : 0,
+							directionX == 1 ? 90 : 0,
 							90);
 		}
 	}
@@ -1186,7 +1185,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			selectionBarrier = 2;
 			
 			if(( helicopter.isPlayedWithoutCheats || Events.SAVE_ANYWAY)
-				 && !Events.boss1_killed_b4())
+				 && !Events.hasAnyBossBeenKilledBefore())
 			{
 				Menu.unlock(HELIOS);
 			}
@@ -1221,6 +1220,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			helicopter.powerUpDecay();
 			if((helicopter.isPlayedWithoutCheats ||Events.SAVE_ANYWAY) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
 			{
+				Events.reachedLevelTwenty[helicopter.getType().ordinal()] = true;
 				helicopter.updateUnlockedHelicopters();
 			}
 		}
@@ -1499,7 +1499,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.startingHitpoints = this.hitpoints;
 		
 		// Festlegen der Höhe und der y-Position des Gegners
-		if(!this.hasHeightSet){this.set_height();}
+		if(!this.hasHeightSet){this.setHeight();}
 		if(!this.hasYPosSet){this.setInitialY();}
 				
 		this.initializeShootDirection();
@@ -1524,7 +1524,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			if(this.cloakingTimer != DISABLED && helicopter.getType() == OROCHI)
 			{
 				BufferedImage 
-					 temp_image = new BufferedImage((int)(1.028f * this.paintBounds.width),
+					 tempImage = new BufferedImage((int)(1.028f * this.paintBounds.width),
 							 						(int)(1.250f * this.paintBounds.height),
 							 						BufferedImage.TYPE_INT_ARGB);
 				
@@ -1532,8 +1532,8 @@ public class Enemy extends MovingObject implements MissileTypes
 													(int)(1.250f * this.paintBounds.height),
 													BufferedImage.TYPE_INT_ARGB);
 				
-				this.paintImage(getGraphics(temp_image), 1-2*i, Color.red, true);
-				(getGraphics(this.image[2+i])).drawImage(temp_image, ROP_CLOAKED, 0, 0);
+				this.paintImage(getGraphics(tempImage), 1-2*i, Color.red, true);
+				(getGraphics(this.image[2+i])).drawImage(tempImage, ROP_CLOAKED, 0, 0);
 			}
 		}		
 	}
@@ -1544,7 +1544,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.type = TINY;
 		this.model = TIT;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
-		this.set_x(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
+		this.setX(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
 		this.direction.setLocation(-1, MyMath.randomDirection());
 		this.callBack = 0;
 		this.shield = 0;
@@ -1636,7 +1636,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		return Events.level >= MIN_BARRIER_LEVEL 
 				&& !Events.isBossLevel()
 				&& barrierTimer == 0
-				&& (MyMath.toss_up(0.35f) 
+				&& (MyMath.tossUp(0.35f)
 					|| (numberOfEnemies - currentNumberOfBarriers >= maxNr))
 				&& currentNumberOfBarriers < maxBarrierNr;
 	}
@@ -1649,7 +1649,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		helicopter.numberOfEnemiesSeen--;
 		this.hitpoints = Integer.MAX_VALUE;
 		this.rotorColor = 1;
-		this.isClockwiseBarrier = MyMath.toss_up();
+		this.isClockwiseBarrier = MyMath.tossUp();
 				
 		if(this.type == BARRIER_0 || this.type == BARRIER_1)
 		{
@@ -1685,7 +1685,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.setVarWidth(105);
 			if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
 
-			this.set_location(this.targetSpeedLevel.getX() >= 5
+			this.setLocation(this.targetSpeedLevel.getX() >= 5
 									? -this.bounds.getWidth()-APPEARANCE_DISTANCE
 									: this.bounds.getX(),
 							  GROUND_Y - this.bounds.getWidth() - (5 + MyMath.random(11)));
@@ -1699,7 +1699,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.barrierShootTimer = READY;
 			this.setBarrierShootingProperties();
 			this.shotRotationSpeed
-				= MyMath.toss_up(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL 
+				= MyMath.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL
 					? MyMath.randomDirection()*(this.shootingRate /3 + MyMath.random(10))
 					: 0;	
 			
@@ -1760,7 +1760,7 @@ public class Enemy extends MovingObject implements MissileTypes
     
     private boolean isBarrierFromFutureCreationApproved()
     {
-        return MyMath.toss_up(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
+        return MyMath.tossUp(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
     }
     
     private void placeAtPausePosition()
@@ -1768,7 +1768,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.callBack--;
 		this.uncloak(DISABLED);
 		this.barrierTeleportTimer = READY;
-		this.set_y(GROUND_Y + 2 * this.bounds.getWidth());
+		this.setY(GROUND_Y + 2 * this.bounds.getWidth());
 	}
 
 	private static boolean rockCreationApproved()
@@ -1777,7 +1777,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				&& Events.level >= MIN_ROCK_LEVEL 
 				&& !Events.isBossLevel()
 				&& rockTimer == 0
-				&& MyMath.toss_up(ROCK_PROB);
+				&& MyMath.tossUp(ROCK_PROB);
 	}
 	
 	private void createRock(Helicopter helicopter)
@@ -1803,7 +1803,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	{		
 		return Events.level >= MIN_KABOOM_LEVEL 
 				&& !Events.isBossLevel()
-				&& MyMath.toss_up(KABOOM_PROB);
+				&& MyMath.tossUp(KABOOM_PROB);
 	}
 	
 	private void createKaboom(Helicopter helicopter)
@@ -2080,9 +2080,9 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 	}
 	
-	private void createScamperingVessel(boolean explosion_creation)
+	private void createScamperingVessel(boolean explosionCreation)
 	{
-		if(explosion_creation){this.type = BOLT;}
+		if(explosionCreation){this.type = BOLT;}
 		
 		this.farbe1 = new Color(75 + MyMath.random(30), 
 								75 + MyMath.random(30), 
@@ -2090,14 +2090,14 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.setHitpoints(26);
 		this.setVarWidth(70);
 		
-		if(explosion_creation)
+		if(explosionCreation)
 		{
-			this.set_location(lastCarrier.bounds.getCenterX(),
+			this.setLocation(lastCarrier.bounds.getCenterX(),
 							  lastCarrier.bounds.getCenterY());
 			this.hasYPosSet = true;
 		}
 		this.isExplodable = true;
-		if(explosion_creation)
+		if(explosionCreation)
 		{
 			this.targetSpeedLevel.setLocation( 10 + 7.5*Math.random(), //d
 													0.5 + 3*Math.random());			//d	
@@ -2109,7 +2109,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			this.targetSpeedLevel.setLocation( 12 + 3.5*Math.random(), //d
 													0.5 + 3*Math.random());		//d			
-			if(MyMath.toss_up()){this.callBack = 1;}
+			if(MyMath.tossUp()){this.callBack = 1;}
 		}
 	}
 	
@@ -2122,7 +2122,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			this.farbe1 = new Color(115, 70, 100);
 			this.hitpoints = 225;			
-			this.set_width(275);			
+			this.setWidth(275);
 			this.targetSpeedLevel.setLocation(2, 0.5); //d
 			
 			this.canKamikaze = true;
@@ -2135,7 +2135,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.model = CARGO;			
 			this.farbe1 = new Color(85, 85, 85);
 			this.hitpoints = 500;
-			this.set_width(250);
+			this.setWidth(250);
 			this.targetSpeedLevel.setLocation(7, 8); //d
 		
 			this.canMoveChaotic = true;
@@ -2164,7 +2164,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		// Level 30
 		else if( this.type == BOSS_3)
 		{			
-			this.set_width(250);
+			this.setWidth(250);
 			this.farbe1 = MyColor.cloaked;
 			this.hitpoints = 1750;
 			this.targetSpeedLevel.setLocation(5, 4); //d
@@ -2183,7 +2183,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		// Level 40
 		else if(this.type == BOSS_4)
 		{						
-			this.set_width(250);	
+			this.setWidth(250);
 			this.farbe1 = Color.red;
 			this.hitpoints = 10000;	
 			this.targetSpeedLevel.setLocation(10, 10); //d
@@ -2303,7 +2303,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				
 				helicopter.numberOfEnemiesSeen--;
 				this.hitpoints = Integer.MAX_VALUE;
-				this.isClockwiseBarrier = MyMath.toss_up();
+				this.isClockwiseBarrier = MyMath.tossUp();
 				this.farbe1 = MyColor.bleach(new Color(170, 0, 255), 0.6f);
 				this.targetSpeedLevel.setLocation(ZERO_SPEED);
 				
@@ -2335,7 +2335,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				&& this.model != BARRIER
 				&& !(this.type == ROCK)
 				&& !(this.type == KABOOM)
-				&& MyMath.toss_up(miniBossProb)
+				&& MyMath.tossUp(miniBossProb)
 				&& this.type.isSuitableMiniBoss();
 	}
 
@@ -2352,7 +2352,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.isExplodable = false;
 		this.callBack += 2;
 		this.canTurn = true;
-		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && MyMath.toss_up(0.2f)) ||
+		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && MyMath.tossUp(0.2f)) ||
 		      this.shootTimer == 0 )
 		{
 			this.cloakingTimer = 0;
@@ -2381,7 +2381,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			x = (int)(helicopter.bounds.getMaxX() 
 				+ BARRIER_DISTANCE);		
 		}
-		this.set_location(x, 
+		this.setLocation(x,
 						  Math.max(0, Math.min(y, GROUND_Y-this.bounds.getWidth())));
 	}
 	
@@ -2400,7 +2400,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.shotsPerCycle = 2 + MyMath.random(9);
 		this.shootingCycleLength = this.shootPause + this.shootingRate * this.shotsPerCycle;
 		this.shotSpeed = 5 + MyMath.random(6);
-		if(this.barrierTeleportTimer != DISABLED || (MyMath.toss_up(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
+		if(this.barrierTeleportTimer != DISABLED || (MyMath.tossUp(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
 		{
 			if(this.barrierTeleportTimer == DISABLED){this.farbe1 = MyColor.bleach(new Color(170, 0, 255), 0.6f);}
 			this.shotType = BUSTER;
@@ -2417,7 +2417,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.hitpoints = hitpoints + MyMath.random(hitpoints/2);		
 	}
 	
-	private void set_x(double x)
+	private void setX(double x)
 	{
 		this.bounds.setRect(x, 
 							this.bounds.getY(), 
@@ -2425,7 +2425,7 @@ public class Enemy extends MovingObject implements MissileTypes
 							this.bounds.getHeight());
 	}
 	
-	private void set_y(double y)
+	private void setY(double y)
 	{
 		this.bounds.setRect(this.bounds.getX(), 
 							y, 
@@ -2433,7 +2433,7 @@ public class Enemy extends MovingObject implements MissileTypes
 							this.bounds.getHeight());
 	}
 	
-	private void set_location(double x, double y)
+	private void setLocation(double x, double y)
 	{
 		this.bounds.setRect(x, 
 							y, 
@@ -2441,7 +2441,7 @@ public class Enemy extends MovingObject implements MissileTypes
 							this.bounds.getHeight());
 	}
 			
-	private void set_width(double width)
+	private void setWidth(double width)
 	{
 		this.bounds.setRect(this.bounds.getX(), 
 							this.bounds.getY(),
@@ -2451,10 +2451,10 @@ public class Enemy extends MovingObject implements MissileTypes
 	
 	private void setVarWidth(int width)
 	{
-		set_width(width + MyMath.random(width/(this.model == BARRIER ? 5 : 10)));
+		setWidth(width + MyMath.random(width/(this.model == BARRIER ? 5 : 10)));
 	}
 	
-	private void set_height()
+	private void setHeight()
 	{
 		double height;
 		if(this.model == TIT)
@@ -2487,7 +2487,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	
 	private void setInitialY(double y)
 	{
-		this.set_y(y);
+		this.setY(y);
 		this.hasYPosSet = true;
 	}	
 	
@@ -2509,15 +2509,15 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 		else if(this.barrierShootTimer == READY )
 		{
-			double temp_random 
+			double tempRandom
 				= Math.PI * (1 + Math.random()/2) 
 					+ (this.bounds.getY() + this.bounds.getHeight()/2 < GROUND_Y/2 
 						? Math.PI/2 
 						: 0);
 		
 			this.shootingDirection.setLocation(
-				Math.sin(temp_random), 
-				Math.cos(temp_random) );
+				Math.sin(tempRandom),
+				Math.cos(tempRandom) );
 		}		
 	}
 
@@ -2540,7 +2540,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	{
 		if(rockTimer > 0){
 			rockTimer--;}
-		if(BackgroundObject.background_moves && barrierTimer > 0){
+		if(BackgroundObject.backgroundMoves && barrierTimer > 0){
 			barrierTimer--;}
 		countBarriers(controller.enemies);
 		
@@ -2581,11 +2581,11 @@ public class Enemy extends MovingObject implements MissileTypes
 		}		
 	}
 
-	private static boolean tournaroundIsTurnAway(double dir, double enemy_center,
-												 double barrier_center)
+	private static boolean tournaroundIsTurnAway(double dir, double enemyCenter,
+												 double barrierCenter)
 	{
-		return 	   dir ==  1 && enemy_center < barrier_center
-				|| dir == -1 && enemy_center > barrier_center;
+		return 	   dir ==  1 && enemyCenter < barrierCenter
+				|| dir == -1 && enemyCenter > barrierCenter;
 	}
 
 
@@ -2655,10 +2655,10 @@ public class Enemy extends MovingObject implements MissileTypes
 
 	private void calculateBossManeuver(ArrayList<LinkedList<Enemy>> enemy)
 	{
-		     if(this.type == BOSS_4)    {this.boss_4_action(enemy);}
+		     if(this.type == BOSS_4)    {this.boss4Action(enemy);}
 		else if(this.type == FINAL_BOSS){this.finalBossAction();}
 		else if(this.shieldMakerTimer != DISABLED){this.shieldMakerAction();}
-		else if(this.type == BODYGUARD) {this.bodyguard_action();}
+		else if(this.type == BODYGUARD) {this.bodyguardAction();}
 		else if(this.type == HEALER 
 				&& this.dodgeTimer == READY){this.healerAction();}
 	}
@@ -2774,12 +2774,12 @@ public class Enemy extends MovingObject implements MissileTypes
 			&& this.chaosTimer == READY
 			&& this.dodgeTimer == READY)
 		{
-			if( MyMath.toss_up(0.2f)
+			if( MyMath.tossUp(0.2f)
 			    && this.type.isShieldMaker())
 			{
 				this.direction.x = -this.direction.x;
 			}
-			if( MyMath.toss_up(0.2f))
+			if( MyMath.tossUp(0.2f))
 			{
 				this.direction.y = -this.direction.y;
 			}			
@@ -2805,7 +2805,7 @@ public class Enemy extends MovingObject implements MissileTypes
 					&& this.bounds.getMaxX() < helicopter.bounds.getMinX() 
 					&& helicopter.bounds.getX() - this.bounds.getX() < 620)))
 		{
-			this.start_kamikaze_mode();				
+			this.startKamikazeMode();
 			this.direction.x = -1;
 		}			
 		if(	this.canKamikaze && !(this.teleportTimer > 0)){this.kamikaze(helicopter);}
@@ -2844,7 +2844,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 		
 		// Tractor					
-		if(isTractorReady(helicopter)){
+		if(canTractor(helicopter)){
 			startTractor(helicopter);}
 				
 		//Chaos-SpeedUp
@@ -2988,7 +2988,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			Audio.play(Audio.explosion2);
 			helicopter.empWave.kills++;
-			helicopter.empWave.earned_money += this.calculateReward(helicopter);
+			helicopter.empWave.earnedMoney += this.calculateReward(helicopter);
 			this.die(controller, helicopter, null, false);
 		}
     }
@@ -3136,7 +3136,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			if(this.operator.servants[serantType] == null)
 			{	
-				if(MyMath.toss_up(RETURN_PROB[serantType])
+				if(MyMath.tossUp(RETURN_PROB[serantType])
 					&& this.operator.timeSinceDeath[serantType] > MIN_ABSENT_TIME[serantType])
 				{
 					makeBoss5Servant[serantType] = true;
@@ -3186,7 +3186,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		if(this.speedLevel.getX() >= this.targetSpeedLevel.getX()){this.batchWiseMove = -1;}
 	}
 	
-	private void bodyguard_action()
+	private void bodyguardAction()
 	{
 		if(Events.boss.shield < 1)
 		{
@@ -3200,7 +3200,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		}		
 	}
 	
-	private void start_kamikaze_mode()
+	private void startKamikazeMode()
 	{
 		this.canKamikaze = true;
 		this.canFrontalSpeedup = true;
@@ -3211,7 +3211,7 @@ public class Enemy extends MovingObject implements MissileTypes
     	// Boss-Gegner mit der Fähigkeit "Kamikaze" drehen mit einer bestimmten
     	// Wahrscheinlichkeit um, wenn sie dem Helikopter das Heck zugekehrt haben.
     	if(	this.isBoss()
-    		&& MyMath.toss_up(0.008f) 
+    		&& MyMath.tossUp(0.008f)
     		&& ( (this.bounds.getMinX() > helicopter.bounds.getMaxX() 
     			   && this.direction.x == 1) 
     			 ||
@@ -3284,7 +3284,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 		else if(this.borrowTimer == READY
 				&&( (this.type != PROTECTOR 
-				     && MyMath.toss_up(0.004f))
+				     && MyMath.tossUp(0.004f))
 				    || 
 				    (this.type == PROTECTOR 
 				     && (helicopter.bounds.getX() > boss.getX() - 225) ))) 
@@ -3304,7 +3304,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	{
 		if(	this.shootTimer == 0
 			&& !this.isEmpSlowed()
-			&& MyMath.toss_up(0.1f)
+			&& MyMath.tossUp(0.1f)
 			&& this.bounds.getX() + this.bounds.getWidth() > 0
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
 			&& ((this.direction.x == -1 
@@ -3334,7 +3334,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	{		
 		return this.type == BOSS_3 
 				|| this.isMiniBoss
-				|| (this.type == BIG_SHIELD_MAKER && MyMath.toss_up());
+				|| (this.type == BIG_SHIELD_MAKER && MyMath.tossUp());
 	}
 
 	private void evaluateBarrierShooting(Controller controller,
@@ -3356,10 +3356,10 @@ public class Enemy extends MovingObject implements MissileTypes
 		{					
 			if(this.shotRotationSpeed != 0)
 			{
-				float temp_value = 0.0005f * this.shotRotationSpeed * this.lifetime;
+				float tempValue = 0.0005f * this.shotRotationSpeed * this.lifetime;
 				this.shootingDirection.setLocation(
-						Math.sin(temp_value), 
-						Math.cos(temp_value) );
+						Math.sin(tempValue),
+						Math.cos(tempValue) );
 			}
 			if(this.borrowTimer != DISABLED || this.barrierTeleportTimer != DISABLED)
 			{
@@ -3402,7 +3402,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.cloakingTimer = ACTIVE;
 			if(this.bounds.getMaxX() > 0){Audio.play(Audio.cloak);}
 		}	
-		else if(this.barrierTeleportTimer == READY && MyMath.toss_up(0.004f))
+		else if(this.barrierTeleportTimer == READY && MyMath.tossUp(0.004f))
 		{
 			this.startBarrierUncloaking(helicopter);
 		}
@@ -3428,7 +3428,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		this.placeNearHelicopter(helicopter);
 	}
 
-	private void boss_4_action(ArrayList<LinkedList<Enemy>> enemy)
+	private void boss4Action(ArrayList<LinkedList<Enemy>> enemy)
     {
     	if(    this.bounds.getX() < 930 
     		&& this.bounds.getX() > 150)
@@ -3456,7 +3456,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			if(enemy.get(ACTIVE).size() < 15
 			   && (    this.spawningHornetTimer == 60
 			   	    || this.spawningHornetTimer == 90
-			   	    || MyMath.toss_up(0.02f)))
+			   	    || MyMath.tossUp(0.02f)))
 			{
 				boss.setLocation(	this.bounds.getX() + this.bounds.getWidth() /2, 
 									this.bounds.getY() + this.bounds.getHeight()/2);
@@ -3506,24 +3506,22 @@ public class Enemy extends MovingObject implements MissileTypes
 		else {this.alpha = 255;}
     }
 	
-	private boolean isTractorReady(Helicopter helicopter)
+	private boolean canTractor(Helicopter helicopter)
 	{		
-		return 
-			this.tractor == READY
-			&& helicopter.interphaseGeneratorTimer <= helicopter.shiftTime
-			&& !this.isEmpSlowed()
-			&& this.cloakingTimer < ACTIVE
-			&& helicopter.tractor == null
-			&& helicopter.bounds.getX() - this.bounds.getX() > -750
-			&& helicopter.bounds.getX() - this.bounds.getX() < -50
-			&& this.bounds.getMaxX() < 982
-			&&(helicopter.bounds.getY()+56 > this.bounds.getY() + 0.2 * this.bounds.getHeight()
-			&& helicopter.bounds.getY()+60 < this.bounds.getY() + 0.8 * this.bounds.getHeight());
+		return isTractorReady() && helicopter.canBeTractored();
 	}
-	
+
+	private boolean isTractorReady() {
+		return this.tractor == READY
+				&& !this.isEmpSlowed()
+				&& this.cloakingTimer < ACTIVE
+				&& this.bounds.getMaxX() < 982;
+	}
+
+
 	private void startTractor(Helicopter helicopter)
 	{
-		Audio.loop(Audio.tractor_beam);
+		Audio.loop(Audio.tractorBeam);
 		this.tractor = ACTIVE;
 		this.speedLevel.setLocation(ZERO_SPEED);
 		helicopter.tractor = this;
@@ -3556,7 +3554,7 @@ public class Enemy extends MovingObject implements MissileTypes
 
 	private void startShielding()
 	{
-		Audio.play(Audio.shield_up);
+		Audio.play(Audio.shieldUp);
 		this.speedLevel.setLocation(ZERO_SPEED);
 		this.direction.x = -1;
 		this.isShielding = true;
@@ -3581,13 +3579,13 @@ public class Enemy extends MovingObject implements MissileTypes
 			this.direction.x = -1;
 		}
 		
-		if(		 this.is_upper_shield_maker
+		if(		 this.isUpperShieldMaker
 				 && this.bounds.getMaxY()
 				 	  < Events.boss.bounds.getMinY()
 				 	    - SHIELD_TARGET_DISTANCE
 				 	    - TARGET_DISTANCE_VARIANCE.y
 			     ||
-			     !this.is_upper_shield_maker
+			     !this.isUpperShieldMaker
 			     && this.bounds.getMinY()
 			     	  < Events.boss.bounds.getMaxY()
 			     	  	+ SHIELD_TARGET_DISTANCE
@@ -3595,10 +3593,10 @@ public class Enemy extends MovingObject implements MissileTypes
 		{
 			this.direction.y = 1;
 		}   
-		else if( this.is_upper_shield_maker
+		else if( this.isUpperShieldMaker
 				 && this.bounds.getMaxY() > Events.boss.bounds.getMinY() - SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y
 				 ||
-				 !this.is_upper_shield_maker
+				 !this.isUpperShieldMaker
 				 && this.bounds.getMinY() > Events.boss.bounds.getMaxY() + SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y)
 		{
 			this.direction.y = -1;
@@ -3613,7 +3611,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				     > Math.abs(Events.boss.bounds.getCenterX() 
 						        -this.bounds.getX()) 				
 			    &&  TARGET_DISTANCE_VARIANCE.y
-					  > (this.is_upper_shield_maker 
+					  > (this.isUpperShieldMaker
 						 ? Math.abs(this.bounds.getMaxY() 
 								    - Events.boss.bounds.getMinY() 
 								    + SHIELD_TARGET_DISTANCE) 
@@ -3698,7 +3696,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		if(this.targetSpeedLevel.getY() != 0
 		   && this.bounds.getMaxY() + 1.5 * this.speed.getY() > GROUND_Y)
 		{
-			this.set_y(GROUND_Y - this.bounds.getHeight());
+			this.setY(GROUND_Y - this.bounds.getHeight());
 		}		
 		if(this.borrowTimer != DISABLED)
 		{						
@@ -3717,12 +3715,12 @@ public class Enemy extends MovingObject implements MissileTypes
 	
 	private void move()
 	{			
-		if(!this.speed.equals(ZERO_SPEED)|| BackgroundObject.background_moves)
+		if(!this.speed.equals(ZERO_SPEED)|| BackgroundObject.backgroundMoves)
 		{
-			this.set_location(	
+			this.setLocation(
 					this.bounds.getX() 
 						+ this.direction.x * this.speed.getX() 
-						- (BackgroundObject.background_moves ? BG_SPEED : 0),
+						- (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
 					Math.max( this.model == BARRIER ? 0 : Integer.MIN_VALUE,
 							this.type == ROCK ? this.bounds.getY() :
 								Math.min( this.canBePositionedBelowGround()
@@ -3795,18 +3793,18 @@ public class Enemy extends MovingObject implements MissileTypes
 		return this.empSlowedTimer > 0;
 	}
 
-	private void adjustSpeedTo(int missile_drive)
+	private void adjustSpeedTo(int missileDrive)
 	{
 		if( !this.speedLevel.equals(ZERO_SPEED)
 			&& 
 			( this.totalStunningTime - 13 == this.stunningTimer
 			  || this.bounds.getMaxX() 
 			  	 + 18 
-			  	 + missile_drive/2 > Main.VIRTUAL_DIMENSION.width 
+			  	 + missileDrive/2 > Main.VIRTUAL_DIMENSION.width
 			  	 								+ 2 * this.bounds.getWidth()/3  
 			  || this.bounds.getMinX() 
 			  	 - 18 
-			  	 - missile_drive/2 < - 2 * this.bounds.getWidth()/3))
+			  	 - missileDrive/2 < - 2 * this.bounds.getWidth()/3))
 		{
 			this.speedLevel.setLocation(ZERO_SPEED);
 		}
@@ -3846,9 +3844,9 @@ public class Enemy extends MovingObject implements MissileTypes
 		}
 	}	
 
-	private boolean mustAvoidGroundCollision(int y_turn_line)
+	private boolean mustAvoidGroundCollision(int yTurnLine)
 	{		
-		return this.bounds.getMaxY() > y_turn_line
+		return this.bounds.getMaxY() > yTurnLine
 				   &&(   (this.direction.getX() ==  1 
 				   			&& this.bounds.getCenterX() < this.stoppingBarrier.bounds.getCenterX())
 					   ||(this.direction.getX() == -1 
@@ -3904,7 +3902,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				 && this.borrowTimer == DISABLED)
 		{
 			this.speed.setLocation(this.speed.getX(), this.stoppingBarrier.speed.getY());
-			if(helicopter.tractor == this){helicopter.stop_tractor();}
+			if(helicopter.tractor == this){helicopter.stopTractor();}
 		}		
 	}
 	
@@ -3926,7 +3924,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			Enemy e = i.next();
 			e.updateDead(controller.explosion, helicopter);
 			
-			if(	helicopter.basic_collision_requirements_satisfied(e) 
+			if(	helicopter.basicCollisionRequirementsSatisfied(e)
 				&& !e.hasCrashed)
 			{
 				e.collision(controller, helicopter);
@@ -3960,7 +3958,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	{
 		this.hasCrashed = true;
 		this.speedLevel.setLocation(ZERO_SPEED);
-		this.set_y(this.yCrashPos - this.bounds.getHeight());
+		this.setY(this.yCrashPos - this.bounds.getHeight());
 		if(this.type.isServant()){this.isMarkedForRemoval = true;}
 		Audio.play(this.type == KABOOM ? Audio.explosion4 : Audio.explosion3);
 		Explosion.start(explosion, 
@@ -4010,7 +4008,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				this.rewardFor(controller.powerUp,
 								null, 
 								helicopter, 
-								helicopter.has_performed_teleport_kill());
+								helicopter.hasPerformedTeleportKill());
 			}
 			this.destroy(helicopter);			
 		}				
@@ -4034,8 +4032,8 @@ public class Enemy extends MovingObject implements MissileTypes
 							
 			if(this.model == BARRIER)
 			{
-				if(	helicopter.has_triple_dmg() 
-					&&  MyMath.toss_up(
+				if(	helicopter.hasTripleDmg()
+					&&  MyMath.tossUp(
 							this.deactivationProb
 							*(helicopter.bonusKillsTimer
 								> NICE_CATCH_TIME
@@ -4043,7 +4041,7 @@ public class Enemy extends MovingObject implements MissileTypes
 				{
 					this.hitpoints = 0;
 				}
-				else if(MyMath.toss_up(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
+				else if(MyMath.tossUp(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
 				{
 					this.snooze(true);
 				}
@@ -4051,8 +4049,8 @@ public class Enemy extends MovingObject implements MissileTypes
 			if(this.hasHPsLeft()){this.reactToHit(helicopter, null);}
 			else
 			{
-				boolean beam_kill = helicopter.bonusKillsTimer > 0;
-				this.die(controller, helicopter, null, beam_kill);
+				boolean beamKill = helicopter.bonusKillsTimer > 0;
+				this.die(controller, helicopter, null, beamKill);
 			}
 		}		
 	}
@@ -4068,10 +4066,10 @@ public class Enemy extends MovingObject implements MissileTypes
 	
 	public float collisionDamage(Helicopter helicopter)
 	{		
-		return helicopter.get_dmg_factor() 
+		return helicopter.getDamageFactor()
 			   *(helicopter.isPowerShieldActivated && this.isExplodable ? 0.65f : 1.0f)
 			   *(this.type == KABOOM && !this.isDestroyed && !helicopter.hasShortrangeRadiation
-			     ? helicopter.kaboom_dmg() 
+			     ? helicopter.kaboomDmg()
 			     : (this.isExplodable && !this.isInvincible() && !this.isDestroyed)
 					? 1.0f 
 					: this.collisionDamageTimer > 0
@@ -4100,7 +4098,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		if(this.model == BARRIER)
 		{
 			if((missile.type == JUMBO || missile.type == PHASE_SHIFT || missile.extraDamage)
-				&& MyMath.toss_up(	0.5f
+				&& MyMath.tossUp(	0.5f
 									* this.deactivationProb
 									* (( (missile.type == JUMBO 
 											|| missile.type == PHASE_SHIFT) 
@@ -4108,7 +4106,7 @@ public class Enemy extends MovingObject implements MissileTypes
 			{
 				this.hitpoints = 0;
 			}
-			else if(MyMath.toss_up(this.deactivationProb *(missile.type == PLASMA ? 2 : 1)))
+			else if(MyMath.tossUp(this.deactivationProb *(missile.type == PLASMA ? 2 : 1)))
 			{
 				this.snooze(true);
 			}
@@ -4146,7 +4144,7 @@ public class Enemy extends MovingObject implements MissileTypes
 
 	private void disableSiteEffects(Helicopter helicopter)
 	{
-		if(helicopter.tractor == this){helicopter.stop_tractor();}
+		if(helicopter.tractor == this){helicopter.stopTractor();}
 		if(!this.canLearnKamikaze
 		   && this.cloakingTimer > 0
 		   && this.type != BOSS_3)
@@ -4161,7 +4159,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		
 		if(this.canDoHitTriggeredTurn())
 		{
-			if(this.canLearnKamikaze){this.start_kamikaze_mode();}
+			if(this.canLearnKamikaze){this.startKamikazeMode();}
 			     if(this.bounds.getMinX() > helicopter.bounds.getMinX()){this.direction.x = -1;}
 			else if(this.bounds.getMaxX() < helicopter.bounds.getMaxX()){this.direction.x = 1;}				
 		}
@@ -4191,7 +4189,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		return this.canInstantTurn
 				|| this.canTurn
 					&& !this.canEarlyTurn
-					&& MyMath.toss_up(this.isMiniBoss
+					&& MyMath.tossUp(this.isMiniBoss
 										? this.isCarrier ? 0.2f : 0.5f
 										: this.isCarrier ? 0.1f : 0.25f);
 	}
@@ -4204,24 +4202,24 @@ public class Enemy extends MovingObject implements MissileTypes
 	{
 		explode(explosion, helicopter, 0, 0, false);
 	}	
-	private void explode(ArrayList<LinkedList<Explosion>> explosion, Helicopter helicopter, double missile_speed, int missile_type, boolean extra_dmg)
+	private void explode(ArrayList<LinkedList<Explosion>> explosion, Helicopter helicopter, double missileSpeed, int missileType, boolean extraDamage)
 	{		
 		if(this.explodingTimer == 0){this.explodingTimer = 7;}
 		Explosion.start(explosion, 
 						helicopter, 
-						this.bounds.getX() + ((missile_type != EMP && this.model != BARRIER) 
-							? (missile_speed < 0 ? 2 : 1) * this.bounds.getWidth()/3 
+						this.bounds.getX() + ((missileType != EMP && this.model != BARRIER)
+							? (missileSpeed < 0 ? 2 : 1) * this.bounds.getWidth()/3
 							: this.bounds.getWidth()/2), 
 						this.bounds.getY() + this.bounds.getHeight()/2, 
-						missile_type, extra_dmg);
+						missileType, extraDamage);
 	}
 	
 	void destroy(Helicopter helicopter){destroy(helicopter, null, true);}
 	void destroy(Helicopter helicopter, 
 	             ArrayList<LinkedList<PowerUp>> powerUp,
-	             boolean was_destroyed_by_player)
+	             boolean wasDestroyedByPlayer)
 	{
-		if(was_destroyed_by_player)
+		if(wasDestroyedByPlayer)
 		{
 			if(this.model != BARRIER){helicopter.numberOfEnemiesKilled++;}
 			if(this.isMiniBoss){helicopter.numberOfMiniBossKilled++;}
@@ -4240,7 +4238,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	
 		if(helicopter.tractor != null && helicopter.tractor == this)
 		{
-			helicopter.stop_tractor();
+			helicopter.stopTractor();
 		}		
 		this.speedLevel.setLocation(0, 12); //d
 		this.direction.y = 1;
@@ -4254,18 +4252,18 @@ public class Enemy extends MovingObject implements MissileTypes
 									    *(this.bounds.getHeight()/4));
 	}
 	
-	private void uncloak(int next_cloaking_state)
+	private void uncloak(int nextCloakingState)
 	{
 		this.alpha = 255;
 		this.farbe1 = MyColor.setAlpha(this.farbe1, 255);
 		this.farbe2 = MyColor.setAlpha(this.farbe2, 255);
-		this.cloakingTimer = next_cloaking_state;
+		this.cloakingTimer = nextCloakingState;
 	}
 
 	public void die(Controller controller, Helicopter helicopter,
-					Missile missile, boolean beam_kill)
+					Missile missile, boolean beamKill)
 	{		
-		this.rewardFor(controller.powerUp, missile, helicopter, beam_kill);
+		this.rewardFor(controller.powerUp, missile, helicopter, beamKill);
 		this.destroy(helicopter);		
 		if(this.isShielding){this.stopShielding();}
 		if(this.cloakingTimer != DISABLED){Audio.play(Audio.cloak);}
@@ -4290,7 +4288,7 @@ public class Enemy extends MovingObject implements MissileTypes
 
 	private void stopShielding()
 	{
-		if(Events.boss.shield == 1){Audio.shield_up.stop();} 
+		if(Events.boss.shield == 1){Audio.shieldUp.stop();}
 		Events.boss.shield--;
 		this.isShielding = false;
 	}
@@ -4298,14 +4296,14 @@ public class Enemy extends MovingObject implements MissileTypes
 	private void rewardFor(ArrayList<LinkedList<PowerUp>> powerUp,
 						   Missile missile,
 						   Helicopter helicopter,
-						   boolean beam_kill)
+						   boolean beamKill)
 	{																					   
 		if(helicopter.getType() != HELIOS)
 		{
 			Events.lastBonus = this.calculateReward(helicopter);
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;
-			Events.last_extra_bonus = 0;		
+			Events.lastExtraBonus = 0;
 			if(missile != null				
 				&& (helicopter.getType() == ROCH || helicopter.getType() == OROCHI))
 			{
@@ -4328,7 +4326,7 @@ public class Enemy extends MovingObject implements MissileTypes
 					missile.credit();
 				}				
 			}
-			else if(beam_kill)
+			else if(beamKill)
 			{
 				helicopter.bonusKills++;
 				helicopter.bonusKillsMoney += Events.lastBonus;
@@ -4358,7 +4356,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	{		
 		return this.model != BARRIER
 			   &&( (!Events.isBossLevel()
-				    &&( ( MyMath.toss_up(POWER_UP_PROB) 
+				    &&( ( MyMath.tossUp(POWER_UP_PROB)
 						  && Events.level >= MIN_POWER_UP_LEVEL) 
 						|| this.isMiniBoss))
 				|| this.type == BOSS_1
@@ -4372,7 +4370,7 @@ public class Enemy extends MovingObject implements MissileTypes
 		PowerUp.activate(helicopter, 
 				 powerUp, 
 				 this, 
-				 MyMath.toss_up(0.14f)
+				 MyMath.tossUp(0.14f)
 					? REPARATION
 					: PowerUpTypes.values()[MyMath.random(this.type.isMajorBoss() ? 5 : 6)], false);
 		
@@ -4490,12 +4488,12 @@ public class Enemy extends MovingObject implements MissileTypes
 	{
 		if(Events.boss.operator.servants[this.shieldingBrotherId()] == null)
 		{
-			this.is_upper_shield_maker = MyMath.toss_up();
+			this.isUpperShieldMaker = MyMath.tossUp();
 		}
 		else
 		{
-			this.is_upper_shield_maker 
-				= !Events.boss.operator.servants[this.shieldingBrotherId()].is_upper_shield_maker;
+			this.isUpperShieldMaker
+				= !Events.boss.operator.servants[this.shieldingBrotherId()].isUpperShieldMaker;
 		}		
 	}
 
@@ -4509,7 +4507,7 @@ public class Enemy extends MovingObject implements MissileTypes
 	public void teleport()
 	{
 		Audio.play(Audio.teleport2);		
-		this.set_location(260.0 + Math.random()*(660.0 - this.bounds.getWidth()),
+		this.setLocation(260.0 + Math.random()*(660.0 - this.bounds.getWidth()),
 						   20.0 + Math.random()*(270.0 - this.bounds.getHeight()));
 		this.speedLevel.setLocation(ZERO_SPEED);
 		this.teleportTimer = 60;
@@ -4526,7 +4524,7 @@ public class Enemy extends MovingObject implements MissileTypes
 									 Helicopter helicopter)
 	{
 		this.staticChargeTimer = STATIC_CHARGE_TIME;
-		helicopter.receive_static_charged(2.5f);
+		helicopter.receiveStaticCharged(2.5f);
 		Audio.play(Audio.emp);
 		Explosion.start(explosion, helicopter, (int)this.bounds.getCenterX(), (int)this.bounds.getCenterY(), 2, false, this);				
 	}
@@ -4563,7 +4561,7 @@ public class Enemy extends MovingObject implements MissileTypes
 
 	public void evaluatePosAdaption(Helicopter helicopter)
 	{
-		if(helicopter.is_location_adaption_approved(this))
+		if(helicopter.isLocationAdaptionApproved(this))
 		{			
 			this.hasUnresolvedIntersection = true;
 		}

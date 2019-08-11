@@ -23,7 +23,7 @@ import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.model.Explosion;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -46,7 +46,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		DELAY = 16;
 	
 	static int
-		skip_frame_flag = DISABLED;
+		skipFrameFlag = DISABLED;
 		
 	static long	
 		tm;
@@ -60,16 +60,20 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	public static Savegame
 		savegame;
 		
-	int nr_of_frames;
-	public int frames_counter = 0;
-	public int backgroundRepaint = 0;
+	int numberOfFrames;
+
+	public int
+		framesCounter = 0,
+		backgroundRepaint = 0;
 	
-	long 
-		fps_start_time;
+	long
+		fpsStartTime;
 	
 	public boolean
-		show_fps = false;
-	public boolean mouse_in_window = true;
+		showFps = false;
+
+	public boolean
+		mouseInWindow = true;
 		
 	private Helicopter
 		helicopter = HelicopterFactory.create(HelicopterTypes.getDefault());
@@ -118,13 +122,13 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);		
-		Menu.initialize_menu(this.helicopter);		
-		Menu.update_button_labels(this.helicopter);		
-		this.initialize_lists();		
+		Menu.initializeMenu(this.helicopter);
+		Menu.updateButtonLabels(this.helicopter);
+		this.initializeLists();
 		BackgroundObject.initialize(this.bgObject);
 	}
 	
-	void initialize_lists()
+	void initializeLists()
 	{
 		for(int i = 0; i < 2; i++)
 		{
@@ -151,19 +155,19 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void run()
 	{
-		if(skip_frame_flag != ACTIVE){tm = System.currentTimeMillis();}
+		if(skipFrameFlag != ACTIVE){tm = System.currentTimeMillis();}
 		while(Thread.currentThread() == this.animator)
 		{			
 			repaint();
 			try				
 			{
 				tm += DELAY;
-				long pause_time = tm - System.currentTimeMillis();
-				if(pause_time < 1)
+				long pauseTime = tm - System.currentTimeMillis();
+				if(pauseTime < 1)
 				{
-					skip_frame_flag = ACTIVE;
+					skipFrameFlag = ACTIVE;
 				}
-				else{Thread.sleep(pause_time);}				
+				else{Thread.sleep(pauseTime);}
 			}
 			catch(InterruptedException e)
 			{
@@ -179,7 +183,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{		
 		if(this.offGraphics != null)
 		{			
-			if(skip_frame_flag == INACTIVE){skip_frame_flag = DISABLED;}
+			if(skipFrameFlag == INACTIVE){
+				skipFrameFlag = DISABLED;}
 			else
 			{					
 				if(this.backgroundRepaint != DISABLED){Menu.repaintBackground(g, this);}
@@ -189,12 +194,12 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 							null);
 			}
 			
-			if(Main.isFullScreen || this.mouse_in_window){updateGame();}
+			if(Main.isFullScreen || this.mouseInWindow){updateGame();}
 			
-			if(skip_frame_flag == ACTIVE)
+			if(skipFrameFlag == ACTIVE)
 			{
 				//skipped_counter++;
-				skip_frame_flag = INACTIVE;
+				skipFrameFlag = INACTIVE;
 			}
 			else
 			{				
@@ -208,18 +213,18 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	
 	private void updateGame()
 	{		
-		this.frames_counter++;
+		this.framesCounter++;
 		if(Events.window == GAME)
 		{			
-			calculate_fps();
+			calculateFps();
 			
 			// aktualisieren aller sichtbaren Objekte
 			if(!Menu.isMenueVisible)
 			{				
-		    	MyColor.calculateVariableGameColors(this.frames_counter);
+		    	MyColor.calculateVariableGameColors(this.framesCounter);
 				BackgroundObject.update(this, this.bgObject);
-				Events.update_timer();
-				Menu.update_displays(this.helicopter);				
+				Events.updateTimer();
+				Menu.updateDisplays(this.helicopter);
 				Enemy.updateAllDestroyed(this, this.helicopter);
 				Missile.updateAll(this, this.helicopter);
 				Enemy.updateAllActive(this, this.helicopter);
@@ -233,7 +238,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		}
 		else
 		{
-			MyColor.calculateVariableMenuColors(this.frames_counter);
+			MyColor.calculateVariableMenuColors(this.framesCounter);
 			Menu.update(this, this.helicopter);
 		}
 	}
@@ -260,34 +265,34 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		Menu.paint(g2d, this, this.helicopter);
 	}
 	
-	private void calculate_fps()
+	private void calculateFps()
 	{
-		if(this.show_fps)
+		if(this.showFps)
 		{
-			long time_diff = System.currentTimeMillis() - this.fps_start_time;
-			this.nr_of_frames++;
-			if(time_diff > 3000)
+			long timeDiff = System.currentTimeMillis() - this.fpsStartTime;
+			this.numberOfFrames++;
+			if(timeDiff > 3000)
 			{
-				Menu.fps = Math.round(1000f*this.nr_of_frames/time_diff);					
-				this.fps_start_time = System.currentTimeMillis();
-				this.nr_of_frames = 0;
+				Menu.fps = Math.round(1000f*this.numberOfFrames /timeDiff);
+				this.fpsStartTime = System.currentTimeMillis();
+				this.numberOfFrames = 0;
 			}
 		}
 	}	
 	
-	public void switch_FPS_visible_state()
+	public void switchFpsVisibleState()
 	{
 		if(Events.window == GAME)
 		{
-			if(this.show_fps)
+			if(this.showFps)
 			{
-				this.show_fps = false;
+				this.showFps = false;
 			}
 			else
 			{					
-				this.show_fps = true;
-				this.fps_start_time = System.currentTimeMillis();					
-				this.nr_of_frames = 0;
+				this.showFps = true;
+				this.fpsStartTime = System.currentTimeMillis();
+				this.numberOfFrames = 0;
 			}
 		}		 
 	}

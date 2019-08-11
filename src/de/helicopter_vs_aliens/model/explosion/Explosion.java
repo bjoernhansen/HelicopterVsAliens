@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.model;
+package de.helicopter_vs_aliens.model.explosion;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,7 +11,6 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.missile.MissileTypes;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -21,14 +20,14 @@ import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
-// Todo alle Identifier in camelCase überführen
-public class Explosion implements Constants, MissileTypes
+
+public class Explosion implements Constants, ExplosionTypes
 {
     public int 
     	time,				// vergangene Zeit [frames] seit Starten der Explosion
-    	max_time,			// maximale Dauer einer Explosion / eines EMP 
+		maxTime,			// maximale Dauer einer Explosion / eines EMP
     	kills,				// nur für Pegasus-Klasse: mit diesem EMP vernichtete Gegner
-    	earned_money;		// nur für Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
+    	earnedMoney;		// nur für Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
   
 	public Ellipse2D 
 		ellipse = new Ellipse2D.Float();	// Einflussbereich der Explosion
@@ -37,7 +36,7 @@ public class Explosion implements Constants, MissileTypes
 		source;
 	
     private int
-    	max_radius,	// maximaler Explosionsradius 
+		maxRadius,	// maximaler Explosionsradius
    		broadness,	// breite des animierten Explosionsringes		
     	type;		// Standard, Plasma, EMP, etc.
     
@@ -57,8 +56,8 @@ public class Explosion implements Constants, MissileTypes
     	this.center.setLocation(x, y); 	
 		this.time = 0;
 		this.type = EMP;	
-		this.max_time = 25;
-		this.max_radius = 45;
+		this.maxTime = 25;
+		this.maxRadius = 45;
 		this.broadness = 36;	    
 		this.source = null;
     }    
@@ -80,7 +79,7 @@ public class Explosion implements Constants, MissileTypes
 			Explosion exp = i.next();
 			exp.update();
 			
-			if(exp.time >= exp.max_time)
+			if(exp.time >= exp.maxTime)
 			{
 				i.remove();
 				if(exp.type == EMP)
@@ -88,7 +87,7 @@ public class Explosion implements Constants, MissileTypes
 					helicopter.empWave = null;
 					if(exp.kills > 1)
 					{
-						Events.extra_reward(exp.kills, exp.earned_money, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
+						Events.extraReward(exp.kills, exp.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
 				explosion.get(INACTIVE).add(exp);
@@ -123,7 +122,7 @@ public class Explosion implements Constants, MissileTypes
     	}    	
     	g2d.setPaint(this.color);
     	g2d.setStroke(new BasicStroke((int)(1+(this.broadness-1)*(1-this.progress[0]))));
-        this.ellipse.setFrameFromCenter(this.center.getX(), this.center.getY(), this.center.getX() - (this.progress[1] * this.max_radius), this.center.getY() - (this.progress[1] * this.max_radius));
+        this.ellipse.setFrameFromCenter(this.center.getX(), this.center.getY(), this.center.getX() - (this.progress[1] * this.maxRadius), this.center.getY() - (this.progress[1] * this.maxRadius));
         g2d.draw(this.ellipse);
         g2d.setStroke(new BasicStroke(1));
     }
@@ -131,10 +130,10 @@ public class Explosion implements Constants, MissileTypes
     public void update()
 	{
     	this.time += 1;
-		float t = (float)this.time/this.max_time;
+		float t = (float)this.time/this.maxTime;
 		this.progress[0] = t;
 		this.progress[1] = t * t * t - 3 * t * t + 3 * t;
-		if(BackgroundObject.background_moves)
+		if(BackgroundObject.backgroundMoves)
 		{			
 			this.center.setLocation(this.center.getX() - BG_SPEED, 
 									this.center.getY());	
@@ -150,16 +149,16 @@ public class Explosion implements Constants, MissileTypes
     public static void start(ArrayList<LinkedList<Explosion>> explosion, 
 				      Helicopter helicopter, 
 			          double x, double y, 
-			          int missile_type, 
-			          boolean extra_dmg)
+			          int missileType,
+			          boolean extraDamage)
     {
-    	start(explosion, helicopter, x, y, missile_type, extra_dmg, null);
+    	start(explosion, helicopter, x, y, missileType, extraDamage, null);
     }        
 	public static void start(ArrayList<LinkedList<Explosion>> explosion, 
                       Helicopter helicopter, 
                       double x, double y, 
-                      int missile_type, 
-                      boolean extra_dmg,
+                      int missileType,
+                      boolean extraDamage,
                       Enemy source)
     {
     	Iterator<Explosion> i = explosion.get(INACTIVE).iterator();
@@ -169,33 +168,33 @@ public class Explosion implements Constants, MissileTypes
 		exp.center.setLocation(x, y);
 		exp.time = 0;
 		// kann wahrscheinlich in den EMP spezifischen bereich verschoben werden
-		helicopter.becomes_center_of(exp);
-		exp.type = missile_type;	
+		helicopter.becomesCenterOf(exp);
+		exp.type = missileType;
 		if(source != null){exp.source = source;}	
 		else exp.source = null;
-		if(missile_type != EMP)
+		if(missileType != EMP)
 		{
-			exp.max_time = 35;
-			exp.max_radius = 65 + (missile_type == JUMBO  || missile_type == PHASE_SHIFT  ? 20 : 0) + (extra_dmg ? 20 : 0);
-	    	exp.broadness =  50 + (missile_type == JUMBO  || missile_type == PHASE_SHIFT  ? 25 : 0) + (extra_dmg ? 25 : 0); 
+			exp.maxTime = 35;
+			exp.maxRadius = 65 + (missileType == JUMBO  || missileType == PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
+	    	exp.broadness =  50 + (missileType == JUMBO  || missileType == PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
 		}		
 		// EMP-Shockwave
 		else
 		{			
 			if(Events.window == STARTSCREEN)
 			{
-				exp.max_time = 20;
-				exp.max_radius = 50;
+				exp.maxTime = 20;
+				exp.maxRadius = 50;
 				exp.broadness = 36;	    	
 			}
 			else
 			{
-				exp.max_time = 20 + helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()];
-				exp.max_radius = 75 + (int)((19+3f*helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]) * helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+				exp.maxTime = 20 + helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()];
+				exp.maxRadius = 75 + (int)((19+3f*helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]) * helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 				exp.broadness = 30 + 3 * (helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 			}			  	
 	    	helicopter.empWave = exp;
-	    	exp.earned_money = 0;
+	    	exp.earnedMoney = 0;
 	    	exp.kills = 0;
 		}			
 		explosion.get(ACTIVE).add(exp);

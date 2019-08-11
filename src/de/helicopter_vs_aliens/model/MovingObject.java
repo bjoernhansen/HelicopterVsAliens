@@ -32,5 +32,5 @@ public abstract class MovingObject implements Constants
 	}
 	
 	protected int getPaintMaxX(){return this.paintBounds.x + this.paintBounds.width;}
- 	int get_paintMaxY(){return this.paintBounds.y + this.paintBounds.height;}
+ 	int getPaintMaxY(){return this.paintBounds.y + this.paintBounds.height;}
 }

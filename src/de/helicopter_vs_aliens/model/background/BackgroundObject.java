@@ -52,26 +52,26 @@ public class BackgroundObject extends MovingObject
 		BG_SPEED = 2.0f;
 		
 	private static final BufferedImage[]
-    	CACTUS_IMG = paint_cactus_image(), 
-    	PALM_CROWN_IMG = paint_palm_crown_image();
+    	CACTUS_IMG = paintCactusImage(),
+    	PALM_CROWN_IMG = paintPalmCrownImage();
 	
 	// statische Variablen
 	public static boolean
-		background_moves;		// = true: bewegter Hintergrund
+            backgroundMoves;		// = true: bewegter Hintergrund
 	   
     private static int
-    	bgObject_selection = TOTAL_FREQUENCY,	   	
-    	ground_factor = 3,			// legt fest, wie viele Objekte erscheinen (auf Wüste weniger als auf anderem Boden)
-    	mutual_exclusion_factor,	// sorgt dafür, dass an der selben Stelle nicht Wüste und Berg gleichzeitig auftreten können
+		backgroundObjectSelection = TOTAL_FREQUENCY,
+    	groundFactor = 3,			// legt fest, wie viele Objekte erscheinen (auf Wüste weniger als auf anderem Boden)
+		mutualExclusionFactor,	// sorgt dafür, dass an der selben Stelle nicht Wüste und Berg gleichzeitig auftreten können
     	
     	// Timmer zur Sicherstellung eines zeitlichen Mindestabstand zwischen 2 Hintergrundobjekten
-    	generalObject_timer,	
-    	cactus_timer,
-    	stone_timer,
-    	hill_timer;
+		generalObjectTimer,
+		cactusTimer,
+		stoneTimer,
+    	hillTimer;
     
     private static float
-    	cloud_x = 135;				// x-Koordinate der Wolke
+		cloudX = 135;				// x-Koordinate der Wolke
     
     // Objekt-Attribute    
     public BackgroundTypes
@@ -92,15 +92,15 @@ public class BackgroundObject extends MovingObject
 		myColor = new Color[2];  			// nur für Palmen: Stammfarbe;
     
                
-    private static BufferedImage [] paint_cactus_image()
+    private static BufferedImage [] paintCactusImage()
     {
     	Graphics2D g2d;
     	GradientPaint[] myGradientColor = new GradientPaint[3];
-    	BufferedImage[] cactus_image = new BufferedImage[2];
+    	BufferedImage[] cactusImage = new BufferedImage[2];
     	for(int i = 0; i < 2; i++)
     	{
-    		cactus_image[i] = new BufferedImage(52, 197, BufferedImage.TYPE_INT_ARGB);
-    		g2d =  (Graphics2D) cactus_image[i].getGraphics();
+    		cactusImage[i] = new BufferedImage(52, 197, BufferedImage.TYPE_INT_ARGB);
+    		g2d =  (Graphics2D) cactusImage[i].getGraphics();
     		g2d.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
 									RenderingHints.VALUE_ANTIALIAS_ON);
     		myGradientColor[0] = new GradientPaint(	 2,  0, MyColor.myGreen[0][i],
@@ -116,65 +116,65 @@ public class BackgroundObject extends MovingObject
 			g2d.setPaint(myGradientColor[2]);
 			g2d.fillOval(  0, 34, 17, 94);  
     	}	
-    	return cactus_image;
+    	return cactusImage;
     }
     
-    private static BufferedImage [] paint_palm_crown_image()
+    private static BufferedImage [] paintPalmCrownImage()
     {
-    	Graphics2D g2d_palm_crown;
-    	BufferedImage[] palm_crown_image = new BufferedImage[2];    	
+    	Graphics2D g2DPalmCrown;
+    	BufferedImage[] palmCrownImage = new BufferedImage[2];
     	for(int i = 0; i < 2; i++)
     	{
-    		palm_crown_image[i] = 	new BufferedImage(209, 27, BufferedImage.TYPE_INT_ARGB);    		
-    		g2d_palm_crown = (Graphics2D) palm_crown_image[i].getGraphics();    		
-    		g2d_palm_crown.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
+    		palmCrownImage[i] = 	new BufferedImage(209, 27, BufferedImage.TYPE_INT_ARGB);
+    		g2DPalmCrown = (Graphics2D) palmCrownImage[i].getGraphics();
+    		g2DPalmCrown.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
 												RenderingHints.VALUE_ANTIALIAS_ON);						
-			g2d_palm_crown.setPaint(new GradientPaint(	0,  4, MyColor.myGreen[0][i], 
+			g2DPalmCrown.setPaint(new GradientPaint(	0,  4, MyColor.myGreen[0][i],
  														0, 17, MyColor.dimColor(MyColor.myGreen[0][i],
  														0.65f), true));
-			g2d_palm_crown.fillArc(115, 1, 94, 26, 0, 225);			
-			g2d_palm_crown.setPaint(new GradientPaint(	0,  3, MyColor.myGreen[1][i], 
+			g2DPalmCrown.fillArc(115, 1, 94, 26, 0, 225);
+			g2DPalmCrown.setPaint(new GradientPaint(	0,  3, MyColor.myGreen[1][i],
  														0, 13, MyColor.dimColor(MyColor.myGreen[1][i],
  														0.60f), true));
-			g2d_palm_crown.fillArc(0, 0 , 125, 21, -45, 225);			
-			g2d_palm_crown.setPaint(new GradientPaint(	0, 17, MyColor.myGreen[2][i], 
+			g2DPalmCrown.fillArc(0, 0 , 125, 21, -45, 225);
+			g2DPalmCrown.setPaint(new GradientPaint(	0, 17, MyColor.myGreen[2][i],
  														0, 23, MyColor.dimColor(MyColor.myGreen[2][i], 
  														0.65f), true));
-			g2d_palm_crown.fillArc(55, 14, 68, 11, -45, 240);
+			g2DPalmCrown.fillArc(55, 14, 68, 11, -45, 240);
     	}
-    	return palm_crown_image;
+    	return palmCrownImage;
     }
     
-    private void paint_palm_stem_image()
+    private void paintPalmStemImage()
     {
     	for(int i = 0; i < 2; i++)
     	{
     		this.image[i] = new BufferedImage(20, 80 + this.coordOfComponents[0][0] + 6, BufferedImage.TYPE_INT_ARGB);
-        	Graphics2D g2d_palm_stem = (Graphics2D)this.image[i].getGraphics();
-        	g2d_palm_stem.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
+        	Graphics2D g2DPalmStem = (Graphics2D)this.image[i].getGraphics();
+        	g2DPalmStem.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
     								RenderingHints.VALUE_ANTIALIAS_ON); 
         	
-    		g2d_palm_stem.setPaint( new GradientPaint(	12, 0,  this.myColor[i], 
+    		g2DPalmStem.setPaint( new GradientPaint(	12, 0,  this.myColor[i],
     			 										23, 0, 	MyColor.dimColor(this.myColor[i], 0.75f), true));
     		this.myColor[i] = null;
-    		g2d_palm_stem.fillRect(0, 0, 20, 80 + this.coordOfComponents[0][0]);
-    		g2d_palm_stem.fillArc( 0, 73 + this.coordOfComponents[0][0], 20, 12, 180, 180);	
+    		g2DPalmStem.fillRect(0, 0, 20, 80 + this.coordOfComponents[0][0]);
+    		g2DPalmStem.fillArc( 0, 73 + this.coordOfComponents[0][0], 20, 12, 180, 180);
     	}
     }
           
-    private void paint_desert_image()
+    private void paintDesertImage()
     {
     	for(int i = 0; i < 2; i++)
     	{
     		this.image[i] = new BufferedImage(this.width, 35, BufferedImage.TYPE_INT_ARGB);
-        	Graphics2D g2d_desert = (Graphics2D) this.image[i] .getGraphics();
-        	g2d_desert.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
+        	Graphics2D g2DDesert = (Graphics2D) this.image[i] .getGraphics();
+        	g2DDesert.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
 										RenderingHints.VALUE_ANTIALIAS_ON); 
-        	g2d_desert.setPaint(new GradientPaint(	 0 + this.x,  0, MyColor.sand[i], 
+        	g2DDesert.setPaint(new GradientPaint(	 0 + this.x,  0, MyColor.sand[i],
 													10 + this.x, 20, MyColor.dimColor(MyColor.sand[i], 0.9f), true));
-        	g2d_desert.fillArc(0, -35, 300, 70, 180, 90);
-        	g2d_desert.fillRect(149, 0, this.width - 298, 35); 
-        	g2d_desert.fillArc(this.width - 300, -35, 300, 70, 270, 90);
+        	g2DDesert.fillArc(0, -35, 300, 70, 180, 90);
+        	g2DDesert.fillRect(149, 0, this.width - 298, 35);
+        	g2DDesert.fillArc(this.width - 300, -35, 300, 70, 270, 90);
     	}
     }
     
@@ -232,12 +232,12 @@ public class BackgroundObject extends MovingObject
     	
     	// Sicherstellen, dass zwischen dem Erscheinen von zwei Kakteen bzw. 
     	// zwei Steinen eine gewisse Mindestzeit vergangen ist
-        int random = (cactus_timer > 0 ? CACTUS_FREQUENCY : 0) 
+        int random = (cactusTimer > 0 ? CACTUS_FREQUENCY : 0)
         			 + MyMath.random(
-        					 bgObject_selection 
-        					 - (cactus_timer > 0 ? CACTUS_FREQUENCY : 0) 
-        					 - (stone_timer  > 0 ? STONE_FREQUENCY  : 0) );
-        if(stone_timer > 0 && random >= CACTUS_FREQUENCY)
+        					 backgroundObjectSelection
+        					 - (cactusTimer > 0 ? CACTUS_FREQUENCY : 0)
+        					 - (stoneTimer > 0 ? STONE_FREQUENCY  : 0) );
+        if(stoneTimer > 0 && random >= CACTUS_FREQUENCY)
         {
         	random += STONE_FREQUENCY;
         }    
@@ -249,12 +249,12 @@ public class BackgroundObject extends MovingObject
         	this.type = CACTUS; 
             this.width = 50;
             this.plane = MyMath.randomDirection();
-            cactus_timer = 125;
+            cactusTimer = 125;
         }                
         else if( random >= CACTUS_FREQUENCY && random < UP_TO_STONE_FREQUENCY)
         {   
         	// Steine
-        	if(random < UP_TO_STONE_FREQUENCY - STONE_FREQUENCY/2 && !(hill_timer > 0)){this.plane = -1;}
+        	if(random < UP_TO_STONE_FREQUENCY - STONE_FREQUENCY/2 && !(hillTimer > 0)){this.plane = -1;}
         	else{this.plane = 2;}                      
             this.type = STONE;            
             this.coordOfComponents[0][0] = 0; 					   // position (x)            
@@ -262,14 +262,14 @@ public class BackgroundObject extends MovingObject
             this.coordOfComponents[0][2] = 50 + MyMath.random(75); // height
             this.coordOfComponents[0][1] = 12;  				   // position (y)
             this.width = 125 + this.coordOfComponents[0][2];
-            stone_timer = 75;
+            stoneTimer = 75;
         } 
         else if( random >= UP_TO_STONE_FREQUENCY && random < UP_TO_PALM_FREQUENCY)
         { 
             // Palme
         	this.type = PALM; 
             this.width = 225;
-            if(MyMath.toss_up()){this.plane = 1;}
+            if(MyMath.tossUp()){this.plane = 1;}
             else{this.plane = -1;}                      
             int a, b, c;
             a = 184 + MyMath.random(12);
@@ -278,8 +278,8 @@ public class BackgroundObject extends MovingObject
             this.myColor[1] = new Color(a, b,c);
             this.myColor[0] = MyColor.dimColor(this.myColor[1], MyColor.NIGHT_DIM_FACTOR);
             this.coordOfComponents[0][0] = 20 + MyMath.random(70);
-            cactus_timer = 140;            
-            this.paint_palm_stem_image();
+            cactusTimer = 140;
+            this.paintPalmStemImage();
         }
         else if( random >= UP_TO_PALM_FREQUENCY && random < UP_TO_HILL_FREQUENCY)
         {            
@@ -299,12 +299,13 @@ public class BackgroundObject extends MovingObject
             this.width = Math.max(this.coordOfComponents[1][0] 
                                   + this.coordOfComponents[1][2], 
                                   this.coordOfComponents[0][2]); 
-            bgObject_selection = UP_TO_HILL_FREQUENCY;
-            if(mutual_exclusion_factor < this.width/2)
+            backgroundObjectSelection = UP_TO_HILL_FREQUENCY;
+            if(mutualExclusionFactor < this.width/2)
             {
-            	mutual_exclusion_factor = this.width/2;
+            	mutualExclusionFactor = this.width/2;
             } 
-            if(hill_timer < this.width/2){hill_timer = this.width/2;}            
+            if(hillTimer < this.width/2){
+				hillTimer = this.width/2;}
         }
         else if( random >= UP_TO_HILL_FREQUENCY && random < TOTAL_FREQUENCY)
         {            
@@ -312,32 +313,32 @@ public class BackgroundObject extends MovingObject
         	this.type = DESERT;
             this.plane = 0;
             this.width = 600 + MyMath.random(400);            
-            ground_factor = 17;
-            if(mutual_exclusion_factor < this.width/2)
+            groundFactor = 17;
+            if(mutualExclusionFactor < this.width/2)
             {
-            	mutual_exclusion_factor = this.width/2;
+            	mutualExclusionFactor = this.width/2;
             }
-            generalObject_timer = 0;
-            bgObject_selection = UP_TO_PALM_FREQUENCY;
-            this.paint_desert_image();
+            generalObjectTimer = 0;
+            backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
+            this.paintDesertImage();
         }        
     }
     
     private static void paintBackground(Graphics2D g2d)
     {
     	// Sonne bzw. Mond
-    	int corona_radius_increase = 0;
+    	int coronaRadiusIncrease = 0;
         if(Events.timeOfDay == NIGHT) {g2d.setColor(MyColor.lighterYellow); }
         else
         {
         	g2d.setColor(MyColor.randomLight);
-        	corona_radius_increase = (MyColor.randomSunlightBlue - 175)/20;
+        	coronaRadiusIncrease = (MyColor.randomSunlightBlue - 175)/20;
         }      
         g2d.fillOval(865, 30, 60, 60);
         g2d.setColor(MyColor.translucentSun);  
         g2d.setStroke(new BasicStroke(35));
-        g2d.drawOval(855-corona_radius_increase, 20-corona_radius_increase, 
-        			 80+2*corona_radius_increase, 80+2*corona_radius_increase);
+        g2d.drawOval(855-coronaRadiusIncrease, 20-coronaRadiusIncrease,
+        			 80+2*coronaRadiusIncrease, 80+2*coronaRadiusIncrease);
         g2d.setStroke(new BasicStroke(1));        
                  
         // Sterne
@@ -353,9 +354,9 @@ public class BackgroundObject extends MovingObject
         
         // Wolke
         g2d.setPaint(MyColor.gradientCloud[Events.timeOfDay.ordinal()]);
-        g2d.fillOval((int) cloud_x      , 51,  82, 45);                           
-        g2d.fillOval((int)(cloud_x + 41), 63, 150, 60);                               
-        g2d.fillOval((int)(cloud_x + 68), 40,  60, 53); 
+        g2d.fillOval((int) cloudX, 51,  82, 45);
+        g2d.fillOval((int)(cloudX + 41), 63, 150, 60);
+        g2d.fillOval((int)(cloudX + 68), 40,  60, 53);
     }   
         
     private void makeFirstCactus()
@@ -387,51 +388,51 @@ public class BackgroundObject extends MovingObject
         this.type = DESERT;
         this.plane = 0;
         this.width = 800;            
-        ground_factor = 17;     
-        mutual_exclusion_factor = this.width/2;
-        generalObject_timer = 0;
-        bgObject_selection = UP_TO_PALM_FREQUENCY;      
-        this.paint_desert_image();
+        groundFactor = 17;
+        mutualExclusionFactor = this.width/2;
+        generalObjectTimer = 0;
+        backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
+        this.paintDesertImage();
     }    
     
-    public static void reset(ArrayList<LinkedList<BackgroundObject>> bgObject)
+    public static void reset(ArrayList<LinkedList<BackgroundObject>> backgroundObjects)
     {
-    	bgObject.get(INACTIVE).addAll(bgObject.get(ACTIVE));
-    	bgObject.get(ACTIVE).clear();   	
-    	Iterator<BackgroundObject> i = bgObject.get(INACTIVE).iterator();
+    	backgroundObjects.get(INACTIVE).addAll(backgroundObjects.get(ACTIVE));
+    	backgroundObjects.get(ACTIVE).clear();
+    	Iterator<BackgroundObject> i = backgroundObjects.get(INACTIVE).iterator();
     	BackgroundObject bgo;
 		if(i.hasNext()){bgo = i.next(); i.remove();}	
 		else{bgo = new BackgroundObject();}
 		bgo.makeFirstCactus();
-		bgObject.get(ACTIVE).add(bgo);
+		backgroundObjects.get(ACTIVE).add(bgo);
 		if(i.hasNext()){bgo = i.next(); i.remove();}	
 		else{bgo = new BackgroundObject();}
 		bgo.makeFirstHill();		
-		bgObject.get(ACTIVE).add(bgo);		
+		backgroundObjects.get(ACTIVE).add(bgo);
 		if(i.hasNext()){bgo = i.next(); i.remove();}	
 		else{bgo = new BackgroundObject();}
 		bgo.makeFirstDesert();		
-		bgObject.get(ACTIVE).add(bgo);
-		cloud_x = 135;
+		backgroundObjects.get(ACTIVE).add(bgo);
+		cloudX = 135;
     }
     
-    public static void initialize(ArrayList<LinkedList<BackgroundObject>> bgObject)
+    public static void initialize(ArrayList<LinkedList<BackgroundObject>> backgroundObjects)
     {    	
     	BackgroundObject firstCactus = new BackgroundObject();
     	firstCactus.makeFirstCactus();
-    	bgObject.get(ACTIVE).add(firstCactus);
+    	backgroundObjects.get(ACTIVE).add(firstCactus);
     	BackgroundObject firstHill = new BackgroundObject();
     	firstHill.makeFirstHill();
-    	bgObject.get(ACTIVE).add(firstHill);
+    	backgroundObjects.get(ACTIVE).add(firstHill);
     	BackgroundObject firstDesert = new BackgroundObject();
     	firstDesert.makeFirstDesert();
-    	bgObject.get(ACTIVE).add(firstDesert);
-    	initialize_stars();    	    	
-    	paint_cactus_image();    
-    	paint_palm_crown_image();
+    	backgroundObjects.get(ACTIVE).add(firstDesert);
+    	initializeStars();
+    	paintCactusImage();
+    	paintPalmCrownImage();
     }
     
-    private static void initialize_stars()
+    private static void initializeStars()
     {
     	for(int i = 0; i < NR_OF_STARS; i++)
 		{
@@ -442,22 +443,28 @@ public class BackgroundObject extends MovingObject
     
     private static void moveCloud()
     {    	
-    	cloud_x -= background_moves ? 0.5f : 0.125f;
-		if(cloud_x < -250){cloud_x = 1000;}
+    	cloudX -= backgroundMoves ? 0.5f : 0.125f;
+		if(cloudX < -250){
+			cloudX = 1000;}
     }
     
     private static void updateBackgroundTimer()
     {
-    	if(mutual_exclusion_factor == 1 )
+    	if(mutualExclusionFactor == 1 )
 		{
-			bgObject_selection = TOTAL_FREQUENCY;
-			ground_factor = 3;
+			backgroundObjectSelection = TOTAL_FREQUENCY;
+			groundFactor = 3;
 		}
-		if(mutual_exclusion_factor > 0 ){mutual_exclusion_factor--;}
-		if(hill_timer > 0 ){hill_timer--;}
-		if(generalObject_timer > 0){generalObject_timer--;}			
-		if(cactus_timer > 0){cactus_timer--;}
-		if(stone_timer > 0){stone_timer--;}
+		if(mutualExclusionFactor > 0 ){
+			mutualExclusionFactor--;}
+		if(hillTimer > 0 ){
+			hillTimer--;}
+		if(generalObjectTimer > 0){
+			generalObjectTimer--;}
+		if(cactusTimer > 0){
+			cactusTimer--;}
+		if(stoneTimer > 0){
+			stoneTimer--;}
     }
     
     private void clearImage()
@@ -466,31 +473,29 @@ public class BackgroundObject extends MovingObject
         this.image[1] = null;
     }
 
-	public static void paintBackground(Graphics2D g2d,
-									   ArrayList<LinkedList<BackgroundObject>> bgObject)
+	public static void paintBackground(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> backgroundObjects)
 	{		
 		paintBackground(g2d);
-		paint_bgObjects(g2d, bgObject);		
+		paintBgObjects(g2d, backgroundObjects);
 	}
 
-	public static void update(Controller controller,
-                              ArrayList<LinkedList<BackgroundObject>> bgObject)
+	public static void update(Controller controller, ArrayList<LinkedList<BackgroundObject>> backgroundObjects)
 	{		
-		background_moves = isBackgroundMoving(controller.enemies, controller.getHelicopter());
-		for(Iterator<BackgroundObject> i = bgObject.get(ACTIVE).iterator(); i.hasNext();)
+		backgroundMoves = isBackgroundMoving(controller.enemies, controller.getHelicopter());
+		for(Iterator<BackgroundObject> i = backgroundObjects.get(ACTIVE).iterator(); i.hasNext();)
 		{
 			BackgroundObject bgo = i.next();
-			if(background_moves){bgo.x -= BG_SPEED;}
+			if(backgroundMoves){bgo.x -= BG_SPEED;}
 			if(bgo.x < -(bgo.width + 50))
 			{
 				bgo.clearImage();
 				i.remove();
-				bgObject.get(INACTIVE).add(bgo);
+				backgroundObjects.get(INACTIVE).add(bgo);
 			}
 		}		
 		moveCloud();
-		generate_new_bgObjects(bgObject);					
-		if(background_moves){
+		generateNewBackgroundObjects(backgroundObjects);
+		if(backgroundMoves){
             updateBackgroundTimer();}
 	}
 
@@ -507,9 +512,9 @@ public class BackgroundObject extends MovingObject
 				&& enemy.get(ACTIVE).getFirst().type.isMajorBoss();
 	}
 
-	private static void	paint_bgObjects(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> bgObject)
+	private static void paintBgObjects(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> backgroundObjects)
 	{
-        for (BackgroundObject bgo : bgObject.get(ACTIVE))
+        for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
         {
             if (bgo.plane == -1)
             {
@@ -518,24 +523,24 @@ public class BackgroundObject extends MovingObject
         }
 	}
 
-	private static void generate_new_bgObjects(	ArrayList<LinkedList<BackgroundObject>> bgObject)
+	private static void generateNewBackgroundObjects(ArrayList<LinkedList<BackgroundObject>> backgroundObjects)
 	{
-		int nr_of_bgObjects = bgObject.get(ACTIVE).size();
-		if( nr_of_bgObjects < 20 && MyMath.creationProbability( 20 - nr_of_bgObjects,
-													ground_factor) &&
-			generalObject_timer == 0 && background_moves)
+		int numberOfBackgroundObjects = backgroundObjects.get(ACTIVE).size();
+		if( numberOfBackgroundObjects < 20 && MyMath.creationProbability( 20 - numberOfBackgroundObjects,
+				groundFactor) &&
+			generalObjectTimer == 0 && backgroundMoves)
 		{
-			generalObject_timer = 20;
-			Iterator<BackgroundObject> i = bgObject.get(INACTIVE).iterator();
+			generalObjectTimer = 20;
+			Iterator<BackgroundObject> i = backgroundObjects.get(INACTIVE).iterator();
 	    	BackgroundObject bgo;
 			if(i.hasNext()){bgo = i.next(); i.remove();}	
 			else{bgo = new BackgroundObject();}
 			bgo.preset();
-			bgObject.get(ACTIVE).add(bgo);
+			backgroundObjects.get(ACTIVE).add(bgo);
 		}
 	}
 
-	public static void paintForeground(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> bgObject)
+	public static void paintForeground(Graphics2D g2d, ArrayList<LinkedList<BackgroundObject>> backgroundObjects)
 	{
 		// der Boden
 		g2d.setPaint(MyColor.gradientGround[Events.timeOfDay.ordinal()]);
@@ -544,7 +549,7 @@ public class BackgroundObject extends MovingObject
         // Objekte vor dem Helikopter
     	for(int j = 0; j < 3; j++)
 		{
-            for (BackgroundObject bgo : bgObject.get(ACTIVE))
+            for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
             {
                 if (bgo.plane == j)
                 {

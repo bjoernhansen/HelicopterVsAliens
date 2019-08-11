@@ -9,8 +9,9 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.model.Explosion;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
@@ -20,7 +21,7 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
 
 
-public class EnemyMissile implements Constants, MissileTypes
+public class EnemyMissile implements Constants, ExplosionTypes
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
@@ -33,9 +34,9 @@ public class EnemyMissile implements Constants, MissileTypes
 		rgbColorValue,	// aktueller Integer-Farbwert für die RGB-Rotkomponente der Geschoss-Farbe [0-255]
 		diameter;			// Geschoss-Durchmesser
     
-	private boolean 
-		has_hit,			// = true: Hat den Helikoper getroffen und kann entsorgt werden
-    	light_up_color; 	// = true: Farbe der grünen Geschosse wird heller, sonst dunkler
+	private boolean
+		hasHit,			// = true: Hat den Helikoper getroffen und kann entsorgt werden
+    	lightUpColor; 	// = true: Farbe der grünen Geschosse wird heller, sonst dunkler
     
 	private Color 	 
 		variableGreen;  	// variable grüne Farbe der gegnerischen Geschosse
@@ -60,8 +61,8 @@ public class EnemyMissile implements Constants, MissileTypes
     
     private void update(Helicopter helicopter)
     {    		
-    	this.determine_color();	
-		this.location.setLocation( this.location.getX() + this.speed.getX() - (BackgroundObject.background_moves ? BG_SPEED : 0),
+    	this.determineColor();
+		this.location.setLocation( this.location.getX() + this.speed.getX() - (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
 		if(	helicopter.interphaseGeneratorTimer <= helicopter.shiftTime &&
 		helicopter.bounds.intersectsLine( this.location.getX() + this.diameter/2, 
@@ -78,7 +79,7 @@ public class EnemyMissile implements Constants, MissileTypes
     	if(this.type == BUSTER)
     	{
     		Audio.play(Audio.explosion2);
-    		helicopter.take_missile_damage();    		
+    		helicopter.takeMissileDamage();
     		Explosion.start(Controller.getInstance().explosion,
     						helicopter,
 							(int)(helicopter.bounds.getX()
@@ -92,14 +93,14 @@ public class EnemyMissile implements Constants, MissileTypes
     	else 
     	{
     		Audio.play(Audio.explosion5);
-    		helicopter.receive_static_charged(1.0f);    		
+    		helicopter.receiveStaticCharged(1.0f);
     	}
-        this.has_hit = true;
+        this.hasHit = true;
     }
     
-    private void determine_color()
+    private void determineColor()
     {
-        if(this.light_up_color)
+        if(this.lightUpColor)
         {
             this.rgbColorValue = Math.min(this.rgbColorValue + 25, 255);
         }
@@ -115,8 +116,8 @@ public class EnemyMissile implements Constants, MissileTypes
         {
         	this.variableGreen = new Color(255, this.rgbColorValue, (int)(0.65f * this.rgbColorValue));
         }  
-        if(this.rgbColorValue == 0){this.light_up_color = true;}
-        else if(this.rgbColorValue == 255){this.light_up_color = false;}
+        if(this.rgbColorValue == 0){this.lightUpColor = true;}
+        else if(this.rgbColorValue == 255){this.lightUpColor = false;}
     }
     
     public void launch(Enemy enemy, EnemyMissileTypes missileType, double shootingSpeed, Point2D shootingDirection)
@@ -146,8 +147,8 @@ public class EnemyMissile implements Constants, MissileTypes
 	    	}
     	}    	
     	this.diameter = ((this.type == DISCHARGER) ? DIAMETER : (DIAMETER + 2));
-		this.has_hit = false;
-		this.light_up_color = true;
+		this.hasHit = false;
+		this.lightUpColor = true;
     }
     
 	
@@ -173,7 +174,7 @@ public class EnemyMissile implements Constants, MissileTypes
 				|| em.location.getX() > 1050 
 				|| em.location.getY() + 20 < 0 
 				|| em.location.getY() > 515 
-				|| em.has_hit)
+				|| em.hasHit)
 			{
 				i.remove();					
 				enemyMissile.get(INACTIVE).add(em);

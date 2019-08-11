@@ -120,16 +120,16 @@ public class Button implements Constants
 	
 	public String
 		label;            // Beschriftung
-	public String second_label;	// zweite Beschriftung, falls vorhanden
+	public String secondLabel;	// zweite Beschriftung, falls vorhanden
 	
 	public Color
-		cost_color;		// Farbe, falls es ein Upgrade-Button in der Werkstatt ist	
+			costColor;		// Farbe, falls es ein Upgrade-Button in der Werkstatt ist
 	
 	public Rectangle2D
 		bounds;		// Maße und Koordinaten des Buttons
 	
-	private boolean 
-		cost_button,	// = true: Kaufbutton
+	private boolean
+		costButton,	// = true: Kaufbutton
 		translucent;	// = true: durchsichtig
 	
 	
@@ -137,10 +137,10 @@ public class Button implements Constants
 	{
 		this.bounds = new Rectangle2D.Float(x, y, width, height);
 		this.label = label;	
-		this.second_label = second_label;
+		this.secondLabel = second_label;
 		this.costs = 0;
-		this.cost_button = cost_button;
-		this.cost_color = null;
+		this.costButton = cost_button;
+		this.costColor = null;
 		this.translucent = translucent;
 		this.highlighted = false;
 		this.enabled = true;
@@ -148,7 +148,7 @@ public class Button implements Constants
 	}		
 	
     // Erstellen und Pre-Initialisieren der Buttons
-	static void initialize_buttons(Helicopter helicopter)
+	static void initializeButtons(Helicopter helicopter)
 	{
 		Menu.repairShopButton.put("RepairButton", new Button(23, 287, 205, 50, REPAIR[Menu.language.ordinal()], PRICE[Menu.language.ordinal()], true, true));
 		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()], SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0], false, true));
@@ -203,14 +203,14 @@ public class Button implements Constants
 	public static void initialize(Helicopter helicopter)
 	{
 		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
-		Menu.repairShopButton.get("Einsatz").second_label = SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
+		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
 		
 		for(int i = 0; i < 6; i++)
     	{    		
 			if(!helicopter.hasMaxUpgradeLevel[i])
 			{
 				Menu.repairShopButton.get("StandardUpgrade" + i).costs = MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]);
-				Menu.repairShopButton.get("StandardUpgrade" + i).cost_color = MyColor.costsColor[helicopter.upgradeCosts[i]];
+				Menu.repairShopButton.get("StandardUpgrade" + i).costColor = MyColor.costsColor[helicopter.upgradeCosts[i]];
 			}
     	}
 		Menu.repairShopButton.get("StandardUpgrade" + 5).label
@@ -219,53 +219,53 @@ public class Button implements Constants
 			  + STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][6 + helicopter.getType().ordinal()][1];
 		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden
 		Menu.repairShopButton.get("Special" + 0).costs = SPOTLIGHT_COSTS;
-		Menu.repairShopButton.get("Special" + 0).cost_color = MyColor.costsColor[CHEAP.ordinal()];
+		Menu.repairShopButton.get("Special" + 0).costColor = MyColor.costsColor[CHEAP.ordinal()];
 		Menu.repairShopButton.get("Special" + 1).costs = (helicopter.getGoliathCosts());
-		Menu.repairShopButton.get("Special" + 1).cost_color = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 1).costColor = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repairShopButton.get("Special" + 2).costs = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + 2).cost_color = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 2).costColor = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repairShopButton.get("Special" + 3).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + 3).cost_color = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 3).costColor = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repairShopButton.get("Special" + 3).label = Menu.SPECIALS[Menu.language.ordinal()][3];
 		Menu.repairShopButton.get("Special" + 4).costs = helicopter.getType() != ROCH ? Helicopter.CHEAP_SPECIAL_COSTS : Roch.JUMBO_MISSILE_COSTS ;
-		Menu.repairShopButton.get("Special" + 4).cost_color = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[CHEAP.ordinal()];
+		Menu.repairShopButton.get("Special" + 4).costColor = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[CHEAP.ordinal()];
 		Menu.repairShopButton.get("Special" + 4).label = Menu.SPECIALS[Menu.language.ordinal()][4 + helicopter.getType().ordinal()];
 	}
 	
 	void paint(Graphics2D g2d){paint(g2d, null, false);}
-	void paint(Graphics2D g2d, String button_label){paint(g2d, button_label, false);}
+	void paint(Graphics2D g2d, String buttonLabel){paint(g2d, buttonLabel, false);}
 	void paint(Graphics2D g2d, boolean loner){paint(g2d, null, loner);}
-	private void paint(Graphics2D g2d, String button_label, boolean loner)
+	private void paint(Graphics2D g2d, String buttonLabel, boolean loner)
 	{
     	if(!this.label.equals("") && !loner)
     	{
-			String used_label = button_label != null ? button_label : this.label;		
+			String usedLabel = buttonLabel != null ? buttonLabel : this.label;
 			if((this.highlighted && this.enabled) || !this.translucent)
 			{
 				g2d.setPaint(this.highlighted ? MyColor.gradientVariableGray : MyColor.lightestGray);
 				g2d.fill(this.bounds);
 			}
 	    	g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-	    	if(this.cost_color == null){g2d.setColor(this.enabled ? this.marked ? MyColor.variableWhite : Color.white : MyColor.lightGray);}
-	        else{g2d.setColor(this.cost_color);}  
+	    	if(this.costColor == null){g2d.setColor(this.enabled ? this.marked ? MyColor.variableWhite : Color.white : MyColor.lightGray);}
+	        else{g2d.setColor(this.costColor);}
 	    	if(this.translucent){g2d.draw(this.bounds);}
 	    	else
 	    	{
 	    		g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)this.bounds.getY());
 	        	g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX()), (int)(this.bounds.getY()+this.bounds.getHeight()));
-	        	if(this.cost_color == null){g2d.setColor(MyColor.gray);}
-	            else{g2d.setColor(this.cost_color);}    	
+	        	if(this.costColor == null){g2d.setColor(MyColor.gray);}
+	            else{g2d.setColor(this.costColor);}
 	        	g2d.drawLine((int)(this.bounds.getX()+this.bounds.getWidth()), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
 	        	g2d.drawLine((int)this.bounds.getX(), (int)(this.bounds.getY()+this.bounds.getHeight()), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
 	    	}
 	        g2d.setStroke(new BasicStroke(1));        
 	        	        
-	        if(this.second_label != null || this.cost_button)
+	        if(this.secondLabel != null || this.costButton)
 	        {	        	
-	        	if(this.cost_color == null){g2d.setColor(MyColor.lightOrange);}
-	            else{g2d.setColor(this.cost_color);}
+	        	if(this.costColor == null){g2d.setColor(MyColor.lightOrange);}
+	            else{g2d.setColor(this.costColor);}
 	        	g2d.setFont(Menu.fontProvider.getBold(14));
-	        	g2d.drawString(used_label, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 20);
+	        	g2d.drawString(usedLabel, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 20);
 	        }
 	        else
 	        {
@@ -281,17 +281,17 @@ public class Button implements Constants
 	        		g2d.setColor(Color.black);
 	        	}        		
 	        	FontMetrics fm = g2d.getFontMetrics();        	
-	            int sw = fm.stringWidth(used_label);
-		        g2d.drawString(used_label, (int)(this.bounds.getX() + (this.bounds.getWidth()-sw)/2), (int)(this.bounds.getY() + this.bounds.getHeight() - this.bounds.getHeight()/2+6));
+	            int sw = fm.stringWidth(usedLabel);
+		        g2d.drawString(usedLabel, (int)(this.bounds.getX() + (this.bounds.getWidth()-sw)/2), (int)(this.bounds.getY() + this.bounds.getHeight() - this.bounds.getHeight()/2+6));
 	        }        
 	        g2d.setColor(Color.white);
 	        if(this.costs != 0)
 	        {            
-	            g2d.drawString(this.second_label + this.costs + " €", (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
+	            g2d.drawString(this.secondLabel + this.costs + " €", (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
 	        }
-	        else if(!this.cost_button && this.second_label != null)
+	        else if(!this.costButton && this.secondLabel != null)
 	        {
-	        	g2d.drawString(this.second_label, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
+	        	g2d.drawString(this.secondLabel, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
 	        }
     	}
     }

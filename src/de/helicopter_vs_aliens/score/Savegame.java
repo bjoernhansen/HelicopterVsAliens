@@ -36,11 +36,11 @@ public class Savegame implements Constants, Serializable
 	
 	public int
 		money,
-		kills_after_levelup,
-		level, 
-		max_level,
-		bonus_counter,
-		extra_bonus_counter,
+            killsAfterLevelup,
+		level,
+			maxLevel,
+			bonusCounter,
+			extraBonusCounter,
 		enemiesSeen,
 		enemiesKilled,
 		miniBossSeen,
@@ -55,12 +55,12 @@ public class Savegame implements Constants, Serializable
 		levelOfUpgrade[] = new int[6];
 	
 	public long
-		playing_time, 
+			playingTime,
 		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5],
 		scorescreenTimes[] = new long [Helicopter.NR_OF_TYPES];
 	
 	public float
-		jumboMissiles,
+            missileDamageFactor,
 		currentPlating,
 		energy;
 	
@@ -99,7 +99,7 @@ public class Savegame implements Constants, Serializable
 		Savegame output;
 		if((new File(FILENAME)).exists())
 		{			
-			Savegame temp = last_game();			
+			Savegame temp = lastGame();
 			
 			HighscoreEntry.currentPlayerName = temp.currentPlayerName;
 			Menu.language = temp.language;
@@ -117,7 +117,7 @@ public class Savegame implements Constants, Serializable
 		return output;
 	}
 	
-	private static Savegame last_game()
+	private static Savegame lastGame()
 	{		
 		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILENAME)))
 		{			
@@ -168,13 +168,13 @@ public class Savegame implements Constants, Serializable
 		this.originalResulution = Menu.originalResulution;
 		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
-		this.kills_after_levelup = Events.killsAfterLevelUp;
+		this.killsAfterLevelup = Events.killsAfterLevelUp;
 		this.level = Events.level;
-		this.max_level = Events.maxLevel;
+		this.maxLevel = Events.maxLevel;
 		this.timeOfDay = Events.timeOfDay;
-		this.bonus_counter = Events.overallEarnings;
-		this.extra_bonus_counter = Events.extraBonusCounter;
-		this.playing_time = Events.playingTime;
+		this.bonusCounter = Events.overallEarnings;
+		this.extraBonusCounter = Events.extraBonusCounter;
+		this.playingTime = Events.playingTime;
 		this.scorescreenTimes = helicopter.scorescreenTimes.clone();
 		this.recordTime = Events.recordTime.clone();
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
@@ -185,7 +185,7 @@ public class Savegame implements Constants, Serializable
 		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
 		this.hasShortrangeRadiation = helicopter.hasShortrangeRadiation;
 		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
-		this.jumboMissiles = helicopter.missileDamageFactor;
+		this.missileDamageFactor = helicopter.missileDamageFactor;
 		this.numberOfCannons = helicopter.numberOfCannons;
 		this.hasRadarDevice = helicopter.hasRadarDevice;
 		this.rapidfire = helicopter.rapidfire;
@@ -208,9 +208,9 @@ public class Savegame implements Constants, Serializable
 	{
 		if(this.valid && (this.noCheatsUsed || Events.SAVE_ANYWAY))
 		{				
-			HighscoreEntry temp_entry = new HighscoreEntry(this);
-			HighscoreEntry.putEntry(Events.highscore[this.helicopterType.ordinal()], temp_entry);
-			HighscoreEntry.putEntry(Events.highscore[OVERALL_HIGHSCORE_INDEX], temp_entry);
+			HighscoreEntry tempEntry = new HighscoreEntry(this);
+			HighscoreEntry.putEntry(Events.highscore[this.helicopterType.ordinal()], tempEntry);
+			HighscoreEntry.putEntry(Events.highscore[OVERALL_HIGHSCORE_INDEX], tempEntry);
 		}
 	}
 }

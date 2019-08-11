@@ -10,12 +10,12 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimesOfDay;
-import de.helicopter_vs_aliens.model.Explosion;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.missile.MissileTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -26,6 +26,7 @@ import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
+import static de.helicopter_vs_aliens.model.helicopter.Pegasus.INTERPHASE_GENERATOR_ALPHA;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
@@ -35,7 +36,8 @@ import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 
-public abstract class Helicopter extends MovingObject implements MissileTypes
+
+public abstract class Helicopter extends MovingObject implements ExplosionTypes
 {			
 	// Konstanten
     public static final int
@@ -55,9 +57,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		CHEAP_SPECIAL_COSTS = 10000;
 	
 	static final float
-    	MISSILE_DMG 			 =  0.5f,
-    	ENHANCED_RADIATION_PROB	 =  0.25f,
-    	POWER_SHIELD_E_LOSS_RATE = -0.06f;
+    	MISSILE_DMG 			 =  0.5f;
     
     public static final double    	
 		FOCAL_PNT_X_LEFT		= 39,
@@ -78,11 +78,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		    							- NO_COLLISION_HEIGHT, 
 		    							HELICOPTER_SIZE.width, 
 		    							HELICOPTER_SIZE.height);        
-        	    	
-    private static final int 
-    	POWER_SHIELD_ACTIVATION_TRESHOLD = 75,
-    	INTERPHASE_GENERATOR_ALPHA[] = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
- 	
+    	
     private static final float    
     	NOSEDIVE_SPEED = 12f,	// Geschwindigkeit des Helikopters bei Absturz
     	INVU_DMG_FACTOR = 1.0f - INVU_DMG_REDUCTION/100f;
@@ -99,9 +95,10 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		
 		// Timer
 		plasmaActivationTimer,				// nur Kamaitachi-Klasse: Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
-		generatorTimer,						// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
-		slowed_timer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse						
-		recent_dmg_timer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
+		empTimer,							// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
+		powerUpGeneratorTimer,
+		slowedTimer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
+		recentDamageTimer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
 		interphaseGeneratorTimer,			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 		enhancedRadiationTimer,
 		
@@ -235,7 +232,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     		if(helicopterType == OROCHI
     					  &&( (this.isNextMissileStunner
     							&& (this.energy >= this.spellCosts
-    								|| this.has_unlimited_energy())) 
+    								|| this.hasUnlimitedEnergy()))
     						  || 
     						  (Events.window == STARTSCREEN 
     						  	&& Menu.effectTimer[OROCHI.ordinal()] > 1
@@ -255,19 +252,19 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     			this.inputColorCannon = MyColor.variableGreen;
     		}
     		else{this.inputColorCannon 
-    				= this.is_invincible() 
+    				= this.isInvincible()
     					? MyColor.variableGreen 
     					: MyColor.helicopterColor[helicopterType.ordinal()][this.hasGoliathPlating() ? 3 : 2];}
     	}
     	else
     	{
     		this.inputColorCannon 
-    			= this.is_invincible() 
-    				? MyColor.reversed_RandomGreen() 
+    			= this.isInvincible()
+    				? MyColor.reversedRandomGreen()
     				: MyColor.variableGreen;
     	}
     	this.inputColorHull = unlockedPainting
-    						  || (!this.is_invincible() 
+    						  || (!this.isInvincible()
     						     && !(Events.window == STARTSCREEN 
     						        && helicopterType == PHOENIX
     						        && Menu.effectTimer[PHOENIX.ordinal()] > 1
@@ -275,8 +272,8 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     						  ? MyColor.helicopterColor[helicopterType.ordinal()][unlockedPainting ? 0 : this.hasGoliathPlating() ? 1 : 0]
     						  : MyColor.variableGreen;
     	this.inputColorWindow = !unlockedPainting
-    								&& (this.has_triple_dmg() 
-    									|| this.has_boosted_fire_rate()) 
+    								&& (this.hasTripleDmg()
+    									|| this.hasBoostedFireRate())
     								|| (Events.window == STARTSCREEN 
     										&& helicopterType == HELIOS
     										&& Menu.effectTimer[HELIOS.ordinal()] > 0
@@ -313,57 +310,57 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, MyColor.dimColor(this.inputColorFuss2, 0.55f), true);
     	this.gradientCannonHole = (this.plasmaActivationTimer == 0 || unlockedPainting)  ? this.gradientHull : MyColor.cannolHoleGreen;
     	
-    	boolean movement_left = this.isMovingLeft && Events.window == GAME && !unlockedPainting;
+    	boolean movementLeft = this.isMovingLeft && Events.window == GAME && !unlockedPainting;
     	    	
     	// Nahkampfbestrahlung 
     	if(!unlockedPainting && this.hasShortrangeRadiation)
         {            
             g2d.setColor(this.enhancedRadiationTimer == 0
             				? MyColor.radiation[Events.timeOfDay.ordinal()]
-            				: MyColor.enhanced_radiation[Events.timeOfDay.ordinal()]);
-            g2d.fillOval(left+(movement_left ? -9 : 35), top+19, 96, 54);
+            				: MyColor.enhancedRadiation[Events.timeOfDay.ordinal()]);
+            g2d.fillOval(left+(movementLeft ? -9 : 35), top+19, 96, 54);
         }
     	    	
     	// Propeller-Stange
     	g2d.setColor(this.inputLightGray);  
     	g2d.setStroke(new BasicStroke(2));
-    	g2d.drawLine(left+(movement_left ? 39 : 83), top+14, left+(movement_left ? 39 : 83), top+29);
+    	g2d.drawLine(left+(movementLeft ? 39 : 83), top+14, left+(movementLeft ? 39 : 83), top+29);
     	
     	// Fußgestell
     	g2d.setPaint(this.gradientFuss2);
-        g2d.fillRoundRect(left+(movement_left ? 25 : 54), top+70, 43, 5, 5, 5);
+        g2d.fillRoundRect(left+(movementLeft ? 25 : 54), top+70, 43, 5, 5, 5);
         g2d.setPaint(this.gradientFuss1);
         g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g2d.drawLine(left+61, top+66, left+61, top+69); 
-        g2d.drawLine(left+(movement_left ? 33 : 89), top+66, left+(movement_left ? 33 : 89), top+69); 
+        g2d.drawLine(left+(movementLeft ? 33 : 89), top+66, left+(movementLeft ? 33 : 89), top+69);
         g2d.setStroke(new BasicStroke(1));
         
         // der Helikopter-Rumpf
         g2d.setPaint(this.gradientHull);
-        g2d.fillOval(left+(movement_left ?  2 : 45), top+29, 75, 34);
-        g2d.fillRect(left+(movement_left ? 92 : -7), top+31, 37,  8);        
-        g2d.fillArc (left+(movement_left ? 34 : 23), top+11, 65, 40, 180, 180); 
+        g2d.fillOval(left+(movementLeft ?  2 : 45), top+29, 75, 34);
+        g2d.fillRect(left+(movementLeft ? 92 : -7), top+31, 37,  8);
+        g2d.fillArc (left+(movementLeft ? 34 : 23), top+11, 65, 40, 180, 180);
         g2d.setPaint(this.gradientWindow);        
-        g2d.fillArc (left+(movement_left ?  1 : 69), top+33, 52, 22, (movement_left ? 75 : -15), 120);
+        g2d.fillArc (left+(movementLeft ?  1 : 69), top+33, 52, 22, (movementLeft ? 75 : -15), 120);
                 
         // die Kanonen
         g2d.setPaint(this.gradientCannon1);        
-        g2d.fillRoundRect(left+(movement_left ? 26 : 53), top+52, 43, 13, 12, 12);    
+        g2d.fillRoundRect(left+(movementLeft ? 26 : 53), top+52, 43, 13, 12, 12);
         g2d.setPaint(this.gradientCannonHole); 
-        g2d.fillOval(left+(movement_left ? 27 : 90), top+54, 5, 9);
+        g2d.fillOval(left+(movementLeft ? 27 : 90), top+54, 5, 9);
         if(!unlockedPainting && this.numberOfCannons >= 2)
         {           
             g2d.setPaint(this.gradientCannon2and3);            
-            g2d.fillRoundRect(left+(movement_left ? 32 : 27), top+27, 63, 6, 6, 6);
+            g2d.fillRoundRect(left+(movementLeft ? 32 : 27), top+27, 63, 6, 6, 6);
             g2d.setPaint(this.gradientCannonHole);
-            g2d.fillOval(left+(movement_left ? 33 : 86), top+28, 3, 4);
+            g2d.fillOval(left+(movementLeft ? 33 : 86), top+28, 3, 4);
         }
         if(!unlockedPainting && this.numberOfCannons >= 3)
         {
         	g2d.setPaint(this.gradientCannon2and3);
-        	g2d.fillRoundRect(left+(movement_left ? 38 : 37), top+41, 47, 6, 6, 6);
+        	g2d.fillRoundRect(left+(movementLeft ? 38 : 37), top+41, 47, 6, 6, 6);
         	g2d.setPaint(this.gradientCannonHole);
-            g2d.fillOval(left+(movement_left ? 39 : 80), top+42, 3, 4);
+            g2d.fillOval(left+(movementLeft ? 39 : 80), top+42, 3, 4);
         }
         
         //der Scheinwerfer
@@ -372,18 +369,18 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         	if(Events.timeOfDay == NIGHT && Events.window == GAME)
         	{
         		g2d.setColor(MyColor.translucentWhite);
-                g2d.fillArc(left+(movement_left ? -135 : -43), top-96, 300, 300, (movement_left ? 165 : -15), 30);
+                g2d.fillArc(left+(movementLeft ? -135 : -43), top-96, 300, 300, (movementLeft ? 165 : -15), 30);
         	}        	
         	g2d.setPaint(this.gradientHull);
-            g2d.fillRect(left+(movement_left ? 4 : 106), top+50, 12, 8);
+            g2d.fillRect(left+(movementLeft ? 4 : 106), top+50, 12, 8);
         	g2d.setColor(this.inputLamp);
-            g2d.fillArc(left+(movement_left ? -1 : 115), top+50, 8, 8, (movement_left ? -90 : 90), 180);
+            g2d.fillArc(left+(movementLeft ? -1 : 115), top+50, 8, 8, (movementLeft ? -90 : 90), 180);
         }        
                 
         //die Propeller        
         paintRotor(g2d,
         			this.inputGray, 
-        			left+(movement_left ? -36 : 8), 
+        			left+(movementLeft ? -36 : 8),
         			top-5, 
         			150, 37, 3, 
         			(int)(this.rotorPosition[helicopterType.ordinal()]),
@@ -393,7 +390,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         
         paintRotor(g2d,
         			this.inputGray,
-        			left+(movement_left ?  107 : -22),
+        			left+(movementLeft ?  107 : -22),
         			top+14,
         			37, 37, 3,
         			(int)(this.rotorPosition[helicopterType.ordinal()]),
@@ -406,7 +403,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         	&& Menu.effectTimer[helicopterType.ordinal()] > 0
         	&& this.empWave != null)
         {
-        	if(this.empWave.time >= this.empWave.max_time)
+        	if(this.empWave.time >= this.empWave.maxTime)
         	{
         		this.empWave = null;
         	}
@@ -426,7 +423,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     				&& Menu.effectTimer[ROCH.ordinal()] < 68))) // 60
         {            
             g2d.setColor(MyColor.shieldColor[timeOfDay.ordinal()]);
-            g2d.fillOval(left+(movement_left ? -9 : 35), top+19, 96, 54);
+            g2d.fillOval(left+(movementLeft ? -9 : 35), top+19, 96, 54);
         }
                
         if(Events.recordTime[helicopterType.ordinal()][4] > 0 && Events.window == STARTSCREEN)
@@ -453,122 +450,103 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 
 	public static void paintRotor(Graphics2D g2d, Color color,
 								  int x, int y, int width, int height,
-								  int nr_of_blades, int pos, int blade_width,
-								  float border_distance, boolean active)
+								  int nrOfBlades, int pos, int bladeWidth,
+								  float borderDistance, boolean active)
 	{
-    	int distance_x = (int) (border_distance * width),
-    		distance_y = (int) (border_distance * height);
+    	int distanceX = (int) (borderDistance * width),
+    		distanceY = (int) (borderDistance * height);
     	paintRotor(g2d, color,
-    				x+distance_x,
-    				y+distance_y, 
-    				width-2*distance_x,
-    				height-2*distance_y, 
-    				nr_of_blades, pos, blade_width, active, true);
+    				x+distanceX,
+    				y+distanceY,
+    				width-2*distanceX,
+    				height-2*distanceY,
+    				nrOfBlades, pos, bladeWidth, active, true);
 	}   
     
 	static void paintRotor(Graphics2D g2d, Color color,
 						   int x, int y, int width, int height,
-						   int nr_of_blades, int pos, int blade_width,
-						   boolean active, boolean enemie_paint)
+						   int numberOfBlades, int pos, int bladeWidth,
+						   boolean active, boolean enemiePaint)
 	{
 		if(active)
 	    {
-	       	g2d.setColor((Events.timeOfDay == DAY || enemie_paint) ? MyColor.translucentGray : MyColor.translucentWhite); 
+	       	g2d.setColor((Events.timeOfDay == DAY || enemiePaint) ? MyColor.translucentGray : MyColor.translucentWhite);
 	       	g2d.fillOval(x, y, width, height); 
 	    }
 	    g2d.setColor(color);	        
-	    for(int i = 0; i < nr_of_blades; i++)
+	    for(int i = 0; i < numberOfBlades; i++)
 	    {
-	       	g2d.fillArc(x, y, width, height, -10-pos+i*(360/nr_of_blades), blade_width);   
+	       	g2d.fillArc(x, y, width, height, -10-pos+i*(360/ numberOfBlades), bladeWidth);
 	    }		
 	}
 
 	public void update(	ArrayList<LinkedList<Missile>> missile,
 	                   	ArrayList<LinkedList<Explosion>> explosion)
 	{
-		this.update_timer();
-		if(this.can_regenerate_energy()){this.regenerate_energy();}
+		this.updateTimer();
+		if(this.canRegenerateEnergy()){this.regenerateEnergy();}
 		if(this.isPowerShieldActivated && this.energy == 0)
 		{
 			this.shutDownPowerShield();
 		}
-		this.evaluate_fire(missile);
+		this.evaluateFire(missile);
 		this.move(explosion);
 	}
     
-	private boolean can_regenerate_energy()
+	boolean canRegenerateEnergy()
 	{		
-		return 	!this.isDamaged
-	    		&& !this.isPowerShieldActivated
-	    		&& !this.isNextMissileStunner;
+		return !this.isDamaged;
 	}
 
-	private void update_timer()
+	void updateTimer()
 	{
-		if(this.recent_dmg_timer	     > 0){this.recent_dmg_timer--;}	
-		if(this.enhancedRadiationTimer > 0){this.enhancedRadiationTimer--;}
-		if(this.generatorTimer > 0){this.generatorTimer--;}
-		if(this.slowed_timer		     > 0){this.slowed_timer--;}	
-			
-		this.evaluate_power_up_activation_states();				
-		if(this.plasmaActivationTimer > 0)
-		{
-			this.plasmaActivationTimer--;
-			if(this.plasmaActivationTimer == 30){
-                Audio.play(Audio.plasma_off);}
-		}		
-		if(this.getType() == PHOENIX || this.getType() == KAMAITACHI)
-		{
-			this.evaluate_bonus_kills();
-		}				
-		if(this.hasInterphaseGenerator && !this.isDamaged)
-		{
-			this.update_interphase_generator();			
-		}
+		if(this.recentDamageTimer > 0)		{this.recentDamageTimer--;}
+		if(this.enhancedRadiationTimer > 0)	{this.enhancedRadiationTimer--;}
+		if(this.slowedTimer > 0)			{this.slowedTimer--;}
+		this.evaluatePowerUpActivationStates();
 	}
 	
-	void regenerate_energy()
+	void regenerateEnergy()
     {
-    	this.energy 
-			= Math.max(
-				0,
-				Math.min(	
-					this.energy 
-						+ (this.isPowerShieldActivated
-							? this.has_unlimited_energy() 
-								? 0
-								: POWER_SHIELD_E_LOSS_RATE
-							: this.regenerationRate),
-					MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])));
+    	float
+			maxEnergy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
+			newEnergy = this.energy + calculateEnergyRegenerationRate();
+
+    	this.energy = Math.max(0, Math.min(newEnergy, maxEnergy));
     }
-			
-	private void evaluate_fire(ArrayList<LinkedList<Missile>> missile)
+
+    float calculateEnergyRegenerationRate()
 	{
-    	if(this.is_ready_for_shooting()){this.shoot(missile);}		
+		return this.regenerationRate;
+	}
+
+	private void evaluateFire(ArrayList<LinkedList<Missile>> missile)
+	{
+    	if(this.isReadyForShooting()){this.shoot(missile);}
     	this.fireRateTimer++;
 	}
 	
-	public boolean has_triple_dmg()
+	public boolean hasTripleDmg()
 	{		
 		return this.powerUpTimer[TRIPLE_DMG.ordinal()] > 0;
 	}
 	
-	public boolean is_invincible()
+	public boolean isInvincible()
 	{		
 		return this.powerUpTimer[INVINCIBLE.ordinal()] > 0;
 	}
 	
-	public boolean has_unlimited_energy()
+	public boolean hasUnlimitedEnergy()
 	{		
 		return this.powerUpTimer[UNLIMITRED_ENERGY.ordinal()] > 0;
 	}
 	
-	private boolean has_boosted_fire_rate()
+	private boolean hasBoostedFireRate()
 	{		
 		return this.powerUpTimer[BOOSTED_FIRE_RATE.ordinal()] > 0;
 	}
 		
-	private boolean is_ready_for_shooting()
+	private boolean isReadyForShooting()
 	{
 		return   	this.isContiniousFireEnabled
     			&& !this.isDamaged
@@ -576,81 +554,71 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     			&&  this.fireRateTimer >= this.timeBetweenTwoShots;
 	}
 
-	private void shoot(ArrayList<LinkedList<Missile>> missile)
+	boolean isShootingStunningMissile()
+	{
+		return false;
+	}
+
+	// TODO Code Duplizierungen auflösen
+	void shoot(ArrayList<LinkedList<Missile>> missiles)
 	{
     	if(this.hasPiercingWarheads){Audio.play(Audio.launch2);}
 		else{Audio.play(Audio.launch1);}
 		this.fireRateTimer = 0;
 		this.missileCounter += this.numberOfCannons;
-		boolean stunning_missile = false;
-		if(this.interphaseGeneratorTimer > this.shiftTime
-		   ||(this.isNextMissileStunner
-			  && (this.energy >= this.spellCosts
-			      || this.has_unlimited_energy())))
-		{
-			if(this.getType() == OROCHI)
-			{
-				this.energy -= this.has_unlimited_energy() 
-								? 0 
-								: this.spellCosts;
-			}
-			stunning_missile = true;
-		}
+
+		boolean stunningMissile = isShootingStunningMissile();
 		Missile sister = null;
+
 		if(this.numberOfCannons >= 1)
 		{
-			Iterator<Missile> i = missile.get(INACTIVE).iterator();
-			Missile m;					
-			if(i.hasNext()){m = i.next(); i.remove();}	
-			else{m = new Missile();}					
+			Iterator<Missile> i = missiles.get(INACTIVE).iterator();
+			Missile missile;
+			if(i.hasNext()){missile = i.next(); i.remove();}
+			else{missile = new Missile();}
 			if(this.getType() == ROCH || this.getType() == OROCHI)
 			{
-				m.sister[0] = null;
-				m.sister[1] = null;						
-				sister = m;
+				missile.sister[0] = null;
+				missile.sister[1] = null;
+				sister = missile;
 			}
-			missile.get(ACTIVE).add(m);
-			m.launch(this, stunning_missile, 56);					
+			missiles.get(ACTIVE).add(missile);
+			missile.launch(this, stunningMissile, 56);
 		}
 		if(this.numberOfCannons >= 2)
 		{
-			Iterator<Missile> i = missile.get(INACTIVE).iterator();
-			Missile m;
-			if(i.hasNext()){m = i.next(); i.remove();}	
-			else{m = new Missile();}											
+			Iterator<Missile> i = missiles.get(INACTIVE).iterator();
+			Missile missile;
+			if(i.hasNext()){missile = i.next(); i.remove();}
+			else{missile = new Missile();}
 			if(  sister != null && sister.sister != null && 
 			    (this.getType() == ROCH || this.getType() == OROCHI))
 			{
-				m.sister[0] = sister;
-				m.sister[1] = null;	
-				sister.sister[0] = m;
-				sister = m;
+				missile.sister[0] = sister;
+				missile.sister[1] = null;
+				sister.sister[0] = missile;
+				sister = missile;
 			}
-			missile.get(ACTIVE).add(m);
-			m.launch(this, stunning_missile, 28);				
+			missiles.get(ACTIVE).add(missile);
+			missile.launch(this, stunningMissile, 28);
 		}
 		if(this.numberOfCannons >= 3)
 		{
-			Iterator<Missile> i = missile.get(INACTIVE).iterator();
-			Missile m;
-			if(i.hasNext()){m = i.next(); i.remove();}	
-			else{m = new Missile();}				
+			Iterator<Missile> i = missiles.get(INACTIVE).iterator();
+			Missile missile;
+			if(i.hasNext()){missile = i.next(); i.remove();}
+			else{missile = new Missile();}
 			if(  sister != null && sister.sister != null && 
 			    (this.getType() == ROCH || this.getType() == OROCHI))
 			{
-				m.sister[0] = sister.sister[0];
-				m.sister[1] = sister;
-				sister.sister[0].sister[1] = m;
-				sister.sister[1] = m;
+				missile.sister[0] = sister.sister[0];
+				missile.sister[1] = sister;
+				sister.sister[0].sister[1] = missile;
+				sister.sister[1] = missile;
 			}
-			missile.get(ACTIVE).add(m);
-			m.launch(this, stunning_missile, 42);
+			missiles.get(ACTIVE).add(missile);
+			missile.launch(this, stunningMissile, 42);
 		}
-		if(this.hasInterphaseGenerator)
-		{
-			Audio.phase_shift.stop();
-			this.interphaseGeneratorTimer = 0;
-		}		
 	}
 
 	private void move(ArrayList<LinkedList<Explosion>> explosion)
@@ -661,16 +629,16 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}
 		
 		float
-    		next_x = (float) this.location.getX(),
-    		next_y = (float) this.location.getY();
+    		nextX = (float) this.location.getX(),
+    		nextY = (float) this.location.getY();
     	
     	if(this.isCrashing)
     	{
-    		next_y += NOSEDIVE_SPEED;
+    		nextY += NOSEDIVE_SPEED;
     	}
     	else if(this.isActive && this.tractor == null)
     	{
-    		this.speed = (this.slowed_timer > 0 ) ? 1.5f : this.rotorSystem;
+    		this.speed = (this.slowedTimer > 0 ) ? 1.5f : this.rotorSystem;
     		float fraction = (float) (this.speed/this.location.distance(this.destination.x, this.destination.y));
     		
     		if(fraction < 1)
@@ -678,22 +646,22 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         		if(!(   this.bounds.getMaxY() + NO_COLLISION_HEIGHT  >= GROUND_Y 
         			 && this.destination.y >= GROUND_Y))
         		{
-        			next_x += (float)(fraction*(this.destination.x - this.location.getX()) - 1);
+        			nextX += (float)(fraction*(this.destination.x - this.location.getX()) - 1);
         		}        		   					
-        		    next_y += (float)(fraction*(this.destination.y - this.location.getY()));
+        		    nextY += (float)(fraction*(this.destination.y - this.location.getY()));
         	}    		
     		else
         	{
-    			next_x = this.destination.x;
-        		next_y = this.destination.y;
+    			nextX = this.destination.x;
+        		nextY = this.destination.y;
         	}
     	}    
     	
-    	boolean in_the_air = this.location.getY() != 407d;
-    	float last_x = (float)this.location.getX();
+    	boolean isInTheAir = this.location.getY() != 407d;
+    	float lastX = (float)this.location.getX();
     	
-    	this.nextLocation.setLocation(next_x, next_y);
-    	this.correct_and_set_coordinates();   	
+    	this.nextLocation.setLocation(nextX, nextY);
+    	this.correctAndSetCoordinates();
     	
     	if(Enemy.currentNumberOfBarriers > 0 && !this.isDamaged)
     	{
@@ -701,10 +669,10 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     		{    			
     			Enemy enemy = Enemy.livingBarrier[i];
     			enemy.lastTouchedSite = enemy.touchedSite;
-    			if(this.is_location_adaption_approved(enemy))
+    			if(this.isLocationAdaptionApproved(enemy))
     			{
     				this.adaptPosTo(enemy);
-    	   	 		this.correct_and_set_coordinates();
+    	   	 		this.correctAndSetCoordinates();
     	   	 		if(enemy.isStaticallyCharged())
     	   	 		{
     	   	 			enemy.startStaticDischarge(explosion, this);
@@ -739,13 +707,13 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     		if(!this.isCrashing)
         	{    		
         		if(this.bounds.getMaxY() + NO_COLLISION_HEIGHT != GROUND_Y
-        			|| last_x != (float)this.location.getX())
+        			|| lastX != (float)this.location.getX())
         		{
         			this.isRotorSystemActive = true;
         		}
-        		if(in_the_air && !(this.location.getY() != 407d)){Audio.play(Audio.landing);}
+        		if(isInTheAir && !(this.location.getY() != 407d)){Audio.play(Audio.landing);}
         	} 
-        	else if(in_the_air && this.location.getY() == 407d)
+        	else if(isInTheAir && this.location.getY() == 407d)
         	{
         		this.crashed(explosion);
         	}
@@ -753,10 +721,8 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	if(this.isRotorSystemActive){this.rotatePropeller(12);}
     	this.setPaintBounds();
     }
-   
 
-
-	public boolean is_location_adaption_approved(Enemy enemy)
+	public boolean isLocationAdaptionApproved(Enemy enemy)
 	{		
 		return enemy.bounds.intersects(this.bounds)
 				&& this.interphaseGeneratorTimer <= this.shiftTime
@@ -771,7 +737,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		 	y = this.bounds.getCenterY() - enemy.bounds.getCenterY(),
 			pseudoAngle = (x/MyMath.ZERO_POINT.distance(x, y)),
 			distance,
-			local_speed = enemy.hasUnresolvedIntersection ? this.speed : Double.MAX_VALUE;
+			localSpeed = enemy.hasUnresolvedIntersection ? this.speed : Double.MAX_VALUE;
 			
 		if(pseudoAngle > MyMath.ROOT05)
 		{
@@ -779,7 +745,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			// new pos x: enemy.getMaxX() + (this.moves_left ? 39 : 83) 
 			distance = (enemy.bounds.getX() + enemy.bounds.getWidth()) + (this.isMovingLeft ? 39 : 83) - this.location.getX();
 			this.nextLocation.setLocation(
-				this.location.getX() + (distance > local_speed ? local_speed : distance),
+				this.location.getX() + (distance > localSpeed ? localSpeed : distance),
 				this.location.getY());
 			enemy.setTouchedSiteToRight();
 
@@ -790,7 +756,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			// new pos x: enemy.bounds.x - this.bounds.getWidth() + (this.moves_left ? 39 : 83)
 			distance = this.location.getX() - enemy.bounds.getX() + this.bounds.getWidth() - (this.isMovingLeft ? 39 : 83);
 			this.nextLocation.setLocation(
-				this.location.getX() - (distance > local_speed ? local_speed : distance),
+				this.location.getX() - (distance > localSpeed ? localSpeed : distance),
 				this.location.getY());
 			enemy.setTouchedSiteToLeft();
 		}
@@ -803,7 +769,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 				distance = enemy.bounds.getMaxY() + 56 - this.location.getY();
 				this.nextLocation.setLocation(
 					this.location.getX(),
-					this.location.getY() + (distance > local_speed ? local_speed : distance));		
+					this.location.getY() + (distance > localSpeed ? localSpeed : distance));
 				enemy.setTouchedSiteToBottom();
 			}
 			else
@@ -813,14 +779,14 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 				distance = this.location.getY() - enemy.bounds.getY() + this.bounds.getHeight() - 56;
 				this.nextLocation.setLocation(
 					this.location.getX(),
-					this.location.getY() - (distance > local_speed ? local_speed : distance));
+					this.location.getY() - (distance > localSpeed ? localSpeed : distance));
 				enemy.setTouchedSiteToTop();
 			}
-			if(this.tractor != null){this.stop_tractor();}
+			if(this.tractor != null){this.stopTractor();}
 		}
 	}
 	
-	private void correct_and_set_coordinates()
+	private void correctAndSetCoordinates()
 	{    	
     	this.location.setLocation
 		(
@@ -867,16 +833,19 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		this.levelOfUpgrade = savegame.levelOfUpgrade.clone();
 		this.spotlight = savegame.spotlight;
 		this.platingDurabilityFactor = savegame.platingDurabilityFactor;
-		this.hasShortrangeRadiation = savegame.hasShortrangeRadiation;
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
-		this.missileDamageFactor = savegame.jumboMissiles;
 		this.numberOfCannons = savegame.numberOfCannons;
+		this.missileDamageFactor = savegame.missileDamageFactor;
+
+		this.hasShortrangeRadiation = savegame.hasShortrangeRadiation;
 		this.hasRadarDevice = savegame.hasRadarDevice;
 		this.rapidfire = savegame.rapidfire;
 		this.hasInterphaseGenerator = savegame.hasInterphaseGenerator;
 		this.hasPowerUpImmobilizer = savegame.hasPowerUpImmobilizer;
+
 		this.currentPlating = savegame.currentPlating;
-		this.energy = savegame.energy;		
+		this.energy = savegame.energy;
+
 		this.numberOfEnemiesSeen = savegame.enemiesSeen;
 		this.numberOfEnemiesKilled = savegame.enemiesKilled;
 		this.numberOfMiniBossSeen = savegame.miniBossSeen;
@@ -894,7 +863,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     {
 
         for(int i=0; i < 4; i++){this.rotorPosition[i]=0;}
-        this.reset_state();
+        this.resetState();
         this.placeAtStartpos();
         this.isDamaged = false;
         this.numberOfCrashes = 0;
@@ -919,38 +888,41 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
         
         Arrays.fill(this.scorescreenTimes, 0);
     }
-       
-    public void reset_state(){reset_state(true);}
-    public void reset_state(boolean reset_start_pos)
+
+    // TODO boolscher Parameter - anders lösen
+    public void resetState()
+	{
+		resetState(true);
+	}
+
+    public void resetState(boolean resetStartPos)
     {
-    	this.set_activation_state(false);
+    	this.setActivationState(false);
     	this.isSearchingForTeleportDestination = false;
 		this.isNextMissileStunner = false;
 		this.isCrashing = false;
 		this.interphaseGeneratorTimer = 0;
 		this.plasmaActivationTimer = 0;
 		this.isPowerShieldActivated = false;
-		this.slowed_timer = 0;		
-		this.recent_dmg_timer = 0; 
-		this.enhancedRadiationTimer = 0;
+		this.slowedTimer = 0;
+		this.recentDamageTimer = 0;
 		for(int i = 0; i < 4; i++){this.powerUpTimer[i] = 0;}
-		this.generatorTimer = 0;
 		this.empWave = null;
 		this.rotorPosition[this.getType().ordinal()] = 0;
-		if(reset_start_pos){this.placeAtStartpos();}
+		if(resetStartPos){this.placeAtStartpos();}
 		this.fireRateTimer = this.timeBetweenTwoShots;
     }
     
-    public void repair(boolean restore_energy, boolean cheat_repair)
+    public void repair(boolean restoreEnergy, boolean cheatRepair)
     {
     	Audio.play(Audio.cash);
     	this.numberOfRepairs++;
 		this.isDamaged = false;
 		this.isCrashing = false;
-    	this.get_max_plating();
+    	this.getMaxPlating();
     	this.setPlatingColor();
-		if(restore_energy){this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);}
-		if(!cheat_repair){this.placeAtStartpos();}
+		if(restoreEnergy){this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);}
+		if(!cheatRepair){this.placeAtStartpos();}
 		Menu.repairShopButton.get("RepairButton").costs = 0;
     }
 	
@@ -958,14 +930,14 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     {
     	for(int i = 0; i < 6; i++)
     	{
-    		this.levelOfUpgrade[i] = MyMath.max_level(this.upgradeCosts[i]);
+    		this.levelOfUpgrade[i] = MyMath.maxLevel(this.upgradeCosts[i]);
     	}
     	this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
     	this.hasPiercingWarheads = true;
     	this.getMaximumNumberOfCannons();
     	this.updateProperties(true);
 		this.isDamaged = false;
-    	Menu.update_repairShopButtons(this);
+    	Menu.updateRepairShopButtons(this);
     	this.isPlayedWithoutCheats = false;
     }
 	
@@ -984,7 +956,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	}        		
     	this.updateProperties(true);
 		this.isDamaged = false;
-    	Menu.update_repairShopButtons(this);    
+    	Menu.updateRepairShopButtons(this);
     	this.isPlayedWithoutCheats = false;
     }
 	
@@ -996,11 +968,6 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     }
 	
 	abstract public boolean hasFifthSpecial();
-
-	public boolean hasJumboMissiles()
-	{
-		return missileDamageFactor > 2;
-	}
 
 	abstract public void obtainFifthSpecial();
     
@@ -1023,17 +990,17 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		return this.numberOfCannons == 2;
 	}
 	
-	public boolean has_all_upgrades()
+	public boolean hasAllUpgrades()
     {
         for(int i = 0; i < 6; i++){if(!this.hasMaxUpgradeLevel[i]){return false;}}
 		return hasAllSpecials();
 	}
 	
-	public void rotatePropeller(float rotational_speed){
-		rotatePropeller(this.getType(), rotational_speed);}
-	public void rotatePropeller(HelicopterTypes type, float rotational_speed)
+	public void rotatePropeller(float rotationalSpeed){
+		rotatePropeller(this.getType(), rotationalSpeed);}
+	public void rotatePropeller(HelicopterTypes type, float rotationalSpeed)
     {
-    	this.rotorPosition[type.ordinal()] += rotational_speed;
+    	this.rotorPosition[type.ordinal()] += rotationalSpeed;
 		if(this.rotorPosition[type.ordinal()] > 360){this.rotorPosition[type.ordinal()] -= 360;}
     }    
     
@@ -1046,9 +1013,9 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     	this.setPaintBounds();
     }
     
-    public void stop_tractor()
+    public void stopTractor()
 	{
-		Audio.tractor_beam.stop();
+		Audio.tractorBeam.stop();
 		this.tractor.stopTractor();
 		this.tractor = null;
 	}
@@ -1062,8 +1029,8 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		this.plasmaActivationTimer = 0;
 		
 		if(this.isPowerShieldActivated){this.shutDownPowerShield();}
-		if(this.tractor != null){this.stop_tractor();}
-		if(this.hasInterphaseGenerator){Audio.phase_shift.stop();}
+		if(this.tractor != null){this.stopTractor();}
+		if(this.hasInterphaseGenerator){Audio.phaseShift.stop();}
 		this.numberOfCrashes++;
 		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosion);}
 		else{this.isCrashing = true;}
@@ -1090,12 +1057,12 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		this.isCrashing = false;
     }
 	
-	public void teleport_to(int x, int y)
+	public void teleportTo(int x, int y)
     {
     	this.isSearchingForTeleportDestination = false;
 		this.destination.setLocation(x, y);
 		
-		if(	(this.energy >= this.spellCosts || this.has_unlimited_energy())
+		if(	(this.energy >= this.spellCosts || this.hasUnlimitedEnergy())
 			&& !this.isDamaged
 			&& !Menu.isMenueVisible
 			&& !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
@@ -1106,14 +1073,14 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 					&& y < this.bounds.getY() + 106))
 		{
 			Audio.play(Audio.teleport1);
-			this.energy -= this.has_unlimited_energy() ? 0 : this.spellCosts;
+			this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
 			this.pastTeleportTime = System.currentTimeMillis();
 						
 			this.nextLocation.setLocation(x, y);
-			this.correct_and_set_coordinates();
+			this.correctAndSetCoordinates();
 						
-			if(!this.isActive || !this.isRotorSystemActive){this.set_activation_state(true);}
-			if(this.tractor != null){this.stop_tractor();}
+			if(!this.isActive || !this.isRotorSystemActive){this.setActivationState(true);}
+			if(this.tractor != null){this.stopTractor();}
 			this.powerUpTimer[INVINCIBLE.ordinal()] = Math.max(this.powerUpTimer[INVINCIBLE.ordinal()], Phoenix.TELEPORT_INVU_TIME);
 			this.bonusKills = 0;
 			this.enhancedRadiationTimer = Phoenix.TELEPORT_INVU_TIME;
@@ -1122,7 +1089,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}
     }
 	
-	public void evaluate_bonus_kills()
+	public void evaluateBonusKills()
 	{
     	if(this.bonusKillsTimer > 0)
 		{
@@ -1131,7 +1098,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			    && this.bonusKillsTimer == NICE_CATCH_TIME - TELEPORT_KILL_TIME
 			    && this.bonusKills > 1)
 			{
-				Events.extra_reward(this.bonusKills,
+				Events.extraReward(this.bonusKills,
 									this.bonusKillsMoney,
 									0.75f, 0.75f, 3.5f);
 			}
@@ -1139,7 +1106,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			{
 				if(this.bonusKills > 1)
 				{
-					Events.extra_reward(this.bonusKills,
+					Events.extraReward(this.bonusKills,
 										this.bonusKillsMoney,
 										0.5f, 0.75f, 3.5f); // 0.25f, 0.5f, 3.0f);
 				}				
@@ -1149,64 +1116,63 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}
 	}
 
-	private void evaluate_power_up_activation_states()
+	private void evaluatePowerUpActivationStates()
 	{
     	for(int i = 0; i < 4; i++)
 		{
 			if(this.powerUpTimer[i] > 0)
 			{
 				this.powerUpTimer[i]--;
-				if(this.powerUpTimer[i] == 0 && Menu.collected_PowerUp[i] != null)
+				if(this.powerUpTimer[i] == 0 && Menu.collectedPowerUp[i] != null)
 				{
-					Audio.play(Audio.pu_fade2);
-					Menu.collected_PowerUp[i].collected = true;
-					Menu.collected_PowerUp[i] = null;	
+					Audio.play(Audio.powerUpFade2);
+					Menu.collectedPowerUp[i].collected = true;
+					Menu.collectedPowerUp[i] = null;
 					if(i == 3){this.adjustFireRate(false);}
 				}
 				else if(this.powerUpTimer[i] == POWERUP_DURATION/4)
 				{
-					Audio.play(Audio.pu_fade1);
+					Audio.play(Audio.powerUpFade1);
 				}
-				else if(this.powerUpTimer[i] < POWERUP_DURATION/4 && Menu.collected_PowerUp[i] != null)
+				else if(this.powerUpTimer[i] < POWERUP_DURATION/4 && Menu.collectedPowerUp[i] != null)
 				{
 					if(this.powerUpTimer[i]%32 > 15)
 			    	{
-			    		Menu.collected_PowerUp[i].surface = MyColor.setAlpha(Menu.collected_PowerUp[i].surface, 17 * ((this.powerUpTimer[i])%16));
-			    		Menu.collected_PowerUp[i].cross =   MyColor.setAlpha(Menu.collected_PowerUp[i].cross,   17 * ((this.powerUpTimer[i])%16));
+			    		Menu.collectedPowerUp[i].surface = MyColor.setAlpha(Menu.collectedPowerUp[i].surface, 17 * ((this.powerUpTimer[i])%16));
+			    		Menu.collectedPowerUp[i].cross =   MyColor.setAlpha(Menu.collectedPowerUp[i].cross,   17 * ((this.powerUpTimer[i])%16));
 			    	}
 					else
 					{
-						Menu.collected_PowerUp[i].surface = MyColor.setAlpha(Menu.collected_PowerUp[i].surface, 255 - 17 * ((this.powerUpTimer[i])%16));
-						Menu.collected_PowerUp[i].cross = MyColor.setAlpha(Menu.collected_PowerUp[i].cross,     255 - 17 * ((this.powerUpTimer[i])%16));
+						Menu.collectedPowerUp[i].surface = MyColor.setAlpha(Menu.collectedPowerUp[i].surface, 255 - 17 * ((this.powerUpTimer[i])%16));
+						Menu.collectedPowerUp[i].cross = MyColor.setAlpha(Menu.collectedPowerUp[i].cross,     255 - 17 * ((this.powerUpTimer[i])%16));
 					}
 				}
-				
 			}
 		}		
 	}
 
-	private void update_interphase_generator()
+	void updateInterphaseGenerator()
 	{
     	this.interphaseGeneratorTimer++;
 		if(this.interphaseGeneratorTimer == this.shiftTime + 1)
 		{
-			Audio.play(Audio.phase_shift);
-			if(this.tractor != null){this.stop_tractor();}
+			Audio.play(Audio.phaseShift);
+			if(this.tractor != null){this.stopTractor();}
 		}		
 	}
 	
-	public void take_missile_damage()
+	public void takeMissileDamage()
     {   	
     	if(!(this.isPowerShieldActivated
-    		 && (this.energy >= this.get_dmg_factor() 
+    		 && (this.energy >= this.getDamageFactor()
     							* MISSILE_DMG 
     							* this.spellCosts
-    			 || this.has_unlimited_energy())))
+    			 || this.hasUnlimitedEnergy())))
 		{
-			this.currentPlating = Math.max(this.currentPlating - this.get_dmg_factor() * MISSILE_DMG, 0f);
+			this.currentPlating = Math.max(this.currentPlating - this.getDamageFactor() * MISSILE_DMG, 0f);
 			if(this.enhancedRadiationTimer == 0)
 			{
-				this.recent_dmg_timer = RECENT_DMG_TIME;
+				this.recentDamageTimer = RECENT_DMG_TIME;
 			}
 			if(this.isPowerShieldActivated)
 			{						
@@ -1220,10 +1186,10 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}
 		else
 		{
-			Audio.play(Audio.shield_up);
-			this.energy -= this.has_unlimited_energy() 
+			Audio.play(Audio.shieldUp);
+			this.energy -= this.hasUnlimitedEnergy()
 							? 0 
-							: this.get_dmg_factor() 
+							: this.getDamageFactor()
 							  * MISSILE_DMG 
 							  * this.spellCosts;
 		}
@@ -1232,20 +1198,20 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
     private void updateProperties(boolean fullPlating)
     {
     	this.rotorSystem = MyMath.speed(this.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
-    	this.missileDrive = MyMath.missile_drive(this.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
+    	this.missileDrive = MyMath.missileDrive(this.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
     	if(fullPlating)
     	{
-    		this.get_max_plating();
+    		this.getMaxPlating();
     		this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
     	}
     	this.setPlatingColor();
     	this.currentFirepower = (int)(this.missileDamageFactor * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
-    	this.adjustFireRate(this.has_boosted_fire_rate());
+    	this.adjustFireRate(this.hasBoostedFireRate());
 		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 		if(Events.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		for(int i = 0; i < 6; i++)
 		{
-			if(this.levelOfUpgrade[i] >= MyMath.max_level(this.upgradeCosts[i]))
+			if(this.levelOfUpgrade[i] >= MyMath.maxLevel(this.upgradeCosts[i]))
 			{
 				this.hasMaxUpgradeLevel[i] = true;
 			}
@@ -1280,19 +1246,9 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		}		
 	}
 
-	public static boolean isUnlocked(HelicopterTypes type)
-	{
-		return  type == PHOENIX
-			||  type == ROCH
-			|| (type == OROCHI && (Events.reachedLevelTwenty[PHOENIX.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()]))
-			|| (type == KAMAITACHI && (Events.reachedLevelTwenty[ROCH.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()]))
-			|| (type == PEGASUS && (Events.reachedLevelTwenty[OROCHI.ordinal()] || Events.reachedLevelTwenty[KAMAITACHI.ordinal()]))
-			|| (type == HELIOS && Events.boss1_killed_b4());
-	}
-	
 	public void setPlatingColor()
 	{		
-		MyColor.plating = MyColor.percentColor((this.currentPlating)/this.max_plating());
+		MyColor.plating = MyColor.percentColor((this.currentPlating)/this.maxPlating());
 	}
 	
 	public void getPowerUp(ArrayList<LinkedList<PowerUp>> powerUp,
@@ -1309,101 +1265,78 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	{
 		if(lastingEffect && this.powerUpTimer[powerUpType.ordinal()] > 0)
 		{
-			if(playSound){Audio.play(Audio.pu_fade2);}
+			if(playSound){Audio.play(Audio.powerUpFade2);}
 			this.powerUpTimer[powerUpType.ordinal()] = 0;
-			Menu.collected_PowerUp[powerUpType.ordinal()].collected = true;
-			Menu.collected_PowerUp[powerUpType.ordinal()] = null;
+			Menu.collectedPowerUp[powerUpType.ordinal()].collected = true;
+			Menu.collectedPowerUp[powerUpType.ordinal()] = null;
 			if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(false);}
 		} 
 		else
 		{
-			if(playSound){Audio.play(Audio.pu_announcer[powerUpType.ordinal()]);}
+			if(playSound){Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);}
 			this.powerUpTimer[powerUpType.ordinal()] = lastingEffect
 												? Integer.MAX_VALUE 
 												: Math.max(
 													this.powerUpTimer[powerUpType.ordinal()],
 													POWERUP_DURATION);
-			if(Menu.collected_PowerUp[powerUpType.ordinal()] == null)
+			if(Menu.collectedPowerUp[powerUpType.ordinal()] == null)
 			{								
 				PowerUp.activate(this, powerUp, null, powerUpType, true);
 				if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(true);}
 			}
 			else
 			{
-				Menu.collected_PowerUp[powerUpType.ordinal()].surface
-					= MyColor.setAlpha(Menu.collected_PowerUp[powerUpType.ordinal()].surface, 255);
-				Menu.collected_PowerUp[powerUpType.ordinal()].cross
-					= MyColor.setAlpha(Menu.collected_PowerUp[powerUpType.ordinal()].cross, 255);
+				Menu.collectedPowerUp[powerUpType.ordinal()].surface
+					= MyColor.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].surface, 255);
+				Menu.collectedPowerUp[powerUpType.ordinal()].cross
+					= MyColor.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].cross, 255);
 			}			
 		}		
 	}
 	
-	public void set_activation_state(boolean activation_state)
+	public void setActivationState(boolean activationState)
 	{
-		this.isActive = activation_state;
-		this.isRotorSystemActive = activation_state;
-	}
-	
-	public void adjustFireRate(boolean powered_up)
-	{
-		this.timeBetweenTwoShots
-			= MyMath.fire_rate( this.levelOfUpgrade[FIRE_RATE.ordinal()]
-			                    + this.rapidfire 
-		                        + (powered_up ? FIRE_RATE_POWERUP_LEVEL : 0));
-		if(this.hasInterphaseGenerator)
-		{
-			this.shiftTime
-				= MyMath.shift_time( this.levelOfUpgrade[FIRE_RATE.ordinal()]
-			                         + (powered_up ? FIRE_RATE_POWERUP_LEVEL : 0));
-		}
+		this.isActive = activationState;
+		this.isRotorSystemActive = activationState;
 	}
 
-	// TODO Easy to intrduce inheritance
-	public void updateUnlockedHelicopters()
+	public void adjustFireRate(boolean poweredUp)
 	{
-		Events.reachedLevelTwenty[this.getType().ordinal()] = true;
-		
-		if((this.getType() == PHOENIX && !Events.reachedLevelTwenty[PEGASUS.ordinal()]) ||
-		   (this.getType() == PEGASUS && !Events.reachedLevelTwenty[PHOENIX.ordinal()]))
-		{
-			Menu.unlock(OROCHI);
-		}
-		else if((this.getType() == ROCH && !Events.reachedLevelTwenty[PEGASUS.ordinal()]) ||
-				(this.getType() == PEGASUS && !Events.reachedLevelTwenty[ROCH.ordinal()]))
-		{
-			Menu.unlock(KAMAITACHI);
-		}
-		else if((this.getType() == OROCHI && !Events.reachedLevelTwenty[KAMAITACHI.ordinal()]) ||
-				(this.getType() == KAMAITACHI && !Events.reachedLevelTwenty[OROCHI.ordinal()]))
-		{
-			Menu.unlock(PEGASUS);
-		}
+		this.timeBetweenTwoShots = MyMath.fireRate(calculateSumOfFireRateBooster(poweredUp));
 	}
+
+	public int calculateSumOfFireRateBooster(boolean poweredUp)
+	{
+		return this.levelOfUpgrade[FIRE_RATE.ordinal()]
+				+ (poweredUp ? FIRE_RATE_POWERUP_LEVEL : 0);
+	}
+
+	abstract public void updateUnlockedHelicopters();
 
 	public void useReparationPowerUp()
 	{
 		Audio.play(Audio.cash);
-		float max_plating = this.max_plating();
-		if(this.currentPlating < max_plating)
+		float maxPlating = this.maxPlating();
+		if(this.currentPlating < maxPlating)
 		{
 			this.currentPlating
 				= Math.min(
-					max_plating, 
+					maxPlating,
 					this.currentPlating
-						+ Math.max(1, (   max_plating 
+						+ Math.max(1, (   maxPlating
 										- this.currentPlating)/2));
 		}
 	}
 	
-	public static int heliosCosts(int upgrade_number)
+	public static int heliosCosts(int upgradeNumber)
 	{
 		int heli;
-		if(upgrade_number <= 1){heli = 2;}
-		else if(upgrade_number == 2 || upgrade_number == 3)
+		if(upgradeNumber <= 1){heli = 2;}
+		else if(upgradeNumber == 2 || upgradeNumber == 3)
 		{
-			heli = upgrade_number - 2;
+			heli = upgradeNumber - 2;
 		}
-		else {heli = upgrade_number - 1;}			
+		else {heli = upgradeNumber - 1;}
 		for(int i = 0; i < 4; i++)
 		{
 			if(Events.recordTime[heli][i] == 0) return 4-i;
@@ -1411,7 +1344,7 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		return 0;		
 	}
 
-	public void menue_paint(Graphics2D g2d, HelicopterTypes helicopterType)
+	public void menuePaint(Graphics2D g2d, HelicopterTypes helicopterType)
 	{		
     	this.rotatePropeller(helicopterType, 7);
     	this.paint(g2d, 692, 360, helicopterType, DAY);
@@ -1420,33 +1353,33 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	public boolean isPowerShieldProtected(Enemy enemy)
 	{		
 		return this.isPowerShieldActivated
-			   && (this.has_unlimited_energy()
+			   && (this.hasUnlimitedEnergy()
 				   || this.energy 
 				   		>= this.spellCosts * enemy.collisionDamage(this));
 	}
 
-	public float kaboom_dmg()
+	public float kaboomDmg()
 	{		
 		return Math.max(4, 2*this.currentPlating /3);
 	}
 	
-	public float max_plating()
+	public float maxPlating()
 	{
 		return MyMath.plating(this.levelOfUpgrade[PLATING.ordinal()])
 			   * this.platingDurabilityFactor;
 	}
 	
-	private void get_max_plating()
+	private void getMaxPlating()
 	{
-		this.currentPlating = this.max_plating();
+		this.currentPlating = this.maxPlating();
 	}
 
-	public void receive_static_charged(float degree)
+	public void receiveStaticCharged(float degree)
 	{
-		if(!this.is_invincible())
+		if(!this.isInvincible())
 		{			
 			this.energy 
-				= this.has_unlimited_energy()
+				= this.hasUnlimitedEnergy()
 					? this.energy 
 					: Math.max( 0, 
 								this.energy 
@@ -1455,21 +1388,21 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 									: ENERGY_DRAIN));			
 			if(!this.isPowerShieldActivated)
 			{
-				this.slowed_timer = SLOW_TIME;
+				this.slowedTimer = SLOW_TIME;
 			}
 		}
 	}	
 	
 	public boolean canCollideWith(Enemy e)
 	{		
-		return this.basic_collision_requirements_satisfied(e)					
+		return this.basicCollisionRequirementsSatisfied(e)
 			   && !(e.model == BARRIER 
 						&& (    e.alpha != 255 
 							||  e.borrowTimer == READY
 							|| !e.hasUnresolvedIntersection));
 	}
 
-	public boolean basic_collision_requirements_satisfied(Enemy e)
+	public boolean basicCollisionRequirementsSatisfied(Enemy e)
 	{		
 		return this.interphaseGeneratorTimer <= this.shiftTime
 				&& !this.isDamaged
@@ -1477,30 +1410,23 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 				&& e.bounds.intersects(this.bounds);
 	}
 	
-	public float get_dmg_factor()
+	public float getDamageFactor()
 	{		
 		return this.enhancedRadiationTimer == READY
-					? this.is_invincible() 
+					? this.isInvincible()
 						? INVU_DMG_FACTOR
 						: 1.0f 
 					: 0.0f;
 	}
 
-	public boolean enhancedRadiationApproved(Enemy enemy)
+	public boolean isEnergyAbilityActivatable()
 	{		
-		return this.hasShortrangeRadiation
-				&& enemy.collisionDamageTimer == 0
-				&& !(enemy.type == KABOOM)
-				&& this.enhancedRadiationTimer == READY
-				&& MyMath.toss_up(ENHANCED_RADIATION_PROB);
+		return this.hasEnoughEnergyForAbility();
 	}
-	
-	public boolean is_energy_ability_activateable()
-	{		
-		return  (this.getType() == ROCH && this.energy >= POWER_SHIELD_ACTIVATION_TRESHOLD)
-				|| !(this.generatorTimer > 0
-					 ||(this.energy < this.spellCosts
-					 	&& !this.has_unlimited_energy()));
+
+	boolean hasEnoughEnergyForAbility()
+	{
+		return this.energy >= this.spellCosts || this.hasUnlimitedEnergy();
 	}
 
 	public void upgradeEnergyAbility()
@@ -1508,14 +1434,9 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 		this.energy += MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
 					   - MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
 		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
-		
-		if(this.getType() == OROCHI)
-		{
-			this.setSpellCosts();
-		}
 	}
 
-	public void becomes_center_of(Explosion exp)
+	public void becomesCenterOf(Explosion exp)
 	{
 		exp.ellipse.setFrameFromCenter(
 			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
@@ -1523,127 +1444,36 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
 			this.bounds.getY() + FOCAL_PNT_Y_EXP);
 	}
-
-	public void prepareTeleportation()
-	{
-		this.isSearchingForTeleportDestination = true;
-		this.priorTeleportLocation.setLocation(
-			this.bounds.getX() + (this.isMovingLeft
-										? FOCAL_PNT_X_LEFT
-										: FOCAL_PNT_X_RIGHT),
-			this.bounds.getY() + FOCAL_PNT_Y_POS);
-	}
-	
-	public void turnOnPowerShield()
-	{
-    	Audio.play(Audio.shield_up);
-		this.isPowerShieldActivated = true;
-	}
 	    
     void shutDownPowerShield()
     {
-    	Audio.play(Audio.plasma_off);
+    	Audio.play(Audio.plasmaOff);
 		this.isPowerShieldActivated = false;
     }
-    
-    public void activatePlasma()
-	{
-		Audio.play(Audio.plasma_on);
-		this.energy -= this.has_unlimited_energy() ? 0 : this.spellCosts;
-		this.plasmaActivationTimer = POWERUP_DURATION;
-	}	
-
-	public void releaseEMP(ArrayList<LinkedList<Explosion>> explosion)
-	{
-		this.generatorTimer = 67;
-		this.energy -= this.has_unlimited_energy() ? 0 : this.spellCosts;
-		Audio.play(Audio.emp);
-		Explosion.start(explosion, 
-						this,							
-						(int)(this.bounds.getX() 
-								+ (this.isMovingLeft
-									? FOCAL_PNT_X_LEFT 
-									: FOCAL_PNT_X_RIGHT)), 
-						(int)(this.bounds.getY() 
-								+ FOCAL_PNT_Y_EXP), 							
-						3, 
-						false);	
-		this.interphaseGeneratorTimer = 0;
-	}
-
-	public void activatePowerUpGenerator(ArrayList<LinkedList<PowerUp>> powerUp)
-	{
-		this.generatorTimer = (int)(0.4f * POWERUP_DURATION);
-		this.energy -= this.has_unlimited_energy() ? 0 : this.spellCosts;
-		MyMath.randomize();			
-		for(int i = 0; i < 3; i++)
-		{
-			if(MyMath.get_random_order_value(i) == REPARATION.ordinal())
-			{
-				if(i == 0){Audio.play(Audio.pu_announcer[REPARATION.ordinal()]);}
-				this.useReparationPowerUp();
-			}
-			else
-			{
-				this.getPowerUp(	powerUp, PowerUpTypes.values()[MyMath.get_random_order_value(i)],
-										false, i == 0);
-			}
-			if(MyMath.toss_up(0.7f)){break;}
-		}		
-	}
 
 	public boolean isOnTheGround()
 	{		
 		return this.bounds.getMaxY() + NO_COLLISION_HEIGHT == GROUND_Y;
 	}
 
-	public void turn_around()
+	public void turnAround()
 	{
 		this.isMovingLeft = !this.isMovingLeft;
 		this.setBounds();
 	}
-	
-	public void energy_ability_used(ArrayList<LinkedList<PowerUp>> powerUp,
-	                         ArrayList<LinkedList<Explosion>> explosion)
+
+	public void tryToUseEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp,
+											   ArrayList<LinkedList<Explosion>> explosion)
 	{
-		if(	this.getType() == PHOENIX
-			&& this.is_energy_ability_activateable())
+		if(this.isEnergyAbilityActivatable())
 		{
-			this.prepareTeleportation();
-		}		
-		else if(this.isPowerShieldActivated)
-		{
-			this.shutDownPowerShield();
-		}
-		else if(this.getType() == ROCH
-				&& this.is_energy_ability_activateable())
-		{			
-			this.turnOnPowerShield();
-		}		
-		else if(this.getType() == OROCHI
-				&& !this.isNextMissileStunner)
-		{
-			Audio.play(Audio.stun_activated);
-			this.isNextMissileStunner = true;
-		}
-		else if(this.getType() == KAMAITACHI
-				&& this.is_energy_ability_activateable())
-		{
-			this.activatePlasma();
-		}
-		else if(this.getType() == PEGASUS
-				&& this.is_energy_ability_activateable())
-		{
-			this.releaseEMP(explosion);
-		}		
-		else if(this.getType() == HELIOS
-				&& this.is_energy_ability_activateable())
-		{			
-			this.activatePowerUpGenerator(powerUp);
+			useEnergyAbility(powerUp, explosion);
 		}
 	}
-	
-	public int ability_id(int i)
+
+	public void useEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp, ArrayList<LinkedList<Explosion>> explosion){};
+
+	public int abilityId(int i)
     {
     	return i == 5 ? 1 + i + this.getType().ordinal() : i;
     }
@@ -1652,61 +1482,22 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 										  Controller controller,
 										  boolean playCollisionSound)
 	{
-		if(!this.isPowerShieldProtected(enemy))
-		{			
-			if(playCollisionSound)
-			{
-				Audio.play(enemy.type == KABOOM
-							? Audio.explosion4 
-							: this.enhancedRadiationTimer == 0
-								? Audio.explosion1
-								: Audio.explosion2);
-			}			
-			
-			this.slowed_timer = 2;
-			
-			if(this.enhancedRadiationApproved(enemy))
-			{
-				this.enhancedRadiationTimer
-					= Math.max(	this.enhancedRadiationTimer,
-								NO_COLLISION_DMG_TIME);
-			}
-			else if(this.enhancedRadiationTimer == 0)
-			{					
-				this.recent_dmg_timer = RECENT_DMG_TIME; 
-			}
-			
-			this.currentPlating
-				= Math.max(
-					this.currentPlating - enemy.collisionDamage(this),
-					0);
-						
-			if(this.isPowerShieldActivated)
-			{						
-				this.shutDownPowerShield();
-				this.energy = 0;
-			}
-			
-			if(this.hasShortrangeRadiation)
-			{
-				enemy.reactToRadiation(controller, this);
-			}
-		}
-		else
+		if(playCollisionSound)
 		{
-			this.energy 
-				-= this.has_unlimited_energy()
-					? 0.0 
-					: this.spellCosts * enemy.collisionDamage(this);
-			if(this.is_invincible())
-			{
-				if(playCollisionSound){Audio.play(Audio.shield_up);}
-			}		
-			else if(playCollisionSound){Audio.play(Audio.explosion1);}
-		}		
+			Audio.play(enemy.type == KABOOM
+					? Audio.explosion4
+					: this.enhancedRadiationTimer == 0
+					? Audio.explosion1
+					: Audio.explosion2);
+		}
+		this.slowedTimer = 2;
+		this.currentPlating
+				= Math.max(
+				this.currentPlating - enemy.collisionDamage(this),
+				0);
 	}
 
-	public boolean has_performed_teleport_kill()
+	public boolean hasPerformedTeleportKill()
 	{		
 		return this.bonusKillsTimer > 0;
 	}
@@ -1733,5 +1524,18 @@ public abstract class Helicopter extends MovingObject implements MissileTypes
 	public void installPiercingWarheads()
 	{
 		this.hasPiercingWarheads = true;
+	}
+
+	public boolean canBeTractored() {
+		return this.tractor == null
+				&& this.bounds.getX() - this.bounds.getX() > -750
+				&& this.bounds.getX() - this.bounds.getX() < -50
+				&& (this.bounds.getY() + 56 > this.bounds.getY() + 0.2 * this.bounds.getHeight()
+				&& this.bounds.getY() + 60 < this.bounds.getY() + 0.8 * this.bounds.getHeight());
+	}
+
+	public int getCurrentMissileType(boolean stunningMissile)
+	{
+		return STANDARD;
 	}
 }

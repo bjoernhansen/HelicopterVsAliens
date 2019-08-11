@@ -18,14 +18,14 @@ public class HighscoreEntry implements Serializable
         currentPlayerName = "John Doe";
 	
 	// Variablen eines Highscore-Eintrages
-	public String player_name;
+	public String playerName;
 	
-	public int max_level;
+	public int maxLevel;
 	public int crashes;
 	public int repairs;
-	public int bonus_income;
+	public int bonusIncome;
 	
-	public long playing_time;
+	public long playingTime;
 	
 	public HelicopterTypes
 		helicopterType;
@@ -33,27 +33,27 @@ public class HighscoreEntry implements Serializable
 	
 	HighscoreEntry(Savegame savegame)
 	{
-		this.player_name = currentPlayerName;
+		this.playerName = currentPlayerName;
 		this.helicopterType = savegame.helicopterType;
-		this.max_level = savegame.max_level;
-		this.playing_time = savegame.playing_time/60000;
+		this.maxLevel = savegame.maxLevel;
+		this.playingTime = savegame.playingTime/60000;
 		this.crashes = savegame.numberOfCrashes;
 		this.repairs = savegame.numberOfRepairs;
-		this.bonus_income = Events.bonusIncomePercentage();
+		this.bonusIncome = Events.bonusIncomePercentage();
 	}
 	
 	// TODO use comparator
 	private boolean isBetterThan(HighscoreEntry entry)
 	{
-			 if(this.max_level > entry.max_level) return true;
-		else if(this.max_level < entry.max_level) return false;
-		else if(this.playing_time < entry.playing_time) return true;
-		else if(this.playing_time > entry.playing_time) return false;
+			 if(this.maxLevel > entry.maxLevel) return true;
+		else if(this.maxLevel < entry.maxLevel) return false;
+		else if(this.playingTime < entry.playingTime) return true;
+		else if(this.playingTime > entry.playingTime) return false;
 		else if(this.crashes < entry.crashes) return true;
 		else if(this.crashes > entry.crashes) return false;
 		else if(this.repairs < entry.repairs) return true;
 		else if(this.repairs > entry.repairs) return false;
-		else return this.bonus_income > entry.bonus_income;
+		else return this.bonusIncome > entry.bonusIncome;
 	}
 	
 	static void putEntry(HighscoreEntry[] highscore, HighscoreEntry entry)

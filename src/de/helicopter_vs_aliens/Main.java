@@ -5,19 +5,13 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.Label;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.MyMath;
-import de.helicopter_vs_aliens.util.dictionary.Dictionary;
-import de.helicopter_vs_aliens.util.dictionary.Languages;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
@@ -27,7 +21,7 @@ public class Main implements Constants
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = false;
+    	TESTMODE = true;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -125,7 +119,7 @@ public class Main implements Constants
 		Events.settingsChanged = true;
 	}
     
-    public static void switchDisplayMode(Button current_button)
+    public static void switchDisplayMode(Button currentButton)
     {
         isFullScreen = !isFullScreen;
         
@@ -134,9 +128,9 @@ public class Main implements Constants
 		Button.STARTSCREEN_MENU_BUTTON[GERMAN.ordinal() ][2][0]
 			= Button.DISPLAY[GERMAN.ordinal()][isFullScreen ? 0 : 1];
    
-		if(current_button != null)
+		if(currentButton != null)
 		{
-			current_button.label
+			currentButton.label
 				= Button.DISPLAY[Menu.language.ordinal()][isFullScreen ? 0 : 1];
 		}
 		    
@@ -152,8 +146,8 @@ public class Main implements Constants
 		else
 		{
 			device.setFullScreenWindow(null);
-			if(current_button != null){
-				Menu.adapt_to_window_mode(displayShift);}
+			if(currentButton != null){
+				Menu.adaptToWindowMode(displayShift);}
 	        frame.setSize(WINDOW_SIZE);
 	        frame.setLocation( (int)(( originalDisplayMode.getWidth()
 	        					  -WINDOW_SIZE.getWidth())/2),

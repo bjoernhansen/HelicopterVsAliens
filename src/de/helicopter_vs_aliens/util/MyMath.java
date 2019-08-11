@@ -37,17 +37,17 @@ public class MyMath
 		REGENERATION = {0.030f, 0.036f, 0.044f, 0.053f, 0.063f, 0.076f, 0.092f, 0.111f, 0.134f, 0.162f};
 	
 	private static int []
-		random_order = {0, 1, 2, 3, 4};
+		randomOrder = {0, 1, 2, 3, 4};
 	
 	// Die Kosten mancher Upgrades weichen für manche Helicopterklassen vom Standard ab.
 	// Die HashMap "additional_costs" enthält die Modifikationswerte.
 	private static final HashMap<String, Integer> 
-		ADDITIONAL_COSTS = set_additional_costs();
+		ADDITIONAL_COSTS = setAdditionalCosts();
 	
 	private static Random random = new Random();
 	
 	
-	private static HashMap<String, Integer> set_additional_costs()
+	private static HashMap<String, Integer> setAdditionalCosts()
 	{
 		HashMap<String, Integer> hashMap = new HashMap<> ();		
 		
@@ -91,35 +91,35 @@ public class MyMath
 	public static void randomize()
     {        
 		int random, temp;
-		for(int i = 0; i < random_order.length; i++)
+		for(int i = 0; i < randomOrder.length; i++)
 		{
-			temp = random_order[i];
-			random = random(random_order.length);
-			random_order[i] = random_order[random];
-			random_order[random] = temp;			
+			temp = randomOrder[i];
+			random = random(randomOrder.length);
+			randomOrder[i] = randomOrder[random];
+			randomOrder[random] = temp;
 		}
     }
 	
-	public static int get_random_order_value(int n)
+	public static int getRandomOrderValue(int n)
 	{
-		if(n < 0 || n >= random_order.length){return -1;}
-		return random_order[n];
+		if(n < 0 || n >= randomOrder.length){return -1;}
+		return randomOrder[n];
 	}
 	
-	public static int random(int value_range)
+	public static int random(int valueRange)
     {
-        return random.nextInt(value_range);
+        return random.nextInt(valueRange);
     }
 	
-	public static boolean toss_up(){return toss_up(0.5f);}
-	public static boolean toss_up(float n)
+	public static boolean tossUp(){return tossUp(0.5f);}
+	public static boolean tossUp(float n)
 	{		
 		return Math.random() < n;
 	}
 	
 	public static int randomDirection()
 	{
-		return toss_up() ? 1 : -1;
+		return tossUp() ? 1 : -1;
 	}
 	
 	public static boolean creationProbability(int difference, int factor)
@@ -139,15 +139,15 @@ public class MyMath
     }
      
     // bestimmt die tatsächlichen Kosten für ein Upgrades unter Berücksichtigung der "additional costs"
-	public static int costs(HelicopterTypes helicopterType, int costs, int upgrade_level)
+	public static int costs(HelicopterTypes helicopterType, int costs, int upgradeLevel)
 	{
-		String key = "" + helicopterType.ordinal() + costs + upgrade_level;
-		int extra_costs = 0;
+		String key = "" + helicopterType.ordinal() + costs + upgradeLevel;
+		int extraCosts = 0;
 		if(ADDITIONAL_COSTS.containsKey(key))
 		{
-			extra_costs = ADDITIONAL_COSTS.get(key);
+			extraCosts = ADDITIONAL_COSTS.get(key);
 		}
-		return increase(costs, upgrade_level) + extra_costs;
+		return increase(costs, upgradeLevel) + extraCosts;
 	}
 	
 	public static float speed(int n)
@@ -162,13 +162,13 @@ public class MyMath
 		return 0;
     }    
     
-    public static float plasma_dmg_factor(int n)
+    public static float plasmaDamageFactor(int n)
     {
     	if(n > 0 && n < 11){return PLASMA_DMG_FACTOR[n-1];}
 		return 0;
     }
 	
-	public static int missile_drive(int n)
+	public static int missileDrive(int n)
     {
     	if(n >= 1 && n <= 10){return MISSILE_DRIVE[n-1];}
 		return 0;
@@ -180,7 +180,7 @@ public class MyMath
 		return 0;
     }
 	
-	public static int fire_rate(int n)
+	public static int fireRate(int n)
     {
     	if(n > 0 && n < 16){return FIRE_RATE[n-1];}
 		return 200;
@@ -197,7 +197,7 @@ public class MyMath
 		return 0;
     }
 	
-	public static int shift_time(int n)
+	public static int shiftTime(int n)
     {
     	if(n > 1 && n < 14){return SHIFT_TIME[n-2];}
 		return 500;
@@ -209,18 +209,18 @@ public class MyMath
 		return 0;
     }
 	
-	public static int max_level(int upgrade_costs)
+	public static int maxLevel(int upgradeCosts)
     {
-    	return upgrade_costs == 4 ? 6 : upgrade_costs == 3 ? 8 : 10;
+    	return upgradeCosts == 4 ? 6 : upgradeCosts == 3 ? 8 : 10;
     }       
     
-    public static boolean is_empty(long[][] int_array)
+    public static boolean isEmpty(long[][] intArray)
     {
-		for(long[] anInt_array : int_array)
+		for(long[] anIntArray : intArray)
 		{
-			for (int j = 0; j < int_array[0].length; j++)
+			for (int j = 0; j < intArray[0].length; j++)
 			{
-				if (anInt_array[j] != 0)
+				if (anIntArray[j] != 0)
 				{
 					return false;
 				}
@@ -239,9 +239,9 @@ public class MyMath
 		return base > 0 ? 100*amount/base : 0;
 	} 
 	
-	public static double getIntersectionLength(double e_min, double e_max,
-                                               double b_min, double b_max)
+	public static double getIntersectionLength(double eMin, double eMax,
+                                               double bMin, double bMax)
 	{		
-		return Math.min(e_max, b_max) - Math.max(e_min, b_min);
+		return Math.min(eMax, bMax) - Math.max(eMin, bMin);
 	}
 }

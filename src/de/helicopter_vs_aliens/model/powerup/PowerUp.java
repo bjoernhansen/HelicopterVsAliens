@@ -142,7 +142,7 @@ public class PowerUp extends MovingObject
 			this.bounds.setRect(
 					this.bounds.getX() 
 						- this.speed.getX()
-						- (BackgroundObject.background_moves ? BG_SPEED : 0),
+						- (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
 					Math.min(this.bounds.getY() - this.speed.getY(), 
 							GROUND_Y - this.bounds.getHeight()), 
 					GAME_SIZE, GAME_SIZE);
@@ -205,23 +205,23 @@ public class PowerUp extends MovingObject
 		
 		if(this.type.ordinal() > 3 || helicopter.powerUpTimer[this.type.ordinal()] ==  0)
 		{
-			Audio.play(Audio.pu_announcer[this.type.ordinal()]);
+			Audio.play(Audio.powerAnnouncer[this.type.ordinal()]);
 		}
 		
 		if(this.type == TRIPLE_DMG)
 		{
-			Audio.play(Audio.shield_up);
+			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel()){
-				Menu.update_collected_powerUps(helicopter, this);}
+				Menu.updateCollectedPowerUps(helicopter, this);}
 		}
 		else if(this.type == INVINCIBLE)
 		{
 			Audio.play(Audio.teleport1);
-			if(!Events.isBossLevel()){Menu.update_collected_powerUps(helicopter, this);}
+			if(!Events.isBossLevel()){Menu.updateCollectedPowerUps(helicopter, this);}
 		}
 		else if(this.type == UNLIMITRED_ENERGY)
 		{
-			Audio.play(Audio.shield_up);	
+			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel())
 			{
 				helicopter.energy 
@@ -230,16 +230,16 @@ public class PowerUp extends MovingObject
 											 	+ Math.max(10, 
 											 			   2*(MyMath.energy(helicopter.levelOfUpgrade[5])
 											 				 - helicopter.energy)/3));
-				Menu.update_collected_powerUps(helicopter, this);
+				Menu.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
 		else if(this.type == BOOSTED_FIRE_RATE)
 		{
-			Audio.play(Audio.shield_up);
+			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel())
 			{				
 				helicopter.adjustFireRate(true);
-				Menu.update_collected_powerUps(helicopter, this);
+				Menu.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
 		else if(this.type == REPARATION)
@@ -249,7 +249,7 @@ public class PowerUp extends MovingObject
 		else if(this.type == BONUS_INCOME)
 		{
 			Audio.play(Audio.cash);
-			Events.last_extra_bonus = 0;
+			Events.lastExtraBonus = 0;
 			Menu.moneyDisplayTimer = START;
 			Events.lastBonus = (int)(1.5f*(helicopter.spotlight ? Events.NIGHT_BONUS_FACTOR : Events.DAY_BONUS_FACTOR) * this.worth);
 			Events.money += Events.lastBonus;
@@ -260,7 +260,7 @@ public class PowerUp extends MovingObject
 	
 	public void moveToStatusbar()
 	{
-		Menu.collected_PowerUp[this.type.ordinal()] = this;
+		Menu.collectedPowerUp[this.type.ordinal()] = this;
 		this.speed.setLocation(0, 0);
 		this.inStatusBar = true;
 		this.collected = false;

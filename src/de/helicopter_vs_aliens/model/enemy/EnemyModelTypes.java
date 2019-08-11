@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.enemy;
 
-public enum EnemyModelTypes {
+public enum EnemyModelTypes
+{
     TIT,
     CARGO,
     BARRIER

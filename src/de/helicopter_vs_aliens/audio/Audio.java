@@ -25,7 +25,7 @@ public class Audio implements Constants
         standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
 
     public static AudioClip
-        current_bg,        // Die aktuell abgespielte Hintergrund-Musik
+            currentBg,        // Die aktuell abgespielte Hintergrund-Musik
 
         // Menü-Sounds
         block,
@@ -44,19 +44,19 @@ public class Audio implements Constants
         launch1,
         launch2,
         launch3,
-        level_up,
-        phase_shift,
-        plasma_on,
-        plasma_off,
-        pu_fade1,
-        pu_fade2,
+        levelUp,
+        phaseShift,
+        plasmaOn,
+        plasmaOff,
+        powerUpFade1,
+        powerUpFade2,
         rebound,
-        shield_up,
+        shieldUp,
         stun,
-        stun_activated,
+        stunActivated,
         teleport1,
         teleport2,
-        tractor_beam,
+        tractorBeam,
 
         // Announcer
         applause1,
@@ -67,16 +67,16 @@ public class Audio implements Constants
         multikill,
         megakill,
         monsterkill,
-        pu_announcer[],
+        powerAnnouncer[],
 
         // Hintergrundmusik für den Standard-Modus
-        bg_music1,
-        bg_music2,
-        bg_music3,
+        bgMusic1,
+        bgMusic2,
+        bgMusic3,
 
         // Hintergrundmusik für Michael-Modus
-        main_menue,
-        repair_shop,
+        mainMenue,
+        repairShop,
         scorescreen,
         level_01_09,
         level_11_19,
@@ -84,8 +84,8 @@ public class Audio implements Constants
         level_31_39,
         level_41_48,
         level_49,
-        boss_level,
-        final_boss_level,
+        bossLevel,
+        finalBossLevel,
         victory;
 
 
@@ -102,10 +102,10 @@ public class Audio implements Constants
         explosion2 = getAudioClip("explosion2.wav");
         explosion3 = getAudioClip("explosion3.wav");
         explosion4 = getAudioClip("explosion4.wav");
-        bg_music1 = getAudioClip("bg_music1.wav");
-        bg_music2 = getAudioClip("bg_music2.wav");
-        bg_music3 = getAudioClip("bg_music3.wav");
-        level_up = getAudioClip("level_up.wav");
+        bgMusic1 = getAudioClip("bg_music1.wav");
+        bgMusic2 = getAudioClip("bg_music2.wav");
+        bgMusic3 = getAudioClip("bg_music3.wav");
+        levelUp = getAudioClip("level_up.wav");
         choose = getAudioClip("choose.wav");
         cash = getAudioClip("cash.wav");
         block = getAudioClip("block.wav");
@@ -113,13 +113,13 @@ public class Audio implements Constants
         cloak = getAudioClip("cloak.wav");
         launch2 = getAudioClip("launch2.wav");
         rebound = getAudioClip("rebound.wav");
-        tractor_beam = getAudioClip("tractor_beam.wav");
-        shield_up = getAudioClip("shield_up.wav");
+        tractorBeam = getAudioClip("tractor_beam.wav");
+        shieldUp = getAudioClip("shield_up.wav");
         applause1 = getAudioClip("applause1.wav");
         launch3 = getAudioClip("launch3.wav");
         explosion5 = getAudioClip("explosion5.wav");
         teleport1 = getAudioClip("teleport1.wav");
-        phase_shift = getAudioClip("phase_shift.wav");
+        phaseShift = getAudioClip("phase_shift.wav");
         emp = getAudioClip("emp.wav");
         stun = getAudioClip("stun.wav");
         applause2 = getAudioClip("applause2.wav");
@@ -130,24 +130,24 @@ public class Audio implements Constants
         monsterkill = getAudioClip("monsterkill.wav");
         nicecatch = getAudioClip("nicecatch.wav");
         landing = getAudioClip("landing.wav");
-        plasma_on = getAudioClip("plasma_on.wav");
-        plasma_off = getAudioClip("plasma_off.wav");
-        pu_fade1 = getAudioClip("pu_fade1.wav");
-        pu_fade2 = getAudioClip("pu_fade2.wav");
-        stun_activated = getAudioClip("stun_activated.wav");
+        plasmaOn = getAudioClip("plasma_on.wav");
+        plasmaOff = getAudioClip("plasma_off.wav");
+        powerUpFade1 = getAudioClip("pu_fade1.wav");
+        powerUpFade2 = getAudioClip("pu_fade2.wav");
+        stunActivated = getAudioClip("stun_activated.wav");
 
-        pu_announcer = new AudioClip[NUMBER_OF_ANNOUNCERS];
-        pu_announcer[TRIPLE_DMG.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
-        pu_announcer[INVINCIBLE.ordinal()] = getAudioClip("announcer_invincible.wav");
-        pu_announcer[UNLIMITRED_ENERGY.ordinal()] = getAudioClip("announcer_unlimited_energy.wav");
-        pu_announcer[BOOSTED_FIRE_RATE.ordinal()] = getAudioClip("announcer_fire_rate_boosted.wav");
-        pu_announcer[REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
-        pu_announcer[BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");
+        powerAnnouncer = new AudioClip[NUMBER_OF_ANNOUNCERS];
+        powerAnnouncer[TRIPLE_DMG.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
+        powerAnnouncer[INVINCIBLE.ordinal()] = getAudioClip("announcer_invincible.wav");
+        powerAnnouncer[UNLIMITRED_ENERGY.ordinal()] = getAudioClip("announcer_unlimited_energy.wav");
+        powerAnnouncer[BOOSTED_FIRE_RATE.ordinal()] = getAudioClip("announcer_fire_rate_boosted.wav");
+        powerAnnouncer[REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
+        powerAnnouncer[BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");
 
         if (MICHAEL_MODE)
         {
-            main_menue = getAudioClip("main_menu.wav");
-            repair_shop = getAudioClip("repair_shop.wav");
+            mainMenue = getAudioClip("main_menu.wav");
+            repairShop = getAudioClip("repair_shop.wav");
             scorescreen = getAudioClip("scorescreen.wav");
             level_01_09 = getAudioClip("level_01_09.wav");
             level_11_19 = getAudioClip("level_11_19.wav");
@@ -155,22 +155,22 @@ public class Audio implements Constants
             level_31_39 = getAudioClip("level_31_39.wav");
             level_41_48 = getAudioClip("level_41_48.wav");
             level_49 = getAudioClip("level_49.wav");
-            boss_level = getAudioClip("boss_level.wav");
-            final_boss_level = getAudioClip("final_boss_level.wav");
+            bossLevel = getAudioClip("boss_level.wav");
+            finalBossLevel = getAudioClip("final_boss_level.wav");
             victory = getAudioClip("victory.wav");
         }
     }
 
     public static void refreshBackgroundMusic()
     {
-        if (current_bg != null)
+        if (currentBg != null)
         {
-            current_bg.stop();
+            currentBg.stop();
         }
         if (isSoundOn)
         {
-            current_bg = get_bg_music();
-            current_bg.loop();
+            currentBg = getBgMusic();
+            currentBg.loop();
         }
     }
 
@@ -183,21 +183,21 @@ public class Audio implements Constants
     }
 
     // Rückgabe der aktuell zu spielenden Hintergrundmusik
-    private static AudioClip get_bg_music()
+    private static AudioClip getBgMusic()
     {
         if (!standardBackgroundMusic)
         {
             if (Events.window == GAME && !Events.isBossLevel())
             {
-                return bg_music2;
+                return bgMusic2;
             } else if (Events.window == REPAIR_SHOP || Events.window == SCORESCREEN)
             {
-                return bg_music1;
+                return bgMusic1;
             }
-            return bg_music3;
+            return bgMusic3;
         } else if (Events.window == REPAIR_SHOP)
         {
-            return repair_shop;
+            return repairShop;
         } else if (Events.window == SCORESCREEN)
         {
             if (Events.level == 51)
@@ -213,31 +213,31 @@ public class Audio implements Constants
                 || Events.window == HIGHSCORE
                 || Events.window == STARTSCREEN)
         {
-            return main_menue;
+            return mainMenue;
         } else if (Events.level >= 1 && Events.level < 10)
         {
             return level_01_09;
         } else if (Events.level == 10)
         {
-            return boss_level;
+            return bossLevel;
         } else if (Events.level >= 11 && Events.level < 20)
         {
             return level_11_19;
         } else if (Events.level == 20)
         {
-            return boss_level;
+            return bossLevel;
         } else if (Events.level >= 21 && Events.level < 30)
         {
             return level_21_29;
         } else if (Events.level == 30)
         {
-            return boss_level;
+            return bossLevel;
         } else if (Events.level >= 31 && Events.level < 40)
         {
             return level_31_39;
         } else if (Events.level == 40)
         {
-            return boss_level;
+            return bossLevel;
         } else if (Events.level >= 41 && Events.level < 49)
         {
             return level_41_48;
@@ -246,7 +246,7 @@ public class Audio implements Constants
             return level_49;
         } else if (Events.level == 50)
         {
-            return final_boss_level;
+            return finalBossLevel;
         }
         return victory;
     }
@@ -288,7 +288,7 @@ public class Audio implements Constants
             play(applause2);
         } else
         {
-            stop_applause();
+            stopApplause();
             play(applause1);
             if (nr == 5)
             {
@@ -300,7 +300,7 @@ public class Audio implements Constants
         }
     }
 
-    private static void stop_applause()
+    private static void stopApplause()
     {
         applause1.stop();
         applause2.stop();
@@ -315,13 +315,13 @@ public class Audio implements Constants
                 break;
             case ROCH:
             case HELIOS:
-                play(shield_up);
+                play(shieldUp);
                 break;
             case OROCHI:
-                play(stun_activated);
+                play(stunActivated);
                 break;
             case KAMAITACHI:
-                play(plasma_on);
+                play(plasmaOn);
                 break;
             case PEGASUS:
                 play(emp);

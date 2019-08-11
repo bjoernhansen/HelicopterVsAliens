@@ -1,7 +1,17 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.OROCHI;
+import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
+
 
 public final class Orochi extends Helicopter
 {
@@ -10,13 +20,29 @@ public final class Orochi extends Helicopter
     {
         return OROCHI;
     }
-    
+
+    @Override
+    public int getCurrentMissileType(boolean stunningMissile)
+    {
+        if(stunningMissile){return STUNNING;}
+        return STANDARD;
+    }
+
     @Override
     void setSpellCosts()
     {
-        this.spellCosts = OROCHI.getSpellCosts() - 2 *(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
+        this.spellCosts = OROCHI.getSpellCosts() - 2 * (this.levelOfUpgrade[ENERGY_ABILITY.ordinal()] - 1);
     }
-    
+
+    @Override
+    public void updateUnlockedHelicopters()
+    {
+        if(!Events.reachedLevelTwenty[KAMAITACHI.ordinal()])
+        {
+            Menu.unlock(PEGASUS);
+        }
+    }
+
     @Override
     void getMaximumNumberOfCannons()
     {
@@ -46,5 +72,43 @@ public final class Orochi extends Helicopter
     public boolean hasAllCannons()
     {
         return this.numberOfCannons == 3;
+    }
+
+    @Override
+    public void upgradeEnergyAbility()
+    {
+        super.upgradeEnergyAbility();
+        this.setSpellCosts();
+    }
+
+    @Override
+    public void tryToUseEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp, ArrayList<LinkedList<Explosion>> explosion)
+    {
+        if(!this.isNextMissileStunner)
+        {
+            Audio.play(Audio.stunActivated);
+            this.isNextMissileStunner = true;
+        }
+    }
+
+    @Override
+    boolean canRegenerateEnergy()
+    {
+        return !this.isDamaged && !this.isNextMissileStunner;
+    }
+
+    @Override
+    boolean isShootingStunningMissile()
+    {
+        if(this.isNextMissileStunner
+                && (this.energy >= this.spellCosts
+                    || this.hasUnlimitedEnergy()))
+        {
+            this.energy -= this.hasUnlimitedEnergy()
+                ? 0
+                : this.spellCosts;
+            return true;
+        }
+        return false;
     }
 }

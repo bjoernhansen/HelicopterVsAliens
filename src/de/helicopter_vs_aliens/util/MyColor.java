@@ -81,17 +81,17 @@ public class MyColor implements Constants
 		translucentWhite = new Color(255, 255, 255, 35),
 		cloaked = new Color(79, 110, 128),
 		detected = new Color(255, 0, 0, 35),	
-		inactive_nozzle = new Color(255, 192, 129),
-		hs_green = new Color(130, 255, 130),
-		hs_red = new Color(255, 130, 130),
-		money_display_night_red = new Color (255, 165, 120),
+		INACTIVE_NOZZLE = new Color(255, 192, 129),
+		HS_GREEN = new Color(130, 255, 130),
+		HS_RED = new Color(255, 130, 130),
+		MONEY_DISPLAY_NIGHT_RED = new Color (255, 165, 120),
 		
 	
 		// Helikopterfarben und tageszeitabhängie Standardfarben
 		cloud[] = {Color.DARK_GRAY, Color.white},
 		radiation[] = 	{ new Color(255, 200, 200, 60), 
 		              	  new Color(255, 200, 200, 90)},
-		enhanced_radiation[] = { new Color(255, 200, 200, 120), 
+		enhancedRadiation[] = { new Color(255, 200, 200, 120),
 		                      new Color(255, 200, 200, 210)},	              
 		shieldColor[] = { new Color(157, 220, 255, 80), 
 	                      new Color(0, 0, 255, 40)},				    
@@ -143,8 +143,8 @@ public class MyColor implements Constants
 					   								 new Color(190,190,190)},
 								  { dimColor(Color.white, BARRIER_NIGHT_DIM_FACTOR), 
 													 Color.white},
-								  { dimColor(inactive_nozzle, BARRIER_NIGHT_DIM_FACTOR), 
-													 inactive_nozzle},
+								  { dimColor(INACTIVE_NOZZLE, BARRIER_NIGHT_DIM_FACTOR),
+                                          INACTIVE_NOZZLE},
 								  { dimColor(new Color (39,52,123), BARRIER_NIGHT_DIM_FACTOR), 
 													 new Color (39,52,123)}};
 	
@@ -216,7 +216,7 @@ public class MyColor implements Constants
     		randomSunlightBlue += lighter ? 1 : -1;
 			if(randomSunlightBlue > 205){lighter = false;}
 			else if(randomSunlightBlue < 175){lighter = true;}
-			else if(MyMath.toss_up(0.045f)){lighter = !lighter;}
+			else if(MyMath.tossUp(0.045f)){lighter = !lighter;}
 			randomLight = new Color(255, 255, randomSunlightBlue);
     	}
     }
@@ -270,22 +270,22 @@ public class MyColor implements Constants
     static Color percentColor(int percentage){return percentColor(((float)percentage)/100);}
 	public static Color percentColor(float percentage)
     {
-    	float capped_value = Math.min(1, percentage);
-    	return new Color((int)(capped_value > 0.5 
-    					 		? 255 - 2*(capped_value-0.5)*255 
+    	float cappedValue = Math.min(1, percentage);
+    	return new Color((int)(cappedValue > 0.5
+    					 		? 255 - 2*(cappedValue-0.5)*255
     					 		: 255), 
-    					 (int)(capped_value <= 0.5
-    					 		? 2 * capped_value * 255 
+    					 (int)(cappedValue <= 0.5
+    					 		? 2 * cappedValue * 255
     					 		: 255), 
     					 0);
     }
 	
-	public static Color reversed_RandomGreen()
+	public static Color reversedRandomGreen()
     {
     	return new Color(255 - variableGreen.getRed(), 255, 100);
     }
     
-    public static Color reversed_RandomRed(Color color)
+    public static Color reversedRandomRed(Color color)
     {
     	return new Color(255, 192-color.getGreen(), 192-color.getBlue(), color.getAlpha());
     }
@@ -293,8 +293,8 @@ public class MyColor implements Constants
     
     public static Color brightenUp(Color color)
     {
-    	float color_max = MyMath.max(color.getRed(), color.getGreen(), color.getBlue());
-    	float factor = 255/color_max;    	
+    	float colorMax = MyMath.max(color.getRed(), color.getGreen(), color.getBlue());
+    	float factor = 255/colorMax;
     	return new Color(Math.min(255, (int)(color.getRed()*factor)), Math.min(255, (int)(color.getGreen()*factor)),Math.min(255, (int)(color.getBlue()*factor)));	
     }
     

@@ -6,6 +6,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
@@ -23,7 +24,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
-public class Missile extends MovingObject implements MissileTypes
+public class Missile extends MovingObject implements ExplosionTypes
 {	
 	private static final float
 		POWERUP_DAMAGE_FACTOR = 3f,				// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
@@ -61,21 +62,16 @@ public class Missile extends MovingObject implements MissileTypes
 		flying;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
 	
-	public void launch(Helicopter helicopter, boolean stunning_missile, int y)
+	public void launch(Helicopter helicopter, boolean stunningMissile, int y)
 	{
 		this.speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
 		this.dangerous = false;
 		this.bounced = false;
 		this.flying = true;	
-		this.extraDamage = helicopter.has_triple_dmg();
-		if(!stunning_missile)
-		{
-			if(helicopter.plasmaActivationTimer > 0){this.type = PLASMA;}
-			else if(helicopter.hasJumboMissiles()){this.type = JUMBO;}
-			else{this.type = STANDARD;}									
-		}								
-		else if(helicopter.getType() == OROCHI){this.type = STUNNING;}
-		else{this.type = PHASE_SHIFT;}
+		this.extraDamage = helicopter.hasTripleDmg();
+
+		this.type = helicopter.getCurrentMissileType(stunningMissile);
+
 		this.setBounds(helicopter, y);
 		this.setDmg(helicopter);
 		this.hits.clear();
@@ -118,7 +114,7 @@ public class Missile extends MovingObject implements MissileTypes
 	{
 		this.dmg = 	(int)(helicopter.currentFirepower
 				* (helicopter.numberOfCannons == 3 ? OROCHI_EXTRA_DAMAGE_FACTOR : 1.0f)
-				* ((helicopter.plasmaActivationTimer == 0) ? 1 : MyMath.plasma_dmg_factor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
+				* ((helicopter.plasmaActivationTimer == 0) ? 1 : MyMath.plasmaDamageFactor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
 				* (this.type == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
 				* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
@@ -144,7 +140,7 @@ public class Missile extends MovingObject implements MissileTypes
 	{		
 		this.setX(this.bounds.getX()
 					+ this.speed
-					+ (BackgroundObject.background_moves ? - BG_SPEED : 0));
+					+ (BackgroundObject.backgroundMoves ? - BG_SPEED : 0));
 				
 		if(this.bounds.getX() > 1175 || this.bounds.getX() + 20 < 0){this.flying = false;}
 		else{this.checkForHitHelicopter(helicopter);}
@@ -168,7 +164,7 @@ public class Missile extends MovingObject implements MissileTypes
 			{
 				this.flying = false;
 			}			
-			helicopter.take_missile_damage();			
+			helicopter.takeMissileDamage();
 		}
 	}		
 	
@@ -193,7 +189,7 @@ public class Missile extends MovingObject implements MissileTypes
 				{
 					Audio.play(Audio.rebound);
 					this.speed = -Math.signum(this.speed)
-						* MyMath.missile_drive(1);
+						* MyMath.missileDrive(1);
 					this.dangerous = true;
 					this.bounced = true;
 				}
@@ -211,7 +207,7 @@ public class Missile extends MovingObject implements MissileTypes
 						&& helicopter.bonusKillsTimer > 0
 						&& this.launchingTime > helicopter.pastTeleportTime)
 					{
-						Events.extra_reward(1,
+						Events.extraReward(1,
 							enemy.getEffectiveStrength()
 								* (helicopter.spotlight
 								? Events.NIGHT_BONUS_FACTOR
@@ -237,7 +233,7 @@ public class Missile extends MovingObject implements MissileTypes
 	
 	public boolean intersects(Enemy e)
 	{
-		int intersect_line_x 
+		int intersectLineX
 			= (int)(this.bounds.getX()
 					+ (this.speed < 0 ? 0 : this.bounds.getWidth()) 
 					+ (this.speed < 0 
@@ -246,9 +242,9 @@ public class Missile extends MovingObject implements MissileTypes
 							? e.bounds.getWidth()/3 
 							: 2*e.bounds.getWidth()/15)));		
 		
-		return e.bounds.intersectsLine(	intersect_line_x, 
+		return e.bounds.intersectsLine(	intersectLineX,
 										this.bounds.getY(),
-										intersect_line_x, 
+										intersectLineX,
 										this.bounds.getMaxY());
 	}
 
@@ -305,22 +301,22 @@ public class Missile extends MovingObject implements MissileTypes
 				{
 					if(helicopter.getType() == ROCH)
 					{										
-						Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 0.5f, 0.75f, 3.0f);
+						Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 0.5f, 0.75f, 3.0f);
 					}
 					else if(helicopter.getType() == OROCHI)
 					{
-						int non_failed_shots = (this.kills > 0 ? 1 : 0) + this.nrOfHittingSisters;
-						if(non_failed_shots == 1)
+						int nonFailedShots = (this.kills > 0 ? 1 : 0) + this.nrOfHittingSisters;
+						if(nonFailedShots == 1)
 						{										
-							Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 0.25f, 0.0f, 0.25f);
+							Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 0.25f, 0.0f, 0.25f);
 						}
-						if(non_failed_shots == 2)
+						if(nonFailedShots == 2)
 						{										
-							Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 1.5f, 0.0f, 1.5f);
+							Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 1.5f, 0.0f, 1.5f);
 						}
-						else if(non_failed_shots == 3)
+						else if(nonFailedShots == 3)
 						{										
-							Events.extra_reward(this.kills + this.sisterKills, this.earnedMoney, 4f, 0.0f, 4f);
+							Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 4f, 0.0f, 4f);
 						}
 						else assert false;
 					}	

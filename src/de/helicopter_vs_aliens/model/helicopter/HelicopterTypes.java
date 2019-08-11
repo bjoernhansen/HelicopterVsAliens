@@ -1,14 +1,45 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.control.Events;
+
 public enum HelicopterTypes
 {
     PHOENIX,
     ROCH,
-    OROCHI,
-    KAMAITACHI,
-    PEGASUS,
-    HELIOS;
-    
+    OROCHI
+    {
+        @Override
+        public boolean isUnlocked()
+        {
+            return Events.reachedLevelTwenty[PHOENIX.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()];
+        }
+    },
+    KAMAITACHI
+    {
+        @Override
+        public boolean isUnlocked()
+        {
+            return Events.reachedLevelTwenty[ROCH.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()];
+        }
+    },
+    PEGASUS
+    {
+        @Override
+        public boolean isUnlocked()
+        {
+            return Events.reachedLevelTwenty[OROCHI.ordinal()] || Events.reachedLevelTwenty[KAMAITACHI.ordinal()];
+        }
+    },
+    HELIOS
+    {
+        @Override
+        public boolean isUnlocked()
+        {
+            return Events.hasAnyBossBeenKilledBefore();
+        }
+    };
+
+
     private static final int
         SPELL_COSTS[]= {50, 30, 20, 200, 75, 250},  // Energiekosten für das Energieupgrade
     
@@ -44,5 +75,10 @@ public enum HelicopterTypes
     public int getUpgradeCosts(int i)
     {
         return COSTS[this.ordinal()][i];
+    }
+
+    public boolean isUnlocked()
+    {
+        return true;
     }
 }

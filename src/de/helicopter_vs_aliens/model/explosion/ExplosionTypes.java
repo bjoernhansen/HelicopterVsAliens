@@ -1,7 +1,7 @@
-package de.helicopter_vs_aliens.model.missile;
+package de.helicopter_vs_aliens.model.explosion;
 
-public interface MissileTypes
-{	
+public interface ExplosionTypes
+{
 	// TODO durch Enum ersetzen
 	int
 		STANDARD = 0,

@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy;
 
 interface Positions
 {
-    // durch ENUM ersetzen
+    // TODO durch ENUM ersetzen
     int
         NONE = -1,
         RIGHT = 0,
