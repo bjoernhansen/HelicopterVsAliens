@@ -173,6 +173,6 @@ public class Main implements Constants
 			Menu.label.setBounds(displayShift.width  + 42,
 					  				displayShift.height + 83, 940, 240);
 		}
-		Controller.getInstance().backgroundRepaint = 0;
+		Controller.getInstance().backgroundRepaintTimer = 0;
 	}
 }

@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyMath;
@@ -11,6 +12,7 @@ import de.helicopter_vs_aliens.util.MyMath;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.FIRE_RATE;
 
@@ -88,7 +90,7 @@ public final class Pegasus extends Helicopter
                         : FOCAL_PNT_X_RIGHT)),
                 (int)(this.bounds.getY()
                         + FOCAL_PNT_Y_EXP),
-                3,
+                EMP,
                 false);
         this.interphaseGeneratorTimer = 0;
     }
@@ -101,7 +103,7 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public int getCurrentMissileType(boolean stunningMissile)
+    public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if(stunningMissile){return PHASE_SHIFT;}
         return STANDARD;

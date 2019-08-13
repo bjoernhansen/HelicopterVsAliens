@@ -17,11 +17,12 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
 
 
-public class EnemyMissile implements Constants, ExplosionTypes
+public class EnemyMissile implements Constants
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse

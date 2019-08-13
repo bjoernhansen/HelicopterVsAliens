@@ -18,10 +18,11 @@ import java.awt.geom.Point2D;
 import static de.helicopter_vs_aliens.gui.Menu.*;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
-public class Explosion implements Constants, ExplosionTypes
+public class Explosion implements Constants
 {
     public int 
     	time,				// vergangene Zeit [frames] seit Starten der Explosion
@@ -37,8 +38,8 @@ public class Explosion implements Constants, ExplosionTypes
 	
     private int
 		maxRadius,	// maximaler Explosionsradius
-   		broadness,	// breite des animierten Explosionsringes		
-    	type;		// Standard, Plasma, EMP, etc.
+   		broadness;	// breite des animierten Explosionsringes
+
     
     private float[]
     	progress = new float[2];	// reguliert das Fortschreiten der Explosionsanimation       
@@ -48,7 +49,11 @@ public class Explosion implements Constants, ExplosionTypes
     
     private Point2D 
 		center = new Point2D.Float();			// Zentrum der Exploson
-	     
+
+	private ExplosionTypes
+		type;		// Standard, Plasma, EMP, etc.
+
+
     private Explosion(){}    
     
     private Explosion(int x, int y)
@@ -149,15 +154,15 @@ public class Explosion implements Constants, ExplosionTypes
     public static void start(ArrayList<LinkedList<Explosion>> explosion, 
 				      Helicopter helicopter, 
 			          double x, double y, 
-			          int missileType,
+			          ExplosionTypes explosionType,
 			          boolean extraDamage)
     {
-    	start(explosion, helicopter, x, y, missileType, extraDamage, null);
+    	start(explosion, helicopter, x, y, explosionType, extraDamage, null);
     }        
 	public static void start(ArrayList<LinkedList<Explosion>> explosion, 
                       Helicopter helicopter, 
                       double x, double y, 
-                      int missileType,
+                      ExplosionTypes explosionType,
                       boolean extraDamage,
                       Enemy source)
     {
@@ -169,14 +174,14 @@ public class Explosion implements Constants, ExplosionTypes
 		exp.time = 0;
 		// kann wahrscheinlich in den EMP spezifischen bereich verschoben werden
 		helicopter.becomesCenterOf(exp);
-		exp.type = missileType;
+		exp.type = explosionType;
 		if(source != null){exp.source = source;}	
 		else exp.source = null;
-		if(missileType != EMP)
+		if(explosionType != EMP)
 		{
 			exp.maxTime = 35;
-			exp.maxRadius = 65 + (missileType == JUMBO  || missileType == PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
-	    	exp.broadness =  50 + (missileType == JUMBO  || missileType == PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
+			exp.maxRadius = 65 + (explosionType == JUMBO  || explosionType == PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
+	    	exp.broadness =  50 + (explosionType == JUMBO  || explosionType == PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
 		}		
 		// EMP-Shockwave
 		else

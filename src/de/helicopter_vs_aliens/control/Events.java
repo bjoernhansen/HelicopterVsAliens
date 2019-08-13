@@ -34,14 +34,15 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
-
+// TODO Timer Klasse schreiben
 public class Events implements Constants
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
 		DAY_BONUS_FACTOR = 60,
 		NIGHT_BONUS_FACTOR = 90,
-		SPOTLIGHT_COSTS = 35000;
+		SPOTLIGHT_COSTS = 35000,
+		START = 0;						// Timer Start
 	
 	private static final int
 		COMPARISON_RECORD_TIME = 60,	// angenommene Bestzeit für besiegen von Boss 5
@@ -330,7 +331,7 @@ public class Events implements Constants
 	
 	private static void mousePressedLeft(Controller controller, Helicopter helicopter)
 	{		
-		controller.backgroundRepaint = READY;
+		controller.backgroundRepaintTimer = 0;
 		if(window == GAME)
 		{
 			inGameMousePressedLeft(controller, helicopter);
@@ -1022,7 +1023,7 @@ public class Events implements Constants
 		isRestartWindowVisible = false;
 		Menu.isMenueVisible = false;
 		lastBonus = 0;
-		Menu.moneyDisplayTimer = DISABLED;
+		Menu.moneyDisplayTimer = -1;
 		Menu.levelDisplayTimer = START;
 		Menu.unlockedTimer = 0;
 				

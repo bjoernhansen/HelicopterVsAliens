@@ -250,7 +250,7 @@ public class PowerUp extends MovingObject
 		{
 			Audio.play(Audio.cash);
 			Events.lastExtraBonus = 0;
-			Menu.moneyDisplayTimer = START;
+			Menu.moneyDisplayTimer = 0;
 			Events.lastBonus = (int)(1.5f*(helicopter.spotlight ? Events.NIGHT_BONUS_FACTOR : Events.DAY_BONUS_FACTOR) * this.worth);
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;

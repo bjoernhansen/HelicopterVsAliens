@@ -4,11 +4,14 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
@@ -22,7 +25,7 @@ public final class Orochi extends Helicopter
     }
 
     @Override
-    public int getCurrentMissileType(boolean stunningMissile)
+    public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if(stunningMissile){return STUNNING;}
         return STANDARD;

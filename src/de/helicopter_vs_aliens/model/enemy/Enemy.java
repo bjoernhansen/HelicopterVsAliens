@@ -24,11 +24,11 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.EnemyMissileTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.util.MyColor;
@@ -39,6 +39,7 @@ import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.*;
 import static de.helicopter_vs_aliens.model.enemy.Positions.*;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
@@ -48,7 +49,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 
-public class Enemy extends MovingObject implements ExplosionTypes
+public class Enemy extends MovingObject
 {
     private static class FinalEnemysOperator
     {	
@@ -102,47 +103,51 @@ public class Enemy extends MovingObject implements ExplosionTypes
 	private static final int 				
 		// Raum-Konstanten
 		SAVE_ZONE_WIDTH			= 116,
-		APPEARANCE_DISTANCE		= 10, 
+		APPEARANCE_DISTANCE		= 10,
 		SHIELD_TARGET_DISTANCE  = 20,
-		DISAPPEARANCE_DISTANCE	= 100, 
+		DISAPPEARANCE_DISTANCE	= 100,
 		BARRIER_DISTANCE		= 100,
 		ROCK_WIDTH				= 300,
 		KABOOM_WIDTH			= 120,
 		FINAL_BOSS_WIDTH		= 450,
 		PROTECTOR_WIDTH 		= 90,
 		KABOOM_Y_TURN_LINE		= GROUND_Y - (int)(HEIGHT_FACTOR*KABOOM_WIDTH),
-	
+
 		// Zeit-Konstanten
-		CLOAKING_TIME			= 135, 	// Zeit, die beim Tarn- und Enttarnvorgang vergeht			
+		CLOAKING_TIME			= 135, 	// Zeit, die beim Tarn- und Enttarnvorgang vergeht
 		CLOAKED_TIME 			= 135, 	// Zeit, die ein Gegner getarnt bleibt
 		ROCKFREE_TIME			= 250,	// Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
 	 	EMP_SLOW_TIME			= 175, 	// Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
 	 	EMP_SLOW_TIME_BOSS		= 110,
 	 	SNOOZE_TIME 			= 100,	// Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
-	 	INACTIVATION_TIME		= 150,	 	
+	 	INACTIVATION_TIME		= 150,
 	 	STUNNING_TIME_BASIS 	= 45,	// Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
 	 	SPEED_KILL_BONUS_TIME 	= 15,	// Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
 	 	BORROW_TIME				= 65,
 	 	MIN_TURN_TIME			= 31,
 	 	MIN_TURN_NOISELESS_TIME = 15,
-	 	STATIC_CHARGE_TIME		= 110,	 	
-	 	MAX_BARRIER_NUMBER		= 3,	 	
-	 	
+	 	STATIC_CHARGE_TIME		= 110,
+	 	MAX_BARRIER_NUMBER		= 3,
+
 	 	// Level-Voraussetzungen
 	 	MIN_BARRIER_LEVEL		= 2,
 	 	MIN_POWER_UP_LEVEL		= 3,
 	 	MIN_FUTURE_LEVEL		= 8,
 	 	MIN_KABOOM_LEVEL		= 12,
 	 	MIN_SPIN_SHOOTER_LEVEL 	= 23,
-	 	MIN_ROCK_LEVEL			= 27,	
+	 	MIN_ROCK_LEVEL			= 27,
 	 	MIN_BUSTER_LEVEL		= 29,
-	 	
+
 	 	// für Boss-Gegner
 	 	NR_OF_BOSS_5_SERVANTS 	= 5,
 	 	BOSS_5_HEAL_RATE		= 11,
 		STANDARD_REWARD_FACTOR	= 1,
 		MINI_BOSS_REWARD_FACTOR	= 4,
-	 	
+
+		PRE_READY 				= 1,
+		READY 					= 0,
+		DISABLED 				= -1,
+
 		MIN_ABSENT_TIME[]		= {175,	// SMALL_SHIELD_MAKER
 		                 		   175, // BIG_SHIELD_MAKER
 		                 		   900,	// BODYGUARD
@@ -2982,7 +2987,7 @@ public class Enemy extends MovingObject implements ExplosionTypes
 			
 			Explosion.start(controller.explosion, helicopter,
 							this.bounds.getCenterX(), 
-							this.bounds.getCenterY(), 2, false);
+							this.bounds.getCenterY(), STUNNING, false);
 		}
 		else
 		{
@@ -4086,8 +4091,8 @@ public class Enemy extends MovingObject implements ExplosionTypes
 	public void hitByMissile(Helicopter helicopter, Missile missile, ArrayList<LinkedList<Explosion>> explosion)
 	{		
 		helicopter.hitCounter++;
-		if( missile.type == JUMBO  
-			|| missile.type == PHASE_SHIFT 
+		if( missile.typeOfExplosion == JUMBO
+			|| missile.typeOfExplosion == PHASE_SHIFT
 			|| missile.extraDamage)
 		{
 			Audio.play(Audio.explosion4);
@@ -4097,21 +4102,21 @@ public class Enemy extends MovingObject implements ExplosionTypes
 		this.takeDamage(missile.dmg);
 		if(this.model == BARRIER)
 		{
-			if((missile.type == JUMBO || missile.type == PHASE_SHIFT || missile.extraDamage)
+			if((missile.typeOfExplosion == JUMBO || missile.typeOfExplosion == PHASE_SHIFT || missile.extraDamage)
 				&& MyMath.tossUp(	0.5f
 									* this.deactivationProb
-									* (( (missile.type == JUMBO 
-											|| missile.type == PHASE_SHIFT) 
+									* (( (missile.typeOfExplosion == JUMBO
+											|| missile.typeOfExplosion == PHASE_SHIFT)
 										  && missile.extraDamage) ? 2 : 1)))
 			{
 				this.hitpoints = 0;
 			}
-			else if(MyMath.tossUp(this.deactivationProb *(missile.type == PLASMA ? 2 : 1)))
+			else if(MyMath.tossUp(this.deactivationProb *(missile.typeOfExplosion == PLASMA ? 2 : 1)))
 			{
 				this.snooze(true);
 			}
 		}		
-		if(missile.type == STUNNING 
+		if(missile.typeOfExplosion == STUNNING
 		   && this.isStunnable
 		   && this.nonStunableTimer == READY)
 		{			
@@ -4171,7 +4176,7 @@ public class Enemy extends MovingObject implements ExplosionTypes
 			this.cloakingTimer = ACTIVE;
 		}
 		if( missile != null 
-		    && missile.type == STUNNING 
+		    && missile.typeOfExplosion == STUNNING
 		    && this.cloakingTimer != DISABLED)
 		{
 			this.uncloak(this.model == BARRIER ? DISABLED : READY);
@@ -4196,22 +4201,22 @@ public class Enemy extends MovingObject implements ExplosionTypes
 
 	private void explode(ArrayList<LinkedList<Explosion>> explosion, Helicopter helicopter, Missile missile)
 	{
-		explode(explosion, helicopter, missile.speed, missile.type, missile.extraDamage);
+		explode(explosion, helicopter, missile.speed, missile.typeOfExplosion, missile.extraDamage);
 	}	
 	void explode(ArrayList<LinkedList<Explosion>> explosion, Helicopter helicopter)
 	{
-		explode(explosion, helicopter, 0, 0, false);
+		explode(explosion, helicopter, 0, STANDARD, false);
 	}	
-	private void explode(ArrayList<LinkedList<Explosion>> explosion, Helicopter helicopter, double missileSpeed, int missileType, boolean extraDamage)
+	private void explode(ArrayList<LinkedList<Explosion>> explosion, Helicopter helicopter, double missileSpeed, ExplosionTypes explosionType, boolean extraDamage)
 	{		
 		if(this.explodingTimer == 0){this.explodingTimer = 7;}
 		Explosion.start(explosion, 
 						helicopter, 
-						this.bounds.getX() + ((missileType != EMP && this.model != BARRIER)
+						this.bounds.getX() + ((explosionType != EMP && this.model != BARRIER)
 							? (missileSpeed < 0 ? 2 : 1) * this.bounds.getWidth()/3
 							: this.bounds.getWidth()/2), 
 						this.bounds.getY() + this.bounds.getHeight()/2, 
-						missileType, extraDamage);
+						explosionType, extraDamage);
 	}
 	
 	void destroy(Helicopter helicopter){destroy(helicopter, null, true);}
@@ -4272,7 +4277,7 @@ public class Enemy extends MovingObject implements ExplosionTypes
 		{
 			this.explode(controller.explosion, helicopter);
 		}		
-		else if(missile.type != STUNNING)
+		else if(missile.typeOfExplosion != STUNNING)
 		{
 			this.explode(controller.explosion, helicopter, missile);
 		}		
@@ -4526,7 +4531,7 @@ public class Enemy extends MovingObject implements ExplosionTypes
 		this.staticChargeTimer = STATIC_CHARGE_TIME;
 		helicopter.receiveStaticCharged(2.5f);
 		Audio.play(Audio.emp);
-		Explosion.start(explosion, helicopter, (int)this.bounds.getCenterX(), (int)this.bounds.getCenterY(), 2, false, this);				
+		Explosion.start(explosion, helicopter, (int)this.bounds.getCenterX(), (int)this.bounds.getCenterY(), STUNNING, false, this);
 	}
 
 	public boolean isHitable(Missile missile)

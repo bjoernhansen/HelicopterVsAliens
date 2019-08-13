@@ -44,7 +44,8 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 public class Menu implements Constants
 {
 	private static final String
-		VERSION = "Version 1.3.4";		// Spielversion
+		VERSION =   "Version 1.3.4",			// Spielversion
+		GAME_NAME = "Helicopter vs. Aliens";
 	
 	private static final int
 		SCORESCREEN_SPACE_BETWEEN_ROWS = 30, 
@@ -55,12 +56,11 @@ public class Menu implements Constants
         SETTING_LEFT = 80,
         SETTING_COLUMN_SPACING = 145,
         SETTING_LINE_SPACING = 40,
-        SETTING_TOP = 130;
+        SETTING_TOP = 130,
 
-	private static final String
-			GAME_NAME = "Helicopter vs. Aliens";
+		DISABLED = -1;
 
-	public static int 
+	public static int
 		page, 							// ausgewählte Seite im Startscreen-Menü
 		helicopterSelection,			// Helicopterauswahl im Startscreen-Menü
 		levelDisplayTimer,				// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
@@ -70,8 +70,8 @@ public class Menu implements Constants
 	
 		// Menu-Timer
 		messageTimer, 					// regulieren die Dauer [frames] der Nachrichtenanzeige im Werkstatt-Menü
-		moneyDisplayTimer,			// regulieren die Dauer [frames] der Geld-Anzeige im Spiel
-		crossTimer,					// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem Startscreen
+		moneyDisplayTimer,				// regulieren die Dauer [frames] der Geld-Anzeige im Spiel
+		crossTimer,						// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem Startscreen
 		unlockedTimer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 		effectTimer[] = new int[Helicopter.NR_OF_TYPES];	// regulieren die Helikopter-Animationen im Startscreen-Menü
   
@@ -3218,8 +3218,8 @@ public class Menu implements Constants
 	
 	public static void repaintBackground(Graphics g, Controller controller)
 	{
-		if(controller.backgroundRepaint > 1){controller.backgroundRepaint = DISABLED;}
-		else controller.backgroundRepaint++;
+		if(controller.backgroundRepaintTimer > 1){controller.backgroundRepaintTimer = DISABLED;}
+		else controller.backgroundRepaintTimer++;
 		g.setColor(Color.black);
 		g.fillRect(0,
 				   0,

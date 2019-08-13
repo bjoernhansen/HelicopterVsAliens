@@ -41,12 +41,16 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
 									   WindowListener, Constants
 {
-	private static final long 
+	private static int
+		BACKGROUND_PAINT_DISABLED = -1;
+
+	private static final long
 		serialVersionUID = 5775063502338544548L, 
 		DELAY = 16;
-	
-	static int
-		skipFrameFlag = DISABLED;
+
+	// TODO muss vermutlich nicht statisch sein
+	private static FrameSkipStatusTypes
+		frameSkipStatus = FrameSkipStatusTypes.DISABLED;
 		
 	static long	
 		tm;
@@ -64,7 +68,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 
 	public int
 		framesCounter = 0,
-		backgroundRepaint = 0;
+		backgroundRepaintTimer = 0;
 	
 	long
 		fpsStartTime;
@@ -77,7 +81,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		
 	private Helicopter
 		helicopter = HelicopterFactory.create(HelicopterTypes.getDefault());
-	
+
+	// TODO auf EnumMap umstellen
 	public ArrayList<LinkedList<Enemy>>
 		enemies = new ArrayList<>(3);
 	public ArrayList<LinkedList<Missile>>
@@ -155,7 +160,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void run()
 	{
-		if(skipFrameFlag != ACTIVE){tm = System.currentTimeMillis();}
+		if(frameSkipStatus != FrameSkipStatusTypes.ACTIVE){tm = System.currentTimeMillis();}
 		while(Thread.currentThread() == this.animator)
 		{			
 			repaint();
@@ -165,7 +170,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 				long pauseTime = tm - System.currentTimeMillis();
 				if(pauseTime < 1)
 				{
-					skipFrameFlag = ACTIVE;
+					frameSkipStatus = FrameSkipStatusTypes.ACTIVE;
 				}
 				else{Thread.sleep(pauseTime);}
 			}
@@ -183,11 +188,11 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{		
 		if(this.offGraphics != null)
 		{			
-			if(skipFrameFlag == INACTIVE){
-				skipFrameFlag = DISABLED;}
+			if(frameSkipStatus == FrameSkipStatusTypes.INACTIVE){
+				frameSkipStatus = FrameSkipStatusTypes.DISABLED;}
 			else
 			{					
-				if(this.backgroundRepaint != DISABLED){Menu.repaintBackground(g, this);}
+				if(this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED){Menu.repaintBackground(g, this);}
 				g.drawImage(this.offImage, 
 							Main.displayShift.width, // 0
 							Main.displayShift.height, // 0
@@ -196,10 +201,10 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			
 			if(Main.isFullScreen || this.mouseInWindow){updateGame();}
 			
-			if(skipFrameFlag == ACTIVE)
+			if(frameSkipStatus == FrameSkipStatusTypes.ACTIVE)
 			{
 				//skipped_counter++;
-				skipFrameFlag = INACTIVE;
+				frameSkipStatus = FrameSkipStatusTypes.INACTIVE;
 			}
 			else
 			{				
@@ -321,7 +326,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			this.mouse_in_window = true;
 			Events.time_aktu = System.currentTimeMillis();
 		}*/
-		this.backgroundRepaint = READY;
+		this.backgroundRepaintTimer = 0;
 	}	
 	
 	@Override

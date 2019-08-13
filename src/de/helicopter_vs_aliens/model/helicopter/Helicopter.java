@@ -1,4 +1,21 @@
 package de.helicopter_vs_aliens.model.helicopter;
+
+import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.TimesOfDay;
+import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
+import de.helicopter_vs_aliens.score.Savegame;
+import de.helicopter_vs_aliens.util.MyColor;
+import de.helicopter_vs_aliens.util.MyMath;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -6,38 +23,23 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.TimesOfDay;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.MovingObject;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
-import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
-
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
+import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.Pegasus.INTERPHASE_GENERATOR_ALPHA;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
-import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
-import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 
 
-public abstract class Helicopter extends MovingObject implements ExplosionTypes
+public abstract class Helicopter extends MovingObject
 {			
 	// Konstanten
     public static final int
@@ -727,7 +729,7 @@ public abstract class Helicopter extends MovingObject implements ExplosionTypes
 		return enemy.bounds.intersects(this.bounds)
 				&& this.interphaseGeneratorTimer <= this.shiftTime
 				&& enemy.alpha == 255 
-				&& enemy.borrowTimer != READY;
+				&& enemy.borrowTimer != 0;
 	}
 
 	void adaptPosTo(Enemy enemy)
@@ -1050,7 +1052,7 @@ public abstract class Helicopter extends MovingObject implements ExplosionTypes
 									? FOCAL_PNT_X_LEFT 
 									: FOCAL_PNT_X_RIGHT)), 
 							(int)(this.bounds.getY() + FOCAL_PNT_Y_EXP), 
-							0, 
+							STANDARD,
 							false);
 		}
 		Events.isRestartWindowVisible = true;
@@ -1398,7 +1400,7 @@ public abstract class Helicopter extends MovingObject implements ExplosionTypes
 		return this.basicCollisionRequirementsSatisfied(e)
 			   && !(e.model == BARRIER 
 						&& (    e.alpha != 255 
-							||  e.borrowTimer == READY
+							||  e.borrowTimer == 0
 							|| !e.hasUnresolvedIntersection));
 	}
 
@@ -1412,7 +1414,7 @@ public abstract class Helicopter extends MovingObject implements ExplosionTypes
 	
 	public float getDamageFactor()
 	{		
-		return this.enhancedRadiationTimer == READY
+		return this.enhancedRadiationTimer == 0
 					? this.isInvincible()
 						? INVU_DMG_FACTOR
 						: 1.0f 
@@ -1534,7 +1536,7 @@ public abstract class Helicopter extends MovingObject implements ExplosionTypes
 				&& this.bounds.getY() + 60 < this.bounds.getY() + 0.8 * this.bounds.getHeight());
 	}
 
-	public int getCurrentMissileType(boolean stunningMissile)
+	public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
 	{
 		return STANDARD;
 	}

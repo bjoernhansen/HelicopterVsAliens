@@ -2,13 +2,9 @@ package de.helicopter_vs_aliens;
 
 public interface Constants
 {	
+	// TODO abschaffen da Anti pattern
 	int
 		INACTIVE = 0,
     	ACTIVE = 1,
-	    DESTROYED = 2,
-	    
-	    DISABLED = -1,
-	    READY = 0,
-	    START = 0,
-	    PRE_READY = 1;
+	    DESTROYED = 2;
 }

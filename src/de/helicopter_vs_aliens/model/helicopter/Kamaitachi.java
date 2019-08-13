@@ -4,11 +4,14 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 
@@ -23,7 +26,7 @@ public final class Kamaitachi extends Helicopter
     }
 
     @Override
-    public int getCurrentMissileType(boolean stunningMissile)
+    public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if(this.plasmaActivationTimer > 0){return PLASMA;}
         return STANDARD;

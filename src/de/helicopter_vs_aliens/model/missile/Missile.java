@@ -20,11 +20,13 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_2_SERVANT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
-public class Missile extends MovingObject implements ExplosionTypes
+public class Missile extends MovingObject
 {	
 	private static final float
 		POWERUP_DAMAGE_FACTOR = 3f,				// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
@@ -32,7 +34,6 @@ public class Missile extends MovingObject implements ExplosionTypes
 		SHIFT_DAMAGE_FACTOR = 8.9f;				// Pegasus-Klasse: Faktor, um den sich die Schadenswirkung einer Rakete erhöht, wenn diese abgeschossen wird, während der Interphasen-Generator aktiviert ist
 
 	public int
-		type,
 		dmg,			// Schaden, den die Rakete beim Gegner anrichtet, wenn sie trifft
 		kills, 			// nur für Roch- und Orochi Klasse: mit dieser Rakete vernichtete Gegner
 		earnedMoney;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
@@ -50,7 +51,10 @@ public class Missile extends MovingObject implements ExplosionTypes
 	
 	public HashMap<Integer, Enemy> 
 		hits = new HashMap<> ();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
-	
+
+	public ExplosionTypes
+		typeOfExplosion;
+
 	private int
 		sisterKills,			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
 		nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
@@ -61,7 +65,7 @@ public class Missile extends MovingObject implements ExplosionTypes
 	private boolean 
 		flying;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
-	
+
 	public void launch(Helicopter helicopter, boolean stunningMissile, int y)
 	{
 		this.speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
@@ -70,7 +74,7 @@ public class Missile extends MovingObject implements ExplosionTypes
 		this.flying = true;	
 		this.extraDamage = helicopter.hasTripleDmg();
 
-		this.type = helicopter.getCurrentMissileType(stunningMissile);
+		this.typeOfExplosion = helicopter.getCurrentExplosionTypeOfMissiles(stunningMissile);
 
 		this.setBounds(helicopter, y);
 		this.setDmg(helicopter);
@@ -93,11 +97,11 @@ public class Missile extends MovingObject implements ExplosionTypes
 	{
 		this.bounds.setRect(helicopter.location.getX() 
 								- (helicopter.isMovingLeft
-									? (this.type == JUMBO ? 30 : 20) 
+									? (this.typeOfExplosion == JUMBO ? 30 : 20)
 									: 0), 
 							helicopter.bounds.getY() + y, 
-							this.type == JUMBO  ? 30 : 20, 
-							this.type == JUMBO ? 6 : 4);
+							this.typeOfExplosion == JUMBO  ? 30 : 20,
+							this.typeOfExplosion == JUMBO ? 6 : 4);
 		this.setPaintBounds((int)this.bounds.getWidth(),
 							  (int)this.bounds.getHeight());
 	}
@@ -115,7 +119,7 @@ public class Missile extends MovingObject implements ExplosionTypes
 		this.dmg = 	(int)(helicopter.currentFirepower
 				* (helicopter.numberOfCannons == 3 ? OROCHI_EXTRA_DAMAGE_FACTOR : 1.0f)
 				* ((helicopter.plasmaActivationTimer == 0) ? 1 : MyMath.plasmaDamageFactor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
-				* (this.type == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
+				* (this.typeOfExplosion == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
 				* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 
@@ -175,9 +179,9 @@ public class Missile extends MovingObject implements ExplosionTypes
 		{
 			if (enemy.isHitable(this))
 			{
-				if (enemy.teleportTimer == READY
-					&& enemy.stunningTimer == READY
-					&& enemy.empSlowedTimer == READY)
+				if (enemy.teleportTimer == 0
+					&& enemy.stunningTimer == 0
+					&& enemy.empSlowedTimer == 0)
 				{
 					enemy.teleport();
 				} else if (!enemy.isInvincible())
@@ -196,7 +200,7 @@ public class Missile extends MovingObject implements ExplosionTypes
 				
 				if (enemy.hasHPsLeft())
 				{
-					if (enemy.stunningTimer == READY)
+					if (enemy.stunningTimer == 0)
 					{
 						enemy.reactToHit(helicopter, this);
 					}
