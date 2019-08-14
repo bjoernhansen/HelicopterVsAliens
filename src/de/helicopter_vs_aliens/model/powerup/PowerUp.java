@@ -5,10 +5,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -18,6 +20,8 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
@@ -59,7 +63,7 @@ public class PowerUp extends MovingObject
 
 		
 	public static void
-	updateAll(ArrayList<LinkedList<PowerUp>> powerUp,
+	updateAll(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
 			  Helicopter helicopter)
 	{
     	for(Iterator<PowerUp> i = powerUp.get(ACTIVE).iterator(); i.hasNext();)
@@ -76,7 +80,7 @@ public class PowerUp extends MovingObject
 
 	public static void
 	paintAll(Graphics2D g2d,
-			 ArrayList<LinkedList<PowerUp>> powerUp)
+			 EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp)
 	{
 		for(PowerUp pu : powerUp.get(ACTIVE))
 		{
@@ -268,8 +272,8 @@ public class PowerUp extends MovingObject
 		this.setPaintBounds(MENU_SIZE, MENU_SIZE);
 	}
 
-	public static void activate(Helicopter helicopter, ArrayList<LinkedList<PowerUp>> powerUp, Enemy enemy, 
-	                     PowerUpTypes type, boolean to_status_bar)
+	public static void activate(Helicopter helicopter, EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, Enemy enemy,
+                                PowerUpTypes type, boolean to_status_bar)
 	{
 		Iterator<PowerUp> i = powerUp.get(INACTIVE).iterator();
 		PowerUp pu;					

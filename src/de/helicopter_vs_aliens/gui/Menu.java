@@ -15,6 +15,7 @@ import java.util.Map;
 
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -29,6 +30,9 @@ import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 import de.helicopter_vs_aliens.util.dictionary.Languages;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
@@ -41,7 +45,7 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 
 // TODO all identifiier to camelCase
-public class Menu implements Constants
+public class Menu
 {
 	private static final String
 		VERSION =   "Version 1.3.4",			// Spielversion
@@ -1070,9 +1074,9 @@ public class Menu implements Constants
 		else if(specialInfoSelection == 7)
 		{
 			infoString = "Aktive Hintergrundobjekte: "
-						  + controller.bgObject.get(ACTIVE).size()
+						  + controller.backgroundObject.get(ACTIVE).size()
 						  + ";   Inaktive Hintergrundobjekte: "
-						  + controller.bgObject.get(INACTIVE).size();
+						  + controller.backgroundObject.get(INACTIVE).size();
 		}
 		else if(specialInfoSelection == 8)
 		{

@@ -15,13 +15,13 @@ import java.awt.event.WindowEvent;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
-public class Main implements Constants
+public class Main
 {
 	public static final Dimension
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = true;
+    	TESTMODE = false;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),

@@ -3,11 +3,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
@@ -15,6 +17,8 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
@@ -22,7 +26,7 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
 
 
-public class EnemyMissile implements Constants
+public class EnemyMissile
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
@@ -155,8 +159,7 @@ public class EnemyMissile implements Constants
 	
 
 	public static void
-	paintAll(Graphics2D g2d,
-			 ArrayList<LinkedList<EnemyMissile>> enemyMissile)
+	paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>> enemyMissile)
 	{
 		for(EnemyMissile em : enemyMissile.get(ACTIVE))
 		{
@@ -164,7 +167,7 @@ public class EnemyMissile implements Constants
 		}		
 	}
 
-	public static void updateAll(ArrayList<LinkedList<EnemyMissile>> enemyMissile,
+	public static void updateAll(EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>> enemyMissile,
 								 Helicopter helicopter)
 	{
 		for(Iterator<EnemyMissile> i = enemyMissile.get(ACTIVE).iterator(); i.hasNext();)

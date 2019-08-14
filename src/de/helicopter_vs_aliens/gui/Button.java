@@ -18,7 +18,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 // TODO Vererbung auch für Buttons, Enums für Button-Typen
 
-public class Button implements Constants
+public class Button
 {
 	private static final int 
 		BUTTON_DISTANCE = 60;

@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.audio;
 
-import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
@@ -12,7 +11,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 
 
-public class Audio implements Constants
+public class Audio
 {
     public static final boolean
         MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist

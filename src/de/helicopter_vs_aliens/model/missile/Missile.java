@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.MovingObject;
@@ -12,11 +13,9 @@ import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_2_SERVANT;
@@ -295,7 +294,7 @@ public class Missile extends MovingObject
 				     (this.paintBounds.height));
 	}
 	
-	private void inactivate(ArrayList<LinkedList<Missile>> missile, Helicopter helicopter)
+	private void inactivate(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile, Helicopter helicopter)
 	{							
 		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
 		{
@@ -349,7 +348,7 @@ public class Missile extends MovingObject
 				}
 			}									
 		}					
-		missile.get(INACTIVE).add(this);		
+		missile.get(CollectionSubgroupTypes.INACTIVE).add(this);
 	}
 	
 	public static boolean canTakeCredit(Missile missile, Enemy enemy)

@@ -1,45 +1,33 @@
 package de.helicopter_vs_aliens.control;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import javax.swing.JPanel;
-
-import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.Main;
-import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.MyColor;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+import java.util.EnumMap;
+import java.util.LinkedList;
+
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 
 public class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
-									   WindowListener, Constants
+									   WindowListener
 {
 	private static int
 		BACKGROUND_PAINT_DISABLED = -1;
@@ -82,19 +70,18 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	private Helicopter
 		helicopter = HelicopterFactory.create(HelicopterTypes.getDefault());
 
-	// TODO auf EnumMap umstellen
-	public ArrayList<LinkedList<Enemy>>
-		enemies = new ArrayList<>(3);
-	public ArrayList<LinkedList<Missile>>
-		missile = new ArrayList<>(2);	
-	public ArrayList<LinkedList<Explosion>>
-		explosion =    new ArrayList<>(2);	
-	public ArrayList<LinkedList<EnemyMissile>>
-		enemyMissile = new ArrayList<>(2);	
-	public ArrayList<LinkedList<BackgroundObject>>
-		bgObject = 	   new ArrayList<>(2);	
-	public ArrayList<LinkedList<PowerUp>>
-		powerUp = 	   new ArrayList<>(2);
+	public EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>>
+		enemies = new EnumMap<>(CollectionSubgroupTypes.class);
+	public EnumMap<CollectionSubgroupTypes, LinkedList<Missile>>
+		missile = new EnumMap<>(CollectionSubgroupTypes.class);
+	public EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>>
+		explosion = new EnumMap<>(CollectionSubgroupTypes.class);
+	public EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>>
+		enemyMissile = new EnumMap<>(CollectionSubgroupTypes.class);
+	public EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>>
+		backgroundObject = new EnumMap<>(CollectionSubgroupTypes.class);
+	public EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>>
+		powerUp = new EnumMap<>(CollectionSubgroupTypes.class);
 		
 	Thread animator;
 	Image offImage;
@@ -130,21 +117,20 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		Menu.initializeMenu(this.helicopter);
 		Menu.updateButtonLabels(this.helicopter);
 		this.initializeLists();
-		BackgroundObject.initialize(this.bgObject);
+		BackgroundObject.initialize(this.backgroundObject);
 	}
 	
 	void initializeLists()
 	{
-		for(int i = 0; i < 2; i++)
-		{
-			this.missile.add(	   i, new LinkedList<>());
-			this.explosion.add(	   i, new LinkedList<>());
-			this.bgObject.add(	   i, new LinkedList<>());
-			this.enemyMissile.add( i, new LinkedList<>());
-			this.powerUp.add(	   i, new LinkedList<>());
-			this.enemies.add(		   i, new LinkedList<>());
-		}		
-		this.enemies.add(DESTROYED, new LinkedList<>());
+		CollectionSubgroupTypes.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
+			this.missile.put(	   		standardSubgroupTypes, new LinkedList<>());
+			this.explosion.put(	   		standardSubgroupTypes, new LinkedList<>());
+			this.backgroundObject.put(	standardSubgroupTypes, new LinkedList<>());
+			this.enemyMissile.put( 		standardSubgroupTypes, new LinkedList<>());
+			this.powerUp.put(	   		standardSubgroupTypes, new LinkedList<>());
+			this.enemies.put(		   	standardSubgroupTypes, new LinkedList<>());
+		});
+		this.enemies.put(DESTROYED, new LinkedList<>());
 	}
 	
 	public void start()
@@ -227,7 +213,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			if(!Menu.isMenueVisible)
 			{				
 		    	MyColor.calculateVariableGameColors(this.framesCounter);
-				BackgroundObject.update(this, this.bgObject);
+				BackgroundObject.update(this, this.backgroundObject);
 				Events.updateTimer();
 				Menu.updateDisplays(this.helicopter);
 				Enemy.updateAllDestroyed(this, this.helicopter);
@@ -255,7 +241,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		if(Events.window == GAME)
 		{						
 			// zeichnen aller sichtbaren Objekte						
-			BackgroundObject.paintBackground(g2d, this.bgObject);
+			BackgroundObject.paintBackground(g2d, this.backgroundObject);
 			Menu.paintBackgroundDisplays( g2d, this, this.helicopter);
 			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d, this.helicopter);}
 			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
@@ -265,7 +251,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			this.helicopter.paint(g2d, Events.timeOfDay);			
 			Explosion.paintAll(g2d, this.explosion);
 			PowerUp.paintAll(g2d, this.powerUp);
-			BackgroundObject.paintForeground(g2d, this.bgObject);
+			BackgroundObject.paintForeground(g2d, this.backgroundObject);
 		}
 		Menu.paint(g2d, this, this.helicopter);
 	}

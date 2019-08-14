@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.control;
 
-import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -17,11 +16,11 @@ import de.helicopter_vs_aliens.util.MyMath;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
@@ -35,7 +34,7 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 // TODO Timer Klasse schreiben
-public class Events implements Constants
+public class Events
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
@@ -120,7 +119,7 @@ public class Events implements Constants
 				Controller.shutDown();}
 			else if(window != REPAIR_SHOP)
 			{
-				cancel(controller.bgObject, helicopter, savegame);
+				cancel(controller.backgroundObject, helicopter, savegame);
 			}
 		}		
 		else if(window == SETTINGS && Menu.page == 4)
@@ -338,7 +337,7 @@ public class Events implements Constants
 		}
 		else if(window == REPAIR_SHOP)
 		{
-			repairShopMousePressedLeft(helicopter, controller.enemies, controller.bgObject);
+			repairShopMousePressedLeft(helicopter, controller.enemies, controller.backgroundObject);
 		}
 		else if(window == STARTSCREEN)
 		{
@@ -346,7 +345,7 @@ public class Events implements Constants
 		}
 		else if(Menu.startscreenMenuButton.get("Cancel").bounds.contains(cursor))
 		{
-			cancel(controller.bgObject, helicopter, Controller.savegame);
+			cancel(controller.backgroundObject, helicopter, Controller.savegame);
 		}
 		else 
 		{		
@@ -366,7 +365,7 @@ public class Events implements Constants
 				{					
 					Controller.savegame.saveToFile(helicopter, true);
 					conditionalReset(controller, helicopter, true);
-					restartGame(helicopter, controller.bgObject);
+					restartGame(helicopter, controller.backgroundObject);
 					Audio.applause1.stop();
 				}
 				else if(Menu.inGameButton.get("MMStopMusic").bounds.contains(cursor))
@@ -434,9 +433,9 @@ public class Events implements Constants
 		}
 	}
 	
-	private static void repairShopMousePressedLeft( Helicopter helicopter, 
-	                                                ArrayList<LinkedList<Enemy>> enemies,
-	                                                ArrayList<LinkedList<BackgroundObject>> bgObject)
+	private static void repairShopMousePressedLeft(Helicopter helicopter,
+												   EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemies,
+												   EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> bgObject)
 	{
 		// Reparatur des Helikopters
 		if(Menu.repairShopButton.get("RepairButton").bounds.contains(cursor))
@@ -766,8 +765,8 @@ public class Events implements Constants
 		}		
 	}
 	
-	private static void cancel( ArrayList<LinkedList<BackgroundObject>> bgObject,
-	                            Helicopter helicopter, Savegame savegame)
+	private static void cancel(EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> bgObject,
+							   Helicopter helicopter, Savegame savegame)
 	{
 		Audio.play(Audio.choose);
 		if(window == SCORESCREEN)
@@ -1064,7 +1063,7 @@ public class Events implements Constants
 			controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
 			controller.enemies.get(DESTROYED).clear();
 			if(level < 6){
-				BackgroundObject.reset(controller.bgObject);}
+				BackgroundObject.reset(controller.backgroundObject);}
 		}									
 		controller.explosion.get(INACTIVE).addAll(controller.explosion.get(ACTIVE));
 		controller.explosion.get(ACTIVE).clear();
@@ -1112,7 +1111,7 @@ public class Events implements Constants
 			Menu.updateRepairShopButtons(helicopter);}
 	}
 		
-	private static void restartGame(Helicopter helicopter, ArrayList<LinkedList<BackgroundObject>> bgObject)
+	private static void restartGame(Helicopter helicopter, EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> bgObject)
 	{		
 		changeWindow(STARTSCREEN);	
 		helicopter.reset();

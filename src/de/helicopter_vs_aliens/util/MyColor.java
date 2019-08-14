@@ -1,5 +1,4 @@
 package de.helicopter_vs_aliens.util;
-import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
@@ -8,7 +7,7 @@ import java.awt.GradientPaint;
 
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 
-public class MyColor implements Constants
+public class MyColor
 {
 	public static final int 
 		FRAME = 3,

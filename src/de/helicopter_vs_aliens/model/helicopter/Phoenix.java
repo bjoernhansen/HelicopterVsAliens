@@ -1,14 +1,17 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyMath;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
@@ -75,7 +78,7 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp, ArrayList<LinkedList<Explosion>> explosion)
+    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
         if(this.isEnergyAbilityActivatable())
         {
@@ -84,7 +87,7 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp, ArrayList<LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
         this.prepareTeleportation();
     }

@@ -1,13 +1,16 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.util.MyMath;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
@@ -69,12 +72,12 @@ public final class Helios extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp, ArrayList<LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
         this.activatePowerUpGenerator(powerUp);
     }
 
-    private void activatePowerUpGenerator(ArrayList<LinkedList<PowerUp>> powerUp)
+    private void activatePowerUpGenerator(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp)
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWERUP_DURATION);
         this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
@@ -89,7 +92,7 @@ public final class Helios extends Helicopter
             }
             else
             {
-                this.getPowerUp(	powerUp, PowerUpTypes.values()[MyMath.getRandomOrderValue(i)],
+                this.getPowerUp( powerUp, PowerUpTypes.values()[MyMath.getRandomOrderValue(i)],
                         false, i == 0);
             }
             if(MyMath.tossUp(0.7f)){break;}

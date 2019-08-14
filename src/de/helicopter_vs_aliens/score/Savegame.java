@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.score;
 
-import de.helicopter_vs_aliens.Constants;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimesOfDay;
@@ -17,7 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class Savegame implements Constants, Serializable
+public class Savegame implements Serializable
 {
 	private static final int
 		OVERALL_HIGHSCORE_INDEX = 6;

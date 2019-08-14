@@ -1,11 +1,13 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimesOfDay;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -18,11 +20,10 @@ import de.helicopter_vs_aliens.util.MyMath;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
@@ -482,8 +483,8 @@ public abstract class Helicopter extends MovingObject
 	    }		
 	}
 
-	public void update(	ArrayList<LinkedList<Missile>> missile,
-	                   	ArrayList<LinkedList<Explosion>> explosion)
+	public void update(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile,
+					   EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
 	{
 		this.updateTimer();
 		if(this.canRegenerateEnergy()){this.regenerateEnergy();}
@@ -522,7 +523,7 @@ public abstract class Helicopter extends MovingObject
 		return this.regenerationRate;
 	}
 
-	private void evaluateFire(ArrayList<LinkedList<Missile>> missile)
+	private void evaluateFire(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile)
 	{
     	if(this.isReadyForShooting()){this.shoot(missile);}
     	this.fireRateTimer++;
@@ -562,7 +563,7 @@ public abstract class Helicopter extends MovingObject
 	}
 
 	// TODO Code Duplizierungen auflösen
-	void shoot(ArrayList<LinkedList<Missile>> missiles)
+	void shoot(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missiles)
 	{
     	if(this.hasPiercingWarheads){Audio.play(Audio.launch2);}
 		else{Audio.play(Audio.launch1);}
@@ -623,7 +624,7 @@ public abstract class Helicopter extends MovingObject
 		}
 	}
 
-	private void move(ArrayList<LinkedList<Explosion>> explosion)
+	private void move(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
 		if(this.isOnTheGround())
 		{
@@ -1038,7 +1039,7 @@ public abstract class Helicopter extends MovingObject
 		else{this.isCrashing = true;}
     }
     
-    private void crashed(ArrayList<LinkedList<Explosion>> explosion)
+    private void crashed(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
     	this.isActive = false;
     	this.powerUpDecay();
@@ -1253,14 +1254,14 @@ public abstract class Helicopter extends MovingObject
 		MyColor.plating = MyColor.percentColor((this.currentPlating)/this.maxPlating());
 	}
 	
-	public void getPowerUp(ArrayList<LinkedList<PowerUp>> powerUp,
+	public void getPowerUp(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
 	                PowerUpTypes powerUpType,
 	                boolean lastingEffect)
 	{
 		getPowerUp(powerUp, powerUpType, lastingEffect, true);
 	}
 	
-	void getPowerUp(ArrayList<LinkedList<PowerUp>> powerUp, 
+	void getPowerUp(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
 	                PowerUpTypes powerUpType,
 	                boolean lastingEffect,
 	                boolean playSound)
@@ -1464,8 +1465,8 @@ public abstract class Helicopter extends MovingObject
 		this.setBounds();
 	}
 
-	public void tryToUseEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp,
-											   ArrayList<LinkedList<Explosion>> explosion)
+	public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
+									  EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
 	{
 		if(this.isEnergyAbilityActivatable())
 		{
@@ -1473,7 +1474,7 @@ public abstract class Helicopter extends MovingObject
 		}
 	}
 
-	public void useEnergyAbility(ArrayList<LinkedList<PowerUp>> powerUp, ArrayList<LinkedList<Explosion>> explosion){};
+	public void useEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion){};
 
 	public int abilityId(int i)
     {

@@ -1,11 +1,9 @@
 package de.helicopter_vs_aliens.model;
 
-import de.helicopter_vs_aliens.Constants;
-
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
-public abstract class MovingObject implements Constants
+public abstract class MovingObject
 {
 	public final static int
 		GROUND_Y = 426;
