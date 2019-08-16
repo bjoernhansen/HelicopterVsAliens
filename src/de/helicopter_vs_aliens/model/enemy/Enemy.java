@@ -39,7 +39,7 @@ import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.*;
-import static de.helicopter_vs_aliens.model.enemy.Positions.*;
+import static de.helicopter_vs_aliens.model.enemy.BarrierPositionTypes.*;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
@@ -225,9 +225,7 @@ public class Enemy extends MovingObject
 		startingHitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegers)
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
-		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen 		
-		touchedSite,
-		lastTouchedSite,
+		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
 		alpha,
 		borrowTimer,
 		untouchedCounter,
@@ -243,6 +241,10 @@ public class Enemy extends MovingObject
 	
 	public EnemyTypes
 		type;
+	
+	public BarrierPositionTypes
+		touchedSite,
+		lastTouchedSite;
 	
 	// Farben
     public Color 
