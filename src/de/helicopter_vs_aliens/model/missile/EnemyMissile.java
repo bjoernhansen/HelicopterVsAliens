@@ -2,18 +2,15 @@ package de.helicopter_vs_aliens.model.missile;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
@@ -21,7 +18,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
 
@@ -85,14 +82,14 @@ public class EnemyMissile
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-    		Explosion.start(Controller.getInstance().explosion,
+    		Explosion.start(Controller.getInstance().explosions,
     						helicopter,
 							(int)(helicopter.bounds.getX()
 									+ (helicopter.isMovingLeft
 										? Helicopter.FOCAL_PNT_X_LEFT
 										: Helicopter.FOCAL_PNT_X_RIGHT)),
 							(int)(helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP),
-							STANDARD,
+                    ORDINARY,
 							false);
     	}
     	else 

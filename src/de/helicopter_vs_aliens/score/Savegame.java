@@ -101,7 +101,7 @@ public class Savegame implements Serializable
 			Savegame temp = lastGame();
 			
 			HighscoreEntry.currentPlayerName = temp.currentPlayerName;
-			Menu.language = temp.language;
+			Menu.setLanguage(temp.language);
 			Menu.originalResulution = temp.originalResulution;
 			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
 			Audio.isSoundOn = temp.isSoundOn;

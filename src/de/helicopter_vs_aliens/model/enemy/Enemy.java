@@ -2646,7 +2646,7 @@ public class Enemy extends MovingObject
 		
 		if(helicopter.canCollideWith(this)){this.collision(controller, helicopter);}
 		if(helicopter.getType() == PEGASUS){this.checkForEmpStrike(controller, helicopter);}
-		if(this.hasDeadlyGroundContact()){this.destroy(helicopter, controller.powerUp, false);}
+		if(this.hasDeadlyGroundContact()){this.destroy(helicopter, controller.powerUps, false);}
 		if(this.isToBeRemoved()){this.prepareRemoval();}
 		this.setPaintBounds();
 	}	
@@ -2992,7 +2992,7 @@ public class Enemy extends MovingObject
 			}
 			this.reactToHit(helicopter, null);
 			
-			Explosion.start(controller.explosion, helicopter,
+			Explosion.start(controller.explosions, helicopter,
 							this.bounds.getCenterX(), 
 							this.bounds.getCenterY(), STUNNING, false);
 		}
@@ -3333,7 +3333,7 @@ public class Enemy extends MovingObject
 								 		Integer.MAX_VALUE/2, 
 								 		EnemyMissile.DIAMETER+30))))) 
 		{
-			this.shoot(	controller.enemyMissile,
+			this.shoot(	controller.enemyMissiles,
 						this.hasDeadlyShots() ? BUSTER : DISCHARGER,
 						this.shotSpeed + 3*Math.random()+5);
 			
@@ -3385,7 +3385,7 @@ public class Enemy extends MovingObject
 				this.shootingDirection.setLocation(this.shootingDirection.getX()/distance,
 													this.shootingDirection.getY()/distance);
 			}
-			this.shoot(controller.enemyMissile, this.shotType, this.shotSpeed);
+			this.shoot(controller.enemyMissiles, this.shotType, this.shotSpeed);
 		}				
 		this.barrierShootTimer--;
 	}
@@ -3934,7 +3934,7 @@ public class Enemy extends MovingObject
 		for(Iterator<Enemy> i = controller.enemies.get(DESTROYED).iterator(); i.hasNext();)
 		{
 			Enemy e = i.next();
-			e.updateDead(controller.explosion, helicopter);
+			e.updateDead(controller.explosions, helicopter);
 			
 			if(	helicopter.basicCollisionRequirementsSatisfied(e)
 				&& !e.hasCrashed)
@@ -3977,7 +3977,7 @@ public class Enemy extends MovingObject
 						helicopter, 
 						this.bounds.getCenterX(),
 						this.bounds.getCenterY(),
-						this.type == KABOOM ? JUMBO : STANDARD,
+						this.type == KABOOM ? JUMBO : ORDINARY,
 						this.type == KABOOM);
 	}
 	
@@ -4006,18 +4006,18 @@ public class Enemy extends MovingObject
 			&& !this.isInvincible()
 			&& !this.isDestroyed)
 		{
-			this.explode( controller.explosion,
+			this.explode( controller.explosions,
 						  helicopter, 
 						  0, 
 						  this.type == KABOOM
 						  	? JUMBO 
-						  	: STANDARD, 
+						  	: ORDINARY,
 						  this.type == KABOOM);
 			
 			if(	helicopter.hasShortrangeRadiation
 				&& !(this.type == KABOOM))
 			{
-				this.rewardFor(controller.powerUp,
+				this.rewardFor(controller.powerUps,
 								null, 
 								helicopter, 
 								helicopter.hasPerformedTeleportKill());
@@ -4212,7 +4212,7 @@ public class Enemy extends MovingObject
 	}	
 	void explode(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion, Helicopter helicopter)
 	{
-		explode(explosion, helicopter, 0, STANDARD, false);
+		explode(explosion, helicopter, 0, ORDINARY, false);
 	}	
 	private void explode(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion, Helicopter helicopter, double missileSpeed, ExplosionTypes explosionType, boolean extraDamage)
 	{		
@@ -4275,23 +4275,23 @@ public class Enemy extends MovingObject
 	public void die(Controller controller, Helicopter helicopter,
 					Missile missile, boolean beamKill)
 	{		
-		this.rewardFor(controller.powerUp, missile, helicopter, beamKill);
+		this.rewardFor(controller.powerUps, missile, helicopter, beamKill);
 		this.destroy(helicopter);
 		if(this.isShielding){this.stopShielding();}
 		if(this.cloakingTimer != DISABLED){Audio.play(Audio.cloak);}
 		
 		if(missile == null)
 		{
-			this.explode(controller.explosion, helicopter);
+			this.explode(controller.explosions, helicopter);
 		}		
 		else if(missile.typeOfExplosion != STUNNING)
 		{
-			this.explode(controller.explosion, helicopter, missile);
+			this.explode(controller.explosions, helicopter, missile);
 		}		
 		
 		this.evaluateBossDestructionEffect(helicopter,
 											  controller.enemies,
-											  controller.explosion);
+											  controller.explosions);
 			
 		if(this.isCarrier){
 			lastCarrier = this;}

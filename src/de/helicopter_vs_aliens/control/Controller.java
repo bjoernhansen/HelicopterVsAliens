@@ -14,6 +14,7 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.MyColor;
+import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,8 +37,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		serialVersionUID = 5775063502338544548L, 
 		DELAY = 16;
 
-	// TODO muss vermutlich nicht statisch sein
-	private static FrameSkipStatusTypes
+	private FrameSkipStatusTypes
 		frameSkipStatus = FrameSkipStatusTypes.DISABLED;
 		
 	static long	
@@ -73,24 +73,24 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	public EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupTypes.class);
 	public EnumMap<CollectionSubgroupTypes, LinkedList<Missile>>
-		missile = new EnumMap<>(CollectionSubgroupTypes.class);
+		missiles = new EnumMap<>(CollectionSubgroupTypes.class);
 	public EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>>
-		explosion = new EnumMap<>(CollectionSubgroupTypes.class);
+		explosions = new EnumMap<>(CollectionSubgroupTypes.class);
 	public EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>>
-		enemyMissile = new EnumMap<>(CollectionSubgroupTypes.class);
+		enemyMissiles = new EnumMap<>(CollectionSubgroupTypes.class);
 	public EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>>
-		backgroundObject = new EnumMap<>(CollectionSubgroupTypes.class);
+		backgroundObjects = new EnumMap<>(CollectionSubgroupTypes.class);
 	public EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>>
-		powerUp = new EnumMap<>(CollectionSubgroupTypes.class);
-		
-	Thread animator;
-	Image offImage;
+		powerUps = new EnumMap<>(CollectionSubgroupTypes.class);
+
 	Graphics2D offGraphics;
-	
+
+	private Thread animator;
+	private Image offImage;
 	private Dimension offDimension;
 	private Shape offscreenClip;
 	private Rectangle2D wholeScreenClip;
-
+	private Dictionary dictionary = new Dictionary();
 	
 	private Controller(){}
 	
@@ -117,17 +117,17 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		Menu.initializeMenu(this.helicopter);
 		Menu.updateButtonLabels(this.helicopter);
 		this.initializeLists();
-		BackgroundObject.initialize(this.backgroundObject);
+		BackgroundObject.initialize(this.backgroundObjects);
 	}
 	
 	void initializeLists()
 	{
 		CollectionSubgroupTypes.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
-			this.missile.put(	   		standardSubgroupTypes, new LinkedList<>());
-			this.explosion.put(	   		standardSubgroupTypes, new LinkedList<>());
-			this.backgroundObject.put(	standardSubgroupTypes, new LinkedList<>());
-			this.enemyMissile.put( 		standardSubgroupTypes, new LinkedList<>());
-			this.powerUp.put(	   		standardSubgroupTypes, new LinkedList<>());
+			this.missiles.put(	   		standardSubgroupTypes, new LinkedList<>());
+			this.explosions.put(	   	standardSubgroupTypes, new LinkedList<>());
+			this.backgroundObjects.put(	standardSubgroupTypes, new LinkedList<>());
+			this.enemyMissiles.put( 	standardSubgroupTypes, new LinkedList<>());
+			this.powerUps.put(	   		standardSubgroupTypes, new LinkedList<>());
 			this.enemies.put(		   	standardSubgroupTypes, new LinkedList<>());
 		});
 		this.enemies.put(DESTROYED, new LinkedList<>());
@@ -146,7 +146,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void run()
 	{
-		if(frameSkipStatus != FrameSkipStatusTypes.ACTIVE){tm = System.currentTimeMillis();}
+		if(this.frameSkipStatus != FrameSkipStatusTypes.ACTIVE){tm = System.currentTimeMillis();}
 		while(Thread.currentThread() == this.animator)
 		{			
 			repaint();
@@ -156,7 +156,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 				long pauseTime = tm - System.currentTimeMillis();
 				if(pauseTime < 1)
 				{
-					frameSkipStatus = FrameSkipStatusTypes.ACTIVE;
+					this.frameSkipStatus = FrameSkipStatusTypes.ACTIVE;
 				}
 				else{Thread.sleep(pauseTime);}
 			}
@@ -174,8 +174,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{		
 		if(this.offGraphics != null)
 		{			
-			if(frameSkipStatus == FrameSkipStatusTypes.INACTIVE){
-				frameSkipStatus = FrameSkipStatusTypes.DISABLED;}
+			if(this.frameSkipStatus == FrameSkipStatusTypes.INACTIVE){
+				this.frameSkipStatus = FrameSkipStatusTypes.DISABLED;}
 			else
 			{					
 				if(this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED){Menu.repaintBackground(g, this);}
@@ -187,10 +187,10 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			
 			if(Main.isFullScreen || this.mouseInWindow){updateGame();}
 			
-			if(frameSkipStatus == FrameSkipStatusTypes.ACTIVE)
+			if(this.frameSkipStatus == FrameSkipStatusTypes.ACTIVE)
 			{
 				//skipped_counter++;
-				frameSkipStatus = FrameSkipStatusTypes.INACTIVE;
+				this.frameSkipStatus = FrameSkipStatusTypes.INACTIVE;
 			}
 			else
 			{				
@@ -205,26 +205,25 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	private void updateGame()
 	{		
 		this.framesCounter++;
+		Timer.countDownActiveTimers();
 		if(Events.window == GAME)
 		{			
 			calculateFps();
-			
-			// aktualisieren aller sichtbaren Objekte
 			if(!Menu.isMenueVisible)
 			{				
 		    	MyColor.calculateVariableGameColors(this.framesCounter);
-				BackgroundObject.update(this, this.backgroundObject);
+				BackgroundObject.update(this, this.backgroundObjects);
 				Events.updateTimer();
 				Menu.updateDisplays(this.helicopter);
 				Enemy.updateAllDestroyed(this, this.helicopter);
 				Missile.updateAll(this, this.helicopter);
 				Enemy.updateAllActive(this, this.helicopter);
-				EnemyMissile.updateAll(this.enemyMissile, this.helicopter);
+				EnemyMissile.updateAll(this.enemyMissiles, this.helicopter);
 				Events.checkForLevelup(this, this.helicopter);
 				Enemy.generateNewEnemies(this.enemies, this.helicopter);
-				this.helicopter.update(this.missile, this.explosion);
-				Explosion.updateAll(this.helicopter, this.explosion);
-				PowerUp.updateAll(this.powerUp, this.helicopter);
+				this.helicopter.update(this.missiles, this.explosions);
+				Explosion.updateAll(this.helicopter, this.explosions);
+				PowerUp.updateAll(this.powerUps, this.helicopter);
 			}			
 		}
 		else
@@ -241,17 +240,17 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		if(Events.window == GAME)
 		{						
 			// zeichnen aller sichtbaren Objekte						
-			BackgroundObject.paintBackground(g2d, this.backgroundObject);
+			BackgroundObject.paintBackground(g2d, this.backgroundObjects);
 			Menu.paintBackgroundDisplays( g2d, this, this.helicopter);
 			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d, this.helicopter);}
 			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
 			Missile.paintAllMissiles( g2d, this);
 			Enemy.paintAllActive(g2d, this, this.helicopter);
-			EnemyMissile.paintAll(g2d, this.enemyMissile);
+			EnemyMissile.paintAll(g2d, this.enemyMissiles);
 			this.helicopter.paint(g2d, Events.timeOfDay);			
-			Explosion.paintAll(g2d, this.explosion);
-			PowerUp.paintAll(g2d, this.powerUp);
-			BackgroundObject.paintForeground(g2d, this.backgroundObject);
+			Explosion.paintAll(g2d, this.explosions);
+			PowerUp.paintAll(g2d, this.powerUps);
+			BackgroundObject.paintForeground(g2d, this.backgroundObjects);
 		}
 		Menu.paint(g2d, this, this.helicopter);
 	}
@@ -365,10 +364,15 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	public void setHelicopter(Helicopter helicopter)
 	{
 		this.helicopter = helicopter;
+		this.dictionary.switchHelicopterTypeTo(helicopter.getType());
 	}
 	
 	public static Controller getInstance()
 	{
 		return controller;
+	}
+
+	public Dictionary getDictionary() {
+		return dictionary;
 	}
 }

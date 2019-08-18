@@ -33,7 +33,6 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
-// TODO Timer Klasse schreiben
 public class Events
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
@@ -119,7 +118,7 @@ public class Events
 				Controller.shutDown();}
 			else if(window != REPAIR_SHOP)
 			{
-				cancel(controller.backgroundObject, helicopter, savegame);
+				cancel(controller.backgroundObjects, helicopter, savegame);
 			}
 		}		
 		else if(window == SETTINGS && Menu.page == 4)
@@ -234,10 +233,10 @@ public class Events
 				{
 					Menu.specialInfoSelection = (Menu.specialInfoSelection +1)%14;
 				}
-				else if(e.getKeyChar() == 'd'){helicopter.getPowerUp(controller.powerUp, TRIPLE_DMG, 	   true);}
-				else if(e.getKeyChar() == 'i'){helicopter.getPowerUp(controller.powerUp, INVINCIBLE, 	   true);}
-				else if(e.getKeyChar() == 'c'){helicopter.getPowerUp(controller.powerUp, UNLIMITRED_ENERGY, true);}
-				else if(e.getKeyChar() == 'y'){helicopter.getPowerUp(controller.powerUp, BOOSTED_FIRE_RATE, true);}
+				else if(e.getKeyChar() == 'd'){helicopter.getPowerUp(controller.powerUps, TRIPLE_DMG, 	   true);}
+				else if(e.getKeyChar() == 'i'){helicopter.getPowerUp(controller.powerUps, INVINCIBLE, 	   true);}
+				else if(e.getKeyChar() == 'c'){helicopter.getPowerUp(controller.powerUps, UNLIMITRED_ENERGY, true);}
+				else if(e.getKeyChar() == 'y'){helicopter.getPowerUp(controller.powerUps, BOOSTED_FIRE_RATE, true);}
 				else if(e.getKeyChar() == 'a')
 				{
 					if(level < 51)
@@ -322,7 +321,7 @@ public class Events
 		{
 			if(e.getButton() == 3)
 			{
-				helicopter.tryToUseEnergyAbility(controller.powerUp, controller.explosion);
+				helicopter.tryToUseEnergyAbility(controller.powerUps, controller.explosions);
 			}
 			else{helicopter.turnAround();}
 		}	
@@ -337,7 +336,7 @@ public class Events
 		}
 		else if(window == REPAIR_SHOP)
 		{
-			repairShopMousePressedLeft(helicopter, controller.enemies, controller.backgroundObject);
+			repairShopMousePressedLeft(helicopter, controller.enemies, controller.backgroundObjects);
 		}
 		else if(window == STARTSCREEN)
 		{
@@ -345,7 +344,7 @@ public class Events
 		}
 		else if(Menu.startscreenMenuButton.get("Cancel").bounds.contains(cursor))
 		{
-			cancel(controller.backgroundObject, helicopter, Controller.savegame);
+			cancel(controller.backgroundObjects, helicopter, Controller.savegame);
 		}
 		else 
 		{		
@@ -365,7 +364,7 @@ public class Events
 				{					
 					Controller.savegame.saveToFile(helicopter, true);
 					conditionalReset(controller, helicopter, true);
-					restartGame(helicopter, controller.backgroundObject);
+					restartGame(helicopter, controller.backgroundObjects);
 					Audio.applause1.stop();
 				}
 				else if(Menu.inGameButton.get("MMStopMusic").bounds.contains(cursor))
@@ -1063,16 +1062,16 @@ public class Events
 			controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
 			controller.enemies.get(DESTROYED).clear();
 			if(level < 6){
-				BackgroundObject.reset(controller.backgroundObject);}
+				BackgroundObject.reset(controller.backgroundObjects);}
 		}									
-		controller.explosion.get(INACTIVE).addAll(controller.explosion.get(ACTIVE));
-		controller.explosion.get(ACTIVE).clear();
-		controller.missile.get(INACTIVE).addAll(controller.missile.get(ACTIVE));
-		controller.missile.get(ACTIVE).clear();
-		controller.enemyMissile.get(INACTIVE).addAll(controller.enemyMissile.get(ACTIVE));
-		controller.enemyMissile.get(ACTIVE).clear();
-		controller.powerUp.get(INACTIVE).addAll(controller.powerUp.get(ACTIVE));
-		controller.powerUp.get(ACTIVE).clear();
+		controller.explosions.get(INACTIVE).addAll(controller.explosions.get(ACTIVE));
+		controller.explosions.get(ACTIVE).clear();
+		controller.missiles.get(INACTIVE).addAll(controller.missiles.get(ACTIVE));
+		controller.missiles.get(ACTIVE).clear();
+		controller.enemyMissiles.get(INACTIVE).addAll(controller.enemyMissiles.get(ACTIVE));
+		controller.enemyMissiles.get(ACTIVE).clear();
+		controller.powerUps.get(INACTIVE).addAll(controller.powerUps.get(ACTIVE));
+		controller.powerUps.get(ACTIVE).clear();
 		if(Menu.collectedPowerUp[3] != null)
 		{
 			helicopter.adjustFireRate(false);
@@ -1193,7 +1192,7 @@ public class Events
 		int previousLevel = level;
 		level += numberOfLevelUp;
 				
-		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemies, controller.explosion);}
+		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemies, controller.explosions);}
 		if(helicopter.getType() == HELIOS && level > maxLevel){getHeliosIncome(previousLevel);}
 		
 		maxLevel = level;
@@ -1328,7 +1327,6 @@ public class Events
 		return maxHeliosMoney;
 	}
 	
-	// TODO check method function why unused asssignment
 	public static int getHighestRecordMoney(long [] array)
 	{	
 		if(array[0] == 0){return 0;}
@@ -1339,7 +1337,7 @@ public class Events
 		{			
 			if(array[i] == 0)
 			{
-				// TODO warum wird hier index gesetzt aber nie wieder verwendet?
+				// TODO check method function why unused asssignment
 				index = i-1;
 				indexSet = true;
 				break;

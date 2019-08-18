@@ -15,7 +15,6 @@ import java.util.Map;
 
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -23,11 +22,14 @@ import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Languages;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
@@ -44,7 +46,6 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 
-// TODO all identifiier to camelCase
 public class Menu
 {
 	private static final String
@@ -81,8 +82,7 @@ public class Menu
   
 	public static Languages
 		language = ENGLISH; 			// Sprache; = 0: English; = 1: German
-	
-	
+
 	private static HelicopterTypes
 		unlockedType;					// Typ des freigeschalteten Helicopters
 	
@@ -140,18 +140,6 @@ public class Menu
 			"Klasse sind wegen ihres", 		"EMP-Generators gefürchtet."},
 		{	"Helios", 						"Helikopter der Helios-Klasse", 
 			"sind auf den Einsatz von",		"PowerUps spezialisiert."}}};
-
-	static final String SPECIALS[][] =
-    	{{	"Spot light", 					"Goliath plating", 
-    		"Piercing warheads", 			"Second cannon", 
-    		"Short-range radiation", 		"Jumbo missiles", 
-    		"Radar device", 				"Rapid fire upgrade", 
-    		"Interphase generator", 		"Power-up immobilizer"},
-    	{	"Scheinwerfer",					"Goliath-Panzerung",
-    		"Durchstoßsprengköpfe",			"zweite Boardkanone",
-    		"Nahkampf-Bestrahlung",			"Jumbo-Raketen",
-    		"Radar-Vorrichtung",			"Schnellfeuer-Upgrade",
-    		"Interphasengenerator",			"PowerUp-Stopper"}};
 
 	static final String PRICE_LEVELS[][] =
     	{{	"very cheap", 
@@ -213,6 +201,7 @@ public class Menu
 	public static PowerUp[] collectedPowerUp = new PowerUp [4];
     public static Rectangle[] helicopterFrame = new Rectangle[4];
     public static FontProvider fontProvider = new FontProvider();
+    public static Dictionary dictionary = Controller.getInstance().getDictionary();
 
 
     
@@ -462,6 +451,7 @@ public class Menu
         		String tempString = "";
             	for(int i = 0; i < 7; i++)
             	{
+            		// TODO über HelicopterTypes iterieren
             		for(int j = 0; j < Helicopter.NR_OF_TYPES + 1; j++)
             		{
             			if(j == 0 && i!=0)
@@ -471,7 +461,7 @@ public class Menu
             			}
             			else if(j != 0 && i==0)
             			{
-            				g2d.setColor(MyColor.brightenUp(MyColor.helicopterColor[j-1][0]));
+            				g2d.setColor(MyColor.brightenUp(HelicopterTypes.values()[j-1].getStandardPrimaryHullColor()));
             				tempString = HELICOPTER_INFOS[language.ordinal()][j-1][0];
             			}
             			else if(j == 6)
@@ -496,6 +486,7 @@ public class Menu
         		String tempString = "";
             	for(int i = 0; i < 6; i++)
             	{
+            		// TODO über HelicopterTypes iterieren
             		for(int j = 0; j < Helicopter.NR_OF_TYPES + 1; j++)
             		{
             			if(j == 0 && i!=0)
@@ -505,7 +496,7 @@ public class Menu
             			}
             			else if(j != 0 && i==0)
             			{
-            				g2d.setColor(MyColor.brightenUp(MyColor.helicopterColor[j-1][0]));
+            				g2d.setColor(MyColor.brightenUp(HelicopterTypes.values()[j-1].getStandardPrimaryHullColor()));
             				tempString = HELICOPTER_INFOS[language.ordinal()][j-1][0];
             			}
             			else if(i != 0)
@@ -550,7 +541,7 @@ public class Menu
         				g2d.setColor(Color.white);
         				g2d.drawString(toStringWithSpace(j+1, false), leftColumn + xShift , topLine + j * lineDistance);
         				g2d.drawString(tempEntry.playerName, leftColumn - 46 + xShift + columnDistance, topLine + j * lineDistance);
-        				g2d.setColor(MyColor.brightenUp(MyColor.helicopterColor[tempEntry.helicopterType.ordinal()][0]));
+        				g2d.setColor(MyColor.brightenUp(tempEntry.helicopterType.getStandardPrimaryHullColor()));
         				g2d.drawString(HELICOPTER_INFOS[language.ordinal()][tempEntry.helicopterType.ordinal()][0],   realLeftColumn + xShift + 2 * columnDistance, topLine + j * lineDistance);
         				g2d.setColor(tempEntry.maxLevel > 50 ? MyColor.HS_GREEN : MyColor.HS_RED);
         				int printLevel = tempEntry.maxLevel > 50 ? 50 : tempEntry.maxLevel;
@@ -722,17 +713,17 @@ public class Menu
         if(helicopter.spotlight)
         {            
             g2d.setColor(MyColor.golden);
-            g2d.drawString(SPECIALS[language.ordinal()][0], STATUS_BAR_X1, SPECUP_OFFSET_Y + 0);
+            g2d.drawString(dictionary.getSpotlight(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 0);
         }       
         if(helicopter.hasGoliathPlating())
         {            
             g2d.setColor(MyColor.golden);
-            g2d.drawString(SPECIALS[language.ordinal()][1], STATUS_BAR_X1, SPECUP_OFFSET_Y + 25);
+            g2d.drawString(dictionary.getGoliathPlating(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 25);
         }       
         if(helicopter.hasPiercingWarheads)
         {            
             g2d.setColor(MyColor.golden);
-            g2d.drawString(SPECIALS[language.ordinal()][2], STATUS_BAR_X1, SPECUP_OFFSET_Y + 50);
+            g2d.drawString(dictionary.getPiercingWarheads(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 50);
         }
         if(helicopter.numberOfCannons >= 2)
         {            
@@ -747,20 +738,22 @@ public class Menu
             }
             else
             {
-            	g2d.drawString(SPECIALS[language.ordinal()][3], STATUS_BAR_X1, SPECUP_OFFSET_Y + 75);
+            	g2d.drawString(dictionary.getSecondCannon(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 75);
             }
         }
         if(helicopter.hasFifthSpecial())
-        {            
+        {
+        	// TODO Logik nach HelicopterAuslagern: isFifthSpecialOnMaximumStrength() --> inheritance
+			// TODO String zusammenbauen und dann einmal g2d.drawString (auch oben)
         	g2d.setColor(MyColor.golden);            
             if(helicopter.getType() == PHOENIX || helicopter.getType() == PEGASUS)
             {
             	if(!helicopter.hasMaxUpgradeLevel[helicopter.getType() == PHOENIX ? 3 : 4]){g2d.setColor(Color.white);}
-            	g2d.drawString(SPECIALS[language.ordinal()][4 + helicopter.getType().ordinal()] + " (" + LEVEL[language.ordinal()] + " " + (helicopter.levelOfUpgrade[helicopter.getType() == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	g2d.drawString(dictionary.getFifthSpecial() + " (" + LEVEL[language.ordinal()] + " " + (helicopter.levelOfUpgrade[helicopter.getType() == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
             else
             {
-            	g2d.drawString(SPECIALS[language.ordinal()][4 + helicopter.getType().ordinal()], STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	g2d.drawString(dictionary.getFifthSpecial(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
         }
         
@@ -1035,16 +1028,16 @@ public class Menu
 		else if(specialInfoSelection == 2)
 		{
 			infoString = "Aktive PowerUps: "
-						  + controller.powerUp.get(ACTIVE).size()
+						  + controller.powerUps.get(ACTIVE).size()
 						  + ";   Inaktive PowerUps: "
-						  + controller.powerUp.get(INACTIVE).size();
+						  + controller.powerUps.get(INACTIVE).size();
 		}
 		else if(specialInfoSelection == 3)
 		{
 			infoString = "Aktive Explosionen: "
-						  + controller.explosion.get(ACTIVE).size()
+						  + controller.explosions.get(ACTIVE).size()
 						  + ";   Inaktive Explosionen: "
-						  + controller.explosion.get(INACTIVE).size();
+						  + controller.explosions.get(INACTIVE).size();
 		}
 		else if(specialInfoSelection == 4)
 		{
@@ -1060,23 +1053,23 @@ public class Menu
 		else if(specialInfoSelection == 5)
 		{
 			infoString = "Aktive Raketen: "
-						  + controller.missile.get(ACTIVE).size()
+						  + controller.missiles.get(ACTIVE).size()
 						  + ";   Inaktive Raketen: "
-						  + controller.missile.get(INACTIVE).size();
+						  + controller.missiles.get(INACTIVE).size();
 		}
 		else if(specialInfoSelection == 6)
 		{
 			infoString = "Aktive gegnerische Geschosse: "
-						  + controller.enemyMissile.get(ACTIVE).size()
+						  + controller.enemyMissiles.get(ACTIVE).size()
 						  + ";   Inaktive gegnerische Geschosse: "
-						  + controller.enemyMissile.get(INACTIVE).size();
+						  + controller.enemyMissiles.get(INACTIVE).size();
 		}
 		else if(specialInfoSelection == 7)
 		{
 			infoString = "Aktive Hintergrundobjekte: "
-						  + controller.backgroundObject.get(ACTIVE).size()
+						  + controller.backgroundObjects.get(ACTIVE).size()
 						  + ";   Inaktive Hintergrundobjekte: "
-						  + controller.backgroundObject.get(INACTIVE).size();
+						  + controller.backgroundObjects.get(INACTIVE).size();
 		}
 		else if(specialInfoSelection == 8)
 		{
@@ -1457,10 +1450,16 @@ public class Menu
 	{
 		Events.settingsChanged = true;
 		
-		language = Languages.values()[(language.ordinal()+1)%Languages.values().length];
+		setLanguage(Languages.values()[(language.ordinal()+1)%Languages.values().length]);
 		savegame.language = language;
 		
 		updateButtonLabels(helicopter);
+	}
+
+	public static void setLanguage(Languages language)
+	{
+		Menu.language = language;
+		Controller.getInstance().getDictionary().switchLanguageTo(language);
 	}
 		
 	public static void updateButtonLabels(Helicopter helicopter)
@@ -1489,8 +1488,9 @@ public class Menu
 				Button.STARTSCREEN_MENU_BUTTON[language.ordinal()][2][m];
 		}
 		startscreenMenuButton.get("Cancel").label = Button.CANCEL[language.ordinal()];
-		
-		for(int i = 0; i < 6; i ++)
+
+		// TODO mit enums arbeiten
+		for(int i = 0; i < StandardUpgradeTypes.values().length; i ++)
 		{
 			repairShopButton.get("StandardUpgrade" + i).label =
 				Button.STANDARD_UPGRADE_LABEL[language.ordinal()][i][0] + " " +
@@ -1498,16 +1498,18 @@ public class Menu
 			repairShopButton.get("StandardUpgrade" + i).secondLabel =
 				Button.PRICE[language.ordinal()];
 		}
-		for(int i = 0; i < 5; i++)
+		// TODO mit enums arbeiten
+		for(int i = 0; i < SpecialUpgradeTypes.values().length; i++)
 		{
-			repairShopButton.get("Special" + i).label = SPECIALS[language.ordinal()][i];
+			repairShopButton.get("Special" + i).label = dictionary.getSpecialUpgrades().get(i);
 			repairShopButton.get("Special" + i).secondLabel = Button.PRICE[language.ordinal()];
 		}		
 		if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
 		{
 			repairShopButton.get("Special" + 3).label  = THIRD_CANNON[language.ordinal()];
-		}		
-		repairShopButton.get("Special" + 4).label = SPECIALS[language.ordinal()][4 + helicopter.getType().ordinal()];
+		}
+		// TODO wieso nochmal? in schleife schon passiert
+		repairShopButton.get("Special" + 4).label = dictionary.getFifthSpecial();
 	}
 
 	

@@ -124,7 +124,7 @@ public class Missile extends MovingObject
 
 	public static void paintAllMissiles(Graphics2D g2d, Controller controller)
 	{
-		for(Missile m : controller.missile.get(ACTIVE))
+		for(Missile m : controller.missiles.get(ACTIVE))
 		{
 			m.paint(g2d);
 		}		
@@ -132,7 +132,7 @@ public class Missile extends MovingObject
 
 	public static void updateAll(Controller controller, Helicopter helicopter)
 	{
-		for(Iterator<Missile> i = controller.missile.get(ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<Missile> i = controller.missiles.get(ACTIVE).iterator(); i.hasNext();)
 		{
 			Missile m = i.next();
 			m.update(controller, i, helicopter);
@@ -151,7 +151,7 @@ public class Missile extends MovingObject
 		if(!this.flying)
 		{
 			i.remove();	
-			this.inactivate(controller.missile, helicopter);
+			this.inactivate(controller.missiles, helicopter);
 		}
 		this.setPaintBounds();
 	}
@@ -185,7 +185,7 @@ public class Missile extends MovingObject
 					enemy.teleport();
 				} else if (!enemy.isInvincible())
 				{
-					enemy.hitByMissile(helicopter, this, controller.explosion);
+					enemy.hitByMissile(helicopter, this, controller.explosions);
 				} else if (!this.bounced
 					&& enemy.teleportTimer < 1
 					&& !(enemy.type == BOSS_2_SERVANT))

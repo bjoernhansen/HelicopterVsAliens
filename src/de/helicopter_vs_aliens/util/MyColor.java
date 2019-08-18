@@ -22,7 +22,7 @@ public class MyColor
 		
 	// Variablen für die Sonnenanimation
 	public static int
-            randomSunlightBlue = 190;	// Blauanteil der Lichtfarbe
+        randomSunlightBlue = 190;	// Blauanteil der Lichtfarbe
     
 	private static boolean
 		lighter = false;			// bestimmt ob die Lichtfarbe (variableLight) heller oder dunkler wird
@@ -30,7 +30,7 @@ public class MyColor
 	// variable Farben
 	public static Color 
 		bg = Color.black,		// Hintergrundfarbe
-		variableGreen,			// zur Darstellung von Unzerstörbarkeit (Gegner udn Helikopter)
+		variableGreen,			// zur Darstellung von Unzerstörbarkeit (Gegner und Helikopter)
 		variableRed,			// Färbung der Helikopter-Scheiben, wenn Bonus-Feuerkraft oder - Feuerrate-PowerUp aktiv
 		variableBlue,			// nur Orochi-Klasse: Bordkanonenfarbe, wenn Stopp-Rakete aktiviert
 		variableYellow,			// zentrale Schrift auf dem Startscreen
@@ -47,7 +47,7 @@ public class MyColor
 		scorescreen = new Color[4];
 	
 	// konstante Farben
-	public static final Color 
+	public static final Color
 		sky  = new Color (157,220,255),
 		pink = new Color (255, 91,185),
 		endlessEnergyViolet = new Color(170, 0, 255),
@@ -91,7 +91,7 @@ public class MyColor
 		radiation[] = 	{ new Color(255, 200, 200, 60), 
 		              	  new Color(255, 200, 200, 90)},
 		enhancedRadiation[] = { new Color(255, 200, 200, 120),
-		                      new Color(255, 200, 200, 210)},	              
+		                        new Color(255, 200, 200, 210)},
 		shieldColor[] = { new Color(157, 220, 255, 80), 
 	                      new Color(0, 0, 255, 40)},				    
 		costsColor[] =  { new Color (130, 255, 130), 
@@ -104,48 +104,25 @@ public class MyColor
 	    stones[] = {dimColor(new Color(155,160,125), NIGHT_DIM_FACTOR),
 	                     			 new Color(155,160,125)};                                    
 	
-	public static final Color [][] helicopterColor = {{new Color(110, 100,  45), 
-												new Color(110, 100,  80), 
-												new Color(180, 160,  100), 
-												new Color(190, 170,  90)},
-	                                           {new Color(120,  45, 130), 
-												new Color(115,  85, 125),
-												new Color(167, 101, 196),
-												new Color(201, 131, 235)},
-	                                           {new Color(180,  80,   0),
-												new Color(150,  110,  60),
-												new Color(240, 110,   60),
-												new Color(255, 170,   85)},
-	                                           {new Color(150,  30,  30),
-												new Color(150,  75,  85),
-												new Color(225,  65,  75),
-												new Color(255, 130, 130)},
-	                                           {new Color(  0, 125, 125),
-												new Color( 85, 125, 125),
-												new Color(  0, 170, 170),
-												new Color(  0, 230, 230)},												
-											   {new Color(225, 225, 225),
-												new Color(180, 175, 150),
-												new Color(125, 125, 125),
-												new Color(110, 110, 110)}},
-				   myGreen = {{dimColor(new Color(65,205,140), NIGHT_DIM_FACTOR), 
-												new Color(65,205,140)},
-							  {dimColor(new Color(80,230,160), NIGHT_DIM_FACTOR), 
-												new Color(80,230,160)}, 
-							  {dimColor(new Color(80,190,140), NIGHT_DIM_FACTOR), 
-												new Color(80,190,140)}},
-				   barrierColor = {{dimColor(new Color(140,140,140), BARRIER_NIGHT_DIM_FACTOR), 
-					   								 new Color(140,140,140)},
-								  { dimColor(new Color(165,165,165), BARRIER_NIGHT_DIM_FACTOR), 
-					   								 new Color(165,165,165)},
-							  	  { dimColor(new Color(190,190,190), BARRIER_NIGHT_DIM_FACTOR), 
-					   								 new Color(190,190,190)},
-								  { dimColor(Color.white, BARRIER_NIGHT_DIM_FACTOR), 
-													 Color.white},
-								  { dimColor(INACTIVE_NOZZLE, BARRIER_NIGHT_DIM_FACTOR),
-                                          INACTIVE_NOZZLE},
-								  { dimColor(new Color (39,52,123), BARRIER_NIGHT_DIM_FACTOR), 
-													 new Color (39,52,123)}};
+	public static final Color [][]
+	    myGreen = {{dimColor(new Color(65,205,140), NIGHT_DIM_FACTOR),
+							 new Color(65,205,140)},
+				   {dimColor(new Color(80,230,160), NIGHT_DIM_FACTOR),
+							 new Color(80,230,160)},
+				   {dimColor(new Color(80,190,140), NIGHT_DIM_FACTOR),
+							 new Color(80,190,140)}},
+	    barrierColor = {{dimColor(new Color(140,140,140), BARRIER_NIGHT_DIM_FACTOR),
+								  new Color(140,140,140)},
+					    {dimColor(new Color(165,165,165), BARRIER_NIGHT_DIM_FACTOR),
+								  new Color(165,165,165)},
+					    {dimColor(new Color(190,190,190), BARRIER_NIGHT_DIM_FACTOR),
+						  		  new Color(190,190,190)},
+					    {dimColor(Color.white, BARRIER_NIGHT_DIM_FACTOR),
+								  Color.white},
+					    {dimColor(INACTIVE_NOZZLE, BARRIER_NIGHT_DIM_FACTOR),
+							  	  INACTIVE_NOZZLE},
+					    {dimColor(new Color (39,52,123), BARRIER_NIGHT_DIM_FACTOR),
+								  new Color (39,52,123)}};
 	
 	public static final GradientPaint
 		cannolHoleGreen = new GradientPaint(0, 0, darkArrowGreen, 0, 0, darkArrowGreen);
@@ -192,10 +169,7 @@ public class MyColor
 					     color.getGreen(), 
 					     color.getBlue(), 0);
     }
-    
-    
-   
-    
+
     public static void calculateVariableGameColors(int counter)
     {    	
     	if(counter%20 > 9)

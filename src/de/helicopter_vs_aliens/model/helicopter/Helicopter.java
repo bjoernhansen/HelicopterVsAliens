@@ -7,7 +7,6 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimesOfDay;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -30,7 +29,7 @@ import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.Pegasus.INTERPHASE_GENERATOR_ALPHA;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
@@ -207,7 +206,8 @@ public abstract class Helicopter extends MovingObject
     	this.paintBounds.setSize(HELICOPTER_SIZE);
     	this.reset();
     }
-    
+
+    // TODO Alles was mit "malen" zusammenhängt in eine eigene Klasse auslagern
     public void paint(Graphics2D g2d, TimesOfDay timeOfDay)
     {
     	paint(g2d, this.paintBounds.x, this.paintBounds.y, this.getType(), timeOfDay, false);
@@ -223,7 +223,7 @@ public abstract class Helicopter extends MovingObject
     	// die Farben    	
     	if(unlockedPainting)
     	{
-    		this.inputColorCannon = MyColor.helicopterColor[helicopterType.ordinal()][this.hasGoliathPlating() ? 3 : 2];
+    		this.inputColorCannon = this.getSecondaryHullColor();
     	}
     	else if(this.plasmaActivationTimer >= POWERUP_DURATION/4  ||
     		(Events.window == STARTSCREEN && helicopterType == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] > 0 && Menu.effectTimer[KAMAITACHI.ordinal()] < 35))
@@ -257,7 +257,7 @@ public abstract class Helicopter extends MovingObject
     		else{this.inputColorCannon 
     				= this.isInvincible()
     					? MyColor.variableGreen 
-    					: MyColor.helicopterColor[helicopterType.ordinal()][this.hasGoliathPlating() ? 3 : 2];}
+    					: this.getSecondaryHullColor();}
     	}
     	else
     	{
@@ -272,7 +272,7 @@ public abstract class Helicopter extends MovingObject
     						        && helicopterType == PHOENIX
     						        && Menu.effectTimer[PHOENIX.ordinal()] > 1
     						        && Menu.effectTimer[PHOENIX.ordinal()] < 55))
-    						  ? MyColor.helicopterColor[helicopterType.ordinal()][unlockedPainting ? 0 : this.hasGoliathPlating() ? 1 : 0]
+    						  ? this.getPrimaryHullColor()
     						  : MyColor.variableGreen;
     	this.inputColorWindow = !unlockedPainting
     								&& (this.hasTripleDmg()
@@ -483,6 +483,20 @@ public abstract class Helicopter extends MovingObject
 	    }		
 	}
 
+	public Color getPrimaryHullColor()
+	{
+		return this.hasGoliathPlating()
+				? this.getType().getPlatedPrimaryHullColor()
+				: this.getType().getStandardPrimaryHullColor();
+	}
+
+	public Color getSecondaryHullColor()
+	{
+		return this.hasGoliathPlating()
+				? this.getType().getPlatedSecondaryHullColor()
+				: this.getType().getStandardSecondaryHullColor();
+	}
+
 	public void update(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile,
 					   EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
 	{
@@ -557,11 +571,6 @@ public abstract class Helicopter extends MovingObject
     			&&  this.fireRateTimer >= this.timeBetweenTwoShots;
 	}
 
-	boolean isShootingStunningMissile()
-	{
-		return false;
-	}
-
 	// TODO Code Duplizierungen auflösen
 	void shoot(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missiles)
 	{
@@ -594,7 +603,7 @@ public abstract class Helicopter extends MovingObject
 			Missile missile;
 			if(i.hasNext()){missile = i.next(); i.remove();}
 			else{missile = new Missile();}
-			if(  sister != null && sister.sister != null && 
+			if(  sister != null && sister.sister != null &&
 			    (this.getType() == ROCH || this.getType() == OROCHI))
 			{
 				missile.sister[0] = sister;
@@ -611,7 +620,7 @@ public abstract class Helicopter extends MovingObject
 			Missile missile;
 			if(i.hasNext()){missile = i.next(); i.remove();}
 			else{missile = new Missile();}
-			if(  sister != null && sister.sister != null && 
+			if(  sister != null && sister.sister != null &&
 			    (this.getType() == ROCH || this.getType() == OROCHI))
 			{
 				missile.sister[0] = sister.sister[0];
@@ -623,18 +632,17 @@ public abstract class Helicopter extends MovingObject
 			missile.launch(this, stunningMissile, 42);
 		}
 	}
-
 	private void move(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
 		if(this.isOnTheGround())
 		{
 			this.isRotorSystemActive = false;
 		}
-		
+
 		float
     		nextX = (float) this.location.getX(),
     		nextY = (float) this.location.getY();
-    	
+
     	if(this.isCrashing)
     	{
     		nextY += NOSEDIVE_SPEED;
@@ -643,33 +651,33 @@ public abstract class Helicopter extends MovingObject
     	{
     		this.speed = (this.slowedTimer > 0 ) ? 1.5f : this.rotorSystem;
     		float fraction = (float) (this.speed/this.location.distance(this.destination.x, this.destination.y));
-    		
+
     		if(fraction < 1)
         	{
-        		if(!(   this.bounds.getMaxY() + NO_COLLISION_HEIGHT  >= GROUND_Y 
+        		if(!(   this.bounds.getMaxY() + NO_COLLISION_HEIGHT  >= GROUND_Y
         			 && this.destination.y >= GROUND_Y))
         		{
         			nextX += (float)(fraction*(this.destination.x - this.location.getX()) - 1);
-        		}        		   					
+        		}
         		    nextY += (float)(fraction*(this.destination.y - this.location.getY()));
-        	}    		
+        	}
     		else
         	{
     			nextX = this.destination.x;
         		nextY = this.destination.y;
         	}
-    	}    
-    	
+    	}
+
     	boolean isInTheAir = this.location.getY() != 407d;
     	float lastX = (float)this.location.getX();
-    	
+
     	this.nextLocation.setLocation(nextX, nextY);
     	this.correctAndSetCoordinates();
-    	
+
     	if(Enemy.currentNumberOfBarriers > 0 && !this.isDamaged)
     	{
     		for(int i = 0; i < Enemy.currentNumberOfBarriers; i++)
-    		{    			
+    		{
     			Enemy enemy = Enemy.livingBarrier[i];
     			enemy.lastTouchedSite = enemy.touchedSite;
     			if(this.isLocationAdaptionApproved(enemy))
@@ -697,25 +705,25 @@ public abstract class Helicopter extends MovingObject
     			else
     			{
     				enemy.untouchedCounter = 0;
-    			}    			
+    			}
     		}
     		for(int i = 0; i < Enemy.currentNumberOfBarriers; i++)
-    		{    			
+    		{
     			Enemy.livingBarrier[i].evaluatePosAdaption(this);
     		}
-    	}  
-    	    	
+    	}
+
     	if(this.isActive && this.tractor == null)
-    	{   
+    	{
     		if(!this.isCrashing)
-        	{    		
+        	{
         		if(this.bounds.getMaxY() + NO_COLLISION_HEIGHT != GROUND_Y
         			|| lastX != (float)this.location.getX())
         		{
         			this.isRotorSystemActive = true;
         		}
         		if(isInTheAir && !(this.location.getY() != 407d)){Audio.play(Audio.landing);}
-        	} 
+        	}
         	else if(isInTheAir && this.location.getY() == 407d)
         	{
         		this.crashed(explosion);
@@ -724,6 +732,11 @@ public abstract class Helicopter extends MovingObject
     	if(this.isRotorSystemActive){this.rotatePropeller(12);}
     	this.setPaintBounds();
     }
+
+	boolean isShootingStunningMissile()
+	{
+		return false;
+	}
 
 	public boolean isLocationAdaptionApproved(Enemy enemy)
 	{		
@@ -1035,7 +1048,7 @@ public abstract class Helicopter extends MovingObject
 		if(this.tractor != null){this.stopTractor();}
 		if(this.hasInterphaseGenerator){Audio.phaseShift.stop();}
 		this.numberOfCrashes++;
-		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosion);}
+		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosions);}
 		else{this.isCrashing = true;}
     }
     
@@ -1052,8 +1065,8 @@ public abstract class Helicopter extends MovingObject
 								+ (this.isMovingLeft
 									? FOCAL_PNT_X_LEFT 
 									: FOCAL_PNT_X_RIGHT)), 
-							(int)(this.bounds.getY() + FOCAL_PNT_Y_EXP), 
-							STANDARD,
+							(int)(this.bounds.getY() + FOCAL_PNT_Y_EXP),
+                    ORDINARY,
 							false);
 		}
 		Events.isRestartWindowVisible = true;
@@ -1539,6 +1552,6 @@ public abstract class Helicopter extends MovingObject
 
 	public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
 	{
-		return STANDARD;
+		return ORDINARY;
 	}
 }

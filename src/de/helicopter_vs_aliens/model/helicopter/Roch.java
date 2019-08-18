@@ -5,19 +5,17 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyMath;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STANDARD;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PEGASUS;
 
@@ -51,7 +49,7 @@ public final class Roch extends Helicopter
     public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if(this.hasJumboMissiles()){return JUMBO;}
-        else{return STANDARD;}
+        else{return ORDINARY;}
     }
 
     public boolean hasJumboMissiles()

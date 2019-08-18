@@ -5,6 +5,8 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Roch;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
@@ -167,7 +169,8 @@ public class Button
 												 	 STARTSCREEN_BUTTON_LABEL[Menu.language.ordinal()][i][j], 
 												 	 null, false, true));
 		}}
-		for(int i = 0; i < 6; i ++)
+		// TODO enums verwenden
+		for(int i = 0; i < StandardUpgradeTypes.values().length; i ++)
 		{
 			Menu.repairShopButton.put( "StandardUpgrade" + i,
 										new Button(	STANDARD_UPGRADE_LOCATION.x, 
@@ -177,9 +180,10 @@ public class Button
 										+ STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][i][1],
 										PRICE[Menu.language.ordinal()], true, true));
 		}
-		for(int i = 0; i < 5; i++)
+		// TODO Enums verwenden für SpecialUpgrades
+		for(int i = 0; i < SpecialUpgradeTypes.values().length; i++)
 		{
-			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50, Menu.SPECIALS[Menu.language.ordinal()][i],  PRICE[Menu.language.ordinal()], true, true));
+			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50, Menu.dictionary.getSpecialUpgrades().get(i),  PRICE[Menu.language.ordinal()], true, true));
 		}		
 		for(int m = 0; m < 8; m++)
 		{				
@@ -191,8 +195,7 @@ public class Button
 		Menu.startscreenButton.get("11").enabled = Controller.savegame.valid;
 		
 		Menu.startscreenMenuButton.put("Cancel", new Button( 849, 410, 150, 30, CANCEL[Menu.language.ordinal()], null, false, true));
-		
-				
+
 		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
 		{
 			Menu.startscreenButton.get("10").marked = true;
@@ -200,12 +203,14 @@ public class Button
 	}
     
 	// Helicopter-spezifische Anpassung der Werkstatt-Button-Beschriftungen
+	// TODO vielleicht können die spezifischen Beschriftungen unnötig gemacht werden, wenn gleich die richtigen Werte verwendet werden
 	public static void initialize(Helicopter helicopter)
 	{
 		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
 		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
-		
-		for(int i = 0; i < 6; i++)
+
+		// TODO Enums verwenden
+		for(int i = 0; i < StandardUpgradeTypes.values().length; i++)
     	{    		
 			if(!helicopter.hasMaxUpgradeLevel[i])
 			{
@@ -226,10 +231,10 @@ public class Button
 		Menu.repairShopButton.get("Special" + 2).costColor = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repairShopButton.get("Special" + 3).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
 		Menu.repairShopButton.get("Special" + 3).costColor = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
-		Menu.repairShopButton.get("Special" + 3).label = Menu.SPECIALS[Menu.language.ordinal()][3];
+		Menu.repairShopButton.get("Special" + 3).label = Menu.dictionary.getSecondCannon();
 		Menu.repairShopButton.get("Special" + 4).costs = helicopter.getType() != ROCH ? Helicopter.CHEAP_SPECIAL_COSTS : Roch.JUMBO_MISSILE_COSTS ;
 		Menu.repairShopButton.get("Special" + 4).costColor = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[CHEAP.ordinal()];
-		Menu.repairShopButton.get("Special" + 4).label = Menu.SPECIALS[Menu.language.ordinal()][4 + helicopter.getType().ordinal()];
+		Menu.repairShopButton.get("Special" + 4).label = Menu.dictionary.getFifthSpecial();
 	}
 	
 	void paint(Graphics2D g2d){paint(g2d, null, false);}

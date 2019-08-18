@@ -31,6 +31,11 @@ public final class Dictionary
         specialUpgrades = new ArrayList<>(5);
 
 
+    public Dictionary()
+    {
+        this(Languages.getDefault(), HelicopterTypes.getDefault());
+    }
+
     public Dictionary(Languages language, HelicopterTypes helicopterType)
     {
         loadDefaultLanguageProperties();
@@ -92,7 +97,7 @@ public final class Dictionary
         specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.spotlight"));
         specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.goliath"));
         specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.warheads"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.secondcannon"));
+        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.secondCannon"));
         specialUpgrades.add(determineFifthSpacial());
     }
 
@@ -106,13 +111,44 @@ public final class Dictionary
         return this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade());
     }
 
+
+    // Textausgaben
+
     public List<String> getSpecialUpgrades()
     {
         return specialUpgrades;
     }
 
-    public String getWord(String key)
+    // TODO Enum einführen für Special-Upgrades
+    // TODO ggf. eine eigene Klasse für die Transkations einführen, welche dann das Dictionary verwendet
+
+    public String getSpotlight()
     {
-        return this.languageProperties.getProperty(key);
+        return specialUpgrades.get(0);
+    }
+
+    public String getGoliathPlating()
+    {
+        return specialUpgrades.get(1);
+    }
+
+    public String getPiercingWarheads()
+    {
+        return specialUpgrades.get(2);
+    }
+
+    public String getSecondCannon()
+    {
+        return specialUpgrades.get(3);
+    }
+
+    public String getFifthSpecial()
+    {
+        return specialUpgrades.get(4);
+    }
+
+    public String getThirdCannon()
+    {
+        return this.languageProperties.getProperty("thirdCannon");
     }
 }
