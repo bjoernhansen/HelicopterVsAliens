@@ -257,7 +257,7 @@ public abstract class Helicopter extends MovingObject
     		else{this.inputColorCannon 
     				= this.isInvincible()
     					? MyColor.variableGreen 
-    					: this.getSecondaryHullColor();}
+    					: helicopterType.getStandardSecondaryHullColor();}
     	}
     	else
     	{
@@ -272,7 +272,7 @@ public abstract class Helicopter extends MovingObject
     						        && helicopterType == PHOENIX
     						        && Menu.effectTimer[PHOENIX.ordinal()] > 1
     						        && Menu.effectTimer[PHOENIX.ordinal()] < 55))
-    						  ? this.getPrimaryHullColor()
+    						  ? helicopterType.getStandardPrimaryHullColor()
     						  : MyColor.variableGreen;
     	this.inputColorWindow = !unlockedPainting
     								&& (this.hasTripleDmg()

@@ -27,7 +27,7 @@ public class Main
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = true;
+    	TESTMODE = false;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -58,26 +58,17 @@ public class Main
     {
     	if(TESTMODE)
         {
-
         	Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
-            
             List<String> list = dictionary.getSpecialUpgrades();
             list.forEach(System.out::println);
             
-    
             dictionary.switchLanguageTo(ENGLISH);
-            
             list.forEach(System.out::println);
-
-    
-    
+       
             dictionary.switchHelicopterTypeTo(HELIOS);
-    
             list.forEach(System.out::println);
 
 			System.out.println(StandardUpgradeTypes.values().length);
-
-   
 		}
         else
         {
