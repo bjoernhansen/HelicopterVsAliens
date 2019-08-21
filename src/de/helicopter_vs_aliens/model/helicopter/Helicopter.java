@@ -61,7 +61,7 @@ public abstract class Helicopter extends MovingObject
 	static final float
 		// TODO wo wird das verwendet? Evtl. nicht mehr nötig?
 		ENEMY_MISSILE_DAMAGE_FACTOR =  0.5f,
-		STANDARD_MISSILE_DMG_FACTOR =  1.0f;
+		STANDARD_MISSILE_DAMAGE_FACTOR =  1.0f;
     
     public static final double    	
 		FOCAL_PNT_X_LEFT		= 39,
@@ -90,12 +90,11 @@ public abstract class Helicopter extends MovingObject
 
 	public int
 		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
-		currentFirepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
+		currentBaseFirepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
 		timeBetweenTwoShots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
 		shiftTime,							// nur Pegasus-Klasse: Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
 		platingDurabilityFactor,			// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
 		numberOfCannons,					// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
-		rapidfire,							// nur Kamaitachi-Klasse: SpezialUpgrade; = 2, wenn erforscht, sonst = 0;	
 		
 		// Timer
 		plasmaActivationTimer,				// nur Kamaitachi-Klasse: Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
@@ -140,14 +139,15 @@ public abstract class Helicopter extends MovingObject
     	rotorPosition[] = new float[NR_OF_TYPES];	// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
     		
     public boolean
-		spotlight,				// = true: Helikopter hat Scheinwerfer
+		spotlight,							// = true: Helikopter hat Scheinwerfer
 		hasPiercingWarheads,				// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen bestückt
-	
+		
 		hasShortrangeRadiation,				// = true: Helikopter verfügt über Nahkampfbestrahlng
-		hasJumboMissiles,					// = true: Helikopter verschießt Jumbo-Raketen
-		hasRadarDevice,						// = true: Helikopter verfügt über eine Radar-Vorrichtung
-		hasInterphaseGenerator,				// = true: Helikopter verfügt über einen Interphasen-Generator
-		hasPowerUpImmobilizer,				// = true: Helikopter verfügt über einen Interphasen-Generator
+		//hasJumboMissiles,					// = true: Helikopter verschießt Jumbo-Raketen
+		//hasRadarDevice,						// = true: Helikopter verfügt über eine Radar-Vorrichtung
+		//hasRapidFire,						// = true: Helikopter verfügt über eine Schnellschussvorrichtung
+		//hasInterphaseGenerator,				// = true: Helikopter verfügt über einen Interphasen-Generator
+		//hasPowerUpImmobilizer,				// = true: Helikopter verfügt über einen Interphasen-Generator
 		
 		isNextMissileStunner,   			// = true: die nächste abgeschossene Rakete wird eine Stopp-Rakete
 		isActive,							// = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
@@ -225,10 +225,12 @@ public abstract class Helicopter extends MovingObject
     
     public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay, boolean unlockedPainting)
     {
-    	// die Farben    	
+    	// TODO: die paint Methode zerstückeln damit inheritance leichter umzusetzen wird
+    	
+    	// die Farben
     	if(unlockedPainting)
     	{
-    		this.inputColorCannon = this.getSecondaryHullColor();
+    		this.inputColorCannon = helicopterType.getStandardSecondaryHullColor();
     	}
     	else if(this.plasmaActivationTimer >= POWERUP_DURATION/4  ||
     		(Events.window == STARTSCREEN && helicopterType == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] > 0 && Menu.effectTimer[KAMAITACHI.ordinal()] < 35))
@@ -856,18 +858,14 @@ public abstract class Helicopter extends MovingObject
 		this.platingDurabilityFactor = savegame.platingDurabilityFactor;
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
 		this.numberOfCannons = savegame.numberOfCannons;
-
-		this.hasShortrangeRadiation = savegame.hasShortrangeRadiation;
-		this.hasJumboMissiles = savegame.hasJumboMissiles;
-		this.hasRadarDevice = savegame.hasRadarDevice;
-		// TODO auch rapid feier wie Jumbomissiles in die Subklasse auslagern
-		this.rapidfire = savegame.rapidfire;
-		this.hasInterphaseGenerator = savegame.hasInterphaseGenerator;
-		this.hasPowerUpImmobilizer = savegame.hasPowerUpImmobilizer;
-
 		this.currentPlating = savegame.currentPlating;
 		this.energy = savegame.energy;
-
+		
+		if(savegame.hasFifthSpecial)
+		{
+			this.obtainFifthSpecial();
+		}
+		
 		this.numberOfEnemiesSeen = savegame.enemiesSeen;
 		this.numberOfEnemiesKilled = savegame.enemiesKilled;
 		this.numberOfMiniBossSeen = savegame.miniBossSeen;
@@ -1055,10 +1053,8 @@ public abstract class Helicopter extends MovingObject
 		this.energy = 0;
 		this.destination.setLocation(this.bounds.getX() + 40, 520);	
 		this.plasmaActivationTimer = 0;
-		
 		if(this.isPowerShieldActivated){this.shutDownPowerShield();}
 		if(this.tractor != null){this.stopTractor();}
-		if(this.hasInterphaseGenerator){Audio.phaseShift.stop();}
 		this.numberOfCrashes++;
 		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosions);}
 		else{this.isCrashing = true;}
@@ -1217,7 +1213,7 @@ public abstract class Helicopter extends MovingObject
     		this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
     	}
     	this.setPlatingColor();
-    	this.currentFirepower = (int)(this.getMissileDamageFactor() * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
+		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
 		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 		if(Events.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
@@ -1545,11 +1541,26 @@ public abstract class Helicopter extends MovingObject
 	
 	public float getMissileDamageFactor()
 	{
-		return STANDARD_MISSILE_DMG_FACTOR;
+		return STANDARD_MISSILE_DAMAGE_FACTOR;
 	}
 
 	public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
 	{
 		return ORDINARY;
+	}
+	
+	public boolean canImmobilizePowerUp()
+	{
+		return false;
+	}
+	
+	public boolean canDetectCloakedVessels()
+	{
+		return false;
+	}
+	
+	public void setCurrentBaseFirepower()
+	{
+		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
 	}
 }

@@ -680,7 +680,7 @@ public class Events
 			}
 			else if(selection == 3)
 			{
-				helicopter.currentFirepower = (int)(helicopter.getMissileDamageFactor() * MyMath.dmg(helicopter.levelOfUpgrade[FIREPOWER.ordinal()]));
+				helicopter.setCurrentBaseFirepower();
 			}
 			else if(selection == 4)
 			{

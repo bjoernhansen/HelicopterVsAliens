@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -23,8 +24,11 @@ public final class Pegasus extends Helicopter
 {
     static final int[]
             INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
-
-
+        
+    private boolean
+        hasInterphaseGenerator;				// = true: Helikopter verfügt über einen Interphasen-Generator
+    
+    
     @Override
     public HelicopterTypes getType()
     {
@@ -162,5 +166,12 @@ public final class Pegasus extends Helicopter
     {
         return this.interphaseGeneratorTimer <= this.shiftTime
                 && super.basicCollisionRequirementsSatisfied(e);
+    }
+    
+    @Override
+    public void crash()
+    {
+        if(this.hasInterphaseGenerator){Audio.phaseShift.stop();}
+        super.crash();
     }
 }

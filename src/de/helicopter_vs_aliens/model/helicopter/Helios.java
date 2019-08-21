@@ -21,6 +21,9 @@ public final class Helios extends Helicopter
 {
     // TODO bei der Guthabenberechnung wird bei bereits besuchten Leveln noch ausgezahlt nach Reparatur.
     
+    private boolean hasPowerUpImmobilizer;  // = true: Helikopter verfügt über einen Interphasen-Generator
+    
+    
     @Override
     public HelicopterTypes getType()
     {
@@ -112,5 +115,11 @@ public final class Helios extends Helicopter
     {
         super.resetState(resetStartPos);
         this.powerUpGeneratorTimer = 0;
+    }
+    
+    @Override
+    public boolean canImmobilizePowerUp()
+    {
+        return this.hasPowerUpImmobilizer;
     }
 }

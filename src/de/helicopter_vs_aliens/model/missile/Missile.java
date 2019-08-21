@@ -29,7 +29,6 @@ public class Missile extends MovingObject
 {	
 	private static final float
 		POWERUP_DAMAGE_FACTOR = 3f,				// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
-		OROCHI_EXTRA_DAMAGE_FACTOR = 1.03f, 	// Orochi-Klasse: Faktor, um den sich die Schadenswirkung von Raketen erhöht wird
 		SHIFT_DAMAGE_FACTOR = 8.9f;				// Pegasus-Klasse: Faktor, um den sich die Schadenswirkung einer Rakete erhöht, wenn diese abgeschossen wird, während der Interphasen-Generator aktiviert ist
 
 	public int
@@ -115,8 +114,7 @@ public class Missile extends MovingObject
 	
 	private void setDmg(Helicopter helicopter)
 	{
-		this.dmg = 	(int)(helicopter.currentFirepower
-				* (helicopter.numberOfCannons == 3 ? OROCHI_EXTRA_DAMAGE_FACTOR : 1.0f)
+		this.dmg = 	(int)(helicopter.currentBaseFirepower
 				* ((helicopter.plasmaActivationTimer == 0) ? 1 : MyMath.plasmaDamageFactor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
 				* (this.typeOfExplosion == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
 				* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));

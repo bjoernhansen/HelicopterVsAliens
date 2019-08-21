@@ -373,7 +373,7 @@ public class Enemy extends MovingObject
 			}
 			else if(this.alpha != 255)
 			{
-				if(this.alpha > 51 || !helicopter.hasRadarDevice)
+				if(this.alpha > 51 || !helicopter.canDetectCloakedVessels())
 				{
 					scales[3] = ((float)this.alpha)/255;			
 					g2d.drawImage(	this.image[g2DSel],
@@ -440,9 +440,12 @@ public class Enemy extends MovingObject
 				this.paintRotor(g2d);
 			}
 		}
-		else if(helicopter.hasRadarDevice)
+		else if(helicopter.canDetectCloakedVessels())
 		{
-			g2d.drawImage(this.image[g2DSel + 2], this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0), this.paintBounds.y - this.paintBounds.height/4, null);
+			g2d.drawImage(	this.image[g2DSel + 2],
+							this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
+							this.paintBounds.y - this.paintBounds.height/4,
+							null);
 		}
 		
 		//zu Testzwecken:	
@@ -1766,7 +1769,7 @@ public class Enemy extends MovingObject
         int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
             ? MyMath.random(3)
             : 0;
-        int selectedBarrierIndex = MyMath.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, 7));
+        int selectedBarrierIndex = MyMath.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyTypes.getBarrierTypes().size()));
         this.type = (EnemyTypes) EnemyTypes.getBarrierTypes().toArray()[selectedBarrierIndex];
     }
     
@@ -2611,7 +2614,7 @@ public class Enemy extends MovingObject
 		}
 		for(Enemy enemy : controller.enemies.get(ACTIVE))
 		{
-			if(enemy.isVisableNonBarricadeVessel(helicopter.hasRadarDevice))
+			if(enemy.isVisableNonBarricadeVessel(helicopter.canDetectCloakedVessels()))
 			{
 				enemy.paint(g2d, helicopter);
 			}
@@ -4037,7 +4040,7 @@ public class Enemy extends MovingObject
 		else if(this.canTakeCollisonDamage())
 		{
 			this.takeDamage((int)(
-				helicopter.currentFirepower
+				helicopter.currentBaseFirepower
 				* (helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
 					? TELEPORT_DAMAGE_FACTOR 
 					: RADIATION_DAMAGE_FACTOR)));				

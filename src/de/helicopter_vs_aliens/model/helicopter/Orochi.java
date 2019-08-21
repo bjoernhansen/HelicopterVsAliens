@@ -19,6 +19,13 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENER
 
 public final class Orochi extends Helicopter
 {
+    private static final float
+        EXTRA_MISSILE_DAMAGE_FACTOR = 1.03f; 	// Orochi-Klasse: Faktor, um den sich die Schadenswirkung von Raketen erhöht wird
+        
+    private boolean
+        hasRadarDevice;	 // = true: Helikopter verfügt über eine Radar-Vorrichtung
+    
+    
     @Override
     public HelicopterTypes getType()
     {
@@ -120,5 +127,17 @@ public final class Orochi extends Helicopter
     void resetFifthSpecial()
     {
         this.hasRadarDevice = false;
+    }
+    
+    @Override
+    public boolean canDetectCloakedVessels()
+    {
+        return this.hasRadarDevice;
+    }
+    
+    @Override
+    public float getMissileDamageFactor()
+    {
+        return this.numberOfCannons == 3 ? EXTRA_MISSILE_DAMAGE_FACTOR : STANDARD_MISSILE_DAMAGE_FACTOR;
     }
 }

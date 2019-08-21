@@ -23,6 +23,7 @@ import de.helicopter_vs_aliens.util.MyMath;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 
@@ -30,7 +31,8 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 public class PowerUp extends MovingObject
 {
 	private static final int
-		GAME_SIZE = 30;
+		GAME_SIZE = 30,
+		POWERUP_STOP_POSITION = 1004;
 	
 	public static final int
 		MENU_SIZE = 23;
@@ -121,8 +123,8 @@ public class PowerUp extends MovingObject
 		if(this.bounds.intersects(helicopter.bounds)){this.collect(helicopter);}		
 		
 		if(!this.stopped 
-		   && helicopter.hasPowerUpImmobilizer
-		   && (this.bounds.getX() - this.speed.getX() + 20 > 1004 ))
+		   && helicopter.canImmobilizePowerUp()
+		   && this.hasReachedStopPosition())
 		{
 			this.stop();
 		}
@@ -133,7 +135,7 @@ public class PowerUp extends MovingObject
 			{
 				double new_y_speed = 0.20 * this.direction * this.speed.getX();
 				this.speed.setLocation(0.25 * this.direction + this.speed.getX(), 
-										helicopter.hasPowerUpImmobilizer
+										helicopter.canImmobilizePowerUp()
 											? Math.min(new_y_speed, 0.03*(this.bounds.getCenterY()-30))
 											: new_y_speed);
 			}	
@@ -158,6 +160,11 @@ public class PowerUp extends MovingObject
 			}
 			this.setPaintBounds();
 		}		
+	}
+	
+	private boolean hasReachedStopPosition()
+	{
+		return POWERUP_STOP_POSITION < (this.bounds.getX() - this.speed.getX() + 20);
 	}
 	
 	private void make(double x, double y, PowerUpTypes powerUpType, int powerUpWorth, int powerUpDirection)
@@ -286,7 +293,7 @@ public class PowerUp extends MovingObject
 					type,
 					(int)(POWER_UP_WORTH_MULTIPLIER * enemy.getEffectiveStrength()),
 					helicopter.bounds.getX() > enemy.bounds.getX() 
-					|| helicopter.hasPowerUpImmobilizer ? -1 : 1 );
+					|| helicopter.canImmobilizePowerUp() ? -1 : 1 );
 		}
 		else{pu.make(0, 0, type, 0, 0);}
 		powerUp.get(ACTIVE).add(pu);

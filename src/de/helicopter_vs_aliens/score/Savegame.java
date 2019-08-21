@@ -35,11 +35,11 @@ public class Savegame implements Serializable
 	
 	public int
 		money,
-            killsAfterLevelup,
+        killsAfterLevelup,
 		level,
-			maxLevel,
-			bonusCounter,
-			extraBonusCounter,
+		maxLevel,
+		bonusCounter,
+		extraBonusCounter,
 		enemiesSeen,
 		enemiesKilled,
 		miniBossSeen,
@@ -50,7 +50,6 @@ public class Savegame implements Serializable
 		hitCounter,
 		platingDurabilityFactor,
 		numberOfCannons,
-		rapidfire, 
 		levelOfUpgrade[] = new int[6];
 	
 	public long
@@ -67,13 +66,9 @@ public class Savegame implements Serializable
 		standardBackgroundMusic,
 		isSoundOn,
 		valid,
-		hasShortrangeRadiation,
-		hasPiercingWarheads,
 		spotlight,
-		hasJumboMissiles,
-		hasRadarDevice,
-		hasInterphaseGenerator,
-		hasPowerUpImmobilizer,
+		hasPiercingWarheads,
+		hasFifthSpecial,
 		noCheatsUsed,
 		reachedLevelTwenty[] = new boolean [Helicopter.NR_OF_TYPES];
 	
@@ -182,14 +177,9 @@ public class Savegame implements Serializable
 		this.levelOfUpgrade = helicopter.levelOfUpgrade.clone();
 		this.spotlight = helicopter.spotlight;
 		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
-		this.hasShortrangeRadiation = helicopter.hasShortrangeRadiation;
 		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
 		this.numberOfCannons = helicopter.numberOfCannons;
-		this.hasJumboMissiles = helicopter.hasJumboMissiles;
-		this.hasRadarDevice = helicopter.hasRadarDevice;
-		this.rapidfire = helicopter.rapidfire;
-		this.hasInterphaseGenerator = helicopter.hasInterphaseGenerator;
-		this.hasPowerUpImmobilizer = helicopter.hasPowerUpImmobilizer;
+		this.hasFifthSpecial = helicopter.hasFifthSpecial();
 		this.currentPlating = helicopter.currentPlating;
 		this.energy = helicopter.energy;
 		this.enemiesSeen = helicopter.numberOfEnemiesSeen;

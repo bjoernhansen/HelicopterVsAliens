@@ -9,7 +9,6 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.MyMath;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -29,8 +28,11 @@ public final class Roch extends Helicopter
         POWER_SHIELD_ACTIVATION_THRESHOLD = 75;
 
     private static final float
-        JUMBO_MISSILE_DMG_FACTOR = 2.36363637f,	// Faktor, um den sich die Schadenswirkung der Raketen erhöht, nachdem das Jumbo-Raketen-Spezial-Upgrade erworben wurde
+        JUMBO_MISSILE_DAMAGE_FACTOR = 2.36363637f,	// Faktor, um den sich die Schadenswirkung der Raketen erhöht, nachdem das Jumbo-Raketen-Spezial-Upgrade erworben wurde
         POWER_SHIELD_E_LOSS_RATE = -0.06f;
+    
+    private boolean
+        hasJumboMissiles;	// = true: Helikopter verschießt Jumbo-Raketen
 
 
     @Override
@@ -69,8 +71,7 @@ public final class Roch extends Helicopter
     public void obtainFifthSpecial()
     {
         this.hasJumboMissiles = true;
-        // TODO current firepower setzen in Methdoe auslagern,w ird mehrfach verwendet
-        this.currentFirepower = (int)(this.getMissileDamageFactor() * MyMath.dmg(this.levelOfUpgrade[StandardUpgradeTypes.FIREPOWER.ordinal()]));
+        this.setCurrentBaseFirepower();
     }
 
     @Override
@@ -167,8 +168,8 @@ public final class Roch extends Helicopter
     public float getMissileDamageFactor()
     {
         return this.hasJumboMissiles
-                ? JUMBO_MISSILE_DMG_FACTOR
-                : STANDARD_MISSILE_DMG_FACTOR;
+                ? JUMBO_MISSILE_DAMAGE_FACTOR
+                : STANDARD_MISSILE_DAMAGE_FACTOR;
     }
     
     @Override

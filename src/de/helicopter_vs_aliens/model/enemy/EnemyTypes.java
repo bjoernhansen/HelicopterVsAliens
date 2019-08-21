@@ -49,7 +49,7 @@ public enum EnemyTypes
     BARRIER_4(7),
     BARRIER_5(9),
     BARRIER_6(4),
-    BARRIER_7(15),
+    BARRIER_7(15), // TODO überarbeiten, wie oft soll er wiederkommen? manchmal schießt er nicht,
     
     KABOOM(0);
     
@@ -58,7 +58,7 @@ public enum EnemyTypes
         BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOSS_1, PROTECTOR)),
         STANDARD_TYPES = Collections.unmodifiableSet(EnumSet.range(TINY, TELEPORTER)),
         FINAL_BOSS_SERVANT_TYPES = Collections.unmodifiableSet(EnumSet.range(SMALL_SHIELD_MAKER, PROTECTOR)),
-        BARRIER = Collections.unmodifiableSet(EnumSet.range(BARRIER_0, BARRIER_7)),
+        BARRIERS = Collections.unmodifiableSet(EnumSet.range(BARRIER_0, BARRIER_7)),
         CLOAKABLE_AS_MINI_BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOLT, TELEPORTER));
       
     private final int strength; // Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
@@ -76,7 +76,7 @@ public enum EnemyTypes
     
     static Set<EnemyTypes> getBarrierTypes()
     {
-        return BARRIER;
+        return BARRIERS;
     }
     
     public boolean isMajorBoss()

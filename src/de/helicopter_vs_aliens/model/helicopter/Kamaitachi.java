@@ -18,7 +18,9 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 public final class Kamaitachi extends Helicopter
 {
-    public static final int RAPIDFIRE_AMOUNT = 2;
+    private static final int RAPIDFIRE_AMOUNT = 2;
+    
+    private boolean hasRapidFire;
     
     @Override
     public HelicopterTypes getType()
@@ -36,13 +38,13 @@ public final class Kamaitachi extends Helicopter
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.rapidfire == RAPIDFIRE_AMOUNT;
+        return this.hasRapidFire; // this.rapidfire == RAPIDFIRE_AMOUNT;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.rapidfire = RAPIDFIRE_AMOUNT;
+        this.hasRapidFire = true;
     }
 
     @Override
@@ -83,12 +85,13 @@ public final class Kamaitachi extends Helicopter
     @Override
     void resetFifthSpecial()
     {
-        this.rapidfire = 0;
+        this.hasRapidFire = false;
     }
     
     @Override
     public int calculateSumOfFireRateBooster(boolean poweredUp)
     {
-        return super.calculateSumOfFireRateBooster(poweredUp) + this.rapidfire;
+        return super.calculateSumOfFireRateBooster(poweredUp)
+                + (this.hasRapidFire ? RAPIDFIRE_AMOUNT : 0);
     }
 }
