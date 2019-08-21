@@ -680,7 +680,7 @@ public class Events
 			}
 			else if(selection == 3)
 			{
-				helicopter.currentFirepower = (int)(helicopter.missileDamageFactor * MyMath.dmg(helicopter.levelOfUpgrade[FIREPOWER.ordinal()]));
+				helicopter.currentFirepower = (int)(helicopter.getMissileDamageFactor() * MyMath.dmg(helicopter.levelOfUpgrade[FIREPOWER.ordinal()]));
 			}
 			else if(selection == 4)
 			{
@@ -1019,12 +1019,10 @@ public class Events
 		lastMultiKill = 0;
 		commendationTimer = 0;		
 		isRestartWindowVisible = false;
-		Menu.isMenueVisible = false;
 		lastBonus = 0;
-		Menu.moneyDisplayTimer = -1;
-		Menu.levelDisplayTimer = START;
-		Menu.unlockedTimer = 0;
-				
+		
+		Menu.conditionalReset();
+		
 		// kein "active enemy"-Reset, wenn Bossgegner 2 Servants aktiv
 		if(!controller.enemies.get(ACTIVE).isEmpty()
 		   && !(!totalReset && controller.enemies.get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
@@ -1076,8 +1074,10 @@ public class Events
 		{
 			helicopter.adjustFireRate(false);
 		}
-		for(int i = 0; i < 4; i++){
-			Menu.collectedPowerUp[i] = null;}
+		for(int i = 0; i < 4; i++)
+		{
+			Menu.collectedPowerUp[i] = null;
+		}
 	}
 
 	static private void startGame(Savegame savegame)
@@ -1087,27 +1087,26 @@ public class Events
 
 	static private void startGame(HelicopterTypes helicopterType, Savegame savegame, boolean isNewGame)
 	{
+		Audio.play(Audio.choose);
 		Helicopter helicopter = HelicopterFactory.create(helicopterType);
 		Controller.getInstance().setHelicopter(helicopter);
-
 		if(isNewGame)
 		{
 			Audio.play(Audio.applause1);
 			savegame.saveInHighscore();
 		}
-		Menu.stopButtonHighlighting(Menu.startscreenButton);
-		Menu.cross = null;
-		Menu.crossTimer = 0;
-		Menu.messageTimer = 0;
-		Audio.play(Audio.choose);
-
+		Menu.reset();
 		helicopter.initialize(isNewGame, savegame);
 		initialize(helicopter, savegame, isNewGame);
 		Button.initialize(helicopter);
-		if(isNewGame){
-			Controller.savegame.saveToFile(helicopter, true);}
-		else{
-			Menu.updateRepairShopButtons(helicopter);}
+		if(isNewGame)
+		{
+			Controller.savegame.saveToFile(helicopter, true);
+		}
+		else
+		{
+			Menu.updateRepairShopButtons(helicopter);
+		}
 	}
 		
 	private static void restartGame(Helicopter helicopter, EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> bgObject)

@@ -49,7 +49,7 @@ public abstract class Helicopter extends MovingObject
 		NO_COLLISION_DMG_TIME	= 20,   // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
     	FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
     	NR_OF_TYPES = HelicopterTypes.values().length,                // so viele Helikopter-Klassen gibt es
-    	INVU_DMG_REDUCTION = 80,        // %-Wert der Schadensreduzierung bei Unverwundbarleit
+    	INVULNERABILITY_DAMAGE_REDUCTION = 80,        // %-Wert der Schadensreduzierung bei Unverwundbarleit
     	ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
     	REDUCED_ENERGY_DRAIN = 10,
 		STANDARD_PLATING_STRENGTH = 1,
@@ -59,7 +59,9 @@ public abstract class Helicopter extends MovingObject
 		CHEAP_SPECIAL_COSTS = 10000;
 	
 	static final float
-    	MISSILE_DMG 			 =  0.5f;
+		// TODO wo wird das verwendet? Evtl. nicht mehr nötig?
+		ENEMY_MISSILE_DAMAGE_FACTOR =  0.5f,
+		STANDARD_MISSILE_DMG_FACTOR =  1.0f;
     
     public static final double    	
 		FOCAL_PNT_X_LEFT		= 39,
@@ -83,7 +85,7 @@ public abstract class Helicopter extends MovingObject
     	
     private static final float    
     	NOSEDIVE_SPEED = 12f,	// Geschwindigkeit des Helikopters bei Absturz
-    	INVU_DMG_FACTOR = 1.0f - INVU_DMG_REDUCTION/100f;
+    	INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f;
 
 
 	public int
@@ -131,19 +133,22 @@ public abstract class Helicopter extends MovingObject
 		
     public float
 		rotorSystem,						// legt die aktuelle Geschwindigkeit des Helikopters fest
-		missileDamageFactor,						// Faktor, welcher die Feuerkraft beeinflusst; = jumbo_missle_dmg_factor, wenn Jumbo-Raketen erforscht, sonst = 1
 		currentPlating,						// aktuelle Panzerung (immer <= maximale Panzerung)
     	energy,								// verfügbare Energie;
 		regenerationRate,					// Energiezuwachs pro Simulationsschritt
 		spellCosts,							// Energiekosten für die Nutzung des Energie-Upgrades
     	rotorPosition[] = new float[NR_OF_TYPES];	// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
     		
-    public boolean spotlight,				// = true: Helikopter hat Scheinwerfer
-		hasShortrangeRadiation,				// = true: Helikopter verfügt über Nahkampfbestrahlng
+    public boolean
+		spotlight,				// = true: Helikopter hat Scheinwerfer
 		hasPiercingWarheads,				// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen bestückt
+	
+		hasShortrangeRadiation,				// = true: Helikopter verfügt über Nahkampfbestrahlng
+		hasJumboMissiles,					// = true: Helikopter verschießt Jumbo-Raketen
 		hasRadarDevice,						// = true: Helikopter verfügt über eine Radar-Vorrichtung
 		hasInterphaseGenerator,				// = true: Helikopter verfügt über einen Interphasen-Generator
 		hasPowerUpImmobilizer,				// = true: Helikopter verfügt über einen Interphasen-Generator
+		
 		isNextMissileStunner,   			// = true: die nächste abgeschossene Rakete wird eine Stopp-Rakete
 		isActive,							// = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
         isDamaged,    						// = true: Helikopter hat einen Totalschaden erlitten
@@ -851,10 +856,11 @@ public abstract class Helicopter extends MovingObject
 		this.platingDurabilityFactor = savegame.platingDurabilityFactor;
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
 		this.numberOfCannons = savegame.numberOfCannons;
-		this.missileDamageFactor = savegame.missileDamageFactor;
 
 		this.hasShortrangeRadiation = savegame.hasShortrangeRadiation;
+		this.hasJumboMissiles = savegame.hasJumboMissiles;
 		this.hasRadarDevice = savegame.hasRadarDevice;
+		// TODO auch rapid feier wie Jumbomissiles in die Subklasse auslagern
 		this.rapidfire = savegame.rapidfire;
 		this.hasInterphaseGenerator = savegame.hasInterphaseGenerator;
 		this.hasPowerUpImmobilizer = savegame.hasPowerUpImmobilizer;
@@ -877,44 +883,27 @@ public abstract class Helicopter extends MovingObject
     
     public void reset()
     {
-
-        for(int i=0; i < 4; i++){this.rotorPosition[i]=0;}
+        // TODO ggf. muss einiges nicht mehr resettet werden, da immer ein neuer Helicopter erzeugt wird
+    	for(int i = 0; i < 4; i++){this.rotorPosition[i] = 0;}
         this.resetState();
         this.placeAtStartpos();
         this.isDamaged = false;
-        this.numberOfCrashes = 0;
-        this.numberOfRepairs = 0;
-        this.isPlayedWithoutCheats = true;
-        this.missileCounter = 0;
-        this.hitCounter = 0;
-        this.numberOfEnemiesSeen = 0;
-        this.numberOfEnemiesKilled = 0;
-        this.numberOfMiniBossSeen = 0;
-        this.numberOfMiniBossKilled = 0;
-        this.spotlight = false;
-        this.platingDurabilityFactor = STANDARD_PLATING_STRENGTH;
-        this.hasShortrangeRadiation = false;
-        this.hasPiercingWarheads = false;
-        this.missileDamageFactor = 1;
-        this.numberOfCannons = 1;
-        this.hasRadarDevice = false;
-        this.rapidfire = 0;
-        this.hasInterphaseGenerator = false;
-        this.hasPowerUpImmobilizer = false;
-        
+		this.isPlayedWithoutCheats = true;
+		this.resetCounterForHighscore();
+		this.resetSpecialUpgrades();
         Arrays.fill(this.scorescreenTimes, 0);
     }
-
-    // TODO boolscher Parameter - anders lösen
-    public void resetState()
+	
+	public void resetState()
 	{
+		// TODO boolscher Parameter - anders lösen
 		resetState(true);
 	}
-
-    public void resetState(boolean resetStartPos)
-    {
-    	this.setActivationState(false);
-    	this.isSearchingForTeleportDestination = false;
+	
+	public void resetState(boolean resetStartPos)
+	{
+		this.setActivationState(false);
+		this.isSearchingForTeleportDestination = false;
 		this.isNextMissileStunner = false;
 		this.isCrashing = false;
 		this.interphaseGeneratorTimer = 0;
@@ -927,8 +916,31 @@ public abstract class Helicopter extends MovingObject
 		this.rotorPosition[this.getType().ordinal()] = 0;
 		if(resetStartPos){this.placeAtStartpos();}
 		this.fireRateTimer = this.timeBetweenTwoShots;
-    }
-    
+	}
+	
+	private void resetCounterForHighscore()
+	{
+		this.numberOfCrashes = 0;
+		this.numberOfRepairs = 0;
+		this.missileCounter = 0;
+		this.hitCounter = 0;
+		this.numberOfEnemiesSeen = 0;
+		this.numberOfEnemiesKilled = 0;
+		this.numberOfMiniBossSeen = 0;
+		this.numberOfMiniBossKilled = 0;
+	}
+	
+	private void resetSpecialUpgrades()
+	{
+		this.spotlight = false;
+		this.platingDurabilityFactor = STANDARD_PLATING_STRENGTH;
+		this.hasPiercingWarheads = false;
+		this.numberOfCannons = 1;
+		this.resetFifthSpecial();
+	}
+	
+	abstract void resetFifthSpecial();
+		
     public void repair(boolean restoreEnergy, boolean cheatRepair)
     {
     	Audio.play(Audio.cash);
@@ -1178,36 +1190,20 @@ public abstract class Helicopter extends MovingObject
 	}
 	
 	public void takeMissileDamage()
-    {   	
-    	if(!(this.isPowerShieldActivated
-    		 && (this.energy >= this.getDamageFactor()
-    							* MISSILE_DMG 
-    							* this.spellCosts
-    			 || this.hasUnlimitedEnergy())))
+    {
+		this.currentPlating = Math.max(this.currentPlating - this.getProtectionFactor() * ENEMY_MISSILE_DAMAGE_FACTOR, 0f);
+		if(this.enhancedRadiationTimer == 0)
 		{
-			this.currentPlating = Math.max(this.currentPlating - this.getDamageFactor() * MISSILE_DMG, 0f);
-			if(this.enhancedRadiationTimer == 0)
-			{
-				this.recentDamageTimer = RECENT_DMG_TIME;
-			}
-			if(this.isPowerShieldActivated)
-			{						
-				this.shutDownPowerShield();
-				this.energy = 0;
-			}
-			if(this.currentPlating <= 0 && !this.isDamaged)
-			{
-				this.crash();
-			}
+			this.recentDamageTimer = RECENT_DMG_TIME;
 		}
-		else
+		if(this.isPowerShieldActivated)
 		{
-			Audio.play(Audio.shieldUp);
-			this.energy -= this.hasUnlimitedEnergy()
-							? 0 
-							: this.getDamageFactor()
-							  * MISSILE_DMG 
-							  * this.spellCosts;
+			this.shutDownPowerShield();
+			this.energy = 0;
+		}
+		if(this.currentPlating <= 0 && !this.isDamaged)
+		{
+			this.crash();
 		}
     }   
         
@@ -1221,7 +1217,7 @@ public abstract class Helicopter extends MovingObject
     		this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
     	}
     	this.setPlatingColor();
-    	this.currentFirepower = (int)(this.missileDamageFactor * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
+    	this.currentFirepower = (int)(this.getMissileDamageFactor() * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
     	this.adjustFireRate(this.hasBoostedFireRate());
 		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 		if(Events.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
@@ -1420,19 +1416,16 @@ public abstract class Helicopter extends MovingObject
 
 	public boolean basicCollisionRequirementsSatisfied(Enemy e)
 	{		
-		return this.interphaseGeneratorTimer <= this.shiftTime
-				&& !this.isDamaged
+		return !this.isDamaged
 				&& e.isOnScreen()
 				&& e.bounds.intersects(this.bounds);
 	}
 	
-	public float getDamageFactor()
+	public float getProtectionFactor()
 	{		
-		return this.enhancedRadiationTimer == 0
-					? this.isInvincible()
-						? INVU_DMG_FACTOR
-						: 1.0f 
-					: 0.0f;
+		return this.isInvincible()
+				? INVULNERABILITY_PROTECTION_FACTOR
+				: 1.0f;
 	}
 
 	public boolean isEnergyAbilityActivatable()
@@ -1548,6 +1541,11 @@ public abstract class Helicopter extends MovingObject
 				&& this.bounds.getX() - this.bounds.getX() < -50
 				&& (this.bounds.getY() + 56 > this.bounds.getY() + 0.2 * this.bounds.getHeight()
 				&& this.bounds.getY() + 60 < this.bounds.getY() + 0.8 * this.bounds.getHeight());
+	}
+	
+	public float getMissileDamageFactor()
+	{
+		return STANDARD_MISSILE_DMG_FACTOR;
 	}
 
 	public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)

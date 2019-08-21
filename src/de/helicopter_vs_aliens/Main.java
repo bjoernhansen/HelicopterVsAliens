@@ -6,6 +6,7 @@ import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
@@ -15,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.EnumMap;
 import java.util.List;
 
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
@@ -59,14 +61,14 @@ public class Main
     	if(TESTMODE)
         {
         	Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
-            List<String> list = dictionary.getSpecialUpgrades();
-            list.forEach(System.out::println);
+            EnumMap<SpecialUpgradeTypes, String> map = dictionary.getSpecialUpgrades();
+            map.values().forEach(System.out::println);
             
             dictionary.switchLanguageTo(ENGLISH);
-            list.forEach(System.out::println);
+            map.values().forEach(System.out::println);
        
             dictionary.switchHelicopterTypeTo(HELIOS);
-            list.forEach(System.out::println);
+            map.values().forEach(System.out::println);
 
 			System.out.println(StandardUpgradeTypes.values().length);
 		}
@@ -74,9 +76,7 @@ public class Main
         {
             final Controller controller = Controller.getInstance();
             frame = new JFrame("Helicopter vs. Aliens");
-            
             frame.setBackground(Color.black);
-            
             frame.add("Center", controller);
             frame.addKeyListener(controller);
             frame.setResizable(false);

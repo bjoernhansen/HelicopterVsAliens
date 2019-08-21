@@ -13,6 +13,7 @@ import de.helicopter_vs_aliens.util.MyMath;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 
 import static de.helicopter_vs_aliens.control.Events.SPOTLIGHT_COSTS;
 import static de.helicopter_vs_aliens.gui.PriceLevels.*;
@@ -180,11 +181,15 @@ public class Button
 										+ STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][i][1],
 										PRICE[Menu.language.ordinal()], true, true));
 		}
-		// TODO Enums verwenden für SpecialUpgrades
-		for(int i = 0; i < SpecialUpgradeTypes.values().length; i++)
+		for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
 		{
-			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50, Menu.dictionary.getSpecialUpgrades().get(i),  PRICE[Menu.language.ordinal()], true, true));
-		}		
+			int i = specialUpgradeType.ordinal();
+			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50,
+																Menu.dictionary.getSpecialUpgrade(specialUpgradeType),
+																PRICE[Menu.language.ordinal()],
+														true,
+														true));
+		}
 		for(int m = 0; m < 8; m++)
 		{				
 			int i = m/2, j = m%2;			

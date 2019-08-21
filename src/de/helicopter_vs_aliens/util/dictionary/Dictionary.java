@@ -1,13 +1,13 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.*;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 
 
@@ -27,8 +27,8 @@ public final class Dictionary
     private HelicopterTypes
         helicopterType = HelicopterTypes.getDefault();
 
-    private List<String>
-        specialUpgrades = new ArrayList<>(5);
+    private EnumMap<SpecialUpgradeTypes, String>
+        specialUpgrades = new EnumMap<>(SpecialUpgradeTypes.class);
 
 
     public Dictionary()
@@ -93,17 +93,17 @@ public final class Dictionary
 
     private void accountForLanguageChange()
     {
-        specialUpgrades.clear();
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.spotlight"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.goliath"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.warheads"));
-        specialUpgrades.add(this.languageProperties.getProperty("upgrades.special.secondCannon"));
-        specialUpgrades.add(determineFifthSpacial());
+        specialUpgrades.put(SPOTLIGHT, this.languageProperties.getProperty("upgrades.special.spotlight"));
+        specialUpgrades.put(GOLIATH_PLATING, this.languageProperties.getProperty("upgrades.special.goliath"));
+        specialUpgrades.put(PIERCING_WARHEADS, this.languageProperties.getProperty("upgrades.special.warheads"));
+        specialUpgrades.put(EXTRA_CANNONS, this.languageProperties.getProperty("upgrades.special.secondCannon"));
+        specialUpgrades.put(FIFTH_SPECIAL, determineFifthSpacial());
+        accountForHelicopterChange();
     }
 
     private void accountForHelicopterChange()
     {
-        specialUpgrades.set(4, determineFifthSpacial());
+        specialUpgrades.put(FIFTH_SPECIAL, determineFifthSpacial());
     }
 
     private String determineFifthSpacial()
@@ -111,40 +111,41 @@ public final class Dictionary
         return this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade());
     }
 
-
-    // Textausgaben
-
-    public List<String> getSpecialUpgrades()
+    
+    /** Textausgaben **/
+    public EnumMap<SpecialUpgradeTypes, String> getSpecialUpgrades()
     {
         return specialUpgrades;
     }
-
-    // TODO Enum einführen für Special-Upgrades
-    // TODO ggf. eine eigene Klasse für die Transkations einführen, welche dann das Dictionary verwendet
+    
+    public String getSpecialUpgrade(SpecialUpgradeTypes specialUpgradeType)
+    {
+        return specialUpgrades.get(specialUpgradeType);
+    }
 
     public String getSpotlight()
     {
-        return specialUpgrades.get(0);
+        return specialUpgrades.get(SPOTLIGHT);
     }
 
     public String getGoliathPlating()
     {
-        return specialUpgrades.get(1);
+        return specialUpgrades.get(GOLIATH_PLATING);
     }
 
     public String getPiercingWarheads()
     {
-        return specialUpgrades.get(2);
+        return specialUpgrades.get(PIERCING_WARHEADS);
     }
 
     public String getSecondCannon()
     {
-        return specialUpgrades.get(3);
+        return specialUpgrades.get(EXTRA_CANNONS);
     }
 
     public String getFifthSpecial()
     {
-        return specialUpgrades.get(4);
+        return specialUpgrades.get(FIFTH_SPECIAL);
     }
 
     public String getThirdCannon()

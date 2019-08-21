@@ -4078,7 +4078,7 @@ public class Enemy extends MovingObject
 	
 	public float collisionDamage(Helicopter helicopter)
 	{		
-		return helicopter.getDamageFactor()
+		return helicopter.getProtectionFactor()
 			   *(helicopter.isPowerShieldActivated && this.isExplodable ? 0.65f : 1.0f)
 			   *(this.type == KABOOM && !this.isDestroyed && !helicopter.hasShortrangeRadiation
 			     ? helicopter.kaboomDmg()

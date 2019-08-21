@@ -48,15 +48,10 @@ public final class Roch extends Helicopter
     @Override
     public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
-        if(this.hasJumboMissiles()){return JUMBO;}
+        if(this.hasJumboMissiles){return JUMBO;}
         else{return ORDINARY;}
     }
-
-    public boolean hasJumboMissiles()
-    {
-        return missileDamageFactor == JUMBO_MISSILE_DMG_FACTOR;
-    }
-
+    
     @Override
     public void obtainSomeUpgrades()
     {
@@ -67,14 +62,15 @@ public final class Roch extends Helicopter
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasJumboMissiles();
+        return this.hasJumboMissiles;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.missileDamageFactor = JUMBO_MISSILE_DMG_FACTOR;
-        this.currentFirepower = (int)(this.missileDamageFactor * MyMath.dmg(this.levelOfUpgrade[StandardUpgradeTypes.FIREPOWER.ordinal()]));
+        this.hasJumboMissiles = true;
+        // TODO current firepower setzen in Methdoe auslagern,w ird mehrfach verwendet
+        this.currentFirepower = (int)(this.getMissileDamageFactor() * MyMath.dmg(this.levelOfUpgrade[StandardUpgradeTypes.FIREPOWER.ordinal()]));
     }
 
     @Override
@@ -159,5 +155,51 @@ public final class Roch extends Helicopter
                     ? 0
                     : POWER_SHIELD_E_LOSS_RATE
                 : this.regenerationRate;
+    }
+    
+    @Override
+    void resetFifthSpecial()
+    {
+        this.hasJumboMissiles = false;
+    }
+    
+    @Override
+    public float getMissileDamageFactor()
+    {
+        return this.hasJumboMissiles
+                ? JUMBO_MISSILE_DMG_FACTOR
+                : STANDARD_MISSILE_DMG_FACTOR;
+    }
+    
+    @Override
+    public void takeMissileDamage()
+    {
+        if(this.canAbsorbMissileDamage())
+        {
+            Audio.play(Audio.shieldUp);
+            this.energy -= this.hasUnlimitedEnergy()
+                ? 0
+                : this.getProtectionFactor()
+                    * ENEMY_MISSILE_DAMAGE_FACTOR
+                    * this.spellCosts;
+        }
+        else
+        {
+            super.takeMissileDamage();
+        }
+    }
+    
+    private boolean canAbsorbMissileDamage()
+    {
+        return this.isPowerShieldActivated
+                && this.hasEnoughEnergyForMissileDamageAbsorption();
+    }
+    
+    private boolean hasEnoughEnergyForMissileDamageAbsorption()
+    {
+        return this.energy >= this.getProtectionFactor()
+                                * ENEMY_MISSILE_DAMAGE_FACTOR
+                                * this.spellCosts
+                || this.hasUnlimitedEnergy();
     }
 }

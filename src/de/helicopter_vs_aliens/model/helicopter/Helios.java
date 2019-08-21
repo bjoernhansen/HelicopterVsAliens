@@ -19,6 +19,8 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
 
 public final class Helios extends Helicopter
 {
+    // TODO bei der Guthabenberechnung wird bei bereits besuchten Leveln noch ausgezahlt nach Reparatur.
+    
     @Override
     public HelicopterTypes getType()
     {
@@ -37,7 +39,13 @@ public final class Helios extends Helicopter
     {
         return heliosCosts(i);
     }
-
+    
+    @Override
+    void resetFifthSpecial()
+    {
+        this.hasPowerUpImmobilizer = false;
+    }
+    
     @Override
     public int getGoliathCosts()
     {

@@ -79,7 +79,13 @@ public final class Kamaitachi extends Helicopter
         }
         this.evaluateBonusKills();
     }
-
+    
+    @Override
+    void resetFifthSpecial()
+    {
+        this.rapidfire = 0;
+    }
+    
     @Override
     public int calculateSumOfFireRateBooster(boolean poweredUp)
     {

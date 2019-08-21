@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -142,11 +143,24 @@ public final class Pegasus extends Helicopter
         }
         return false;
     }
-
+    
+    @Override
+    void resetFifthSpecial()
+    {
+        this.hasInterphaseGenerator = false;
+    }
+    
     @Override
     public void resetState(boolean resetStartPos)
     {
         super.resetState(resetStartPos);
         this.empTimer = 0;
+    }
+    
+    @Override
+    public boolean basicCollisionRequirementsSatisfied(Enemy e)
+    {
+        return this.interphaseGeneratorTimer <= this.shiftTime
+                && super.basicCollisionRequirementsSatisfied(e);
     }
 }

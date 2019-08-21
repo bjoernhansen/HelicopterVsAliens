@@ -115,4 +115,10 @@ public final class Orochi extends Helicopter
         }
         return false;
     }
+    
+    @Override
+    void resetFifthSpecial()
+    {
+        this.hasRadarDevice = false;
+    }
 }

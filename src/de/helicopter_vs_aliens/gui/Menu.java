@@ -35,6 +35,7 @@ import de.helicopter_vs_aliens.util.dictionary.Languages;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
+import static de.helicopter_vs_aliens.control.Events.START;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
@@ -1498,10 +1499,11 @@ public class Menu
 			repairShopButton.get("StandardUpgrade" + i).secondLabel =
 				Button.PRICE[language.ordinal()];
 		}
-		// TODO mit enums arbeiten
-		for(int i = 0; i < SpecialUpgradeTypes.values().length; i++)
+	
+		for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
 		{
-			repairShopButton.get("Special" + i).label = dictionary.getSpecialUpgrades().get(i);
+			int i = specialUpgradeType.ordinal();
+			repairShopButton.get("Special" + i).label = dictionary.getSpecialUpgrade(specialUpgradeType);
 			repairShopButton.get("Special" + i).secondLabel = Button.PRICE[language.ordinal()];
 		}		
 		if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
@@ -2093,7 +2095,7 @@ public class Menu
 					"Partial repairs " +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
 					"<font size = \"" + (HTML_SIZE-1) + "\">" +
-					Helicopter.INVU_DMG_REDUCTION + "% Indestructibility " +
+					Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Indestructibility " +
 					"for 15 seconds " +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
 					"<font size = \"" + (HTML_SIZE-1) + "\">" + 
@@ -2775,7 +2777,7 @@ public class Menu
 					"Teil-Reparatur " +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
 					"<font size = \"" + (HTML_SIZE-1) + "\">" +
-					Helicopter.INVU_DMG_REDUCTION + "% Unverwundbarkeit " +
+					Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Unverwundbarkeit " +
 					"für 15 Sekunden " +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
 					"<font size = \"" + (HTML_SIZE-1) + "\">" + 
@@ -3258,5 +3260,21 @@ public class Menu
 		//startscreen_menu_button.get("5").enabled = false;
 		label.setBounds(displayShift.width  + 42,
   						   displayShift.height + 83, 940, 240);
+	}
+	
+	public static void reset()
+	{
+		stopButtonHighlighting(startscreenButton);
+		cross = null;
+		crossTimer = 0;
+		messageTimer = 0;
+	}
+	
+	public static void conditionalReset()
+	{
+		isMenueVisible = false;
+		moneyDisplayTimer = -1;
+		levelDisplayTimer = START;
+		unlockedTimer = 0;
 	}
 }

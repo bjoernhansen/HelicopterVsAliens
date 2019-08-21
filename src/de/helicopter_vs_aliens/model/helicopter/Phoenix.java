@@ -4,13 +4,11 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyMath;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
@@ -42,7 +40,13 @@ public final class Phoenix extends Helicopter
         super.updateTimer();
         this.evaluateBonusKills();
     }
-
+    
+    @Override
+    void resetFifthSpecial()
+    {
+        this.hasShortrangeRadiation = false;
+    }
+    
     @Override
     public int getGoliathCosts()
     {
@@ -138,5 +142,13 @@ public final class Phoenix extends Helicopter
     {
         super.resetState(resetStartPos);
         this.enhancedRadiationTimer = 0;
+    }
+    
+    @Override
+    public float getProtectionFactor()
+    {
+        return this.enhancedRadiationTimer == 0
+            ? super.getProtectionFactor()
+            : 0.0f;
     }
 }

@@ -54,12 +54,11 @@ public class Savegame implements Serializable
 		levelOfUpgrade[] = new int[6];
 	
 	public long
-			playingTime,
+		playingTime,
 		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5],
 		scorescreenTimes[] = new long [Helicopter.NR_OF_TYPES];
 	
 	public float
-            missileDamageFactor,
 		currentPlating,
 		energy;
 	
@@ -71,6 +70,7 @@ public class Savegame implements Serializable
 		hasShortrangeRadiation,
 		hasPiercingWarheads,
 		spotlight,
+		hasJumboMissiles,
 		hasRadarDevice,
 		hasInterphaseGenerator,
 		hasPowerUpImmobilizer,
@@ -184,8 +184,8 @@ public class Savegame implements Serializable
 		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
 		this.hasShortrangeRadiation = helicopter.hasShortrangeRadiation;
 		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
-		this.missileDamageFactor = helicopter.missileDamageFactor;
 		this.numberOfCannons = helicopter.numberOfCannons;
+		this.hasJumboMissiles = helicopter.hasJumboMissiles;
 		this.hasRadarDevice = helicopter.hasRadarDevice;
 		this.rapidfire = helicopter.rapidfire;
 		this.hasInterphaseGenerator = helicopter.hasInterphaseGenerator;
