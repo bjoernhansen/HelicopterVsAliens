@@ -151,4 +151,10 @@ public final class Phoenix extends Helicopter
             ? super.getProtectionFactor()
             : 0.0f;
     }
+    
+    @Override
+    public boolean isFifthSpecialOnMaximumStrength()
+    {
+        return this.hasMaxUpgradeLevel[StandardUpgradeTypes.FIREPOWER.ordinal()];
+    }
 }

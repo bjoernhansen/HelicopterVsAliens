@@ -744,12 +744,11 @@ public class Menu
         }
         if(helicopter.hasFifthSpecial())
         {
-        	// TODO Logik nach HelicopterAuslagern: isFifthSpecialOnMaximumStrength() --> inheritance
 			// TODO String zusammenbauen und dann einmal g2d.drawString (auch oben)
         	g2d.setColor(MyColor.golden);            
             if(helicopter.getType() == PHOENIX || helicopter.getType() == PEGASUS)
             {
-            	if(!helicopter.hasMaxUpgradeLevel[helicopter.getType() == PHOENIX ? 3 : 4]){g2d.setColor(Color.white);}
+            	if(!helicopter.isFifthSpecialOnMaximumStrength()){g2d.setColor(Color.white);}
             	g2d.drawString(dictionary.getFifthSpecial() + " (" + LEVEL[language.ordinal()] + " " + (helicopter.levelOfUpgrade[helicopter.getType() == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
             else

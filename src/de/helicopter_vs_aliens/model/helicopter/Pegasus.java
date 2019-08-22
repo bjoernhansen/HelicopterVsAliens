@@ -174,4 +174,10 @@ public final class Pegasus extends Helicopter
         if(this.hasInterphaseGenerator){Audio.phaseShift.stop();}
         super.crash();
     }
+    
+    @Override
+    public boolean isFifthSpecialOnMaximumStrength()
+    {
+        return this.hasMaxUpgradeLevel[StandardUpgradeTypes.FIRE_RATE.ordinal()];
+    }
 }

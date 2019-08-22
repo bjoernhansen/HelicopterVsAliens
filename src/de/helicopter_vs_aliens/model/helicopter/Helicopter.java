@@ -226,7 +226,7 @@ public abstract class Helicopter extends MovingObject
     public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay, boolean unlockedPainting)
     {
     	// TODO: die paint Methode zerstückeln damit inheritance leichter umzusetzen wird
-    	
+    	// TODO Farben in Menü und Spiel fpr Hülle und Kanone passen nicht merh
     	// die Farben
     	if(unlockedPainting)
     	{
@@ -264,7 +264,7 @@ public abstract class Helicopter extends MovingObject
     		else{this.inputColorCannon 
     				= this.isInvincible()
     					? MyColor.variableGreen 
-    					: helicopterType.getStandardSecondaryHullColor();}
+    					: this.getSecondaryHullColor();}
     	}
     	else
     	{
@@ -273,14 +273,17 @@ public abstract class Helicopter extends MovingObject
     				? MyColor.reversedRandomGreen()
     				: MyColor.variableGreen;
     	}
+    	
     	this.inputColorHull = unlockedPainting
-    						  || (!this.isInvincible()
-    						     && !(Events.window == STARTSCREEN 
+								? helicopterType.getStandardPrimaryHullColor()
+								: (    !this.isInvincible()
+    						     	&& !(Events.window == STARTSCREEN
     						        && helicopterType == PHOENIX
     						        && Menu.effectTimer[PHOENIX.ordinal()] > 1
     						        && Menu.effectTimer[PHOENIX.ordinal()] < 55))
-    						  ? helicopterType.getStandardPrimaryHullColor()
-    						  : MyColor.variableGreen;
+    						  			? helicopterType.getStandardPrimaryHullColor()
+    						  			: MyColor.variableGreen;
+    	
     	this.inputColorWindow = !unlockedPainting
     								&& (this.hasTripleDmg()
     									|| this.hasBoostedFireRate())
@@ -1562,5 +1565,10 @@ public abstract class Helicopter extends MovingObject
 	public void setCurrentBaseFirepower()
 	{
 		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
+	}
+	
+	public boolean isFifthSpecialOnMaximumStrength()
+	{
+		return true;
 	}
 }
