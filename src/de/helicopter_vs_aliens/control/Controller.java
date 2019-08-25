@@ -207,7 +207,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{		
 		this.framesCounter++;
 		Timer.countDownActiveTimers();
-		if(Events.window == GAME)
+		if(Menu.window == GAME)
 		{			
 			calculateFps();
 			if(!Menu.isMenueVisible)
@@ -238,7 +238,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{
 		Graphics2D g2d = (Graphics2D) g;		
 		
-		if(Events.window == GAME)
+		if(Menu.window == GAME)
 		{						
 			// zeichnen aller sichtbaren Objekte						
 			BackgroundObject.paintBackground(g2d, this.backgroundObjects);
@@ -248,7 +248,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			Missile.paintAllMissiles( g2d, this);
 			Enemy.paintAllActive(g2d, this, this.helicopter);
 			EnemyMissile.paintAll(g2d, this.enemyMissiles);
-			this.helicopter.paint(g2d, Events.timeOfDay);			
+			this.helicopter.paint(g2d);
 			Explosion.paintAll(g2d, this.explosions);
 			PowerUp.paintAll(g2d, this.powerUps);
 			BackgroundObject.paintForeground(g2d, this.backgroundObjects);
@@ -273,7 +273,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	
 	public void switchFpsVisibleState()
 	{
-		if(Events.window == GAME)
+		if(Menu.window == GAME)
 		{
 			if(this.showFps)
 			{

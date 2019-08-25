@@ -25,8 +25,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
-import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
+import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
@@ -213,9 +212,9 @@ public abstract class Helicopter extends MovingObject
     }
 
     // TODO Alles was mit "malen" zusammenhängt in eine eigene Klasse auslagern
-    public void paint(Graphics2D g2d, TimesOfDay timeOfDay)
+    public void paint(Graphics2D g2d)
     {
-    	paint(g2d, this.paintBounds.x, this.paintBounds.y, this.getType(), timeOfDay, false);
+    	paint(g2d, this.paintBounds.x, this.paintBounds.y, this.getType(), Events.timeOfDay, false);
     }
     
     public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay)
@@ -226,14 +225,14 @@ public abstract class Helicopter extends MovingObject
     public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay, boolean unlockedPainting)
     {
     	// TODO: die paint Methode zerstückeln damit inheritance leichter umzusetzen wird
-    	// TODO Farben in Menü und Spiel fpr Hülle und Kanone passen nicht merh
+    	// TODO Farben in Menü und Spiel für Hülle und Kanone passen nicht mehr
     	// die Farben
     	if(unlockedPainting)
     	{
     		this.inputColorCannon = helicopterType.getStandardSecondaryHullColor();
     	}
     	else if(this.plasmaActivationTimer >= POWERUP_DURATION/4  ||
-    		(Events.window == STARTSCREEN && helicopterType == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] > 0 && Menu.effectTimer[KAMAITACHI.ordinal()] < 35))
+    		(Menu.window == STARTSCREEN && helicopterType == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] > 0 && Menu.effectTimer[KAMAITACHI.ordinal()] < 35))
     	{
     		this.inputColorCannon = Color.green;
     	}
@@ -244,13 +243,13 @@ public abstract class Helicopter extends MovingObject
     							&& (this.energy >= this.spellCosts
     								|| this.hasUnlimitedEnergy()))
     						  || 
-    						  (Events.window == STARTSCREEN 
+    						  (Menu.window == STARTSCREEN 
     						  	&& Menu.effectTimer[OROCHI.ordinal()] > 1
     						  	&& Menu.effectTimer[OROCHI.ordinal()] < 80)) ) // 70
     		{
     			this.inputColorCannon = MyColor.variableBlue;
     		}
-    		else if(Events.window == STARTSCREEN
+    		else if(Menu.window == STARTSCREEN
     				&& ( (helicopterType == KAMAITACHI
     						&& Menu.effectTimer[KAMAITACHI.ordinal()] >= 35
     						&& Menu.effectTimer[KAMAITACHI.ordinal()] < 100)
@@ -263,8 +262,11 @@ public abstract class Helicopter extends MovingObject
     		}
     		else{this.inputColorCannon 
     				= this.isInvincible()
-    					? MyColor.variableGreen 
-    					: this.getSecondaryHullColor();}
+    					? MyColor.variableGreen
+                        // TODO Zugehörigkeit zu EnumSet
+    					: (Menu.window == SCORESCREEN || Menu.window == GAME|| Menu.window == REPAIR_SHOP)
+                            ? this.getSecondaryHullColor()
+                            : helicopterType.getStandardSecondaryHullColor();}
     	}
     	else
     	{
@@ -277,17 +279,19 @@ public abstract class Helicopter extends MovingObject
     	this.inputColorHull = unlockedPainting
 								? helicopterType.getStandardPrimaryHullColor()
 								: (    !this.isInvincible()
-    						     	&& !(Events.window == STARTSCREEN
+    						     	&& !(Menu.window == STARTSCREEN
     						        && helicopterType == PHOENIX
     						        && Menu.effectTimer[PHOENIX.ordinal()] > 1
     						        && Menu.effectTimer[PHOENIX.ordinal()] < 55))
-    						  			? helicopterType.getStandardPrimaryHullColor()
+    						  			? (Menu.window == SCORESCREEN || Menu.window == GAME|| Menu.window == REPAIR_SHOP)
+                                            ? this.getPrimaryHullColor()
+                                            : helicopterType.getStandardPrimaryHullColor()
     						  			: MyColor.variableGreen;
     	
     	this.inputColorWindow = !unlockedPainting
     								&& (this.hasTripleDmg()
     									|| this.hasBoostedFireRate())
-    								|| (Events.window == STARTSCREEN 
+    								|| (Menu.window == STARTSCREEN 
     										&& helicopterType == HELIOS
     										&& Menu.effectTimer[HELIOS.ordinal()] > 0
     										&& Menu.effectTimer[HELIOS.ordinal()] < 65)
@@ -297,7 +301,7 @@ public abstract class Helicopter extends MovingObject
     	this.inputColorFuss2 = MyColor.enemyGray;
     	this.inputGray = MyColor.gray;
     	this.inputLightGray = MyColor.lightGray;
-    	this.inputLamp = (!unlockedPainting && Events.timeOfDay == NIGHT && Events.window == GAME) ? MyColor.randomLight : MyColor.darkYellow;
+    	this.inputLamp = (!unlockedPainting && Events.timeOfDay == NIGHT && Menu.window == GAME) ? MyColor.randomLight : MyColor.darkYellow;
     	    	
     	if(!unlockedPainting && this.interphaseGeneratorTimer > this.shiftTime)
     	{    		
@@ -323,7 +327,7 @@ public abstract class Helicopter extends MovingObject
     	this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, MyColor.dimColor(this.inputColorFuss2, 0.55f), true);
     	this.gradientCannonHole = (this.plasmaActivationTimer == 0 || unlockedPainting)  ? this.gradientHull : MyColor.cannolHoleGreen;
     	
-    	boolean movementLeft = this.isMovingLeft && Events.window == GAME && !unlockedPainting;
+    	boolean movementLeft = this.isMovingLeft && Menu.window == GAME && !unlockedPainting;
     	    	
     	// Nahkampfbestrahlung 
     	if(!unlockedPainting && this.hasShortrangeRadiation)
@@ -379,7 +383,7 @@ public abstract class Helicopter extends MovingObject
         //der Scheinwerfer
         if(!unlockedPainting && this.spotlight)
         {            
-        	if(Events.timeOfDay == NIGHT && Events.window == GAME)
+        	if(Events.timeOfDay == NIGHT && Menu.window == GAME)
         	{
         		g2d.setColor(MyColor.translucentWhite);
                 g2d.fillArc(left+(movementLeft ? -135 : -43), top-96, 300, 300, (movementLeft ? 165 : -15), 30);
@@ -411,7 +415,7 @@ public abstract class Helicopter extends MovingObject
         			this.isRotorSystemActive,
         			false);
         
-        if(Events.window == STARTSCREEN 
+        if(Menu.window == STARTSCREEN 
         	&& helicopterType == PEGASUS
         	&& Menu.effectTimer[helicopterType.ordinal()] > 0
         	&& this.empWave != null)
@@ -430,7 +434,7 @@ public abstract class Helicopter extends MovingObject
         // Energie-Schild der Roch-Klasse
         if(!unlockedPainting
         	&& (this.isPowerShieldActivated
-    			|| (Events.window == STARTSCREEN 
+    			|| (Menu.window == STARTSCREEN 
     				&& helicopterType == ROCH
     				&& Menu.effectTimer[ROCH.ordinal()] > 0
     				&& Menu.effectTimer[ROCH.ordinal()] < 68))) // 60
@@ -439,7 +443,7 @@ public abstract class Helicopter extends MovingObject
             g2d.fillOval(left+(movementLeft ? -9 : 35), top+19, 96, 54);
         }
                
-        if(Events.recordTime[helicopterType.ordinal()][4] > 0 && Events.window == STARTSCREEN)
+        if(Events.recordTime[helicopterType.ordinal()][4] > 0 && Menu.window == STARTSCREEN)
         {            
             g2d.setFont(Menu.fontProvider.getBold(12));
             g2d.setColor(Color.yellow);
@@ -447,7 +451,7 @@ public abstract class Helicopter extends MovingObject
             g2d.drawString(Menu.minuten(Events.recordTime[helicopterType.ordinal()][4]),left-27, top+80);
         } 
         
-        if(helicopterType == HELIOS && Events.window == STARTSCREEN)
+        if(helicopterType == HELIOS && Menu.window == STARTSCREEN)
         {
 			g2d.setFont(Menu.fontProvider.getBold(12));
             g2d.setColor(MyColor.brown);
@@ -1219,7 +1223,7 @@ public abstract class Helicopter extends MovingObject
 		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
 		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
-		if(Events.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
+		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		for(int i = 0; i < 6; i++)
 		{
 			if(this.levelOfUpgrade[i] >= MyMath.maxLevel(this.upgradeCosts[i]))

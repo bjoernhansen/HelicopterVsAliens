@@ -86,6 +86,9 @@ public class Menu
 
 	private static HelicopterTypes
 		unlockedType;					// Typ des freigeschalteten Helicopters
+
+	public static WindowTypes
+		window = STARTSCREEN;	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
 	
 	public static boolean
 		isMenueVisible,					// = true: Spielmenü ist sichtbar
@@ -99,21 +102,21 @@ public class Menu
            					
      // Konstanten   
     public static final int
-    	STARTSCREEN_OFFSET_X = 4;				// x-Verschiebung der meisten Anzeigen des Startscreens
-    
-    private static final int 	
-    	STATUS_BAR_X1 = 268;                    // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü; erste Spalte)
-    	private static final int STATUS_BAR_X2 = 421;                    // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü; zweite Spalte)
-    	private static final int STANDUP_OFFSET_Y = 148;                // y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
-    	private static final int SPECUP_OFFSET_Y = 328;                    // y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
-    	private static final int HEALTH_BAR_LENGTH = 150;                // Länge des Hitpoint-Balken des Helikopters
-    	private static final int HTML_SIZE = 5;                            // Standard-Schriftgröße der Startscreen-Menuetexte
-		public static final int HELICOPTER_DISTANCE = 250;                // Abstand zwischen den Helikopter auf dem Startscreen
-		public static final int STARTSCREEN_HELICOPTER_OFFSET_Y = 33;    // y-Verschiebung der Helicopter-Leiste im Startscreen-Menü
-		private static final int BONUS_MAX_DISPLAY_TIME = 200;            // Maximale Anzeigezeit des zuletzt erhalten Bonus
-		private static final int CROSS_MAX_DISPLAY_TIME = 60;            // Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
-		private static final int UNLOCKED_DISPLAY_TIME = 300;
-		private static final int ENEMY_HEALTH_BAR_WIDTH = 206;
+    	STARTSCREEN_OFFSET_X = 4,				// x-Verschiebung der meisten Anzeigen des Startscreens
+	 	HELICOPTER_DISTANCE = 250,                // Abstand zwischen den Helikopter auf dem Startscreen
+		STARTSCREEN_HELICOPTER_OFFSET_Y = 33;    // y-Verschiebung der Helicopter-Leiste im Startscreen-Menü
+
+	private static final int 	
+    	STATUS_BAR_X1 = 268,                   // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,erste Spalte)
+    	STATUS_BAR_X2 = 421,                   // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,zweite Spalte)
+    	STANDUP_OFFSET_Y = 148,               // y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
+    	SPECUP_OFFSET_Y = 328,                   // y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
+    	HEALTH_BAR_LENGTH = 150,               // Länge des Hitpoint-Balken des Helikopters
+    	HTML_SIZE = 5,                           // Standard-Schriftgröße der Startscreen-Menuetexte
+		BONUS_MAX_DISPLAY_TIME = 200,           // Maximale Anzeigezeit des zuletzt erhalten Bonus
+		CROSS_MAX_DISPLAY_TIME = 60,           // Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
+		UNLOCKED_DISPLAY_TIME = 300,
+		ENEMY_HEALTH_BAR_WIDTH = 206;
     
     static final String  
     	HELICOPTER_INFOS[][][] = 
@@ -203,7 +206,6 @@ public class Menu
     public static Rectangle[] helicopterFrame = new Rectangle[4];
     public static FontProvider fontProvider = new FontProvider();
     public static Dictionary dictionary = Controller.getInstance().getDictionary();
-
 
     
     public static void initializeMenu(Helicopter helicopter)
@@ -424,7 +426,7 @@ public class Menu
     {    	
     	g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(29));
-        if(Events.window == SETTINGS)
+        if(window == SETTINGS)
         {
         	g2d.drawString(language == ENGLISH ? "Settings" : "Optionen", 40, 55);           
         }
@@ -441,7 +443,7 @@ public class Menu
         }
         startscreenMenuButton.get("Cancel").paint(g2d);
         
-        if(Events.window == HELICOPTER_TYPES)
+        if(window  == HELICOPTER_TYPES)
         {
         	if(page > 1 && page < 2 + Helicopter.NR_OF_TYPES)
         	{
@@ -480,7 +482,7 @@ public class Menu
             	}
         	}
         }
-        else if(Events.window == HIGHSCORE)
+        else if(window  == HIGHSCORE)
         {       	
         	if(page == 0)
         	{
@@ -558,7 +560,7 @@ public class Menu
     			}
         	}        	
         }        
-        else if(Events.window == SETTINGS)
+        else if(window  == SETTINGS)
         {        	
         	g2d.setFont(fontProvider.getPlain(18));
         	
@@ -600,7 +602,7 @@ public class Menu
         	if(page == 4 && (counter/30)%2 == 0){g2d.drawString("|", SETTING_LEFT + SETTING_COLUMN_SPACING + g2d.getFontMetrics().stringWidth(HighscoreEntry.currentPlayerName), SETTING_TOP + 4 * SETTING_LINE_SPACING);}
         
         }        
-        else if(Events.window == DESCRIPTION && page == 5)
+        else if(window  == DESCRIPTION && page == 5)
         {
         	int x = 52, y = 120, yOffset = 35, size = PowerUp.MENU_SIZE;
         	PowerUp.paint(g2d, x, y + 0 * yOffset, size, size, Color.orange, MyColor.golden);
@@ -1289,7 +1291,7 @@ public class Menu
 											   int x, int y,
 											   boolean displayUpgrades)
     {
-        paintFrame(g2d, 26 + x,  85 + y, 200, 173, Events.window != GAME ? null : MyColor.lightestGray);
+        paintFrame(g2d, 26 + x,  85 + y, 200, 173, window  != GAME ? null : MyColor.lightestGray);
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getBold(20));
         String inputString = HELICOPTER_INFOS [language.ordinal()][helicopterTypes.ordinal()][0] + (language == ENGLISH ? " type" : "-Klasse");
@@ -1300,7 +1302,7 @@ public class Menu
         paintFrameLine(g2d, 28 + x, 126 + y, 196);
     	paintFrameLine(g2d, 28 + x, 226 + y, 196);
         
-        if(Events.window != GAME)
+        if(window  != GAME)
         {      	
         	paintHealthBar(g2d, helicopter, 30 + x, 230 + y, 187, false);
         }
@@ -1320,7 +1322,7 @@ public class Menu
             g2d.drawString(inputString, 28 + x + (196-g2d.getFontMetrics().stringWidth(inputString))/2, 249 + y);
         }
                
-        if(Events.window == REPAIR_SHOP)
+        if(window  == REPAIR_SHOP)
         {       	
         	if(helicopter.isDamaged)
         	{
@@ -1723,7 +1725,7 @@ public class Menu
 	    		
 		if(language == ENGLISH)
 		{
-			if(Events.window == INFORMATIONS)
+			if(window  == INFORMATIONS)
 			{
 				if(page == 0)
 				{				
@@ -1881,7 +1883,7 @@ public class Menu
 		            );
 				}
 			}
-			else if(Events.window == DESCRIPTION)
+			else if(window  == DESCRIPTION)
 			{
 				if(page == 0)
 				{				
@@ -2132,7 +2134,7 @@ public class Menu
 					);
 				}				
 			}
-			else if(Events.window == HELICOPTER_TYPES)
+			else if(window  == HELICOPTER_TYPES)
 			{
 				if(page == 0)
 				{				
@@ -2382,7 +2384,7 @@ public class Menu
 		            ); 
 				}
 			}			
-			else if(Events.window == CONTACT)
+			else if(window  == CONTACT)
 			{
 				if(page == 0)
 				{
@@ -2408,7 +2410,7 @@ public class Menu
 		}
 		else if(language == GERMAN)
 		{
-			if(Events.window == INFORMATIONS)
+			if(window  == INFORMATIONS)
 			{
 				if(page == 0)
 				{				
@@ -2554,7 +2556,7 @@ public class Menu
 		            );
 				}
 			}
-			else if(Events.window == DESCRIPTION)
+			else if(window  == DESCRIPTION)
 			{
 				if(page == 0)
 				{				
@@ -2812,7 +2814,7 @@ public class Menu
 					);
 				}
 			}
-			else if(Events.window == HELICOPTER_TYPES)
+			else if(window  == HELICOPTER_TYPES)
 			{
 				if(page == 0)
 				{				
@@ -3077,7 +3079,7 @@ public class Menu
 		            ); 
 				}
 			}			
-			else if(Events.window == CONTACT)
+			else if(window  == CONTACT)
 			{
 				if(page == 0)
 				{
@@ -3110,7 +3112,7 @@ public class Menu
 	public static void adaptToNewWindow(boolean justEntered)
 	{
 		page = 0;
-		if(Events.window != HIGHSCORE && Events.window != SETTINGS){
+		if(window  != HIGHSCORE && window  != SETTINGS){
 			label.setVisible(true);}
 		updateLabeltext();
 		crossTimer = 0;
@@ -3200,20 +3202,20 @@ public class Menu
 
 	public static void paint(Graphics2D g2d, Controller controller, Helicopter helicopter)
 	{
-		if(Events.window == GAME)
+		if(window  == GAME)
 		{
 			paintForegroundDisplays(g2d, controller, helicopter, controller.showFps);
 			paintGui(g2d, helicopter);
 		}			
-		else if(Events.window == REPAIR_SHOP)
+		else if(window  == REPAIR_SHOP)
 		{				
 			paintRepairShop(g2d, helicopter);
 		}		 
-		else if(Events.window == STARTSCREEN)
+		else if(window  == STARTSCREEN)
 		{				
 			paintStartscreen(g2d, helicopter);
 		}
-		else if(Events.window == SCORESCREEN)
+		else if(window  == SCORESCREEN)
 		{				
 			paintScorescreen(g2d, helicopter);
 		}		
@@ -3236,15 +3238,15 @@ public class Menu
 
 	public static void update(Controller controller, Helicopter helicopter)
 	{
-		if(Events.window == REPAIR_SHOP)
+		if(window  == REPAIR_SHOP)
 		{			
 			updateRepairShop(helicopter);
 		}		 
-		else if(Events.window == STARTSCREEN)
+		else if(window  == STARTSCREEN)
 		{						
 			updateStartscreen(helicopter, controller.framesCounter);
 		}
-		else if(Events.window == SCORESCREEN)
+		else if(window  == SCORESCREEN)
 		{
 			updateScorescreen(helicopter);
 		}		

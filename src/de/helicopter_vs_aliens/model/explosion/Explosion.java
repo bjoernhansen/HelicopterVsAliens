@@ -189,7 +189,7 @@ public class Explosion
 		// EMP-Shockwave
 		else
 		{			
-			if(Events.window == STARTSCREEN)
+			if(window == STARTSCREEN)
 			{
 				exp.maxTime = 20;
 				exp.maxRadius = 50;

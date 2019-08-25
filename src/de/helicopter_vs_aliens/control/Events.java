@@ -24,6 +24,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
+import static de.helicopter_vs_aliens.gui.Menu.window;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
@@ -84,12 +85,9 @@ public class Events
     	reachedLevelTwenty[] = new boolean[Helicopter.NR_OF_TYPES],
     	settingsChanged = false,
     	allPlayable = false;
-	
-	public static WindowTypes
-		window = STARTSCREEN;	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
 
 	public static TimesOfDay
-		timeOfDay = DAY;		// Tageszeit [DAY, NIGHT]
+		timeOfDay = DAY;		// Tageszeit [NIGHT, DAY]
 
 	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
 	private static boolean

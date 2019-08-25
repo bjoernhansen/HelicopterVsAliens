@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.audio;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import java.applet.Applet;
@@ -186,31 +187,32 @@ public class Audio
     {
         if (!standardBackgroundMusic)
         {
-            if (Events.window == GAME && !Events.isBossLevel())
+            if (Menu.window == GAME && !Events.isBossLevel())
             {
                 return bgMusic2;
-            } else if (Events.window == REPAIR_SHOP || Events.window == SCORESCREEN)
+            } else if (Menu.window == REPAIR_SHOP || Menu.window == SCORESCREEN)
             {
                 return bgMusic1;
             }
             return bgMusic3;
-        } else if (Events.window == REPAIR_SHOP)
+        } else if (Menu.window == REPAIR_SHOP)
         {
             return repairShop;
-        } else if (Events.window == SCORESCREEN)
+        } else if (Menu.window == SCORESCREEN)
         {
             if (Events.level == 51)
             {
                 return victory;
             }
             return scorescreen;
-        } else if (Events.window == INFORMATIONS
-                || Events.window == DESCRIPTION
-                || Events.window == SETTINGS
-                || Events.window == CONTACT
-                || Events.window == HELICOPTER_TYPES
-                || Events.window == HIGHSCORE
-                || Events.window == STARTSCREEN)
+            // TODO Lösen über Zugegörigkeit zu einem EnumSet und innerhalb einer Methode
+        } else if (Menu.window == INFORMATIONS
+                || Menu.window == DESCRIPTION
+                || Menu.window == SETTINGS
+                || Menu.window == CONTACT
+                || Menu.window == HELICOPTER_TYPES
+                || Menu.window == HIGHSCORE
+                || Menu.window == STARTSCREEN)
         {
             return mainMenue;
         } else if (Events.level >= 1 && Events.level < 10)
