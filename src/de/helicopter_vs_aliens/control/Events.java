@@ -160,7 +160,7 @@ public class Events
 			if(	window == GAME
 				&&	helicopter.isActive
 				&& !helicopter.isDamaged
-				&& !Menu.isMenueVisible)
+				&& !Menu.isMenuVisible)
 			{
 				helicopter.turnAround();
 			}
@@ -315,7 +315,7 @@ public class Events
 					window == GAME
 					&&	helicopter.isActive
 					&& !helicopter.isDamaged
-					&& !Menu.isMenueVisible)
+					&& !Menu.isMenuVisible)
 		{
 			if(e.getButton() == 3)
 			{
@@ -356,7 +356,7 @@ public class Events
 	{
 		if(!helicopter.isDamaged)
 		{
-			if(Menu.isMenueVisible)
+			if(Menu.isMenuVisible)
 			{
 				if(Menu.inGameButton.get("MMNewGame1").bounds.contains(cursor))
 				{					
@@ -1164,7 +1164,7 @@ public class Events
 		Audio.play(Audio.choose);		
 		window = newWindow;
 		Menu.adaptToNewWindow(hasJustEntered);
-		Button.updateScreenMenueButtons(window);
+		Button.updateScreenMenuButtons(window);
 	}
 
 	// überprüfen, ob Level-Up Voraussetzungen erfüll. Wenn ja: Schwierigkeitssteigerung
@@ -1251,15 +1251,15 @@ public class Events
 	static private void changeVisibilityOfInGameMenu(Helicopter helicopter)
 	{
 		Audio.play(Audio.choose);
-		if(!Menu.isMenueVisible)
+		if(!Menu.isMenuVisible)
 		{
-			Menu.isMenueVisible = true;
+			Menu.isMenuVisible = true;
 			BackgroundObject.backgroundMoves = false;
 			playingTime += System.currentTimeMillis() - timeAktu;
 		}
 		else
 		{
-			Menu.isMenueVisible = false;
+			Menu.isMenuVisible = false;
 			timeAktu = System.currentTimeMillis();
 			if(helicopter.isOnTheGround())
 			{

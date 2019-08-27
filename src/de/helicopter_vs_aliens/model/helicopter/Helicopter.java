@@ -216,10 +216,16 @@ public abstract class Helicopter extends MovingObject
     {
     	paint(g2d, this.paintBounds.x, this.paintBounds.y, this.getType(), Events.timeOfDay, false);
     }
+	
+	public void paint(Graphics2D g2d, Point location)
+	{
+		this.rotatePropeller(this.getType(), 7);
+		paint(g2d, location.x, location.y, this.getType(), NIGHT, false);
+	}
     
-    public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay)
+    public void paint(Graphics2D g2d, Point location, HelicopterTypes helicopterType)
     {
-    	paint(g2d, left, top, helicopterType, timeOfDay, false);
+    	paint(g2d, location.x, location.y, helicopterType, NIGHT, false);
     }
     
     public void paint(Graphics2D g2d, int left, int top, HelicopterTypes helicopterType, TimesOfDay timeOfDay, boolean unlockedPainting)
@@ -322,7 +328,7 @@ public abstract class Helicopter extends MovingObject
     	this.gradientWindow = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorWindow, 2.2f),
 												0, top+ 2, MyColor.dimColor(this.inputColorWindow, 0.70f), true);
     	this.gradientCannon2and3 = new GradientPaint(0, top+28, MyColor.dimColor(this.inputColorCannon, 1.7f),
-													 0, top+35, MyColor.dimColor(this.inputColorCannon, 0.4f), true);    	
+													 0, top+35, MyColor.dimColor(this.inputColorCannon, 0.4f), true);
     	this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, MyColor.dimColor(this.inputColorFuss1, 0.44f), true);
     	this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, MyColor.dimColor(this.inputColorFuss2, 0.55f), true);
     	this.gradientCannonHole = (this.plasmaActivationTimer == 0 || unlockedPainting)  ? this.gradientHull : MyColor.cannolHoleGreen;
@@ -348,7 +354,7 @@ public abstract class Helicopter extends MovingObject
         g2d.fillRoundRect(left+(movementLeft ? 25 : 54), top+70, 43, 5, 5, 5);
         g2d.setPaint(this.gradientFuss1);
         g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-        g2d.drawLine(left+61, top+66, left+61, top+69); 
+        g2d.drawLine(left+61, top+66, left+61, top+69);
         g2d.drawLine(left+(movementLeft ? 33 : 89), top+66, left+(movementLeft ? 33 : 89), top+69);
         g2d.setStroke(new BasicStroke(1));
         
@@ -396,9 +402,9 @@ public abstract class Helicopter extends MovingObject
                 
         //die Propeller        
         paintRotor(g2d,
-        			this.inputGray, 
+        			this.inputGray,
         			left+(movementLeft ? -36 : 8),
-        			top-5, 
+        			top-5,
         			150, 37, 3, 
         			(int)(this.rotorPosition[helicopterType.ordinal()]),
         			12, 
@@ -1095,7 +1101,7 @@ public abstract class Helicopter extends MovingObject
 		
 		if(	(this.energy >= this.spellCosts || this.hasUnlimitedEnergy())
 			&& !this.isDamaged
-			&& !Menu.isMenueVisible
+			&& !Menu.isMenuVisible
 			&& !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
 					&& y >= GROUND_Y) 
 			&& !(	   x > this.bounds.getX() + 33 
@@ -1357,12 +1363,6 @@ public abstract class Helicopter extends MovingObject
 			if(Events.recordTime[heli][i] == 0) return 4-i;
 		}
 		return 0;		
-	}
-
-	public void menuePaint(Graphics2D g2d, HelicopterTypes helicopterType)
-	{		
-    	this.rotatePropeller(helicopterType, 7);
-    	this.paint(g2d, 692, 360, helicopterType, DAY);
 	}
 
 	public boolean isPowerShieldProtected(Enemy enemy)

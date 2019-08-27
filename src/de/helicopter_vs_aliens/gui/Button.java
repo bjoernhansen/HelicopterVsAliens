@@ -306,7 +306,7 @@ public class Button
     	}
     }
 	
-	public static void updateScreenMenueButtons(WindowTypes window)
+	public static void updateScreenMenuButtons(WindowTypes window)
 	{
 		for(int m = 0; m < 8; m++)
 		{

@@ -75,7 +75,7 @@ public class Audio
         bgMusic3,
 
         // Hintergrundmusik für Michael-Modus
-        mainMenue,
+        mainMenu,
         repairShop,
         scorescreen,
         level_01_09,
@@ -146,7 +146,7 @@ public class Audio
 
         if (MICHAEL_MODE)
         {
-            mainMenue = getAudioClip("main_menu.wav");
+            mainMenu = getAudioClip("main_menu.wav");
             repairShop = getAudioClip("repair_shop.wav");
             scorescreen = getAudioClip("scorescreen.wav");
             level_01_09 = getAudioClip("level_01_09.wav");
@@ -214,7 +214,7 @@ public class Audio
                 || Menu.window == HIGHSCORE
                 || Menu.window == STARTSCREEN)
         {
-            return mainMenue;
+            return mainMenu;
         } else if (Events.level >= 1 && Events.level < 10)
         {
             return level_01_09;

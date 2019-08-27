@@ -9,7 +9,6 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
@@ -210,7 +209,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		if(Menu.window == GAME)
 		{			
 			calculateFps();
-			if(!Menu.isMenueVisible)
+			if(!Menu.isMenuVisible)
 			{				
 		    	MyColor.calculateVariableGameColors(this.framesCounter);
 				BackgroundObject.update(this, this.backgroundObjects);

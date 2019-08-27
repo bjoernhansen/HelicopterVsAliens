@@ -1,15 +1,7 @@
 package de.helicopter_vs_aliens.gui;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +11,8 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.MovingObject;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -65,7 +54,11 @@ public class Menu
         SETTING_TOP = 130,
 
 		DISABLED = -1;
-
+	
+	public static final Point
+		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262),
+		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
+		
 	public static int
 		page, 							// ausgewählte Seite im Startscreen-Menü
 		helicopterSelection,			// Helicopterauswahl im Startscreen-Menü
@@ -91,7 +84,7 @@ public class Menu
 		window = STARTSCREEN;	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
 	
 	public static boolean
-		isMenueVisible,					// = true: Spielmenü ist sichtbar
+		isMenuVisible,					// = true: Spielmenü ist sichtbar
 		originalResulution = false,
 		highlightedHelicopter = false;
 	
@@ -117,7 +110,10 @@ public class Menu
 		CROSS_MAX_DISPLAY_TIME = 60,           // Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
 		UNLOCKED_DISPLAY_TIME = 300,
 		ENEMY_HEALTH_BAR_WIDTH = 206;
-    
+  
+	public static final EnumMap<HelicopterTypes, Helicopter>
+		helicopterDummies = new EnumMap<>(HelicopterTypes.class);
+	
     static final String  
     	HELICOPTER_INFOS[][][] = 
     	{{{	"Phoenix",						"The most remarkable feature", 	
@@ -210,6 +206,11 @@ public class Menu
     
     public static void initializeMenu(Helicopter helicopter)
     {
+    	for(HelicopterTypes helicopterType : HelicopterTypes.values())
+		{
+			helicopterDummies.put(helicopterType, HelicopterFactory.create(helicopterType));
+		}
+    	
     	helicopterSelection = (3 + MyMath.random(Helicopter.NR_OF_TYPES-1))
     						   %Helicopter.NR_OF_TYPES;
     	
@@ -249,12 +250,12 @@ public class Menu
 				inGameButton.get("MainMenu").paint(g2d);
 				
 			}
-			if(isMenueVisible){
-				paintIngameMenue(g2d);}
+			if(isMenuVisible){
+				paintIngameMenu(g2d);}
 		}		
 	}
 	
-	private static void paintIngameMenue(Graphics2D g2d)
+	private static void paintIngameMenu(Graphics2D g2d)
     {      
     	paintFrame(g2d,363, 77, 256, 231, MyColor.golden);
         g2d.setColor(MyColor.red);
@@ -366,7 +367,8 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.darkBlue);
             }
-            helicopter.paint(g2d, 66 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 262 + STARTSCREEN_HELICOPTER_OFFSET_Y, HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES], DAY);
+            helicopterDummies.get(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]).paint(g2d, new Point(HELICOPTER_STARTSCREEN_OFFSET.x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, HELICOPTER_STARTSCREEN_OFFSET.y + STARTSCREEN_HELICOPTER_OFFSET_Y));
+            //helicopter.paint(g2d, 66 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 262 + STARTSCREEN_HELICOPTER_OFFSET_Y, HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]);
             if(!helicopterFrame[i].contains(helicopter.destination.x, helicopter.destination.y))
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.translucentBlack);
@@ -447,7 +449,7 @@ public class Menu
         {
         	if(page > 1 && page < 2 + Helicopter.NR_OF_TYPES)
         	{
-        		helicopter.menuePaint(g2d, HelicopterTypes.values()[page-2]);
+				helicopterDummies.get(HelicopterTypes.values()[page-2]).paint(g2d, HELICOPTER_MENU_PAINT_POS);
         	}
         	else if(page == 1)
         	{
@@ -523,7 +525,7 @@ public class Menu
         	{
         		if(page > 1 && page < 2 + Helicopter.NR_OF_TYPES)
             	{
-            		helicopter.menuePaint(g2d, HelicopterTypes.values()[page-2]);
+            		helicopterDummies.get(HelicopterTypes.values()[page-2]).paint(g2d, HELICOPTER_MENU_PAINT_POS);
             	}        		
         		int columnDistance = 114/*135*/, topLine = 125, lineDistance = 21, leftColumn = 55, realLeftColumn = leftColumn, xShift = 10;
         		    			
@@ -908,7 +910,7 @@ public class Menu
 	
 	private static void updateCreditDisplay(Helicopter helicopter)
 	{
-		if(!isMenueVisible
+		if(!isMenuVisible
 			&& (moneyDisplayTimer != DISABLED || helicopter.isDamaged))
 		{				
 			moneyDisplayTimer++;
@@ -1086,7 +1088,7 @@ public class Menu
 		}
 		else if(specialInfoSelection == 10)
 		{
-			infoString = "Menü sichtbar: " + isMenueVisible;
+			infoString = "Menü sichtbar: " + isMenuVisible;
 		}
 		else if(specialInfoSelection == 11)
 		{
@@ -1135,7 +1137,7 @@ public class Menu
 		
 		if(helicopter.isOnTheGround())
 		{
-			if(!isMenueVisible && controller.mouseInWindow)
+			if(!isMenuVisible && controller.mouseInWindow)
 			{
 				paintTimeDisplay(g2d, Events.playingTime
 											 + System.currentTimeMillis()
@@ -3273,7 +3275,7 @@ public class Menu
 	
 	public static void conditionalReset()
 	{
-		isMenueVisible = false;
+		isMenuVisible = false;
 		moneyDisplayTimer = -1;
 		levelDisplayTimer = START;
 		unlockedTimer = 0;
