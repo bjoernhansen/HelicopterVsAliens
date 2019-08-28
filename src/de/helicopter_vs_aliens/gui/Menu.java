@@ -35,7 +35,7 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ROTO
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
-
+// TODO mögichst alle längeren Texte innerhalb dieser Klasse ins Dictionary überführen
 public class Menu
 {
 	private static final String
@@ -170,9 +170,6 @@ public class Menu
     		"Abstürze",
     		"Reparaturen",			
     		"Extra-Boni"}};
-
-	public static final String[]
-		THIRD_CANNON = 			{"Third cannon", "Dritte Bordkanone"};
 
 	static final String
 		SECOND_AND_THIRD_CANNON[] = {"Second and third cannon",
@@ -1511,7 +1508,7 @@ public class Menu
 		}		
 		if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
 		{
-			repairShopButton.get("Special" + 3).label  = THIRD_CANNON[language.ordinal()];
+			repairShopButton.get("Special" + 3).label  = dictionary.getThirdCannon();
 		}
 		// TODO wieso nochmal? in schleife schon passiert
 		repairShopButton.get("Special" + 4).label = dictionary.getFifthSpecial();
@@ -1676,6 +1673,7 @@ public class Menu
 	
 	public static void setStartscreenMessage(HelicopterTypes helicopterType)
 	{		
+		// TODO String in Dictionary auslagern
 		if(helicopterType == OROCHI || helicopterType == KAMAITACHI || helicopterType == PEGASUS)
 		{			
 			if(language == ENGLISH)
@@ -3166,13 +3164,13 @@ public class Menu
 	    		repairShopButton.get("Special" + 3).costs = 0;
 	    		if(helicopter.numberOfCannons == 3)
 	    		{
-	    			repairShopButton.get("Special" + 3).label = THIRD_CANNON[language.ordinal()];
+	    			repairShopButton.get("Special" + 3).label = dictionary.getThirdCannon();
 	    		}
 	    	}
 	    	else
 	    	{
 	    		repairShopButton.get("Special" + 3).costs = 125000;
-	    		repairShopButton.get("Special" + 3).label = THIRD_CANNON[language.ordinal()];
+	    		repairShopButton.get("Special" + 3).label = dictionary.getThirdCannon();
 	    	}
 		}
 		if(helicopter.hasFifthSpecial())

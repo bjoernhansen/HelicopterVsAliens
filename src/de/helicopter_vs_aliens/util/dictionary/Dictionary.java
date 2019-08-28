@@ -30,6 +30,12 @@ public final class Dictionary
     private EnumMap<SpecialUpgradeTypes, String>
         specialUpgrades = new EnumMap<>(SpecialUpgradeTypes.class);
 
+    private EnumMap<HelicopterTypes, String>
+        helicopterNames = new EnumMap<>(HelicopterTypes.class);
+
+    private EnumMap<HelicopterTypes, List<String>>
+        helicopterInfos = new EnumMap<>(HelicopterTypes.class);
+
 
     public Dictionary()
     {
@@ -97,16 +103,26 @@ public final class Dictionary
         specialUpgrades.put(GOLIATH_PLATING, this.languageProperties.getProperty("upgrades.special.goliath"));
         specialUpgrades.put(PIERCING_WARHEADS, this.languageProperties.getProperty("upgrades.special.warheads"));
         specialUpgrades.put(EXTRA_CANNONS, this.languageProperties.getProperty("upgrades.special.secondCannon"));
-        specialUpgrades.put(FIFTH_SPECIAL, determineFifthSpacial());
+
+        for(HelicopterTypes type : HelicopterTypes.values())
+        {
+            helicopterNames.put(type, this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".name"));
+            List<String> infos = new ArrayList<>();
+            for(int i = 1; i <= 3; i++)
+            {
+                infos.add(this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".infos." + i));
+            }
+            helicopterInfos.put(type, infos);
+        }
         accountForHelicopterChange();
     }
 
     private void accountForHelicopterChange()
     {
-        specialUpgrades.put(FIFTH_SPECIAL, determineFifthSpacial());
+        specialUpgrades.put(FIFTH_SPECIAL, determineFifthSpecial());
     }
 
-    private String determineFifthSpacial()
+    private String determineFifthSpecial()
     {
         return this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade());
     }
@@ -151,5 +167,16 @@ public final class Dictionary
     public String getThirdCannon()
     {
         return this.languageProperties.getProperty("thirdCannon");
+    }
+
+    public String getHelicopterName(HelicopterTypes type)
+    {
+        return this.helicopterNames.get(type);
+    }
+
+    // TODO hier methode zum Abruf der Helicopter Infos
+    public List<String> getHelicopterInfos(HelicopterTypes type)
+    {
+        return this.helicopterInfos.get(type);
     }
 }

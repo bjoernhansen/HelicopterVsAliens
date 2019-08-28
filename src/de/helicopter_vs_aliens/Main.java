@@ -29,7 +29,7 @@ public class Main
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = false;
+    	TESTMODE = true;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -60,17 +60,34 @@ public class Main
     {
     	if(TESTMODE)
         {
-        	Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
+        	/*Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
             EnumMap<SpecialUpgradeTypes, String> map = dictionary.getSpecialUpgrades();
             map.values().forEach(System.out::println);
-            
+
             dictionary.switchLanguageTo(ENGLISH);
             map.values().forEach(System.out::println);
        
             dictionary.switchHelicopterTypeTo(HELIOS);
-            map.values().forEach(System.out::println);
+            map.values().forEach(System.out::println);*/
 
-			System.out.println(StandardUpgradeTypes.values().length);
+			Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
+
+			for(HelicopterTypes type : HelicopterTypes.values())
+			{
+				System.out.println(dictionary.getHelicopterName(type));
+				System.out.println(dictionary.getHelicopterInfos(type).toString());
+			}
+
+
+			dictionary.switchLanguageTo(ENGLISH);
+
+			for(HelicopterTypes type : HelicopterTypes.values())
+			{
+				System.out.println(dictionary.getHelicopterName(type));
+				System.out.println(dictionary.getHelicopterInfos(type).toString());
+			}
+
+			dictionary.switchHelicopterTypeTo(HELIOS);
 		}
         else
         {

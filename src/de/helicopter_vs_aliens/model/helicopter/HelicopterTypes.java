@@ -89,6 +89,11 @@ public enum HelicopterTypes
         return HELIOS;
     }
     
+    public String getDesignation()
+    {
+        return this.name().toLowerCase();
+    }
+
     public String getSpecialUpgrade()
     {
         return SPECIAL_UPGRADES[this.ordinal()];
