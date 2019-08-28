@@ -174,9 +174,13 @@ public final class Dictionary
         return this.helicopterNames.get(type);
     }
 
-    // TODO hier methode zum Abruf der Helicopter Infos
     public List<String> getHelicopterInfos(HelicopterTypes type)
     {
         return this.helicopterInfos.get(type);
+    }
+    
+    public String getTypeName(HelicopterTypes type)
+    {
+        return this.getHelicopterName(type) + this.languageProperties.getProperty("type");
     }
 }

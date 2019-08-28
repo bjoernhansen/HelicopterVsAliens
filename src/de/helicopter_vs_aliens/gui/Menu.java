@@ -351,15 +351,19 @@ public class Menu
             else{g2d.setColor(MyColor.lightGray);}       	
         	g2d.setFont(fontProvider.getBold(20));
         	
-        	String className = HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][0] + (language == ENGLISH ? " type" : "-Klasse");
+        	String className = Menu.dictionary.getTypeName(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]);
         	int sw = g2d.getFontMetrics().stringWidth(className);
         	g2d.drawString(className, 30 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE + (206-sw)/2, 225 + STARTSCREEN_HELICOPTER_OFFSET_Y);
         	
         	g2d.setFont(new Font("Dialog", Font.BOLD, 15));
-            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][1], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + STARTSCREEN_HELICOPTER_OFFSET_Y);
-            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][2], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 400 + STARTSCREEN_HELICOPTER_OFFSET_Y);
-            g2d.drawString(HELICOPTER_INFOS[language.ordinal()][(helicopterSelection +i)%Helicopter.NR_OF_TYPES][3], 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 420 + STARTSCREEN_HELICOPTER_OFFSET_Y);
-            
+        	
+        	HelicopterTypes type = HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES];
+        	for(int j = 0; j < 3; j++)
+			{
+				g2d.drawString(Menu.dictionary.getHelicopterInfos(type).get(j), 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + j * 20 + STARTSCREEN_HELICOPTER_OFFSET_Y);
+			}
+        	
+          
             if(	helicopterFrame[i].contains(helicopter.destination))
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.darkBlue);
