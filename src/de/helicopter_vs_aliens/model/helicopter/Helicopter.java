@@ -69,7 +69,9 @@ public abstract class Helicopter extends MovingObject
 		FOCAL_PNT_Y_POS	 		= 56;
         
     private static final int
-    	NO_COLLISION_HEIGHT		= 6;
+    	NO_COLLISION_HEIGHT		= 6,
+		SLOW_ROTATIONAL_SPEED	= 7,
+		FAST_ROTATIONAL_SPEED	= 12;
    
     private static final Dimension
 		HELICOPTER_SIZE = new Dimension(122, 69);
@@ -135,7 +137,7 @@ public abstract class Helicopter extends MovingObject
     	energy,								// verfügbare Energie;
 		regenerationRate,					// Energiezuwachs pro Simulationsschritt
 		spellCosts,							// Energiekosten für die Nutzung des Energie-Upgrades
-    	rotorPosition[] = new float[NR_OF_TYPES];	// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
+    	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
     		
     public boolean
 		spotlight,							// = true: Helikopter hat Scheinwerfer
@@ -219,7 +221,6 @@ public abstract class Helicopter extends MovingObject
 	
 	public void paint(Graphics2D g2d, Point location)
 	{
-		this.rotatePropeller(this.getType(), 7);
 		paint(g2d, location.x, location.y, this.getType(), NIGHT, false);
 	}
     
@@ -406,7 +407,7 @@ public abstract class Helicopter extends MovingObject
         			left+(movementLeft ? -36 : 8),
         			top-5,
         			150, 37, 3, 
-        			(int)(this.rotorPosition[helicopterType.ordinal()]),
+        			(int)(this.rotorPosition),
         			12, 
         			this.isRotorSystemActive,
         			false);
@@ -416,7 +417,7 @@ public abstract class Helicopter extends MovingObject
         			left+(movementLeft ?  107 : -22),
         			top+14,
         			37, 37, 3,
-        			(int)(this.rotorPosition[helicopterType.ordinal()]),
+        			(int)(this.rotorPosition),
         			12, 
         			this.isRotorSystemActive,
         			false);
@@ -749,7 +750,7 @@ public abstract class Helicopter extends MovingObject
         		this.crashed(explosion);
         	}
     	}
-    	if(this.isRotorSystemActive){this.rotatePropeller(12);}
+    	if(this.isRotorSystemActive){this.rotatePropellerFast();}
     	this.setPaintBounds();
     }
 
@@ -855,7 +856,7 @@ public abstract class Helicopter extends MovingObject
     	if(!newGame){this.restoreLastGameState(savegame);}
     	this.updateProperties(newGame);
     	this.fireRateTimer = this.timeBetweenTwoShots;
-        this.rotorPosition[this.getType().ordinal()] = 0;
+        this.rotorPosition = 0;
         this.empWave = null;
     }
 	
@@ -895,8 +896,8 @@ public abstract class Helicopter extends MovingObject
     public void reset()
     {
         // TODO ggf. muss einiges nicht mehr resettet werden, da immer ein neuer Helicopter erzeugt wird
-    	for(int i = 0; i < 4; i++){this.rotorPosition[i] = 0;}
-        this.resetState();
+		this.rotorPosition = 0;
+		this.resetState();
         this.placeAtStartpos();
         this.isDamaged = false;
 		this.isPlayedWithoutCheats = true;
@@ -924,7 +925,7 @@ public abstract class Helicopter extends MovingObject
 		this.recentDamageTimer = 0;
 		for(int i = 0; i < 4; i++){this.powerUpTimer[i] = 0;}
 		this.empWave = null;
-		this.rotorPosition[this.getType().ordinal()] = 0;
+		this.rotorPosition = 0;
 		if(resetStartPos){this.placeAtStartpos();}
 		this.fireRateTimer = this.timeBetweenTwoShots;
 	}
@@ -1035,13 +1036,18 @@ public abstract class Helicopter extends MovingObject
 		return hasAllSpecials();
 	}
 	
-	public void rotatePropeller(float rotationalSpeed){
-		rotatePropeller(this.getType(), rotationalSpeed);}
-	public void rotatePropeller(HelicopterTypes type, float rotationalSpeed)
+	// TODO unlocked Panting rotae drehung richtet sich nach Haupthelicopter
+	// TODO Menü (Helicopter Types Highscore, ...) keien Rotor-Drehung
+	public void rotatePropellerSlow()
     {
-    	this.rotorPosition[type.ordinal()] += rotationalSpeed;
-		if(this.rotorPosition[type.ordinal()] > 360){this.rotorPosition[type.ordinal()] -= 360;}
-    }    
+    	this.rotorPosition = (this.rotorPosition + SLOW_ROTATIONAL_SPEED)%360;
+    }
+	
+	public void rotatePropellerFast()
+	{
+		this.rotorPosition = (this.rotorPosition + FAST_ROTATIONAL_SPEED)%360;
+	}
+    
     
     private void placeAtStartpos()
     {

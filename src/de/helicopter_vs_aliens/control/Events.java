@@ -68,7 +68,7 @@ public class Events
         overallEarnings, 		// Gesamtverdienst
         extraBonusCounter, 		// Summe aller Extra-Boni (Multi-Kill-Belohnungen, Abschuss von Mini-Bossen und Geld-PowerUps)
 		lastBonus, 				// für die Guthabenanzeige: zuletzt erhaltener Standard-Verdienst
-			lastExtraBonus,		// für die Guthabenanzeige: zuletzt erhaltener Extra-Bonus
+		lastExtraBonus,		// für die Guthabenanzeige: zuletzt erhaltener Extra-Bonus
         lastMultiKill,			// für die Multi-Kill-Anzeige: Art des letzten Multi-Kill
         commendationTimer,		// reguliert, wie lange die Multi-Kill-Anzeige zu sehen ist
 		heliosMaxMoney;
@@ -1119,7 +1119,7 @@ public class Events
 		changeWindow(GAME);		
 		Audio.play(Audio.choose);	
 		timeAktu = System.currentTimeMillis();
-		helicopter.rotorPosition[helicopter.getType().ordinal()] = 0;
+		helicopter.rotorPosition = 0;
 		Controller.savegame.saveToFile(helicopter, true);
 	}
 	

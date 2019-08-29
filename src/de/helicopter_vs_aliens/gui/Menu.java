@@ -309,8 +309,12 @@ public class Menu
 				highlightedHelicopter = true;
 				break;
 			}			
-		}		
-		if(highlightedHelicopter){helicopter.rotatePropeller(Events.nextHelicopterType, 7);}
+		}
+		// TODO highlighted helicopter müsste unnötig sein, es müsste allein üher nextHelicopter lösbar sein
+		if(highlightedHelicopter)
+		{
+			Menu.helicopterDummies.get(Events.nextHelicopterType).rotatePropellerSlow();
+		}
 		else{Arrays.fill(effectTimer, 0);}
 	}
 
@@ -639,7 +643,7 @@ public class Menu
 			message[0] = message[1] = message[2] = message[3] = "";
 			messageTimer = 0;
 		}
-		if(!helicopter.isDamaged){helicopter.rotatePropeller(7);}
+		if(!helicopter.isDamaged){helicopter.rotatePropellerSlow();}
 	}
 
 	static void paintRepairShop(Graphics2D g2d, Helicopter helicopter)
@@ -880,7 +884,7 @@ public class Menu
 	
 	public static void updateScorescreen(Helicopter helicopter)
 	{		
-    	helicopter.rotatePropeller(7);
+    	helicopter.rotatePropellerSlow();
 		startscreenMenuButton.get("Cancel").highlighted = startscreenMenuButton.get("Cancel").bounds.contains(helicopter.destination);
 	}
 	
@@ -1262,7 +1266,7 @@ public class Menu
 		{
 			Audio.play(Audio.cash);
 		}
-		helicopter.rotatePropeller(unlockedType, 7);
+		Menu.helicopterDummies.get(unlockedType).rotatePropellerSlow();
 		if(unlockedTimer == 0){
 			unlockedType = null;}
 	}
