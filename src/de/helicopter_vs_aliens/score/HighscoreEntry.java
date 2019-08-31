@@ -42,7 +42,7 @@ public class HighscoreEntry implements Serializable
 		this.bonusIncome = Events.bonusIncomePercentage();
 	}
 	
-	// TODO use comparator
+	// TODO use comparator & ggf. Baumstruktur verwenden, ELEMENT einfügen und das kleinste löschen
 	private boolean isBetterThan(HighscoreEntry entry)
 	{
 			 if(this.maxLevel > entry.maxLevel) return true;

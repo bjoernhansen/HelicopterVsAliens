@@ -20,7 +20,7 @@ public final class Dictionary
     private final Properties
         defaultLanguageProperties = new Properties(),
         languageProperties = new Properties(defaultLanguageProperties);
-        
+
     private Languages
         language;
     
@@ -127,6 +127,9 @@ public final class Dictionary
         return this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade());
     }
 
+    public Languages getLanguage() {
+        return language;
+    }
     
     /** Textausgaben **/
     public EnumMap<SpecialUpgradeTypes, String> getSpecialUpgrades()

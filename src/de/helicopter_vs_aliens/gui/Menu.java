@@ -114,33 +114,6 @@ public class Menu
 	public static final EnumMap<HelicopterTypes, Helicopter>
 		helicopterDummies = new EnumMap<>(HelicopterTypes.class);
 	
-    static final String  
-    	HELICOPTER_INFOS[][][] = 
-    	{{{	"Phoenix",						"The most remarkable feature", 	
-			"of Phoenix type helicopters", 	"is their heavy plating."}, 
-		{	"Roch",							"Roch type helicopters are", 	
-			"well known for their",			"massive firepower."},
-		{	"Orochi", 						"An excellent maneuverability",	
-			"is the striking feature of", 	"Orochi type helicopters."},
-		{	"Kamaitachi", 					"Kamaitachi type helicopters", 
-			"can attack with incredible",   "high fire rate."},
-		{	"Pegasus", 						"Pegasus type helicopters",
-			"are feared because of their",  "EMP generator."},
-		{	"Helios", 						"Helios type helicopters",
-			"are specialized in",			"using PowerUps."}},
-		{{	"Phönix", 						"Helikopter der Phönix-Klasse",
-			"zeichnen sich durch eine", 	"äußerst hohe Panzerung aus."},
-		{	"Roch", 						"Helikopter der Roch-Klasse",
-			"sind für ihre ausgesprochen",	"hohe Feuerkraft bekannt."},
-		{	"Orochi", 						"Helikopter der Orochi-Klasse", 
-			"haben eine ungewöhnlich", 		"gute Manovrierfähigkeit."},
-		{	"Kamaitachi", 					"Helikopter der Kamaitachi-",
-			"Klasse überzeugen durch", 		"besonders hohe Schussrate."},
-		{	"Pegasus", 						"Helikopter der Pegasus-", 
-			"Klasse sind wegen ihres", 		"EMP-Generators gefürchtet."},
-		{	"Helios", 						"Helikopter der Helios-Klasse", 
-			"sind auf den Einsatz von",		"PowerUps spezialisiert."}}};
-
 	static final String PRICE_LEVELS[][] =
     	{{	"very cheap", 
     		"cheap",
@@ -472,7 +445,7 @@ public class Menu
             			else if(j != 0 && i==0)
             			{
             				g2d.setColor(MyColor.brightenUp(HelicopterTypes.values()[j-1].getStandardPrimaryHullColor()));
-            				tempString = HELICOPTER_INFOS[language.ordinal()][j-1][0];
+            				tempString = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[j-1]);
             			}
             			else if(j == 6)
             			{
@@ -507,7 +480,7 @@ public class Menu
             			else if(j != 0 && i==0)
             			{
             				g2d.setColor(MyColor.brightenUp(HelicopterTypes.values()[j-1].getStandardPrimaryHullColor()));
-            				tempString = HELICOPTER_INFOS[language.ordinal()][j-1][0];
+            				tempString = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[j-1]);
             			}
             			else if(i != 0)
             			{
@@ -552,7 +525,7 @@ public class Menu
         				g2d.drawString(toStringWithSpace(j+1, false), leftColumn + xShift , topLine + j * lineDistance);
         				g2d.drawString(tempEntry.playerName, leftColumn - 46 + xShift + columnDistance, topLine + j * lineDistance);
         				g2d.setColor(MyColor.brightenUp(tempEntry.helicopterType.getStandardPrimaryHullColor()));
-        				g2d.drawString(HELICOPTER_INFOS[language.ordinal()][tempEntry.helicopterType.ordinal()][0],   realLeftColumn + xShift + 2 * columnDistance, topLine + j * lineDistance);
+						g2d.drawString(Menu.dictionary.getHelicopterName(tempEntry.helicopterType),   realLeftColumn + xShift + 2 * columnDistance, topLine + j * lineDistance);
         				g2d.setColor(tempEntry.maxLevel > 50 ? MyColor.HS_GREEN : MyColor.HS_RED);
         				int printLevel = tempEntry.maxLevel > 50 ? 50 : tempEntry.maxLevel;
         				g2d.drawString(toStringWithSpace(printLevel), realLeftColumn + xShift + 3 * columnDistance, topLine + j * lineDistance);
@@ -1124,7 +1097,7 @@ public class Menu
 		}   
 		else if(specialInfoSelection == 13)
 		{
-			infoString = HELICOPTER_INFOS[language.ordinal()][helicopter.getType().ordinal()][0] + "-Klasse";
+			infoString = Menu.dictionary.getTypeName(helicopter.getType());
 		}
         g2d.drawString("Info: " + infoString, 20, 155);
     }
@@ -1294,17 +1267,17 @@ public class Menu
     
     private static void paintHelicopterDisplay(Graphics2D g2d,
 											   Helicopter helicopter,
-											   HelicopterTypes helicopterTypes,
+											   HelicopterTypes helicopterType,
 											   int x, int y,
 											   boolean displayUpgrades)
     {
         paintFrame(g2d, 26 + x,  85 + y, 200, 173, window  != GAME ? null : MyColor.lightestGray);
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getBold(20));
-        String inputString = HELICOPTER_INFOS [language.ordinal()][helicopterTypes.ordinal()][0] + (language == ENGLISH ? " type" : "-Klasse");
-        g2d.drawString(inputString, 28 + x + (196-g2d.getFontMetrics().stringWidth(inputString))/2, 113 + y);
+        String typeName = Menu.dictionary.getTypeName(helicopterType);
+        g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 113 + y);
         
-        helicopter.paint(g2d, 59 + x, 141 + y, helicopterTypes, DAY, !displayUpgrades);
+        helicopter.paint(g2d, 59 + x, 141 + y, helicopterType, DAY, !displayUpgrades);
                 
         paintFrameLine(g2d, 28 + x, 126 + y, 196);
     	paintFrameLine(g2d, 28 + x, 226 + y, 196);
@@ -1319,14 +1292,14 @@ public class Menu
             if(unlockedTimer > UNLOCKED_DISPLAY_TIME - 50)
             {
             	g2d.setColor(MyColor.red);
-            	inputString = (language == ENGLISH ? "not available" : "nicht verfügbar");
+            	typeName = (language == ENGLISH ? "not available" : "nicht verfügbar");
             }
             else
             {
             	g2d.setColor(MyColor.darkArrowGreen);
-            	inputString = (language == ENGLISH ? "unlocked" : "freigeschaltet");
+            	typeName = (language == ENGLISH ? "unlocked" : "freigeschaltet");
             }
-            g2d.drawString(inputString, 28 + x + (196-g2d.getFontMetrics().stringWidth(inputString))/2, 249 + y);
+            g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 249 + y);
         }
                
         if(window  == REPAIR_SHOP)
@@ -1458,11 +1431,14 @@ public class Menu
 	public static void changeLanguage(Helicopter helicopter, Savegame savegame)
 	{
 		Events.settingsChanged = true;
-		
-		setLanguage(Languages.values()[(language.ordinal()+1)%Languages.values().length]);
+		setLanguage(getNextLanguage());
 		savegame.language = language;
 		
 		updateButtonLabels(helicopter);
+	}
+
+	private static Languages getNextLanguage() {
+		return Languages.values()[(language.ordinal()+1)%Languages.values().length];
 	}
 
 	public static void setLanguage(Languages language)
@@ -1681,21 +1657,21 @@ public class Menu
 	
 	public static void setStartscreenMessage(HelicopterTypes helicopterType)
 	{		
-		// TODO String in Dictionary auslagern
+		// TODO Strings in Dictionary auslagern
 		if(helicopterType == OROCHI || helicopterType == KAMAITACHI || helicopterType == PEGASUS)
 		{			
 			if(language == ENGLISH)
 			{
-				message[0] = HELICOPTER_INFOS[language.ordinal()][helicopterType.ordinal()][0] + " type helicopters are not available yet.";
+				message[0] = Menu.dictionary.getHelicopterName(helicopterType) + " type helicopters are not available yet.";
 				message[1] = "They will be unlocked after you reached level 20 with a";
-				message[2] = HELICOPTER_INFOS[language.ordinal()][helicopterType.ordinal()-2][0] + " or a " + HELICOPTER_INFOS[language.ordinal()][helicopterType == PEGASUS ? 3 : 4][0] + " type helicopter for the first time.";
+				message[2] = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[helicopterType.ordinal()-2]) + " or a " + Menu.dictionary.getHelicopterName(helicopterType == PEGASUS ? KAMAITACHI : PEGASUS) + " type helicopter for the first time.";
 				message[3] = "";
 			}
 			else
 			{
-				message[0] = "Die " +  HELICOPTER_INFOS[language.ordinal()][helicopterType.ordinal()][0] + "-Klasse ist noch nicht verfügbar.";
-				message[1] = "Sie wird freigeschaltet, sobald Sie erstmalig mit der " ;				   
-				message[2] = HELICOPTER_INFOS[language.ordinal()][helicopterType.ordinal()-2][0] + "- oder der " + HELICOPTER_INFOS[language.ordinal()][helicopterType == PEGASUS ? 3 : 4][0] + "-Klasse Level 20 erreicht haben.";
+				message[0] = "Die " +  Menu.dictionary.getHelicopterName(helicopterType) + "-Klasse ist noch nicht verfügbar.";
+				message[1] = "Sie wird freigeschaltet, sobald Sie erstmalig mit der" ;
+				message[2] = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[helicopterType.ordinal()-2]) + "- oder der " + Menu.dictionary.getHelicopterName(helicopterType == PEGASUS ? KAMAITACHI : PEGASUS) + "-Klasse Level 20 erreicht haben.";
 				message[3] = "";   
 			}			
 		}
