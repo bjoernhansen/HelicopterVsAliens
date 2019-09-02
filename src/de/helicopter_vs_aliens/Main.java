@@ -25,7 +25,7 @@ public class Main
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = true;
+    	TESTMODE = false;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -73,8 +73,6 @@ public class Main
 				System.out.println(dictionary.getHelicopterName(type));
 				System.out.println(dictionary.getHelicopterInfos(type).toString());
 			}
-
-
 			dictionary.switchLanguageTo(ENGLISH);
 
 			for(HelicopterTypes type : HelicopterTypes.values())

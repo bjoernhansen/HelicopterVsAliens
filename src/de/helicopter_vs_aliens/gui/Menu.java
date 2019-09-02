@@ -25,7 +25,6 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.Events.START;
-import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
@@ -56,8 +55,7 @@ public class Menu
 		DISABLED = -1;
 	
 	public static final Point
-		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262),
-		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
+		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262);
 		
 	public static int
 		page, 							// ausgewählte Seite im Startscreen-Menü
@@ -262,6 +260,7 @@ public class Menu
 		highlightedHelicopter = false;
 		for(int i = 0; i < 4; i++)
 		{
+			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
 				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopterSelection)%Helicopter.NR_OF_TYPES];
@@ -270,7 +269,7 @@ public class Menu
 					Audio.playSpecialSound(Events.nextHelicopterType);
 					if(Events.nextHelicopterType == PEGASUS)
 					{
-						helicopter.empWave = Explosion.createStartscreenExplosion(i);
+						helicopterDummies.get(PEGASUS).empWave = Explosion.createStartscreenExplosion(i);
 					}
 					Arrays.fill(effectTimer, 0);
 					effectTimer[Events.nextHelicopterType.ordinal()] = 1;
@@ -283,7 +282,7 @@ public class Menu
 				break;
 			}			
 		}
-		// TODO highlighted helicopter müsste unnötig sein, es müsste allein üher nextHelicopter lösbar sein
+		// TODO highlighted helicopter müsste unnötig sein, es müsste allein üher nextHelicopter lösbar sein müsste
 		if(highlightedHelicopter)
 		{
 			Menu.helicopterDummies.get(Events.nextHelicopterType).rotatePropellerSlow();
@@ -345,8 +344,10 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.darkBlue);
             }
-            helicopterDummies.get(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]).paint(g2d, new Point(HELICOPTER_STARTSCREEN_OFFSET.x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, HELICOPTER_STARTSCREEN_OFFSET.y + STARTSCREEN_HELICOPTER_OFFSET_Y));
-            //helicopter.paint(g2d, 66 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 262 + STARTSCREEN_HELICOPTER_OFFSET_Y, HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]);
+            helicopterDummies.get(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]).paint(
+            	g2d,
+				HELICOPTER_STARTSCREEN_OFFSET.x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
+				HELICOPTER_STARTSCREEN_OFFSET.y + STARTSCREEN_HELICOPTER_OFFSET_Y);
             if(!helicopterFrame[i].contains(helicopter.destination.x, helicopter.destination.y))
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.translucentBlack);
@@ -427,7 +428,7 @@ public class Menu
         {
         	if(page > 1 && page < 2 + Helicopter.NR_OF_TYPES)
         	{
-				helicopterDummies.get(HelicopterTypes.values()[page-2]).paint(g2d, HELICOPTER_MENU_PAINT_POS);
+				helicopterDummies.get(HelicopterTypes.values()[page-2]).startScreenMenuPaint(g2d);
         	}
         	else if(page == 1)
         	{
@@ -503,7 +504,7 @@ public class Menu
         	{
         		if(page > 1 && page < 2 + Helicopter.NR_OF_TYPES)
             	{
-            		helicopterDummies.get(HelicopterTypes.values()[page-2]).paint(g2d, HELICOPTER_MENU_PAINT_POS);
+					helicopterDummies.get(HelicopterTypes.values()[page-2]).startScreenMenuPaint(g2d);
             	}        		
         		int columnDistance = 114/*135*/, topLine = 125, lineDistance = 21, leftColumn = 55, realLeftColumn = leftColumn, xShift = 10;
         		    			
@@ -693,7 +694,7 @@ public class Menu
         }
         
         // Spezial-Upgrades        
-        if(helicopter.spotlight)
+        if(helicopter.hasSpotlights)
         {            
             g2d.setColor(MyColor.golden);
             g2d.drawString(dictionary.getSpotlight(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 0);
@@ -1125,9 +1126,9 @@ public class Menu
 		}		
 		if(unlockedTimer > 0)
     	{
-    		paintHelicopterDisplay(g2d, helicopter, unlockedType,
+    		paintHelicopterDisplay(g2d, helicopterDummies.get(unlockedType),
     								 unlockedDisplayPosition(unlockedTimer),
-    								 -50, false);
+    								 -50);
 		}		
 	}
 	
@@ -1256,28 +1257,18 @@ public class Menu
 		}
 		else return 789;
 	}
-    	
+    
     private static void paintHelicopterDisplay(Graphics2D g2d,
 											   Helicopter helicopter,
 											   int x, int y)
     {
-    	paintHelicopterDisplay(g2d, helicopter, helicopter.getType(), x, y, true);
-    }
-    
-    
-    private static void paintHelicopterDisplay(Graphics2D g2d,
-											   Helicopter helicopter,
-											   HelicopterTypes helicopterType,
-											   int x, int y,
-											   boolean displayUpgrades)
-    {
         paintFrame(g2d, 26 + x,  85 + y, 200, 173, window  != GAME ? null : MyColor.lightestGray);
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getBold(20));
-        String typeName = Menu.dictionary.getTypeName(helicopterType);
+        String typeName = Menu.dictionary.getTypeName(helicopter.getType());
         g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 113 + y);
         
-        helicopter.paint(g2d, 59 + x, 141 + y, helicopterType, DAY, !displayUpgrades);
+        helicopter.paint(g2d, 59 + x, 141 + y);
                 
         paintFrameLine(g2d, 28 + x, 126 + y, 196);
     	paintFrameLine(g2d, 28 + x, 226 + y, 196);
@@ -1658,20 +1649,20 @@ public class Menu
 	public static void setStartscreenMessage(HelicopterTypes helicopterType)
 	{		
 		// TODO Strings in Dictionary auslagern
-		if(helicopterType == OROCHI || helicopterType == KAMAITACHI || helicopterType == PEGASUS)
+		if(!helicopterType.getUnlockerTypes().isEmpty())
 		{			
 			if(language == ENGLISH)
 			{
 				message[0] = Menu.dictionary.getHelicopterName(helicopterType) + " type helicopters are not available yet.";
 				message[1] = "They will be unlocked after you reached level 20 with a";
-				message[2] = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[helicopterType.ordinal()-2]) + " or a " + Menu.dictionary.getHelicopterName(helicopterType == PEGASUS ? KAMAITACHI : PEGASUS) + " type helicopter for the first time.";
+				message[2] = Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(0)) + " or a " + Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(1)) + " type helicopter for the first time.";
 				message[3] = "";
 			}
 			else
 			{
 				message[0] = "Die " +  Menu.dictionary.getHelicopterName(helicopterType) + "-Klasse ist noch nicht verfügbar.";
 				message[1] = "Sie wird freigeschaltet, sobald Sie erstmalig mit der" ;
-				message[2] = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[helicopterType.ordinal()-2]) + "- oder der " + Menu.dictionary.getHelicopterName(helicopterType == PEGASUS ? KAMAITACHI : PEGASUS) + "-Klasse Level 20 erreicht haben.";
+				message[2] = Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(0)) + "- oder der " + Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(1)) + "-Klasse Level 20 erreicht haben.";
 				message[3] = "";   
 			}			
 		}
@@ -3128,8 +3119,8 @@ public class Menu
 	public static void updateRepairShopButtons(Helicopter helicopter)
 	{
 		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()];
-		repairShopButton.get("Einsatz").secondLabel = Button.SOLD[language.ordinal()][helicopter.spotlight ? 1 : 0];
-		if(helicopter.spotlight)
+		repairShopButton.get("Einsatz").secondLabel = Button.SOLD[language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
+		if(helicopter.hasSpotlights)
 		{
 			repairShopButton.get("Special" + 0).costs = 0;
 		}

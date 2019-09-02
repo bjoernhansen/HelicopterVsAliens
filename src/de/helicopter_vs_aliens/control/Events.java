@@ -448,7 +448,7 @@ public class Events
 			else
 			{
 				money -= repairFee(helicopter, helicopter.isDamaged);
-				timeOfDay = (!helicopter.spotlight || MyMath.tossUp(0.33f)) ? DAY : NIGHT;
+				timeOfDay = (!helicopter.hasSpotlights || MyMath.tossUp(0.33f)) ? DAY : NIGHT;
 				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
 												
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
@@ -496,7 +496,7 @@ public class Events
 		{
 			if(helicopter.isDamaged){
 				Menu.block(4);}
-			else if(helicopter.spotlight){
+			else if(helicopter.hasSpotlights){
 				Menu.block(7);}
 			else if(money < SPOTLIGHT_COSTS){
 				Menu.block(6);}
@@ -504,10 +504,10 @@ public class Events
 			{
 				Audio.play(Audio.cash);
 				money -= SPOTLIGHT_COSTS;				
-				helicopter.spotlight = true;
+				helicopter.hasSpotlights = true;
 				timeOfDay = NIGHT;
 				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
-				Menu.repairShopButton.get("Einsatz").secondLabel = Button.SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
+				Menu.repairShopButton.get("Einsatz").secondLabel = Button.SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
 				Menu.repairShopButton.get("Special" + 0).costs = 0;
 				for(Enemy enemy : enemies.get(DESTROYED))
 				{

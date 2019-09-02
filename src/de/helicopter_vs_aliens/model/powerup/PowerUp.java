@@ -4,7 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,7 +22,6 @@ import de.helicopter_vs_aliens.util.MyMath;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
 
@@ -262,7 +260,7 @@ public class PowerUp extends MovingObject
 			Audio.play(Audio.cash);
 			Events.lastExtraBonus = 0;
 			Menu.moneyDisplayTimer = 0;
-			Events.lastBonus = (int)(1.5f*(helicopter.spotlight ? Events.NIGHT_BONUS_FACTOR : Events.DAY_BONUS_FACTOR) * this.worth);
+			Events.lastBonus = (int)(1.5f*(helicopter.hasSpotlights ? Events.NIGHT_BONUS_FACTOR : Events.DAY_BONUS_FACTOR) * this.worth);
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;
 			Events.extraBonusCounter += Events.lastBonus;

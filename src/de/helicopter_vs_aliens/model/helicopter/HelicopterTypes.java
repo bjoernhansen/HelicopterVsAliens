@@ -3,6 +3,10 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.control.Events;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public enum HelicopterTypes
@@ -12,25 +16,25 @@ public enum HelicopterTypes
     OROCHI
     {
         @Override
-        public boolean isUnlocked()
+        public List<HelicopterTypes> getUnlockerTypes()
         {
-            return Events.reachedLevelTwenty[PHOENIX.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()];
+            return OROCHI_UNLOCKER;
         }
     },
     KAMAITACHI
     {
         @Override
-        public boolean isUnlocked()
+        public List<HelicopterTypes> getUnlockerTypes()
         {
-            return Events.reachedLevelTwenty[ROCH.ordinal()] || Events.reachedLevelTwenty[PEGASUS.ordinal()];
+            return KAMAITACHI_UNLOCKER;
         }
     },
     PEGASUS
     {
         @Override
-        public boolean isUnlocked()
+        public List<HelicopterTypes> getUnlockerTypes()
         {
-            return Events.reachedLevelTwenty[OROCHI.ordinal()] || Events.reachedLevelTwenty[KAMAITACHI.ordinal()];
+            return PEGASUS_UNLOCKER;
         }
     },
     HELIOS
@@ -82,8 +86,19 @@ public enum HelicopterTypes
                     new Color(180, 175, 150),
                     new Color(125, 125, 125),
                     new Color(110, 110, 110)}};
-
-
+    
+    private static final List<HelicopterTypes>
+        NO_UNLOCKER = Collections.unmodifiableList(new ArrayList<>()),
+        OROCHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(PHOENIX, PEGASUS)),
+        KAMAITACHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(ROCH, PEGASUS)),
+        PEGASUS_UNLOCKER = Collections.unmodifiableList(Arrays.asList(OROCHI, KAMAITACHI));
+    
+    
+    public List<HelicopterTypes> getUnlockerTypes()
+    {
+        return NO_UNLOCKER;
+    }
+    
     public static HelicopterTypes getDefault()
     {
         return HELIOS;
@@ -111,7 +126,9 @@ public enum HelicopterTypes
 
     public boolean isUnlocked()
     {
-        return true;
+        return getUnlockerTypes().isEmpty()
+            || Events.reachedLevelTwenty[getUnlockerTypes().get(0).ordinal()]
+            || Events.reachedLevelTwenty[getUnlockerTypes().get(1).ordinal()];
     }
 
     public Color getStandardPrimaryHullColor()

@@ -4394,7 +4394,7 @@ public class Enemy extends MovingObject
 	private int calculateReward(Helicopter helicopter)
 	{		
 		return this.getEffectiveStrength()
-		        * (helicopter.spotlight
+		        * (helicopter.hasSpotlights
 					? Events.NIGHT_BONUS_FACTOR 
 					: Events.DAY_BONUS_FACTOR)
 			    + this.rewardModifier;

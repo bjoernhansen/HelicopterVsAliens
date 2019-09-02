@@ -1,5 +1,4 @@
 package de.helicopter_vs_aliens.gui;
-import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
@@ -13,7 +12,6 @@ import de.helicopter_vs_aliens.util.MyMath;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
 
 import static de.helicopter_vs_aliens.control.Events.SPOTLIGHT_COSTS;
 import static de.helicopter_vs_aliens.gui.PriceLevels.*;
@@ -154,7 +152,7 @@ public class Button
 	static void initializeButtons(Helicopter helicopter)
 	{
 		Menu.repairShopButton.put("RepairButton", new Button(23, 287, 205, 50, REPAIR[Menu.language.ordinal()], PRICE[Menu.language.ordinal()], true, true));
-		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()], SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0], false, true));
+		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()], SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0], false, true));
 		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, REPAIR_SHOP[Menu.language.ordinal()], null, false, false));
 		Menu.inGameButton.put("MainMenu",     new Button(897, 431, 121, 25, MAIN_MENU[Menu.language.ordinal()], null, false, false));
 		Menu.inGameButton.put("MMNewGame1",   new Button(385, 116, 211, 35, START_NEW_GAME[Menu.language.ordinal()], null, false, false));
@@ -212,7 +210,7 @@ public class Button
 	public static void initialize(Helicopter helicopter)
 	{
 		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
-		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.spotlight ? 1 : 0];
+		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
 
 		// TODO Enums verwenden
 		for(int i = 0; i < StandardUpgradeTypes.values().length; i++)

@@ -19,7 +19,6 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.FIRE_RATE;
 
-// TODO im Startmenue ist keine Nova mehr
 public final class Pegasus extends Helicopter
 {
     static final int[]

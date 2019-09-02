@@ -19,7 +19,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
 
 public final class Helios extends Helicopter
 {
-    // TODO bei der Guthabenberechnung wird bei bereits besuchten Leveln noch ausgezahlt nach Reparatur.
+    // TODO BUG: bei der Guthabenberechnung wird bei bereits besuchten Leveln noch ausgezahlt nach Reparatur.
     
     private boolean hasPowerUpImmobilizer;  // = true: Helikopter verfügt über einen Interphasen-Generator
     

@@ -175,7 +175,7 @@ public class Savegame implements Serializable
 		this.highscore = Events.highscore.clone();
 		this.helicopterType = helicopter.getType();
 		this.levelOfUpgrade = helicopter.levelOfUpgrade.clone();
-		this.spotlight = helicopter.spotlight;
+		this.spotlight = helicopter.hasSpotlights;
 		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
 		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
 		this.numberOfCannons = helicopter.numberOfCannons;

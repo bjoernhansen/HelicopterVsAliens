@@ -210,7 +210,7 @@ public class Missile extends MovingObject
 					{
 						Events.extraReward(1,
 							enemy.getEffectiveStrength()
-								* (helicopter.spotlight
+								* (helicopter.hasSpotlights
 								? Events.NIGHT_BONUS_FACTOR
 								: Events.DAY_BONUS_FACTOR),
 							1.25f,
