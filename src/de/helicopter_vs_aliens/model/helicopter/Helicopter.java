@@ -230,7 +230,7 @@ public abstract class Helicopter extends MovingObject
 		
     	// die Farben
     	if(this.plasmaActivationTimer >= POWERUP_DURATION/4  ||
-    		(Menu.window == STARTSCREEN && this.getType() == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] > 0 && Menu.effectTimer[KAMAITACHI.ordinal()] < 35))
+    		(Menu.window == STARTSCREEN && this.getType() == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] > 0 && Menu.effectTimer[KAMAITACHI.ordinal()] > 65))
     	{
     		this.inputColorCannon = Color.green;
     	}
@@ -242,19 +242,17 @@ public abstract class Helicopter extends MovingObject
     								|| this.hasUnlimitedEnergy()))
     						  || 
     						  (Menu.window == STARTSCREEN 
-    						  	&& Menu.effectTimer[OROCHI.ordinal()] > 1
-    						  	&& Menu.effectTimer[OROCHI.ordinal()] < 80)) )
+    						  	&& Menu.effectTimer[OROCHI.ordinal()] > 0)) )
     		{
     			this.inputColorCannon = MyColor.variableBlue;
     		}
     		else if(Menu.window == STARTSCREEN
     				&& ( (this.getType() == KAMAITACHI
-    						&& Menu.effectTimer[KAMAITACHI.ordinal()] >= 35
-    						&& Menu.effectTimer[KAMAITACHI.ordinal()] < 100)
+    						&& Menu.effectTimer[KAMAITACHI.ordinal()] > 0
+    						&& Menu.effectTimer[KAMAITACHI.ordinal()] < 65)
     					 ||
     					 (this.getType() == PHOENIX
-    					 	&& Menu.effectTimer[PHOENIX.ordinal()] > 1
-    					 	&& Menu.effectTimer[PHOENIX.ordinal()] < 55) ))
+    					 	&& Menu.effectTimer[PHOENIX.ordinal()] > 0) ))
     		{
     			this.inputColorCannon = MyColor.variableGreen;
     		}
@@ -274,8 +272,7 @@ public abstract class Helicopter extends MovingObject
     	this.inputColorHull = (    !this.isInvincible()
     						     	&& !(Menu.window == STARTSCREEN
     						        && this.getType() == PHOENIX
-    						        && Menu.effectTimer[PHOENIX.ordinal()] > 1
-    						        && Menu.effectTimer[PHOENIX.ordinal()] < 55))
+    						        && Menu.effectTimer[PHOENIX.ordinal()] > 0))
     						  			? this.getPrimaryHullColor()
     						  			: MyColor.variableGreen;
     	
@@ -283,8 +280,7 @@ public abstract class Helicopter extends MovingObject
     									|| this.hasBoostedFireRate())
     								|| (Menu.window == STARTSCREEN 
     										&& this.getType() == HELIOS
-    										&& Menu.effectTimer[HELIOS.ordinal()] > 0
-    										&& Menu.effectTimer[HELIOS.ordinal()] < 65)
+    										&& Menu.effectTimer[HELIOS.ordinal()] > 0)
     								? MyColor.variableRed 
     								: MyColor.windowBlue;
     	
@@ -413,8 +409,7 @@ public abstract class Helicopter extends MovingObject
         if((this.isPowerShieldActivated
     			|| (Menu.window == STARTSCREEN 
     				&& this.getType() == ROCH
-    				&& Menu.effectTimer[ROCH.ordinal()] > 0
-    				&& Menu.effectTimer[ROCH.ordinal()] < 68))) // 60
+    				&& Menu.effectTimer[ROCH.ordinal()] > 0)))
         {            
             g2d.setColor(MyColor.shieldColor[Menu.window == STARTSCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
             g2d.fillOval(left+(movementLeft ? -9 : 35), top+19, 96, 54);

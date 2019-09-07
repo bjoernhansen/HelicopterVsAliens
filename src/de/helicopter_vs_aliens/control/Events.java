@@ -100,11 +100,12 @@ public class Events
 		cheatCode = "+cheats";			// Code, mit welchem Cheats aktiviert werden können
 	
 	public static Enemy
-		boss;	// Referenz auf den aktuellen Endgegner
+		boss;							// Referenz auf den aktuellen Endgegner
 
 	public static HelicopterTypes
-		nextHelicopterType = HelicopterTypes.getDefault();
-
+		nextHelicopterType,				// aktuell im Startmenü ausgewählte Helikopter
+		previousHelicopterType;			// zuletzt im Startmenü ausgewählte Helikopter
+	
 
 	static void keyTyped( KeyEvent e, Controller controller,
 	                      Helicopter helicopter, Savegame savegame)
@@ -1365,5 +1366,10 @@ public class Events
 	{
 		if(commendationTimer > 0){
             commendationTimer--;}		
+	}
+	
+	public static boolean hasSelectedHelicopterChanged()
+	{
+		return previousHelicopterType != nextHelicopterType;
 	}
 }

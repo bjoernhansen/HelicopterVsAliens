@@ -25,6 +25,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.Events.START;
+import static de.helicopter_vs_aliens.control.Events.nextHelicopterType;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
@@ -83,8 +84,7 @@ public class Menu
 	
 	public static boolean
 		isMenuVisible,					// = true: Spielmenü ist sichtbar
-		originalResulution = false,
-		highlightedHelicopter = false;
+		originalResulution = false;
 	
     // Auf dem Startscreen gezeichnete Polygone
     public static Polygon
@@ -255,16 +255,18 @@ public class Menu
         for(int i = 0; i < Helicopter.NR_OF_TYPES; i++)
         {	        	
         	if(effectTimer[i] > 0){
-				effectTimer[i]++;}
-        }      	
-		highlightedHelicopter = false;
+				effectTimer[i]--;}
+        }
+        
+		Events.previousHelicopterType = Events.nextHelicopterType;
+        Events.nextHelicopterType = null;
 		for(int i = 0; i < 4; i++)
 		{
 			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
 				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopterSelection)%Helicopter.NR_OF_TYPES];
-				if(effectTimer[Events.nextHelicopterType.ordinal()] == 0)
+				if(effectTimer[Events.nextHelicopterType.ordinal()] == 0 && Events.hasSelectedHelicopterChanged())
 				{
 					Audio.playSpecialSound(Events.nextHelicopterType);
 					if(Events.nextHelicopterType == PEGASUS)
@@ -272,22 +274,23 @@ public class Menu
 						helicopterDummies.get(PEGASUS).empWave = Explosion.createStartscreenExplosion(i);
 					}
 					Arrays.fill(effectTimer, 0);
-					effectTimer[Events.nextHelicopterType.ordinal()] = 1;
+					effectTimer[Events.nextHelicopterType.ordinal()] = Events.nextHelicopterType.getEffectTime();
 				}
-				if(Events.nextHelicopterType == KAMAITACHI && effectTimer[KAMAITACHI.ordinal()] == 70)
+				if((Events.nextHelicopterType == ROCH || Events.nextHelicopterType == KAMAITACHI) && effectTimer[Events.nextHelicopterType.ordinal()] == 30)
 				{
 					Audio.play(Audio.plasmaOff);
-				}				
-				highlightedHelicopter = true;
+				}
 				break;
 			}			
 		}
-		// TODO highlighted helicopter müsste unnötig sein, es müsste allein üher nextHelicopter lösbar sein müsste
-		if(highlightedHelicopter)
+		if(Events.nextHelicopterType != null)
 		{
 			Menu.helicopterDummies.get(Events.nextHelicopterType).rotatePropellerSlow();
 		}
-		else{Arrays.fill(effectTimer, 0);}
+		else
+		{
+			Arrays.fill(effectTimer, 0);
+		}
 	}
 
 	static void paintStartscreen(Graphics2D g2d, Helicopter helicopter)
@@ -302,7 +305,6 @@ public class Menu
         g2d.setColor(MyColor.darkGray);
         g2d.setFont(fontProvider.getItalicBold(15));
         g2d.drawString((language == ENGLISH ? "developed by" : "ein Spiel von") + " Björn Hansen", 505, 120);
-        
         
         if(messageTimer == 0)
         {
@@ -323,7 +325,7 @@ public class Menu
          
         for(int i = 0; i < 4; i++)
         {
-        	if(Events.nextHelicopterType.ordinal() == (helicopterSelection +i)%Helicopter.NR_OF_TYPES && highlightedHelicopter){g2d.setColor(Color.white);}
+        	if(Events.nextHelicopterType != null && Events.nextHelicopterType.ordinal() == (helicopterSelection +i)%Helicopter.NR_OF_TYPES){g2d.setColor(Color.white);}
             else{g2d.setColor(MyColor.lightGray);}       	
         	g2d.setFont(fontProvider.getBold(20));
         	

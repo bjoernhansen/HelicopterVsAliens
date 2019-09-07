@@ -255,18 +255,12 @@ public class Audio
     public static void play(AudioClip clip)
     {
         clip.stop();
-        if (isSoundOn)
-        {
-            clip.play();
-        }
+        if(isSoundOn){clip.play();}
     }
 
     public static void loop(AudioClip clip)
     {
-        if (isSoundOn)
-        {
-            clip.loop();
-        }
+        if(isSoundOn){clip.loop();}
     }
 
     // Abspielen eines Lob-Sounds entsprechend der Anzahl mit einem Mal besiegter Gegner
@@ -309,23 +303,27 @@ public class Audio
 
     public static void playSpecialSound(HelicopterTypes helicopterType)
     {
-        switch (helicopterType)
+        play(getSpecialSound(helicopterType));
+    }
+
+    private static AudioClip getSpecialSound(HelicopterTypes helicopterType)
+    {
+        if(helicopterType == null)
+        {
+            return shieldUp;
+        }
+        else switch (helicopterType)
         {
             case PHOENIX:
-                play(teleport1);
-                break;
-            case ROCH:
-            case HELIOS:
-                play(shieldUp);
-                break;
+                return teleport1;
             case OROCHI:
-                play(stunActivated);
-                break;
+                return stunActivated;
             case KAMAITACHI:
-                play(plasmaOn);
-                break;
+                return plasmaOn;
             case PEGASUS:
-                play(emp);
+                return emp;
+            default:
+                return shieldUp;
         }
     }
 }
