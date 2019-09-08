@@ -338,7 +338,7 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.darkBlue);
             }
-            helicopterDummies.get(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]).paint(
+            helicopterDummies.get(HelicopterTypes.values()[(helicopterSelection +i)%Helicopter.NR_OF_TYPES]).startScreenPaint(
             	g2d,
 				HELICOPTER_STARTSCREEN_OFFSET.x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
 				HELICOPTER_STARTSCREEN_OFFSET.y + STARTSCREEN_HELICOPTER_OFFSET_Y);
@@ -1758,13 +1758,13 @@ public class Menu
 					"different helicopter types " +
 					"differ from each other much more clearly now." +
 					"<br>- A <font color=\"#FFFFD2\">" +
-					"hardcore mode<font color=\"#D2D2D2\"> (see section " +
-					"<font color=\"#FFFFFF\">\"Hardcore mode\"" +
+					"special mode<font color=\"#D2D2D2\"> (see section " +
+					"<font color=\"#FFFFFF\">\"Special mode\"" +
 					"<font color=\"#D2D2D2\">) is now available." +
 					"<br>- <font color=\"#FFFFD2\">Pegasus" +
 					"<font color=\"#D2D2D2\"> and<font color=\"#FFFFD2\"> Helios type" +
 					"<font color=\"#D2D2D2\"> helicopters are " +
-					"now available. Helios type helicopters can only be played in hardcore mode." +					
+					"now available. Helios type helicopters can only be played in special mode." +
 					"<br>- Also in non-boss levels, " +
 					"ocasionally uncommon strong enemies " +
 					"can now occour.<br>&nbsp These <font color=\"#FFFFD2\">" +
@@ -2078,11 +2078,11 @@ public class Menu
 				}				
 				else if(page == 7)
 				{
-					// Hardcore-Mode
+					// Spezial-Modus
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
 					"\" color=\"#D2D2D2\">" +										
-					"In <font color=\"#FFFFD2\">hardcore mode<font color=\"#D2D2D2\">, players do not receive any "
+					"In <font color=\"#FFFFD2\">special mode<font color=\"#D2D2D2\">, players do not receive any "
 					+ "financial reward for the "
 					+ "destruction of a hostile flying vessel. Instead, "
 					+ "every level up is generously rewarded. The more "
@@ -2347,7 +2347,7 @@ public class Menu
 					+ "from high <font color=\"#FFFFD2\">upgrade costs. "
 					+ "<br><font color=\"#D2D2D2\">Helios-type helicopters can "
 					+ "only be played in <font color=\"#FFFFD2\">"
-					+ "hardcore mode.<font color=\"#D2D2D2\">" +					
+					+ "special mode.<font color=\"#D2D2D2\">" +
 					"<font color=\"#D2D2D2\">" +
 					"</font></html>"
 		            ); 
@@ -2449,7 +2449,7 @@ public class Menu
 					"<font color=\"#D2D2D2\"> und der  <font color=\"#FFFFD2\">Helios-Klasse" +
 					"<font color=\"#D2D2D2\"> stehen dem Spieler nun " +
 					"zwei weitere Helikopter-Klassen zur Verfügung.<br>" +
-					"- Als neuer Spielmodus ist der <font color=\"#FFFFD2\">Hardcore-Modus" +
+					"- Als neuer Spielmodus ist der <font color=\"#FFFFD2\">Spezial-Modus" +
 					"<font color=\"#D2D2D2\"> verfügbar, welcher nur von der Helios-Klasse gespielt werden kann.<br>" +
 					"- Für zusätzlichen Spielreiz sorgen zufällig " +
 					"auftretende <font color=\"#FFFFD2\">\"Mini-Endgegner\"" +
@@ -2760,11 +2760,11 @@ public class Menu
 				}
 				else if(page == 7)
 				{
-					// Hardcore-Modus
+					// Spezial-Modus
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
 					"\" color=\"#D2D2D2\">" +										
-					"Im <font color=\"#FFFFD2\">Hardcore-Modus"
+					"Im <font color=\"#FFFFD2\">Spezial-Modus"
 					+ "<font color=\"#D2D2D2\"> erhält der Spieler keine "
 					+ "Belohnung für "
 					+ "abgeschossene Gegner. Stattdessen wird in diesem "
@@ -3043,7 +3043,7 @@ public class Menu
 					+ "erleichtert. Unter großem Energieaufwand können diese "
 					+ "Helikopter außerdem einen <font color=\"#FFFFD2\">PU-Generator<font color=\"#D2D2D2\"> zur Erzeugung "
 					+ "von PowerUps nutzen. Die Helios-Klasse lässt sich nur "
-					+ "im <font color=\"#FFFFD2\">Hardcore-Modus<font color=\"#D2D2D2\"> spielen." 
+					+ "im <font color=\"#FFFFD2\">Spezial-Modus<font color=\"#D2D2D2\"> spielen."
 					+ "</font></html>"
 		            ); 
 				}

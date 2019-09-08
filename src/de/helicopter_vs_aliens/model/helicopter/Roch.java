@@ -9,15 +9,18 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.util.MyColor;
 
+import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PEGASUS;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 public final class Roch extends Helicopter
 {
@@ -232,6 +235,29 @@ public final class Roch extends Helicopter
     @Override
     public void stoptMenuEffect()
     {
+        this.isPowerShieldActivated = false;
+    }
+    
+    @Override
+    void paintComponents(Graphics2D g2d, int left, int top)
+    {
+        super.paintComponents(g2d, left, top);
+        if(this.isPowerShieldActivated)
+        {
+            this.paintPowerShield(g2d, left, top);
+        }
+    }
+    
+    private void paintPowerShield(Graphics2D g2d, int left, int top)
+    {
+        g2d.setColor(MyColor.shieldColor[Menu.window == STARTSCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
+        g2d.fillOval(left+(this.hasLeftMovingAppearance() ? -9 : 35), top+19, 96, 54);
+    }
+    
+    @Override
+    public void resetState(boolean resetStartPos)
+    {
+        super.resetState(resetStartPos);
         this.isPowerShieldActivated = false;
     }
 }

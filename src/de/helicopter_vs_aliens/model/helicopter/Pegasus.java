@@ -9,11 +9,14 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.FIRE_RATE;
@@ -21,10 +24,13 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.FIRE
 public final class Pegasus extends Helicopter
 {
     static final int[]
-            INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
-        
+        INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
+       
+    private int
+        shiftTime;		            // Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
+    
     private boolean
-        hasInterphaseGenerator;				// = true: Helikopter verfügt über einen Interphasen-Generator
+        hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator
     
     
     @Override
@@ -157,6 +163,8 @@ public final class Pegasus extends Helicopter
     {
         super.resetState(resetStartPos);
         this.empTimer = 0;
+        this.empWave = null;
+        this.interphaseGeneratorTimer = 0;
     }
     
     @Override
@@ -214,5 +222,45 @@ public final class Pegasus extends Helicopter
     public void stoptMenuEffect()
     {
         this.empWave = null;
+    }
+    
+    @Override
+    void determineInputColors()
+    {
+        super.determineInputColors();
+        if(this.interphaseGeneratorTimer > this.shiftTime)
+        {
+            // TODO HashMap daraus machen und hier verwenden
+            this.inputColorCannon = MyColor.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputColorHull =   MyColor.setAlpha(this.inputColorHull, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputColorWindow = MyColor.setAlpha(this.inputColorWindow, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()] );
+            this.inputColorFuss1 =  MyColor.setAlpha(this.inputColorFuss1, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputColorFuss2 =  MyColor.setAlpha(this.inputColorFuss2, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputGray = 		MyColor.setAlpha(this.inputGray, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputLightGray = 	MyColor.setAlpha(this.inputLightGray, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputLamp = 		MyColor.setAlpha(this.inputLamp, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+        }
+    }
+    
+    @Override
+    void paintComponents(Graphics2D g2d, int left, int top)
+    {
+        super.paintComponents(g2d, left, top);
+        
+        // EMP wave animation in start menu
+        if(Menu.window == STARTSCREEN
+            && Menu.effectTimer[PEGASUS.ordinal()] > 0
+            && this.empWave != null)
+        {
+            if(this.empWave.time >= this.empWave.maxTime)
+            {
+                this.empWave = null;
+            }
+            else
+            {
+                this.empWave.update();
+                this.empWave.paint(g2d);
+            }
+        }
     }
 }

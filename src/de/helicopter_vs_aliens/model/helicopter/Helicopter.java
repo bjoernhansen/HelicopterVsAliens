@@ -18,18 +18,21 @@ import de.helicopter_vs_aliens.util.MyMath;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.WindowTypes.*;
+import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
+import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.Pegasus.INTERPHASE_GENERATOR_ALPHA;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
@@ -94,7 +97,6 @@ public abstract class Helicopter extends MovingObject
 		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
 		currentBaseFirepower,				// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
 		timeBetweenTwoShots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
-		shiftTime,							// nur Pegasus-Klasse: Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
 		platingDurabilityFactor,			// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
 		numberOfCannons,					// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
 		
@@ -189,7 +191,7 @@ public abstract class Helicopter extends MovingObject
 		isCrashing;			// Helikopter befindet sich im Sturzflug
       
     // Grundfarben zur Berechnung der Gradientenfarben
-    private Color
+    Color
     	inputColorCannon, 
     	inputColorHull, 
     	inputColorWindow, 
@@ -200,7 +202,7 @@ public abstract class Helicopter extends MovingObject
     	inputLamp;                             
     
     // Gradientenfarben
-    private GradientPaint 	
+    GradientPaint
     	gradientHull, 					// Hauptfarbe des Helikopters
     	gradientCannon1,				// Farbe der ersten Bordkanone
     	gradientWindow, 				// Fensterfarbe
@@ -223,188 +225,9 @@ public abstract class Helicopter extends MovingObject
     // TODO left / top ersetzen durch Point position
     public void paint(Graphics2D g2d, int left, int top)
     {
-		// TODO: die paint Methode zerstückeln damit inheritance leichter umzusetzen wird
     	// TODO Alles was mit "malen" zusammenhängt in eine eigene Klasse auslagern
-    	
-    	// die Farben
-    	if(this.plasmaActivationTimer > POWERUP_DURATION/4)
-    	{
-    		this.inputColorCannon = Color.green;
-    	}
-    	else if(this.plasmaActivationTimer == 0)
-    	{
-    		if(this.getType() == OROCHI
-    					  &&( this.isNextMissileStunner
-    							&& (this.energy >= this.spellCosts
-    								|| this.hasUnlimitedEnergy())))
-    		{
-    			this.inputColorCannon = MyColor.variableBlue;
-    		}
-    		else{this.inputColorCannon 
-    				= this.isInvincible()
-    					? MyColor.variableGreen
-    					: this.getSecondaryHullColor();}
-    	}
-    	else
-    	{
-    		this.inputColorCannon 
-    			= this.isInvincible()
-    				? MyColor.reversedRandomGreen()
-    				: MyColor.variableGreen;
-    	}
-    	
-    	this.inputColorHull = this.isInvincible()
-    						  		? MyColor.variableGreen
-    						  		: this.getPrimaryHullColor();
-    	
-    	this.inputColorWindow = (this.hasTripleDmg() || this.hasBoostedFireRate())
-    								? MyColor.variableRed 
-    								: MyColor.windowBlue;
-    	
-    	this.inputColorFuss1 = MyColor.lighterGray;
-    	this.inputColorFuss2 = MyColor.enemyGray;
-    	this.inputGray = MyColor.gray;
-    	this.inputLightGray = MyColor.lightGray;
-    	this.inputLamp = (this.hasSpotlights && Events.timeOfDay == NIGHT && Menu.window == GAME) ? MyColor.randomLight : MyColor.darkYellow;
-    	    	
-    	if(this.interphaseGeneratorTimer > this.shiftTime)
-    	{    		
-    		this.inputColorCannon = MyColor.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-    		this.inputColorHull =   MyColor.setAlpha(this.inputColorHull, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-    		this.inputColorWindow = MyColor.setAlpha(this.inputColorWindow, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()] );
-    		this.inputColorFuss1 =  MyColor.setAlpha(this.inputColorFuss1, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-    		this.inputColorFuss2 =  MyColor.setAlpha(this.inputColorFuss2, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-    		this.inputGray = 		MyColor.setAlpha(this.inputGray, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-    		this.inputLightGray = 	MyColor.setAlpha(this.inputLightGray, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-    		this.inputLamp = 		MyColor.setAlpha(this.inputLamp, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-    	}   	
-    	
-    	this.gradientHull = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorHull, 1.65f),
-    										  0, top+ 2, MyColor.dimColor(this.inputColorHull, 0.75f), true);
-    	this.gradientCannon1 = new GradientPaint(0, top+56, MyColor.dimColor(this.inputColorCannon, 1.65f),
-												 0, top+64, MyColor.dimColor(this.inputColorCannon, 0.55f), true);
-    	this.gradientWindow = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorWindow, 2.2f),
-												0, top+ 2, MyColor.dimColor(this.inputColorWindow, 0.70f), true);
-    	this.gradientCannon2and3 = new GradientPaint(0, top+28, MyColor.dimColor(this.inputColorCannon, 1.7f),
-													 0, top+35, MyColor.dimColor(this.inputColorCannon, 0.4f), true);
-    	this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, MyColor.dimColor(this.inputColorFuss1, 0.44f), true);
-    	this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, MyColor.dimColor(this.inputColorFuss2, 0.55f), true);
-    	this.gradientCannonHole = (this.plasmaActivationTimer == 0 && !(Menu.window == STARTSCREEN && this.getType() == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] != 0)) ? this.gradientHull : MyColor.cannonHoleGreen;
-	
-		// TODO müsste unnötig sein, this.MovingLeft muss eben immer false sein, wenn wir nicht im Spiel sind (wo wird this.MovingLeft genutzt / gesetzt
-    	boolean movementLeft = this.isMovingLeft && Menu.window == GAME;
-    	
-    	
-    	// Nahkampfbestrahlung 
-    	if(this.hasShortrangeRadiation)
-        {            
-            g2d.setColor(this.enhancedRadiationTimer == 0
-            				? MyColor.radiation[Events.timeOfDay.ordinal()]
-            				: MyColor.enhancedRadiation[Events.timeOfDay.ordinal()]);
-            g2d.fillOval(left+(movementLeft ? -9 : 35), top+19, 96, 54);
-        }
-    	    	
-    	// Propeller-Stange
-    	g2d.setColor(this.inputLightGray);  
-    	g2d.setStroke(new BasicStroke(2));
-    	g2d.drawLine(left+(movementLeft ? 39 : 83), top+14, left+(movementLeft ? 39 : 83), top+29);
-    	
-    	// Fußgestell
-    	g2d.setPaint(this.gradientFuss2);
-        g2d.fillRoundRect(left+(movementLeft ? 25 : 54), top+70, 43, 5, 5, 5);
-        g2d.setPaint(this.gradientFuss1);
-        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-        g2d.drawLine(left+61, top+66, left+61, top+69);
-        g2d.drawLine(left+(movementLeft ? 33 : 89), top+66, left+(movementLeft ? 33 : 89), top+69);
-        g2d.setStroke(new BasicStroke(1));
-        
-        // der Helikopter-Rumpf
-        g2d.setPaint(this.gradientHull);
-        g2d.fillOval(left+(movementLeft ?  2 : 45), top+29, 75, 34);
-        g2d.fillRect(left+(movementLeft ? 92 : -7), top+31, 37,  8);
-        g2d.fillArc (left+(movementLeft ? 34 : 23), top+11, 65, 40, 180, 180);
-        g2d.setPaint(this.gradientWindow);        
-        g2d.fillArc (left+(movementLeft ?  1 : 69), top+33, 52, 22, (movementLeft ? 75 : -15), 120);
-                
-        // die Kanonen
-        g2d.setPaint(this.gradientCannon1);        
-        g2d.fillRoundRect(left+(movementLeft ? 26 : 53), top+52, 43, 13, 12, 12);
-        g2d.setPaint(this.gradientCannonHole); 
-        g2d.fillOval(left+(movementLeft ? 27 : 90), top+54, 5, 9);
-        if(this.numberOfCannons >= 2)
-        {           
-            g2d.setPaint(this.gradientCannon2and3);            
-            g2d.fillRoundRect(left+(movementLeft ? 32 : 27), top+27, 63, 6, 6, 6);
-            g2d.setPaint(this.gradientCannonHole);
-            g2d.fillOval(left+(movementLeft ? 33 : 86), top+28, 3, 4);
-        }
-        if(this.numberOfCannons >= 3)
-        {
-        	g2d.setPaint(this.gradientCannon2and3);
-        	g2d.fillRoundRect(left+(movementLeft ? 38 : 37), top+41, 47, 6, 6, 6);
-        	g2d.setPaint(this.gradientCannonHole);
-            g2d.fillOval(left+(movementLeft ? 39 : 80), top+42, 3, 4);
-        }
-        
-        //der Scheinwerfer
-        if(this.hasSpotlights)
-        {            
-        	if(Events.timeOfDay == NIGHT && Menu.window == GAME)
-        	{
-        		g2d.setColor(MyColor.translucentWhite);
-                g2d.fillArc(left+(movementLeft ? -135 : -43), top-96, 300, 300, (movementLeft ? 165 : -15), 30);
-        	}        	
-        	g2d.setPaint(this.gradientHull);
-            g2d.fillRect(left+(movementLeft ? 4 : 106), top+50, 12, 8);
-        	g2d.setColor(this.inputLamp);
-            g2d.fillArc(left+(movementLeft ? -1 : 115), top+50, 8, 8, (movementLeft ? -90 : 90), 180);
-        }        
-                
-        //die Propeller
-		this.paintMainRotor(g2d, left, top, movementLeft);
-		this.paintTailRotor(g2d, left, top, movementLeft);
-		
-        
-        if(Menu.window == STARTSCREEN 
-        	//&& this.getType() == PEGASUS
-        	&& Menu.effectTimer[PEGASUS.ordinal()] > 0
-        	&& this.empWave != null)
-        {
-        	if(this.empWave.time >= this.empWave.maxTime)
-        	{
-        		this.empWave = null;
-        	}
-        	else
-        	{
-        		this.empWave.update();
-        		this.empWave.paint(g2d);
-        	}
-        }
-        
-        // Energie-Schild der Roch-Klasse
-        if((this.isPowerShieldActivated
-    			|| (Menu.window == STARTSCREEN 
-    				&& this.getType() == ROCH
-    				&& Menu.effectTimer[ROCH.ordinal()] > 0)))
-        {            
-            g2d.setColor(MyColor.shieldColor[Menu.window == STARTSCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
-            g2d.fillOval(left+(movementLeft ? -9 : 35), top+19, 96, 54);
-        }
-               
-        if(Events.recordTime[this.getType().ordinal()][4] > 0 && Menu.window == STARTSCREEN)
-        {            
-            g2d.setFont(Menu.fontProvider.getBold(12));
-            g2d.setColor(Color.yellow);
-            g2d.drawString(Menu.language == ENGLISH ? "Record time:" : "Bestzeit:", left-27, top+67);
-            g2d.drawString(Menu.minuten(Events.recordTime[this.getType().ordinal()][4]),left-27, top+80);
-        } 
-        
-        if(this.getType() == HELIOS && Menu.window == STARTSCREEN)
-        {
-			g2d.setFont(Menu.fontProvider.getBold(12));
-            g2d.setColor(MyColor.brown);
-            g2d.drawString("Hardcore" + (Menu.language == ENGLISH ? " mode" : "-Modus:"), left-27, top-4);
-        }  
+        this.determineColors(left, top);
+    	this.paintComponents(g2d, left, top);
             
         //zu Testzwecken: 
         /*
@@ -412,12 +235,153 @@ public abstract class Helicopter extends MovingObject
         g2d.draw(this.bounds);
         g2d.fillOval((int) this.location.getX()-2, (int) this.location.getY()-2, 4, 4); */
     }
-		
-	private void paintMainRotor(Graphics2D g2d, int left, int top, boolean movementLeft)
+    
+    private void determineColors(int left, int top)
+    {
+        this.determineInputColors();
+        this.determineGradientColors(left, top);
+    }
+    
+    void paintComponents(Graphics2D g2d, int left, int top)
+    {
+        this.paintRotorHead(g2d, left, top);
+        this.paintSkids(g2d, left, top);
+        this.paintHull(g2d, left, top);
+        this.paintCannons(g2d, left, top);
+        this.paintSpotlights(g2d, left, top);
+        this.paintMainRotor(g2d, left, top);
+        this.paintTailRotor(g2d, left, top);
+    }
+    
+    private void paintRotorHead(Graphics2D g2d, int left, int top)
+    {
+        g2d.setColor(this.inputLightGray);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.drawLine(left+(this.hasLeftMovingAppearance() ? 39 : 83), top+14, left+(this.hasLeftMovingAppearance() ? 39 : 83), top+29);
+    }
+    
+    boolean hasLeftMovingAppearance()
+    {
+        return this.isMovingLeft && Menu.window == GAME;
+    }
+    
+    private void paintSkids(Graphics2D g2d, int left, int top)
+    {
+        g2d.setPaint(this.gradientFuss2);
+        g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 25 : 54), top+70, 43, 5, 5, 5);
+        g2d.setPaint(this.gradientFuss1);
+        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(left+61, top+66, left+61, top+69);
+        g2d.drawLine(left+(this.hasLeftMovingAppearance() ? 33 : 89), top+66, left+(this.hasLeftMovingAppearance() ? 33 : 89), top+69);
+        g2d.setStroke(new BasicStroke(1));
+    }
+    
+    private void paintHull(Graphics2D g2d, int left, int top)
+    {
+        g2d.setPaint(this.gradientHull);
+        g2d.fillOval(left+(this.hasLeftMovingAppearance() ?  2 : 45), top+29, 75, 34);
+        g2d.fillRect(left+(this.hasLeftMovingAppearance() ? 92 : -7), top+31, 37,  8);
+        g2d.fillArc (left+(this.hasLeftMovingAppearance() ? 34 : 23), top+11, 65, 40, 180, 180);
+        g2d.setPaint(this.gradientWindow);
+        g2d.fillArc (left+(this.hasLeftMovingAppearance() ?  1 : 69), top+33, 52, 22, (this.hasLeftMovingAppearance() ? 75 : -15), 120);
+    }
+    
+    private void paintSpotlights(Graphics2D g2d, int left, int top)
+    {
+        if(this.hasSpotlights)
+        {
+            if(Events.timeOfDay == NIGHT && Menu.window == GAME)
+            {
+                g2d.setColor(MyColor.translucentWhite);
+                g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -135 : -43), top-96, 300, 300, (this.hasLeftMovingAppearance() ? 165 : -15), 30);
+            }
+            g2d.setPaint(this.gradientHull);
+            g2d.fillRect(left+(this.hasLeftMovingAppearance() ? 4 : 106), top+50, 12, 8);
+            g2d.setColor(this.inputLamp);
+            g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -1 : 115), top+50, 8, 8, (this.hasLeftMovingAppearance() ? -90 : 90), 180);
+        }
+    }
+    
+    void paintCannons(Graphics2D g2d, int left, int top)
+    {
+        g2d.setPaint(this.gradientCannon1);
+        g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 26 : 53), top+52, 43, 13, 12, 12);
+        g2d.setPaint(this.gradientCannonHole);
+        g2d.fillOval(left+(this.hasLeftMovingAppearance() ? 27 : 90), top+54, 5, 9);
+        if(this.numberOfCannons >= 2)
+        {
+            g2d.setPaint(this.gradientCannon2and3);
+            g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 32 : 27), top+27, 63, 6, 6, 6);
+            g2d.setPaint(this.gradientCannonHole);
+            g2d.fillOval(left+(this.hasLeftMovingAppearance() ? 33 : 86), top+28, 3, 4);
+        }
+    }
+    
+    private void determineGradientColors(int left, int top)
+	{
+		this.gradientHull = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorHull, 1.65f),
+			0, top+ 2, MyColor.dimColor(this.inputColorHull, 0.75f), true);
+		this.gradientCannon1 = new GradientPaint(0, top+56, MyColor.dimColor(this.inputColorCannon, 1.65f),
+			0, top+64, MyColor.dimColor(this.inputColorCannon, 0.55f), true);
+		this.gradientWindow = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorWindow, 2.2f),
+			0, top+ 2, MyColor.dimColor(this.inputColorWindow, 0.70f), true);
+		this.gradientCannon2and3 = new GradientPaint(0, top+28, MyColor.dimColor(this.inputColorCannon, 1.7f),
+			0, top+35, MyColor.dimColor(this.inputColorCannon, 0.4f), true);
+		this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, MyColor.dimColor(this.inputColorFuss1, 0.44f), true);
+		this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, MyColor.dimColor(this.inputColorFuss2, 0.55f), true);
+		this.gradientCannonHole = this.getGradientCannonHoleColor();
+	}
+    
+    GradientPaint getGradientCannonHoleColor()
+    {
+        return this.gradientHull;
+    }
+    
+    void determineInputColors()
+	{
+		this.inputColorCannon = this.getInputColorCannon();
+		this.inputColorHull = this.getInputColorHull();
+		this.inputColorWindow = this.getInputColorWindow();
+		this.inputColorFuss1 = MyColor.lighterGray;
+		this.inputColorFuss2 = MyColor.enemyGray;
+		this.inputGray = MyColor.gray;
+		this.inputLightGray = MyColor.lightGray;
+		this.inputLamp = this.hasSpotlightsTurnedOn() ? MyColor.randomLight : MyColor.darkYellow;
+	}
+	
+	private boolean hasSpotlightsTurnedOn()
+	{
+		return this.hasSpotlights
+				&& Events.timeOfDay == NIGHT
+				&& Menu.window == GAME;
+	}
+	
+	Color getInputColorCannon()
+	{
+		return this.isInvincible()
+			? MyColor.variableGreen
+			: this.getSecondaryHullColor();
+	}
+	
+	private Color getInputColorHull()
+	{
+		return this.isInvincible()
+			? MyColor.variableGreen
+			: this.getPrimaryHullColor();
+	}
+	
+	private Color getInputColorWindow()
+	{
+		return this.hasTripleDmg() || this.hasBoostedFireRate()
+			? MyColor.variableRed
+			: MyColor.windowBlue;
+	}
+	
+	private void paintMainRotor(Graphics2D g2d, int left, int top)
 	{
 		paintRotor(g2d,
 			this.inputGray,
-			left+(movementLeft ? -36 : 8),
+			left+(this.hasLeftMovingAppearance() ? -36 : 8),
 			top-5,
 			150, 37, 3,
 			(int)(this.rotorPosition),
@@ -426,11 +390,11 @@ public abstract class Helicopter extends MovingObject
 			false);
 	}
 	
-	private void paintTailRotor(Graphics2D g2d, int left, int top, boolean movementLeft)
+	private void paintTailRotor(Graphics2D g2d, int left, int top)
 	{
 		paintRotor(g2d,
 			this.inputGray,
-			left+(movementLeft ?  107 : -22),
+			left+(this.hasLeftMovingAppearance() ?  107 : -22),
 			top+14,
 			37, 37, 3,
 			(int)(this.rotorPosition),
@@ -444,6 +408,26 @@ public abstract class Helicopter extends MovingObject
 		this.rotatePropellerSlow();
 		this.paint(g2d, HELICOPTER_MENU_PAINT_POS.x, HELICOPTER_MENU_PAINT_POS.y);
 	}
+    
+    public void startScreenPaint(Graphics2D g2d, int left, int top)
+    {
+        this.paint(g2d, left, top);
+        if(Events.recordTime[this.getType().ordinal()][4] > 0 && Menu.window == STARTSCREEN)
+        {
+            g2d.setFont(Menu.fontProvider.getBold(12));
+            g2d.setColor(Color.yellow);
+            g2d.drawString(Menu.language == ENGLISH ? "Record time:" : "Bestzeit:", left-27, top+67);
+            g2d.drawString(Menu.minuten(Events.recordTime[this.getType().ordinal()][4]),left-27, top+80);
+        }
+    
+        if(this.getType() == HELIOS && Menu.window == STARTSCREEN)
+        {
+            g2d.setFont(Menu.fontProvider.getBold(12));
+            g2d.setColor(MyColor.brown);
+            g2d.drawString(Menu.language == ENGLISH ? "Special mode" : "Spezial-Modus:", left-27, top-4);
+        }
+    }
+	
  
 	public static void paintRotor(Graphics2D g2d, Color color,
 								  int x, int y, int width, int height,
@@ -886,17 +870,11 @@ public abstract class Helicopter extends MovingObject
 	
 	public void resetState(boolean resetStartPos)
 	{
-		this.setActivationState(false);
-		this.isSearchingForTeleportDestination = false;
-		this.isNextMissileStunner = false;
+        this.setActivationState(false);
 		this.isCrashing = false;
-		this.interphaseGeneratorTimer = 0;
-		this.plasmaActivationTimer = 0;
-		this.isPowerShieldActivated = false;
 		this.slowedTimer = 0;
 		this.recentDamageTimer = 0;
 		for(int i = 0; i < 4; i++){this.powerUpTimer[i] = 0;}
-		this.empWave = null;
 		this.rotorPosition = 0;
 		if(resetStartPos){this.placeAtStartpos();}
 		this.fireRateTimer = this.timeBetweenTwoShots;

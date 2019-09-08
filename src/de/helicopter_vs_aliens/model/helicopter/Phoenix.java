@@ -7,8 +7,10 @@ import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
@@ -143,6 +145,7 @@ public final class Phoenix extends Helicopter
     {
         super.resetState(resetStartPos);
         this.enhancedRadiationTimer = 0;
+        this.isSearchingForTeleportDestination = false;
     }
     
     @Override
@@ -170,5 +173,19 @@ public final class Phoenix extends Helicopter
     public void stoptMenuEffect()
     {
         this.powerUpTimer[INVINCIBLE.ordinal()] = 0;
+    }
+    
+    @Override
+    void paintComponents(Graphics2D g2d, int left, int top)
+    {
+        // Nahkampfbestrahlung
+        if (this.hasShortrangeRadiation)
+        {
+            g2d.setColor(this.enhancedRadiationTimer == 0
+                ? MyColor.radiation[Events.timeOfDay.ordinal()]
+                : MyColor.enhancedRadiation[Events.timeOfDay.ordinal()]);
+            g2d.fillOval(left + (this.hasLeftMovingAppearance() ? -9 : 35), top + 19, 96, 54);
+        }
+        super.paintComponents(g2d, left, top);
     }
 }

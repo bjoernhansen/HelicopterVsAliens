@@ -530,9 +530,9 @@ Versionen:
      		spielbar macht. 
      		Spielstände, für deren erreichen Cheats verwendet wurden, 
      		erscheinen nicht länger in der Highscore.
-     		Als weiterer Spielmodus ist nun der Hardcore-Modus verfügbar.
+     		Als weiterer Spielmodus ist nun der Spezial-Modus verfügbar.
      		Dieser wird bei Wahl der Helios-Klasse gespielt. 
-     		Im Hardcore-Modus wird nicht der Abschuss von Gegnern sondern 
+     		Im Spezial-Modus wird nicht der Abschuss von Gegnern sondern
      		der Levelaufstieg belohnt. Die Höhe der Belohnung hängt vom
      		Erfolg mit den übrigen 5 Helikopter-Klassen up, ebenso wie die 
      		Kosten für den Ausbau einzelner Upgrades.
@@ -540,7 +540,7 @@ Versionen:
      		Ein Fehler bei der Darstellung freigeschalteter Helicopter
      		wurde behoben.
      		Scheinwerfer wirken sich jetzt auch auf die Belohnung im 
-     		Hardcore-Modus aus.
+     		Spezial-Modus aus.
      		Ein Fehler, der bewirkte, dass Boss 4 und 5 bei ihrer Zerstörung 
      		doppelt gezählt wurden, wurde behoben.
      		Ein Fehler bei der Berechnung der Trefferquote wurde behoben.
@@ -553,7 +553,7 @@ Versionen:
      		Im Menü "Helikopter-Klassen" können jetzt die aktuellen 
      		Upgrade-Kosten der Helios-Klasse eingesehen werden.
      		Die spielinterne Anleitung enthält nun auch Informationen zur
-     		Helios-Klasse und zum Hardcore-Modus.
+     		Helios-Klasse und zum Spezial-Modus.
      		Eine neue Gegnerklasse, welche nach Abschuss andere Gegner
      		freisetzt (vgl. Boss 2) wurde eingeführt.
      		Es gibt nun zwei Arten gegnerischer Geschossen:

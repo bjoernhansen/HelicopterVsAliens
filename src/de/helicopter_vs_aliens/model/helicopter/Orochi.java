@@ -7,7 +7,9 @@ import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.util.MyColor;
 
+import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
@@ -15,7 +17,6 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 
 public final class Orochi extends Helicopter
@@ -152,6 +153,38 @@ public final class Orochi extends Helicopter
     @Override
     public void stoptMenuEffect()
     {
+        this.isNextMissileStunner = false;
+    }
+    
+    @Override
+    Color getInputColorCannon()
+    {
+        if( this.isNextMissileStunner
+            && (this.energy >= this.spellCosts
+            || this.hasUnlimitedEnergy()))
+        {
+            return MyColor.variableBlue;
+        }
+        return super.getInputColorCannon();
+    }
+    
+    @Override
+    void paintCannons(Graphics2D g2d, int left, int top)
+    {
+        super.paintCannons(g2d, left, top);
+        if(this.numberOfCannons == 3)
+        {
+            g2d.setPaint(this.gradientCannon2and3);
+            g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 38 : 37), top+41, 47, 6, 6, 6);
+            g2d.setPaint(this.gradientCannonHole);
+            g2d.fillOval(left+(this.hasLeftMovingAppearance() ? 39 : 80), top+42, 3, 4);
+        }
+    }
+    
+    @Override
+    public void resetState(boolean resetStartPos)
+    {
+        super.resetState(resetStartPos);
         this.isNextMissileStunner = false;
     }
 }

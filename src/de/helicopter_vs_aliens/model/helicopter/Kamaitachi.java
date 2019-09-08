@@ -7,14 +7,15 @@ import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.util.MyColor;
 
+import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 
 public final class Kamaitachi extends Helicopter
@@ -133,5 +134,36 @@ public final class Kamaitachi extends Helicopter
     public void stoptMenuEffect()
     {
         this.plasmaActivationTimer = 0;
+    }
+    
+    @Override
+    Color getInputColorCannon()
+    {
+        if(this.plasmaActivationTimer > POWERUP_DURATION/4)
+        {
+            return Color.green;
+        }
+        else if(this.plasmaActivationTimer == 0)
+        {
+            return super.getInputColorCannon();
+        }
+        return this.isInvincible()
+                ? MyColor.reversedRandomGreen()
+                : MyColor.variableGreen;
+    }
+    
+    @Override
+    public void resetState(boolean resetStartPos)
+    {
+        super.resetState(resetStartPos);
+        this.plasmaActivationTimer = 0;
+    }
+    
+    @Override
+    GradientPaint getGradientCannonHoleColor()
+    {
+        return this.plasmaActivationTimer == 0
+                ? this.gradientHull
+                : MyColor.cannonHoleGreen;
     }
 }
