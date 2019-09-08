@@ -17,6 +17,7 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PEGASUS;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 public final class Roch extends Helicopter
 {
@@ -202,5 +203,35 @@ public final class Roch extends Helicopter
                                 * ENEMY_MISSILE_DAMAGE_FACTOR
                                 * this.spellCosts
                 || this.hasUnlimitedEnergy();
+    }
+    
+    @Override
+    public void crash()
+    {
+        if(this.isPowerShieldActivated){this.shutDownPowerShield();}
+        super.crash();
+    }
+    
+    @Override
+    public void initMenuEffect(int i)
+    {
+        super.initMenuEffect(i);
+        this.isPowerShieldActivated = true;
+    }
+    
+    @Override
+    public void updateMenuEffect()
+    {
+        super.updateMenuEffect();
+        if(Menu.effectTimer[this.getType().ordinal()] == 30)
+        {
+            Audio.play(Audio.plasmaOff);
+        }
+    }
+    
+    @Override
+    public void stoptMenuEffect()
+    {
+        this.isPowerShieldActivated = false;
     }
 }

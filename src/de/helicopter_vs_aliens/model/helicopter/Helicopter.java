@@ -4,7 +4,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.TimesOfDay;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -43,7 +42,7 @@ public abstract class Helicopter extends MovingObject
 	// Konstanten
     public static final int
 		POWERUP_DURATION = 930,         // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
-    	RECENT_DMG_TIME = 50,
+    	RECENT_DAMAGE_TIME = 50,
 		SLOW_TIME = 100,
 		NO_COLLISION_DMG_TIME	= 20,   // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
     	FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
@@ -93,7 +92,7 @@ public abstract class Helicopter extends MovingObject
 
 	public int
 		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
-		currentBaseFirepower,					// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
+		currentBaseFirepower,				// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
 		timeBetweenTwoShots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
 		shiftTime,							// nur Pegasus-Klasse: Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
 		platingDurabilityFactor,			// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
@@ -224,37 +223,22 @@ public abstract class Helicopter extends MovingObject
     // TODO left / top ersetzen durch Point position
     public void paint(Graphics2D g2d, int left, int top)
     {
-		// TODO evtl. MenuEffectTImer ändern. Stattdessen auf die Klasseneigenen Timer zurückgreifen (vorher analysieren)
+		// TODO: die paint Methode zerstückeln damit inheritance leichter umzusetzen wird
     	// TODO Alles was mit "malen" zusammenhängt in eine eigene Klasse auslagern
-    	// TODO: die paint Methode zerstückeln damit inheritance leichter umzusetzen wird
-		
+    	
     	// die Farben
-    	if(this.plasmaActivationTimer >= POWERUP_DURATION/4  ||
-    		(Menu.window == STARTSCREEN && this.getType() == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] > 0 && Menu.effectTimer[KAMAITACHI.ordinal()] > 65))
+    	if(this.plasmaActivationTimer > POWERUP_DURATION/4)
     	{
     		this.inputColorCannon = Color.green;
     	}
     	else if(this.plasmaActivationTimer == 0)
     	{
     		if(this.getType() == OROCHI
-    					  &&( (this.isNextMissileStunner
+    					  &&( this.isNextMissileStunner
     							&& (this.energy >= this.spellCosts
-    								|| this.hasUnlimitedEnergy()))
-    						  || 
-    						  (Menu.window == STARTSCREEN 
-    						  	&& Menu.effectTimer[OROCHI.ordinal()] > 0)) )
+    								|| this.hasUnlimitedEnergy())))
     		{
     			this.inputColorCannon = MyColor.variableBlue;
-    		}
-    		else if(Menu.window == STARTSCREEN
-    				&& ( (this.getType() == KAMAITACHI
-    						&& Menu.effectTimer[KAMAITACHI.ordinal()] > 0
-    						&& Menu.effectTimer[KAMAITACHI.ordinal()] < 65)
-    					 ||
-    					 (this.getType() == PHOENIX
-    					 	&& Menu.effectTimer[PHOENIX.ordinal()] > 0) ))
-    		{
-    			this.inputColorCannon = MyColor.variableGreen;
     		}
     		else{this.inputColorCannon 
     				= this.isInvincible()
@@ -269,18 +253,11 @@ public abstract class Helicopter extends MovingObject
     				: MyColor.variableGreen;
     	}
     	
-    	this.inputColorHull = (    !this.isInvincible()
-    						     	&& !(Menu.window == STARTSCREEN
-    						        && this.getType() == PHOENIX
-    						        && Menu.effectTimer[PHOENIX.ordinal()] > 0))
-    						  			? this.getPrimaryHullColor()
-    						  			: MyColor.variableGreen;
+    	this.inputColorHull = this.isInvincible()
+    						  		? MyColor.variableGreen
+    						  		: this.getPrimaryHullColor();
     	
-    	this.inputColorWindow = (this.hasTripleDmg()
-    									|| this.hasBoostedFireRate())
-    								|| (Menu.window == STARTSCREEN 
-    										&& this.getType() == HELIOS
-    										&& Menu.effectTimer[HELIOS.ordinal()] > 0)
+    	this.inputColorWindow = (this.hasTripleDmg() || this.hasBoostedFireRate())
     								? MyColor.variableRed 
     								: MyColor.windowBlue;
     	
@@ -312,11 +289,10 @@ public abstract class Helicopter extends MovingObject
 													 0, top+35, MyColor.dimColor(this.inputColorCannon, 0.4f), true);
     	this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, MyColor.dimColor(this.inputColorFuss1, 0.44f), true);
     	this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, MyColor.dimColor(this.inputColorFuss2, 0.55f), true);
-    	this.gradientCannonHole = (this.plasmaActivationTimer == 0)  ? this.gradientHull : MyColor.cannolHoleGreen;
+    	this.gradientCannonHole = (this.plasmaActivationTimer == 0 && !(Menu.window == STARTSCREEN && this.getType() == KAMAITACHI && Menu.effectTimer[KAMAITACHI.ordinal()] != 0)) ? this.gradientHull : MyColor.cannonHoleGreen;
 	
 		// TODO müsste unnötig sein, this.MovingLeft muss eben immer false sein, wenn wir nicht im Spiel sind (wo wird this.MovingLeft genutzt / gesetzt
     	boolean movementLeft = this.isMovingLeft && Menu.window == GAME;
-    	
     	
     	
     	// Nahkampfbestrahlung 
@@ -563,7 +539,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public boolean hasTripleDmg()
 	{		
-		return this.powerUpTimer[TRIPLE_DMG.ordinal()] > 0;
+		return this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] > 0;
 	}
 	
 	public boolean isInvincible()
@@ -759,7 +735,6 @@ public abstract class Helicopter extends MovingObject
 	public boolean isLocationAdaptionApproved(Enemy enemy)
 	{		
 		return enemy.bounds.intersects(this.bounds)
-				&& this.interphaseGeneratorTimer <= this.shiftTime
 				&& enemy.alpha == 255 
 				&& enemy.borrowTimer != 0;
 	}
@@ -1069,9 +1044,7 @@ public abstract class Helicopter extends MovingObject
     	this.isDamaged = true;
 		this.isRotorSystemActive = false;
 		this.energy = 0;
-		this.destination.setLocation(this.bounds.getX() + 40, 520);	
-		this.plasmaActivationTimer = 0;
-		if(this.isPowerShieldActivated){this.shutDownPowerShield();}
+		this.destination.setLocation(this.bounds.getX() + 40, 520);
 		if(this.tractor != null){this.stopTractor();}
 		this.numberOfCrashes++;
 		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosions);}
@@ -1192,23 +1165,13 @@ public abstract class Helicopter extends MovingObject
 			}
 		}		
 	}
-
-	void updateInterphaseGenerator()
-	{
-    	this.interphaseGeneratorTimer++;
-		if(this.interphaseGeneratorTimer == this.shiftTime + 1)
-		{
-			Audio.play(Audio.phaseShift);
-			if(this.tractor != null){this.stopTractor();}
-		}		
-	}
 	
 	public void takeMissileDamage()
     {
 		this.currentPlating = Math.max(this.currentPlating - this.getProtectionFactor() * ENEMY_MISSILE_DAMAGE_FACTOR, 0f);
 		if(this.enhancedRadiationTimer == 0)
 		{
-			this.recentDamageTimer = RECENT_DMG_TIME;
+			this.recentDamageTimer = RECENT_DAMAGE_TIME;
 		}
 		if(this.isPowerShieldActivated)
 		{
@@ -1580,4 +1543,25 @@ public abstract class Helicopter extends MovingObject
 	{
 		return true;
 	}
+	
+	public boolean canBeHit()
+	{
+		return true;
+	}
+	
+	public void initMenuEffect(int i)
+	{
+		Audio.playSpecialSound(this.getType());
+	}
+	
+	public void updateMenuEffect()
+	{
+		this.rotatePropellerSlow();
+		if(Menu.effectTimer[this.getType().ordinal()] == 1)
+		{
+			this.stoptMenuEffect();
+		}
+	}
+	
+	abstract public void stoptMenuEffect();
 }

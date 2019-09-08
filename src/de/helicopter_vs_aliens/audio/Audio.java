@@ -137,7 +137,7 @@ public class Audio
         stunActivated = getAudioClip("stun_activated.wav");
 
         powerAnnouncer = new AudioClip[NUMBER_OF_ANNOUNCERS];
-        powerAnnouncer[TRIPLE_DMG.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
+        powerAnnouncer[TRIPLE_DAMAGE.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
         powerAnnouncer[INVINCIBLE.ordinal()] = getAudioClip("announcer_invincible.wav");
         powerAnnouncer[UNLIMITRED_ENERGY.ordinal()] = getAudioClip("announcer_unlimited_energy.wav");
         powerAnnouncer[BOOSTED_FIRE_RATE.ordinal()] = getAudioClip("announcer_fire_rate_boosted.wav");

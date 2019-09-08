@@ -175,7 +175,7 @@ public class PowerUp extends MovingObject
 		this.speed.setLocation(0, 0);
 		this.direction = powerUpDirection;
 		this.type = powerUpType;
-		if(this.type == TRIPLE_DMG)
+		if(this.type == TRIPLE_DAMAGE)
 		{
 			this.surface = Color.magenta;
 			this.cross = Color.black;
@@ -217,7 +217,7 @@ public class PowerUp extends MovingObject
 			Audio.play(Audio.powerAnnouncer[this.type.ordinal()]);
 		}
 		
-		if(this.type == TRIPLE_DMG)
+		if(this.type == TRIPLE_DAMAGE)
 		{
 			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel()){

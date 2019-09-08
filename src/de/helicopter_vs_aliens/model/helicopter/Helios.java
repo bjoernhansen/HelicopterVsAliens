@@ -3,18 +3,18 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.util.MyMath;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.TRIPLE_DAMAGE;
 
 
 public final class Helios extends Helicopter
@@ -121,5 +121,18 @@ public final class Helios extends Helicopter
     public boolean canImmobilizePowerUp()
     {
         return this.hasPowerUpImmobilizer;
+    }
+    
+    @Override
+    public void initMenuEffect(int i)
+    {
+        super.initMenuEffect(i);
+        this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] = Integer.MAX_VALUE;
+    }
+    
+    @Override
+    public void stoptMenuEffect()
+    {
+        this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] = 0;
     }
 }

@@ -66,11 +66,11 @@ public class EnemyMissile
     	this.determineColor();
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
-		if(	helicopter.interphaseGeneratorTimer <= helicopter.shiftTime &&
-		helicopter.bounds.intersectsLine( this.location.getX() + this.diameter/2, 
-										  this.location.getY(), 
-										  this.location.getX() + this.diameter/2, 
-										  this.location.getY() + this.diameter))
+		if(	helicopter.canBeHit()
+			&& helicopter.bounds.intersectsLine( this.location.getX() + this.diameter/2,
+												  this.location.getY(),
+												  this.location.getX() + this.diameter/2,
+												  this.location.getY() + this.diameter))
         {
 			this.hit(helicopter);
 		}		

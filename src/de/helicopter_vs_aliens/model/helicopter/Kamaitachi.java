@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 
 public final class Kamaitachi extends Helicopter
@@ -73,13 +74,18 @@ public final class Kamaitachi extends Helicopter
     void updateTimer()
     {
         super.updateTimer();
+        this.updatePlasmaActivationTimer();
+        this.evaluateBonusKills();
+    }
+    
+    private void updatePlasmaActivationTimer()
+    {
         if(this.plasmaActivationTimer > 0)
         {
             this.plasmaActivationTimer--;
             if(this.plasmaActivationTimer == 30){
                 Audio.play(Audio.plasmaOff);}
         }
-        this.evaluateBonusKills();
     }
     
     @Override
@@ -93,5 +99,39 @@ public final class Kamaitachi extends Helicopter
     {
         return super.calculateSumOfFireRateBooster(poweredUp)
                 + (this.hasRapidFire ? RAPIDFIRE_AMOUNT : 0);
+    }
+    
+    @Override
+    public void crash()
+    {
+        this.plasmaActivationTimer = 0;
+        super.crash();
+    }
+    
+    @Override
+    public void initMenuEffect(int i)
+    {
+        super.initMenuEffect(i);
+        this.plasmaActivationTimer = Integer.MAX_VALUE;
+    }
+    
+    @Override
+    public void updateMenuEffect()
+    {
+        super.updateMenuEffect();
+        if(Menu.effectTimer[this.getType().ordinal()] == 65)
+        {
+            this.plasmaActivationTimer = POWERUP_DURATION/4;
+        }
+        else if(Menu.effectTimer[this.getType().ordinal()] == 30)
+        {
+            Audio.play(Audio.plasmaOff);
+        }
+    }
+    
+    @Override
+    public void stoptMenuEffect()
+    {
+        this.plasmaActivationTimer = 0;
     }
 }

@@ -15,6 +15,7 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 
 public final class Orochi extends Helicopter
@@ -139,5 +140,18 @@ public final class Orochi extends Helicopter
     public float getMissileDamageFactor()
     {
         return this.numberOfCannons == 3 ? EXTRA_MISSILE_DAMAGE_FACTOR : STANDARD_MISSILE_DAMAGE_FACTOR;
+    }
+    
+    @Override
+    public void initMenuEffect(int i)
+    {
+        super.initMenuEffect(i);
+        this.isNextMissileStunner = true;
+    }
+    
+    @Override
+    public void stoptMenuEffect()
+    {
+        this.isNextMissileStunner = false;
     }
 }

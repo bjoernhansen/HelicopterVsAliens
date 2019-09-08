@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PEGASUS;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 
 public final class Phoenix extends Helicopter
@@ -119,7 +120,7 @@ public final class Phoenix extends Helicopter
         }
         else if(this.enhancedRadiationTimer == 0)
         {
-            this.recentDamageTimer = RECENT_DMG_TIME;
+            this.recentDamageTimer = RECENT_DAMAGE_TIME;
         }
         super.beAffectedByCollisionWith(enemy, controller, playCollisionSound);
         if(this.hasShortrangeRadiation)
@@ -156,5 +157,18 @@ public final class Phoenix extends Helicopter
     public boolean isFifthSpecialOnMaximumStrength()
     {
         return this.hasMaxUpgradeLevel[StandardUpgradeTypes.FIREPOWER.ordinal()];
+    }
+    
+    @Override
+    public void initMenuEffect(int i)
+    {
+        super.initMenuEffect(i);
+        this.powerUpTimer[INVINCIBLE.ordinal()] = Integer.MAX_VALUE;
+    }
+    
+    @Override
+    public void stoptMenuEffect()
+    {
+        this.powerUpTimer[INVINCIBLE.ordinal()] = 0;
     }
 }

@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -178,5 +177,42 @@ public final class Pegasus extends Helicopter
     public boolean isFifthSpecialOnMaximumStrength()
     {
         return this.hasMaxUpgradeLevel[StandardUpgradeTypes.FIRE_RATE.ordinal()];
+    }
+    
+    @Override
+    public boolean canBeHit()
+    {
+        return interphaseGeneratorTimer <= this.shiftTime;
+    }
+    
+    private void updateInterphaseGenerator()
+    {
+        this.interphaseGeneratorTimer++;
+        if(this.interphaseGeneratorTimer == this.shiftTime + 1)
+        {
+            Audio.play(Audio.phaseShift);
+            if(this.tractor != null){this.stopTractor();}
+        }
+    }
+    
+    @Override
+    public boolean isLocationAdaptionApproved(Enemy enemy)
+    {
+        return  super.isLocationAdaptionApproved(enemy)
+                && this.interphaseGeneratorTimer <= this.shiftTime;
+    }
+    
+    @Override
+    public void initMenuEffect(int position)
+    {
+        super.initMenuEffect(position);
+        // TODO empWave sollte nach Menu ausgelagert werden, da es nur hier verwendet wird
+        this.empWave = Explosion.createStartscreenExplosion(position);
+    }
+    
+    @Override
+    public void stoptMenuEffect()
+    {
+        this.empWave = null;
     }
 }

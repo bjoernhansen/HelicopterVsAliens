@@ -9,7 +9,6 @@ import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -25,7 +24,6 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
 import static de.helicopter_vs_aliens.control.Events.START;
-import static de.helicopter_vs_aliens.control.Events.nextHelicopterType;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
@@ -252,12 +250,12 @@ public class Menu
 			messageTimer++;}
 		if(messageTimer > 215){
 			messageTimer = 0;}
+			
         for(int i = 0; i < Helicopter.NR_OF_TYPES; i++)
         {	        	
         	if(effectTimer[i] > 0){
 				effectTimer[i]--;}
         }
-        
 		Events.previousHelicopterType = Events.nextHelicopterType;
         Events.nextHelicopterType = null;
 		for(int i = 0; i < 4; i++)
@@ -266,30 +264,24 @@ public class Menu
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
 				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopterSelection)%Helicopter.NR_OF_TYPES];
-				if(effectTimer[Events.nextHelicopterType.ordinal()] == 0 && Events.hasSelectedHelicopterChanged())
+				Helicopter helicopterDummy = helicopterDummies.get(Events.nextHelicopterType);
+				if(Events.hasSelectedHelicopterChanged())
 				{
-					Audio.playSpecialSound(Events.nextHelicopterType);
-					if(Events.nextHelicopterType == PEGASUS)
-					{
-						helicopterDummies.get(PEGASUS).empWave = Explosion.createStartscreenExplosion(i);
-					}
+					helicopterDummy.initMenuEffect(i);
 					Arrays.fill(effectTimer, 0);
 					effectTimer[Events.nextHelicopterType.ordinal()] = Events.nextHelicopterType.getEffectTime();
 				}
-				if((Events.nextHelicopterType == ROCH || Events.nextHelicopterType == KAMAITACHI) && effectTimer[Events.nextHelicopterType.ordinal()] == 30)
-				{
-					Audio.play(Audio.plasmaOff);
-				}
+				helicopterDummy.updateMenuEffect();
 				break;
 			}			
 		}
-		if(Events.nextHelicopterType != null)
-		{
-			Menu.helicopterDummies.get(Events.nextHelicopterType).rotatePropellerSlow();
-		}
-		else
+		if(Events.nextHelicopterType == null)
 		{
 			Arrays.fill(effectTimer, 0);
+		}
+		if(Events.hasSelectedHelicopterChanged() && Events.previousHelicopterType != null)
+		{
+			helicopterDummies.get(Events.previousHelicopterType).stoptMenuEffect();
 		}
 	}
 

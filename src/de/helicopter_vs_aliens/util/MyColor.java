@@ -126,7 +126,7 @@ public class MyColor
 								  new Color (39,52,123)}};
 	
 	public static final GradientPaint
-		cannolHoleGreen = new GradientPaint(0, 0, darkArrowGreen, 0, 0, darkArrowGreen);
+        cannonHoleGreen = new GradientPaint(0, 0, darkArrowGreen, 0, 0, darkArrowGreen);
     
 	// tagezeitabhängige Gradienten-Farben für Hintergrundobjekte
     public static final GradientPaint []

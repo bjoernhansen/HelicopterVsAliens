@@ -48,7 +48,8 @@ public enum HelicopterTypes
 
     private static final int
         SPELL_COSTS[]= {50, 30, 20, 200, 75, 250},  // Energiekosten für das Energie-Upgrade
-        EFFECT_TIMES[] = {55, 68, 80, 100, Integer.MAX_VALUE, 65},
+        // TODO integer Max_VALUE anders lösen
+        EFFECT_TIMES[] = {55, 85, 80, 100, Integer.MAX_VALUE, 65},
     
         // Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standard-Upgrades
         COSTS[][] = {   {4, 2, 0, 1, 2, 3},	// Phoenix
