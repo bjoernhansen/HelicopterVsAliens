@@ -16,7 +16,9 @@ import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import java.applet.AudioClip;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -44,6 +46,7 @@ public abstract class Helicopter extends MovingObject
 {			
 	// Konstanten
     public static final int
+		// TODO Einstellen auf 60 Frames per Second
 		POWERUP_DURATION = 930,         // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
     	RECENT_DAMAGE_TIME = 50,
 		SLOW_TIME = 100,
@@ -58,21 +61,23 @@ public abstract class Helicopter extends MovingObject
 		STANDARD_GOLIATH_COSTS = 75000,
 		STANDARD_SPECIAL_COSTS = 125000,
 		CHEAP_SPECIAL_COSTS = 10000;
-	
-	static final float
-		ENEMY_MISSILE_DAMAGE_FACTOR =  0.5f,
-		STANDARD_MISSILE_DAMAGE_FACTOR =  1.0f;
     
-    public static final double    	
-		FOCAL_PNT_X_LEFT		= 39,
-		FOCAL_PNT_X_RIGHT		= 83,
-		FOCAL_PNT_Y_EXP			= 44,
-		FOCAL_PNT_Y_POS	 		= 56;
+    public static final double
+        FOCAL_PNT_X_LEFT		= 39,
+        FOCAL_PNT_X_RIGHT		= 83,
+        FOCAL_PNT_Y_EXP			= 44,
+        FOCAL_PNT_Y_POS	 		= 56;
+    
+    static final float
+        ENEMY_MISSILE_DAMAGE_FACTOR =  0.5f,
+        STANDARD_MISSILE_DAMAGE_FACTOR =  1.0f;
         
+    static final int
+    	NO_COLLISION_HEIGHT		= 6;
+    
     private static final int
-    	NO_COLLISION_HEIGHT		= 6,
-		SLOW_ROTATIONAL_SPEED	= 7,
-		FAST_ROTATIONAL_SPEED	= 12;
+        SLOW_ROTATIONAL_SPEED	= 7,
+        FAST_ROTATIONAL_SPEED	= 12;
 	
 	private static final Point
 		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
@@ -90,7 +95,8 @@ public abstract class Helicopter extends MovingObject
     	
     private static final float    
     	NOSEDIVE_SPEED = 12f,	// Geschwindigkeit des Helikopters bei Absturz
-    	INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f;
+    	INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f,
+        STANDARD_PROTECTION_FACTOR = 1.0f;
 
 
 	public int
@@ -101,13 +107,8 @@ public abstract class Helicopter extends MovingObject
 		numberOfCannons,					// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
 		
 		// Timer
-		plasmaActivationTimer,				// nur Kamaitachi-Klasse: Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
-		empTimer,							// nur Pegasus-Klasse: Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
-		powerUpGeneratorTimer,
 		slowedTimer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
 		recentDamageTimer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
-		interphaseGeneratorTimer,			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
-		enhancedRadiationTimer,
 		
 		// für die Spielstatistik
 		numberOfCrashes,					// Anzahl der Abstürze
@@ -145,15 +146,6 @@ public abstract class Helicopter extends MovingObject
     public boolean
 		hasSpotlights,						// = true: Helikopter hat Scheinwerfer
 		hasPiercingWarheads,				// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen bestückt
-		
-		hasShortrangeRadiation,				// = true: Helikopter verfügt über Nahkampfbestrahlng
-		//hasJumboMissiles,					// = true: Helikopter verschießt Jumbo-Raketen
-		//hasRadarDevice,						// = true: Helikopter verfügt über eine Radar-Vorrichtung
-		//hasRapidFire,						// = true: Helikopter verfügt über eine Schnellschussvorrichtung
-		//hasInterphaseGenerator,				// = true: Helikopter verfügt über einen Interphasen-Generator
-		//hasPowerUpImmobilizer,				// = true: Helikopter verfügt über einen Interphasen-Generator
-		
-		isNextMissileStunner,   			// = true: die nächste abgeschossene Rakete wird eine Stopp-Rakete
 		isActive,							// = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
         isDamaged,    						// = true: Helikopter hat einen Totalschaden erlitten
 		// TODO kann evtl. genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
@@ -191,6 +183,7 @@ public abstract class Helicopter extends MovingObject
 		isCrashing;			// Helikopter befindet sich im Sturzflug
       
     // Grundfarben zur Berechnung der Gradientenfarben
+    // TODO ggf. eigene Klase für Farben einführen
     Color
     	inputColorCannon, 
     	inputColorHull, 
@@ -480,23 +473,18 @@ public abstract class Helicopter extends MovingObject
 	{
 		this.updateTimer();
 		if(this.canRegenerateEnergy()){this.regenerateEnergy();}
-		if(this.isPowerShieldActivated && this.energy == 0)
-		{
-			this.shutDownPowerShield();
-		}
 		this.evaluateFire(missile);
 		this.move(explosion);
 	}
-    
+ 
 	boolean canRegenerateEnergy()
-	{		
+	{
 		return !this.isDamaged;
 	}
 
 	void updateTimer()
 	{
 		if(this.recentDamageTimer > 0)		{this.recentDamageTimer--;}
-		if(this.enhancedRadiationTimer > 0)	{this.enhancedRadiationTimer--;}
 		if(this.slowedTimer > 0)			{this.slowedTimer--;}
 		this.evaluatePowerUpActivationStates();
 	}
@@ -779,7 +767,7 @@ public abstract class Helicopter extends MovingObject
 		}
 	}
 	
-	private void correctAndSetCoordinates()
+	void correctAndSetCoordinates()
 	{    	
     	this.location.setLocation
 		(
@@ -1049,39 +1037,7 @@ public abstract class Helicopter extends MovingObject
 		Events.isRestartWindowVisible = true;
 		this.isCrashing = false;
     }
-	
-	public void teleportTo(int x, int y)
-    {
-    	this.isSearchingForTeleportDestination = false;
-		this.destination.setLocation(x, y);
 		
-		if(	(this.energy >= this.spellCosts || this.hasUnlimitedEnergy())
-			&& !this.isDamaged
-			&& !Menu.isMenuVisible
-			&& !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
-					&& y >= GROUND_Y) 
-			&& !(	   x > this.bounds.getX() + 33 
-					&& x < this.bounds.getX() + 133 
-					&& y > this.bounds.getY() + 6
-					&& y < this.bounds.getY() + 106))
-		{
-			Audio.play(Audio.teleport1);
-			this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
-			this.pastTeleportTime = System.currentTimeMillis();
-						
-			this.nextLocation.setLocation(x, y);
-			this.correctAndSetCoordinates();
-						
-			if(!this.isActive || !this.isRotorSystemActive){this.setActivationState(true);}
-			if(this.tractor != null){this.stopTractor();}
-			this.powerUpTimer[INVINCIBLE.ordinal()] = Math.max(this.powerUpTimer[INVINCIBLE.ordinal()], Phoenix.TELEPORT_INVU_TIME);
-			this.bonusKills = 0;
-			this.enhancedRadiationTimer = Phoenix.TELEPORT_INVU_TIME;
-			this.bonusKillsTimer = NICE_CATCH_TIME;
-			this.bonusKillsMoney = 0;
-		}
-    }
-	
 	public void evaluateBonusKills()
 	{
     	if(this.bonusKillsTimer > 0)
@@ -1146,22 +1102,19 @@ public abstract class Helicopter extends MovingObject
 	
 	public void takeMissileDamage()
     {
-		this.currentPlating = Math.max(this.currentPlating - this.getProtectionFactor() * ENEMY_MISSILE_DAMAGE_FACTOR, 0f);
-		if(this.enhancedRadiationTimer == 0)
-		{
-			this.recentDamageTimer = RECENT_DAMAGE_TIME;
-		}
-		if(this.isPowerShieldActivated)
-		{
-			this.shutDownPowerShield();
-			this.energy = 0;
-		}
+        this.currentPlating = Math.max(this.currentPlating - this.getProtectionFactor() * ENEMY_MISSILE_DAMAGE_FACTOR, 0f);
+        this.startRecentDamageTimer();
 		if(this.currentPlating <= 0 && !this.isDamaged)
 		{
 			this.crash();
 		}
-    }   
-        
+    }
+    
+    void startRecentDamageTimer()
+    {
+        this.recentDamageTimer = RECENT_DAMAGE_TIME;
+    }
+    
     private void updateProperties(boolean fullPlating)
     {
     	this.rotorSystem = MyMath.speed(this.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
@@ -1311,15 +1264,7 @@ public abstract class Helicopter extends MovingObject
 		return 0;		
 	}
 
-	public boolean isPowerShieldProtected(Enemy enemy)
-	{		
-		return this.isPowerShieldActivated
-			   && (this.hasUnlimitedEnergy()
-				   || this.energy 
-				   		>= this.spellCosts * enemy.collisionDamage(this));
-	}
-
-	public float kaboomDmg()
+	public float kaboomDamage()
 	{		
 		return Math.max(4, 2*this.currentPlating /3);
 	}
@@ -1344,17 +1289,22 @@ public abstract class Helicopter extends MovingObject
 					? this.energy 
 					: Math.max( 0, 
 								this.energy 
-								-degree*(this.isPowerShieldActivated
-									? REDUCED_ENERGY_DRAIN 
-									: ENERGY_DRAIN));			
-			if(!this.isPowerShieldActivated)
-			{
-				this.slowedTimer = SLOW_TIME;
-			}
+								-degree*this.getEnergyDrain());
+			this.slowDown();
 		}
-	}	
-	
-	public boolean canCollideWith(Enemy e)
+	}
+    
+    void slowDown()
+    {
+        this.slowedTimer = SLOW_TIME;
+    }
+    
+    float getEnergyDrain()
+    {
+        return ENERGY_DRAIN;
+    }
+    
+    public boolean canCollideWith(Enemy e)
 	{		
 		return this.basicCollisionRequirementsSatisfied(e)
 			   && !(e.model == BARRIER 
@@ -1374,7 +1324,7 @@ public abstract class Helicopter extends MovingObject
 	{		
 		return this.isInvincible()
 				? INVULNERABILITY_PROTECTION_FACTOR
-				: 1.0f;
+				: STANDARD_PROTECTION_FACTOR;
 	}
 
 	public boolean isEnergyAbilityActivatable()
@@ -1402,13 +1352,7 @@ public abstract class Helicopter extends MovingObject
 			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
 			this.bounds.getY() + FOCAL_PNT_Y_EXP);
 	}
-	    
-    void shutDownPowerShield()
-    {
-    	Audio.play(Audio.plasmaOff);
-		this.isPowerShieldActivated = false;
-    }
-
+ 
 	public boolean isOnTheGround()
 	{		
 		return this.bounds.getMaxY() + NO_COLLISION_HEIGHT == GROUND_Y;
@@ -1444,9 +1388,7 @@ public abstract class Helicopter extends MovingObject
 		{
 			Audio.play(enemy.type == KABOOM
 					? Audio.explosion4
-					: this.enhancedRadiationTimer == 0
-					? Audio.explosion1
-					: Audio.explosion2);
+					: this.getCollisionAudio());
 		}
 		this.slowedTimer = 2;
 		this.currentPlating
@@ -1454,8 +1396,13 @@ public abstract class Helicopter extends MovingObject
 				this.currentPlating - enemy.collisionDamage(this),
 				0);
 	}
-
-	public boolean hasPerformedTeleportKill()
+    
+    AudioClip getCollisionAudio()
+    {
+        return Audio.explosion1;
+    }
+    
+    public boolean hasPerformedTeleportKill()
 	{		
 		return this.bonusKillsTimer > 0;
 	}
@@ -1542,4 +1489,21 @@ public abstract class Helicopter extends MovingObject
 	}
 	
 	abstract public void stoptMenuEffect();
+    
+    public boolean isTakingKaboomDamageFrom(Enemy enemy)
+    {
+        return enemy.isKaboomDamageDealer();
+    }
+    
+    public float getBaseDamage()
+    {
+        return this.currentBaseFirepower;
+    }
+    
+    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent){}
+    
+    public boolean canObtainCollisionReward()
+    {
+        return false;
+    }
 }

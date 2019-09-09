@@ -1,5 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
@@ -10,7 +12,9 @@ import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import java.applet.AudioClip;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
@@ -30,7 +34,14 @@ public final class Phoenix extends Helicopter
 
     private static final float
         ENHANCED_RADIATION_PROB	= 0.25f;
-
+    
+    private int
+        enhancedRadiationTimer;             // nur Phönix
+    
+    private boolean
+        hasShortrangeRadiation;				// = true: Helikopter verfügt über Nahkampfbestrahlng
+    
+    
     @Override
     public HelicopterTypes getType()
     {
@@ -41,6 +52,7 @@ public final class Phoenix extends Helicopter
     void updateTimer()
     {
         super.updateTimer();
+        if(this.enhancedRadiationTimer > 0)	{this.enhancedRadiationTimer--;}
         this.evaluateBonusKills();
     }
     
@@ -187,5 +199,73 @@ public final class Phoenix extends Helicopter
             g2d.fillOval(left + (this.hasLeftMovingAppearance() ? -9 : 35), top + 19, 96, 54);
         }
         super.paintComponents(g2d, left, top);
+    }
+    
+    @Override
+    public boolean isTakingKaboomDamageFrom(Enemy enemy)
+    {
+        return super.isTakingKaboomDamageFrom(enemy) && !this.hasShortrangeRadiation;
+    }
+    
+    @Override
+    AudioClip getCollisionAudio()
+    {
+        return this.enhancedRadiationTimer == 0
+            ? Audio.explosion1
+            : Audio.explosion2;
+    }
+    
+    @Override
+    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
+    {
+        this.teleportTo(mouseEvent.getX()- Main.displayShift.width,
+                        mouseEvent.getY()- Main.displayShift.height);
+    }
+    
+    public void teleportTo(int x, int y)
+    {
+        this.isSearchingForTeleportDestination = false;
+        this.destination.setLocation(x, y);
+        
+        if(	(this.energy >= this.spellCosts || this.hasUnlimitedEnergy())
+            && !this.isDamaged
+            && !Menu.isMenuVisible
+            && !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
+            && y >= GROUND_Y)
+            && !(	   x > this.bounds.getX() + 33
+            && x < this.bounds.getX() + 133
+            && y > this.bounds.getY() + 6
+            && y < this.bounds.getY() + 106))
+        {
+            Audio.play(Audio.teleport1);
+            this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+            this.pastTeleportTime = System.currentTimeMillis();
+            
+            this.nextLocation.setLocation(x, y);
+            this.correctAndSetCoordinates();
+            
+            if(!this.isActive || !this.isRotorSystemActive){this.setActivationState(true);}
+            if(this.tractor != null){this.stopTractor();}
+            this.powerUpTimer[INVINCIBLE.ordinal()] = Math.max(this.powerUpTimer[INVINCIBLE.ordinal()], Phoenix.TELEPORT_INVU_TIME);
+            this.bonusKills = 0;
+            this.enhancedRadiationTimer = Phoenix.TELEPORT_INVU_TIME;
+            this.bonusKillsTimer = NICE_CATCH_TIME;
+            this.bonusKillsMoney = 0;
+        }
+    }
+    
+    @Override
+    void startRecentDamageTimer()
+    {
+        if(this.enhancedRadiationTimer == 0)
+        {
+            super.startRecentDamageTimer();
+        }
+    }
+    
+    @Override
+    public boolean canObtainCollisionReward()
+    {
+        return this.hasShortrangeRadiation;
     }
 }

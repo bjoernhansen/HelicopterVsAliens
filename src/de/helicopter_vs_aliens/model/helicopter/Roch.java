@@ -8,6 +8,7 @@ import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyColor;
 
@@ -147,12 +148,6 @@ public final class Roch extends Helicopter
     }
 
     @Override
-    boolean canRegenerateEnergy()
-    {
-        return !this.isDamaged && !this.isPowerShieldActivated;
-    }
-
-    @Override
     float calculateEnergyRegenerationRate()
     {
         return this.isPowerShieldActivated
@@ -190,6 +185,11 @@ public final class Roch extends Helicopter
         }
         else
         {
+            if(this.isPowerShieldActivated)
+            {
+                this.shutDownPowerShield();
+                this.energy = 0;
+            }
             super.takeMissileDamage();
         }
     }
@@ -259,5 +259,47 @@ public final class Roch extends Helicopter
     {
         super.resetState(resetStartPos);
         this.isPowerShieldActivated = false;
+    }
+    
+    @Override
+    public void update(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile,
+                       EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    {
+        super.update(missile, explosion);
+        if(this.isPowerShieldActivated && this.energy == 0)
+        {
+            this.shutDownPowerShield();
+        }
+    }
+    
+    void shutDownPowerShield()
+    {
+        Audio.play(Audio.plasmaOff);
+        this.isPowerShieldActivated = false;
+    }
+    
+    public boolean isPowerShieldProtected(Enemy enemy)
+    {
+        return this.isPowerShieldActivated
+            && (this.hasUnlimitedEnergy()
+            || this.energy
+            >= this.spellCosts * enemy.collisionDamage(this));
+    }
+    
+    @Override
+    float getEnergyDrain()
+    {
+        return this.isPowerShieldActivated
+                ? REDUCED_ENERGY_DRAIN
+                : super.getEnergyDrain();
+    }
+    
+    @Override
+    void slowDown()
+    {
+        if(!this.isPowerShieldActivated)
+        {
+            super.slowDown();
+        }
     }
 }

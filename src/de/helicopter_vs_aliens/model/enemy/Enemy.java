@@ -52,7 +52,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 public class Enemy extends MovingObject
 {
-    private static class FinalEnemysOperator
+	private static class FinalEnemysOperator
     {	
 		Enemy[] servants;
     	int [] timeSinceDeath;
@@ -264,7 +264,7 @@ public class Enemy extends MovingObject
 	private int
 		rewardModifier,			// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
 		lifetime,				// Anzahl der Frames seit Erstellung des Gegners;  und vergangene Zeit seit Erstellung, Zeit	
-			yCrashPos,			// Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
+		yCrashPos,				// Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
 		collisionAudioTimer,
 		turnAudioTimer,
 		explodingTimer,			// Timer zur überwachung der Zeit zwischen Abschuss und Absturz
@@ -272,7 +272,7 @@ public class Enemy extends MovingObject
 		uncloakingSpeed,
 		shieldMakerTimer,
 		callBack,
-		chaosTimer = 0,
+		chaosTimer,
 		speedup,
 		batchWiseMove,
 		shootTimer,
@@ -301,34 +301,33 @@ public class Enemy extends MovingObject
 	private float
 		deactivationProb,
 		dimFactor;
-	
-	private boolean
-		canDodge,				// = true: Gegner kann Schüssen ausweichen
-		canKamikaze,			// = true: Gegner geht auf Kollsionskurs, wenn die Distanz zum Helicopter klein ist
-		canLearnKamikaze,		// = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
-		canEarlyTurn,
-		canMoveChaotic, 		// reguliert den zufälligen Richtungswechsel bei Chaosflug-Modus
-		canSinusMove,			// Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
-		canTurn,				// Gegner ändert bei Beschuss evtl.    seine Flugrichtung in Richtung Helikopter
-		canInstantTurn,		// Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
-		canFrontalSpeedup,	// Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
-		canLoop,				// = true: Gegner fliegt Loopings
-		canChaosSpeedup,		// erhöht die Geschwindigkeit, wenn in Helicopternähe
-
-		isSpeedBoosted,
-		isDestroyed,			// = true: Gegner wurde vernichtet
-		hasHeightSet,			// = false --> heigt = height_factor * width; = true --> height wurde manuell festgelegt
-		hasYPosSet,			// = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
-		hasCrashed, 			// = true: Gegner ist abgestürzt
-		isEmpShocked,			// = true: Gegner steht unter EMP-Schock -> ist verlangsamt
-		isMarkedForRemoval,	// = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
-		isUpperShieldMaker,	// bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
-		isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
-		isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
-		isStunnable,			// = false für Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann
-		isCarrier,				// = true
-		isClockwiseBarrier,	// = true: der Rotor des Hindernis dreht im Uhrzeigersinn
-		isRecoveringSpeed;
+    
+    private boolean
+        canDodge,				// = true: Gegner kann Schüssen ausweichen
+        canKamikaze,			// = true: Gegner geht auf Kollsionskurs, wenn die Distanz zum Helicopter klein ist
+        canLearnKamikaze,		// = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
+        canEarlyTurn,
+        canMoveChaotic, 		// reguliert den zufälligen Richtungswechsel bei Chaosflug-Modus
+        canSinusMove,			// Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
+        canTurn,				// Gegner ändert bei Beschuss evtl.    seine Flugrichtung in Richtung Helikopter
+        canInstantTurn,		    // Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
+        canFrontalSpeedup,	    // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
+        canLoop,				// = true: Gegner fliegt Loopings
+        canChaosSpeedup,		// erhöht die Geschwindigkeit, wenn in Helicopternähe
+        isSpeedBoosted,
+        isDestroyed,			// = true: Gegner wurde vernichtet
+        hasHeightSet,			// = false --> heigt = height_factor * width; = true --> height wurde manuell festgelegt
+        hasYPosSet,			    // = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
+        hasCrashed, 			// = true: Gegner ist abgestürzt
+        isEmpShocked,			// = true: Gegner steht unter EMP-Schock -> ist verlangsamt
+        isMarkedForRemoval,	    // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
+        isUpperShieldMaker,	    // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
+        isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
+        isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
+        isStunnable,			// = false für Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann
+        isCarrier,				// = true
+        isClockwiseBarrier,	    // = true: der Rotor des Hindernis dreht im Uhrzeigersinn
+        isRecoveringSpeed;
   
 	private AbilityStatusTypes
 		tractor;				// = DISABLED (Gegner ohne Traktor); = READY (Traktor nicht aktiv); = 1 (Traktor aktiv)
@@ -4017,7 +4016,7 @@ public class Enemy extends MovingObject
 						  	: ORDINARY,
 						  this.type == KABOOM);
 			
-			if(	helicopter.hasShortrangeRadiation
+			if(	helicopter.canObtainCollisionReward()
 				&& !(this.type == KABOOM))
 			{
 				this.rewardFor(controller.powerUps,
@@ -4084,8 +4083,8 @@ public class Enemy extends MovingObject
 		return helicopter.getProtectionFactor()
 				// TODO 0.65 und 1.0 in Konstanten auslagern
 			   *(helicopter.isPowerShieldActivated && this.isExplodable ? 0.65f : 1.0f)
-			   *(this.type == KABOOM && !this.isDestroyed && !helicopter.hasShortrangeRadiation
-			     ? helicopter.kaboomDmg()
+			   *(helicopter.isTakingKaboomDamageFrom(this)
+			     ? helicopter.kaboomDamage()
 			     : (this.isExplodable && !this.isInvincible() && !this.isDestroyed)
 					? 1.0f 
 					: this.collisionDamageTimer > 0
@@ -4641,5 +4640,10 @@ public class Enemy extends MovingObject
 	public boolean isUntouched()
 	{
 		return this.touchedSite == NONE;
+	}
+	
+	public boolean isKaboomDamageDealer()
+	{
+		return this.type == KABOOM && !this.isDestroyed;
 	}
 }

@@ -27,7 +27,9 @@ public final class Pegasus extends Helicopter
         INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
        
     private int
-        shiftTime;		            // Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
+        shiftTime,  // Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
+        empTimer,	// Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
+        interphaseGeneratorTimer;			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
     
     private boolean
         hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator

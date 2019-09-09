@@ -28,8 +28,9 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENER
 public class Missile extends MovingObject
 {	
 	private static final float
-		POWERUP_DAMAGE_FACTOR = 3f,				// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
-		SHIFT_DAMAGE_FACTOR = 8.9f;				// Pegasus-Klasse: Faktor, um den sich die Schadenswirkung einer Rakete erhöht, wenn diese abgeschossen wird, während der Interphasen-Generator aktiviert ist
+		STANDARD_DAMAGE_FACTOR = 1.0f,
+		POWERUP_DAMAGE_FACTOR = 3.0f,	// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
+		SHIFT_DAMAGE_FACTOR = 8.9f;		// Pegasus-Klasse: Faktor, um den sich die Schadenswirkung einer Rakete erhöht, wenn diese abgeschossen wird, während der Interphasen-Generator aktiviert ist
 
 	public int
 		dmg,			// Schaden, den die Rakete beim Gegner anrichtet, wenn sie trifft
@@ -75,7 +76,7 @@ public class Missile extends MovingObject
 		this.typeOfExplosion = helicopter.getCurrentExplosionTypeOfMissiles(stunningMissile);
 
 		this.setBounds(helicopter, y);
-		this.setDmg(helicopter);
+		this.setDmg(helicopter.getBaseDamage());
 		this.hits.clear();
 		
 		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
@@ -112,12 +113,11 @@ public class Missile extends MovingObject
 							this.bounds.getHeight());	
 	}
 	
-	private void setDmg(Helicopter helicopter)
+	private void setDmg(float baseDamage)
 	{
-		this.dmg = 	(int)(helicopter.currentBaseFirepower
-				* ((helicopter.plasmaActivationTimer == 0) ? 1 : MyMath.plasmaDamageFactor(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]))
-				* (this.typeOfExplosion == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : 1)
-				* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
+		this.dmg = 	(int) (	baseDamage
+							* (this.typeOfExplosion == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : STANDARD_DAMAGE_FACTOR)
+							* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 
 	public static void paintAllMissiles(Graphics2D g2d, Controller controller)

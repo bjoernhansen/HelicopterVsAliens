@@ -8,6 +8,7 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyColor;
+import de.helicopter_vs_aliens.util.MyMath;
 
 import java.awt.*;
 import java.util.EnumMap;
@@ -16,13 +17,19 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
 public final class Kamaitachi extends Helicopter
 {
-    private static final int RAPIDFIRE_AMOUNT = 2;
+    private static final int
+        RAPIDFIRE_AMOUNT = 2;
     
-    private boolean hasRapidFire;
+    private int
+        plasmaActivationTimer; // Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
+    
+    private boolean
+        hasRapidFire;
     
     @Override
     public HelicopterTypes getType()
@@ -165,5 +172,14 @@ public final class Kamaitachi extends Helicopter
         return this.plasmaActivationTimer == 0
                 ? this.gradientHull
                 : MyColor.cannonHoleGreen;
+    }
+    
+    @Override
+    public float getBaseDamage()
+    {
+        return  super.getBaseDamage()
+                * ((this.plasmaActivationTimer == 0)
+                    ? 1
+                    : MyMath.plasmaDamageFactor(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]));
     }
 }

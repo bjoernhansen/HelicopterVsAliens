@@ -924,23 +924,15 @@ public class Events
 		    = Button.ANTIALIAZING[Menu.language.ordinal()][Controller.antialiasing ? 0 : 1];
 	}
 
-	static void mouseReleased(MouseEvent e, Helicopter helicopter)
+	static void mouseReleased(MouseEvent mouseEvent, Helicopter helicopter)
 	{
-		if(e.getButton() == 1)
+		if(mouseEvent.getButton() == 1)
 		{
 			helicopter.isContiniousFireEnabled = false;
 		}
-		else if(window == GAME && e.getButton() == 3 && !helicopter.isDamaged)
-		{			
-			if(helicopter.getType() == PHOENIX)
-			{
-				helicopter.teleportTo(	e.getX()-Main.displayShift.width,
-										e.getY()-Main.displayShift.height);
-			}			
-			else if(helicopter.getType() == OROCHI)
-			{
-				helicopter.isNextMissileStunner = false;
-			}		
+		else if(window == GAME && mouseEvent.getButton() == 3 && !helicopter.isDamaged)
+		{
+			helicopter.rightMouseButtonReleaseAction(mouseEvent);
 		}		
 	}
 	
