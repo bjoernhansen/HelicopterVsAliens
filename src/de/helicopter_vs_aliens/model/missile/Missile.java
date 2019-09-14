@@ -79,6 +79,7 @@ public class Missile extends MovingObject
 		this.setDmg(helicopter.getBaseDamage());
 		this.hits.clear();
 		
+		// TODO ggf. HelicopterType abfragen anders lösen
 		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
 		{
 			this.kills = 0;
@@ -204,19 +205,18 @@ public class Missile extends MovingObject
 				} else
 				{
 					enemy.die(controller, helicopter, this, false);
+					
 					if (helicopter.getType() == PHOENIX
 						&& helicopter.bonusKillsTimer > 0
 						&& this.launchingTime > helicopter.pastTeleportTime)
 					{
 						Events.extraReward(1,
-							enemy.getEffectiveStrength()
-								* (helicopter.hasSpotlights
-								? Events.NIGHT_BONUS_FACTOR
-								: Events.DAY_BONUS_FACTOR),
+							enemy.getEffectiveStrength() * helicopter.getBonusFactor(),
 							1.25f,
 							0f,
 							1.25f);
 					}
+					
 				}
 				if (!helicopter.hasPiercingWarheads
 					&& !enemy.isInvincible())

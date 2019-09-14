@@ -238,6 +238,7 @@ public class Enemy extends MovingObject
 		isLasting,
 		isTouchingHelicopter,
 		hasUnresolvedIntersection;
+		
 	
 	public EnemyTypes
 		type;
@@ -303,6 +304,7 @@ public class Enemy extends MovingObject
 		dimFactor;
     
     private boolean
+		isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
         canDodge,				// = true: Gegner kann Schüssen ausweichen
         canKamikaze,			// = true: Gegner geht auf Kollsionskurs, wenn die Distanz zum Helicopter klein ist
         canLearnKamikaze,		// = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
@@ -322,7 +324,6 @@ public class Enemy extends MovingObject
         isEmpShocked,			// = true: Gegner steht unter EMP-Schock -> ist verlangsamt
         isMarkedForRemoval,	    // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
         isUpperShieldMaker,	    // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
-        isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
         isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
         isStunnable,			// = false für Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann
         isCarrier,				// = true
@@ -4000,9 +4001,9 @@ public class Enemy extends MovingObject
 				
 		if(playCollisionSound)
 		{
-			this.collisionAudioTimer = Helicopter.NO_COLLISION_DMG_TIME;
+			this.collisionAudioTimer = Helicopter.NO_COLLISION_DAMAGE_TIME;
 		}		
-		this.collisionDamageTimer = Helicopter.NO_COLLISION_DMG_TIME;
+		this.collisionDamageTimer = Helicopter.NO_COLLISION_DAMAGE_TIME;
 			
 		if(	this.isExplodable
 			&& !this.isInvincible()
@@ -4082,7 +4083,7 @@ public class Enemy extends MovingObject
 	{		
 		return helicopter.getProtectionFactor()
 				// TODO 0.65 und 1.0 in Konstanten auslagern
-			   *(helicopter.isPowerShieldActivated && this.isExplodable ? 0.65f : 1.0f)
+			   *helicopter.getBaseProtectionFactor(this.isExplodable)
 			   *(helicopter.isTakingKaboomDamageFrom(this)
 			     ? helicopter.kaboomDamage()
 			     : (this.isExplodable && !this.isInvincible() && !this.isDestroyed)
@@ -4394,9 +4395,7 @@ public class Enemy extends MovingObject
 	private int calculateReward(Helicopter helicopter)
 	{		
 		return this.getEffectiveStrength()
-		        * (helicopter.hasSpotlights
-					? Events.NIGHT_BONUS_FACTOR 
-					: Events.DAY_BONUS_FACTOR)
+		        * helicopter.getBonusFactor()
 			    + this.rewardModifier;
 	}
 	
@@ -4409,6 +4408,11 @@ public class Enemy extends MovingObject
 	{
 		return this.isMiniBoss ? MINI_BOSS_REWARD_FACTOR : STANDARD_REWARD_FACTOR;
 	}
+    
+    public int getRewardFactorEqualizer()
+    {
+        return this.isMiniBoss ? STANDARD_REWARD_FACTOR : MINI_BOSS_REWARD_FACTOR;
+    }
  
 	private void evaluateBossDestructionEffect(Helicopter helicopter,
 											   EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy,

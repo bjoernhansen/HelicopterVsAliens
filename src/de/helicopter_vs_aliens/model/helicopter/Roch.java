@@ -28,18 +28,21 @@ public final class Roch extends Helicopter
     public static final int
         JUMBO_MISSILE_COSTS = 25000,
         ROCH_SECOND_CANNON_COSTS = 225000;
-
+    
     private static final int
-        POWER_SHIELD_ACTIVATION_THRESHOLD = 75;
+        POWER_SHIELD_ACTIVATION_THRESHOLD = 75,
+        REDUCED_ENERGY_DRAIN = 10;
 
     private static final float
         JUMBO_MISSILE_DAMAGE_FACTOR = 2.36363637f,	// Faktor, um den sich die Schadenswirkung der Raketen erhöht, nachdem das Jumbo-Raketen-Spezial-Upgrade erworben wurde
-        POWER_SHIELD_E_LOSS_RATE = -0.06f;
-    
+        POWER_SHIELD_E_LOSS_RATE = -0.06f,
+        REDUCED_BASE_PROTECTION_FACTOR = 0.65f;
+        
     private boolean
-        hasJumboMissiles;	// = true: Helikopter verschießt Jumbo-Raketen
+        hasJumboMissiles,	        // = true: Helikopter verschießt Jumbo-Raketen
+        isPowerShieldActivated;	    // = true: Power-Shield ist aktiviert
 
-
+    
     @Override
     public HelicopterTypes getType()
     {
@@ -301,5 +304,13 @@ public final class Roch extends Helicopter
         {
             super.slowDown();
         }
+    }
+    
+    @Override
+    public float getBaseProtectionFactor(boolean isExplodable)
+    {
+        return this.isPowerShieldActivated && isExplodable
+                ? REDUCED_BASE_PROTECTION_FACTOR
+                : super.getBaseProtectionFactor(isExplodable);
     }
 }

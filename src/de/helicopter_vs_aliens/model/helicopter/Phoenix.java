@@ -29,14 +29,14 @@ public final class Phoenix extends Helicopter
     public static final int
         TELEPORT_KILL_TIME = 15,		// in dieser Zeit [frames] nach einer Teleportation vernichtete Gegner werden für den Extra-Bonus gewertet
         NICE_CATCH_TIME = 22,			// nur wenn die Zeit [frames] zwischen Teleportation und Gegner-Abschuss kleiner ist, gibt es den "NiceCath-Bonus"
-        TELEPORT_INVU_TIME = 45,
+        TELEPORT_INVULNERABILITY_TIME = 45,
         GOLIATH_COSTS = 6000;
 
     private static final float
         ENHANCED_RADIATION_PROB	= 0.25f;
     
     private int
-        enhancedRadiationTimer;             // nur Phönix
+        enhancedRadiationTimer;
     
     private boolean
         hasShortrangeRadiation;				// = true: Helikopter verfügt über Nahkampfbestrahlng
@@ -126,20 +126,19 @@ public final class Phoenix extends Helicopter
                                           Controller controller,
                                           boolean playCollisionSound)
     {
-        if(this.enhancedRadiationApproved(enemy))
-        {
-            this.enhancedRadiationTimer
-                    = Math.max(	this.enhancedRadiationTimer,
-                                NO_COLLISION_DMG_TIME);
-        }
-        else if(this.enhancedRadiationTimer == 0)
-        {
-            this.recentDamageTimer = RECENT_DAMAGE_TIME;
-        }
         super.beAffectedByCollisionWith(enemy, controller, playCollisionSound);
         if(this.hasShortrangeRadiation)
         {
             enemy.reactToRadiation(controller, this);
+        }
+    }
+    
+    @Override
+    void startRecentDamageTimer()
+    {
+        if(this.enhancedRadiationTimer == 0)
+        {
+            super.startRecentDamageTimer();
         }
     }
 
@@ -246,20 +245,11 @@ public final class Phoenix extends Helicopter
             
             if(!this.isActive || !this.isRotorSystemActive){this.setActivationState(true);}
             if(this.tractor != null){this.stopTractor();}
-            this.powerUpTimer[INVINCIBLE.ordinal()] = Math.max(this.powerUpTimer[INVINCIBLE.ordinal()], Phoenix.TELEPORT_INVU_TIME);
+            this.powerUpTimer[INVINCIBLE.ordinal()] = Math.max(this.powerUpTimer[INVINCIBLE.ordinal()], TELEPORT_INVULNERABILITY_TIME);
             this.bonusKills = 0;
-            this.enhancedRadiationTimer = Phoenix.TELEPORT_INVU_TIME;
+            this.enhancedRadiationTimer = TELEPORT_INVULNERABILITY_TIME;
             this.bonusKillsTimer = NICE_CATCH_TIME;
             this.bonusKillsMoney = 0;
-        }
-    }
-    
-    @Override
-    void startRecentDamageTimer()
-    {
-        if(this.enhancedRadiationTimer == 0)
-        {
-            super.startRecentDamageTimer();
         }
     }
     
@@ -267,5 +257,15 @@ public final class Phoenix extends Helicopter
     public boolean canObtainCollisionReward()
     {
         return this.hasShortrangeRadiation;
+    }
+    
+    @Override
+    void startRecentDamageEffect(Enemy enemy)
+    {
+        if(this.enhancedRadiationApproved(enemy))
+        {
+            this.enhancedRadiationTimer = NO_COLLISION_DAMAGE_TIME;
+        }
+        else super.startRecentDamageEffect(enemy);
     }
 }

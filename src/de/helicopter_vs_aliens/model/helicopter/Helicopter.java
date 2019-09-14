@@ -17,6 +17,7 @@ import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
 import java.applet.AudioClip;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -43,22 +44,13 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 
 
 public abstract class Helicopter extends MovingObject
-{			
-	// Konstanten
+{
     public static final int
-		// TODO Einstellen auf 60 Frames per Second
+		// TODO einstellen auf 60 Frames per Second
 		POWERUP_DURATION = 930,         // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
-    	RECENT_DAMAGE_TIME = 50,
-		SLOW_TIME = 100,
-		NO_COLLISION_DMG_TIME	= 20,   // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
-    	FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
+		NO_COLLISION_DAMAGE_TIME = 20,   // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
     	NR_OF_TYPES = HelicopterTypes.values().length,                // so viele Helikopter-Klassen gibt es
     	INVULNERABILITY_DAMAGE_REDUCTION = 80,        // %-Wert der Schadensreduzierung bei Unverwundbarleit
-    	ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
-    	REDUCED_ENERGY_DRAIN = 10,
-		STANDARD_PLATING_STRENGTH = 1,
-		GOLIATH_PLATING_STRENGTH = 2,
-		STANDARD_GOLIATH_COSTS = 75000,
 		STANDARD_SPECIAL_COSTS = 125000,
 		CHEAP_SPECIAL_COSTS = 10000;
     
@@ -68,17 +60,32 @@ public abstract class Helicopter extends MovingObject
         FOCAL_PNT_Y_EXP			= 44,
         FOCAL_PNT_Y_POS	 		= 56;
     
+    static final int
+        GOLIATH_PLATING_STRENGTH = 2,
+        STANDARD_GOLIATH_COSTS = 75000,
+        NO_COLLISION_HEIGHT	= 6;
+    
     static final float
         ENEMY_MISSILE_DAMAGE_FACTOR =  0.5f,
         STANDARD_MISSILE_DAMAGE_FACTOR =  1.0f;
         
-    static final int
-    	NO_COLLISION_HEIGHT		= 6;
-    
     private static final int
+        RECENT_DAMAGE_TIME = 50,        // Zeitrate in der die Lebenspunktleiste nach Kollisionen blinkt
+        SLOW_TIME = 100,
+        FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
+        ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
+        STANDARD_PLATING_STRENGTH = 1,
         SLOW_ROTATIONAL_SPEED	= 7,
-        FAST_ROTATIONAL_SPEED	= 12;
-	
+        FAST_ROTATIONAL_SPEED	= 12,
+        DAY_BONUS_FACTOR = 60,
+        NIGHT_BONUS_FACTOR = 90;
+    
+    private static final float
+        NOSEDIVE_SPEED = 12f,	        // Geschwindigkeit des Helikopters bei Absturz
+        INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f,
+        STANDARD_PROTECTION_FACTOR = 1.0f,
+        STANDARD_BASE_PROTECTION_FACTOR = 1.0f;
+    
 	private static final Point
 		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
     
@@ -91,23 +98,14 @@ public abstract class Helicopter extends MovingObject
 		    							- HELICOPTER_SIZE.height 
 		    							- NO_COLLISION_HEIGHT, 
 		    							HELICOPTER_SIZE.width, 
-		    							HELICOPTER_SIZE.height);        
-    	
-    private static final float    
-    	NOSEDIVE_SPEED = 12f,	// Geschwindigkeit des Helikopters bei Absturz
-    	INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f,
-        STANDARD_PROTECTION_FACTOR = 1.0f;
-
-
-	public int
+		    							HELICOPTER_SIZE.height);
+       
+    
+    public int
 		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
 		currentBaseFirepower,				// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
-		timeBetweenTwoShots,				// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
 		platingDurabilityFactor,			// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
 		numberOfCannons,					// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
-		
-		// Timer
-		slowedTimer,						// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
 		recentDamageTimer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
 		
 		// für die Spielstatistik
@@ -121,6 +119,7 @@ public abstract class Helicopter extends MovingObject
 		numberOfMiniBossKilled,				// Anzahl der vernichteten Mini-Bosse
 				
 		// nur für Phönix- und Kamaitachi-Klasse
+        // TODO auslagern in Phönix- und Kamaitachi-Klasse
 		bonusKills,							// Anzahl der Kills, für den aktuelken Mulikill-Award
 		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen Multikill-Awards ohne Bonus
 		bonusKillsTimer,					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
@@ -128,21 +127,27 @@ public abstract class Helicopter extends MovingObject
 		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
 		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
-		upgradeCosts[] = new int[6],    			// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
-		levelOfUpgrade[] = new int[6];			// Upgrade-Level aller 6 StandardUpgrades
+        // TODO Enum StandardUpgradeTypes verwenden
+		upgradeCosts[] = new int[6],    	// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
+		levelOfUpgrade[] = new int[6];		// Upgrade-Level aller 6 StandardUpgrades
 	
 	public long
-		pastTeleportTime,						// nur Phönix-Klasse: Zeitpunkt der letzten Nutzung des Teleporters
+        // TODO nach Phoenix
+		pastTeleportTime,					// nur Phönix-Klasse: Zeitpunkt der letzten Nutzung des Teleporters
     	scorescreenTimes[] = new long [5];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float
 		rotorSystem,						// legt die aktuelle Geschwindigkeit des Helikopters fest
 		currentPlating,						// aktuelle Panzerung (immer <= maximale Panzerung)
-    	energy,								// verfügbare Energie;
-		regenerationRate,					// Energiezuwachs pro Simulationsschritt
-		spellCosts,							// Energiekosten für die Nutzung des Energie-Upgrades
+    	energy;							// verfügbare Energie;
+    
+    int
     	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
-    		
+    
+    float
+        regenerationRate,					// Energiezuwachs pro Simulationsschritt
+        spellCosts;							// Energiekosten für die Nutzung des Energie-Upgrades
+    
     public boolean
 		hasSpotlights,						// = true: Helikopter hat Scheinwerfer
 		hasPiercingWarheads,				// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen bestückt
@@ -154,18 +159,18 @@ public abstract class Helicopter extends MovingObject
 		isSearchingForTeleportDestination,	// = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
 		isMovingLeft,
 		isPlayedWithoutCheats,				// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
-     	hasMaxUpgradeLevel[] = new boolean[6],	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
-     		     		
-     	// nur für Roch-Klasse
-		isPowerShieldActivated;				// = true: Power-Shield ist aktiviert
-     
+     	hasMaxUpgradeLevel[] = new boolean[6];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
+     	
     public Point
     	destination = new Point(), 				// dorthin fliegt der Helikopter
+        // TODO noch Phoenix auslagern
   		priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
 	
 	public Point2D
-  		location = new Point2D.Float(),	// exakter Aufenthaltsort	
-  		nextLocation = new Point2D.Float();
+  		location = new Point2D.Float();	        // exakter Aufenthaltsort
+    
+    Point2D
+        nextLocation = new Point2D.Float();
     
   	public Enemy 
   		tractor;			// Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
@@ -174,7 +179,9 @@ public abstract class Helicopter extends MovingObject
 		empWave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
 	
 	private int
-		fireRateTimer;  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
+		fireRateTimer,  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
+        timeBetweenTwoShots,// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
+        slowedTimer;		// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
     
     private float 
     	speed;     			// aktuelle Geschwindigkeit des Helikopters
@@ -204,6 +211,7 @@ public abstract class Helicopter extends MovingObject
     	gradientFuss2, 					
     	gradientCannonHole;				// Farbe der Bordkanonen-Öffnung
 	   
+    
     public Helicopter()
     {
     	this.paintBounds.setSize(HELICOPTER_SIZE);
@@ -377,7 +385,7 @@ public abstract class Helicopter extends MovingObject
 			left+(this.hasLeftMovingAppearance() ? -36 : 8),
 			top-5,
 			150, 37, 3,
-			(int)(this.rotorPosition),
+            this.rotorPosition,
 			12,
 			this.isRotorSystemActive,
 			false);
@@ -390,7 +398,7 @@ public abstract class Helicopter extends MovingObject
 			left+(this.hasLeftMovingAppearance() ?  107 : -22),
 			top+14,
 			37, 37, 3,
-			(int)(this.rotorPosition),
+            this.rotorPosition,
 			12,
 			this.isRotorSystemActive,
 			false);
@@ -791,7 +799,8 @@ public abstract class Helicopter extends MovingObject
 	
 	public void initialize(boolean newGame, Savegame savegame)
     {
-    	for(int i = 0; i < 6; i++)
+    	// TODO Enum StandardUpgradeTypes verwenden
+        for(int i = 0; i < 6; i++)
 	    {
     		this.hasMaxUpgradeLevel[i] = false;
     		this.upgradeCosts[i] =  getUpgradeCosts(i);
@@ -800,7 +809,7 @@ public abstract class Helicopter extends MovingObject
     	if(!newGame){this.restoreLastGameState(savegame);}
     	this.updateProperties(newGame);
     	this.fireRateTimer = this.timeBetweenTwoShots;
-        this.rotorPosition = 0;
+        this.resetRotorPosition();
         this.empWave = null;
     }
 	
@@ -840,7 +849,7 @@ public abstract class Helicopter extends MovingObject
     public void reset()
     {
         // TODO ggf. muss einiges nicht mehr resettet werden, da immer ein neuer Helicopter erzeugt wird
-		this.rotorPosition = 0;
+		this.resetRotorPosition();
 		this.resetState();
         this.placeAtStartpos();
         this.isDamaged = false;
@@ -863,7 +872,7 @@ public abstract class Helicopter extends MovingObject
 		this.slowedTimer = 0;
 		this.recentDamageTimer = 0;
 		for(int i = 0; i < 4; i++){this.powerUpTimer[i] = 0;}
-		this.rotorPosition = 0;
+        this.resetRotorPosition();
 		if(resetStartPos){this.placeAtStartpos();}
 		this.fireRateTimer = this.timeBetweenTwoShots;
 	}
@@ -898,7 +907,7 @@ public abstract class Helicopter extends MovingObject
 		this.isDamaged = false;
 		this.isCrashing = false;
     	this.getMaxPlating();
-    	this.setPlatingColor();
+    	this.setPercentPlatingDisplayColor();
 		if(restoreEnergy){this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);}
 		if(!cheatRepair){this.placeAtStartpos();}
 		Menu.repairShopButton.get("RepairButton").costs = 0;
@@ -1124,7 +1133,7 @@ public abstract class Helicopter extends MovingObject
     		this.getMaxPlating();
     		this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
     	}
-    	this.setPlatingColor();
+    	this.setPercentPlatingDisplayColor();
 		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
 		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
@@ -1166,7 +1175,7 @@ public abstract class Helicopter extends MovingObject
 		}		
 	}
 
-	public void setPlatingColor()
+	public void setPercentPlatingDisplayColor()
 	{		
 		MyColor.plating = MyColor.percentColor((this.currentPlating)/this.maxPlating());
 	}
@@ -1384,6 +1393,7 @@ public abstract class Helicopter extends MovingObject
 										  Controller controller,
 										  boolean playCollisionSound)
 	{
+		this.startRecentDamageEffect(enemy);
 		if(playCollisionSound)
 		{
 			Audio.play(enemy.type == KABOOM
@@ -1396,6 +1406,11 @@ public abstract class Helicopter extends MovingObject
 				this.currentPlating - enemy.collisionDamage(this),
 				0);
 	}
+    
+    void startRecentDamageEffect(Enemy enemy)
+    {
+        this.startRecentDamageTimer();
+    }
     
     AudioClip getCollisionAudio()
     {
@@ -1413,7 +1428,7 @@ public abstract class Helicopter extends MovingObject
 	{
 		this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
 		this.currentPlating += MyMath.plating(this.levelOfUpgrade[PLATING.ordinal()]);
-		this.setPlatingColor();
+		this.setPercentPlatingDisplayColor();
 	}
 	
 	public int getGoliathCosts()
@@ -1505,5 +1520,20 @@ public abstract class Helicopter extends MovingObject
     public boolean canObtainCollisionReward()
     {
         return false;
+    }
+    
+    public int getBonusFactor()
+    {
+        return this.hasSpotlights ? NIGHT_BONUS_FACTOR : DAY_BONUS_FACTOR;
+    }
+    
+    public void resetRotorPosition()
+    {
+        this.rotorPosition = 0;
+    }
+    
+    public float getBaseProtectionFactor(boolean isExplodable)
+    {
+        return STANDARD_BASE_PROTECTION_FACTOR;
     }
 }

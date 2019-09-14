@@ -38,8 +38,6 @@ public class Events
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
-		DAY_BONUS_FACTOR = 60,
-		NIGHT_BONUS_FACTOR = 90,
 		SPOTLIGHT_COSTS = 35000,
 		START = 0;						// Timer Start
 	
@@ -49,6 +47,9 @@ public class Events
 		DEFAULT_REPAIR_BASE_FEE = 350,
 		MAX_MONEY = 5540500;			// für Komplettausbau erforderliche Geldmenge
 
+    private static final float
+        HELIOS_MAX_MONEY_DIVISOR = 110250;        // Summe der ersten 49 natürlichen Zahlen (0.5 * 49 * 50) * NIGHT_BONUS_FACTOR
+    
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
 		SAVE_ANYWAY = true;
@@ -675,7 +676,7 @@ public class Events
 					+= helicopter.platingDurabilityFactor
 					   * ( MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()])
 						   -MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()]-1));
-				helicopter.setPlatingColor();
+				helicopter.setPercentPlatingDisplayColor();
 			}
 			else if(selection == 3)
 			{
@@ -1112,7 +1113,7 @@ public class Events
 		changeWindow(GAME);		
 		Audio.play(Audio.choose);	
 		timeAktu = System.currentTimeMillis();
-		helicopter.rotorPosition = 0;
+		helicopter.resetRotorPosition();
 		Controller.savegame.saveToFile(helicopter, true);
 	}
 	
@@ -1123,7 +1124,7 @@ public class Events
 		Audio.applause1.stop();
 		playingTime += System.currentTimeMillis() - timeAktu;
 		Menu.repairShopTime = Menu.returnTimeDisplayText(playingTime);
-		helicopter.setPlatingColor();					
+		helicopter.setPercentPlatingDisplayColor();
 		if(helicopter.currentPlating < helicopter.maxPlating())
 	    {
 			Menu.repairShopButton.get("RepairButton").costs = repairFee(helicopter, helicopter.isDamaged);
@@ -1183,7 +1184,7 @@ public class Events
 		level += numberOfLevelUp;
 				
 		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemies, controller.explosions);}
-		if(helicopter.getType() == HELIOS && level > maxLevel){getHeliosIncome(previousLevel);}
+		if(helicopter.getType() == HELIOS && level > maxLevel){getHeliosIncome(previousLevel, helicopter);}
 		
 		maxLevel = level;
 		
@@ -1196,14 +1197,15 @@ public class Events
 		Enemy.adaptToLevel(helicopter, level, true);
 	}
 
-	private static void getHeliosIncome(int previousLevel)
+	private static void getHeliosIncome(int previousLevel, Helicopter helicopter)
 	{
-		int bonusSum = 0;
+		// TODO Methode verständlicher Strukturieren; die Schleife so nötig --> lieber Array?
+		float bonusSum = 0;
 		for(int i = Math.max(previousLevel, maxLevel); i < level; i++)
 		{
-			bonusSum += (int)((i/1225f)* heliosMaxMoney);
+			bonusSum += i*heliosMaxMoney/HELIOS_MAX_MONEY_DIVISOR;
 		}
-		lastBonus = (int) (bonusSum * (timeOfDay == NIGHT ? 1 : ((float)DAY_BONUS_FACTOR)/NIGHT_BONUS_FACTOR));
+		lastBonus = (int) (bonusSum * helicopter.getBonusFactor());
 		money += lastBonus;
 		overallEarnings += lastBonus;
 		Menu.moneyDisplayTimer = START;

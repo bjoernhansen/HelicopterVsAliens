@@ -35,9 +35,9 @@ public class PowerUp extends MovingObject
 	public static final int
 		MENU_SIZE = 23;
 	
-	public static final double
-		POWER_UP_WORTH_MULTIPLIER = 1.25;
-	
+	private static final double
+		POWER_UP_WORTH_MULTIPLIER = 7.5;
+		
 	private int
 		direction;
 	
@@ -260,7 +260,7 @@ public class PowerUp extends MovingObject
 			Audio.play(Audio.cash);
 			Events.lastExtraBonus = 0;
 			Menu.moneyDisplayTimer = 0;
-			Events.lastBonus = (int)(1.5f*(helicopter.hasSpotlights ? Events.NIGHT_BONUS_FACTOR : Events.DAY_BONUS_FACTOR) * this.worth);
+			Events.lastBonus = helicopter.getBonusFactor() * this.worth;
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;
 			Events.extraBonusCounter += Events.lastBonus;
@@ -289,11 +289,14 @@ public class PowerUp extends MovingObject
 			pu.make(enemy.bounds.getX(), 
 					enemy.bounds.getY(), 
 					type,
-					(int)(POWER_UP_WORTH_MULTIPLIER * enemy.getEffectiveStrength()),
+					(int)(POWER_UP_WORTH_MULTIPLIER * enemy.type.getStrength()),
 					helicopter.bounds.getX() > enemy.bounds.getX() 
 					|| helicopter.canImmobilizePowerUp() ? -1 : 1 );
 		}
-		else{pu.make(0, 0, type, 0, 0);}
+		else
+		{
+		    pu.make(0, 0, type, 0, 0);
+		}
 		powerUp.get(ACTIVE).add(pu);
 		if(to_status_bar){pu.moveToStatusbar();}		
 	}

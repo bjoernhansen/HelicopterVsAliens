@@ -19,7 +19,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.TRIPLE_DAMAGE;
 
 public final class Helios extends Helicopter
 {
-    // TODO BUG: bei der Guthabenberechnung wird bei bereits besuchten Leveln noch ausgezahlt nach Reparatur.
+    // TODO BUG: bei der Guthabenberechnung wird bei bereits besuchten Leveln noch ausgezahlt nach Reparatur. siehe Events 1186
     
     private int
         powerUpGeneratorTimer;

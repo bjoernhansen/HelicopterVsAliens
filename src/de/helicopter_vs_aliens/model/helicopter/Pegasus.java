@@ -127,9 +127,7 @@ public final class Pegasus extends Helicopter
         super.adjustFireRate(poweredUp);
         if(this.hasInterphaseGenerator)
         {
-            this.shiftTime
-                    = MyMath.shiftTime( this.levelOfUpgrade[FIRE_RATE.ordinal()]
-                    + (poweredUp ? FIRE_RATE_POWERUP_LEVEL : 0));
+            this.shiftTime = MyMath.shiftTime( this.calculateSumOfFireRateBooster(poweredUp));
         }
     }
 
