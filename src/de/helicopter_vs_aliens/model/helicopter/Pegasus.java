@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.Timer;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -19,18 +20,25 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.FIRE_RATE;
+
 
 public final class Pegasus extends Helicopter
 {
     static final int[]
         INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
-       
+
+    private final int
+        EMP_TIMER_DURATION = 67;
+
     private int
-        shiftTime,  // Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
-        empTimer,	// Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
-        interphaseGeneratorTimer;			// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
-    
+        shiftTime;                  // Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
+        //empTimer,	                // Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
+        //interphaseGeneratorTimer;	// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
+
+    private final Timer
+        empTimer = new Timer(EMP_TIMER_DURATION),
+        interphaseGeneratorTimer = new Timer(EMP_TIMER_DURATION);
+
     private boolean
         hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator
     
@@ -44,7 +52,7 @@ public final class Pegasus extends Helicopter
     @Override
     void updateTimer()
     {
-        if(this.empTimer > 0){this.empTimer--;}
+        //if(this.empTimer > 0){this.empTimer--;}
         super.updateTimer();
         if(this.hasInterphaseGenerator && !this.isDamaged)
         {
@@ -80,7 +88,7 @@ public final class Pegasus extends Helicopter
     @Override
     public boolean isEnergyAbilityActivatable()
     {
-        return this.empTimer == 0 && this.hasEnoughEnergyForAbility();
+        return this.empTimer.hasExpired() && this.hasEnoughEnergyForAbility();
     }
 
     @Override
@@ -91,7 +99,7 @@ public final class Pegasus extends Helicopter
 
     private void releaseEMP(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
-        this.empTimer = 67;
+        this.empTimer.start();
         this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
         Audio.play(Audio.emp);
         Explosion.start(explosion,
@@ -104,13 +112,18 @@ public final class Pegasus extends Helicopter
                         + FOCAL_PNT_Y_EXP),
                 EMP,
                 false);
-        this.interphaseGeneratorTimer = 0;
+        this.restartInterphaseGenerator();
+    }
+
+    private void restartInterphaseGenerator()
+    {
+        this.interphaseGeneratorTimer.start(this.shiftTime);
     }
 
     @Override
     public boolean canBeTractored()
     {
-        return this.interphaseGeneratorTimer <= this.shiftTime
+        return this.isInPhase()
                 && super.canBeTractored();
     }
 
@@ -138,14 +151,14 @@ public final class Pegasus extends Helicopter
         if(this.hasInterphaseGenerator)
         {
             Audio.phaseShift.stop();
-            this.interphaseGeneratorTimer = 0;
+            this.restartInterphaseGenerator();
         }
     }
 
     @Override
     boolean isShootingStunningMissile()
     {
-        if(this.interphaseGeneratorTimer > this.shiftTime)
+        if(!this.isInPhase())
         {
             return true;
         }
@@ -162,18 +175,24 @@ public final class Pegasus extends Helicopter
     public void resetState(boolean resetStartPos)
     {
         super.resetState(resetStartPos);
-        this.empTimer = 0;
+        this.empTimer.reset();
         this.empWave = null;
-        this.interphaseGeneratorTimer = 0;
+        this.restartInterphaseGenerator();
     }
     
     @Override
     public boolean basicCollisionRequirementsSatisfied(Enemy e)
     {
-        return this.interphaseGeneratorTimer <= this.shiftTime
+        return this.isInPhase()
                 && super.basicCollisionRequirementsSatisfied(e);
     }
-    
+
+    private boolean isInPhase()
+    {
+        return this.interphaseGeneratorTimer.isActive();
+        //return this.interphaseGeneratorTimer <= this.shiftTime;
+    }
+
     @Override
     public void crash()
     {
@@ -190,13 +209,12 @@ public final class Pegasus extends Helicopter
     @Override
     public boolean canBeHit()
     {
-        return interphaseGeneratorTimer <= this.shiftTime;
+        return this.isInPhase();
     }
     
     private void updateInterphaseGenerator()
     {
-        this.interphaseGeneratorTimer++;
-        if(this.interphaseGeneratorTimer == this.shiftTime + 1)
+        if(this.interphaseGeneratorTimer.hasExpired())
         {
             Audio.play(Audio.phaseShift);
             if(this.tractor != null){this.stopTractor();}
@@ -207,14 +225,14 @@ public final class Pegasus extends Helicopter
     public boolean isLocationAdaptionApproved(Enemy enemy)
     {
         return  super.isLocationAdaptionApproved(enemy)
-                && this.interphaseGeneratorTimer <= this.shiftTime;
+                && this.isInPhase();
     }
     
     @Override
     public void initMenuEffect(int position)
     {
         super.initMenuEffect(position);
-        // TODO empWave sollte nach Menu ausgelagert werden, da es nur hier verwendet wird
+        // TODO empWave sollte nach Menu ausgelagert werden, da es nur hier verwendet wird - wirklich? Überprüfen!
         this.empWave = Explosion.createStartscreenExplosion(position);
     }
     
@@ -228,7 +246,7 @@ public final class Pegasus extends Helicopter
     void determineInputColors()
     {
         super.determineInputColors();
-        if(this.interphaseGeneratorTimer > this.shiftTime)
+        if(!this.isInPhase())
         {
             // TODO HashMap daraus machen und hier verwenden
             this.inputColorCannon = MyColor.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);

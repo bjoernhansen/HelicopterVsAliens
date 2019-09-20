@@ -5,15 +5,24 @@ import java.util.*;
 // TODO Timer-Klasse verwenden
 public class Timer
 {
-    private static Set<Timer> activeTimers = new HashSet<>();
+    private static final Set<Timer>
+        activeTimers = new HashSet<>();
 
     private static final int
         EXPIRED = 0;
 
     private int
-        timeLeft,
+        timeLeft = EXPIRED,
         timeInterval;
 
+    private boolean
+        isActive = false;
+
+
+    public Timer(int duration)
+    {
+        this.timeInterval = duration;
+    }
 
     public static void countDownActiveTimers()
     {
@@ -21,10 +30,14 @@ public class Timer
         while (iterator.hasNext())
         {
             Timer timer = iterator.next();
-            timer.countDown();
             if(timer.hasExpired())
             {
+                timer.isActive = false;
                 iterator.remove();
+            }
+            else
+            {
+                timer.countDown();
             }
         }
     }
@@ -39,7 +52,7 @@ public class Timer
         this.timeLeft = Math.max(0, this.timeLeft-1);
     }
 
-    public void restart()
+    public void start()
     {
         this.start(this.timeInterval);
     }
@@ -48,22 +61,24 @@ public class Timer
     {
         this.timeInterval = duration;
         this.timeLeft = duration;
+        this.isActive = true;
         activeTimers.add(this);
     }
 
     public void reset()
     {
         this.timeLeft = EXPIRED;
+        this.isActive = false;
         activeTimers.remove(this);
     }
 
     public boolean isActive()
     {
-        return timeLeft > EXPIRED;
+        return this.isActive;
     }
 
     public boolean hasExpired()
     {
-        return timeLeft <= EXPIRED;
+        return timeLeft <= EXPIRED && this.isActive;
     }
 }
