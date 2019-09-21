@@ -3,7 +3,8 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.Timer;
+import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.control.timer.VariableTimer;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -36,8 +37,10 @@ public final class Pegasus extends Helicopter
         //interphaseGeneratorTimer;	// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 
     private final Timer
-        empTimer = new Timer(EMP_TIMER_DURATION),
-        interphaseGeneratorTimer = new Timer(EMP_TIMER_DURATION);
+        empTimer = new Timer(EMP_TIMER_DURATION);
+
+    private final VariableTimer
+        interphaseGeneratorTimer = new VariableTimer(this.shiftTime);
 
     private boolean
         hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator

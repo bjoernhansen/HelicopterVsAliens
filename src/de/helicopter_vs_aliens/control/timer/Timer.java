@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control;
+package de.helicopter_vs_aliens.control.timer;
 
 import java.util.*;
 
@@ -12,11 +12,13 @@ public class Timer
         EXPIRED = 0;
 
     private int
-        timeLeft = EXPIRED,
-        timeInterval;
+        timeLeft = EXPIRED;
 
     private boolean
         isActive = false;
+
+    int
+        timeInterval;
 
 
     public Timer(int duration)
@@ -54,13 +56,7 @@ public class Timer
 
     public void start()
     {
-        this.start(this.timeInterval);
-    }
-
-    public void start(int duration)
-    {
-        this.timeInterval = duration;
-        this.timeLeft = duration;
+        this.timeLeft = this.timeInterval;
         this.isActive = true;
         activeTimers.add(this);
     }

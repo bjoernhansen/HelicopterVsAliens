@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
