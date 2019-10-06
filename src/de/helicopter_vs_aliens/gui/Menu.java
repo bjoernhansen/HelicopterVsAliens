@@ -82,7 +82,7 @@ public class Menu
 	
 	public static boolean
 		isMenuVisible,					// = true: Spielmenü ist sichtbar
-		originalResulution = false;
+		hasOriginalResulution = false;
 	
     // Auf dem Startscreen gezeichnete Polygone
     public static Polygon
@@ -549,7 +549,7 @@ public class Menu
         	g2d.setColor(MyColor.golden);
         	g2d.drawString( Button.DISPLAY[language.ordinal()][Main.isFullScreen ? 1 : 0]
         				 	  + (!Main.isFullScreen ? "" : " (" 
-        				 		   + (originalResulution
+        				 		   + (hasOriginalResulution
         				 			   ? Main.currentDisplayMode.getWidth()
         				 				   + "x" 
         				 				   + Main.currentDisplayMode.getHeight()

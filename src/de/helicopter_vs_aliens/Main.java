@@ -123,8 +123,8 @@ public class Main
 
 	static void switchResolution(Savegame savegame)
 	{
-		Menu.originalResulution = !Menu.originalResulution;
-		savegame.originalResulution = Menu.originalResulution;
+		Menu.hasOriginalResulution = !Menu.hasOriginalResulution;
+		savegame.originalResulution = Menu.hasOriginalResulution;
 		activateDisplayMode();
 		Events.settingsChanged = true;
 	}
@@ -169,7 +169,7 @@ public class Main
     
     private static void activateDisplayMode()
 	{
-    	currentDisplayMode = Menu.originalResulution
+    	currentDisplayMode = Menu.hasOriginalResulution
 				? originalDisplayMode
 				: standardDisplayMode;
     	device.setDisplayMode(currentDisplayMode);

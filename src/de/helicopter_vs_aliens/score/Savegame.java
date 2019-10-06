@@ -97,7 +97,7 @@ public class Savegame implements Serializable
 			
 			HighscoreEntry.currentPlayerName = temp.currentPlayerName;
 			Menu.setLanguage(temp.language);
-			Menu.originalResulution = temp.originalResulution;
+			Menu.hasOriginalResulution = temp.originalResulution;
 			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
 			Audio.isSoundOn = temp.isSoundOn;
 			Events.recordTime = temp.recordTime.clone();
@@ -159,7 +159,7 @@ public class Savegame implements Serializable
 		this.currentPlayerName = HighscoreEntry.currentPlayerName;
 		this.language = Menu.language;
 		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
-		this.originalResulution = Menu.originalResulution;
+		this.originalResulution = Menu.hasOriginalResulution;
 		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
 		this.killsAfterLevelup = Events.killsAfterLevelUp;
