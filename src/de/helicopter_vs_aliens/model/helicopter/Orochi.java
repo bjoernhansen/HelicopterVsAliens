@@ -191,14 +191,13 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void resetState(boolean resetStartPos)
+    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
     {
-        super.resetState(resetStartPos);
         this.isNextMissileStunner = false;
     }
     
     @Override
-    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
+    public void resetStateTypeSpecific()
     {
         this.isNextMissileStunner = false;
     }

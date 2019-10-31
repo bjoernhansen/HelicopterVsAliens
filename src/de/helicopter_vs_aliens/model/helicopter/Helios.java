@@ -115,13 +115,6 @@ public final class Helios extends Helicopter
     }
 
     @Override
-    public void resetState(boolean resetStartPos)
-    {
-        super.resetState(resetStartPos);
-        this.powerUpGeneratorTimer = 0;
-    }
-    
-    @Override
     public boolean canImmobilizePowerUp()
     {
         return this.hasPowerUpImmobilizer;
@@ -138,5 +131,11 @@ public final class Helios extends Helicopter
     public void stoptMenuEffect()
     {
         this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] = 0;
+    }
+    
+    @Override
+    public void resetStateTypeSpecific()
+    {
+        this.powerUpGeneratorTimer = 0;
     }
 }

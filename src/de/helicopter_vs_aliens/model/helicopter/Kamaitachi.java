@@ -160,13 +160,6 @@ public final class Kamaitachi extends Helicopter
     }
     
     @Override
-    public void resetState(boolean resetStartPos)
-    {
-        super.resetState(resetStartPos);
-        this.plasmaActivationTimer = 0;
-    }
-    
-    @Override
     GradientPaint getGradientCannonHoleColor()
     {
         return this.plasmaActivationTimer == 0
@@ -181,5 +174,11 @@ public final class Kamaitachi extends Helicopter
                 * ((this.plasmaActivationTimer == 0)
                     ? 1
                     : MyMath.plasmaDamageFactor(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]));
+    }
+    
+    @Override
+    public void resetStateTypeSpecific()
+    {
+        this.plasmaActivationTimer = 0;
     }
 }

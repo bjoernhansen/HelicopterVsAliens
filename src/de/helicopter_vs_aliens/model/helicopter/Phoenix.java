@@ -150,14 +150,6 @@ public final class Phoenix extends Helicopter
                 && this.enhancedRadiationTimer == 0
                 && MyMath.tossUp(ENHANCED_RADIATION_PROB);
     }
-
-    @Override
-    public void resetState(boolean resetStartPos)
-    {
-        super.resetState(resetStartPos);
-        this.enhancedRadiationTimer = 0;
-        this.isSearchingForTeleportDestination = false;
-    }
     
     @Override
     public float getProtectionFactor()
@@ -267,5 +259,12 @@ public final class Phoenix extends Helicopter
             this.enhancedRadiationTimer = NO_COLLISION_DAMAGE_TIME;
         }
         else super.startRecentDamageEffect(enemy);
+    }
+    
+    @Override
+    public void resetStateTypeSpecific()
+    {
+        this.enhancedRadiationTimer = 0;
+        this.isSearchingForTeleportDestination = false;
     }
 }

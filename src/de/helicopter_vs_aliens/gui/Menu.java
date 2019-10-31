@@ -1094,6 +1094,10 @@ public class Menu
 		{
 			infoString = Menu.dictionary.getTypeName(helicopter.getType());
 		}
+		else if(specialInfoSelection == 14)
+		{
+			infoString = helicopter.getTypeSpecificDebuggingOutput();
+		}
         g2d.drawString("Info: " + infoString, 20, 155);
     }
 	

@@ -258,13 +258,6 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void resetState(boolean resetStartPos)
-    {
-        super.resetState(resetStartPos);
-        this.isPowerShieldActivated = false;
-    }
-    
-    @Override
     public void update(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile,
                        EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
     {
@@ -312,5 +305,11 @@ public final class Roch extends Helicopter
         return this.isPowerShieldActivated && isExplodable
                 ? REDUCED_BASE_PROTECTION_FACTOR
                 : super.getBaseProtectionFactor(isExplodable);
+    }
+    
+    @Override
+    public void resetStateTypeSpecific()
+    {
+        this.isPowerShieldActivated = false;
     }
 }

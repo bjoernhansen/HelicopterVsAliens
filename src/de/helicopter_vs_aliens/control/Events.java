@@ -53,7 +53,8 @@ public class Events
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
 		SAVE_ANYWAY = true;
-
+	public static final int NUMBER_OF_DEBUGGING_INFOS = 15;
+	
 	public static HighscoreEntry[][]
 		highscore = new HighscoreEntry[7][10];
 	
@@ -231,7 +232,7 @@ public class Events
 				}
 				else if(e.getKeyChar() =='s')
 				{
-					Menu.specialInfoSelection = (Menu.specialInfoSelection +1)%14;
+					Menu.specialInfoSelection = (Menu.specialInfoSelection +1)% NUMBER_OF_DEBUGGING_INFOS;
 				}
 				else if(e.getKeyChar() == 'd'){helicopter.getPowerUp(controller.powerUps, TRIPLE_DAMAGE, 	   true);}
 				else if(e.getKeyChar() == 'i'){helicopter.getPowerUp(controller.powerUps, INVINCIBLE, 	   true);}
@@ -1004,8 +1005,9 @@ public class Events
 		
 		helicopter.bonusKillsTimer = 1;
 		if(helicopter.getType() == KAMAITACHI){helicopter.evaluateBonusKills();}
+		helicopter.resetStateGeneral(totalReset);
+        helicopter.resetStateTypeSpecific();
 		
-		helicopter.resetState(totalReset);
 		boss = null;		
 		lastExtraBonus = 0;
 		lastMultiKill = 0;
@@ -1113,7 +1115,7 @@ public class Events
 		changeWindow(GAME);		
 		Audio.play(Audio.choose);	
 		timeAktu = System.currentTimeMillis();
-		helicopter.resetRotorPosition();
+		helicopter.prepareForMission();
 		Controller.savegame.saveToFile(helicopter, true);
 	}
 	

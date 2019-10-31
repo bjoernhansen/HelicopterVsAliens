@@ -18,6 +18,7 @@ import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
@@ -25,22 +26,20 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 
 public final class Pegasus extends Helicopter
 {
-    static final int[]
+    private static final int[]
         INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
 
-    private final int
+    private static final int
         EMP_TIMER_DURATION = 67;
 
     private int
         shiftTime;                  // Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
-        //empTimer,	                // Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
-        //interphaseGeneratorTimer;	// nur Pegasus-Klasse: Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 
     private final Timer
-        empTimer = new Timer(EMP_TIMER_DURATION);
+        empTimer = new Timer(EMP_TIMER_DURATION);   // Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
 
     private final VariableTimer
-        interphaseGeneratorTimer = new VariableTimer(this.shiftTime);
+        interphaseGeneratorTimer = new VariableTimer(this.shiftTime);   // Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 
     private boolean
         hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator
@@ -91,7 +90,7 @@ public final class Pegasus extends Helicopter
     @Override
     public boolean isEnergyAbilityActivatable()
     {
-        return this.empTimer.hasExpired() && this.hasEnoughEnergyForAbility();
+        return !this.empTimer.isActive() && this.hasEnoughEnergyForAbility();
     }
 
     @Override
@@ -175,15 +174,6 @@ public final class Pegasus extends Helicopter
     }
     
     @Override
-    public void resetState(boolean resetStartPos)
-    {
-        super.resetState(resetStartPos);
-        this.empTimer.reset();
-        this.empWave = null;
-        this.restartInterphaseGenerator();
-    }
-    
-    @Override
     public boolean basicCollisionRequirementsSatisfied(Enemy e)
     {
         return this.isInPhase()
@@ -192,8 +182,7 @@ public final class Pegasus extends Helicopter
 
     private boolean isInPhase()
     {
-        return this.interphaseGeneratorTimer.isActive();
-        //return this.interphaseGeneratorTimer <= this.shiftTime;
+        return this.interphaseGeneratorTimer.isActive() || !this.hasInterphaseGenerator || Menu.window != GAME;
     }
 
     @Override
@@ -283,5 +272,26 @@ public final class Pegasus extends Helicopter
                 this.empWave.paint(g2d);
             }
         }
+    }
+    
+    @Override
+    public String getTypeSpecificDebuggingOutput()
+    {
+        return String.format("emp Timer: %d; phaseShift Timer: %d", this.empTimer.getTimeLeft(), this.interphaseGeneratorTimer.getTimeLeft());
+    }
+    
+    @Override
+    public void resetStateTypeSpecific()
+    {
+        this.empTimer.reset();
+        this.empWave = null;
+        this.restartInterphaseGenerator();
+    }
+    
+    @Override
+    public void prepareForMission()
+    {
+        super.prepareForMission();
+        this.restartInterphaseGenerator();
     }
 }

@@ -104,8 +104,8 @@ public abstract class Helicopter extends MovingObject
     public int
 		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
 		currentBaseFirepower,				// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
-		platingDurabilityFactor,			// SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
-		numberOfCannons,					// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
+		platingDurabilityFactor = STANDARD_PLATING_STRENGTH,    // SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
+		numberOfCannons = 1,				// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
 		recentDamageTimer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
 		
 		// für die Spielstatistik
@@ -158,7 +158,7 @@ public abstract class Helicopter extends MovingObject
 		isContiniousFireEnabled,			// = true: Dauerfeuer aktiv
 		isSearchingForTeleportDestination,	// = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
 		isMovingLeft,
-		isPlayedWithoutCheats,				// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
+		isPlayedWithoutCheats = true,				// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
      	hasMaxUpgradeLevel[] = new boolean[6];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
      	
     public Point
@@ -215,7 +215,6 @@ public abstract class Helicopter extends MovingObject
     public Helicopter()
     {
     	this.paintBounds.setSize(HELICOPTER_SIZE);
-    	this.reset();
     }
     
     public void paint(Graphics2D g2d)
@@ -809,8 +808,9 @@ public abstract class Helicopter extends MovingObject
     	if(!newGame){this.restoreLastGameState(savegame);}
     	this.updateProperties(newGame);
     	this.fireRateTimer = this.timeBetweenTwoShots;
-        this.resetRotorPosition();
         this.empWave = null;
+        this.placeAtStartpos();
+        this.prepareForMission();
     }
 	
 	int getUpgradeCosts(int i)
@@ -849,9 +849,8 @@ public abstract class Helicopter extends MovingObject
     public void reset()
     {
         // TODO ggf. muss einiges nicht mehr resettet werden, da immer ein neuer Helicopter erzeugt wird
-		this.resetRotorPosition();
-		this.resetState();
-        this.placeAtStartpos();
+		this.resetStateGeneral(true);
+        this.resetStateTypeSpecific();
         this.isDamaged = false;
 		this.isPlayedWithoutCheats = true;
 		this.resetCounterForHighscore();
@@ -859,22 +858,18 @@ public abstract class Helicopter extends MovingObject
         Arrays.fill(this.scorescreenTimes, 0);
     }
 	
-	public void resetState()
+	
+	public void resetStateGeneral(boolean resetStartPos)
 	{
 		// TODO boolscher Parameter - anders lösen
-		resetState(true);
-	}
-	
-	public void resetState(boolean resetStartPos)
-	{
         this.setActivationState(false);
 		this.isCrashing = false;
 		this.slowedTimer = 0;
 		this.recentDamageTimer = 0;
 		for(int i = 0; i < 4; i++){this.powerUpTimer[i] = 0;}
         this.resetRotorPosition();
-		if(resetStartPos){this.placeAtStartpos();}
 		this.fireRateTimer = this.timeBetweenTwoShots;
+		if(resetStartPos){this.placeAtStartpos();}
 	}
 	
 	private void resetCounterForHighscore()
@@ -1535,5 +1530,17 @@ public abstract class Helicopter extends MovingObject
     public float getBaseProtectionFactor(boolean isExplodable)
     {
         return STANDARD_BASE_PROTECTION_FACTOR;
+    }
+    
+    public String getTypeSpecificDebuggingOutput()
+	{
+		return "";
+	}
+	
+	public abstract void resetStateTypeSpecific();
+    
+    public void prepareForMission()
+    {
+        this.resetRotorPosition();
     }
 }
