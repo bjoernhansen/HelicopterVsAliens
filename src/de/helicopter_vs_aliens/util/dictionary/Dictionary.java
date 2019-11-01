@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
+import de.helicopter_vs_aliens.gui.PriceLevels;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
 
@@ -35,6 +36,9 @@ public final class Dictionary
 
     private EnumMap<HelicopterTypes, List<String>>
         helicopterInfos = new EnumMap<>(HelicopterTypes.class);
+
+    private EnumMap<PriceLevels, String>
+        priceLevels = new EnumMap<>(PriceLevels.class);
 
 
     public Dictionary()
@@ -142,6 +146,7 @@ public final class Dictionary
         return specialUpgrades.get(specialUpgradeType);
     }
 
+    // TODO MEthoden zusammenführen: getSpecialUprade(specialUpgradeType)
     public String getSpotlight()
     {
         return specialUpgrades.get(SPOTLIGHT);
@@ -185,5 +190,10 @@ public final class Dictionary
     public String getTypeName(HelicopterTypes type)
     {
         return this.getHelicopterName(type) + this.languageProperties.getProperty("type");
+    }
+
+    public String getPrice(PriceLevels priceLevel)
+    {
+        return this.languageProperties.getProperty(priceLevel.getDictionaryKey());
     }
 }

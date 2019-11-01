@@ -39,7 +39,8 @@ public class Events
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
 		SPOTLIGHT_COSTS = 35000,
-		START = 0;						// Timer Start
+		START = 0,					// Timer Start
+		NUMBER_OF_BOSS_LEVEL = 5;
 	
 	private static final int
 		COMPARISON_RECORD_TIME = 60,	// angenommene Bestzeit für besiegen von Boss 5
@@ -80,11 +81,11 @@ public class Events
     	public static long timeAktu;	// Zeitpunkt der letzten Aktualisierung von playing_time
 	
 	public static long
-		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
+		recordTime[][] = new long [HelicopterTypes.size()][NUMBER_OF_BOSS_LEVEL];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
     
     public static boolean
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
-    	reachedLevelTwenty[] = new boolean[Helicopter.NR_OF_TYPES],
+    	reachedLevelTwenty[] = new boolean[HelicopterTypes.size()],
     	settingsChanged = false,
     	allPlayable = false;
 
@@ -271,7 +272,7 @@ public class Events
 				{					
 					if(!MyMath.isEmpty(recordTime))
 					{
-						for(int i = 0; i < Helicopter.NR_OF_TYPES; i++)
+						for(int i = 0; i < HelicopterTypes.size(); i++)
 						{
 							Arrays.fill(recordTime[i], 0);
 							reachedLevelTwenty[i] = false;
@@ -631,7 +632,8 @@ public class Events
 		else 
 		{	
 			int selection = Integer.MIN_VALUE;
-			for(int i = 0; i < 6; i++)
+			// TODO über Standardupgrades iterieren
+			for(int i = 0; i < StandardUpgradeTypes.size(); i++)
 			{
 				if(Menu.repairShopButton.get("StandardUpgrade" + i).bounds.contains(cursor))
 				{
@@ -698,16 +700,16 @@ public class Events
 	{
 		if(Menu.triangle[0].contains(cursor))
 		{
-			Menu.crossPosition = (Menu.crossPosition + 1)%Helicopter.NR_OF_TYPES;
+			Menu.crossPosition = (Menu.crossPosition + 1)%HelicopterTypes.size();
 			Menu.cross = Menu.getCrossPolygon();
-			Menu.helicopterSelection = (Menu.helicopterSelection + Helicopter.NR_OF_TYPES - 1)%Helicopter.NR_OF_TYPES;
+			Menu.helicopterSelection = (Menu.helicopterSelection + HelicopterTypes.size() - 1)%HelicopterTypes.size();
 			Audio.play(Audio.choose);
 		}
 		else if(Menu.triangle[1].contains(cursor))
 		{
-			Menu.crossPosition = (Menu.crossPosition + Helicopter.NR_OF_TYPES - 1)%Helicopter.NR_OF_TYPES;
+			Menu.crossPosition = (Menu.crossPosition + HelicopterTypes.size() - 1)%HelicopterTypes.size();
 			Menu.cross = Menu.getCrossPolygon();
-			Menu.helicopterSelection = (Menu.helicopterSelection + 1)%Helicopter.NR_OF_TYPES;
+			Menu.helicopterSelection = (Menu.helicopterSelection + 1)%HelicopterTypes.size();
 			Audio.play(Audio.choose);
 		}
 		else if(Menu.helicopterFrame[0].contains(cursor)||
@@ -722,7 +724,7 @@ public class Events
 			else
 			{
 				Audio.play(Audio.block);
-				Menu.crossPosition = (Events.nextHelicopterType.ordinal() - Menu.helicopterSelection + Helicopter.NR_OF_TYPES)%Helicopter.NR_OF_TYPES;
+				Menu.crossPosition = (Events.nextHelicopterType.ordinal() - Menu.helicopterSelection + HelicopterTypes.size())%HelicopterTypes.size();
 				Menu.cross = Menu.getCrossPolygon();
 				Menu.crossTimer = 1;
 				Menu.messageTimer = 1;
@@ -1304,7 +1306,7 @@ public class Events
 	
 	public static boolean hasAnyBossBeenKilledBefore()
 	{
-		for(int i = 0; i < Helicopter.NR_OF_TYPES; i++)
+		for(int i = 0; i < HelicopterTypes.size(); i++)
 		{
 			if(recordTime[i][0] != 0) return true;
 		}
@@ -1314,33 +1316,34 @@ public class Events
 	public static int getHeliosMaxMoney()
 	{
 		int maxHeliosMoney = 0;
-		for(int i = 0; i < Helicopter.NR_OF_TYPES - 1; i++)
+		for(int i = 0; i < HelicopterTypes.size() - 1; i++)
 		{
 			maxHeliosMoney += getHighestRecordMoney(recordTime[i]);
 		}	
 		return maxHeliosMoney;
 	}
 	
-	public static int getHighestRecordMoney(long [] array)
+	public static int getHighestRecordMoney(long[] recordTime)
 	{	
-		if(array[0] == 0){return 0;}
-		int index = 0;
+		// TODO Code überarbeiten - unverständlich
+		if(recordTime[0] == 0){return 0;}
+		int bossLevelIndex = 0;
 		boolean indexSet = false;
-		int maxMoney = heliosRecordEntryMoney((int)(array[index]), index);
-		for(int i = 1; i < array.length; i++)
+		int maxMoney = heliosRecordEntryMoney((int)(recordTime[bossLevelIndex]), bossLevelIndex);
+		for(int i = 1; i < recordTime.length; i++)
 		{			
-			if(array[i] == 0)
+			if(recordTime[i] == 0)
 			{
 				// TODO check method function why unused asssignment
-				index = i-1;
+				bossLevelIndex = i-1;
 				indexSet = true;
 				break;
 			}
-			maxMoney = Math.max(maxMoney, heliosRecordEntryMoney((int)(array[i]), i));
+			maxMoney = Math.max(maxMoney, heliosRecordEntryMoney((int)(recordTime[i]), i));
 		}	
 		if(!indexSet)
 		{
-			maxMoney = Math.max(maxMoney, heliosRecordEntryMoney((int)(array[array.length-1]), array.length-1));
+			maxMoney = Math.max(maxMoney, heliosRecordEntryMoney((int)(recordTime[recordTime.length-1]), recordTime.length-1));
 		}
 		return maxMoney;
 	}
@@ -1367,5 +1370,14 @@ public class Events
 	public static boolean hasSelectedHelicopterChanged()
 	{
 		return previousHelicopterType != nextHelicopterType;
+	}
+
+	public static int getBestNonFinalMainBossKillBy(HelicopterTypes privilegedHelicopter)
+	{
+		for(int i = 0; i < 4; i++)
+		{
+			if(Events.recordTime[privilegedHelicopter.ordinal()][i] == 0) return i;
+		}
+		return 4;
 	}
 }

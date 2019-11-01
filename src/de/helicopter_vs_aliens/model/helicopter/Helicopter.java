@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.PriceLevels;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -17,7 +18,6 @@ import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
 import java.applet.AudioClip;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -28,8 +28,10 @@ import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
+import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
 import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.PriceLevels.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
@@ -49,7 +51,6 @@ public abstract class Helicopter extends MovingObject
 		// TODO einstellen auf 60 Frames per Second
 		POWERUP_DURATION = 930,         // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
 		NO_COLLISION_DAMAGE_TIME = 20,   // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
-    	NR_OF_TYPES = HelicopterTypes.values().length,                // so viele Helikopter-Klassen gibt es
     	INVULNERABILITY_DAMAGE_REDUCTION = 80,        // %-Wert der Schadensreduzierung bei Unverwundbarleit
 		STANDARD_SPECIAL_COSTS = 125000,
 		CHEAP_SPECIAL_COSTS = 10000;
@@ -118,21 +119,16 @@ public abstract class Helicopter extends MovingObject
 		numberOfMiniBossSeen,				// Anzahl der erschienenen Mini-Bosse
 		numberOfMiniBossKilled,				// Anzahl der vernichteten Mini-Bosse
 				
-		// nur für Phönix- und Kamaitachi-Klasse
-        // TODO auslagern in Phönix- und Kamaitachi-Klasse
-		bonusKills,							// Anzahl der Kills, für den aktuelken Mulikill-Award
-		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen Multikill-Awards ohne Bonus
-		bonusKillsTimer,					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
-				
+
 		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
 		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
         // TODO Enum StandardUpgradeTypes verwenden
-		upgradeCosts[] = new int[6],    	// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
-		levelOfUpgrade[] = new int[6];		// Upgrade-Level aller 6 StandardUpgrades
+		upgradeCosts[] = new int[StandardUpgradeTypes.size()],    	// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
+		levelOfUpgrade[] = new int[StandardUpgradeTypes.size()];	// Upgrade-Level aller 6 StandardUpgrades
 	
 	public long
-    	scorescreenTimes[] = new long [5];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
+    	scorescreenTimes[] = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float
 		rotorSystem,						// legt die aktuelle Geschwindigkeit des Helikopters fest
@@ -157,7 +153,7 @@ public abstract class Helicopter extends MovingObject
 		
 		isMovingLeft,
 		isPlayedWithoutCheats = true,			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
-     	hasMaxUpgradeLevel[] = new boolean[6];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
+     	hasMaxUpgradeLevel[] = new boolean[StandardUpgradeTypes.size()];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
       
     public Point
     	destination = new Point(); 				// dorthin fliegt der Helikopter
@@ -169,7 +165,12 @@ public abstract class Helicopter extends MovingObject
     public boolean
         isSearchingForTeleportDestination;	    // = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
     
-	
+	public int
+		// nur für Phönix- und Kamaitachi-Klasse
+		// TODO auslagern in Phönix- und Kamaitachi-Klasse
+		bonusKills,							// Anzahl der Kills, für den aktuelken Mulikill-Award
+		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen Multikill-Awards ohne Bonus
+		bonusKillsTimer;					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
     
 	public Point2D
   		location = new Point2D.Float();	        // exakter Aufenthaltsort
@@ -803,8 +804,8 @@ public abstract class Helicopter extends MovingObject
 	
 	public void initialize(boolean newGame, Savegame savegame)
     {
-    	// TODO Enum StandardUpgradeTypes verwenden
-        for(int i = 0; i < 6; i++)
+    	// TODO über Enum StandardUpgradeTypes iterieren
+        for(int i = 0; i < StandardUpgradeTypes.size(); i++)
 	    {
     		this.hasMaxUpgradeLevel[i] = false;
     		this.upgradeCosts[i] =  getUpgradeCosts(i);
@@ -915,7 +916,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public void obtainAllUpgrades()
     {
-    	for(int i = 0; i < 6; i++)
+    	for(int i = 0; i < StandardUpgradeTypes.size(); i++)
     	{
     		this.levelOfUpgrade[i] = MyMath.maxLevel(this.upgradeCosts[i]);
     	}
@@ -937,9 +938,9 @@ public abstract class Helicopter extends MovingObject
     {
 		this.hasSpotlights = true;
     	this.obtainFifthSpecial();
-    	for(int i = 0; i < 6; i++)
+    	for(int i = 0; i < StandardUpgradeTypes.size(); i++)
     	{
-    		if(this.levelOfUpgrade[i] < 6){this.levelOfUpgrade[i] = 6;}
+    		if(this.levelOfUpgrade[i] < EXTORTIONATE.getMaxUpgradeLevel()){this.levelOfUpgrade[i] = EXTORTIONATE.getMaxUpgradeLevel();}
     	}        		
     	this.updateProperties(true);
 		this.isDamaged = false;
@@ -949,7 +950,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public boolean hasSomeUpgrades()
     {
-    	for(int i = 0; i < 6; i++){if(this.levelOfUpgrade[i] < 6) return false;}
+    	for(int i = 0; i < StandardUpgradeTypes.size(); i++){if(this.levelOfUpgrade[i] < EXTORTIONATE.getMaxUpgradeLevel()) return false;}
     	if(!this.hasSpotlights) return false;
     	else return this.hasFifthSpecial();
     }
@@ -979,7 +980,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public boolean hasAllUpgrades()
     {
-        for(int i = 0; i < 6; i++){if(!this.hasMaxUpgradeLevel[i]){return false;}}
+        for(int i = 0; i < StandardUpgradeTypes.size(); i++){if(!this.hasMaxUpgradeLevel[i]){return false;}}
 		return hasAllSpecials();
 	}
 
@@ -1138,7 +1139,7 @@ public abstract class Helicopter extends MovingObject
     	this.adjustFireRate(this.hasBoostedFireRate());
 		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
-		for(int i = 0; i < 6; i++)
+		for(int i = 0; i < StandardUpgradeTypes.size(); i++)
 		{
 			if(this.levelOfUpgrade[i] >= MyMath.maxLevel(this.upgradeCosts[i]))
 			{
@@ -1257,22 +1258,6 @@ public abstract class Helicopter extends MovingObject
 		}
 	}
 	
-	public static int heliosCosts(int upgradeNumber)
-	{
-		int heli;
-		if(upgradeNumber <= 1){heli = 2;}
-		else if(upgradeNumber == 2 || upgradeNumber == 3)
-		{
-			heli = upgradeNumber - 2;
-		}
-		else {heli = upgradeNumber - 1;}
-		for(int i = 0; i < 4; i++)
-		{
-			if(Events.recordTime[heli][i] == 0) return 4-i;
-		}
-		return 0;		
-	}
-
 	public float kaboomDamage()
 	{		
 		return Math.max(4, 2*this.currentPlating /3);

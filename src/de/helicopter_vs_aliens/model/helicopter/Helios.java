@@ -40,12 +40,6 @@ public final class Helios extends Helicopter
         if(this.powerUpGeneratorTimer > 0){this.powerUpGeneratorTimer--;}
         super.updateTimer();
     }
-
-    @Override
-    int getUpgradeCosts(int i)
-    {
-        return heliosCosts(i);
-    }
     
     @Override
     void resetFifthSpecial()

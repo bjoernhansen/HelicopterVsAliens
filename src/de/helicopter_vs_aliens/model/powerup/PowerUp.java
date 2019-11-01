@@ -16,6 +16,7 @@ import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
@@ -237,7 +238,7 @@ public class PowerUp extends MovingObject
 					= Math.min(MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
 											 helicopter.energy 
 											 	+ Math.max(10, 
-											 			   2*(MyMath.energy(helicopter.levelOfUpgrade[5])
+											 			   2*(MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
 											 				 - helicopter.energy)/3));
 				Menu.updateCollectedPowerUps(helicopter, this);
 			}				

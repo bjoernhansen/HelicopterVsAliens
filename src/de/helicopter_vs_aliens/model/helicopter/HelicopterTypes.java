@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.gui.PriceLevels;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -43,6 +44,15 @@ public enum HelicopterTypes
         public boolean isUnlocked()
         {
             return Events.hasAnyBossBeenKilledBefore();
+        }
+
+        @Override
+        public int getUpgradeCosts(int upgradeTypeNumber)
+        {
+            StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.values()[upgradeTypeNumber];
+            HelicopterTypes privilegedHelicopter = standardUpgradeType.getPrivilegedHelicopter();
+            int bestNonFinalMainBossKill = Events.getBestNonFinalMainBossKillBy(privilegedHelicopter);
+            return PriceLevels.getMaximium().ordinal() - bestNonFinalMainBossKill;
         }
     };
 
@@ -95,7 +105,12 @@ public enum HelicopterTypes
         KAMAITACHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(ROCH, PEGASUS)),
         PEGASUS_UNLOCKER = Collections.unmodifiableList(Arrays.asList(OROCHI, KAMAITACHI));
     
-    
+
+    public static int size()
+    {
+        return values().length;
+    }
+
     public List<HelicopterTypes> getUnlockerTypes()
     {
         return NO_UNLOCKER;
@@ -126,9 +141,9 @@ public enum HelicopterTypes
         return EFFECT_TIMES[this.ordinal()];
     }
     
-    public int getUpgradeCosts(int i)
+    public int getUpgradeCosts(int standardUpgradeType)
     {
-        return COSTS[this.ordinal()][i];
+        return COSTS[this.ordinal()][standardUpgradeType];
     }
 
     public boolean isUnlocked()

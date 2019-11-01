@@ -5,5 +5,11 @@ public enum SpecialUpgradeTypes {
     GOLIATH_PLATING,
     PIERCING_WARHEADS,
     EXTRA_CANNONS,
-    FIFTH_SPECIAL
+    FIFTH_SPECIAL;
+
+
+    public static int size()
+    {
+        return values().length;
+    }
 }

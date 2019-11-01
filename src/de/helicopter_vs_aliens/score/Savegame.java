@@ -6,6 +6,7 @@ import de.helicopter_vs_aliens.control.TimesOfDay;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.util.dictionary.Languages;
 
 import java.io.File;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
+import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
 
 public class Savegame implements Serializable
 {
@@ -50,17 +53,17 @@ public class Savegame implements Serializable
 		hitCounter,
 		platingDurabilityFactor,
 		numberOfCannons,
-		levelOfUpgrade[] = new int[6];
+		levelOfUpgrade[] = new int[StandardUpgradeTypes.size()];
 	
 	public long
 		playingTime,
-		recordTime[][] = new long [Helicopter.NR_OF_TYPES][5],
-		scorescreenTimes[] = new long [Helicopter.NR_OF_TYPES];
-	
+		recordTime[][] = new long [HelicopterTypes.size()][NUMBER_OF_BOSS_LEVEL],
+		scorescreenTimes[] = new long [HelicopterTypes.size()];
+
 	public float
 		currentPlating,
 		energy;
-	
+
 	public boolean
 		originalResulution,
 		standardBackgroundMusic,
@@ -70,7 +73,7 @@ public class Savegame implements Serializable
 		hasPiercingWarheads,
 		hasFifthSpecial,
 		noCheatsUsed,
-		reachedLevelTwenty[] = new boolean [Helicopter.NR_OF_TYPES];
+		reachedLevelTwenty[] = new boolean [HelicopterTypes.size()];
 	
 	public HelicopterTypes
 		helicopterType;
