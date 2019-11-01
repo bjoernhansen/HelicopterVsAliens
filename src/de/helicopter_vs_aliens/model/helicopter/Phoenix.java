@@ -38,8 +38,11 @@ public final class Phoenix extends Helicopter
     private int
         enhancedRadiationTimer;
     
+    private long
+            pastTeleportTime;			// Zeitpunkt der letzten Nutzung des Teleporters
+    
     private boolean
-        hasShortrangeRadiation;				// = true: Helikopter verfügt über Nahkampfbestrahlng
+        hasShortrangeRadiation;     	// = true: Helikopter verfügt über Nahkampfbestrahlng
     
     
     @Override
@@ -266,5 +269,12 @@ public final class Phoenix extends Helicopter
     {
         this.enhancedRadiationTimer = 0;
         this.isSearchingForTeleportDestination = false;
+    }
+    
+    @Override
+    public boolean deservesMantisReward(long missileLaunchingTime)
+    {
+        return this.bonusKillsTimer > 0
+                && missileLaunchingTime > this.pastTeleportTime;
     }
 }

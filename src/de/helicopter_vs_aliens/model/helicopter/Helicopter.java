@@ -132,14 +132,12 @@ public abstract class Helicopter extends MovingObject
 		levelOfUpgrade[] = new int[6];		// Upgrade-Level aller 6 StandardUpgrades
 	
 	public long
-        // TODO nach Phoenix
-		pastTeleportTime,					// nur Phönix-Klasse: Zeitpunkt der letzten Nutzung des Teleporters
     	scorescreenTimes[] = new long [5];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float
 		rotorSystem,						// legt die aktuelle Geschwindigkeit des Helikopters fest
 		currentPlating,						// aktuelle Panzerung (immer <= maximale Panzerung)
-    	energy;							// verfügbare Energie;
+    	energy;							    // verfügbare Energie;
     
     int
     	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
@@ -156,16 +154,23 @@ public abstract class Helicopter extends MovingObject
 		// TODO kann evtl. genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
 		isRotorSystemActive,				// = true: Propeller dreht sich / Helikopter fliegt
 		isContiniousFireEnabled,			// = true: Dauerfeuer aktiv
-		isSearchingForTeleportDestination,	// = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
+		
 		isMovingLeft,
-		isPlayedWithoutCheats = true,				// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
+		isPlayedWithoutCheats = true,			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
      	hasMaxUpgradeLevel[] = new boolean[6];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
-     	
+      
     public Point
-    	destination = new Point(), 				// dorthin fliegt der Helikopter
-        // TODO noch Phoenix auslagern
-  		priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
+    	destination = new Point(); 				// dorthin fliegt der Helikopter
+    
+    
+    // TODO noch Phoenix auslagern
+    public Point
+    	priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
+    public boolean
+        isSearchingForTeleportDestination;	    // = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
+    
 	
+    
 	public Point2D
   		location = new Point2D.Float();	        // exakter Aufenthaltsort
     
@@ -1542,5 +1547,10 @@ public abstract class Helicopter extends MovingObject
     public void prepareForMission()
     {
         this.resetRotorPosition();
+    }
+    
+    public boolean deservesMantisReward(long missileLaunchingTime)
+    {
+        return false;
     }
 }

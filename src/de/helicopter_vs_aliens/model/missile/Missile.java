@@ -206,9 +206,7 @@ public class Missile extends MovingObject
 				{
 					enemy.die(controller, helicopter, this, false);
 					
-					if (helicopter.getType() == PHOENIX
-						&& helicopter.bonusKillsTimer > 0
-						&& this.launchingTime > helicopter.pastTeleportTime)
+					if (helicopter.deservesMantisReward(this.launchingTime))
 					{
 						Events.extraReward(1,
 							enemy.getEffectiveStrength() * helicopter.getBonusFactor(),
