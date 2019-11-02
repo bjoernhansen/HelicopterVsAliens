@@ -9,16 +9,13 @@ public enum PriceLevels
     EXTORTIONATE (6);
 
 
-    private static final String[] keySuffixes = {"veryCheap", "cheap", "medium", "expensive", "extortionate"};
+    private static final String[] KEY_SUFFIXES = {"veryCheap", "cheap", "medium", "expensive", "extortionate"};
 
     private int maxUpgradeLevel = 10;
-
-    private String dictionaryKey;
 
 
     PriceLevels()
     {
-        initializeDictionaryKey();
     }
 
     PriceLevels (int maxUpgradeLevel)
@@ -44,11 +41,6 @@ public enum PriceLevels
 
     public String getDictionaryKey()
     {
-        return dictionaryKey;
-    }
-
-    private void initializeDictionaryKey()
-    {
-        dictionaryKey = "priceLevels." + keySuffixes[ordinal()];
+        return "priceLevels." + KEY_SUFFIXES[ordinal()];
     }
 }

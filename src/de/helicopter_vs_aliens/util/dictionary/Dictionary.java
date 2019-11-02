@@ -37,9 +37,6 @@ public final class Dictionary
     private EnumMap<HelicopterTypes, List<String>>
         helicopterInfos = new EnumMap<>(HelicopterTypes.class);
 
-    private EnumMap<PriceLevels, String>
-        priceLevels = new EnumMap<>(PriceLevels.class);
-
 
     public Dictionary()
     {
