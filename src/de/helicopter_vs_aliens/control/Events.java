@@ -589,7 +589,7 @@ public class Events
 					if(helicopter.getType() == OROCHI)
 					{
 						Menu.repairShopButton.get("Special" + 3).costs = Helicopter.STANDARD_SPECIAL_COSTS;
-						Menu.repairShopButton.get("Special" + 3).label = Menu.dictionary.getThirdCannon();
+						Menu.repairShopButton.get("Special" + 3).label = Menu.dictionary.thirdCannon();
 						Menu.repairShopButton.get("Special" + 3).costColor = MyColor.costsColor[REGULAR.ordinal()];
 					}
 					else

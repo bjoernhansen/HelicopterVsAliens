@@ -10,19 +10,48 @@ public enum StandardUpgradeTypes
     FIREPOWER (ROCH),
     FIRE_RATE (KAMAITACHI),
     ENERGY_ABILITY (PEGASUS);
-
-
-    private HelicopterTypes privilegedHelicopter;
-
-
-    public static int size()
+    
+    
+    private static final String[]
+            KEY_SUFFIXES = {"rotorSystem", "missileDrive", "plating", "firepower", "fireRate", "energyAbility"};
+        
+    static
     {
-        return values().length;
+        for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.values())
+        {
+            standardUpgradeType.dictionaryKey = "upgrades.standard." + KEY_SUFFIXES[standardUpgradeType.ordinal()];
+        }
     }
-
+    
+    private String
+            dictionaryKey;
+       
+    
+    public String getDictionaryKey()
+    {
+        return dictionaryKey;
+    }
+    
+    private static final StandardUpgradeTypes[]
+            defensiveCopyOfValues = values();
+    
+    private HelicopterTypes
+            privilegedHelicopter;
+    
+    
     StandardUpgradeTypes(HelicopterTypes privilegedHelicopter)
     {
         this.privilegedHelicopter = privilegedHelicopter;
+    }
+    
+    public static final StandardUpgradeTypes[] getValues()
+    {
+        return defensiveCopyOfValues;
+    }
+    
+    public static int size()
+    {
+        return getValues().length;
     }
 
     HelicopterTypes getPrivilegedHelicopter()

@@ -7,16 +7,23 @@ public enum PriceLevels
     REGULAR,
     EXPENSIVE (8),
     EXTORTIONATE (6);
-
-
+    
+    
     private static final String[] KEY_SUFFIXES = {"veryCheap", "cheap", "medium", "expensive", "extortionate"};
-
-    private int maxUpgradeLevel = 10;
-
-
-    PriceLevels()
+    
+    static
     {
+        for(PriceLevels priceLevel : PriceLevels.values())
+        {
+            priceLevel.dictionaryKey = "priceLevels." + KEY_SUFFIXES[priceLevel.ordinal()];
+        }
     }
+    
+    private int maxUpgradeLevel = 10;
+    private String dictionaryKey;
+
+
+    PriceLevels(){}
 
     PriceLevels (int maxUpgradeLevel)
     {
@@ -41,6 +48,6 @@ public enum PriceLevels
 
     public String getDictionaryKey()
     {
-        return "priceLevels." + KEY_SUFFIXES[ordinal()];
+        return this.dictionaryKey;
     }
 }

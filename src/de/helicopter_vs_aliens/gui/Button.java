@@ -10,12 +10,16 @@ import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
+import java.util.List;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 import static de.helicopter_vs_aliens.control.Events.SPOTLIGHT_COSTS;
+import static de.helicopter_vs_aliens.gui.Menu.dictionary;
 import static de.helicopter_vs_aliens.gui.PriceLevels.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.EXTRA_CANNONS;
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.FIFTH_SPECIAL;
 
 // TODO Vererbung auch für Buttons, Enums für Button-Typen
 
@@ -29,17 +33,8 @@ public class Button
 		
 	private static final Dimension 
 		UPGRADE_BUTTON_SIZE = new Dimension(193, 50);
-	    
+	   
     // Beschriftungen in deutscher und englischer Sprache
-	static final String 
-		REPAIR[] = 			 {"Repair helicopter", "Reparatur durchführen"},
-		PRICE[]	= 			 {"Price: ", "Kosten: "},
-		REPAIR_SHOP[] =		 {"Repair shop", "zur Werkstatt"},
-		MAIN_MENU[] = 		 {"Main menu", "Hauptmenü"},
-		START_NEW_GAME[] = 	 {"Start a new game", "Neues Spiel starten"},
-		QUIT[] = 			 {"Quit", "Spiel beenden"},
-		CANCEL[] = 			 {"Cancel", "zurück"};
-	
 	public static final String[][] 
 		MISSION = 		{{"Start overnight mission", "Start daytime mission"},
                          {"Nachteinsatz starten", "Tageinsatz starten"}},
@@ -79,7 +74,7 @@ public class Button
 				   "Kamaitachi", "Pegasus", "Helios"},
 				  {"Bestzeiten", "Gesamt", "Phönix",  "Roch", "Orochi",
 				   "Kamaitachi", "Pegasus", "Helios"}}};
-
+/*
 	static final String STANDARD_UPGRADE_LABEL[][][]
 			= 	{{{"Improve", "Rotor system"}, 
     			  {"Improve", "Missile drive"}, 
@@ -105,6 +100,7 @@ public class Button
     			  {"Plasma-Rakete", "aufwerten"},
     			  {"EMP-Generator", "steigern"},
     			  {"PU-Generator", "verbessern"}}};
+    			  */
 
 	static final String STARTSCREEN_BUTTON_LABEL[][][]
     		= 	{{{"Informations",  "Highscore", "Contact"}, 
@@ -151,14 +147,14 @@ public class Button
     // Erstellen und Pre-Initialisieren der Buttons
 	static void initializeButtons(Helicopter helicopter)
 	{
-		Menu.repairShopButton.put("RepairButton", new Button(23, 287, 205, 50, REPAIR[Menu.language.ordinal()], PRICE[Menu.language.ordinal()], true, true));
+		Menu.repairShopButton.put("RepairButton", new Button(23, 287, 205, 50, dictionary.repair(), dictionary.price(), true, true));
 		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()], SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0], false, true));
-		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, REPAIR_SHOP[Menu.language.ordinal()], null, false, false));
-		Menu.inGameButton.put("MainMenu",     new Button(897, 431, 121, 25, MAIN_MENU[Menu.language.ordinal()], null, false, false));
-		Menu.inGameButton.put("MMNewGame1",   new Button(385, 116, 211, 35, START_NEW_GAME[Menu.language.ordinal()], null, false, false));
+		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, dictionary.repairShop(), null, false, false));
+		Menu.inGameButton.put("MainMenu",     new Button(897, 431, 121, 25, dictionary.mainMenu(), null, false, false));
+		Menu.inGameButton.put("MMNewGame1",   new Button(385, 116, 211, 35, dictionary.startNewGame(), null, false, false));
 		Menu.inGameButton.put("MMStopMusic",  new Button(385, 161, 211, 35, MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1], null, false, false));
-		Menu.inGameButton.put("MMNewGame2",   new Button(385, 206, 211, 35, QUIT[Menu.language.ordinal()], null, false, false));
-		Menu.inGameButton.put("MMCancel",     new Button(385, 251, 211, 35, CANCEL[Menu.language.ordinal()], null, false, false));
+		Menu.inGameButton.put("MMNewGame2",   new Button(385, 206, 211, 35, dictionary.quit(), null, false, false));
+		Menu.inGameButton.put("MMCancel",     new Button(385, 251, 211, 35, dictionary.cancel(), null, false, false));
 				
 		for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++)
 		{
@@ -169,24 +165,25 @@ public class Button
 												 	 null, false, true));
 		}}
 		// TODO enums verwenden
-		for(int i = 0; i < StandardUpgradeTypes.values().length; i ++)
+		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
 		{
-			Menu.repairShopButton.put( "StandardUpgrade" + i,
-										new Button(	STANDARD_UPGRADE_LOCATION.x, 
-										STANDARD_UPGRADE_LOCATION.y + i * BUTTON_DISTANCE, 
-										UPGRADE_BUTTON_SIZE.width, UPGRADE_BUTTON_SIZE.height, 
-										STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][i][0] + " " 
-										+ STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][i][1],
-										PRICE[Menu.language.ordinal()], true, true));
+			List<String> standardUpgradeLabel = dictionary.standardUpgradesImprovements(standardUpgradeType);
+			
+			Menu.repairShopButton.put( "StandardUpgrade" + standardUpgradeType.ordinal(),
+										new Button(STANDARD_UPGRADE_LOCATION.x,
+										STANDARD_UPGRADE_LOCATION.y + standardUpgradeType.ordinal() * BUTTON_DISTANCE,
+										UPGRADE_BUTTON_SIZE.width, UPGRADE_BUTTON_SIZE.height,
+										String.join(" ", standardUpgradeLabel),
+										dictionary.price(), true, true));
 		}
 		for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
 		{
 			int i = specialUpgradeType.ordinal();
 			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50,
-																Menu.dictionary.getSpecialUpgrade(specialUpgradeType),
-																PRICE[Menu.language.ordinal()],
-														true,
-														true));
+																dictionary.specialUpgrade(specialUpgradeType),
+																dictionary.price(),
+																true,
+																true));
 		}
 		for(int m = 0; m < 8; m++)
 		{				
@@ -197,7 +194,7 @@ public class Button
 		Menu.startscreenButton.get("11").marked = true;   // Der "Letztes Spiel fortsetzen"-Button ist markiert
 		Menu.startscreenButton.get("11").enabled = Controller.savegame.valid;
 		
-		Menu.startscreenMenuButton.put("Cancel", new Button( 849, 410, 150, 30, CANCEL[Menu.language.ordinal()], null, false, true));
+		Menu.startscreenMenuButton.put("Cancel", new Button( 849, 410, 150, 30, Menu.dictionary.cancel(), null, false, true));
 
 		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
 		{
@@ -221,10 +218,8 @@ public class Button
 				Menu.repairShopButton.get("StandardUpgrade" + i).costColor = MyColor.costsColor[helicopter.upgradeCosts[i]];
 			}
     	}
-		Menu.repairShopButton.get("StandardUpgrade" + 5).label
-			= STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][6 + helicopter.getType().ordinal()][0]
-			  + " " 
-			  + STANDARD_UPGRADE_LABEL[Menu.language.ordinal()][6 + helicopter.getType().ordinal()][1];
+		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();
+		Menu.repairShopButton.get("StandardUpgrade" + 5).label = String.join(" ", standardUpgradeLabel);
 		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden
 		Menu.repairShopButton.get("Special" + 0).costs = SPOTLIGHT_COSTS;
 		Menu.repairShopButton.get("Special" + 0).costColor = MyColor.costsColor[CHEAP.ordinal()];
@@ -234,10 +229,10 @@ public class Button
 		Menu.repairShopButton.get("Special" + 2).costColor = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
 		Menu.repairShopButton.get("Special" + 3).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
 		Menu.repairShopButton.get("Special" + 3).costColor = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
-		Menu.repairShopButton.get("Special" + 3).label = Menu.dictionary.getSecondCannon();
+		Menu.repairShopButton.get("Special" + 3).label = dictionary.extraCannons();
 		Menu.repairShopButton.get("Special" + 4).costs = helicopter.getType() != ROCH ? Helicopter.CHEAP_SPECIAL_COSTS : Roch.JUMBO_MISSILE_COSTS ;
 		Menu.repairShopButton.get("Special" + 4).costColor = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[CHEAP.ordinal()];
-		Menu.repairShopButton.get("Special" + 4).label = Menu.dictionary.getFifthSpecial();
+		Menu.repairShopButton.get("Special" + 4).label = dictionary.fifthSpecial();
 	}
 	
 	void paint(Graphics2D g2d){paint(g2d, null, false);}

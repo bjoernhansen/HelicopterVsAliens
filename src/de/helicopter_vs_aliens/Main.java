@@ -21,6 +21,8 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
+
+// TODO für alle Enum-Klassen die Nutzung von Values ersetzen durch getValues (siehe HelicopterTypes) falls in jedem Schritt verwendet
 public class Main
 {
 	public static final Dimension

@@ -1,14 +1,17 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
+import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevels;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 
 
@@ -30,6 +33,9 @@ public final class Dictionary
 
     private EnumMap<SpecialUpgradeTypes, String>
         specialUpgrades = new EnumMap<>(SpecialUpgradeTypes.class);
+    
+    private EnumMap<StandardUpgradeTypes, List<String>>
+            standardUpgradesImprovements = new EnumMap<>(StandardUpgradeTypes.class);
 
     private EnumMap<HelicopterTypes, String>
         helicopterNames = new EnumMap<>(HelicopterTypes.class);
@@ -37,7 +43,10 @@ public final class Dictionary
     private EnumMap<HelicopterTypes, List<String>>
         helicopterInfos = new EnumMap<>(HelicopterTypes.class);
 
-
+    private List <String>
+        columnNames = new ArrayList<>();
+    
+    
     public Dictionary()
     {
         this(Languages.getDefault(), HelicopterTypes.getDefault());
@@ -100,12 +109,20 @@ public final class Dictionary
 
     private void accountForLanguageChange()
     {
-        specialUpgrades.put(SPOTLIGHT, this.languageProperties.getProperty("upgrades.special.spotlight"));
-        specialUpgrades.put(GOLIATH_PLATING, this.languageProperties.getProperty("upgrades.special.goliath"));
-        specialUpgrades.put(PIERCING_WARHEADS, this.languageProperties.getProperty("upgrades.special.warheads"));
-        specialUpgrades.put(EXTRA_CANNONS, this.languageProperties.getProperty("upgrades.special.secondCannon"));
-
-        for(HelicopterTypes type : HelicopterTypes.values())
+        for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
+        {
+            if(specialUpgradeType == SpecialUpgradeTypes.FIFTH_SPECIAL){break;}
+            specialUpgrades.put(specialUpgradeType, this.languageProperties.getProperty(specialUpgradeType.getDictionaryKey()));
+        }
+    
+        for(StandardUpgradeTypes standardUpgradeType: StandardUpgradeTypes.getValues())
+        {
+            if(standardUpgradeType == StandardUpgradeTypes.ENERGY_ABILITY){break;}
+            String dictionaryKeyPraefix = standardUpgradeType.getDictionaryKey()+ ".";
+            standardUpgradesImprovements.put(standardUpgradeType, getImprovementsStringList(dictionaryKeyPraefix));
+        }
+        
+        for(HelicopterTypes type : HelicopterTypes.getValues())
         {
             helicopterNames.put(type, this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".name"));
             List<String> infos = new ArrayList<>();
@@ -115,82 +132,150 @@ public final class Dictionary
             }
             helicopterInfos.put(type, infos);
         }
+        
+        for(int i = 0; i < Menu.NUMBER_OF_COLUMN_NAMES; i++)
+        {
+            columnNames.add(this.languageProperties.getProperty("highscore.columnNames." + i));
+        }
+        
         accountForHelicopterChange();
     }
 
     private void accountForHelicopterChange()
     {
-        specialUpgrades.put(FIFTH_SPECIAL, determineFifthSpecial());
-    }
-
-    private String determineFifthSpecial()
-    {
-        return this.languageProperties.getProperty("upgrades.special.fifth." + this.helicopterType.getSpecialUpgrade());
-    }
-
-    public Languages getLanguage() {
-        return language;
+        specialUpgrades.put(FIFTH_SPECIAL, getFifthSpecial());
+        standardUpgradesImprovements.put(ENERGY_ABILITY, determineEnergyAbility());
     }
     
-    /** Textausgaben **/
-    public EnumMap<SpecialUpgradeTypes, String> getSpecialUpgrades()
+    private String getFifthSpecial()
     {
-        return specialUpgrades;
+        return this.languageProperties.getProperty(this.helicopterType.getFifthSpecialdictionaryKey());
     }
     
-    public String getSpecialUpgrade(SpecialUpgradeTypes specialUpgradeType)
+    private List<String> determineEnergyAbility()
+    {
+        String dictionaryKeyPraefix = String.format("%s.%s.", ENERGY_ABILITY.getDictionaryKey(), helicopterType.getDesignation());
+        return getImprovementsStringList(dictionaryKeyPraefix);
+    }
+    
+    private List<String> getImprovementsStringList(String dictionaryKeyPraefix)
+    {
+        List<String> improvements = new ArrayList<>();
+        for(int i = 1; i <= 2; i++)
+        {
+            improvements.add(this.languageProperties.getProperty(dictionaryKeyPraefix + i));
+        }
+        return improvements;
+    }
+    
+    public String specialUpgrade(SpecialUpgradeTypes specialUpgradeType)
     {
         return specialUpgrades.get(specialUpgradeType);
     }
-
-    // TODO MEthoden zusammenführen: getSpecialUprade(specialUpgradeType)
-    public String getSpotlight()
-    {
-        return specialUpgrades.get(SPOTLIGHT);
-    }
-
-    public String getGoliathPlating()
-    {
-        return specialUpgrades.get(GOLIATH_PLATING);
-    }
-
-    public String getPiercingWarheads()
-    {
-        return specialUpgrades.get(PIERCING_WARHEADS);
-    }
-
-    public String getSecondCannon()
+    
+    public String extraCannons()
     {
         return specialUpgrades.get(EXTRA_CANNONS);
     }
-
-    public String getFifthSpecial()
+    
+    public String fifthSpecial()
     {
         return specialUpgrades.get(FIFTH_SPECIAL);
     }
-
-    public String getThirdCannon()
+    
+    
+    public String thirdCannon()
     {
         return this.languageProperties.getProperty("thirdCannon");
     }
-
-    public String getHelicopterName(HelicopterTypes type)
+    
+    public String secondAndThirdCannon()
+    {
+        return this.languageProperties.getProperty("secondAndThirdCannon");
+    }
+    
+    public String playingTime()
+    {
+        return this.languageProperties.getProperty("playingTime");
+    }
+    
+    public String level()
+    {
+        return this.languageProperties.getProperty("level");
+    }
+    
+    public String repair()
+    {
+        return this.languageProperties.getProperty("repair");
+    }
+    
+    public String price()
+    {
+        return this.languageProperties.getProperty("price");
+    }
+    
+    public String repairShop()
+    {
+        return this.languageProperties.getProperty("repairShop");
+    }
+    
+    public String mainMenu()
+    {
+        return this.languageProperties.getProperty("mainMenu");
+    }
+    
+    public String startNewGame()
+    {
+        return this.languageProperties.getProperty("startNewGame");
+    }
+    
+    public String quit()
+    {
+        return this.languageProperties.getProperty("quit");
+    }
+    
+    public String cancel()
+    {
+        return this.languageProperties.getProperty("cancel");
+    }
+    
+    public String helicopterName(HelicopterTypes type)
     {
         return this.helicopterNames.get(type);
     }
 
-    public List<String> getHelicopterInfos(HelicopterTypes type)
+    public List<String> helicopterInfos(HelicopterTypes type)
     {
         return this.helicopterInfos.get(type);
     }
     
-    public String getTypeName(HelicopterTypes type)
+    public String typeName(HelicopterTypes type)
     {
-        return this.getHelicopterName(type) + this.languageProperties.getProperty("type");
+        return this.helicopterName(type) + this.languageProperties.getProperty("type");
     }
 
-    public String getPrice(PriceLevels priceLevel)
+    public String priceLevel(PriceLevels priceLevel)
     {
         return this.languageProperties.getProperty(priceLevel.getDictionaryKey());
+    }
+    
+    public List<String> columnNames()
+    {
+        return this.columnNames;
+    }
+    
+    public List<String> standardUpgradesImprovements(StandardUpgradeTypes standardUpgradeType)
+    {
+        return standardUpgradesImprovements.get(standardUpgradeType);
+    }
+    
+    public List<String> energyAbilityImprovements()
+    {
+        return standardUpgradesImprovements.get(ENERGY_ABILITY);
+    }
+    
+    public String standardUpgradeName(StandardUpgradeTypes standardUpgradeType)
+    {
+        return standardUpgradesImprovements.get(standardUpgradeType).get(language.getObjectPosition());
     }
 }

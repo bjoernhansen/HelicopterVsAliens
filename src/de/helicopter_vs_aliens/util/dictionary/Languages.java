@@ -3,9 +3,10 @@ package de.helicopter_vs_aliens.util.dictionary;
 
 public enum Languages
 {
-    ENGLISH("en"),
-    GERMAN("de");
+    ENGLISH("en", 1),
+    GERMAN("de", 0);
     
+    private int objectPosition;
     private String code;
 
     public static Languages getDefault()
@@ -13,11 +14,17 @@ public enum Languages
         return ENGLISH;
     }
 
-    Languages(String code)
+    Languages(String code, int objectPosition)
     {
         this.code = code;
+        this.objectPosition = objectPosition;
     }
 
+    int getObjectPosition()
+    {
+        return this.objectPosition;
+    }
+    
     String getCode()
     {
         return this.code;

@@ -27,6 +27,7 @@ import static de.helicopter_vs_aliens.control.Events.START;
 import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.MISSILE_DRIVE;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ROTOR_SYSTEM;
@@ -40,18 +41,20 @@ public class Menu
 		VERSION =   "Version 1.3.4",			// Spielversion
 		GAME_NAME = "Helicopter vs. Aliens";
 	
-	private static final int
-		SCORESCREEN_SPACE_BETWEEN_ROWS = 30, 
-    	SCORESCREEN_X_POS_1 = 351, 
-    	SCORESCREEN_X_POS_2 = 633, 
-    	SCORESCREEN_Y_POS = 129,    	
-    			
-        SETTING_LEFT = 80,
-        SETTING_COLUMN_SPACING = 145,
-        SETTING_LINE_SPACING = 40,
-        SETTING_TOP = 130,
-
-		DISABLED = -1;
+	public static final int
+		NUMBER_OF_COLUMN_NAMES = 8;
+    
+    private static final int SCORESCREEN_SPACE_BETWEEN_ROWS = 30;
+    private static final int SCORESCREEN_X_POS_1 = 351;
+    private static final int SCORESCREEN_X_POS_2 = 633;
+    private static final int SCORESCREEN_Y_POS = 129;
+    
+    private static final int SETTING_LEFT = 80;
+    private static final int SETTING_COLUMN_SPACING = 145;
+    private static final int SETTING_LINE_SPACING = 40;
+    private static final int SETTING_TOP = 130;
+    
+    private static final int DISABLED = -1;
 	
 	public static final Point
 		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262);
@@ -109,43 +112,7 @@ public class Menu
   
 	public static final EnumMap<HelicopterTypes, Helicopter>
 		helicopterDummies = new EnumMap<>(HelicopterTypes.class);
-	
-	static final String PRICE_LEVELS[][] =
-    	{{	"very cheap", 
-    		"cheap",
-    		"medium", 
-    		"expensive", 			
-    		"extortionate"},
-    	{	"sehr güstig",
-    		"günstig",
-    		"normal",		
-    		"teuer",
-    		"sehr teuer"}};
-
-	static final String HIGHSCORE_COLUMN_NAME[][] =
-		{{	"Rank", 					
-			"Player", 
-    		"Type", 			
-    		"Max Level", 
-    		"Playing time", 		
-    		"Crashs", 
-    		"Repairs", 		
-    		"Bonuses"},
-    	{	"Rang",					
-    		"Spieler",
-    		"Typ",			
-    		"Höchstlevel",
-    		"Spielzeit",			
-    		"Abstürze",
-    		"Reparaturen",			
-    		"Extra-Boni"}};
-
-	static final String
-		SECOND_AND_THIRD_CANNON[] = {"Second and third cannon",
-                               		 "zweite und dritte Boardkanone"},
-		PLAYING_TIME[] =			{"Playing time: ", "Spielzeit: "},
-		LEVEL[] =					{"Level", "Stufe"};
-        
+	 	
     // Menu Objects
     public static String
 			repairShopTime;
@@ -172,7 +139,7 @@ public class Menu
     
     public static void initializeMenu(Helicopter helicopter)
     {
-    	for(HelicopterTypes helicopterType : HelicopterTypes.values())
+    	for(HelicopterTypes helicopterType : HelicopterTypes.getValues())
 		{
 			helicopterDummies.put(helicopterType, HelicopterFactory.create(helicopterType));
 		}
@@ -226,7 +193,7 @@ public class Menu
     	paintFrame(g2d,363, 77, 256, 231, MyColor.golden);
         g2d.setColor(MyColor.red);
         g2d.setFont(fontProvider.getPlain(25));
-        g2d.drawString(Button.MAIN_MENU[language.ordinal()], 422 + (language == ENGLISH ? 6 : 0), 106);
+        g2d.drawString(dictionary.mainMenu(), 422 + (language == ENGLISH ? 6 : 0), 106);
         inGameButton.get("MMNewGame1").paint(g2d);
         inGameButton.get("MMStopMusic").paint(g2d);
         inGameButton.get("MMNewGame2").paint(g2d);
@@ -263,7 +230,7 @@ public class Menu
 			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
-				Events.nextHelicopterType = HelicopterTypes.values()[(i + helicopterSelection)%HelicopterTypes.size()];
+				Events.nextHelicopterType = HelicopterTypes.getValues()[(i + helicopterSelection)%HelicopterTypes.size()];
 				Helicopter helicopterDummy = helicopterDummies.get(Events.nextHelicopterType);
 				if(Events.hasSelectedHelicopterChanged())
 				{
@@ -321,16 +288,16 @@ public class Menu
             else{g2d.setColor(MyColor.lightGray);}       	
         	g2d.setFont(fontProvider.getBold(20));
         	
-        	String className = Menu.dictionary.getTypeName(HelicopterTypes.values()[(helicopterSelection +i)%HelicopterTypes.size()]);
+        	String className = Menu.dictionary.typeName(HelicopterTypes.getValues()[(helicopterSelection +i)%HelicopterTypes.size()]);
         	int sw = g2d.getFontMetrics().stringWidth(className);
         	g2d.drawString(className, 30 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE + (206-sw)/2, 225 + STARTSCREEN_HELICOPTER_OFFSET_Y);
         	
         	g2d.setFont(new Font("Dialog", Font.BOLD, 15));
         	
-        	HelicopterTypes type = HelicopterTypes.values()[(helicopterSelection +i)%HelicopterTypes.size()];
+        	HelicopterTypes type = HelicopterTypes.getValues()[(helicopterSelection +i)%HelicopterTypes.size()];
         	for(int j = 0; j < 3; j++)
 			{
-				g2d.drawString(Menu.dictionary.getHelicopterInfos(type).get(j), 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + j * 20 + STARTSCREEN_HELICOPTER_OFFSET_Y);
+				g2d.drawString(Menu.dictionary.helicopterInfos(type).get(j), 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + j * 20 + STARTSCREEN_HELICOPTER_OFFSET_Y);
 			}
         	
           
@@ -338,7 +305,7 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.darkBlue);
             }
-            helicopterDummies.get(HelicopterTypes.values()[(helicopterSelection +i)%HelicopterTypes.size()]).startScreenPaint(
+            helicopterDummies.get(HelicopterTypes.getValues()[(helicopterSelection +i)%HelicopterTypes.size()]).startScreenPaint(
             	g2d,
 				HELICOPTER_STARTSCREEN_OFFSET.x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
 				HELICOPTER_STARTSCREEN_OFFSET.y + STARTSCREEN_HELICOPTER_OFFSET_Y);
@@ -346,7 +313,7 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], MyColor.translucentBlack);
             }
-            if(Events.allPlayable || HelicopterTypes.values()[(helicopterSelection + i)%HelicopterTypes.size()].isUnlocked())
+            if(Events.allPlayable || HelicopterTypes.getValues()[(helicopterSelection + i)%HelicopterTypes.size()].isUnlocked())
             {
             	paintTickmark(g2d, i, 210, 323, 15, 20);
             }
@@ -422,7 +389,7 @@ public class Menu
         {
         	if(page > 1 && page < 2 + HelicopterTypes.size())
         	{
-				helicopterDummies.get(HelicopterTypes.values()[page-2]).startScreenMenuPaint(g2d);
+				helicopterDummies.get(HelicopterTypes.getValues()[page-2]).startScreenMenuPaint(g2d);
         	}
         	else if(page == 1)
         	{
@@ -436,18 +403,20 @@ public class Menu
             			if(j == 0 && i != 0)
             			{
             				g2d.setColor(MyColor.golden);
-            				tempString = Button.STANDARD_UPGRADE_LABEL[language.ordinal()][i-1][1-language.ordinal()];
+            				// TODO 1-language.ordinal , das geht besser
+                            StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.getValues()[i-1];
+            				tempString = dictionary.standardUpgradeName(standardUpgradeType);
             			}
             			else if(j != 0 && i == 0)
             			{
-            				g2d.setColor(MyColor.brightenUp(HelicopterTypes.values()[j-1].getStandardPrimaryHullColor()));
-            				tempString = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[j-1]);
+            				g2d.setColor(MyColor.brightenUp(HelicopterTypes.getValues()[j-1].getStandardPrimaryHullColor()));
+            				tempString = Menu.dictionary.helicopterName(HelicopterTypes.getValues()[j-1]);
             			}
             			else if(i != 0)
             			{
-            				int upgradeCosts = HelicopterTypes.values()[j-1].getUpgradeCosts(i-1);
+            				int upgradeCosts = HelicopterTypes.getValues()[j-1].getUpgradeCosts(i-1);
             				g2d.setColor(MyColor.costsColor[upgradeCosts]);
-            				tempString = PRICE_LEVELS[language.ordinal()][upgradeCosts];
+            				tempString = dictionary.priceLevel(PriceLevels.values()[upgradeCosts]);
             			}
             			g2d.drawString(tempString, 200 + (j-1) * 135, 140 + (i == 0 ? 0 : 5) + (i-1) * 32);
             		}
@@ -471,8 +440,8 @@ public class Menu
             			}
             			else if(j != 0 && i==0)
             			{
-            				g2d.setColor(MyColor.brightenUp(HelicopterTypes.values()[j-1].getStandardPrimaryHullColor()));
-            				tempString = Menu.dictionary.getHelicopterName(HelicopterTypes.values()[j-1]);
+            				g2d.setColor(MyColor.brightenUp(HelicopterTypes.getValues()[j-1].getStandardPrimaryHullColor()));
+            				tempString = Menu.dictionary.helicopterName(HelicopterTypes.getValues()[j-1]);
             			}
             			else if(i != 0)
             			{
@@ -495,16 +464,16 @@ public class Menu
         	{
         		if(page > 1 && page < 2 + HelicopterTypes.size())
             	{
-					helicopterDummies.get(HelicopterTypes.values()[page-2]).startScreenMenuPaint(g2d);
+					helicopterDummies.get(HelicopterTypes.getValues()[page-2]).startScreenMenuPaint(g2d);
             	}        		
         		int columnDistance = 114/*135*/, topLine = 125, lineDistance = 21, leftColumn = 55, realLeftColumn = leftColumn, xShift = 10;
         		    			
         		g2d.setColor(Color.lightGray);    			
-        		for(int i = 0; i < 8; i++)
+        		for(int i = 0; i < NUMBER_OF_COLUMN_NAMES; i++)
     			{
     				if(i == 1){realLeftColumn = leftColumn - 46;}
     				else if(i == 2){realLeftColumn = leftColumn + 42;}
-    				g2d.drawString(HIGHSCORE_COLUMN_NAME[language.ordinal()][i], 	realLeftColumn + i * columnDistance, topLine - lineDistance);
+    				g2d.drawString(dictionary.columnNames().get(i), 	realLeftColumn + i * columnDistance, topLine - lineDistance);
     			}
     			
         		for(int j = 0; j < HighscoreEntry.NUMBER_OF_ENTRIES; j++)
@@ -517,7 +486,7 @@ public class Menu
         				g2d.drawString(toStringWithSpace(j+1, false), leftColumn + xShift , topLine + j * lineDistance);
         				g2d.drawString(tempEntry.playerName, leftColumn - 46 + xShift + columnDistance, topLine + j * lineDistance);
         				g2d.setColor(MyColor.brightenUp(tempEntry.helicopterType.getStandardPrimaryHullColor()));
-						g2d.drawString(Menu.dictionary.getHelicopterName(tempEntry.helicopterType),   realLeftColumn + xShift + 2 * columnDistance, topLine + j * lineDistance);
+						g2d.drawString(Menu.dictionary.helicopterName(tempEntry.helicopterType),   realLeftColumn + xShift + 2 * columnDistance, topLine + j * lineDistance);
         				g2d.setColor(tempEntry.maxLevel > 50 ? MyColor.HS_GREEN : MyColor.HS_RED);
         				int printLevel = tempEntry.maxLevel > 50 ? 50 : tempEntry.maxLevel;
         				g2d.drawString(toStringWithSpace(printLevel), realLeftColumn + xShift + 3 * columnDistance, topLine + j * lineDistance);
@@ -623,7 +592,7 @@ public class Menu
         g2d.drawString((language == ENGLISH ? "Credit: " : "Guthaben: ") + Events.money + " €", 27, 35);
         g2d.drawString((language == ENGLISH ? "Current level: " : "aktuelles Level: ") + Events.level, 562, 35);
         g2d.setFont(fontProvider.getPlain(18));
-        g2d.drawString(PLAYING_TIME[language.ordinal()] + repairShopTime, 27, 75);
+        g2d.drawString(dictionary.playingTime() + repairShopTime, 27, 75);
               
         // Helicopter-Anzeige
         paintHelicopterDisplay(g2d, helicopter, 0, 10); //58
@@ -661,10 +630,13 @@ public class Menu
         }
         
         // Standard-Upgrades
-        for(int i = 0; i < 6; i++)
+        for(int i = 0; i < StandardUpgradeTypes.size(); i++)
         {
-        	g2d.setColor(MyColor.lightOrange);        
-            g2d.drawString(Button.STANDARD_UPGRADE_LABEL[language.ordinal()][helicopter.abilityId(i)][1-language.ordinal()] + ":",
+        	g2d.setColor(MyColor.lightOrange);
+    
+            StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.getValues()[i];
+			String tempString = dictionary.standardUpgradeName(standardUpgradeType);
+            g2d.drawString(tempString + ":",
             			   STATUS_BAR_X1, 
             			   STANDUP_OFFSET_Y + 25 + i * 25);        
            
@@ -679,29 +651,30 @@ public class Menu
             else{g2d.setColor(Color.white);}            
             if(i == ENERGY_ABILITY.ordinal() && helicopter.getType() == OROCHI)
             {
-            	g2d.drawString(LEVEL[language.ordinal()] + " " + helicopter.levelOfUpgrade[i] + " / " + (helicopter.levelOfUpgrade[1]-1), STATUS_BAR_X2, STANDUP_OFFSET_Y + 150);
+            	g2d.drawString(dictionary.level() + " " + helicopter.levelOfUpgrade[i] + " / " + (helicopter.levelOfUpgrade[1]-1), STATUS_BAR_X2, STANDUP_OFFSET_Y + 150);
             }
-            else{g2d.drawString(LEVEL[language.ordinal()] + " " + (helicopter.levelOfUpgrade[i]), STATUS_BAR_X2, STANDUP_OFFSET_Y + 25 + i * 25);}
+            else{g2d.drawString(dictionary.level() + " " + (helicopter.levelOfUpgrade[i]), STATUS_BAR_X2, STANDUP_OFFSET_Y + 25 + i * 25);}
         }
         
-        // Spezial-Upgrades        
+        // Spezial-Upgrades
+		// TODO überprüfen, ob iterieren über eine Schliefe möglich ist
         if(helicopter.hasSpotlights)
         {            
             g2d.setColor(MyColor.golden);
-            g2d.drawString(dictionary.getSpotlight(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 0);
+            g2d.drawString(dictionary.specialUpgrade(SPOTLIGHT), STATUS_BAR_X1, SPECUP_OFFSET_Y + 0);
         }       
         if(helicopter.hasGoliathPlating())
         {            
             g2d.setColor(MyColor.golden);
-            g2d.drawString(dictionary.getGoliathPlating(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 25);
+            g2d.drawString(dictionary.specialUpgrade(GOLIATH_PLATING), STATUS_BAR_X1, SPECUP_OFFSET_Y + 25);
         }       
         if(helicopter.hasPiercingWarheads)
         {            
             g2d.setColor(MyColor.golden);
-            g2d.drawString(dictionary.getPiercingWarheads(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 50);
+            g2d.drawString(dictionary.specialUpgrade(PIERCING_WARHEADS), STATUS_BAR_X1, SPECUP_OFFSET_Y + 50);
         }
         if(helicopter.numberOfCannons >= 2)
-        {            
+        {
             if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
             {
             	g2d.setColor(Color.white);
@@ -709,11 +682,11 @@ public class Menu
             else{g2d.setColor(MyColor.golden);}
             if(helicopter.numberOfCannons == 3)
             {
-            	g2d.drawString(SECOND_AND_THIRD_CANNON[language.ordinal()], STATUS_BAR_X1, SPECUP_OFFSET_Y + 75);
+            	g2d.drawString(dictionary.secondAndThirdCannon(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 75);
             }
             else
             {
-            	g2d.drawString(dictionary.getSecondCannon(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 75);
+            	g2d.drawString(dictionary.specialUpgrade(EXTRA_CANNONS), STATUS_BAR_X1, SPECUP_OFFSET_Y + 75);
             }
         }
         if(helicopter.hasFifthSpecial())
@@ -723,11 +696,11 @@ public class Menu
             if(helicopter.getType() == PHOENIX || helicopter.getType() == PEGASUS)
             {
             	if(!helicopter.isFifthSpecialOnMaximumStrength()){g2d.setColor(Color.white);}
-            	g2d.drawString(dictionary.getFifthSpecial() + " (" + LEVEL[language.ordinal()] + " " + (helicopter.levelOfUpgrade[helicopter.getType() == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	g2d.drawString(dictionary.specialUpgrade(FIFTH_SPECIAL) + " (" + dictionary.level() + " " + (helicopter.levelOfUpgrade[helicopter.getType() == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
             else
             {
-            	g2d.drawString(dictionary.getFifthSpecial(), STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	g2d.drawString(dictionary.specialUpgrade(FIFTH_SPECIAL), STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
         }
         
@@ -1089,7 +1062,7 @@ public class Menu
 		}   
 		else if(specialInfoSelection == 13)
 		{
-			infoString = Menu.dictionary.getTypeName(helicopter.getType());
+			infoString = Menu.dictionary.typeName(helicopter.getType());
 		}
 		else if(specialInfoSelection == 14)
 		{
@@ -1213,7 +1186,7 @@ public class Menu
     {
     	g2d.setColor(Color.white);        
         g2d.setFont(fontProvider.getPlain(18));
-        String outputstring = PLAYING_TIME[language.ordinal()] + returnTimeDisplayText(zeit);
+        String outputstring = dictionary.playingTime() + returnTimeDisplayText(zeit);
         g2d.drawString(outputstring, language == ENGLISH ? 646 : 661, 450);
     }
     
@@ -1260,7 +1233,7 @@ public class Menu
         paintFrame(g2d, 26 + x,  85 + y, 200, 173, window  != GAME ? null : MyColor.lightestGray);
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getBold(20));
-        String typeName = Menu.dictionary.getTypeName(helicopter.getType());
+        String typeName = Menu.dictionary.typeName(helicopter.getType());
         g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 113 + y);
         
         helicopter.paint(g2d, 59 + x, 141 + y);
@@ -1435,17 +1408,17 @@ public class Menu
 		
 	public static void updateButtonLabels(Helicopter helicopter)
 	{
-		repairShopButton.get("RepairButton").label = Button.REPAIR[language.ordinal()];
-		repairShopButton.get("RepairButton").secondLabel = Button.PRICE[language.ordinal()];
+		repairShopButton.get("RepairButton").label = dictionary.repair();
+		repairShopButton.get("RepairButton").secondLabel = dictionary.price();
 		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()];
 		repairShopButton.get("Einsatz").secondLabel = Button.SOLD[language.ordinal()][Events.timeOfDay.ordinal()];
 		
-		inGameButton.get("RepairShop").label =  Button.REPAIR_SHOP[language.ordinal()];
-		inGameButton.get("MainMenu").label =    Button.MAIN_MENU[language.ordinal()];
-		inGameButton.get("MMNewGame1").label =  Button.START_NEW_GAME[language.ordinal()];
+		inGameButton.get("RepairShop").label =  dictionary.repairShop();
+		inGameButton.get("MainMenu").label =    dictionary.mainMenu();
+		inGameButton.get("MMNewGame1").label =  dictionary.startNewGame();
 		inGameButton.get("MMStopMusic").label = Button.MUSIC[language.ordinal()][Audio.isSoundOn ? 0 : 1];
-		inGameButton.get("MMNewGame2").label =  Button.QUIT[language.ordinal()];
-		inGameButton.get("MMCancel").label =    Button.CANCEL[language.ordinal()];
+		inGameButton.get("MMNewGame2").label =  dictionary.quit();
+		inGameButton.get("MMCancel").label =    dictionary.cancel();
 				
 		for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++)
 		{
@@ -1458,33 +1431,31 @@ public class Menu
 			startscreenMenuButton.get(Integer.toString(m)).label =
 				Button.STARTSCREEN_MENU_BUTTON[language.ordinal()][2][m];
 		}
-		startscreenMenuButton.get("Cancel").label = Button.CANCEL[language.ordinal()];
+		startscreenMenuButton.get("Cancel").label = dictionary.cancel();
 
 		// TODO mit enums arbeiten
-		for(int i = 0; i < StandardUpgradeTypes.values().length; i ++)
+		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
 		{
-			repairShopButton.get("StandardUpgrade" + i).label =
-				Button.STANDARD_UPGRADE_LABEL[language.ordinal()][i][0] + " " +
-				Button.STANDARD_UPGRADE_LABEL[language.ordinal()][i][1];
-			repairShopButton.get("StandardUpgrade" + i).secondLabel =
-				Button.PRICE[language.ordinal()];
+			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).label =
+				String.join(" ", dictionary.standardUpgradesImprovements(standardUpgradeType));
+			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).secondLabel =
+				dictionary.price();
 		}
 	
 		for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
 		{
 			int i = specialUpgradeType.ordinal();
-			repairShopButton.get("Special" + i).label = dictionary.getSpecialUpgrade(specialUpgradeType);
-			repairShopButton.get("Special" + i).secondLabel = Button.PRICE[language.ordinal()];
+			repairShopButton.get("Special" + i).label = dictionary.specialUpgrade(specialUpgradeType);
+			repairShopButton.get("Special" + i).secondLabel = dictionary.price();
 		}		
 		if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
 		{
-			repairShopButton.get("Special" + 3).label  = dictionary.getThirdCannon();
+			repairShopButton.get("Special" + 3).label  = dictionary.thirdCannon();
 		}
 		// TODO wieso nochmal? in schleife schon passiert
-		repairShopButton.get("Special" + 4).label = dictionary.getFifthSpecial();
+		//repairShopButton.get("Special" + 4).label = dictionary.specialUpgrade(FIFTH_SPECIAL);
 	}
-
-	
+ 
 	static void identifyHighlightedButtons(Helicopter helicopter, HashMap<String, Button> buttons)
 	{
     	if(	highlightedButton.equals("")
@@ -1649,16 +1620,16 @@ public class Menu
 		{			
 			if(language == ENGLISH)
 			{
-				message[0] = Menu.dictionary.getHelicopterName(helicopterType) + " type helicopters are not available yet.";
+				message[0] = Menu.dictionary.helicopterName(helicopterType) + " type helicopters are not available yet.";
 				message[1] = "They will be unlocked after you reached level 20 with a";
-				message[2] = Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(0)) + " or a " + Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(1)) + " type helicopter for the first time.";
+				message[2] = Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(0)) + " or a " + Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(1)) + " type helicopter for the first time.";
 				message[3] = "";
 			}
 			else
 			{
-				message[0] = "Die " +  Menu.dictionary.getHelicopterName(helicopterType) + "-Klasse ist noch nicht verfügbar.";
+				message[0] = "Die " +  Menu.dictionary.helicopterName(helicopterType) + "-Klasse ist noch nicht verfügbar.";
 				message[1] = "Sie wird freigeschaltet, sobald Sie erstmalig mit der" ;
-				message[2] = Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(0)) + "- oder der " + Menu.dictionary.getHelicopterName(helicopterType.getUnlockerTypes().get(1)) + "-Klasse Level 20 erreicht haben.";
+				message[2] = Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(0)) + "- oder der " + Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(1)) + "-Klasse Level 20 erreicht haben.";
 				message[3] = "";   
 			}			
 		}
@@ -3135,13 +3106,13 @@ public class Menu
 	    		repairShopButton.get("Special" + 3).costs = 0;
 	    		if(helicopter.numberOfCannons == 3)
 	    		{
-	    			repairShopButton.get("Special" + 3).label = dictionary.getThirdCannon();
+	    			repairShopButton.get("Special" + 3).label = dictionary.thirdCannon();
 	    		}
 	    	}
 	    	else
 	    	{
 	    		repairShopButton.get("Special" + 3).costs = 125000;
-	    		repairShopButton.get("Special" + 3).label = dictionary.getThirdCannon();
+	    		repairShopButton.get("Special" + 3).label = dictionary.thirdCannon();
 	    	}
 		}
 		if(helicopter.hasFifthSpecial())

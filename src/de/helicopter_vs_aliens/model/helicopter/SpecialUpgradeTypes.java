@@ -6,10 +6,22 @@ public enum SpecialUpgradeTypes {
     PIERCING_WARHEADS,
     EXTRA_CANNONS,
     FIFTH_SPECIAL;
-
-
-    public static int size()
+    
+    private static final String[] KEY_SUFFIXES = {"spotlight", "goliath", "warheads", "secondCannon", "fifth"};
+    
+    private String dictionaryKey;
+    
+    static
     {
-        return values().length;
+        for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
+        {
+            specialUpgradeType.dictionaryKey = "upgrades.special." + KEY_SUFFIXES[specialUpgradeType.ordinal()];
+        }
+    }
+
+    
+    public String getDictionaryKey()
+    {
+        return dictionaryKey;
     }
 }

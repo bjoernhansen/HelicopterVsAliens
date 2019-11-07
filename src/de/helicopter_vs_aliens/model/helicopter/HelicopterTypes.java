@@ -69,9 +69,6 @@ public enum HelicopterTypes
                         {3, 4, 2, 3, 1, 0}, // Pegasus
                         {2, 2, 2, 2, 2, 2}};// Helios
 
-    private static final String[]
-        SPECIAL_UPGRADES = {"radiation", "jumbo", "radar", "rapidfire", "generator", "immobilizer"};
-
     private static final Color [][]
             helicopterColor = {
                    {new Color(110, 100,  45),
@@ -99,16 +96,35 @@ public enum HelicopterTypes
                     new Color(125, 125, 125),
                     new Color(110, 110, 110)}};
     
+        
+    private static final HelicopterTypes[]
+            defensiveCopyOfValues = values();
+    
     private static final List<HelicopterTypes>
         NO_UNLOCKER = Collections.unmodifiableList(new ArrayList<>()),
         OROCHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(PHOENIX, PEGASUS)),
         KAMAITACHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(ROCH, PEGASUS)),
         PEGASUS_UNLOCKER = Collections.unmodifiableList(Arrays.asList(OROCHI, KAMAITACHI));
+        
+    static
+    {
+        for(HelicopterTypes helicopterType : HelicopterTypes.getValues())
+        {
+            helicopterType.fifthSpecialdictionaryKey = "upgrades.special.fifth." + helicopterType.getDesignation();
+        }
+    }
     
-
+    private String fifthSpecialdictionaryKey;
+    
+    
     public static int size()
     {
-        return values().length;
+        return getValues().length;
+    }
+    
+    public static final HelicopterTypes[] getValues()
+    {
+        return defensiveCopyOfValues;
     }
 
     public List<HelicopterTypes> getUnlockerTypes()
@@ -126,11 +142,6 @@ public enum HelicopterTypes
         return this.name().toLowerCase();
     }
 
-    public String getSpecialUpgrade()
-    {
-        return SPECIAL_UPGRADES[this.ordinal()];
-    }
-    
     int getSpellCosts()
     {
         return SPELL_COSTS[this.ordinal()];
@@ -141,6 +152,7 @@ public enum HelicopterTypes
         return EFFECT_TIMES[this.ordinal()];
     }
     
+    // TODO langfristig sollte diese Methode Price Level enum type zurück geben
     public int getUpgradeCosts(int standardUpgradeType)
     {
         return COSTS[this.ordinal()][standardUpgradeType];
@@ -171,5 +183,10 @@ public enum HelicopterTypes
     public Color getPlatedSecondaryHullColor()
     {
         return helicopterColor[this.ordinal()][3];
+    }
+    
+    public String getFifthSpecialdictionaryKey()
+    {
+        return fifthSpecialdictionaryKey;
     }
 }
