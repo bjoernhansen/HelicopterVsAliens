@@ -47,12 +47,11 @@ public enum HelicopterTypes
         }
 
         @Override
-        public int getUpgradeCosts(int upgradeTypeNumber)
+        public PriceLevels getUpgradeCosts(StandardUpgradeTypes standardUpgradeType)
         {
-            StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.values()[upgradeTypeNumber];
             HelicopterTypes privilegedHelicopter = standardUpgradeType.getPrivilegedHelicopter();
             int bestNonFinalMainBossKill = Events.getBestNonFinalMainBossKillBy(privilegedHelicopter);
-            return PriceLevels.getMaximium().ordinal() - bestNonFinalMainBossKill;
+            return PriceLevels.getValues()[PriceLevels.getMaximium().ordinal() - bestNonFinalMainBossKill];
         }
     };
 
@@ -122,7 +121,7 @@ public enum HelicopterTypes
         return getValues().length;
     }
     
-    public static final HelicopterTypes[] getValues()
+    public static HelicopterTypes[] getValues()
     {
         return defensiveCopyOfValues;
     }
@@ -151,11 +150,10 @@ public enum HelicopterTypes
     {
         return EFFECT_TIMES[this.ordinal()];
     }
-    
-    // TODO langfristig sollte diese Methode Price Level enum type zurück geben
-    public int getUpgradeCosts(int standardUpgradeType)
+
+    public PriceLevels getUpgradeCosts(StandardUpgradeTypes standardUpgradeType)
     {
-        return COSTS[this.ordinal()][standardUpgradeType];
+        return PriceLevels.getValues()[COSTS[this.ordinal()][standardUpgradeType.ordinal()]];
     }
 
     public boolean isUnlocked()

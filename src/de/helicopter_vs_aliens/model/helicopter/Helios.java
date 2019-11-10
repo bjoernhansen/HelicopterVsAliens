@@ -3,7 +3,9 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.util.MyMath;
@@ -132,4 +134,7 @@ public final class Helios extends Helicopter
     {
         this.powerUpGeneratorTimer = 0;
     }
+
+    @Override
+    public void receiveRewardFor(Enemy enemy, Missile missile, boolean beamKill){}
 }

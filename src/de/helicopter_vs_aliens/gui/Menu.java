@@ -9,6 +9,7 @@ import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -57,12 +58,12 @@ public class Menu
     private static final int DISABLED = -1;
 	
 	public static final Point
-		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262);
+		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262),
+		NUMBER_OF_STARTSCREEN_BUTTONS = new Point(2, 3);
 		
 	public static int
 		page, 							// ausgewählte Seite im Startscreen-Menü
 		helicopterSelection,			// Helicopterauswahl im Startscreen-Menü
-		levelDisplayTimer,				// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
 		fps,							// Frames Per Second; wird über die FPS-Anzeige ausgegeben
 		specialInfoSelection = 0,		// nur für Debugging: Auswahl der anzuzeigenden Informationen
 		crossPosition,					// Position des Block-Kreuzes
@@ -136,7 +137,10 @@ public class Menu
     public static FontProvider fontProvider = new FontProvider();
     public static Dictionary dictionary = Controller.getInstance().getDictionary();
 
-    
+	public static final Timer
+		levelDisplayTimer = new Timer(250);				// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
+
+
     public static void initializeMenu(Helicopter helicopter)
     {
     	for(HelicopterTypes helicopterType : HelicopterTypes.getValues())
@@ -400,23 +404,23 @@ public class Menu
             		// TODO über HelicopterTypes iterieren
             		for(int j = 0; j < HelicopterTypes.size() + 1; j++)
             		{
+            			StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.getValues()[i-1];
+            			HelicopterTypes helicopterType = HelicopterTypes.getValues()[j-1];
             			if(j == 0 && i != 0)
             			{
             				g2d.setColor(MyColor.golden);
-            				// TODO 1-language.ordinal , das geht besser
-                            StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.getValues()[i-1];
             				tempString = dictionary.standardUpgradeName(standardUpgradeType);
             			}
             			else if(j != 0 && i == 0)
             			{
-            				g2d.setColor(MyColor.brightenUp(HelicopterTypes.getValues()[j-1].getStandardPrimaryHullColor()));
-            				tempString = Menu.dictionary.helicopterName(HelicopterTypes.getValues()[j-1]);
+            				g2d.setColor(MyColor.brightenUp(helicopterType.getStandardPrimaryHullColor()));
+            				tempString = Menu.dictionary.helicopterName(helicopterType);
             			}
             			else if(i != 0)
             			{
-            				int upgradeCosts = HelicopterTypes.getValues()[j-1].getUpgradeCosts(i-1);
-            				g2d.setColor(MyColor.costsColor[upgradeCosts]);
-            				tempString = dictionary.priceLevel(PriceLevels.values()[upgradeCosts]);
+            				PriceLevels upgradeCosts = helicopterType.getUpgradeCosts(standardUpgradeType);
+            				g2d.setColor(MyColor.costsColor[upgradeCosts.ordinal()]);
+            				tempString = dictionary.priceLevel(upgradeCosts);
             			}
             			g2d.drawString(tempString, 200 + (j-1) * 135, 140 + (i == 0 ? 0 : 5) + (i-1) * 32);
             		}
@@ -836,11 +840,12 @@ public class Menu
 	
 	public static void updateDisplays(Helicopter helicopter)
 	{
-		updateLevelDisplay();
+		//updateLevelDisplay();
 		updateCreditDisplay(helicopter);
 		updateForegroundDisplays(helicopter);
 	}
-	
+
+	/*
 	private static void updateLevelDisplay()
 	{
 		if(levelDisplayTimer != DISABLED)
@@ -849,7 +854,7 @@ public class Menu
 			if(levelDisplayTimer > 250){
 				levelDisplayTimer = DISABLED;}
 		}
-	}
+	}*/
 	
 	private static void updateCreditDisplay(Helicopter helicopter)
 	{
@@ -883,7 +888,7 @@ public class Menu
 							Controller controller,
 							Helicopter helicopter)
 	{
-		if(helicopter.isOnTheGround() || levelDisplayTimer != DISABLED)
+		if(helicopter.isOnTheGround() || levelDisplayTimer.isActive())
 		{
 			paintLevelDisplay(g2d);
 		}
@@ -1420,20 +1425,22 @@ public class Menu
 		inGameButton.get("MMNewGame2").label =  dictionary.quit();
 		inGameButton.get("MMCancel").label =    dictionary.cancel();
 				
-		for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++)
+		for(int i = 0; i < NUMBER_OF_STARTSCREEN_BUTTONS.x; i++)
 		{
-			startscreenButton.get(Integer.toString(i)+j).label =
-				Button.STARTSCREEN_BUTTON_LABEL[language.ordinal()][i][j];
-		}}	
+			for(int j = 0; j < NUMBER_OF_STARTSCREEN_BUTTONS.y; j++)
+			{
+				startscreenButton.get(Integer.toString(i)+j).label =
+					Button.STARTSCREEN_BUTTON_LABEL[language.ordinal()][i][j];
+			}
+		}
 		
 		for(int m = 0; m < 8; m++)
 		{						
 			startscreenMenuButton.get(Integer.toString(m)).label =
-				Button.STARTSCREEN_MENU_BUTTON[language.ordinal()][2][m];
+				Button.STARTSCREEN_MENU_BUTTON[language.ordinal()][SETTINGS.ordinal()][m];
 		}
 		startscreenMenuButton.get("Cancel").label = dictionary.cancel();
 
-		// TODO mit enums arbeiten
 		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
 		{
 			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).label =
@@ -3217,7 +3224,7 @@ public class Menu
 	{
 		isMenuVisible = false;
 		moneyDisplayTimer = -1;
-		levelDisplayTimer = START;
+		levelDisplayTimer.start();
 		unlockedTimer = 0;
 	}
 }

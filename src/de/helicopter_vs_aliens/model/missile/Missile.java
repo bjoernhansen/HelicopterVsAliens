@@ -204,7 +204,7 @@ public class Missile extends MovingObject
 					}
 				} else
 				{
-					enemy.die(controller, helicopter, this, false);
+					enemy.die(controller, helicopter, this);
 					
 					if (helicopter.deservesMantisReward(this.launchingTime))
 					{

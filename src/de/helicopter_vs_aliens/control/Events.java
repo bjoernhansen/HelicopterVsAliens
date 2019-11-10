@@ -920,9 +920,9 @@ public class Events
 				Controller.antialiasing ?
 					RenderingHints.VALUE_ANTIALIAS_ON : 
 					RenderingHints.VALUE_ANTIALIAS_OFF);
-		STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][2][1]
+		STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][SETTINGS.ordinal()][1]
 		    = Button.ANTIALIAZING[ENGLISH.ordinal()][Controller.antialiasing ? 0 : 1];
-		STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][2][1]
+		STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][SETTINGS.ordinal()][1]
 		    = Button.ANTIALIAZING[GERMAN.ordinal()][Controller.antialiasing ? 0 : 1];
 		currentButton.label
 		    = Button.ANTIALIAZING[Menu.language.ordinal()][Controller.antialiasing ? 0 : 1];
@@ -1197,7 +1197,7 @@ public class Events
 			Audio.refreshBackgroundMusic();
 			if(previousLevel % 10 == 0){Audio.play(Audio.applause1);}
 		}
-		Menu.levelDisplayTimer = START;
+		Menu.levelDisplayTimer.start();
 		Enemy.adaptToLevel(helicopter, level, true);
 	}
 
@@ -1273,8 +1273,8 @@ public class Events
 		savegame.isSoundOn = Audio.isSoundOn;
 		settingsChanged = true;
 		Audio.refreshBackgroundMusic();
-		STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][2][2] = Button.MUSIC[ENGLISH.ordinal()][Audio.isSoundOn ? 0 : 1];
-		STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][2][2] = Button.MUSIC[GERMAN.ordinal()][Audio.isSoundOn ? 0 : 1];
+		STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][SETTINGS.ordinal()][2] = Button.MUSIC[ENGLISH.ordinal()][Audio.isSoundOn ? 0 : 1];
+		STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][SETTINGS.ordinal()][2] = Button.MUSIC[GERMAN.ordinal()][Audio.isSoundOn ? 0 : 1];
 		Menu.inGameButton.get("MMStopMusic").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
 		Menu.startscreenMenuButton.get("2").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
 	}
@@ -1379,5 +1379,12 @@ public class Events
 			if(Events.recordTime[privilegedHelicopter.ordinal()][i] == 0) return i;
 		}
 		return 4;
+	}
+
+	public static void updateFinance(Enemy enemy, Helicopter helicopter) {
+		lastBonus = enemy.calculateReward(helicopter);
+		money += lastBonus;
+		overallEarnings += lastBonus;
+		lastExtraBonus = 0;
 	}
 }

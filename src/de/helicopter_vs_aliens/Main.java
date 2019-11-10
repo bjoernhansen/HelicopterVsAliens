@@ -17,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import static de.helicopter_vs_aliens.gui.WindowTypes.SETTINGS;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
@@ -29,7 +30,7 @@ public class Main
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = false;
+    	TESTMODE = true;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),
@@ -142,9 +143,9 @@ public class Main
     {
         isFullScreen = !isFullScreen;
         
-        Button.STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][2][0]
+        Button.STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][SETTINGS.ordinal()][0]
         	= Button.DISPLAY[ENGLISH.ordinal()][isFullScreen ? 0 : 1];
-		Button.STARTSCREEN_MENU_BUTTON[GERMAN.ordinal() ][2][0]
+		Button.STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][SETTINGS.ordinal()][0]
 			= Button.DISPLAY[GERMAN.ordinal()][isFullScreen ? 0 : 1];
    
 		if(currentButton != null)

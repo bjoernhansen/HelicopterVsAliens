@@ -34,6 +34,7 @@ import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevels.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
+import static de.helicopter_vs_aliens.model.enemy.Enemy.SPEED_KILL_BONUS_TIME;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
@@ -123,7 +124,7 @@ public abstract class Helicopter extends MovingObject
 		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
 		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
-        // TODO Enum StandardUpgradeTypes verwenden
+        // TODO EnumMap StandardUpgradeTypes verwenden
 		upgradeCosts[] = new int[StandardUpgradeTypes.size()],    	// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
 		levelOfUpgrade[] = new int[StandardUpgradeTypes.size()];	// Upgrade-Level aller 6 StandardUpgrades
 	
@@ -157,8 +158,7 @@ public abstract class Helicopter extends MovingObject
       
     public Point
     	destination = new Point(); 				// dorthin fliegt der Helikopter
-    
-    
+
     // TODO noch Phoenix auslagern
     public Point
     	priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
@@ -808,7 +808,7 @@ public abstract class Helicopter extends MovingObject
         for(int i = 0; i < StandardUpgradeTypes.size(); i++)
 	    {
     		this.hasMaxUpgradeLevel[i] = false;
-    		this.upgradeCosts[i] =  getUpgradeCosts(i);
+    		this.upgradeCosts[i] =  this.getUpgradeCosts(StandardUpgradeTypes.getValues()[i]).ordinal();
     		if(newGame){this.levelOfUpgrade[i] = this.upgradeCosts[i] < 2 ? 2 : 1;}
 	    }
     	if(!newGame){this.restoreLastGameState(savegame);}
@@ -819,9 +819,9 @@ public abstract class Helicopter extends MovingObject
         this.prepareForMission();
     }
 	
-	int getUpgradeCosts(int i)
+	PriceLevels getUpgradeCosts(StandardUpgradeTypes standardUpgradeType)
 	{
-		return this.getType().getUpgradeCosts(i);
+		return this.getType().getUpgradeCosts(standardUpgradeType);
 	}
 	
 	private void restoreLastGameState(Savegame savegame)
@@ -1538,4 +1538,13 @@ public abstract class Helicopter extends MovingObject
     {
         return false;
     }
+
+	public void receiveRewardFor(Enemy enemy, Missile missile, boolean beamKill)
+	{
+		Events.updateFinance(enemy, this);
+		this.typeSpecificRewards(enemy, missile, beamKill);
+		Menu.moneyDisplayTimer = 0;
+	}
+
+	public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill) {}
 }

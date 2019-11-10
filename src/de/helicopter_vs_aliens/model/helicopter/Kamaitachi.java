@@ -4,8 +4,10 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
@@ -14,6 +16,7 @@ import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.model.enemy.Enemy.SPEED_KILL_BONUS_TIME;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
@@ -180,5 +183,13 @@ public final class Kamaitachi extends Helicopter
     public void resetStateTypeSpecific()
     {
         this.plasmaActivationTimer = 0;
+    }
+
+    @Override
+    public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
+    {
+        this.bonusKillsTimer += SPEED_KILL_BONUS_TIME;
+        this.bonusKills++;
+        this.bonusKillsMoney += Events.lastBonus;
     }
 }

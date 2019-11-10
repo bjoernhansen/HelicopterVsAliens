@@ -8,6 +8,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
@@ -276,5 +277,15 @@ public final class Phoenix extends Helicopter
     {
         return this.bonusKillsTimer > 0
                 && missileLaunchingTime > this.pastTeleportTime;
+    }
+
+    @Override
+    public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
+    {
+        if(beamKill)
+        {
+            this.bonusKills++;
+            this.bonusKillsMoney += Events.lastBonus;
+        }
     }
 }

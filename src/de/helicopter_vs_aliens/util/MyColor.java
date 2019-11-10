@@ -94,7 +94,8 @@ public class MyColor
 		enhancedRadiation[] = { new Color(255, 200, 200, 120),
 		                        new Color(255, 200, 200, 210)},
 		shieldColor[] = { new Color(157, 220, 255, 80), 
-	                      new Color(0, 0, 255, 40)},				    
+	                      new Color(0, 0, 255, 40)},
+		// TODO evtl. privat machen und Zugriff über EnumMap (ggf. im static block aufbauen)
 		costsColor[] =  { new Color (130, 255, 130), 
 						  new Color (210, 255, 180),
 	                      new Color (255, 210,   0), 

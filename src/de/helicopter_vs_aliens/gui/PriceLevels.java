@@ -9,8 +9,12 @@ public enum PriceLevels
     EXTORTIONATE (6);
     
     
-    private static final String[] KEY_SUFFIXES = {"veryCheap", "cheap", "medium", "expensive", "extortionate"};
-    
+    private static final String[]
+            KEY_SUFFIXES = {"veryCheap", "cheap", "medium", "expensive", "extortionate"};
+
+    private static final PriceLevels[]
+            defensiveCopyOfValues = values();
+
     static
     {
         for(PriceLevels priceLevel : PriceLevels.values())
@@ -38,7 +42,12 @@ public enum PriceLevels
 
     public static int size()
     {
-        return values().length;
+        return getValues().length;
+    }
+
+    public static PriceLevels[] getValues()
+    {
+        return defensiveCopyOfValues;
     }
 
     public int getMaxUpgradeLevel()

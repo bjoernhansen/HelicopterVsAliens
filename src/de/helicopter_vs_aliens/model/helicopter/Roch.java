@@ -312,4 +312,30 @@ public final class Roch extends Helicopter
     {
         this.isPowerShieldActivated = false;
     }
+
+    @Override
+    public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
+    {
+        if(missile != null)
+        {
+            if(missile.kills > 0
+                    && this.hasPiercingWarheads
+                    && (     Missile.canTakeCredit(missile.sister[0], enemy)
+                    || Missile.canTakeCredit(missile.sister[1], enemy)))
+            {
+                if(Missile.canTakeCredit(missile.sister[0], enemy))
+                {
+                    missile.sister[0].credit();
+                }
+                else if(Missile.canTakeCredit(missile.sister[1], enemy))
+                {
+                    missile.sister[1].credit();
+                }
+            }
+            else
+            {
+                missile.credit();
+            }
+        }
+    }
 }

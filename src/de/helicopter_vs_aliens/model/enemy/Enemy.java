@@ -103,55 +103,55 @@ public class Enemy extends MovingObject
 		
 	private static final int 				
 		// Raum-Konstanten
-		SAVE_ZONE_WIDTH			= 116,
-		APPEARANCE_DISTANCE		= 10,
-		SHIELD_TARGET_DISTANCE  = 20,
-		DISAPPEARANCE_DISTANCE	= 100,
-		BARRIER_DISTANCE		= 100,
-		ROCK_WIDTH				= 300,
-		KABOOM_WIDTH			= 120,
-		FINAL_BOSS_WIDTH		= 450,
-		PROTECTOR_WIDTH 		= 90,
-		KABOOM_Y_TURN_LINE		= GROUND_Y - (int)(HEIGHT_FACTOR*KABOOM_WIDTH),
+		SAVE_ZONE_WIDTH			= 116;
+	private static final int APPEARANCE_DISTANCE		= 10;
+	private static final int SHIELD_TARGET_DISTANCE  = 20;
+	private static final int DISAPPEARANCE_DISTANCE	= 100;
+	private static final int BARRIER_DISTANCE		= 100;
+	private static final int ROCK_WIDTH				= 300;
+	private static final int KABOOM_WIDTH			= 120;
+	private static final int FINAL_BOSS_WIDTH		= 450;
+	private static final int PROTECTOR_WIDTH 		= 90;
+	private static final int KABOOM_Y_TURN_LINE		= GROUND_Y - (int)(HEIGHT_FACTOR*KABOOM_WIDTH);
 
-		// Zeit-Konstanten
-		CLOAKING_TIME			= 135, 	// Zeit, die beim Tarn- und Enttarnvorgang vergeht
-		CLOAKED_TIME 			= 135, 	// Zeit, die ein Gegner getarnt bleibt
-		ROCKFREE_TIME			= 250,	// Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
-	 	EMP_SLOW_TIME			= 175, 	// Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
-	 	EMP_SLOW_TIME_BOSS		= 110,
-	 	SNOOZE_TIME 			= 100,	// Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
-	 	INACTIVATION_TIME		= 150,
-	 	STUNNING_TIME_BASIS 	= 45,	// Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
-	 	SPEED_KILL_BONUS_TIME 	= 15,	// Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
-	 	BORROW_TIME				= 65,
-	 	MIN_TURN_TIME			= 31,
-	 	MIN_TURN_NOISELESS_TIME = 15,
-	 	STATIC_CHARGE_TIME		= 110,
-	 	MAX_BARRIER_NUMBER		= 3,
+	private static final int// Zeit-Konstanten
+		CLOAKING_TIME			= 135;    // Zeit, die beim Tarn- und Enttarnvorgang vergeht
+		private static final int CLOAKED_TIME 			= 135;    // Zeit, die ein Gegner getarnt bleibt
+		private static final int ROCKFREE_TIME			= 250;    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
+	 	private static final int EMP_SLOW_TIME			= 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
+	 	private static final int EMP_SLOW_TIME_BOSS		= 110;
+	private static final int SNOOZE_TIME 			= 100;    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
+	 	private static final int INACTIVATION_TIME		= 150;
+	private static final int STUNNING_TIME_BASIS 	= 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
+	 	public static final int SPEED_KILL_BONUS_TIME 	= 15;    // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
+	 	private static final int BORROW_TIME				= 65;
+	private static final int MIN_TURN_TIME			= 31;
+	private static final int MIN_TURN_NOISELESS_TIME = 15;
+	private static final int STATIC_CHARGE_TIME		= 110;
+	private static final int MAX_BARRIER_NUMBER		= 3;
 
-	 	// Level-Voraussetzungen
-	 	MIN_BARRIER_LEVEL		= 2,
-	 	MIN_POWER_UP_LEVEL		= 3,
-	 	MIN_FUTURE_LEVEL		= 8,
-	 	MIN_KABOOM_LEVEL		= 12,
-	 	MIN_SPIN_SHOOTER_LEVEL 	= 23,
-	 	MIN_ROCK_LEVEL			= 27,
-	 	MIN_BUSTER_LEVEL		= 29,
+	private static final int// Level-Voraussetzungen
+	 	MIN_BARRIER_LEVEL		= 2;
+	private static final int MIN_POWER_UP_LEVEL		= 3;
+	private static final int MIN_FUTURE_LEVEL		= 8;
+	private static final int MIN_KABOOM_LEVEL		= 12;
+	private static final int MIN_SPIN_SHOOTER_LEVEL 	= 23;
+	private static final int MIN_ROCK_LEVEL			= 27;
+	private static final int MIN_BUSTER_LEVEL		= 29;
 
-	 	// für Boss-Gegner
-	 	NR_OF_BOSS_5_SERVANTS 	= 5,
-	 	BOSS_5_HEAL_RATE		= 11,
-		STANDARD_REWARD_FACTOR	= 1,
-		MINI_BOSS_REWARD_FACTOR	= 4,
+	private static final int// für Boss-Gegner
+	 	NR_OF_BOSS_5_SERVANTS 	= 5;
+	private static final int BOSS_5_HEAL_RATE		= 11;
+	private static final int STANDARD_REWARD_FACTOR	= 1;
+	private static final int MINI_BOSS_REWARD_FACTOR	= 4;
 
-		// TODO die 4 austauschen / anders lösen
-		PRE_READY 				= 1,
-		READY 					= 0,
-		ACTIVE_TIMER 			= 1,
-		DISABLED 				= -1,
+	private static final int// TODO die 4 austauschen / anders lösen
+		PRE_READY 				= 1;
+	private static final int READY 					= 0;
+	private static final int ACTIVE_TIMER 			= 1;
+	private static final int DISABLED 				= -1;
 
-		MIN_ABSENT_TIME[]		= {175,	// SMALL_SHIELD_MAKER
+	private static final int MIN_ABSENT_TIME[]		= {175,	// SMALL_SHIELD_MAKER
 		                 		   175, // BIG_SHIELD_MAKER
 		                 		   900,	// BODYGUARD
 		                 		   250, // HEALER
@@ -3004,7 +3004,7 @@ public class Enemy extends MovingObject
 			Audio.play(Audio.explosion2);
 			helicopter.empWave.kills++;
 			helicopter.empWave.earnedMoney += this.calculateReward(helicopter);
-			this.die(controller, helicopter, null, false);
+			this.die(controller, helicopter, null);
 		}
     }
 	
@@ -4020,10 +4020,7 @@ public class Enemy extends MovingObject
 			if(	helicopter.canObtainCollisionReward()
 				&& !(this.type == KABOOM))
 			{
-				this.rewardFor(controller.powerUps,
-								null, 
-								helicopter, 
-								helicopter.hasPerformedTeleportKill());
+				this.grantRewards(helicopter, null, helicopter.hasPerformedTeleportKill(), controller.powerUps);
 			}
 			this.destroy(helicopter);
 		}				
@@ -4033,7 +4030,13 @@ public class Enemy extends MovingObject
 			helicopter.crash();
 		}		
 	}
-	
+
+	private void grantRewards(Helicopter helicopter, Missile missile, boolean beamKill, EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUps)
+	{
+		helicopter.receiveRewardFor(this, missile, beamKill);
+		this.grantGeneralRewards(helicopter, powerUps);
+	}
+
 	public void reactToRadiation(Controller controller, Helicopter helicopter)
 	{
 		if(	this.teleportTimer == READY){this.teleport();}
@@ -4061,7 +4064,10 @@ public class Enemy extends MovingObject
 					this.snooze(true);
 				}
 			}
-			if(this.hasHPsLeft()){this.reactToHit(helicopter, null);}
+			if(this.hasHPsLeft())
+			{
+				this.reactToHit(helicopter, null);
+			}
 			else
 			{
 				boolean beamKill = helicopter.bonusKillsTimer > 0;
@@ -4277,9 +4283,15 @@ public class Enemy extends MovingObject
 	}
 
 	public void die(Controller controller, Helicopter helicopter,
+					Missile missile)
+	{
+		this.die(controller, helicopter, missile, false);
+	}
+
+	public void die(Controller controller, Helicopter helicopter,
 					Missile missile, boolean beamKill)
-	{		
-		this.rewardFor(controller.powerUps, missile, helicopter, beamKill);
+	{
+		this.grantRewards(helicopter, missile, beamKill, controller.powerUps);
 		this.destroy(helicopter);
 		if(this.isShielding){this.stopShielding();}
 		if(this.cloakingTimer != DISABLED){Audio.play(Audio.cloak);}
@@ -4296,7 +4308,6 @@ public class Enemy extends MovingObject
 		this.evaluateBossDestructionEffect(helicopter,
 											  controller.enemies,
 											  controller.explosions);
-			
 		if(this.isCarrier){
 			lastCarrier = this;}
 		if(missile != null){missile.hits.remove(this.hashCode());}
@@ -4309,66 +4320,12 @@ public class Enemy extends MovingObject
 		this.isShielding = false;
 	}
 
-	private void rewardFor(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
-						   Missile missile,
-						   Helicopter helicopter,
-						   boolean beamKill)
-	{																					   
-		if(helicopter.getType() != HELIOS)
-		{
-			Events.lastBonus = this.calculateReward(helicopter);
-			Events.money += Events.lastBonus;
-			Events.overallEarnings += Events.lastBonus;
-			Events.lastExtraBonus = 0;
-			if(missile != null				
-				&& (helicopter.getType() == ROCH || helicopter.getType() == OROCHI))
-			{
-				if(missile.kills > 0
-				   && helicopter.hasPiercingWarheads
-				   && (     Missile.canTakeCredit(missile.sister[0], this)
-						 || Missile.canTakeCredit(missile.sister[1], this)))
-				{
-					if(Missile.canTakeCredit(missile.sister[0], this))
-					{
-						missile.sister[0].credit();
-					}
-					else if(Missile.canTakeCredit(missile.sister[1], this))
-					{
-						missile.sister[1].credit();
-					}	
-				}
-				else
-				{
-					missile.credit();
-				}				
-			}
-			else if(beamKill)
-			{
-				helicopter.bonusKills++;
-				helicopter.bonusKillsMoney += Events.lastBonus;
-			}
-			else if(helicopter.getType() == KAMAITACHI)
-			{
-				helicopter.bonusKillsTimer +=SPEED_KILL_BONUS_TIME;
-				helicopter.bonusKills++;
-				helicopter.bonusKillsMoney += Events.lastBonus;
-			}
-			Menu.moneyDisplayTimer = 0;
-		}
-		if(this.canCountForKillsAfterLevelUp())
-		{
-			Events.killsAfterLevelUp++;
-		}		
-		if(this.canDropPowerUp()){this.dropPowerUp(helicopter, powerUp);}
-		if(this.isMiniBoss){Audio.play(Audio.applause2);}
-	}
-    
-    private boolean canCountForKillsAfterLevelUp()
+    public boolean canCountForKillsAfterLevelUp()
     {
         return this.type != BOSS_4_SERVANT && !this.type.isFinalBossServant();
     }
     
-    private boolean canDropPowerUp()
+    public boolean canDropPowerUp()
 	{		
 		return this.model != BARRIER
 			   &&( (!Events.isBossLevel()
@@ -4380,8 +4337,8 @@ public class Enemy extends MovingObject
 				|| this.type == BOSS_4 );
 	}
 	
-	private void dropPowerUp(Helicopter helicopter,
-							 EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp)
+	public void dropPowerUp(Helicopter helicopter,
+							EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp)
 	{
 		PowerUp.activate(helicopter, 
 				 powerUp, 
@@ -4392,7 +4349,7 @@ public class Enemy extends MovingObject
 		
 	}
 	
-	private int calculateReward(Helicopter helicopter)
+	public int calculateReward(Helicopter helicopter)
 	{		
 		return this.getEffectiveStrength()
 		        * helicopter.getBonusFactor()
@@ -4649,5 +4606,15 @@ public class Enemy extends MovingObject
 	public boolean isKaboomDamageDealer()
 	{
 		return this.type == KABOOM && !this.isDestroyed;
+	}
+
+	public void grantGeneralRewards(Helicopter helicopter, EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUps)
+	{
+		if(this.canCountForKillsAfterLevelUp())
+		{
+			Events.killsAfterLevelUp++;
+		}
+		if(this.canDropPowerUp()){this.dropPowerUp(helicopter, powerUps);}
+		if(this.isMiniBoss){Audio.play(Audio.applause2);}
 	}
 }

@@ -1,4 +1,5 @@
 package de.helicopter_vs_aliens.gui;
+
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
@@ -10,16 +11,15 @@ import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.util.MyColor;
 import de.helicopter_vs_aliens.util.MyMath;
 
-import java.util.List;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import static de.helicopter_vs_aliens.control.Events.SPOTLIGHT_COSTS;
+import static de.helicopter_vs_aliens.gui.Menu.NUMBER_OF_STARTSCREEN_BUTTONS;
 import static de.helicopter_vs_aliens.gui.Menu.dictionary;
 import static de.helicopter_vs_aliens.gui.PriceLevels.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.EXTRA_CANNONS;
-import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.FIFTH_SPECIAL;
 
 // TODO Vererbung auch für Buttons, Enums für Button-Typen
 
@@ -74,33 +74,6 @@ public class Button
 				   "Kamaitachi", "Pegasus", "Helios"},
 				  {"Bestzeiten", "Gesamt", "Phönix",  "Roch", "Orochi",
 				   "Kamaitachi", "Pegasus", "Helios"}}};
-/*
-	static final String STANDARD_UPGRADE_LABEL[][][]
-			= 	{{{"Improve", "Rotor system"}, 
-    			  {"Improve", "Missile drive"}, 
-    			  {"Fortify", "Plating"}, 
-    			  {"Boost", "Firepower"},
-    			  {"Increase", "Fire rate"}, 
-    			  {"Improve", "Energy ability"},     			
-    			  {"Enhance", "Teleporter"},
-    			  {"Strengthen", "Energy shield"},
-    			  {"Upgrade", "Stunning missile"},
-    			  {"Upgrade", "Plasma missile"},
-    			  {"Improve", "EMP generator"},
-    			  {"Improve", "PU generator"}},
-                 {{"Hauptrotor", "verbessern"}, 
-    			  {"Raketenantrieb", "erhöhen"},
-    			  {"Panzerung", "vestärken"},
-    			  {"Feuerkraft", "erhöhen"},
-    			  {"Schussrate", "steigern"}, 
-    			  {"Energie-UPs", "verbessern"},
-    			  {"Teleporter", "verbessern"},
-    			  {"Energie-Schild", "aufwerten"},
-    			  {"Stopp-Rakete", "aufwerten"},
-    			  {"Plasma-Rakete", "aufwerten"},
-    			  {"EMP-Generator", "steigern"},
-    			  {"PU-Generator", "verbessern"}}};
-    			  */
 
 	static final String STARTSCREEN_BUTTON_LABEL[][][]
     		= 	{{{"Informations",  "Highscore", "Contact"}, 
@@ -156,15 +129,17 @@ public class Button
 		Menu.inGameButton.put("MMNewGame2",   new Button(385, 206, 211, 35, dictionary.quit(), null, false, false));
 		Menu.inGameButton.put("MMCancel",     new Button(385, 251, 211, 35, dictionary.cancel(), null, false, false));
 				
-		for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++)
+		for(int i = 0; i < NUMBER_OF_STARTSCREEN_BUTTONS.x; i++)
 		{
-			Menu.startscreenButton.put( Integer.toString(i)+j,
-										 new Button(  27 + Menu.STARTSCREEN_OFFSET_X + i * 750, 
-												 	 110 + j * 40, 211, 30, 
-												 	 STARTSCREEN_BUTTON_LABEL[Menu.language.ordinal()][i][j], 
-												 	 null, false, true));
-		}}
-		// TODO enums verwenden
+			for(int j = 0; j < NUMBER_OF_STARTSCREEN_BUTTONS.y; j++)
+			{
+				Menu.startscreenButton.put( Integer.toString(i)+j,
+											 new Button(  27 + Menu.STARTSCREEN_OFFSET_X + i * 750,
+														 110 + j * 40, 211, 30,
+														 STARTSCREEN_BUTTON_LABEL[Menu.language.ordinal()][i][j],
+														 null, false, true));
+			}
+		}
 		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
 		{
 			List<String> standardUpgradeLabel = dictionary.standardUpgradesImprovements(standardUpgradeType);
