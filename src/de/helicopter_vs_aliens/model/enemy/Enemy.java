@@ -4365,11 +4365,6 @@ public class Enemy extends MovingObject
 	{
 		return this.isMiniBoss ? MINI_BOSS_REWARD_FACTOR : STANDARD_REWARD_FACTOR;
 	}
-    
-    public int getRewardFactorEqualizer()
-    {
-        return this.isMiniBoss ? STANDARD_REWARD_FACTOR : MINI_BOSS_REWARD_FACTOR;
-    }
  
 	private void evaluateBossDestructionEffect(Helicopter helicopter,
 											   EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy,
@@ -4407,8 +4402,7 @@ public class Enemy extends MovingObject
 				}
 			}
 			Events.isRestartWindowVisible = true;
-			Events.level = 51;
-			Events.maxLevel = Events.level;
+			Events.level = Events.maxLevel = 51;
 			helicopter.isDamaged = true;
 		
 			helicopter.destination.setLocation(helicopter.bounds.getX()+40, 

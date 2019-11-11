@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -13,6 +14,7 @@ import de.helicopter_vs_aliens.util.MyMath;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.control.Events.lastBonus;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
@@ -21,8 +23,9 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.TRIPLE_DAMAGE;
 
 public final class Helios extends Helicopter
 {
-    // TODO BUG: bei der Guthabenberechnung wird bei bereits besuchten Leveln noch ausgezahlt nach Reparatur. siehe Events 1186
-    
+    public static final float
+        HELIOS_MAX_MONEY_DIVISOR = 110250;        // Summe der ersten 49 natürlichen Zahlen (0.5 * 49 * 50) * NIGHT_BONUS_FACTOR
+        
     private int
         powerUpGeneratorTimer;
     
@@ -137,4 +140,26 @@ public final class Helios extends Helicopter
 
     @Override
     public void receiveRewardFor(Enemy enemy, Missile missile, boolean beamKill){}
+    
+    @Override
+    public void levelUpEffect(int previousLevel)
+    {
+        if(Events.level > Events.maxLevel){getHeliosIncome(previousLevel, this);}
+    }
+    
+    private static void getHeliosIncome(int previousLevel, Helicopter helicopter)
+    {
+        float bonusSum = 0;
+        for(int i = Math.max(previousLevel, Events.maxLevel); i < Events.level; i++)
+        {
+            bonusSum += i*Events.heliosMaxMoney/HELIOS_MAX_MONEY_DIVISOR;
+        }
+        lastBonus = (int) (bonusSum * helicopter.getBonusFactor());
+        Events.money += lastBonus;
+        Events.overallEarnings += lastBonus;
+        Menu.moneyDisplayTimer = Events.START;
+    }
+    
+    
+    
 }

@@ -290,6 +290,7 @@ public class Missile extends MovingObject
 				     (this.paintBounds.height));
 	}
 	
+	// TODO nach Helicopter schieben und auf Roch und Orochi verteilen
 	private void inactivate(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile, Helicopter helicopter)
 	{							
 		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)

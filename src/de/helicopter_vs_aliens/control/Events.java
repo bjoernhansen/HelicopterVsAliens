@@ -48,9 +48,6 @@ public class Events
 		DEFAULT_REPAIR_BASE_FEE = 350,
 		MAX_MONEY = 5540500;			// für Komplettausbau erforderliche Geldmenge
 
-    private static final float
-        HELIOS_MAX_MONEY_DIVISOR = 110250;        // Summe der ersten 49 natürlichen Zahlen (0.5 * 49 * 50) * NIGHT_BONUS_FACTOR
-    
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
 		SAVE_ANYWAY = true;
@@ -1186,11 +1183,10 @@ public class Events
 		killsAfterLevelUp = 0;
 		int previousLevel = level;
 		level += numberOfLevelUp;
-				
+        helicopter.levelUpEffect(previousLevel);
+        maxLevel = Math.max(level, maxLevel);
+        
 		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemies, controller.explosions);}
-		if(helicopter.getType() == HELIOS && level > maxLevel){getHeliosIncome(previousLevel, helicopter);}
-		
-		maxLevel = level;
 		
 		if(	isBossLevel() || isBossLevel(previousLevel) || level == 49)
 		{
@@ -1200,21 +1196,7 @@ public class Events
 		Menu.levelDisplayTimer.start();
 		Enemy.adaptToLevel(helicopter, level, true);
 	}
-
-	private static void getHeliosIncome(int previousLevel, Helicopter helicopter)
-	{
-		// TODO Methode verständlicher Strukturieren; die Schleife so nötig --> lieber Array?
-		float bonusSum = 0;
-		for(int i = Math.max(previousLevel, maxLevel); i < level; i++)
-		{
-			bonusSum += i*heliosMaxMoney/HELIOS_MAX_MONEY_DIVISOR;
-		}
-		lastBonus = (int) (bonusSum * helicopter.getBonusFactor());
-		money += lastBonus;
-		overallEarnings += lastBonus;
-		Menu.moneyDisplayTimer = START;
-	}
-
+	
 	// Stellt sicher, dass mit dem Besiegen des End-Gegners direkt das nächste Level erreicht wird
 	public static void setBossLevelUpConditions()
 	{
@@ -1279,9 +1261,6 @@ public class Events
 		Menu.startscreenMenuButton.get("2").label = Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1];
 	}
 	
-	
-	
-
 	public static void determineHighscoreTimes(Helicopter helicopter)
 	{
 		int bossNr = getBossNr();

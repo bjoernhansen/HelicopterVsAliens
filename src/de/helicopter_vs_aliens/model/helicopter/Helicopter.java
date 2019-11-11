@@ -1048,6 +1048,7 @@ public abstract class Helicopter extends MovingObject
 		this.isCrashing = false;
     }
 		
+    // TODO auslagern nach Phoenix und Kamaitachi
 	public void evaluateBonusKills()
 	{
     	if(this.bonusKillsTimer > 0)
@@ -1547,4 +1548,6 @@ public abstract class Helicopter extends MovingObject
 	}
 
 	public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill) {}
+    
+    public void levelUpEffect(int previousLevel){}
 }

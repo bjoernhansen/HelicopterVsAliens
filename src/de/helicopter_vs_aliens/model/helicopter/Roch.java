@@ -321,7 +321,7 @@ public final class Roch extends Helicopter
             if(missile.kills > 0
                     && this.hasPiercingWarheads
                     && (     Missile.canTakeCredit(missile.sister[0], enemy)
-                    || Missile.canTakeCredit(missile.sister[1], enemy)))
+                            || Missile.canTakeCredit(missile.sister[1], enemy)))
             {
                 if(Missile.canTakeCredit(missile.sister[0], enemy))
                 {
