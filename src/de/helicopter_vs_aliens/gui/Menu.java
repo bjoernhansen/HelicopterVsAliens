@@ -36,6 +36,7 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 // TODO mögichst alle längeren Texte innerhalb dieser Klasse ins Dictionary überführen
+// TODO An vielen Stellen im Menü werden zustände immer wieder berechnet anstatt sie einmal zu speichern
 public class Menu
 {
 	private static final String

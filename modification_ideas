@@ -1,0 +1,429 @@
+Dictionary für Sprachespezifische einführen, Übersetzungen mit Properties einlesen
+
+Vererbung auch für andere Klassen wie zum Beispiel PowerUps einführen
+
+
+
+
+zuerst: die JavaFX-Sachen ausprobieren (zuerst evtl. in einem Testprojekt)
+
+Wenn Savegame nicht mehr kompatibel ist automatisch löschen / neuen File erstellen
+Helicopter Vererbung einführen und eigenes Package, an vielen stellen müssten dann abfragen des Types wegfallen
+Ggf. auch manche Konstanten in Enum (oder besser über Vererbung?)
+
+eigene Klasse(n) für Timern schreiben, ggf. mit Bindung/Listeners arbeiten
+
+JavaFX Canvas verwenden
+	Buttons auf Canvas
+	Java3D für JavaFX testen
+	automatische Skalierung (Bindung mit Canvas-Ausmaßen)  Beispiel
+	Effekte Testen:
+	https://docs.oracle.com/javase/8/javafx/api/javafx/scene/effect/Effect.html
+	GaussianBlur, Shadow, Lightning, …
+
+Hilfreiche Links dazu:
+https://gamedevelopment.tutsplus.com/tutorials/introduction-to-javafx-for-game-development--cms-23835
+https://www.canoo.com/blog/2012/09/21/take-care-of-the-javafx-scene-graph/?lang=de
+https://jaxenter.com/tutorial-a-glimpse-at-javafxs-canvas-api-105696.html
+https://docs.oracle.com/javase/8/javafx/graphics-tutorial/canvas.htm
+
+
+	Modell View Controller & JavaFX
+	JavaFX AnimationTimer
+	Model view controller game java examples
+	Vererbung + Interface richtig verwenden (für Gegner etc.)
+	abstracte factory bzw. factory strategy von cimdata verwenden plan entwicken
+	JavaFX verwenden
+ 	Enumerations statt Interfaces
+
+
+
+Aktuelle geplante Änderungen nach Weiterbildung
+-	StrategyFactory verwenden
+-	JavaFX verwenden für Grafiken, vorher alle Zeichenanweisungen von eigenen Methoden aufrufen lassen, um die Portierung für JavaFX und Android (wie funktioniert es da?) zu erleichtern
+-	Version ohne Michael-Sounds für compaktere Version
+-	Refactoring: viel kleinere Klassen, viel in einzelne Pakete auslagern, mehr Vererbung und Interfaces verwenden
+-	Enums verwenden
+-	Kollision verbessern ggf. Shape, Area, JavaFX verwenden
+
+
+
+
+HeliDefence
+- sounds ohne Copyright auswählen
+- Screenshots anfertigen
+- Veröffentlichen auf Website verbessern
+
+
+
+
+
+Fehler, unverwunbar + energy schild roch  an, absturz, weenn energie weg
+
+
+
+
+Kamikaze
+	zu schnelles hin und her drehen an Barrier
+	Kamikaze und can learn kamikaze verbessern
+
+Unsichtbare Barriers
+	- blockieren manchmal den Helikopter, obwohl sie unsichtbar sind.
+	- EMPs trifft sie nicht, wenn sie nicht ganz enttarnt sind.
+	Gegner sollten nicht durch sie abgelenkt werden, wenn sie komplett unsichtbar
+	EMP sollte sie sofort enttarnen
+	Kommen sie wieder? Test: unbegrenzt viele Returns geben: was passieert?
+
+Heli nimmt manchmal schaden, wenn er unten Barrier berührt
+
+
+
+nanos + größere Bild-Frequenz testen,
+Spiel soll wieder laufen auch wenn Maus verschwindet .
+
+.. Dekoratet mal probieren, vielleicht besser, wenn Fenster maximierbar
+
+Wo müssen noch Gleitkommazahlen verwendet werden:
+Hintergrundbewegung
+Wolkenbewegung
+RandomColors
+Button
+
+-Animation
+StartScreen-Animation
+Alle Menü-Animation (auch in Game)
+Propeller-Drehgeschwindigkeit
+Timer für Plasma und PowerUp müssen zeitabhängig werden
+Vermutlich müssen alle Timer Zeitabhängig werden
+	Explosionen
+
+
+System nanos verweenden um länge der Schritte für alle Objekte zu bestimmen
+Thread-Pause nicht mehr verwenden, sondern immer Zeitdistanz berechnen!
+60 frames per seconds später so einstellen
+
+Suchen wo implizit floats für Doubles oder doubles für Floats eingegeben werden (oder int für double/float
+
+
+
+
+Balancing:
+Sind die blauen Speedup-Flitzer noch so treffsicher wie vorher?
+Fronter Speed auf 0 bei turn, evtl zurücksetzen.
+Schnelle Gegner langsamer: Boss 2 servants, Gelbe zitterer, Graue flitzer, blaue flitzer
+EMP_SLOW_TIME balancen
+EMP zu starker Stun bei Endgegnern … gewollt, früher auch so? evtl abschwächen
+
+
+
+
+Timer vereinheitlichen, gegebenenfalls unterscheiden zwischen stun und nicht stun gestoppten timern
+
+
+Enemy- anouver noch besser gestalten (Methoden sortieren und spalten)
+Alle richtungsänderungen aus Manöver in validate_turns einarbeiten
+Alle Geschwindigkeitsänderungen aus Manäver in calculate speed einarbeiten
+Zeitmessung was kostet am meisten
+
+
+Easy Mode (mehr Panzerung, weniger Kosten für Upgrades)
+	Vermerk in Highscore
+
+
+Wenn Enemy eingezwängt zwischen zwei Barrier, dann kein turn solange timer nicht soweit (sonst zu schnelles hin und her gewechsel) sondern speed null (extra timer verwenden evtl.)
+
+Helicopter Barrier touch aufwendiger gelöst als bei den Gegnern?
+
+
+
+Helicopter auch Image malen wie bei Gegnern,
+	evtl transparentes Image auf Image malen, wenn Phaseshift
+	 wie ist das bei den Enemies gelöst?
+Kein unverwundbarkeits blinken wenn im shift modus
+
+BgObject für MovingObject Abstract class vorbereiten
+die Menge an statischen Variablen möglichst weit reduzieren
+Barrier und Enemy trennen mit gemeinsamer Superklasse
+
+Jimdo HP
+
+Testspielen & Balancen:
+Optimalzeit für Helios-Klasse balancen
+Tipps vom Michael:
+-	vorbei fliegende PowerUps (Energie, Geld, Unverwundbarkeit, Leben)
+-	Bomben einsammeln (sprengen alle Gegner)
+-	31-35 zu unanspruchsvoll (dann kommt es nur auf die Schnellen an)
+-	Kanonen am Boden
+-	schnelle eventuell langsamer (entschärfen)
+-	offensiveres Spielweise sollte mehr belohnt werden als jetzt
+-	höhere Level schwerer, aber Endboss leichter
+-	Hindernisse am Boden
+-	„am Hintern klebende Gegner“ nerven
+
+o	Kamaitachi balancen
+- Plasmsa bonus dmg
+- Kamaitachi-Doppelkill-Bonus
+o	vielleicht EMP-Schaden gegen Bosse (und vielleicht auch allgemein) noch kleiner aber dafür Stun länger anhaltend
+o	evtl. Stoppraketen wieder stärken
+o	Roch Superschild balancen
+
+o	die unsichtbaren Beschleuniger vielleicht etwas langsamer
+o	Balancing: tendenziell eher weniger Gegner und diese dann stärker
+
+Jar erstellen  (oder exe oder beides)  an Michi schicken
+
+
+Wahrscheinlichkeit der Inaktivierung anpassen
+Abschuss schwieriger machen, eventuell über die HPs realisieren Integer.MAXVALUE/X abziehen, wenn voraussetzungen da
+Extra funktion: can_hit_barrier oder dmg_to_barrier() abziehen
+
+
+
+Java Webstart
+Gamepad Steuerung
+
+
+Vor jedem Endgegner ein Barrieren Rätsel überlegen:
+	Was ist möglich?
+	Evtl. auch vor 6, 16, etc.
+
+Hindernis-Klassen-Traktor-Shielder
+
+Neues Mega-Power (Ultra Boost)
+	- orange leuchtend wie BUSTER-Schüsse, Kreuz weiß oder hellgrau
+- aktiv wenn alle gleichzeitig eingesammelt werden
+- ersetzt dann die anderen
+- damit können selbst unverwundbare besiegt werden
+- Timer von allen resetet und 20 Sek
+
+
+
+
+Inaktivierter Barrier Tarnen sollte nichtmehr schießen nach der Snoozew zeit sondern sich nur 	noch wieder tarnen
+Keine Kollision  mit vergrabenen Barriern
+
+Anlöeitung texte überarbeiten Bonus Credit Credit .. nicht durcheinanderwürfeln
+1 x Hindernis-Klassen Traktor shielder
+Helicopter kann sich auch drehen und nach links schießen
+Rock immer zurerst malen (den Link verwenden und dann beim malen der anderen ausschließen)
+Panzerung als FLoatvariable, schaden häufiger nehmen (kontinuierlich) aber weniger
+Geräusch nur in Abständen, großer schaden, bei ersten zusaammenstoß dann viele kleine
+Eventuell den Zuwachs von Panzerung überlinear und Grundschaden 0.6 statt 1.0
+
+Vor jedem endgegner ein Barrieren Rätsel überlegen: Was ist möglich? Evtl. auch vor 6, 16, etc , Neues Mega Power (Ultra Boost), wenn alle gleichzeitig eingesammelt werden, damit können selbst unverwundbare besiegt werden, timer von allen resetet und 20 Sek, färblich evtl. etwas blinkende, die Texte bei Missiobsende für Helios und Die dB anderen. "You won a great victory for mankind, but the war isn't over yet. Unfortunately the alien mothership could escape. Rumours are that online Helios type helicopters can finally stop the alien invasion.
+
+
+Spielentwicklung Java Datei
+Gamepad Steuerung
+Java Webstart
+Michis Musik
+
+
+
+HelicopterDefence
+
+-	Graphik / Animationen
+o	Wolken
+	zufällige Form (Zusammensetzung) und Größe
+	zufällige Farbe
+	zufällige Y-Position
+	zufällige Geschwindigkeit (vielleicht auch nicht)
+	bis zu 3 (5?) Wolken gleichzeitig, diese als Bild vorzeichnen
+	Wolken vormalen
+o	für Gegner, die blinken, auch Bilder malen, aber diese nur alle 5 (z.B.) Schritte aktualisieren
+o	Raketenschweif sollte nicht hinten aus dem Helikopter ragen Farbverlauf an den Fußstützen bei Tag und Nachteinsatz unterschiedlich
+
+-	Spielmechanik / Helikopter-Balancing
+
+o	Roch Superschild balancen
+o
+o	so oft neu malen wie möglich, aber die Positionen zeitabhängig neu   berechnen (floats statt ins für die Koordinaten verwenden und dann auf int runden)
+
+-	Anzeige / Signale
+o	FPS permanten berechnen und auch in Startscreen ausgeben können
+o	In der Werkstatt: kleines Infofenster (selbstgezeichnet natürlich, wie button)
+	wird angezeigt, wenn Cursor lange über einem Feld ist. (oder ?-Button)
+	bei Maus-Bewegung wird ein Timer zurückgesetzt und bei nicht bewegung wird er  hoch gezählt und dann wird für das entsprechende Feld eine Info angezeigt
+
+-	Menü
+
+
+o	weitere Option: Einsteigermodus  mit Hilfe
+	zu Beginn eine Erklärung des Menüs (inkl. Werkstatt Button) & besonderheiten des gewählten Helis
+	Erinnerung wenn ein bisschen Geld zusammen gekommen ist, an die Werkstatt
+	hinweis bei ersten Miniboss
+	hinweis nach Erwerb des Special (Extra Bonus)
+
+
+-	Implementierung
+o	Image für Helicopter vorzeichnen (wie bei den Gegnern)
+o	für die Hintergrundobjekte mehrere Listen verwenden je nach Position, damit jedes Objekt nur einmal betrachtet werden muss
+o	Wie bei neuen Projekten: GUI, Simulation und Animator trennen
+-	speed und speed level, nur noch ein Wert und speed über floats festlegen
+-	direction x und y über speed regulieren
+-	 bei richtungswechsel speed vector anpassen,
+-	 dafür function : change x direction, change y direction, enemy Funktion zum erstellen, Funktionen in enemy sinnvoll sortieren, optisch überarbeiten (weniger lange Zeilen)
+o
+
+-	Gegner:
+o	Hindernisse
+
+	verschiedene Typen:
+6) macht Gegner kurzfristig unverwundbar (Schild für Gegner)
+	- helltürkis
+	- Iterator wie bei der Die Methode verwenden
+7) kann sich tarnen, taucht immer in Nähe des Heli auf, schießt in Richtung Heli – tarnfarbe
+Hindernis höchste Stufe: zufälliger Wechsel zwischen Schussarten und Geschwindigkeit,
+zielt mit jedem Schuss auf den Heli
+beamt sich in den Bereich des Helicopters (begrenzte Werte),  beamt sich dann wieder weg
+
+•
+o	Bei Minobossen vermeiden, dass diese so schnell oder fast so schnell fliegen wie das Bild weiterzieht (kleben am Rand) (man könnte Timer verwenden, der nach einer bestimmten Zeit den Gegner beschleunigt oder sie spontan umkehren lässt  nach links aus dem Bild fliegen) evtl, wenn diese eine bestimmte Zeit aktiv waren, Geschwindigkeit ändern oder flugrichtung ändern (besser)
+o	die unsichtbaren Beschleuniger vielleicht etwas langsamer (evtl. schon gefixt)
+o	Balancing: tendenziell eher weniger Gegner und diese dann stärker
+
+-	Sound
+o	evtl. einige Soundefekte komprimieren,wenn kein Qualitätsverlust
+
+
+
+-	Anleitung und HP
+o	Bilder zum Spiel
+o	Anleitung auf HP als pdf-DL und evtl. auch direkt als HTML
+o	Twitter / Facebook Likebutton
+o	Gästebuch
+o	Forum einbinden
+o	Insgesamt schöneres HP-Layout (Buttons, etc)
+o	Evtl. Video für Youtube drehen
+o	Wie erstellt man schicke HTML-Seiten  Tutorial raussuchen und durcharbeiten (Stichwort: modernes Webdesign / Webdesign 2.0)
+
+
+
+Langfristige Änderungen:#
+
+o	Google Web Tool Kit einstudieren, links von Fabian anschauen:
+	 https://code.google.com/p/forplay/wiki/GameLoop
+	http://www.youtube.com/watch?v=F_sbusEUz5w&feature=player_embedded
+
+- Datenbankanbindung
+- Helios-Erklärung: der Anteil wird bei höheren Level mehr (vgl. Geld Power Up)
+Freischaltung, wenn erstes Mal Endboss 1 besiegt
+Optimalzeit (muss ermittelt werden, wie schnell ist möglich, vielleicht 60min)
+Wer mit allen 5 Helicoptern Optimalzeit erreicht erhält 100% des Geldes das nötig ist, um alles zu erforschen, Optimalzeit nicht zu hoch ansetzen, man kann mehr als 100% erreichen
+Auch bei früheren Endgegnern kann man Boni für den Hardcore modus sammeln
+
+
+Wenn sich der Zuwachs verschlechtert, bleibt der alte Wert
+Für jeden Helicopter erhält man bei Optimalzeit 1/5 der Gesamtausbaukosten
+(oder mehr wenn schneller)
+
+
+
+
+
+2.)	Grafische Änderungen:
+
+neue Szenarien, jeweils Wechsel nach Besiegen eines Endgegners (oder auch selten nach Zufallsprinzip):
+- Südsee-Inseln (Wüste wird Wasser, nichts drauf außer Steine dahinter)
+- Idee: nach einer Insel in Wüstensandfarbe kann nur Wasser kommen, aber kein Land, nach Wasser kann Festland und Insel kommen, nach Land nur Wasser
+	- Gegner explodieren nicht, sondern gehen unter
+
+
+
+3.)	Änderungen an der GUI / Bedienung:
+
+Mit Tastatur steuerbar
+Steuerung ähnlich: Taste nach oben gedrück, dann gleicher effekt, wie wenn mauscursor über dem Heli
+
+
+4.)	Änderungen am Spiel (neue Features):
+
+
+Neue Gegner:
+1. neuer Gegner:	fliegt sehr langsam und hat sehr viele HPs
+zwei Phasen: fliegt auf den Heli zu, Stoppt, zielt auf heli,
+schießt (rote Kugel), wartet kurzen(!) moment , fliegt wieder auf Heli zu, etc. (dunkle Farbe schwarz-rot)
+rote Kugeln explodieren, wenn sie auf den Boden treffen
+Modifiziert: getarnt, fliegt schnell an neue Zufällige Position wird sichtbar, schießt von dort ein paar mal, tarnt sich wieder und fliegt schnell an weitere zufällige Position, flug und schusszeit ca. gleich, verlässt Bildschirm irgendwann von selbst, aber das dauert
+2. neuer Gegner:	helles Braun / Beige, baut Schilde für Standardgegner auf, immer wenn 			diese beschossen werden, können trotzdem fliegen
+			flieger die ein Schutzschild aufspannen, können selbst keines 				empfangen, könnte einfach eine neue Eigenschaft von den Traktor-			Shieldern sein, vielleicht: Wie die ausweicher (weichen schüssen aus, evtl. sogar wie die grauen Schießer, Schielder und beschieldeter Gegner stoppen, wenn Heli an einen Ort fliegt, von wo aus er den Schutzschildempfänger nicht mehr treffen kann, dann fliegen beide Gegner normal weiter
+
+nächster Gegner:
+landet, baut stationäre Kanonen auf, diese zielen immer auf den Heli, evtl. sogar flugbahn einberechnen
+
+
+Noch ein Gegner, hält gelegentlich an, blinkt dann … wenn er in der Zeit beschossen wird, absorbiert er die Energie und
+wird größer (stärker) oder vielleicht, Gegner ist durchgehend unverwundbar, nur gelegentlich hält er an und ist nicht
+unverwundbar und sich zu replizieren, in der Zeit muss er abgeschossen werden, nach Teilung wird der Counter resettet,
+für turns, evtl. könnten diese Gegner die grünen ersetzen oder neue Gegner klasse, mit mehr turns
+
+
+
+
+
+
+
+
+5.)	Verbesserung der Implementierung
+
+
+
+
+
+
+6.)	Bug-Fixing:
+
+
+7.)	Vorschläge von Beta-Testern:
+
+
+8.)	Zum Einsotieren:
+
+
+
+Enttarn-Länge sollte für die Gegner individuell sein (boss länger als die grünen flitzer)
+
+
+
+Die Servant-Leichen von Boss 5 sollten wieder zum leben erweckt werden
+entweder Farbe nimmt allmählich wieder utsprungsfarbe an oder von Anfang an nur
+vielleicht Erweckungstrahl, Servant ist kurzfristig unverwundbar
+
+
+
+Liste für aktive Traktor-Gegner (statische Liste in der Gegner-Klasse)
+
+
+Platzierung der Berge ändern:
+zum Teil zu stark überlagert
+zum Teil zu klein
+Gelegentlich immer noch auf der Wüste
+(können die x-Coords auch nach hinten?
+Vielleicht nicht ½ bei dem Ausschlussfaktor sondern 1x?)
+
+
+Farben von Gegner überarbeiten (Variabilität bei einigen reduzieren)
+
+
+3ter Boss vielleicht Grün?
+
+Gradientenfarbverlauf für Gegner für den Seitenflügel und das Dach je bei Unterschreiten einer bestimmten Größe nicht
+mehr berechnen, dann gleichmäßige Farbe, Größe ab der nicht mehr mit Gradient gemalt wird für Dach geringer, eventuell
+nicht nur von der Größe sondern von einen Faktor aus Gegnergröße und Auflösung
+
+
+evtl. versuchen mit Hardwarebeschleunigung zu arbeiten
+
+Java Webstart anschauen
+
+Vielleicht 2 neue Optionen im Menu: Steuerung Maus/Tastatur; Bildschirmauflösung (4:3, 15:9, 15:10 …)
+(Bei Tastatur-Steuerung, Mauscursor nicht zu sehen und dafür ein anderer (gemalt) oder Cursor pos verändern und dann in
+größeren schritten pos von cursor ändern) (evtl auch prinzipiell beides zulassen und auf gemalten cursor umsteigen
+
+
+Namen der Extra-Rewards:
+Goliath: Mammoth, Mantis
+Roch: Tailor
+Orochi: Hydra
+Kamaitachi: Fury
+Pegasus: Nova
