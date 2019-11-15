@@ -16,9 +16,8 @@ import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
@@ -113,7 +112,7 @@ public class PowerUp extends MovingObject
 		g2d.drawLine(x + width/2, y + height/5, x + width/2, y + (4 * height)/5);
 		g2d.drawLine(x + width/5, y + height/2, x + (4 * width)/5, y + height/2);		
 		g2d.setStroke(new BasicStroke(1));
-		g2d.setPaint(MyColor.dimColor(surface, 0.75f));
+		g2d.setPaint(Coloration.dimColor(surface, 0.75f));
 		g2d.drawRoundRect(x, y, width, height, 12, 12);		
 	}
 	
@@ -204,7 +203,7 @@ public class PowerUp extends MovingObject
 		else
 		{
 			this.surface = Color.orange;
-			this.cross = MyColor.golden;
+			this.cross = Coloration.golden;
 			this.worth = powerUpWorth;
 		} 
 	}
@@ -235,10 +234,10 @@ public class PowerUp extends MovingObject
 			if(!Events.isBossLevel())
 			{
 				helicopter.energy 
-					= Math.min(MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
+					= Math.min(Calculation.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
 											 helicopter.energy 
 											 	+ Math.max(10, 
-											 			   2*(MyMath.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
+											 			   2*(Calculation.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
 											 				 - helicopter.energy)/3));
 				Menu.updateCollectedPowerUps(helicopter, this);
 			}				

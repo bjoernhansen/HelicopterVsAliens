@@ -11,8 +11,8 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.util.EnumMap;
@@ -27,8 +27,9 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 public final class Pegasus extends Helicopter
 {
     private static final int[]
-        INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
-
+        INTERPHASE_GENERATOR_ALPHA = {110, 70}, // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
+        SHIFT_TIME = {225, 185, 151, 124, 102, 83, 68, 56, 45, 37, 30, 25};
+    
     private static final int
         EMP_TIMER_DURATION = 67;
 
@@ -142,8 +143,14 @@ public final class Pegasus extends Helicopter
         super.adjustFireRate(poweredUp);
         if(this.hasInterphaseGenerator)
         {
-            this.shiftTime = MyMath.shiftTime( this.calculateSumOfFireRateBooster(poweredUp));
+            this.shiftTime = shiftTime(this.calculateSumOfFireRateBooster(poweredUp));
         }
+    }
+    
+    public static int shiftTime(int n)
+    {
+        if(n > 1 && n < 14){return SHIFT_TIME[n-2];}
+        return 500;
     }
 
     @Override
@@ -241,14 +248,14 @@ public final class Pegasus extends Helicopter
         if(!this.isInPhase())
         {
             // TODO HashMap daraus machen und hier verwenden
-            this.inputColorCannon = MyColor.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputColorHull =   MyColor.setAlpha(this.inputColorHull, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputColorWindow = MyColor.setAlpha(this.inputColorWindow, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()] );
-            this.inputColorFuss1 =  MyColor.setAlpha(this.inputColorFuss1, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputColorFuss2 =  MyColor.setAlpha(this.inputColorFuss2, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputGray = 		MyColor.setAlpha(this.inputGray, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputLightGray = 	MyColor.setAlpha(this.inputLightGray, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputLamp = 		MyColor.setAlpha(this.inputLamp, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputColorCannon = Coloration.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputColorHull =   Coloration.setAlpha(this.inputColorHull, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputColorWindow = Coloration.setAlpha(this.inputColorWindow, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()] );
+            this.inputColorFuss1 =  Coloration.setAlpha(this.inputColorFuss1, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputColorFuss2 =  Coloration.setAlpha(this.inputColorFuss2, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputGray = 		Coloration.setAlpha(this.inputGray, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputLightGray = 	Coloration.setAlpha(this.inputLightGray, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
+            this.inputLamp = 		Coloration.setAlpha(this.inputLamp, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
         }
     }
     

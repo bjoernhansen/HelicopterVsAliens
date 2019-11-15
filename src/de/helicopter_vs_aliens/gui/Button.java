@@ -8,8 +8,8 @@ import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -189,24 +189,24 @@ public class Button
     	{    		
 			if(!helicopter.hasMaxUpgradeLevel[i])
 			{
-				Menu.repairShopButton.get("StandardUpgrade" + i).costs = MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]);
-				Menu.repairShopButton.get("StandardUpgrade" + i).costColor = MyColor.costsColor[helicopter.upgradeCosts[i]];
+				Menu.repairShopButton.get("StandardUpgrade" + i).costs = Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]);
+				Menu.repairShopButton.get("StandardUpgrade" + i).costColor = helicopter.getUpgradeCost(i).getColor();
 			}
     	}
 		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();
 		Menu.repairShopButton.get("StandardUpgrade" + 5).label = String.join(" ", standardUpgradeLabel);
 		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden
 		Menu.repairShopButton.get("Special" + 0).costs = SPOTLIGHT_COSTS;
-		Menu.repairShopButton.get("Special" + 0).costColor = MyColor.costsColor[CHEAP.ordinal()];
+		Menu.repairShopButton.get("Special" + 0).costColor = CHEAP.getColor();
 		Menu.repairShopButton.get("Special" + 1).costs = (helicopter.getGoliathCosts());
-		Menu.repairShopButton.get("Special" + 1).costColor = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 1).costColor = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor();
 		Menu.repairShopButton.get("Special" + 2).costs = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + 2).costColor = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 2).costColor = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor();
 		Menu.repairShopButton.get("Special" + 3).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + 3).costColor = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? MyColor.costsColor[VERY_CHEAP.ordinal()] : helicopter.getType() == ROCH ? MyColor.costsColor[EXPENSIVE.ordinal()] : MyColor.costsColor[REGULAR.ordinal()];
+		Menu.repairShopButton.get("Special" + 3).costColor = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor();
 		Menu.repairShopButton.get("Special" + 3).label = dictionary.extraCannons();
 		Menu.repairShopButton.get("Special" + 4).costs = helicopter.getType() != ROCH ? Helicopter.CHEAP_SPECIAL_COSTS : Roch.JUMBO_MISSILE_COSTS ;
-		Menu.repairShopButton.get("Special" + 4).costColor = helicopter.getType() != ROCH ? MyColor.costsColor[VERY_CHEAP.ordinal()] : MyColor.costsColor[CHEAP.ordinal()];
+		Menu.repairShopButton.get("Special" + 4).costColor = helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor();
 		Menu.repairShopButton.get("Special" + 4).label = dictionary.fifthSpecial();
 	}
 	
@@ -220,18 +220,18 @@ public class Button
 			String usedLabel = buttonLabel != null ? buttonLabel : this.label;
 			if((this.highlighted && this.enabled) || !this.translucent)
 			{
-				g2d.setPaint(this.highlighted ? MyColor.gradientVariableGray : MyColor.lightestGray);
+				g2d.setPaint(this.highlighted ? Coloration.gradientVariableGray : Coloration.lightestGray);
 				g2d.fill(this.bounds);
 			}
 	    	g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-	    	if(this.costColor == null){g2d.setColor(this.enabled ? this.marked ? MyColor.variableWhite : Color.white : MyColor.lightGray);}
+	    	if(this.costColor == null){g2d.setColor(this.enabled ? this.marked ? Coloration.variableWhite : Color.white : Coloration.lightGray);}
 	        else{g2d.setColor(this.costColor);}
 	    	if(this.translucent){g2d.draw(this.bounds);}
 	    	else
 	    	{
 	    		g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)this.bounds.getY());
 	        	g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX()), (int)(this.bounds.getY()+this.bounds.getHeight()));
-	        	if(this.costColor == null){g2d.setColor(MyColor.gray);}
+	        	if(this.costColor == null){g2d.setColor(Coloration.gray);}
 	            else{g2d.setColor(this.costColor);}
 	        	g2d.drawLine((int)(this.bounds.getX()+this.bounds.getWidth()), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
 	        	g2d.drawLine((int)this.bounds.getX(), (int)(this.bounds.getY()+this.bounds.getHeight()), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
@@ -240,7 +240,7 @@ public class Button
 	        	        
 	        if(this.secondLabel != null || this.costButton)
 	        {	        	
-	        	if(this.costColor == null){g2d.setColor(MyColor.lightOrange);}
+	        	if(this.costColor == null){g2d.setColor(Coloration.lightOrange);}
 	            else{g2d.setColor(this.costColor);}
 	        	g2d.setFont(Menu.fontProvider.getBold(14));
 	        	g2d.drawString(usedLabel, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 20);
@@ -250,8 +250,8 @@ public class Button
 	        	if(this.translucent)
 	        	{
 	        		g2d.setFont(Menu.fontProvider.getBold(15));
-	        		if(this.enabled){g2d.setColor(this.marked ? MyColor.variableMarkedButton : Color.yellow); }
-		        	else{g2d.setColor(MyColor.lightGray);} 		
+	        		if(this.enabled){g2d.setColor(this.marked ? Coloration.variableMarkedButton : Color.yellow); }
+		        	else{g2d.setColor(Coloration.lightGray);}
 	        	}
 	        	else
 	        	{

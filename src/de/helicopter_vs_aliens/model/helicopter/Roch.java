@@ -10,7 +10,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.MyColor;
+import de.helicopter_vs_aliens.util.Coloration;
 
 import java.awt.*;
 import java.util.EnumMap;
@@ -253,7 +253,7 @@ public final class Roch extends Helicopter
     
     private void paintPowerShield(Graphics2D g2d, int left, int top)
     {
-        g2d.setColor(MyColor.shieldColor[Menu.window == STARTSCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
+        g2d.setColor(Coloration.shieldColor[Menu.window == STARTSCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
         g2d.fillOval(left+(this.hasLeftMovingAppearance() ? -9 : 35), top+19, 96, 54);
     }
     

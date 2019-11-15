@@ -29,8 +29,8 @@ import de.helicopter_vs_aliens.model.missile.EnemyMissileTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
@@ -369,7 +369,7 @@ public class Enemy extends MovingObject
 		{
 			if(this.isInvincible())
 			{	
-				this.paintImage(g2d, -this.direction.x, MyColor.variableGreen, false);
+				this.paintImage(g2d, -this.direction.x, Coloration.variableGreen, false);
 			}
 			else if(this.alpha != 255)
 			{
@@ -400,8 +400,8 @@ public class Enemy extends MovingObject
 			{
 				Color inputColorRoof
 					= this.alpha < 255 
-						? MyColor.setAlpha(MyColor.variableGreen, this.alpha) 								
-						: MyColor.variableGreen;				
+						? Coloration.setAlpha(Coloration.variableGreen, this.alpha)
+						: Coloration.variableGreen;
 				
 				this.paintCannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, inputColorRoof);
 			}
@@ -488,7 +488,7 @@ public class Enemy extends MovingObject
 			if(this.model != BARRIER)
 			{				
 				this.graphics[j].setComposite(AlphaComposite.Src);
-				this.graphics[j].setColor(MyColor.translucentDarkestBlack);
+				this.graphics[j].setColor(Coloration.translucentDarkestBlack);
 				this.graphics[j].fillRect(0, 0, this.image[j].getWidth(), this.image[j].getHeight());
 			}			
 			this.paintImage(this.graphics[j], 1-2*j, null, true);
@@ -504,8 +504,8 @@ public class Enemy extends MovingObject
 	{
 		Helicopter.paintRotor(	g2d,
 								!this.isDestroyed
-									?(MyColor.setAlpha(MyColor.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], this.alpha))
-									: MyColor.dimColor(MyColor.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], MyColor.DESTRUCTION_DIM_FACTOR),
+									?(Coloration.setAlpha(Coloration.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], this.alpha))
+									: Coloration.dimColor(Coloration.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], Coloration.DESTRUCTION_DIM_FACTOR),
 								x, y, this.paintBounds.width, this.paintBounds.height, 5, (this.speedLevel.equals(ZERO_SPEED) ? (this.snoozeTimer <= SNOOZE_TIME ? 3 : 0) : 8) * (this.isClockwiseBarrier ? -1 : 1) * this.lifetime%360,
 								24, BARRIER_BORDER_SIZE, this.snoozeTimer == 0);
 		this.paintBarrierCannon(g2d, x, y);
@@ -518,11 +518,11 @@ public class Enemy extends MovingObject
 		for(int i = 0; i < 3; i++)
 		{
 			tempColor = (this.barrierShootTimer != DISABLED && this.barrierShootTimer <= this.shotsPerCycle * this.shootingRate && i != 0 && !this.isDestroyed)
-							?  MyColor.variableGreen
+							?  Coloration.variableGreen
 							: !this.isDestroyed
-								? MyColor.barrierColor[i][Events.timeOfDay.ordinal()]
-								: MyColor.dimColor(MyColor.barrierColor[i][Events.timeOfDay.ordinal()], MyColor.DESTRUCTION_DIM_FACTOR);
-			if(this.alpha != 255){tempColor = MyColor.setAlpha(tempColor, this.alpha);}
+								? Coloration.barrierColor[i][Events.timeOfDay.ordinal()]
+								: Coloration.dimColor(Coloration.barrierColor[i][Events.timeOfDay.ordinal()], Coloration.DESTRUCTION_DIM_FACTOR);
+			if(this.alpha != 255){tempColor = Coloration.setAlpha(tempColor, this.alpha);}
 			g2d.setColor(tempColor);
 			
 			distanceX = (int) ((0.45f + i * 0.01f) * this.paintBounds.width);
@@ -569,7 +569,7 @@ public class Enemy extends MovingObject
 											backgroundColor,
 											0, 
 											y + 0.3f*thicknessFactor*this.paintBounds.height,
-											MyColor.dimColor(backgroundColor, 0.85f),
+											Coloration.dimColor(backgroundColor, 0.85f),
 											true));
 			
 			g2d.fillRect(x + (int)(thicknessFactor/2 * this.paintBounds.width),
@@ -672,7 +672,7 @@ public class Enemy extends MovingObject
 											inputColor,
 											(int) (horizontal ? 0 : x + 1.0f * thicknessFactor * width),
 											(int) (horizontal ?     y + 1.0f * thicknessFactor * height : 0),
-											MyColor.dimColor(inputColor, dimFactor),
+											Coloration.dimColor(inputColor, dimFactor),
 											true));		
 		
 		g2d.fillRoundRect(	(int) (x - (directionX == 1 ? xShiftLeft : xShiftRight) * width),
@@ -738,7 +738,7 @@ public class Enemy extends MovingObject
 										color, 
 										0, 
 										y + (yShift + height) * this.paintBounds.height,
-										MyColor.dimColor(color, 0.5f), 
+										Coloration.dimColor(color, 0.5f),
 										true));
 		
 		g2d.fillRoundRect(	(int) (x + (directionX == 1
@@ -774,8 +774,8 @@ public class Enemy extends MovingObject
 		{
 			if(this.isDestroyed && Events.timeOfDay == NIGHT)
 			{
-				mainColorLight = MyColor.dimColor(this.farbe1, 1.3f * MyColor.NIGHT_DIM_FACTOR);
-				mainColorDark  = MyColor.dimColor(this.farbe2, 1.3f * MyColor.NIGHT_DIM_FACTOR);
+				mainColorLight = Coloration.dimColor(this.farbe1, 1.3f * Coloration.NIGHT_DIM_FACTOR);
+				mainColorDark  = Coloration.dimColor(this.farbe2, 1.3f * Coloration.NIGHT_DIM_FACTOR);
 			}
 			else
 			{
@@ -786,25 +786,25 @@ public class Enemy extends MovingObject
 		else
 		{
 			mainColorLight = color;
-			mainColorDark = MyColor.dimColor(color, 1.5f);
+			mainColorDark = Coloration.dimColor(color, 1.5f);
 		}		
 		
-		if(this.model == BARRIER){barColor = MyColor.barrierColor[MyColor.FRAME][Events.timeOfDay.ordinal()];}
-		else if(!this.isDestroyed && (this.tractor == AbilityStatusTypes.ACTIVE || this.shootTimer > 0 || this.isShielding)){barColor = MyColor.variableGreen;}
+		if(this.model == BARRIER){barColor = Coloration.barrierColor[Coloration.FRAME][Events.timeOfDay.ordinal()];}
+		else if(!this.isDestroyed && (this.tractor == AbilityStatusTypes.ACTIVE || this.shootTimer > 0 || this.isShielding)){barColor = Coloration.variableGreen;}
 		else if(!this.isDestroyed && !imagePaint && this.isInvincible()){barColor = Color.green;}
 		else if(this.isMiniBoss){barColor = this.farbe2;}
-		else{barColor = MyColor.enemyGray;}
-		inactiveNozzleColor = MyColor.INACTIVE_NOZZLE;
+		else{barColor = Coloration.enemyGray;}
+		inactiveNozzleColor = Coloration.INACTIVE_NOZZLE;
 		
 		if(this.model == BARRIER && Events.timeOfDay == NIGHT)
 		{
-			inactiveNozzleColor = MyColor.barrierColor[MyColor.NOZZLE][Events.timeOfDay.ordinal()];
+			inactiveNozzleColor = Coloration.barrierColor[Coloration.NOZZLE][Events.timeOfDay.ordinal()];
 		}
 		
 		if(this.isDestroyed)
 		{
-			barColor = MyColor.dimColor(barColor, Events.timeOfDay == NIGHT ? 1.3f * MyColor.NIGHT_DIM_FACTOR : 1);
-			inactiveNozzleColor = MyColor.dimColor(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * MyColor.NIGHT_DIM_FACTOR : 1);
+			barColor = Coloration.dimColor(barColor, Events.timeOfDay == NIGHT ? 1.3f * Coloration.NIGHT_DIM_FACTOR : 1);
+			inactiveNozzleColor = Coloration.dimColor(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * Coloration.NIGHT_DIM_FACTOR : 1);
 		}
 				
 		//Malen des Gegners
@@ -857,7 +857,7 @@ public class Enemy extends MovingObject
 					(int)(offsetY
 							+ this.paintBounds.height
 							  *(this.model == TIT ? 0.067f : 0.125f)), 
-					Color.red.equals(color) ? MyColor.cloakedBossEye : null, 
+					Color.red.equals(color) ? Coloration.cloakedBossEye : null,
 					directionX,
 					getarnt && !imagePaint);
 		}		
@@ -894,7 +894,7 @@ public class Enemy extends MovingObject
 		this.paintBarrierEyes(g2d,
 								offsetX,
 								offsetY,
-								MyColor.barrierColor[MyColor.EYES][Events.timeOfDay.ordinal()],
+								Coloration.barrierColor[Coloration.EYES][Events.timeOfDay.ordinal()],
 								imagePaint);
 		
 		// Turbinen-Innenraum
@@ -919,7 +919,7 @@ public class Enemy extends MovingObject
 										mainColorDark,
 										0, 
 										offsetY + 0.045f*this.paintBounds.height,
-										MyColor.dimColor(mainColorDark, 0.85f),
+										Coloration.dimColor(mainColorDark, 0.85f),
 										true));	
 		
 		g2d.fillOval(offsetX + distanceX,
@@ -1007,7 +1007,7 @@ public class Enemy extends MovingObject
 				mainColorLight,
 				0,
 				offsetY + this.paintBounds.height,
-				MyColor.dimColor(mainColorLight, 0.5f),
+				Coloration.dimColor(mainColorLight, 0.5f),
 				true);
 			
 		g2d.setPaint(this.gradientColor);		
@@ -1019,8 +1019,8 @@ public class Enemy extends MovingObject
 							this.paintBounds.x,
 							this.paintBounds.y,
 							this.alpha != 255 
-								? MyColor.setAlpha(MyColor.variableRed, this.alpha) 
-								: MyColor.variableRed,
+								? Coloration.setAlpha(Coloration.variableRed, this.alpha)
+								: Coloration.variableRed,
 							false);
 	}
 	
@@ -1039,7 +1039,7 @@ public class Enemy extends MovingObject
 					 y - borderDistance + this.paintBounds.height - eyeSize,
 					 eyeSize, eyeSize);
 		
-		if(!imagePaint && !(this.snoozeTimer > SNOOZE_TIME)){g2d.setPaint(MyColor.reversedRandomRed(color));}
+		if(!imagePaint && !(this.snoozeTimer > SNOOZE_TIME)){g2d.setPaint(Coloration.reversedRandomRed(color));}
 		g2d.fillOval(x + borderDistance,
 					 y - borderDistance + this.paintBounds.height - eyeSize,
 					 eyeSize, eyeSize);
@@ -1083,7 +1083,7 @@ public class Enemy extends MovingObject
 	public static void paintEnergyBeam(Graphics2D g2d, int x1, int y1, int x2, int y2)
 	{
 		g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-		g2d.setColor(MyColor.green);
+		g2d.setColor(Coloration.green);
 		g2d.drawLine(x1, y1, x2, y2);
 		g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g2d.setColor(Color.green);
@@ -1099,8 +1099,8 @@ public class Enemy extends MovingObject
 							+ this.paintBounds.height
 							  *(this.model == TIT ? 0.067f : 0.125f)), 
 					 this.alpha != 255 
-						? MyColor.setAlpha(MyColor.variableRed, this.alpha) 
-						: MyColor.variableRed,
+						? Coloration.setAlpha(Coloration.variableRed, this.alpha)
+						: Coloration.variableRed,
 					 -this.direction.x, 
 					 false);
 	}
@@ -1137,11 +1137,11 @@ public class Enemy extends MovingObject
 		{
 			g2d.setColor(this.isLivingBoss()
 				 	? (this.alpha == 255 
-				 		? MyColor.variableRed 
-				 		: MyColor.setAlpha(MyColor.variableRed, this.alpha)) 
+				 		? Coloration.variableRed
+				 		: Coloration.setAlpha(Coloration.variableRed, this.alpha))
 				 	: (this.alpha == 255 
-				 		? MyColor.windowBlue 
-				 		: MyColor.setAlpha(MyColor.windowBlue, this.alpha)));
+				 		? Coloration.windowBlue
+				 		: Coloration.setAlpha(Coloration.windowBlue, this.alpha)));
 		}
 		else{g2d.setColor(color);}		
 	}
@@ -1372,8 +1372,8 @@ public class Enemy extends MovingObject
 	{
 		for(int m = 0; 
 				m < (lastCarrier.isMiniBoss
-						? 5 + MyMath.random(3)
-						: 2 + MyMath.random(2)); 
+						? 5 + Calculation.random(3)
+						: 2 + Calculation.random(2));
 				m++)
 			{
 				creation(helicopter, enemy);
@@ -1472,7 +1472,7 @@ public class Enemy extends MovingObject
 				&&((Events.lastCreationTimer > 20  && !Events.isBossLevel()) ||
 				   (Events.lastCreationTimer > 135 ) )
 				&& nrOfEnemies < (maxNr + maxBarrierNr)
-				&& MyMath.creationProbability(
+				&& Calculation.creationProbability(
 						Events.isBossLevel()
 							? 0
 							: (maxNr + maxBarrierNr) - nrOfEnemies, 1)
@@ -1506,11 +1506,11 @@ public class Enemy extends MovingObject
 		
 		if(this.model != BARRIER)
 		{
-			this.farbe1 = MyColor.dimColor(this.farbe1, 1.3f);
-			this.farbe2 = MyColor.dimColor(this.farbe1, this.dimFactor);
+			this.farbe1 = Coloration.dimColor(this.farbe1, 1.3f);
+			this.farbe2 = Coloration.dimColor(this.farbe1, this.dimFactor);
 		}		
 		if(this.canBecomeMiniBoss()){this.turnIntoMiniBoss(helicopter);}
-		this.rewardModifier = this.isBoss() ? 0 : 5 - MyMath.random(11);
+		this.rewardModifier = this.isBoss() ? 0 : 5 - Calculation.random(11);
 		this.startingHitpoints = this.hitpoints;
 		
 		// Festlegen der Höhe und der y-Position des Gegners
@@ -1560,7 +1560,7 @@ public class Enemy extends MovingObject
 		this.model = TIT;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
 		this.setX(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
-		this.direction.setLocation(-1, MyMath.randomDirection());
+		this.direction.setLocation(-1, Calculation.randomDirection());
 		this.callBack = 0;
 		this.shield = 0;
 		this.dimFactor = 1.5f;
@@ -1651,7 +1651,7 @@ public class Enemy extends MovingObject
 		return Events.level >= MIN_BARRIER_LEVEL 
 				&& !Events.isBossLevel()
 				&& barrierTimer == 0
-				&& (MyMath.tossUp(0.35f)
+				&& (Calculation.tossUp(0.35f)
 					|| (numberOfEnemies - currentNumberOfBarriers >= maxNr))
 				&& currentNumberOfBarriers < maxBarrierNr;
 	}
@@ -1664,11 +1664,11 @@ public class Enemy extends MovingObject
 		helicopter.numberOfEnemiesSeen--;
 		this.hitpoints = Integer.MAX_VALUE;
 		this.rotorColor = 1;
-		this.isClockwiseBarrier = MyMath.tossUp();
+		this.isClockwiseBarrier = Calculation.tossUp();
 				
 		if(this.type == BARRIER_0 || this.type == BARRIER_1)
 		{
-			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
+			this.farbe1 = Coloration.bleach(Color.green, 0.6f);
 			this.isLasting = true;
 			
 			// Level 2
@@ -1684,7 +1684,7 @@ public class Enemy extends MovingObject
 		// Level 12
 		else if(this.type == BARRIER_2)
 		{
-			this.farbe1 = MyColor.bleach(Color.yellow, 0.6f);
+			this.farbe1 = Coloration.bleach(Color.yellow, 0.6f);
 			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
 			this.setVarWidth(65);
 			
@@ -1695,7 +1695,7 @@ public class Enemy extends MovingObject
 		// Level 15
 		else if(this.type == BARRIER_3)
 		{
-			this.farbe1 = MyColor.bleach(new Color(255, 192, 0), 0.0f);
+			this.farbe1 = Coloration.bleach(new Color(255, 192, 0), 0.0f);
 			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
 			this.setVarWidth(105);
 			if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
@@ -1703,7 +1703,7 @@ public class Enemy extends MovingObject
 			this.setLocation(this.targetSpeedLevel.getX() >= 5
 									? -this.bounds.getWidth()-APPEARANCE_DISTANCE
 									: this.bounds.getX(),
-							  GROUND_Y - this.bounds.getWidth() - (5 + MyMath.random(11)));
+							  GROUND_Y - this.bounds.getWidth() - (5 + Calculation.random(11)));
 			this.hasYPosSet = true;
 		}
 		// Level 18
@@ -1714,8 +1714,8 @@ public class Enemy extends MovingObject
 			this.barrierShootTimer = READY;
 			this.setBarrierShootingProperties();
 			this.shotRotationSpeed
-				= MyMath.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL
-					? MyMath.randomDirection()*(this.shootingRate /3 + MyMath.random(10))
+				= Calculation.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL
+					? Calculation.randomDirection()*(this.shootingRate /3 + Calculation.random(10))
 					: 0;	
 			
 			this.isLasting = true;
@@ -1734,7 +1734,7 @@ public class Enemy extends MovingObject
 		// Level 42
 		else if(this.type == BARRIER_6)
 		{
-			this.farbe1 = MyColor.bleach(Color.green, 0.6f);
+			this.farbe1 = Coloration.bleach(Color.green, 0.6f);
 			this.setVarWidth(80);
 			
 			this.isLasting = true;
@@ -1742,7 +1742,7 @@ public class Enemy extends MovingObject
 		// Level 44
 		else if(this.type == BARRIER_7)
 		{
-			this.farbe1 = MyColor.bleach(MyColor.cloaked, 0.6f);
+			this.farbe1 = Coloration.bleach(Coloration.cloaked, 0.6f);
 			this.setVarWidth(100);
 						
 			this.barrierTeleportTimer = READY;
@@ -1750,16 +1750,16 @@ public class Enemy extends MovingObject
 			this.startBarrierUncloaking(helicopter);
 						
 			this.hasYPosSet = true;
-			this.callBack = 1 + MyMath.random(4);
+			this.callBack = 1 + Calculation.random(4);
 		}
 		
-		this.farbe2 = MyColor.dimColor(this.farbe1, 0.75f);
+		this.farbe2 = Coloration.dimColor(this.farbe1, 0.75f);
 		this.deactivationProb = 1.0f / this.type.getStrength();
 				
 		if(Events.timeOfDay == NIGHT)
 		{
-			this.farbe1 = MyColor.dimColor(this.farbe1, MyColor.BARRIER_NIGHT_DIM_FACTOR);
-			this.farbe2 = MyColor.dimColor(this.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
+			this.farbe1 = Coloration.dimColor(this.farbe1, Coloration.BARRIER_NIGHT_DIM_FACTOR);
+			this.farbe2 = Coloration.dimColor(this.farbe2, Coloration.BARRIER_NIGHT_DIM_FACTOR);
 		}		
 		barrierTimer = (int)((helicopter.bounds.getWidth() + this.bounds.getWidth())/2);
 	}
@@ -1767,15 +1767,15 @@ public class Enemy extends MovingObject
     private void assignRandomBarrierType()
     {
         int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
-            ? MyMath.random(3)
+            ? Calculation.random(3)
             : 0;
-        int selectedBarrierIndex = MyMath.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyTypes.getBarrierTypes().size()));
+        int selectedBarrierIndex = Calculation.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyTypes.getBarrierTypes().size()));
         this.type = (EnemyTypes) EnemyTypes.getBarrierTypes().toArray()[selectedBarrierIndex];
     }
     
     private boolean isBarrierFromFutureCreationApproved()
     {
-        return MyMath.tossUp(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
+        return Calculation.tossUp(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
     }
     
     private void placeAtPausePosition()
@@ -1792,7 +1792,7 @@ public class Enemy extends MovingObject
 				&& Events.level >= MIN_ROCK_LEVEL 
 				&& !Events.isBossLevel()
 				&& rockTimer == 0
-				&& MyMath.tossUp(ROCK_PROB);
+				&& Calculation.tossUp(ROCK_PROB);
 	}
 	
 	private void createRock(Helicopter helicopter)
@@ -1801,7 +1801,7 @@ public class Enemy extends MovingObject
 		this.type = ROCK;
 		this.model = CARGO;	
 		helicopter.numberOfEnemiesSeen--;
-		this.farbe1 = new Color((180 + MyMath.random(30)), (120 + MyMath.random(30)),(0 + MyMath.random(15)));
+		this.farbe1 = new Color((180 + Calculation.random(30)), (120 + Calculation.random(30)),(0 + Calculation.random(15)));
 		this.hitpoints = 1;
 		this.invincibleTimer = Integer.MAX_VALUE;
 			
@@ -1818,7 +1818,7 @@ public class Enemy extends MovingObject
 	{		
 		return Events.level >= MIN_KABOOM_LEVEL 
 				&& !Events.isBossLevel()
-				&& MyMath.tossUp(KABOOM_PROB);
+				&& Calculation.tossUp(KABOOM_PROB);
 	}
 	
 	private void createKaboom(Helicopter helicopter)
@@ -1835,16 +1835,16 @@ public class Enemy extends MovingObject
 	
 	private void createStandardEnemy()
 	{
-		this.type = enemySelector.getType(MyMath.random(selection));
+		this.type = enemySelector.getType(Calculation.random(selection));
 		//this.type = CARRIER;
 
 		switch(this.type)
 		{
 			// Level 1
 			case TINY:
-				this.farbe1 = new Color((180 + MyMath.random(30)),
-						(120 + MyMath.random(30)),
-						(0 + MyMath.random(15)));
+				this.farbe1 = new Color((180 + Calculation.random(30)),
+						(120 + Calculation.random(30)),
+						(0 + Calculation.random(15)));
 				this.hitpoints = 2;
 				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
@@ -1856,10 +1856,10 @@ public class Enemy extends MovingObject
 
 			// Level 3
 			case SMALL:
-				this.farbe1 = new Color((140 + MyMath.random(25)),
-						(65 + MyMath.random(35)),
-						(0 + MyMath.random(25)));
-				this.hitpoints = 3 + MyMath.random(3);
+				this.farbe1 = new Color((140 + Calculation.random(25)),
+						(65 + Calculation.random(35)),
+						(0 + Calculation.random(25)));
+				this.hitpoints = 3 + Calculation.random(3);
 				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(), //d
 						0.5*Math.random());	//d
@@ -1869,10 +1869,10 @@ public class Enemy extends MovingObject
 
 			// level 5
 			case RUNABOUT:
-				this.farbe1 = new Color((100 + MyMath.random(30)),
-						(100 + MyMath.random(30)),
-						(40 + MyMath.random(25)));
-				this.hitpoints = 2 + MyMath.random(2);
+				this.farbe1 = new Color((100 + Calculation.random(30)),
+						(100 + Calculation.random(30)),
+						(40 + Calculation.random(25)));
+				this.hitpoints = 2 + Calculation.random(2);
 				this.setVarWidth(100);
 				this.targetSpeedLevel.setLocation(2 + 2*Math.random(), //d
 						2.5 + 1.5*Math.random());		//d
@@ -1883,9 +1883,9 @@ public class Enemy extends MovingObject
 			// Level 7
 			case FREIGHTER:
 				this.model = CARGO;
-				this.farbe1 = new Color((100 + MyMath.random(30)),
-						(50 + MyMath.random(30)),
-						(45 + MyMath.random(20)));
+				this.farbe1 = new Color((100 + Calculation.random(30)),
+						(50 + Calculation.random(30)),
+						(45 + Calculation.random(20)));
 				this.setHitpoints(25);
 				this.setVarWidth(145);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
@@ -1897,9 +1897,9 @@ public class Enemy extends MovingObject
 
 			// Level 11
 			case BATCHWISE:
-				this.farbe1 = new Color((135 + MyMath.random(30)),
-						(80+MyMath.random(20)),
-						(85 + MyMath.random(30)));
+				this.farbe1 = new Color((135 + Calculation.random(30)),
+						(80+ Calculation.random(20)),
+						(85 + Calculation.random(30)));
 				this.setHitpoints(16);
 				this.setVarWidth(130);
 				this.targetSpeedLevel.setLocation(7 + 4*Math.random(), //d
@@ -1910,9 +1910,9 @@ public class Enemy extends MovingObject
 
 			// Level 13
 			case SINUS:
-				this.farbe1 = new Color((185 + MyMath.random(40)),
-						( 70 + MyMath.random(30)),
-						(135 + MyMath.random(40)));
+				this.farbe1 = new Color((185 + Calculation.random(40)),
+						( 70 + Calculation.random(30)),
+						(135 + Calculation.random(40)));
 				this.setHitpoints(6);
 				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(2.5 + 2.5*Math.random(), 11); //d
@@ -1925,9 +1925,9 @@ public class Enemy extends MovingObject
 
 			// Level 16
 			case DODGER:
-				this.farbe1 = new Color((85 + MyMath.random(20)),
-						(35 + MyMath.random(30)),
-						(95 + MyMath.random(30)));
+				this.farbe1 = new Color((85 + Calculation.random(20)),
+						(35 + Calculation.random(30)),
+						(95 + Calculation.random(30)));
 				this.setHitpoints(24);
 				this.setVarWidth(170);
 				this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(), //d
@@ -1938,9 +1938,9 @@ public class Enemy extends MovingObject
 
 			// Level 21
 			case CHAOS:
-				this.farbe1 = new Color((150 + MyMath.random(20)),
-						(130 + MyMath.random(25)),
-						( 75 + MyMath.random(30)));
+				this.farbe1 = new Color((150 + Calculation.random(20)),
+						(130 + Calculation.random(25)),
+						( 75 + Calculation.random(30)));
 				this.setHitpoints(22);
 				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(), //d
@@ -1952,9 +1952,9 @@ public class Enemy extends MovingObject
 
 			// Level 24
 			case CALLBACK:
-				this.farbe1 = new Color((70 + MyMath.random(40)),
-						(130 + MyMath.random(50)),
-						(30 + MyMath.random(45)));
+				this.farbe1 = new Color((70 + Calculation.random(40)),
+						(130 + Calculation.random(50)),
+						(30 + Calculation.random(45)));
 				this.setHitpoints(30);
 				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(), //d
@@ -1968,9 +1968,9 @@ public class Enemy extends MovingObject
 			case SHOOTER:
 				this.model = CARGO;
 
-				this.farbe1 = new Color(80 + MyMath.random(25),
-						80 + MyMath.random(25),
-						80 + MyMath.random(25));
+				this.farbe1 = new Color(80 + Calculation.random(25),
+						80 + Calculation.random(25),
+						80 + Calculation.random(25));
 				this.setHitpoints(60);
 				this.setVarWidth(80);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
@@ -1985,7 +1985,7 @@ public class Enemy extends MovingObject
 			case CLOAK:
 				this.model = CARGO;
 
-				this.farbe1 = MyColor.cloaked;
+				this.farbe1 = Coloration.cloaked;
 				this.setHitpoints(100);
 				this.setVarWidth(85);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
@@ -2007,9 +2007,9 @@ public class Enemy extends MovingObject
 			case CARRIER:
 				this.model = CARGO;
 
-				this.farbe1 = new Color(70 + MyMath.random(15),
-						60 + MyMath.random(10),
-						45 + MyMath.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
+				this.farbe1 = new Color(70 + Calculation.random(15),
+						60 + Calculation.random(10),
+						45 + Calculation.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
 				this.setHitpoints(450);
 				this.setVarWidth(165);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
@@ -2022,9 +2022,9 @@ public class Enemy extends MovingObject
 
 			// Level 37
 			case YELLOW:
-				this.farbe1 = new Color((180 + MyMath.random(50)),
-						(230 + MyMath.random(20)),
-						(20 + MyMath.random(60)));
+				this.farbe1 = new Color((180 + Calculation.random(50)),
+						(230 + Calculation.random(20)),
+						(20 + Calculation.random(60)));
 				this.setHitpoints(140);
 				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(), //d
@@ -2037,9 +2037,9 @@ public class Enemy extends MovingObject
 
 			// Level 41
 			case AMBUSH:
-				this.farbe1 = new Color( 30 + MyMath.random(40),
-						60 + MyMath.random(40),
-						120 + MyMath.random(40));
+				this.farbe1 = new Color( 30 + Calculation.random(40),
+						60 + Calculation.random(40),
+						120 + Calculation.random(40));
 				this.setHitpoints(150);
 				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0); //d
@@ -2051,7 +2051,7 @@ public class Enemy extends MovingObject
 
 			 // Level 43
 			case LOOPING:
-				this.farbe1 = MyColor.cloaked;
+				this.farbe1 = Coloration.cloaked;
 				this.setHitpoints(330);
 				this.setVarWidth(105);
 				this.targetSpeedLevel.setLocation(9, 11);	//d
@@ -2065,9 +2065,9 @@ public class Enemy extends MovingObject
 
 			// Level 45
 			case CAPTURER:
-				this.farbe1 = new Color(  5 + MyMath.random(55),
-						105 + MyMath.random(40),
-						90 + MyMath.random(30));
+				this.farbe1 = new Color(  5 + Calculation.random(55),
+						105 + Calculation.random(40),
+						90 + Calculation.random(30));
 				this.setHitpoints(520);
 				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(), //d
@@ -2081,9 +2081,9 @@ public class Enemy extends MovingObject
 			case TELEPORTER:
 				this.model = CARGO;
 
-				this.farbe1 = new Color(190 + MyMath.random(40),
-						10 + MyMath.random(60),
-						15 + MyMath.random(60));
+				this.farbe1 = new Color(190 + Calculation.random(40),
+						10 + Calculation.random(60),
+						15 + Calculation.random(60));
 				this.setHitpoints(500);
 				this.setVarWidth(130);
 				this.targetSpeedLevel.setLocation( 1 + Math.random(), //d
@@ -2099,9 +2099,9 @@ public class Enemy extends MovingObject
 	{
 		if(explosionCreation){this.type = BOLT;}
 		
-		this.farbe1 = new Color(75 + MyMath.random(30), 
-								75 + MyMath.random(30), 
-								75 + MyMath.random(30) );
+		this.farbe1 = new Color(75 + Calculation.random(30),
+								75 + Calculation.random(30),
+								75 + Calculation.random(30) );
 		this.setHitpoints(26);
 		this.setVarWidth(70);
 		
@@ -2116,15 +2116,15 @@ public class Enemy extends MovingObject
 		{
 			this.targetSpeedLevel.setLocation( 10 + 7.5*Math.random(), //d
 													0.5 + 3*Math.random());			//d	
-			this.callBack = 1 + MyMath.random(3);
-			this.direction.x = MyMath.randomDirection();
+			this.callBack = 1 + Calculation.random(3);
+			this.direction.x = Calculation.randomDirection();
 			this.invincibleTimer = 67;
 		}
 		else 
 		{
 			this.targetSpeedLevel.setLocation( 12 + 3.5*Math.random(), //d
 													0.5 + 3*Math.random());		//d			
-			if(MyMath.tossUp()){this.callBack = 1;}
+			if(Calculation.tossUp()){this.callBack = 1;}
 		}
 	}
 	
@@ -2168,19 +2168,19 @@ public class Enemy extends MovingObject
 								65,
 								this.bounds.getHeight());
 			this.hasYPosSet = true;
-			this.farbe1 = new Color(80 + MyMath.random(25), 80 + MyMath.random(25), 80 + MyMath.random(25));
+			this.farbe1 = new Color(80 + Calculation.random(25), 80 + Calculation.random(25), 80 + Calculation.random(25));
 			this.hitpoints = 15;					
 			this.targetSpeedLevel.setLocation(3 + 10.5*Math.random(), //d
 												  3 + 10.5*Math.random()); //d
 		
-			this.direction.x = MyMath.randomDirection();
+			this.direction.x = Calculation.randomDirection();
 			this.invincibleTimer = 67;
 		}
 		// Level 30
 		else if( this.type == BOSS_3)
 		{			
 			this.setWidth(250);
-			this.farbe1 = MyColor.cloaked;
+			this.farbe1 = Coloration.cloaked;
 			this.hitpoints = 1750;
 			this.targetSpeedLevel.setLocation(5, 4); //d
 
@@ -2214,14 +2214,14 @@ public class Enemy extends MovingObject
 		{	
 			this.bounds.setRect(boss.getX(),
 								boss.getY(),
-								85 + MyMath.random(15),
+								85 + Calculation.random(15),
 							    this.bounds.getHeight());
 			this.hasYPosSet = true;
-			this.farbe1 = new Color(80 + MyMath.random(20), 80 + MyMath.random(20), 80 + MyMath.random(20));
-			this.hitpoints = 100 + MyMath.random(50);					
+			this.farbe1 = new Color(80 + Calculation.random(20), 80 + Calculation.random(20), 80 + Calculation.random(20));
+			this.hitpoints = 100 + Calculation.random(50);
 			this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(), //d
 												  6 + 2.5*Math.random()); //d
-			this.direction.x = MyMath.randomDirection();
+			this.direction.x = Calculation.randomDirection();
 			this.isExplodable = true;
 		}	
 		// Level 50
@@ -2232,7 +2232,7 @@ public class Enemy extends MovingObject
 								    FINAL_BOSS_WIDTH,
 								    FINAL_BOSS_WIDTH * HEIGHT_FACTOR);
 						
-			this.farbe1 = MyColor.brown;
+			this.farbe1 = Coloration.brown;
 			this.hitpoints = 25000;	
 			this.targetSpeedLevel.setLocation(23.5, 0); //d
 
@@ -2254,7 +2254,7 @@ public class Enemy extends MovingObject
 									boss.getY(),
 									this.type == SMALL_SHIELD_MAKER ? 125 : 145,
 								    this.bounds.getHeight());			
-				this.direction.x = MyMath.randomDirection();
+				this.direction.x = Calculation.randomDirection();
 				
 				this.shieldMakerTimer = READY;
 				this.setShieldingPosition();
@@ -2282,7 +2282,7 @@ public class Enemy extends MovingObject
 									boss.getY(),
 									225,
 								    this.bounds.getHeight());					
-				this.farbe1 = MyColor.cloaked;
+				this.farbe1 = Coloration.cloaked;
 				this.hitpoints = 7500;					
 				this.targetSpeedLevel.setLocation(1, 2); //d
 
@@ -2318,8 +2318,8 @@ public class Enemy extends MovingObject
 				
 				helicopter.numberOfEnemiesSeen--;
 				this.hitpoints = Integer.MAX_VALUE;
-				this.isClockwiseBarrier = MyMath.tossUp();
-				this.farbe1 = MyColor.bleach(new Color(170, 0, 255), 0.6f);
+				this.isClockwiseBarrier = Calculation.tossUp();
+				this.farbe1 = Coloration.bleach(new Color(170, 0, 255), 0.6f);
 				this.targetSpeedLevel.setLocation(ZERO_SPEED);
 				
 				this.deactivationProb = 0.04f;
@@ -2332,11 +2332,11 @@ public class Enemy extends MovingObject
 				this.shotSpeed = 10;
 				this.shotType = BUSTER;
 				this.isStunnable = false;
-				this.farbe2 = MyColor.dimColor(this.farbe1, 0.75f);		
+				this.farbe2 = Coloration.dimColor(this.farbe1, 0.75f);
 				if(Events.timeOfDay == NIGHT)
 				{
-					this.farbe1 = MyColor.dimColor(this.farbe1, MyColor.BARRIER_NIGHT_DIM_FACTOR);
-					this.farbe2 = MyColor.dimColor(this.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
+					this.farbe1 = Coloration.dimColor(this.farbe1, Coloration.BARRIER_NIGHT_DIM_FACTOR);
+					this.farbe2 = Coloration.dimColor(this.farbe2, Coloration.BARRIER_NIGHT_DIM_FACTOR);
 				}
 				Events.boss.operator.servants[this.id()] = this;
 			}			
@@ -2350,7 +2350,7 @@ public class Enemy extends MovingObject
 				&& this.model != BARRIER
 				&& !(this.type == ROCK)
 				&& !(this.type == KABOOM)
-				&& MyMath.tossUp(miniBossProb)
+				&& Calculation.tossUp(miniBossProb)
 				&& this.type.isSuitableMiniBoss();
 	}
 
@@ -2367,7 +2367,7 @@ public class Enemy extends MovingObject
 		this.isExplodable = false;
 		this.callBack += 2;
 		this.canTurn = true;
-		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && MyMath.tossUp(0.2f)) ||
+		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && Calculation.tossUp(0.2f)) ||
 		      this.shootTimer == 0 )
 		{
 			this.cloakingTimer = 0;
@@ -2404,32 +2404,32 @@ public class Enemy extends MovingObject
 	{
 		if(this.barrierTeleportTimer != DISABLED || this.borrowTimer != DISABLED)
 		{
-			this.shootingRate = 35 + MyMath.random(15);
+			this.shootingRate = 35 + Calculation.random(15);
 		}
 		else
 		{
-			this.shootingRate = 25 + MyMath.random(25);
+			this.shootingRate = 25 + Calculation.random(25);
 		}
 			
-		if(this.barrierTeleportTimer == DISABLED){this.shootPause = 2 * this.shootingRate + 20 + MyMath.random(40);}
-		this.shotsPerCycle = 2 + MyMath.random(9);
+		if(this.barrierTeleportTimer == DISABLED){this.shootPause = 2 * this.shootingRate + 20 + Calculation.random(40);}
+		this.shotsPerCycle = 2 + Calculation.random(9);
 		this.shootingCycleLength = this.shootPause + this.shootingRate * this.shotsPerCycle;
-		this.shotSpeed = 5 + MyMath.random(6);
-		if(this.barrierTeleportTimer != DISABLED || (MyMath.tossUp(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
+		this.shotSpeed = 5 + Calculation.random(6);
+		if(this.barrierTeleportTimer != DISABLED || (Calculation.tossUp(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
 		{
-			if(this.barrierTeleportTimer == DISABLED){this.farbe1 = MyColor.bleach(new Color(170, 0, 255), 0.6f);}
+			if(this.barrierTeleportTimer == DISABLED){this.farbe1 = Coloration.bleach(new Color(170, 0, 255), 0.6f);}
 			this.shotType = BUSTER;
 		}
 		else
 		{
-			this.farbe1 = MyColor.bleach(Color.red, 0.6f);
+			this.farbe1 = Coloration.bleach(Color.red, 0.6f);
 			this.shotType = DISCHARGER;
 		}
 	}
 
 	private void setHitpoints(int hitpoints)
 	{
-		this.hitpoints = hitpoints + MyMath.random(hitpoints/2);		
+		this.hitpoints = hitpoints + Calculation.random(hitpoints/2);
 	}
 	
 	private void setX(double x)
@@ -2466,7 +2466,7 @@ public class Enemy extends MovingObject
 	
 	private void setVarWidth(int width)
 	{
-		setWidth(width + MyMath.random(width/(this.model == BARRIER ? 5 : 10)));
+		setWidth(width + Calculation.random(width/(this.model == BARRIER ? 5 : 10)));
 	}
 	
 	private void setHeight()
@@ -2734,12 +2734,12 @@ public class Enemy extends MovingObject
 	boolean hasLateralFaceTouchWith(Enemy barrier)
 	{
 		return  
-			MyMath.getIntersectionLength(	this.bounds.getMinX(),
+			Calculation.getIntersectionLength(	this.bounds.getMinX(),
 											this.bounds.getMaxX(),
 											barrier.bounds.getMinX(),
 											barrier.bounds.getMaxX())										 
 			<										 									 
-			MyMath.getIntersectionLength(	this.bounds.getMinY(),
+			Calculation.getIntersectionLength(	this.bounds.getMinY(),
 											this.bounds.getMaxY(),
 											barrier.bounds.getMinY(),
 											barrier.bounds.getMaxY());	
@@ -2789,12 +2789,12 @@ public class Enemy extends MovingObject
 			&& this.chaosTimer == READY
 			&& this.dodgeTimer == READY)
 		{
-			if( MyMath.tossUp(0.2f)
+			if( Calculation.tossUp(0.2f)
 			    && this.type.isShieldMaker())
 			{
 				this.direction.x = -this.direction.x;
 			}
-			if( MyMath.tossUp(0.2f))
+			if( Calculation.tossUp(0.2f))
 			{
 				this.direction.y = -this.direction.y;
 			}			
@@ -2977,7 +2977,7 @@ public class Enemy extends MovingObject
     	this.takeDamage((int)( (this.type.isMajorBoss()
     							? EMP_DAMAGE_FACTOR_BOSS
     							: EMP_DAMAGE_FACTOR_ORDINARY) 
-    						 * MyMath.dmg(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])));
+    						 * Calculation.dmg(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])));
 		this.isEmpShocked = true;
 		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
 		this.disableSiteEffects(helicopter);
@@ -3151,7 +3151,7 @@ public class Enemy extends MovingObject
 		{
 			if(this.operator.servants[serantType] == null)
 			{	
-				if(MyMath.tossUp(RETURN_PROB[serantType])
+				if(Calculation.tossUp(RETURN_PROB[serantType])
 					&& this.operator.timeSinceDeath[serantType] > MIN_ABSENT_TIME[serantType])
 				{
 					makeBoss5Servant[serantType] = true;
@@ -3226,7 +3226,7 @@ public class Enemy extends MovingObject
     	// Boss-Gegner mit der Fähigkeit "Kamikaze" drehen mit einer bestimmten
     	// Wahrscheinlichkeit um, wenn sie dem Helikopter das Heck zugekehrt haben.
     	if(	this.isBoss()
-    		&& MyMath.tossUp(0.008f)
+    		&& Calculation.tossUp(0.008f)
     		&& ( (this.bounds.getMinX() > helicopter.bounds.getMaxX() 
     			   && this.direction.x == 1) 
     			 ||
@@ -3299,7 +3299,7 @@ public class Enemy extends MovingObject
 		}
 		else if(this.borrowTimer == READY
 				&&( (this.type != PROTECTOR 
-				     && MyMath.tossUp(0.004f))
+				     && Calculation.tossUp(0.004f))
 				    || 
 				    (this.type == PROTECTOR 
 				     && (helicopter.bounds.getX() > boss.getX() - 225) ))) 
@@ -3319,7 +3319,7 @@ public class Enemy extends MovingObject
 	{
 		if(	this.shootTimer == 0
 			&& !this.isEmpSlowed()
-			&& MyMath.tossUp(0.1f)
+			&& Calculation.tossUp(0.1f)
 			&& this.bounds.getX() + this.bounds.getWidth() > 0
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
 			&& ((this.direction.x == -1 
@@ -3349,7 +3349,7 @@ public class Enemy extends MovingObject
 	{		
 		return this.type == BOSS_3 
 				|| this.isMiniBoss
-				|| (this.type == BIG_SHIELD_MAKER && MyMath.tossUp());
+				|| (this.type == BIG_SHIELD_MAKER && Calculation.tossUp());
 	}
 
 	private void evaluateBarrierShooting(Controller controller,
@@ -3384,7 +3384,7 @@ public class Enemy extends MovingObject
 							  - (this.bounds.getX() +       this.bounds.getWidth()/2)), 
 						  (helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP) 
 						  	  - (this.bounds.getY() +       this.bounds.getHeight()/2)) ;
-				float distance = (float) MyMath.ZERO_POINT.distance(this.shootingDirection);
+				float distance = (float) Calculation.ZERO_POINT.distance(this.shootingDirection);
 				this.shootingDirection.setLocation(this.shootingDirection.getX()/distance,
 													this.shootingDirection.getY()/distance);
 			}
@@ -3417,7 +3417,7 @@ public class Enemy extends MovingObject
 			this.cloakingTimer = ACTIVE_TIMER;
 			if(this.bounds.getMaxX() > 0){Audio.play(Audio.cloak);}
 		}	
-		else if(this.barrierTeleportTimer == READY && MyMath.tossUp(0.004f))
+		else if(this.barrierTeleportTimer == READY && Calculation.tossUp(0.004f))
 		{
 			this.startBarrierUncloaking(helicopter);
 		}
@@ -3471,7 +3471,7 @@ public class Enemy extends MovingObject
 			if(enemy.get(ACTIVE).size() < 15
 			   && (    this.spawningHornetTimer == 60
 			   	    || this.spawningHornetTimer == 90
-			   	    || MyMath.tossUp(0.02f)))
+			   	    || Calculation.tossUp(0.02f)))
 			{
 				boss.setLocation(	this.bounds.getX() + this.bounds.getWidth() /2, 
 									this.bounds.getY() + this.bounds.getHeight()/2);
@@ -3705,7 +3705,7 @@ public class Enemy extends MovingObject
 						SNOOZE_TIME 
 						+ (inactivation
 							? INACTIVATION_TIME
-							  + MyMath.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
+							  + Calculation.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
 							:0));
 		this.speedLevel.setLocation(ZERO_SPEED);
 		if(this.targetSpeedLevel.getY() != 0
@@ -4051,7 +4051,7 @@ public class Enemy extends MovingObject
 			if(this.model == BARRIER)
 			{
 				if(	helicopter.hasTripleDmg()
-					&&  MyMath.tossUp(
+					&&  Calculation.tossUp(
 							this.deactivationProb
 							*(helicopter.bonusKillsTimer
 								> NICE_CATCH_TIME
@@ -4059,7 +4059,7 @@ public class Enemy extends MovingObject
 				{
 					this.hitpoints = 0;
 				}
-				else if(MyMath.tossUp(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
+				else if(Calculation.tossUp(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
 				{
 					this.snooze(true);
 				}
@@ -4120,7 +4120,7 @@ public class Enemy extends MovingObject
 		if(this.model == BARRIER)
 		{
 			if((missile.typeOfExplosion == JUMBO || missile.typeOfExplosion == PHASE_SHIFT || missile.extraDamage)
-				&& MyMath.tossUp(	0.5f
+				&& Calculation.tossUp(	0.5f
 									* this.deactivationProb
 									* (( (missile.typeOfExplosion == JUMBO
 											|| missile.typeOfExplosion == PHASE_SHIFT)
@@ -4128,7 +4128,7 @@ public class Enemy extends MovingObject
 			{
 				this.hitpoints = 0;
 			}
-			else if(MyMath.tossUp(this.deactivationProb *(missile.typeOfExplosion == PLASMA ? 2 : 1)))
+			else if(Calculation.tossUp(this.deactivationProb *(missile.typeOfExplosion == PLASMA ? 2 : 1)))
 			{
 				this.snooze(true);
 			}
@@ -4211,7 +4211,7 @@ public class Enemy extends MovingObject
 		return this.canInstantTurn
 				|| this.canTurn
 					&& !this.canEarlyTurn
-					&& MyMath.tossUp(this.isMiniBoss
+					&& Calculation.tossUp(this.isMiniBoss
 										? this.isCarrier ? 0.2f : 0.5f
 										: this.isCarrier ? 0.1f : 0.25f);
 	}
@@ -4253,8 +4253,8 @@ public class Enemy extends MovingObject
 		this.isDestroyed = true;
 		if(this.cloakingTimer > 0){this.uncloak(DISABLED);}
 		this.teleportTimer = DISABLED;
-		this.farbe1 = MyColor.dimColor(this.farbe1, MyColor.DESTRUCTION_DIM_FACTOR);
-		this.farbe2 = MyColor.dimColor(this.farbe2, MyColor.DESTRUCTION_DIM_FACTOR);	
+		this.farbe1 = Coloration.dimColor(this.farbe1, Coloration.DESTRUCTION_DIM_FACTOR);
+		this.farbe2 = Coloration.dimColor(this.farbe2, Coloration.DESTRUCTION_DIM_FACTOR);
 		
 		this.repaint();
 	
@@ -4277,8 +4277,8 @@ public class Enemy extends MovingObject
 	private void uncloak(int nextCloakingState)
 	{
 		this.alpha = 255;
-		this.farbe1 = MyColor.setAlpha(this.farbe1, 255);
-		this.farbe2 = MyColor.setAlpha(this.farbe2, 255);
+		this.farbe1 = Coloration.setAlpha(this.farbe1, 255);
+		this.farbe2 = Coloration.setAlpha(this.farbe2, 255);
 		this.cloakingTimer = nextCloakingState;
 	}
 
@@ -4329,7 +4329,7 @@ public class Enemy extends MovingObject
 	{		
 		return this.model != BARRIER
 			   &&( (!Events.isBossLevel()
-				    &&( ( MyMath.tossUp(POWER_UP_PROB)
+				    &&( ( Calculation.tossUp(POWER_UP_PROB)
 						  && Events.level >= MIN_POWER_UP_LEVEL) 
 						|| this.isMiniBoss))
 				|| this.type == BOSS_1
@@ -4343,9 +4343,9 @@ public class Enemy extends MovingObject
 		PowerUp.activate(helicopter, 
 				 powerUp, 
 				 this, 
-				 MyMath.tossUp(0.14f)
+				 Calculation.tossUp(0.14f)
 					? REPARATION
-					: PowerUpTypes.values()[MyMath.random(this.type.isMajorBoss() ? 5 : 6)], false);
+					: PowerUpTypes.values()[Calculation.random(this.type.isMajorBoss() ? 5 : 6)], false);
 		
 	}
 	
@@ -4458,7 +4458,7 @@ public class Enemy extends MovingObject
 	{
 		if(Events.boss.operator.servants[this.shieldingBrotherId()] == null)
 		{
-			this.isUpperShieldMaker = MyMath.tossUp();
+			this.isUpperShieldMaker = Calculation.tossUp();
 		}
 		else
 		{

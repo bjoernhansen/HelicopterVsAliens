@@ -14,7 +14,7 @@ import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.MyColor;
+import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 
 import javax.swing.*;
@@ -196,7 +196,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			else
 			{				
 				//unskipped_counter++;
-				this.offGraphics.setColor(MyColor.bg);
+				this.offGraphics.setColor(Coloration.bg);
 				this.offGraphics.fill(this.wholeScreenClip);	
 				paintFrame(this.offGraphics);
 			}			
@@ -212,7 +212,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			calculateFps();
 			if(!Menu.isMenuVisible)
 			{				
-		    	MyColor.calculateVariableGameColors(this.framesCounter);
+		    	Coloration.calculateVariableGameColors(this.framesCounter);
 				BackgroundObject.update(this, this.backgroundObjects);
 				Events.updateTimer();
 				Menu.updateDisplays(this.helicopter);
@@ -229,7 +229,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		}
 		else
 		{
-			MyColor.calculateVariableMenuColors(this.framesCounter);
+			Coloration.calculateVariableMenuColors(this.framesCounter);
 			Menu.update(this, this.helicopter);
 		}
 	}

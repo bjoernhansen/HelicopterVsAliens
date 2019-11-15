@@ -14,8 +14,8 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Calculation;
+import de.helicopter_vs_aliens.util.Coloration;
 
 import java.applet.AudioClip;
 import java.awt.*;
@@ -34,7 +34,6 @@ import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevels.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
 import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
-import static de.helicopter_vs_aliens.model.enemy.Enemy.SPEED_KILL_BONUS_TIME;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
@@ -86,9 +85,11 @@ public abstract class Helicopter extends MovingObject
         NOSEDIVE_SPEED = 12f,	        // Geschwindigkeit des Helikopters bei Absturz
         INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f,
         STANDARD_PROTECTION_FACTOR = 1.0f,
-        STANDARD_BASE_PROTECTION_FACTOR = 1.0f;
-    
-	private static final Point
+        STANDARD_BASE_PROTECTION_FACTOR = 1.0f,
+        PLATING_MULTIPLIER = 1.3f,
+        PLATING_DURABILITY[] = {1.5f, 2.6f, 4.0f, 5.6f, 7.7f, 9.6f, 11.8f, 14.2f, 17.0f, 20f};
+        
+    private static final Point
 		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
     
     private static final Dimension
@@ -124,10 +125,15 @@ public abstract class Helicopter extends MovingObject
 		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
 		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
-        // TODO EnumMap StandardUpgradeTypes verwenden
-		upgradeCosts[] = new int[StandardUpgradeTypes.size()],    	// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
+  
+		//upgradeCosts[] = new int[StandardUpgradeTypes.size()],    	// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
 		levelOfUpgrade[] = new int[StandardUpgradeTypes.size()];	// Upgrade-Level aller 6 StandardUpgrades
 	
+    // TODO zu einer EnumMap für StandardUpgrades machen
+    private PriceLevels
+            upgradeCosts[] = new PriceLevels[StandardUpgradeTypes.size()]; // Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
+    
+    
 	public long
     	scorescreenTimes[] = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
@@ -298,7 +304,7 @@ public abstract class Helicopter extends MovingObject
         {
             if(Events.timeOfDay == NIGHT && Menu.window == GAME)
             {
-                g2d.setColor(MyColor.translucentWhite);
+                g2d.setColor(Coloration.translucentWhite);
                 g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -135 : -43), top-96, 300, 300, (this.hasLeftMovingAppearance() ? 165 : -15), 30);
             }
             g2d.setPaint(this.gradientHull);
@@ -325,16 +331,16 @@ public abstract class Helicopter extends MovingObject
     
     private void determineGradientColors(int left, int top)
 	{
-		this.gradientHull = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorHull, 1.65f),
-			0, top+ 2, MyColor.dimColor(this.inputColorHull, 0.75f), true);
-		this.gradientCannon1 = new GradientPaint(0, top+56, MyColor.dimColor(this.inputColorCannon, 1.65f),
-			0, top+64, MyColor.dimColor(this.inputColorCannon, 0.55f), true);
-		this.gradientWindow = new GradientPaint(0, top-10, MyColor.dimColor(this.inputColorWindow, 2.2f),
-			0, top+ 2, MyColor.dimColor(this.inputColorWindow, 0.70f), true);
-		this.gradientCannon2and3 = new GradientPaint(0, top+28, MyColor.dimColor(this.inputColorCannon, 1.7f),
-			0, top+35, MyColor.dimColor(this.inputColorCannon, 0.4f), true);
-		this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, MyColor.dimColor(this.inputColorFuss1, 0.44f), true);
-		this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, MyColor.dimColor(this.inputColorFuss2, 0.55f), true);
+		this.gradientHull = new GradientPaint(0, top-10, Coloration.dimColor(this.inputColorHull, 1.65f),
+			0, top+ 2, Coloration.dimColor(this.inputColorHull, 0.75f), true);
+		this.gradientCannon1 = new GradientPaint(0, top+56, Coloration.dimColor(this.inputColorCannon, 1.65f),
+			0, top+64, Coloration.dimColor(this.inputColorCannon, 0.55f), true);
+		this.gradientWindow = new GradientPaint(0, top-10, Coloration.dimColor(this.inputColorWindow, 2.2f),
+			0, top+ 2, Coloration.dimColor(this.inputColorWindow, 0.70f), true);
+		this.gradientCannon2and3 = new GradientPaint(0, top+28, Coloration.dimColor(this.inputColorCannon, 1.7f),
+			0, top+35, Coloration.dimColor(this.inputColorCannon, 0.4f), true);
+		this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, Coloration.dimColor(this.inputColorFuss1, 0.44f), true);
+		this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, Coloration.dimColor(this.inputColorFuss2, 0.55f), true);
 		this.gradientCannonHole = this.getGradientCannonHoleColor();
 	}
     
@@ -348,11 +354,11 @@ public abstract class Helicopter extends MovingObject
 		this.inputColorCannon = this.getInputColorCannon();
 		this.inputColorHull = this.getInputColorHull();
 		this.inputColorWindow = this.getInputColorWindow();
-		this.inputColorFuss1 = MyColor.lighterGray;
-		this.inputColorFuss2 = MyColor.enemyGray;
-		this.inputGray = MyColor.gray;
-		this.inputLightGray = MyColor.lightGray;
-		this.inputLamp = this.hasSpotlightsTurnedOn() ? MyColor.randomLight : MyColor.darkYellow;
+		this.inputColorFuss1 = Coloration.lighterGray;
+		this.inputColorFuss2 = Coloration.enemyGray;
+		this.inputGray = Coloration.gray;
+		this.inputLightGray = Coloration.lightGray;
+		this.inputLamp = this.hasSpotlightsTurnedOn() ? Coloration.randomLight : Coloration.darkYellow;
 	}
 	
 	private boolean hasSpotlightsTurnedOn()
@@ -365,22 +371,22 @@ public abstract class Helicopter extends MovingObject
 	Color getInputColorCannon()
 	{
 		return this.isInvincible()
-			? MyColor.variableGreen
+			? Coloration.variableGreen
 			: this.getSecondaryHullColor();
 	}
 	
 	private Color getInputColorHull()
 	{
 		return this.isInvincible()
-			? MyColor.variableGreen
+			? Coloration.variableGreen
 			: this.getPrimaryHullColor();
 	}
 	
 	private Color getInputColorWindow()
 	{
 		return this.hasTripleDmg() || this.hasBoostedFireRate()
-			? MyColor.variableRed
-			: MyColor.windowBlue;
+			? Coloration.variableRed
+			: Coloration.windowBlue;
 	}
 	
 	private void paintMainRotor(Graphics2D g2d, int left, int top)
@@ -429,7 +435,7 @@ public abstract class Helicopter extends MovingObject
         if(this.getType() == HELIOS && Menu.window == STARTSCREEN)
         {
             g2d.setFont(Menu.fontProvider.getBold(12));
-            g2d.setColor(MyColor.brown);
+            g2d.setColor(Coloration.brown);
             g2d.drawString(Menu.language == ENGLISH ? "Special mode" : "Spezial-Modus:", left-27, top-4);
         }
     }
@@ -457,7 +463,7 @@ public abstract class Helicopter extends MovingObject
 	{
 		if(active)
 	    {
-	       	g2d.setColor((Events.timeOfDay == DAY || enemiePaint) ? MyColor.translucentGray : MyColor.translucentWhite);
+	       	g2d.setColor((Events.timeOfDay == DAY || enemiePaint) ? Coloration.translucentGray : Coloration.translucentWhite);
 	       	g2d.fillOval(x, y, width, height); 
 	    }
 	    g2d.setColor(color);	        
@@ -505,7 +511,7 @@ public abstract class Helicopter extends MovingObject
 	void regenerateEnergy()
     {
     	float
-			maxEnergy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
+			maxEnergy = Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
 			newEnergy = this.energy + calculateEnergyRegenerationRate();
 
     	this.energy = Math.max(0, Math.min(newEnergy, maxEnergy));
@@ -729,11 +735,11 @@ public abstract class Helicopter extends MovingObject
 		double 
 			x = this.bounds.getCenterX() - enemy.bounds.getCenterX(),
 		 	y = this.bounds.getCenterY() - enemy.bounds.getCenterY(),
-			pseudoAngle = (x/MyMath.ZERO_POINT.distance(x, y)),
+			pseudoAngle = (x/ Calculation.ZERO_POINT.distance(x, y)),
 			distance,
 			localSpeed = enemy.hasUnresolvedIntersection ? this.speed : Double.MAX_VALUE;
 			
-		if(pseudoAngle > MyMath.ROOT05)
+		if(pseudoAngle > Calculation.ROOT05)
 		{
 			// Right	
 			// new pos x: enemy.getMaxX() + (this.moves_left ? 39 : 83) 
@@ -744,7 +750,7 @@ public abstract class Helicopter extends MovingObject
 			enemy.setTouchedSiteToRight();
 
 		}
-		else if(pseudoAngle < -MyMath.ROOT05)
+		else if(pseudoAngle < -Calculation.ROOT05)
 		{
 			// Left
 			// new pos x: enemy.bounds.x - this.bounds.getWidth() + (this.moves_left ? 39 : 83)
@@ -808,8 +814,8 @@ public abstract class Helicopter extends MovingObject
         for(int i = 0; i < StandardUpgradeTypes.size(); i++)
 	    {
     		this.hasMaxUpgradeLevel[i] = false;
-    		this.upgradeCosts[i] =  this.getUpgradeCosts(StandardUpgradeTypes.getValues()[i]).ordinal();
-    		if(newGame){this.levelOfUpgrade[i] = this.upgradeCosts[i] < 2 ? 2 : 1;}
+    		this.upgradeCosts[i] =  this.getUpgradeCosts(StandardUpgradeTypes.getValues()[i]);
+    		if(newGame){this.levelOfUpgrade[i] = this.upgradeCosts[i].isCheap() ? 2 : 1;}
 	    }
     	if(!newGame){this.restoreLastGameState(savegame);}
     	this.updateProperties(newGame);
@@ -909,7 +915,7 @@ public abstract class Helicopter extends MovingObject
 		this.isCrashing = false;
     	this.getMaxPlating();
     	this.setPercentPlatingDisplayColor();
-		if(restoreEnergy){this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);}
+		if(restoreEnergy){this.energy = Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);}
 		if(!cheatRepair){this.placeAtStartpos();}
 		Menu.repairShopButton.get("RepairButton").costs = 0;
     }
@@ -918,7 +924,7 @@ public abstract class Helicopter extends MovingObject
     {
     	for(int i = 0; i < StandardUpgradeTypes.size(); i++)
     	{
-    		this.levelOfUpgrade[i] = MyMath.maxLevel(this.upgradeCosts[i]);
+    		this.levelOfUpgrade[i] = this.upgradeCosts[i].getMaxUpgradeLevel();
     	}
     	this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
     	this.hasPiercingWarheads = true;
@@ -1098,13 +1104,13 @@ public abstract class Helicopter extends MovingObject
 				{
 					if(this.powerUpTimer[i]%32 > 15)
 			    	{
-			    		Menu.collectedPowerUp[i].surface = MyColor.setAlpha(Menu.collectedPowerUp[i].surface, 17 * ((this.powerUpTimer[i])%16));
-			    		Menu.collectedPowerUp[i].cross =   MyColor.setAlpha(Menu.collectedPowerUp[i].cross,   17 * ((this.powerUpTimer[i])%16));
+			    		Menu.collectedPowerUp[i].surface = Coloration.setAlpha(Menu.collectedPowerUp[i].surface, 17 * ((this.powerUpTimer[i])%16));
+			    		Menu.collectedPowerUp[i].cross =   Coloration.setAlpha(Menu.collectedPowerUp[i].cross,   17 * ((this.powerUpTimer[i])%16));
 			    	}
 					else
 					{
-						Menu.collectedPowerUp[i].surface = MyColor.setAlpha(Menu.collectedPowerUp[i].surface, 255 - 17 * ((this.powerUpTimer[i])%16));
-						Menu.collectedPowerUp[i].cross = MyColor.setAlpha(Menu.collectedPowerUp[i].cross,     255 - 17 * ((this.powerUpTimer[i])%16));
+						Menu.collectedPowerUp[i].surface = Coloration.setAlpha(Menu.collectedPowerUp[i].surface, 255 - 17 * ((this.powerUpTimer[i])%16));
+						Menu.collectedPowerUp[i].cross = Coloration.setAlpha(Menu.collectedPowerUp[i].cross,     255 - 17 * ((this.powerUpTimer[i])%16));
 					}
 				}
 			}
@@ -1128,21 +1134,21 @@ public abstract class Helicopter extends MovingObject
     
     private void updateProperties(boolean fullPlating)
     {
-    	this.rotorSystem = MyMath.speed(this.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
-    	this.missileDrive = MyMath.missileDrive(this.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
+    	this.rotorSystem = Calculation.speed(this.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
+    	this.missileDrive = Calculation.missileDrive(this.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
     	if(fullPlating)
     	{
     		this.getMaxPlating();
-    		this.energy = MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+    		this.energy = Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
     	}
     	this.setPercentPlatingDisplayColor();
 		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
-		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+		this.regenerationRate = Calculation.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		for(int i = 0; i < StandardUpgradeTypes.size(); i++)
 		{
-			if(this.levelOfUpgrade[i] >= MyMath.maxLevel(this.upgradeCosts[i]))
+			if(this.levelOfUpgrade[i] >= this.upgradeCosts[i].getMaxUpgradeLevel())
 			{
 				this.hasMaxUpgradeLevel[i] = true;
 			}
@@ -1179,7 +1185,7 @@ public abstract class Helicopter extends MovingObject
 
 	public void setPercentPlatingDisplayColor()
 	{		
-		MyColor.plating = MyColor.percentColor((this.currentPlating)/this.maxPlating());
+		Coloration.plating = Coloration.percentColor((this.currentPlating)/this.maxPlating());
 	}
 	
 	public void getPowerUp(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
@@ -1218,9 +1224,9 @@ public abstract class Helicopter extends MovingObject
 			else
 			{
 				Menu.collectedPowerUp[powerUpType.ordinal()].surface
-					= MyColor.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].surface, 255);
+					= Coloration.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].surface, 255);
 				Menu.collectedPowerUp[powerUpType.ordinal()].cross
-					= MyColor.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].cross, 255);
+					= Coloration.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].cross, 255);
 			}			
 		}		
 	}
@@ -1233,7 +1239,7 @@ public abstract class Helicopter extends MovingObject
 
 	public void adjustFireRate(boolean poweredUp)
 	{
-		this.timeBetweenTwoShots = MyMath.fireRate(calculateSumOfFireRateBooster(poweredUp));
+		this.timeBetweenTwoShots = Calculation.fireRate(calculateSumOfFireRateBooster(poweredUp));
 	}
 
 	public int calculateSumOfFireRateBooster(boolean poweredUp)
@@ -1266,8 +1272,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public float maxPlating()
 	{
-		return MyMath.plating(this.levelOfUpgrade[PLATING.ordinal()])
-			   * this.platingDurabilityFactor;
+		return this.getPlating() * this.platingDurabilityFactor;
 	}
 	
 	private void getMaxPlating()
@@ -1334,9 +1339,9 @@ public abstract class Helicopter extends MovingObject
 
 	public void upgradeEnergyAbility()
 	{
-		this.energy += MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
-					   - MyMath.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
-		this.regenerationRate = MyMath.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+		this.energy += Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
+					   - Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
+		this.regenerationRate = Calculation.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
 	}
 
 	public void becomesCenterOf(Explosion exp)
@@ -1413,7 +1418,7 @@ public abstract class Helicopter extends MovingObject
 	public void installGoliathPlating()
 	{
 		this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
-		this.currentPlating += MyMath.plating(this.levelOfUpgrade[PLATING.ordinal()]);
+		this.currentPlating += this.getPlating();
 		this.setPercentPlatingDisplayColor();
 	}
 	
@@ -1462,7 +1467,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public void setCurrentBaseFirepower()
 	{
-		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * MyMath.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
+		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * Calculation.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
 	}
 	
 	public boolean isFifthSpecialOnMaximumStrength()
@@ -1550,4 +1555,41 @@ public abstract class Helicopter extends MovingObject
 	public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill) {}
     
     public void levelUpEffect(int previousLevel){}
+    
+    // TODO StandardUpgradeType verwenden statt int i
+    public PriceLevels getUpgradeCost(int i)
+    {
+        return upgradeCosts[i];
+    }
+		
+	public float getPlating()
+	{
+		int platingLevel = this.getPlatingLevel();
+        return getPlating(platingLevel);
+	}
+	
+	public float getLastPlatingDurabilityIncrease()
+	{
+		return this.getPlating() - this.getPreviousPlating();
+	}
+    
+    private float getPreviousPlating()
+    {
+        int previousPlatingLevel = this.getPlatingLevel() - 1;
+        return this.getPlating(previousPlatingLevel);
+    }
+    
+    private int getPlatingLevel()
+    {
+        return this.levelOfUpgrade[PLATING.ordinal()];
+    }
+    
+    private float getPlating(int platingLevel)
+    {
+        if(platingLevel >= 1 && platingLevel <= 10)
+        {
+            return PLATING_MULTIPLIER * PLATING_DURABILITY[platingLevel-1];
+        }
+        return 0;
+    }
 }

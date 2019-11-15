@@ -9,8 +9,8 @@ import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.util.*;
@@ -22,7 +22,6 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_2_SERVANT;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
 
 
 public class Missile extends MovingObject
@@ -191,7 +190,7 @@ public class Missile extends MovingObject
 				{
 					Audio.play(Audio.rebound);
 					this.speed = -Math.signum(this.speed)
-						* MyMath.missileDrive(1);
+						* Calculation.missileDrive(1);
 					this.dangerous = true;
 					this.bounced = true;
 				}
@@ -249,7 +248,7 @@ public class Missile extends MovingObject
 
 	private void paint(Graphics2D g2d)
 	{		
-		g2d.setColor(MyColor.red);
+		g2d.setColor(Coloration.red);
 		g2d.fillRect(this.paintBounds.x
 							+(this.speed >= 0 ? 0 : this.paintBounds.width + 3),
 					 this.paintBounds.y-2,
@@ -268,7 +267,7 @@ public class Missile extends MovingObject
 					 (this.paintBounds.width),
 					 (this.paintBounds.height));
 					
-		g2d.setColor(MyColor.pink);
+		g2d.setColor(Coloration.pink);
 		g2d.fillRect(this.paintBounds.x+(this.speed >= 0 ? 2 : 0),
 					 this.paintBounds.y+1,
 					 this.paintBounds.width+3,
@@ -281,7 +280,7 @@ public class Missile extends MovingObject
 					  3,
 					 (this.paintBounds.height));
 		
-		g2d.setColor(MyColor.translucentWhite);
+		g2d.setColor(Coloration.translucentWhite);
 		g2d.fillRect((int)(this.getPaintMaxX()
 						*(this.speed >= 0 ? -this.speed/5 : 1) 
 						+(this.speed >= 0 ? -6 : 11)),

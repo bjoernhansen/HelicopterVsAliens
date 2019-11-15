@@ -9,8 +9,8 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.util.EnumMap;
@@ -158,8 +158,8 @@ public final class Kamaitachi extends Helicopter
             return super.getInputColorCannon();
         }
         return this.isInvincible()
-                ? MyColor.reversedRandomGreen()
-                : MyColor.variableGreen;
+                ? Coloration.reversedRandomGreen()
+                : Coloration.variableGreen;
     }
     
     @Override
@@ -167,7 +167,7 @@ public final class Kamaitachi extends Helicopter
     {
         return this.plasmaActivationTimer == 0
                 ? this.gradientHull
-                : MyColor.cannonHoleGreen;
+                : Coloration.cannonHoleGreen;
     }
     
     @Override
@@ -176,7 +176,7 @@ public final class Kamaitachi extends Helicopter
         return  super.getBaseDamage()
                 * ((this.plasmaActivationTimer == 0)
                     ? 1
-                    : MyMath.plasmaDamageFactor(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]));
+                    : Calculation.plasmaDamageFactor(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]));
     }
     
     @Override

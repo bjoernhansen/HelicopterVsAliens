@@ -8,7 +8,7 @@ import java.awt.GradientPaint;
 
 import static de.helicopter_vs_aliens.gui.WindowTypes.*;
 
-public class MyColor
+public class Coloration
 {
 	public static final int 
 		FRAME = 3,
@@ -95,12 +95,7 @@ public class MyColor
 		                        new Color(255, 200, 200, 210)},
 		shieldColor[] = { new Color(157, 220, 255, 80), 
 	                      new Color(0, 0, 255, 40)},
-		// TODO evtl. privat machen und Zugriff über EnumMap (ggf. im static block aufbauen)
-		costsColor[] =  { new Color (130, 255, 130), 
-						  new Color (210, 255, 180),
-	                      new Color (255, 210,   0), 
-	                      new Color (255, 165, 120), 
-	                      new Color (255, 115, 105)},	                                      
+
 	    sand[] =   {dimColor(new Color(200,185,120), NIGHT_DIM_FACTOR), 
 	                     	  	     new Color(200,185,120)},    
 	    stones[] = {dimColor(new Color(155,160,125), NIGHT_DIM_FACTOR),
@@ -191,7 +186,7 @@ public class MyColor
     		randomSunlightBlue += lighter ? 1 : -1;
 			if(randomSunlightBlue > 205){lighter = false;}
 			else if(randomSunlightBlue < 175){lighter = true;}
-			else if(MyMath.tossUp(0.045f)){lighter = !lighter;}
+			else if(Calculation.tossUp(0.045f)){lighter = !lighter;}
 			randomLight = new Color(255, 255, randomSunlightBlue);
     	}
     }
@@ -237,9 +232,9 @@ public class MyColor
     public static void updateScorescreenColors(Helicopter helicopter)
     {       
     	scorescreen[0] = percentColor(Events.bonusIncomePercentage());
-    	scorescreen[1] = percentColor(MyMath.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
-    	scorescreen[2] = percentColor(MyMath.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
-    	scorescreen[3] = percentColor(MyMath.percentage(helicopter.hitCounter, helicopter.missileCounter));
+    	scorescreen[1] = percentColor(Calculation.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
+    	scorescreen[2] = percentColor(Calculation.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
+    	scorescreen[3] = percentColor(Calculation.percentage(helicopter.hitCounter, helicopter.missileCounter));
     }
     
     static Color percentColor(int percentage){return percentColor(((float)percentage)/100);}
@@ -268,7 +263,7 @@ public class MyColor
     
     public static Color brightenUp(Color color)
     {
-    	float colorMax = MyMath.max(color.getRed(), color.getGreen(), color.getBlue());
+    	float colorMax = Calculation.max(color.getRed(), color.getGreen(), color.getBlue());
     	float factor = 255/colorMax;
     	return new Color(Math.min(255, (int)(color.getRed()*factor)), Math.min(255, (int)(color.getGreen()*factor)),Math.min(255, (int)(color.getBlue()*factor)));	
     }

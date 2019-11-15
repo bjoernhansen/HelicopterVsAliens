@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
 import de.helicopter_vs_aliens.control.Events;
@@ -10,7 +9,7 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.MyColor;
+import de.helicopter_vs_aliens.util.Coloration;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -174,7 +173,7 @@ public final class Orochi extends Helicopter
             && (this.energy >= this.spellCosts
             || this.hasUnlimitedEnergy()))
         {
-            return MyColor.variableBlue;
+            return Coloration.variableBlue;
         }
         return super.getInputColorCannon();
     }

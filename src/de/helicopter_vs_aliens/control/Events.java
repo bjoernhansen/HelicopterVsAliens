@@ -10,8 +10,8 @@ import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.WindowTypes;
 import de.helicopter_vs_aliens.model.helicopter.*;
-import de.helicopter_vs_aliens.util.MyColor;
-import de.helicopter_vs_aliens.util.MyMath;
+import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -214,7 +214,7 @@ public class Events
 										+ (nr_of_levelUp%10 == 0 ? 0 : 1) 
 										- level;
 						if(isBossLevel()){nr_of_levelUp = 1;}
-						playingTime += (nr_of_levelUp + MyMath.random(nr_of_levelUp)) * 60000;
+						playingTime += (nr_of_levelUp + Calculation.random(nr_of_levelUp)) * 60000;
 						levelUp(controller, nr_of_levelUp);
 						helicopter.isPlayedWithoutCheats = false;
 					}					
@@ -223,7 +223,7 @@ public class Events
 				{
 					if(level < 50)
 					{
-						playingTime += (1 + (MyMath.tossUp(0.4f) ? 1 : 0)) * 60000;
+						playingTime += (1 + (Calculation.tossUp(0.4f) ? 1 : 0)) * 60000;
 						levelUp(controller, 1);
 						helicopter.isPlayedWithoutCheats = false;
 					}
@@ -267,7 +267,7 @@ public class Events
 				}
 				else if(e.getKeyChar() == '-')
 				{					
-					if(!MyMath.isEmpty(recordTime))
+					if(!Calculation.isEmpty(recordTime))
 					{
 						for(int i = 0; i < HelicopterTypes.size(); i++)
 						{
@@ -425,7 +425,7 @@ public class Events
 															
 				helicopter.isDamaged = false;
 				Controller.savegame.saveToFile(helicopter, true);
-				MyColor.updateScorescreenColors(helicopter);
+				Coloration.updateScorescreenColors(helicopter);
 			}
 			else{enterRepairShop(helicopter);}
 		}
@@ -449,7 +449,7 @@ public class Events
 			else
 			{
 				money -= repairFee(helicopter, helicopter.isDamaged);
-				timeOfDay = (!helicopter.hasSpotlights || MyMath.tossUp(0.33f)) ? DAY : NIGHT;
+				timeOfDay = (!helicopter.hasSpotlights || Calculation.tossUp(0.33f)) ? DAY : NIGHT;
 				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
 												
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
@@ -518,8 +518,8 @@ public class Events
 				{
 					if (enemy.type != ROCK)
 					{
-						enemy.farbe1 = MyColor.dimColor(enemy.farbe1, MyColor.BARRIER_NIGHT_DIM_FACTOR);
-						enemy.farbe2 = MyColor.dimColor(enemy.farbe2, MyColor.BARRIER_NIGHT_DIM_FACTOR);
+						enemy.farbe1 = Coloration.dimColor(enemy.farbe1, Coloration.BARRIER_NIGHT_DIM_FACTOR);
+						enemy.farbe2 = Coloration.dimColor(enemy.farbe2, Coloration.BARRIER_NIGHT_DIM_FACTOR);
 						enemy.repaint();
 					}
 				}
@@ -587,7 +587,7 @@ public class Events
 					{
 						Menu.repairShopButton.get("Special" + 3).costs = Helicopter.STANDARD_SPECIAL_COSTS;
 						Menu.repairShopButton.get("Special" + 3).label = Menu.dictionary.thirdCannon();
-						Menu.repairShopButton.get("Special" + 3).costColor = MyColor.costsColor[REGULAR.ordinal()];
+						Menu.repairShopButton.get("Special" + 3).costColor = REGULAR.getColor();
 					}
 					else
 					{
@@ -638,23 +638,23 @@ public class Events
 						Menu.block(4);}
 					else if(helicopter.hasMaxUpgradeLevel[i]){
 						Menu.block(5);}
-					else if(money < MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]))
+					else if(money < Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]))
 					{
 						Menu.block(6);
 					}
 					else
 					{
 						Audio.play(Audio.cash);
-						money -= MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]);
+						money -= Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]);
 						helicopter.levelOfUpgrade[i]++;
-						if(helicopter.levelOfUpgrade[i] >= MyMath.maxLevel(helicopter.upgradeCosts[i]))
+						if(helicopter.levelOfUpgrade[i] >= helicopter.getUpgradeCost(i).getMaxUpgradeLevel())
 						{
 							helicopter.hasMaxUpgradeLevel[i] = true;
 							Menu.repairShopButton.get("StandardUpgrade" + i).costs = 0;
 						}
 						else
 						{
-							Menu.repairShopButton.get("StandardUpgrade" + i).costs = MyMath.costs(helicopter.getType(), helicopter.upgradeCosts[i], helicopter.levelOfUpgrade[i]);
+							Menu.repairShopButton.get("StandardUpgrade" + i).costs = Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]);
 						}
 						selection = i;
 					}					
@@ -664,18 +664,16 @@ public class Events
 			if(selection == Integer.MIN_VALUE){/**/}
 			else if(selection == 0)
 			{
-				helicopter.rotorSystem = MyMath.speed(helicopter.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
+				helicopter.rotorSystem = Calculation.speed(helicopter.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
 			}
 			else if(selection == 1)
 			{
-				helicopter.missileDrive = MyMath.missileDrive(helicopter.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
+				helicopter.missileDrive = Calculation.missileDrive(helicopter.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
 			}
 			else if(selection == 2)
 			{
 				helicopter.currentPlating
-					+= helicopter.platingDurabilityFactor
-					   * ( MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()])
-						   -MyMath.plating(helicopter.levelOfUpgrade[PLATING.ordinal()]-1));
+					+= helicopter.platingDurabilityFactor * helicopter.getLastPlatingDurabilityIncrease();
 				helicopter.setPercentPlatingDisplayColor();
 			}
 			else if(selection == 3)
@@ -1149,7 +1147,7 @@ public class Events
 	{		
 		window = newWindow;
 		Audio.refreshBackgroundMusic();
-		MyColor.bg = newWindow == GAME && timeOfDay == DAY ? MyColor.sky: Color.black;
+		Coloration.bg = newWindow == GAME && timeOfDay == DAY ? Coloration.sky: Color.black;
 	}
 
 	private static void newStartscreenMenuWindow(WindowTypes newWindow, boolean hasJustEntered)
@@ -1165,7 +1163,7 @@ public class Events
 	// überprüfen, ob Level-Up Voraussetzungen erfüll. Wenn ja: Schwierigkeitssteigerung
 	static void checkForLevelup(Controller controller, Helicopter helicopter)
 	{
-		if( killsAfterLevelUp >= MyMath.kills(level) && level < 50)
+		if( killsAfterLevelUp >= Calculation.kills(level) && level < 50)
 		{
 			levelUp(controller, 1);
 		}
@@ -1337,7 +1335,7 @@ public class Events
 
 	public static int bonusIncomePercentage()
 	{		
-		return MyMath.percentage(extraBonusCounter, overallEarnings);
+		return Calculation.percentage(extraBonusCounter, overallEarnings);
 	}
 
 	public static void updateTimer()
