@@ -176,7 +176,7 @@ public final class Kamaitachi extends Helicopter
         return  super.getBaseDamage()
                 * ((this.plasmaActivationTimer == 0)
                     ? 1
-                    : Calculation.plasmaDamageFactor(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]));
+                    : Calculation.plasmaDamageFactor(this.getUpgradeLevelOf(ENERGY_ABILITY)));
     }
     
     @Override

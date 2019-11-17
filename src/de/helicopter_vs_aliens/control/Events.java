@@ -240,7 +240,8 @@ public class Events
 				{
 					if(level < 51)
 					{
-						helicopter.repair(true, true);
+						helicopter.repair();
+						helicopter.restoreEnergy();
 						isRestartWindowVisible = false;
 						helicopter.isPlayedWithoutCheats = false;
 					}								
@@ -472,8 +473,9 @@ public class Events
 					Enemy.maxNr = 1;
 					Enemy.maxBarrierNr = 0;
 				}
-				
-				helicopter.repair(level == 50, false);
+				helicopter.repair();
+				if(level == 50){helicopter.restoreEnergy();}
+				helicopter.placeAtStartpos();
 			}
 		}		
 		// Einsatz fliegen
@@ -645,7 +647,9 @@ public class Events
 					else
 					{
 						Audio.play(Audio.cash);
-						money -= Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]);
+						money -= Calculation.costs(	helicopter.getType(),
+													helicopter.getUpgradeCost(i).ordinal(),
+													helicopter.levelOfUpgrade[i]);
 						helicopter.levelOfUpgrade[i]++;
 						if(helicopter.levelOfUpgrade[i] >= helicopter.getUpgradeCost(i).getMaxUpgradeLevel())
 						{
@@ -654,7 +658,10 @@ public class Events
 						}
 						else
 						{
-							Menu.repairShopButton.get("StandardUpgrade" + i).costs = Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]);
+							Menu.repairShopButton.get("StandardUpgrade" + i).costs
+									= Calculation.costs(helicopter.getType(),
+														helicopter.getUpgradeCost(i).ordinal(),
+														helicopter.levelOfUpgrade[i]);
 						}
 						selection = i;
 					}					
@@ -664,11 +671,11 @@ public class Events
 			if(selection == Integer.MIN_VALUE){/**/}
 			else if(selection == 0)
 			{
-				helicopter.rotorSystem = Calculation.speed(helicopter.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
+				helicopter.rotorSystem = Calculation.speed(helicopter.getUpgradeLevelOf(ROTOR_SYSTEM));
 			}
 			else if(selection == 1)
 			{
-				helicopter.missileDrive = Calculation.missileDrive(helicopter.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
+				helicopter.missileDrive = Calculation.missileDrive(helicopter.getUpgradeLevelOf(MISSILE_DRIVE));
 			}
 			else if(selection == 2)
 			{

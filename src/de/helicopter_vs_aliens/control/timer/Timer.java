@@ -2,7 +2,11 @@ package de.helicopter_vs_aliens.control.timer;
 
 import java.util.*;
 
-// TODO Timer-Klasse verwenden
+// TODO Timer-Klasse überall verwenden, wo integer-Counter verwendet werden
+// TODO es muss festgelegt werden können, wann ein Timer heruntergezählt wird, jeder Timer braucht somit eine eigene
+// Bedingung (eine Methode) welche bei jedem Timer abgefragt wird. Zwei Ansätze sind denkbar: 1. übergfeben von Lambda Ausdrucl an Methode
+// oder verschiedene Unterklassen
+// TODO bei Fensterwechsel Bedingung, die bestimmt, ob Timer wegfällt
 public class Timer
 {
     private static final Set<Timer>

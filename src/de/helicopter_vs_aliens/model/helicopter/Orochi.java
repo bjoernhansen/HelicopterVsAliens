@@ -51,7 +51,7 @@ public final class Orochi extends Helicopter
     @Override
     void setSpellCosts()
     {
-        this.spellCosts = OROCHI.getSpellCosts() - 2 * (this.levelOfUpgrade[ENERGY_ABILITY.ordinal()] - 1);
+        this.spellCosts = OROCHI.getSpellCosts() - 2 * (this.getUpgradeLevelOf(ENERGY_ABILITY) - 1);
     }
     
     @Override

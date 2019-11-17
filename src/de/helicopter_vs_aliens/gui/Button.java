@@ -184,13 +184,16 @@ public class Button
 		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
 		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
 
-		// TODO Enums verwenden
-		for(int i = 0; i < StandardUpgradeTypes.values().length; i++)
+		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
     	{    		
-			if(!helicopter.hasMaxUpgradeLevel[i])
+			if(!helicopter.hasMaxUpgradeLevelFor(standardUpgradeType))
 			{
-				Menu.repairShopButton.get("StandardUpgrade" + i).costs = Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]);
-				Menu.repairShopButton.get("StandardUpgrade" + i).costColor = helicopter.getUpgradeCost(i).getColor();
+				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
+						= Calculation.costs(helicopter.getType(),
+											helicopter.getUpgradeCost(standardUpgradeType).ordinal(),
+											helicopter.getUpgradeLevelOf(standardUpgradeType));
+				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costColor
+						= helicopter.getUpgradeCost(standardUpgradeType).getColor();
 			}
     	}
 		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();

@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PEGASUS;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.FIREPOWER;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
 
 
@@ -166,7 +167,7 @@ public final class Phoenix extends Helicopter
     @Override
     public boolean isFifthSpecialOnMaximumStrength()
     {
-        return this.hasMaxUpgradeLevel[StandardUpgradeTypes.FIREPOWER.ordinal()];
+        return this.hasMaxUpgradeLevel[FIREPOWER.ordinal()];
     }
     
     @Override

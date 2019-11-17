@@ -197,9 +197,10 @@ public class Explosion
 			}
 			else
 			{
-				exp.maxTime = 20 + helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()];
-				exp.maxRadius = 75 + (int)((19+3f*helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]) * helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
-				exp.broadness = 30 + 3 * (helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+				int level = helicopter.getUpgradeLevelOf(ENERGY_ABILITY);
+				exp.maxTime = 20 + level;
+				exp.maxRadius = 75 + (int)(19 + 3f * level * level);
+				exp.broadness = 30 + 3 * (level);
 			}			  	
 	    	helicopter.empWave = exp;
 	    	exp.earnedMoney = 0;

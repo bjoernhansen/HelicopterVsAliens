@@ -2977,7 +2977,7 @@ public class Enemy extends MovingObject
     	this.takeDamage((int)( (this.type.isMajorBoss()
     							? EMP_DAMAGE_FACTOR_BOSS
     							: EMP_DAMAGE_FACTOR_ORDINARY) 
-    						 * Calculation.dmg(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])));
+    						 * Calculation.dmg(helicopter.getUpgradeLevelOf(ENERGY_ABILITY))));
 		this.isEmpShocked = true;
 		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
 		this.disableSiteEffects(helicopter);

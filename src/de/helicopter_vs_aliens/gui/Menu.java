@@ -35,7 +35,7 @@ import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
 
 // TODO mögichst alle längeren Texte innerhalb dieser Klasse ins Dictionary überführen
-// TODO An vielen Stellen im Menü werden zustände immer wieder berechnet anstatt sie einmal zu speichern
+// TODO An vielen Stellen im Menü werden Zustände immer wieder neu berechnet anstatt sie einmal zu speichern
 public class Menu
 {
 	private static final String
@@ -44,18 +44,19 @@ public class Menu
 	
 	public static final int
 		NUMBER_OF_COLUMN_NAMES = 8;
-    
-    private static final int SCORESCREEN_SPACE_BETWEEN_ROWS = 30;
-    private static final int SCORESCREEN_X_POS_1 = 351;
-    private static final int SCORESCREEN_X_POS_2 = 633;
-    private static final int SCORESCREEN_Y_POS = 129;
-    
-    private static final int SETTING_LEFT = 80;
-    private static final int SETTING_COLUMN_SPACING = 145;
-    private static final int SETTING_LINE_SPACING = 40;
-    private static final int SETTING_TOP = 130;
-    
-    private static final int DISABLED = -1;
+
+	private static final int
+    	SCORESCREEN_SPACE_BETWEEN_ROWS = 30,
+    	SCORESCREEN_X_POS_1 = 351,
+    	SCORESCREEN_X_POS_2 = 633,
+    	SCORESCREEN_Y_POS = 129,
+
+    	SETTING_LEFT = 80,
+    	SETTING_COLUMN_SPACING = 145,
+    	SETTING_LINE_SPACING = 40,
+    	SETTING_TOP = 130,
+
+    	DISABLED = -1;
 	
 	public static final Point
 		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262),
@@ -74,7 +75,7 @@ public class Menu
 		crossTimer,						// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem Startscreen
 		unlockedTimer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 		effectTimer[] = new int[HelicopterTypes.size()];	// regulieren die Helikopter-Animationen im Startscreen-Menü
-  
+
 	public static Languages
 		language = ENGLISH; 			// Sprache; = 0: English; = 1: German
 
@@ -95,19 +96,21 @@ public class Menu
            					
      // Konstanten   
     public static final int
-    	STARTSCREEN_OFFSET_X = 4,				// x-Verschiebung der meisten Anzeigen des Startscreens
-	 	HELICOPTER_DISTANCE = 250,                // Abstand zwischen den Helikopter auf dem Startscreen
-		STARTSCREEN_HELICOPTER_OFFSET_Y = 33;    // y-Verschiebung der Helicopter-Leiste im Startscreen-Menü
+    	STARTSCREEN_OFFSET_X = 4,						// x-Verschiebung der meisten Anzeigen des Startscreens
+	 	HELICOPTER_DISTANCE = 250,                		// Abstand zwischen den Helikopter auf dem Startscreen
+		STARTSCREEN_HELICOPTER_OFFSET_Y = 33;    		// y-Verschiebung der Helicopter-Leiste im Startscreen-Menü
 
 	private static final int 	
-    	STATUS_BAR_X1 = 268,                   // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,erste Spalte)
-    	STATUS_BAR_X2 = 421,                   // x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,zweite Spalte)
-    	STANDUP_OFFSET_Y = 148,               // y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
-    	SPECUP_OFFSET_Y = 328,                   // y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
-    	HEALTH_BAR_LENGTH = 150,               // Länge des Hitpoint-Balken des Helikopters
-    	HTML_SIZE = 5,                           // Standard-Schriftgröße der Startscreen-Menuetexte
-		BONUS_MAX_DISPLAY_TIME = 200,           // Maximale Anzeigezeit des zuletzt erhalten Bonus
-		CROSS_MAX_DISPLAY_TIME = 60,           // Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
+    	STATUS_BAR_X1 = 268,                   			// x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,erste Spalte)
+    	STATUS_BAR_X2 = 421,                   			// x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,zweite Spalte)
+    	STANDUP_OFFSET_Y = 148,               			// y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
+    	SPECUP_OFFSET_Y = 328,                   		// y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
+    	HEALTH_BAR_LENGTH = 150,               			// Länge des Hitpoint-Balken des Helikopters
+    	HTML_SIZE = 5,                           		// Standard-Schriftgröße der Startscreen-Menuetexte
+		BONUS_DISPLAY_TIME = 200,           			// Anzeigezeit des zuletzt erhalten Bonus
+		MONEY_DISPLAY_TIME = BONUS_DISPLAY_TIME + 100,	// Anzeigezeit der Geldanzeige nach Gegnerabschuss
+		LEVEL_DISPLAY_TIME = 250,
+		CROSS_MAX_DISPLAY_TIME = 60,           			// Maximale Anzeigezeit des Block-Kreuzes (Startscreen)
 		UNLOCKED_DISPLAY_TIME = 300,
 		ENEMY_HEALTH_BAR_WIDTH = 206;
   
@@ -138,8 +141,7 @@ public class Menu
     public static Dictionary dictionary = Controller.getInstance().getDictionary();
 
 	public static final Timer
-		levelDisplayTimer = new Timer(250);				// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
-
+		levelDisplayTimer = new Timer(LEVEL_DISPLAY_TIME);			// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
 
     public static void initializeMenu(Helicopter helicopter)
     {
@@ -863,15 +865,15 @@ public class Menu
 	{
 		if(!isMenuVisible
 			&& (moneyDisplayTimer != DISABLED || helicopter.isDamaged))
-		{				
+		{
 			moneyDisplayTimer++;
-			if(moneyDisplayTimer == BONUS_MAX_DISPLAY_TIME)
+			if(moneyDisplayTimer == BONUS_DISPLAY_TIME)
 			{
 				Events.lastBonus = 0;
 				Events.lastExtraBonus = 0;
 			}
 			else if(	moneyDisplayTimer >
-						BONUS_MAX_DISPLAY_TIME + 100)
+						BONUS_DISPLAY_TIME + 100)
 			{
 				moneyDisplayTimer = DISABLED;
 			}				
@@ -955,7 +957,7 @@ public class Menu
             else{g2d.setColor(Coloration.darkerOrange);}
             if(moneyDisplayTimer <= 23){g2d.setFont(new Font("Dialog", Font.PLAIN, moneyDisplayTimer));}
             if(moneyDisplayTimer > 23 && moneyDisplayTimer < 77){g2d.setFont(fontProvider.getPlain(22));}
-            if(moneyDisplayTimer >= BONUS_MAX_DISPLAY_TIME-23){g2d.setFont(new Font("Dialog", Font.PLAIN, BONUS_MAX_DISPLAY_TIME - moneyDisplayTimer));}
+            if(moneyDisplayTimer >= BONUS_DISPLAY_TIME -23){g2d.setFont(new Font("Dialog", Font.PLAIN, BONUS_DISPLAY_TIME - moneyDisplayTimer));}
             g2d.drawString("+" + Events.lastBonus + " €", 20, 60);
             if(Events.lastExtraBonus > 0)
             {
@@ -1139,7 +1141,7 @@ public class Menu
     
     private static void paintHealthBar(Graphics2D g2d, Helicopter helicopter, int x, int y, int length, boolean rahmen)
     {
-    	float relativeEnergy = helicopter.energy/ Calculation.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+    	float relativeEnergy = helicopter.getCurrentEnergy() / helicopter.getMaximumEnergy();
     	float relativeLife = helicopter.currentPlating /helicopter.maxPlating();
         if(rahmen)
     	{
@@ -3226,7 +3228,7 @@ public class Menu
 	public static void conditionalReset()
 	{
 		isMenuVisible = false;
-		moneyDisplayTimer = -1;
+		moneyDisplayTimer = DISABLED;
 		levelDisplayTimer.start();
 		unlockedTimer = 0;
 	}

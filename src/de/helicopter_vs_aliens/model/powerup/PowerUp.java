@@ -233,12 +233,7 @@ public class PowerUp extends MovingObject
 			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel())
 			{
-				helicopter.energy 
-					= Math.min(Calculation.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
-											 helicopter.energy 
-											 	+ Math.max(10, 
-											 			   2*(Calculation.energy(helicopter.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
-											 				 - helicopter.energy)/3));
+				helicopter.rechargeEnergy(PowerUp.energyBoost(helicopter));
 				Menu.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
@@ -259,14 +254,19 @@ public class PowerUp extends MovingObject
 		{
 			Audio.play(Audio.cash);
 			Events.lastExtraBonus = 0;
-			Menu.moneyDisplayTimer = 0;
+			Menu.moneyDisplayTimer = Events.START;
 			Events.lastBonus = helicopter.getBonusFactor() * this.worth;
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;
 			Events.extraBonusCounter += Events.lastBonus;
 		}
 	}
-	
+
+	private static float energyBoost(Helicopter helicopter)
+	{
+		return Math.max(10, 2*helicopter.getMissingEnergy()/3);
+	}
+
 	public void moveToStatusbar()
 	{
 		Menu.collectedPowerUp[this.type.ordinal()] = this;

@@ -79,7 +79,9 @@ public abstract class Helicopter extends MovingObject
         SLOW_ROTATIONAL_SPEED	= 7,
         FAST_ROTATIONAL_SPEED	= 12,
         DAY_BONUS_FACTOR = 60,
-        NIGHT_BONUS_FACTOR = 90;
+        NIGHT_BONUS_FACTOR = 90,
+		START_ENERGY = 150,
+		ENERGY[] = {0, 100, 190, 270, 340, 400, 450, 490, 520, 540};
     
     private static final float
         NOSEDIVE_SPEED = 12f,	        // Geschwindigkeit des Helikopters bei Absturz
@@ -120,27 +122,25 @@ public abstract class Helicopter extends MovingObject
 		numberOfEnemiesKilled,				// Anzahl der vernichteten Gegner
 		numberOfMiniBossSeen,				// Anzahl der erschienenen Mini-Bosse
 		numberOfMiniBossKilled,				// Anzahl der vernichteten Mini-Bosse
-				
 
 		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
-		// Standard-Upgrades: Index 0: Hauptrotor, 1: Raketenantrieb, 2: Panzerung, 3: Feuerkraft, 4: Schussrate, 5: Energie-Upgrade
-  
-		//upgradeCosts[] = new int[StandardUpgradeTypes.size()],    	// Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
+		// TODO private machen und lesenden Zugriff über getUpgradeLevel
 		levelOfUpgrade[] = new int[StandardUpgradeTypes.size()];	// Upgrade-Level aller 6 StandardUpgrades
 	
     // TODO zu einer EnumMap für StandardUpgrades machen
     private PriceLevels
-            upgradeCosts[] = new PriceLevels[StandardUpgradeTypes.size()]; // Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
-    
-    
+        upgradeCosts[] = new PriceLevels[StandardUpgradeTypes.size()]; // Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
+
 	public long
     	scorescreenTimes[] = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float
 		rotorSystem,						// legt die aktuelle Geschwindigkeit des Helikopters fest
-		currentPlating,						// aktuelle Panzerung (immer <= maximale Panzerung)
-    	energy;							    // verfügbare Energie;
+		currentPlating;						// aktuelle Panzerung (immer <= maximale Panzerung)
+
+	float
+		energy;							    // verfügbare Energie;
     
     int
     	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
@@ -160,7 +160,8 @@ public abstract class Helicopter extends MovingObject
 		
 		isMovingLeft,
 		isPlayedWithoutCheats = true,			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
-     	hasMaxUpgradeLevel[] = new boolean[StandardUpgradeTypes.size()];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
+     	// TODO array unnötig, durch Methode ersetzen
+		hasMaxUpgradeLevel[] = new boolean[StandardUpgradeTypes.size()];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
       
     public Point
     	destination = new Point(); 				// dorthin fliegt der Helikopter
@@ -510,11 +511,7 @@ public abstract class Helicopter extends MovingObject
 	
 	void regenerateEnergy()
     {
-    	float
-			maxEnergy = Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]),
-			newEnergy = this.energy + calculateEnergyRegenerationRate();
-
-    	this.energy = Math.max(0, Math.min(newEnergy, maxEnergy));
+    	this.rechargeEnergy(this.calculateEnergyRegenerationRate());
     }
 
     float calculateEnergyRegenerationRate()
@@ -907,16 +904,14 @@ public abstract class Helicopter extends MovingObject
 	
 	abstract void resetFifthSpecial();
 		
-    public void repair(boolean restoreEnergy, boolean cheatRepair)
+    public void repair()
     {
     	Audio.play(Audio.cash);
     	this.numberOfRepairs++;
 		this.isDamaged = false;
 		this.isCrashing = false;
-    	this.getMaxPlating();
+    	this.getMaximumPlating();
     	this.setPercentPlatingDisplayColor();
-		if(restoreEnergy){this.energy = Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);}
-		if(!cheatRepair){this.placeAtStartpos();}
 		Menu.repairShopButton.get("RepairButton").costs = 0;
     }
 	
@@ -944,9 +939,12 @@ public abstract class Helicopter extends MovingObject
     {
 		this.hasSpotlights = true;
     	this.obtainFifthSpecial();
-    	for(int i = 0; i < StandardUpgradeTypes.size(); i++)
+		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
     	{
-    		if(this.levelOfUpgrade[i] < EXTORTIONATE.getMaxUpgradeLevel()){this.levelOfUpgrade[i] = EXTORTIONATE.getMaxUpgradeLevel();}
+    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaxUpgradeLevel())
+    		{
+    			this.levelOfUpgrade[standardUpgradeType.ordinal()] = EXTORTIONATE.getMaxUpgradeLevel();
+    		}
     	}        		
     	this.updateProperties(true);
 		this.isDamaged = false;
@@ -956,8 +954,11 @@ public abstract class Helicopter extends MovingObject
 	
 	public boolean hasSomeUpgrades()
     {
-    	for(int i = 0; i < StandardUpgradeTypes.size(); i++){if(this.levelOfUpgrade[i] < EXTORTIONATE.getMaxUpgradeLevel()) return false;}
-    	if(!this.hasSpotlights) return false;
+    	for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
+    	{
+    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaxUpgradeLevel()){return false;}
+    	}
+    	if(!this.hasSpotlights){return false;}
     	else return this.hasFifthSpecial();
     }
 	
@@ -1005,7 +1006,7 @@ public abstract class Helicopter extends MovingObject
 		this.rotorPosition = (this.rotorPosition + rotationalSpeed)%360;
 	}
 	
-    private void placeAtStartpos()
+    public void placeAtStartpos()
     {
     	this.isMovingLeft = false;
     	this.bounds.setRect(INITIAL_BOUNDS);
@@ -1134,21 +1135,22 @@ public abstract class Helicopter extends MovingObject
     
     private void updateProperties(boolean fullPlating)
     {
-    	this.rotorSystem = Calculation.speed(this.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]);
-    	this.missileDrive = Calculation.missileDrive(this.levelOfUpgrade[MISSILE_DRIVE.ordinal()]);
+    	this.rotorSystem = Calculation.speed(this.getUpgradeLevelOf(ROTOR_SYSTEM));
+    	this.missileDrive = Calculation.missileDrive(this.getUpgradeLevelOf(MISSILE_DRIVE));
     	if(fullPlating)
     	{
-    		this.getMaxPlating();
-    		this.energy = Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+    		this.getMaximumPlating();
+    		this.restoreEnergy();
     	}
     	this.setPercentPlatingDisplayColor();
 		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
-		this.regenerationRate = Calculation.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+		this.regenerationRate = Calculation.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		for(int i = 0; i < StandardUpgradeTypes.size(); i++)
 		{
-			if(this.levelOfUpgrade[i] >= this.upgradeCosts[i].getMaxUpgradeLevel())
+			StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.getValues()[i];
+			if(this.getUpgradeLevelOf(standardUpgradeType) >= this.upgradeCosts[i].getMaxUpgradeLevel())
 			{
 				this.hasMaxUpgradeLevel[i] = true;
 			}
@@ -1244,7 +1246,7 @@ public abstract class Helicopter extends MovingObject
 
 	public int calculateSumOfFireRateBooster(boolean poweredUp)
 	{
-		return this.levelOfUpgrade[FIRE_RATE.ordinal()]
+		return this.getUpgradeLevelOf(FIRE_RATE)
 				+ (poweredUp ? FIRE_RATE_POWERUP_LEVEL : 0);
 	}
 
@@ -1275,7 +1277,7 @@ public abstract class Helicopter extends MovingObject
 		return this.getPlating() * this.platingDurabilityFactor;
 	}
 	
-	private void getMaxPlating()
+	private void getMaximumPlating()
 	{
 		this.currentPlating = this.maxPlating();
 	}
@@ -1339,9 +1341,9 @@ public abstract class Helicopter extends MovingObject
 
 	public void upgradeEnergyAbility()
 	{
-		this.energy += Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()])
-					   - Calculation.energy(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]-1);
-		this.regenerationRate = Calculation.regeneration(this.levelOfUpgrade[ENERGY_ABILITY.ordinal()]);
+		int previousLevelOfEnergyAbility = this.getUpgradeLevelOf(ENERGY_ABILITY) - 1;
+		this.energy += this.getMaximumEnergy() - this.getMaximumEnergy(previousLevelOfEnergyAbility);
+		this.regenerationRate = Calculation.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
 	}
 
 	public void becomesCenterOf(Explosion exp)
@@ -1467,7 +1469,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public void setCurrentBaseFirepower()
 	{
-		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * Calculation.dmg(this.levelOfUpgrade[FIREPOWER.ordinal()]));
+		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * Calculation.dmg(this.getUpgradeLevelOf(FIREPOWER)));
 	}
 	
 	public boolean isFifthSpecialOnMaximumStrength()
@@ -1549,7 +1551,7 @@ public abstract class Helicopter extends MovingObject
 	{
 		Events.updateFinance(enemy, this);
 		this.typeSpecificRewards(enemy, missile, beamKill);
-		Menu.moneyDisplayTimer = 0;
+		Menu.moneyDisplayTimer = Events.START;
 	}
 
 	public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill) {}
@@ -1561,6 +1563,11 @@ public abstract class Helicopter extends MovingObject
     {
         return upgradeCosts[i];
     }
+
+	public PriceLevels getUpgradeCost(StandardUpgradeTypes standardUpgradeTypes)
+	{
+		return upgradeCosts[standardUpgradeTypes.ordinal()];
+	}
 		
 	public float getPlating()
 	{
@@ -1581,7 +1588,7 @@ public abstract class Helicopter extends MovingObject
     
     private int getPlatingLevel()
     {
-        return this.levelOfUpgrade[PLATING.ordinal()];
+        return this.getUpgradeLevelOf(PLATING);
     }
     
     private float getPlating(int platingLevel)
@@ -1592,4 +1599,59 @@ public abstract class Helicopter extends MovingObject
         }
         return 0;
     }
+
+    // TODO eine Klasse EnergyUnit, Battery oder ähnliches erstellen und dort
+
+	public float getCurrentEnergy()
+	{
+		return this.energy;
+	}
+
+	public void rechargeEnergy(float energyBoost)
+	{
+		this.energy = Math.max(0, Math.min(this.getMaximumEnergy(), this.getCurrentEnergy() + energyBoost));
+	}
+
+	public int getMaximumEnergy()
+	{
+		int levelOfEnergyAbility = this.getUpgradeLevelOf(ENERGY_ABILITY);
+		return getMaximumEnergy(levelOfEnergyAbility);
+	}
+
+	private static int getMaximumEnergy(int n)
+	{
+		if(n > 0 && n < 11){return START_ENERGY + ENERGY[n-1];}
+		return 0;
+	}
+
+	public void restoreEnergy()
+	{
+		this.energy = this.getMaximumEnergy();
+	}
+
+	public int getUpgradeLevelOf(StandardUpgradeTypes standardUpgradeType)
+	{
+		return this.levelOfUpgrade[standardUpgradeType.ordinal()];
+	}
+
+	// TODO unnötig machen
+	public int getUpgradeLevelOf(int standardUpgradeType)
+	{
+		return this.levelOfUpgrade[standardUpgradeType];
+	}
+
+	public void upgrade(StandardUpgradeTypes standardUpgradeType)
+	{
+		this.levelOfUpgrade[standardUpgradeType.ordinal()]++;
+	}
+
+	public float getMissingEnergy()
+	{
+    	return this.getMaximumEnergy() - this.getCurrentEnergy();
+	}
+
+	public boolean hasMaxUpgradeLevelFor(StandardUpgradeTypes standardUpgradeType)
+	{
+		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getUpgradeCost(standardUpgradeType).getMaxUpgradeLevel();
+	}
 }

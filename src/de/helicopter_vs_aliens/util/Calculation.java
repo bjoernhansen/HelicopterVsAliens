@@ -12,19 +12,16 @@ import java.util.Random;
 public class Calculation
 {
 	public final static double
-		ROOT05 = Math.sqrt(2)/2;
+		ROOT05 = Math.sqrt(2)/2.0;
 	
 	public final static Point2D 
 		ZERO_POINT = new Point2D.Float(0,0);
-	
-	private static final int 
-		START_ENERGY = 150;
 	
 	private static final int []
 		MISSILE_DRIVE = {13, 16, 19, 22, 25, 28, 31, 34, 37, 40},
 		DMG = {2, 3, 6, 10, 17, 28, 46, 75, 122, 198},
 		FIRE_RATE = {80, 64, 51, 41, 33, 26, 21, 17, 13, 11, 9, 7, 6, 5, 4},
-		ENERGY = {0, 100, 190, 270, 340, 400, 450, 490, 520, 540},
+
 		OBJECT_ACTIVATION_PROBABILITY = {100, 50, 34, 25, 20, 17, 15, 13, 12, 10, 10, 9, 8, 8, 7},
 		COST_LEVEL = {500, 2000, 6000, 16000, 36000, 80000, 176000, 368000, 792000};
 		
@@ -192,12 +189,6 @@ public class Calculation
 		return 0;
     }
 
-	public static int energy(int n)
-    {
-    	if(n > 0 && n < 11){return START_ENERGY + ENERGY[n-1];}
-		return 0;
-    }
-    
     public static boolean isEmpty(long[][] intArray)
     {
 		for(long[] anIntArray : intArray)
