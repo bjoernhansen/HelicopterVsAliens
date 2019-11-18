@@ -3137,9 +3137,7 @@ public class Menu
 			else
 			{
 				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
-					= Calculation.costs(helicopter.getType(),
-								   		helicopter.getPriceLevelFor(standardUpgradeType),
-								   		helicopter.getUpgradeLevelOf(standardUpgradeType));
+					= helicopter.getUpgradeCostFor(standardUpgradeType);
 			}    				    		
 		}
 		repairShopButton.get("RepairButton").costs = 0;

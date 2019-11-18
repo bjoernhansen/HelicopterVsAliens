@@ -17,6 +17,12 @@ public enum PriceLevel
     private static final PriceLevel[]
             defensiveCopyOfValues = values();
     
+    private static final float[]
+            UPGRADE_LEVEL_COST_FACTORS = {500, 2000, 6000, 16000, 36000, 80000, 176000, 368000, 792000};
+        
+    private static final float[]
+            PRICE_FACTORS = {0.375f, 0.75f, 1f, 1.5f, 2.5f};
+    
     private static final Color
             costsColor[] =  {   new Color(130, 255, 130),   // very cheap
                                 new Color (210, 255, 180),  // cheap
@@ -77,5 +83,15 @@ public enum PriceLevel
     public boolean isCheap()
     {
         return this == CHEAP || this == VERY_CHEAP;
+    }
+    
+    public int getBaseUpgradeCosts(int upgradeLevel)
+    {
+        return (int)(this.getPriceFactor() * UPGRADE_LEVEL_COST_FACTORS[upgradeLevel-1]);
+    }
+    
+    private float getPriceFactor()
+    {
+        return PRICE_FACTORS[this.ordinal()];
     }
 }

@@ -9,7 +9,6 @@ import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -189,9 +188,7 @@ public class Button
 			if(!helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 			{
 				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
-						= Calculation.costs(helicopter.getType(),
-											helicopter.getPriceLevelFor(standardUpgradeType),
-											helicopter.getUpgradeLevelOf(standardUpgradeType));
+						= helicopter.getUpgradeCostFor(standardUpgradeType);
 				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costColor
 						= helicopter.getPriceLevelFor(standardUpgradeType).getColor();
 			}

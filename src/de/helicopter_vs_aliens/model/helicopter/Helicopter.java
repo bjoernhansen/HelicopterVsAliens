@@ -21,10 +21,7 @@ import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
@@ -1654,5 +1651,18 @@ public abstract class Helicopter extends MovingObject
 	public boolean hasMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
 	{
 		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel();
+	}
+	
+	// bestimmt die tatsächlichen Kosten für ein Upgrades unter Berücksichtigung der "additional costs"
+	public int getUpgradeCostFor(StandardUpgradeType standardUpgradeType)
+	{
+		int upgradeLevel = this.getUpgradeLevelOf(standardUpgradeType);
+		PriceLevel priceLevel = this.getPriceLevelFor(standardUpgradeType);
+		int baseUpgradeCosts = priceLevel.getBaseUpgradeCosts(upgradeLevel);
+		
+		String key = String.format("%d%d%d", this.getType().ordinal(), priceLevel.ordinal(), upgradeLevel);
+		int additionalUpgradeCosts = Optional.ofNullable(Calculation.ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
+		
+		return baseUpgradeCosts + additionalUpgradeCosts;
 	}
 }

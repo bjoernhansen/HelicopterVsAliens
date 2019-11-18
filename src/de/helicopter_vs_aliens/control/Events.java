@@ -637,18 +637,14 @@ public class Events
 						Menu.block(4);}
 					else if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType)){
 						Menu.block(5);}
-					else if(money < Calculation.costs(  helicopter.getType(),
-                                                        helicopter.getPriceLevelFor(standardUpgradeType),
-                                                        helicopter.getUpgradeLevelOf(standardUpgradeType)))
+					else if(money < helicopter.getUpgradeCostFor(standardUpgradeType))
 					{
 						Menu.block(6);
 					}
 					else
 					{
 						Audio.play(Audio.cash);
-						money -= Calculation.costs(	helicopter.getType(),
-													helicopter.getPriceLevelFor(standardUpgradeType),
-													helicopter.getUpgradeLevelOf(standardUpgradeType));
+						money -= helicopter.getUpgradeCostFor(standardUpgradeType);
 						helicopter.upgrade(standardUpgradeType);
 						if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 						{
@@ -657,9 +653,7 @@ public class Events
 						else
 						{
 							Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
-									= Calculation.costs(helicopter.getType(),
-														helicopter.getPriceLevelFor(standardUpgradeType),
-														helicopter.getUpgradeLevelOf(standardUpgradeType));
+									= helicopter.getUpgradeCostFor(standardUpgradeType);
 						}
 					}					
 					break;
@@ -668,9 +662,6 @@ public class Events
 		}
 	}
 	
-	
-	
-		
 	private static void startscreenMousePressedLeft(Helicopter helicopter)
 	{
 		if(Menu.triangle[0].contains(cursor))

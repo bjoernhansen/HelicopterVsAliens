@@ -7,6 +7,9 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Random;
 
+import java.util.Optional;
+
+
 // TODO alles auslagern, was nicht direkt mit Mathematik zutun hat
 // TODO Klasse umbenennen, vielleicht Calculations
 
@@ -23,14 +26,11 @@ public class Calculation
 		DMG = {2, 3, 6, 10, 17, 28, 46, 75, 122, 198},
 		FIRE_RATE = {80, 64, 51, 41, 33, 26, 21, 17, 13, 11, 9, 7, 6, 5, 4},
 
-		OBJECT_ACTIVATION_PROBABILITY = {100, 50, 34, 25, 20, 17, 15, 13, 12, 10, 10, 9, 8, 8, 7},
-		COST_LEVEL = {500, 2000, 6000, 16000, 36000, 80000, 176000, 368000, 792000};
+		OBJECT_ACTIVATION_PROBABILITY = {100, 50, 34, 25, 20, 17, 15, 13, 12, 10, 10, 9, 8, 8, 7};
 		
 	
 	
 	private static final float[]
-        // TODO gehört ins PriceLevel enum
-		COST_FACTOR = {0.375f, 0.75f, 1f, 1.5f, 2.5f},
 		PLASMA_DMG_FACTOR = {3.26f, 3.5f, 3.76f, 4.05f, 4.35f, 4.68f, 5.03f, 5.41f, 5.81f, 6.25f},	// Kamaitachi-Klasse: Faktor, um den sich die Schadenswirkung der Raketen erhöht, wenn diese Plasmaraketen sind
 		SPEED = {3f, 3.4f, 3.8f, 4.2f, 4.8f, 5.4f, 6.0f, 6.8f, 7.6f, 8.5f},
 		REGENERATION = {0.030f, 0.036f, 0.044f, 0.053f, 0.063f, 0.076f, 0.092f, 0.111f, 0.134f, 0.162f};
@@ -38,14 +38,17 @@ public class Calculation
 	private static int []
 		randomOrder = {0, 1, 2, 3, 4};
 	
+	private static Random
+        random = new Random();
+	
 	// Die Kosten mancher Upgrades weichen für manche Helicopterklassen vom Standard ab.
 	// Die HashMap "additional_costs" enthält die Modifikationswerte.
-	private static final HashMap<String, Integer> 
-		ADDITIONAL_COSTS = setAdditionalCosts();
-	
-	private static Random random = new Random();
-	
-	
+    
+    // TODO verschieben ins HelicopterTypesEnum
+	public static final HashMap<String, Integer>
+            ADDITIONAL_STANDARD_UPGRADE_COSTS = setAdditionalCosts();
+		
+	// TODO Auslagern nach HelicopterTypes
 	private static HashMap<String, Integer> setAdditionalCosts()
 	{
 		HashMap<String, Integer> hashMap = new HashMap<> ();		
@@ -131,26 +134,7 @@ public class Calculation
     	else value = 6 * factor;
     	return random(value)==0;
     }
-	
-    private static int increase(int priceLevel, int level)
-    {
-     	return (int) (COST_FACTOR[priceLevel] * (COST_LEVEL[level-1]));
-    }
-     
-    // bestimmt die tatsächlichen Kosten für ein Upgrades unter Berücksichtigung der "additional costs"
-	// TODO helicopter übergeben und infos in der Methode extrahieren
-	// TODO gehört diese Methode in Calculations?
-	public static int costs(HelicopterType helicopterType, PriceLevel priceLevel, int upgradeLevel)
-	{
-		String key = "" + helicopterType.ordinal() + priceLevel + upgradeLevel;
-		int extraCosts = 0;
-		if(ADDITIONAL_COSTS.containsKey(key))
-		{
-			extraCosts = ADDITIONAL_COSTS.get(key);
-		}
-		return increase(priceLevel.ordinal(), upgradeLevel) + extraCosts;
-	}
-	
+    
 	public static float speed(int n)
     {
     	if(n > 0 && n < 11){return SPEED[n-1];}

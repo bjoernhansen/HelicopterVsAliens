@@ -6,11 +6,13 @@ import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.score.Savegame;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Optional;
 
 import static de.helicopter_vs_aliens.gui.WindowType.SETTINGS;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
