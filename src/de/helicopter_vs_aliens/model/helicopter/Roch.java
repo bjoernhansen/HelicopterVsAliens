@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -16,12 +16,12 @@ import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
+import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PEGASUS;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 
 public final class Roch extends Helicopter
 {
@@ -44,7 +44,7 @@ public final class Roch extends Helicopter
 
     
     @Override
-    public HelicopterTypes getType()
+    public HelicopterType getType()
     {
         return ROCH;
     }
@@ -98,7 +98,7 @@ public final class Roch extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         if(this.isPowerShieldActivated)
         {
@@ -111,7 +111,7 @@ public final class Roch extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         this.turnOnPowerShield();
     }
@@ -258,8 +258,8 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void update(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile,
-                       EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
+                       EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         super.update(missile, explosion);
         if(this.isPowerShieldActivated && this.energy == 0)

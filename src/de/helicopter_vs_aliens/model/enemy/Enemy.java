@@ -15,7 +15,7 @@ import java.util.*;
 
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -25,29 +25,29 @@ import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
-import de.helicopter_vs_aliens.model.missile.EnemyMissileTypes;
+import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
-import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
+import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.*;
-import static de.helicopter_vs_aliens.model.enemy.BarrierPositionTypes.*;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
+import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.*;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
-import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
-import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.REPARATION;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
+import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
+import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
 
 public class Enemy extends MovingObject
@@ -184,7 +184,7 @@ public class Enemy extends MovingObject
 		lastCarrier,  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
 		livingBarrier[] = new Enemy [MAX_BARRIER_NUMBER];
 	
-	public static EnemyTypes
+	public static EnemyType
 		bossSelection;		 	// bestimmt, welche Boss-Typ erstellt wird
 	
 	private static int 
@@ -240,10 +240,10 @@ public class Enemy extends MovingObject
 		hasUnresolvedIntersection;
 		
 	
-	public EnemyTypes
+	public EnemyType
 		type;
 	
-	public BarrierPositionTypes
+	public BarrierPositionType
 		touchedSite,
 		lastTouchedSite;
 	
@@ -252,7 +252,7 @@ public class Enemy extends MovingObject
     	farbe1,
     	farbe2; 
 
-    public EnemyModelTypes
+    public EnemyModelType
 		model;				// legt das Aussehen (Model) des Gegners fest
 
     public Point 
@@ -330,10 +330,10 @@ public class Enemy extends MovingObject
         isClockwiseBarrier,	    // = true: der Rotor des Hindernis dreht im Uhrzeigersinn
         isRecoveringSpeed;
   
-	private AbilityStatusTypes
+	private AbilityStatusType
 		tractor;				// = DISABLED (Gegner ohne Traktor); = READY (Traktor nicht aktiv); = 1 (Traktor aktiv)
 	
-	private EnemyMissileTypes
+	private EnemyMissileType
 		shotType;
 	
 	private GradientPaint 
@@ -396,7 +396,7 @@ public class Enemy extends MovingObject
 			}
 						
 			// Dach
-			if(!this.isDestroyed && (this.tractor == AbilityStatusTypes.ACTIVE || this.shootTimer > 0 || this.isShielding))
+			if(!this.isDestroyed && (this.tractor == AbilityStatusType.ACTIVE || this.shootTimer > 0 || this.isShielding))
 			{
 				Color inputColorRoof
 					= this.alpha < 255 
@@ -422,7 +422,7 @@ public class Enemy extends MovingObject
 			}			
 					
 			// die Schild- und Traktorstrahlen
-			if(this.tractor == AbilityStatusTypes.ACTIVE){this.paintTractorBeam(g2d, helicopter);}
+			if(this.tractor == AbilityStatusType.ACTIVE){this.paintTractorBeam(g2d, helicopter);}
 			else if(this.type == FINAL_BOSS)
 			{
 				for(int servantType = id(SMALL_SHIELD_MAKER); servantType <= id(BIG_SHIELD_MAKER); servantType++)
@@ -790,7 +790,7 @@ public class Enemy extends MovingObject
 		}		
 		
 		if(this.model == BARRIER){barColor = Coloration.barrierColor[Coloration.FRAME][Events.timeOfDay.ordinal()];}
-		else if(!this.isDestroyed && (this.tractor == AbilityStatusTypes.ACTIVE || this.shootTimer > 0 || this.isShielding)){barColor = Coloration.variableGreen;}
+		else if(!this.isDestroyed && (this.tractor == AbilityStatusType.ACTIVE || this.shootTimer > 0 || this.isShielding)){barColor = Coloration.variableGreen;}
 		else if(!this.isDestroyed && !imagePaint && this.isInvincible()){barColor = Color.green;}
 		else if(this.isMiniBoss){barColor = this.farbe2;}
 		else{barColor = Coloration.enemyGray;}
@@ -1355,7 +1355,7 @@ public class Enemy extends MovingObject
 	/** Methoden zur Erstellung von Gegnern
 	 */	
 	
-	public static void generateNewEnemies(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy, Helicopter helicopter)
+	public static void generateNewEnemies(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy, Helicopter helicopter)
 	{
 		Events.lastCreationTimer++;
 		if(lastCarrier != null){
@@ -1368,7 +1368,7 @@ public class Enemy extends MovingObject
 	}
 	
 	private static void createCarrierServants(Helicopter helicopter,
-											  EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+											  EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
 		for(int m = 0; 
 				m < (lastCarrier.isMiniBoss
@@ -1381,7 +1381,7 @@ public class Enemy extends MovingObject
 			lastCarrier = null;
 	}
 
-	private static void verifyCreationStop(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy,
+	private static void verifyCreationStop(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
 										   Helicopter helicopter)
 	{
 		if(	enemy.get(ACTIVE).isEmpty()
@@ -1417,7 +1417,7 @@ public class Enemy extends MovingObject
 	}
 	
 	private static void createBossServant(Helicopter helicopter,
-										  EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+										  EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
 		if(makeBossTwoServants)
 		{
@@ -1434,7 +1434,7 @@ public class Enemy extends MovingObject
 		}
 		else
 		{
-			EnemyTypes.getFinalBossServantTypes().forEach(type -> {
+			EnemyType.getFinalBossServantTypes().forEach(type -> {
 				if(makeBoss5Servant[id(type)])
 				{
 					makeBoss5Servant[id(type)] = false;
@@ -1446,7 +1446,7 @@ public class Enemy extends MovingObject
 	}
 	
 	private static void createBoss2Servants(Helicopter helicopter,
-											EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+											EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
     	makeBossTwoServants = false;
 		creationStop = true;
@@ -1456,16 +1456,16 @@ public class Enemy extends MovingObject
     }
     
     private static void createAllBoss5Servants(Helicopter helicopter,
-											   EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+											   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
     	makeAllBoss5Servants = false;
-    	EnemyTypes.getFinalBossServantTypes().forEach(type -> {
+    	EnemyType.getFinalBossServantTypes().forEach(type -> {
 			bossSelection = type;
 			creation(helicopter, enemy);
 		});
     }	
 
-    private static boolean enemyCreationApproved(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+    private static boolean enemyCreationApproved(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{		
 		int nrOfEnemies = enemy.get(ACTIVE).size();
 		return !creationStop
@@ -1482,7 +1482,7 @@ public class Enemy extends MovingObject
 	}
     
 	private static void creation(Helicopter helicopter,
-								 EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+								 EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
 		Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
 		Enemy e;
@@ -1622,7 +1622,7 @@ public class Enemy extends MovingObject
 		this.speedup = DISABLED;
 		
 		this.uncloakingSpeed = 1;
-		this.tractor = AbilityStatusTypes.DISABLED;
+		this.tractor = AbilityStatusType.DISABLED;
 		this.batchWiseMove = 0;
 		
 		this.shootingDirection.setLocation(0, 0);
@@ -1769,8 +1769,8 @@ public class Enemy extends MovingObject
         int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
             ? Calculation.random(3)
             : 0;
-        int selectedBarrierIndex = Calculation.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyTypes.getBarrierTypes().size()));
-        this.type = (EnemyTypes) EnemyTypes.getBarrierTypes().toArray()[selectedBarrierIndex];
+        int selectedBarrierIndex = Calculation.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyType.getBarrierTypes().size()));
+        this.type = (EnemyType) EnemyType.getBarrierTypes().toArray()[selectedBarrierIndex];
     }
     
     private boolean isBarrierFromFutureCreationApproved()
@@ -2072,7 +2072,7 @@ public class Enemy extends MovingObject
 				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(), //d
 						4.5 + 1.5*Math.random());//d
-				this.tractor = AbilityStatusTypes.READY;
+				this.tractor = AbilityStatusType.READY;
 				this.isExplodable = true;
 				
 				break;
@@ -2580,7 +2580,7 @@ public class Enemy extends MovingObject
 		}
 	}	
 
-	private static void countBarriers(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+	private static void countBarriers(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
 		Arrays.fill(livingBarrier, null);
 		currentNumberOfBarriers = 0;
@@ -2668,7 +2668,7 @@ public class Enemy extends MovingObject
 			   && this.type != ROCK;
 	}
 
-	private void calculateBossManeuver(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+	private void calculateBossManeuver(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
 		     if(this.type == BOSS_4)    {this.boss4Action(enemy);}
 		else if(this.type == FINAL_BOSS){this.finalBossAction();}
@@ -3166,7 +3166,7 @@ public class Enemy extends MovingObject
 		return id(this.type);
 	}
 	
-	private static int id(EnemyTypes type)
+	private static int id(EnemyType type)
 	{
 		switch(type)
 		{
@@ -3393,7 +3393,7 @@ public class Enemy extends MovingObject
 		this.barrierShootTimer--;
 	}
 	
-	public void shoot(EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>> enemyMissiles, EnemyMissileTypes missileType, double missileSpeed)
+	public void shoot(EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissiles, EnemyMissileType missileType, double missileSpeed)
     {
     	Iterator<EnemyMissile> i = enemyMissiles.get(INACTIVE).iterator();
 		EnemyMissile em;
@@ -3443,7 +3443,7 @@ public class Enemy extends MovingObject
 		this.placeNearHelicopter(helicopter);
 	}
 
-	private void boss4Action(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+	private void boss4Action(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
     	if(    this.bounds.getX() < 930 
     		&& this.bounds.getX() > 150)
@@ -3527,7 +3527,7 @@ public class Enemy extends MovingObject
 	}
 
 	private boolean isTractorReady() {
-		return this.tractor == AbilityStatusTypes.READY
+		return this.tractor == AbilityStatusType.READY
 				&& !this.isEmpSlowed()
 				&& this.cloakingTimer < 1
 				&& this.bounds.getMaxX() < 982;
@@ -3537,7 +3537,7 @@ public class Enemy extends MovingObject
 	private void startTractor(Helicopter helicopter)
 	{
 		Audio.loop(Audio.tractorBeam);
-		this.tractor = AbilityStatusTypes.ACTIVE;
+		this.tractor = AbilityStatusType.ACTIVE;
 		this.speedLevel.setLocation(ZERO_SPEED);
 		helicopter.tractor = this;
 		this.direction.x = -1;		
@@ -3545,7 +3545,7 @@ public class Enemy extends MovingObject
 	
 	public void stopTractor()
 	{
-		this.tractor = AbilityStatusTypes.DISABLED;
+		this.tractor = AbilityStatusType.DISABLED;
 		this.speedLevel.setLocation(this.targetSpeedLevel);
 	}
 	
@@ -3953,7 +3953,7 @@ public class Enemy extends MovingObject
 		}		// this.slowed_timer
 	}
 
-	private void updateDead(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion, Helicopter helicopter)
+	private void updateDead(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter)
 	{				
 		if(this.collisionDamageTimer > 0){this.collisionDamageTimer--;}
 		if(this.collisionAudioTimer > 0){this.collisionAudioTimer--;}
@@ -3968,7 +3968,7 @@ public class Enemy extends MovingObject
 		this.setPaintBounds();
 	}
 	
-	private void handleCrashToTheGround(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion,
+	private void handleCrashToTheGround(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
 										Helicopter helicopter)
 	{
 		this.hasCrashed = true;
@@ -4031,7 +4031,7 @@ public class Enemy extends MovingObject
 		}		
 	}
 
-	private void grantRewards(Helicopter helicopter, Missile missile, boolean beamKill, EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUps)
+	private void grantRewards(Helicopter helicopter, Missile missile, boolean beamKill, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
 	{
 		helicopter.receiveRewardFor(this, missile, beamKill);
 		this.grantGeneralRewards(helicopter, powerUps);
@@ -4105,7 +4105,7 @@ public class Enemy extends MovingObject
 		if(!this.hasHPsLeft()){this.hitpoints = 0;}
 	}
 	
-	public void hitByMissile(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+	public void hitByMissile(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{		
 		helicopter.hitCounter++;
 		if( missile.typeOfExplosion == JUMBO
@@ -4141,7 +4141,7 @@ public class Enemy extends MovingObject
 		}
 	}	
 	
-	private void stun(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+	private void stun(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		if(this.hasHPsLeft()){Audio.play(Audio.stun);}
 		this.explode(explosion, helicopter, missile);	
@@ -4187,7 +4187,7 @@ public class Enemy extends MovingObject
 		}
 		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
 		
-		if(this.cloakingTimer == READY && !(this.tractor == AbilityStatusTypes.ACTIVE))
+		if(this.cloakingTimer == READY && !(this.tractor == AbilityStatusType.ACTIVE))
 		{
 			Audio.play(Audio.cloak); 
 			this.cloakingTimer = ACTIVE_TIMER;
@@ -4216,15 +4216,15 @@ public class Enemy extends MovingObject
 										: this.isCarrier ? 0.1f : 0.25f);
 	}
 
-	private void explode(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion, Helicopter helicopter, Missile missile)
+	private void explode(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter, Missile missile)
 	{
 		explode(explosion, helicopter, missile.speed, missile.typeOfExplosion, missile.extraDamage);
 	}	
-	void explode(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion, Helicopter helicopter)
+	void explode(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter)
 	{
 		explode(explosion, helicopter, 0, ORDINARY, false);
 	}	
-	private void explode(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion, Helicopter helicopter, double missileSpeed, ExplosionTypes explosionType, boolean extraDamage)
+	private void explode(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter, double missileSpeed, ExplosionTypes explosionType, boolean extraDamage)
 	{		
 		if(this.explodingTimer == 0){this.explodingTimer = 7;}
 		Explosion.start(explosion, 
@@ -4238,7 +4238,7 @@ public class Enemy extends MovingObject
 	
 	void destroy(Helicopter helicopter){destroy(helicopter, null, true);}
 	void destroy(Helicopter helicopter,
-				 EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
+				 EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
 				 boolean wasDestroyedByPlayer)
 	{
 		if(wasDestroyedByPlayer)
@@ -4338,14 +4338,14 @@ public class Enemy extends MovingObject
 	}
 	
 	public void dropPowerUp(Helicopter helicopter,
-							EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp)
+							EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
 	{
 		PowerUp.activate(helicopter, 
 				 powerUp, 
 				 this, 
 				 Calculation.tossUp(0.14f)
 					? REPARATION
-					: PowerUpTypes.values()[Calculation.random(this.type.isMajorBoss() ? 5 : 6)], false);
+					: PowerUpType.values()[Calculation.random(this.type.isMajorBoss() ? 5 : 6)], false);
 		
 	}
 	
@@ -4367,8 +4367,8 @@ public class Enemy extends MovingObject
 	}
  
 	private void evaluateBossDestructionEffect(Helicopter helicopter,
-											   EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy,
-											   EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+											   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
+											   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		if(this.isMiniBoss)
 		{
@@ -4490,7 +4490,7 @@ public class Enemy extends MovingObject
    	 		   && this.snoozeTimer <= SNOOZE_TIME;
 	}
 	
-	public void startStaticDischarge(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion,
+	public void startStaticDischarge(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
 									 Helicopter helicopter)
 	{
 		this.staticChargeTimer = STATIC_CHARGE_TIME;
@@ -4548,8 +4548,8 @@ public class Enemy extends MovingObject
 	}
 
 	public static void getRidOfSomeEnemies(Helicopter helicopter,
-										   EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy,
-										   EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+										   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
+										   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		for(Enemy e : enemy.get(ACTIVE))
 		{
@@ -4602,7 +4602,7 @@ public class Enemy extends MovingObject
 		return this.type == KABOOM && !this.isDestroyed;
 	}
 
-	public void grantGeneralRewards(Helicopter helicopter, EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUps)
+	public void grantGeneralRewards(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
 	{
 		if(this.canCountForKillsAfterLevelUp())
 		{

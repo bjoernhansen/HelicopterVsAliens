@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -17,13 +17,11 @@ import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 
 public class PowerUp extends MovingObject
@@ -51,7 +49,7 @@ public class PowerUp extends MovingObject
 	private boolean
 		inStatusBar;	// = true: PowerUp befindet sich in der Statusbar
 	
-	public PowerUpTypes
+	public PowerUpType
 		type;
 	
 	private Point2D 
@@ -63,7 +61,7 @@ public class PowerUp extends MovingObject
 
 		
 	public static void
-	updateAll(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
+	updateAll(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
 			  Helicopter helicopter)
 	{
     	for(Iterator<PowerUp> i = powerUp.get(ACTIVE).iterator(); i.hasNext();)
@@ -80,7 +78,7 @@ public class PowerUp extends MovingObject
 
 	public static void
 	paintAll(Graphics2D g2d,
-			 EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp)
+			 EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
 	{
 		for(PowerUp pu : powerUp.get(ACTIVE))
 		{
@@ -165,7 +163,7 @@ public class PowerUp extends MovingObject
 		return POWERUP_STOP_POSITION < (this.bounds.getX() - this.speed.getX() + 20);
 	}
 	
-	private void make(double x, double y, PowerUpTypes powerUpType, int powerUpWorth, int powerUpDirection)
+	private void make(double x, double y, PowerUpType powerUpType, int powerUpWorth, int powerUpDirection)
 	{
 		this.bounds.setRect(x, y, GAME_SIZE, GAME_SIZE);
 		this.setPaintBounds(GAME_SIZE, GAME_SIZE);
@@ -277,8 +275,8 @@ public class PowerUp extends MovingObject
 		this.setPaintBounds(MENU_SIZE, MENU_SIZE);
 	}
 
-	public static void activate(Helicopter helicopter, EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, Enemy enemy,
-                                PowerUpTypes type, boolean to_status_bar)
+	public static void activate(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, Enemy enemy,
+								PowerUpType type, boolean to_status_bar)
 	{
 		Iterator<PowerUp> i = powerUp.get(INACTIVE).iterator();
 		PowerUp pu;					

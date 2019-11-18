@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.control;
 
-public enum TimesOfDay
+public enum TimeOfDay
 {
     NIGHT,
     DAY

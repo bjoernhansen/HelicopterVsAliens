@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.MovingObject;
@@ -15,13 +15,13 @@ import de.helicopter_vs_aliens.util.Calculation;
 import java.awt.*;
 import java.util.*;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.TIT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.BOSS_2_SERVANT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
 
 public class Missile extends MovingObject
@@ -290,7 +290,7 @@ public class Missile extends MovingObject
 	}
 	
 	// TODO nach Helicopter schieben und auf Roch und Orochi verteilen
-	private void inactivate(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile, Helicopter helicopter)
+	private void inactivate(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile, Helicopter helicopter)
 	{							
 		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
 		{
@@ -344,7 +344,7 @@ public class Missile extends MovingObject
 				}
 			}									
 		}					
-		missile.get(CollectionSubgroupTypes.INACTIVE).add(this);
+		missile.get(CollectionSubgroupType.INACTIVE).add(this);
 	}
 	
 	public static boolean canTakeCredit(Missile missile, Enemy enemy)

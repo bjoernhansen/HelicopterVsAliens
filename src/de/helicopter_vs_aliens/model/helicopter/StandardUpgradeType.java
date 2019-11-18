@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
-public enum StandardUpgradeTypes
+public enum StandardUpgradeType
 {
     ROTOR_SYSTEM (OROCHI),
     MISSILE_DRIVE (OROCHI),
@@ -17,7 +17,7 @@ public enum StandardUpgradeTypes
         
     static
     {
-        for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.values())
+        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.values())
         {
             standardUpgradeType.dictionaryKey = "upgrades.standard." + KEY_SUFFIXES[standardUpgradeType.ordinal()];
         }
@@ -32,19 +32,19 @@ public enum StandardUpgradeTypes
         return dictionaryKey;
     }
     
-    private static final StandardUpgradeTypes[]
+    private static final StandardUpgradeType[]
             defensiveCopyOfValues = values();
     
-    private HelicopterTypes
+    private HelicopterType
             privilegedHelicopter;
     
     
-    StandardUpgradeTypes(HelicopterTypes privilegedHelicopter)
+    StandardUpgradeType(HelicopterType privilegedHelicopter)
     {
         this.privilegedHelicopter = privilegedHelicopter;
     }
     
-    public static final StandardUpgradeTypes[] getValues()
+    public static final StandardUpgradeType[] getValues()
     {
         return defensiveCopyOfValues;
     }
@@ -54,7 +54,7 @@ public enum StandardUpgradeTypes
         return getValues().length;
     }
 
-    HelicopterTypes getPrivilegedHelicopter()
+    HelicopterType getPrivilegedHelicopter()
     {
         return this.privilegedHelicopter;
     }

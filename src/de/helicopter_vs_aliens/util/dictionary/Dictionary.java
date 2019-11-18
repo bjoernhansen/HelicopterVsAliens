@@ -1,18 +1,18 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.gui.PriceLevels;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
-import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
+import de.helicopter_vs_aliens.gui.PriceLevel;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
+import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
 public final class Dictionary
@@ -25,23 +25,23 @@ public final class Dictionary
         defaultLanguageProperties = new Properties(),
         languageProperties = new Properties(defaultLanguageProperties);
 
-    private Languages
+    private Language
         language;
     
-    private HelicopterTypes
-        helicopterType = HelicopterTypes.getDefault();
+    private HelicopterType
+        helicopterType = HelicopterType.getDefault();
 
-    private EnumMap<SpecialUpgradeTypes, String>
-        specialUpgrades = new EnumMap<>(SpecialUpgradeTypes.class);
+    private EnumMap<SpecialUpgradeType, String>
+        specialUpgrades = new EnumMap<>(SpecialUpgradeType.class);
     
-    private EnumMap<StandardUpgradeTypes, List<String>>
-            standardUpgradesImprovements = new EnumMap<>(StandardUpgradeTypes.class);
+    private EnumMap<StandardUpgradeType, List<String>>
+            standardUpgradesImprovements = new EnumMap<>(StandardUpgradeType.class);
 
-    private EnumMap<HelicopterTypes, String>
-        helicopterNames = new EnumMap<>(HelicopterTypes.class);
+    private EnumMap<HelicopterType, String>
+        helicopterNames = new EnumMap<>(HelicopterType.class);
 
-    private EnumMap<HelicopterTypes, List<String>>
-        helicopterInfos = new EnumMap<>(HelicopterTypes.class);
+    private EnumMap<HelicopterType, List<String>>
+        helicopterInfos = new EnumMap<>(HelicopterType.class);
 
     private List <String>
         columnNames = new ArrayList<>();
@@ -49,10 +49,10 @@ public final class Dictionary
     
     public Dictionary()
     {
-        this(Languages.getDefault(), HelicopterTypes.getDefault());
+        this(Language.getDefault(), HelicopterType.getDefault());
     }
 
-    public Dictionary(Languages language, HelicopterTypes helicopterType)
+    public Dictionary(Language language, HelicopterType helicopterType)
     {
         loadDefaultLanguageProperties();
         this.switchLanguageTo(language);
@@ -69,7 +69,7 @@ public final class Dictionary
         loadLanguageProperties(this.language, languageProperties);
     }
 
-    private void loadLanguageProperties(Languages language, Properties properties)
+    private void loadLanguageProperties(Language language, Properties properties)
     {
         try
         {
@@ -83,12 +83,12 @@ public final class Dictionary
         }
     }
 
-    private String getFilename(Languages language)
+    private String getFilename(Language language)
     {
         return FILENAME_PREFIX + language.getCode() + FILENAME_EXTENSION;
     }
 
-    public void switchLanguageTo(Languages language)
+    public void switchLanguageTo(Language language)
     {
         if(this.language != language)
         {
@@ -98,7 +98,7 @@ public final class Dictionary
         }
     }
 
-    public void switchHelicopterTypeTo(HelicopterTypes helicopterType)
+    public void switchHelicopterTypeTo(HelicopterType helicopterType)
     {
         if(this.helicopterType != helicopterType)
         {
@@ -109,20 +109,20 @@ public final class Dictionary
 
     private void accountForLanguageChange()
     {
-        for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
+        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
         {
-            if(specialUpgradeType == SpecialUpgradeTypes.FIFTH_SPECIAL){break;}
+            if(specialUpgradeType == SpecialUpgradeType.FIFTH_SPECIAL){break;}
             specialUpgrades.put(specialUpgradeType, this.languageProperties.getProperty(specialUpgradeType.getDictionaryKey()));
         }
     
-        for(StandardUpgradeTypes standardUpgradeType: StandardUpgradeTypes.getValues())
+        for(StandardUpgradeType standardUpgradeType: StandardUpgradeType.getValues())
         {
-            if(standardUpgradeType == StandardUpgradeTypes.ENERGY_ABILITY){break;}
+            if(standardUpgradeType == StandardUpgradeType.ENERGY_ABILITY){break;}
             String dictionaryKeyPraefix = standardUpgradeType.getDictionaryKey()+ ".";
             standardUpgradesImprovements.put(standardUpgradeType, getImprovementsStringList(dictionaryKeyPraefix));
         }
         
-        for(HelicopterTypes type : HelicopterTypes.getValues())
+        for(HelicopterType type : HelicopterType.getValues())
         {
             helicopterNames.put(type, this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".name"));
             List<String> infos = new ArrayList<>();
@@ -168,7 +168,7 @@ public final class Dictionary
         return improvements;
     }
     
-    public String specialUpgrade(SpecialUpgradeTypes specialUpgradeType)
+    public String specialUpgrade(SpecialUpgradeType specialUpgradeType)
     {
         return specialUpgrades.get(specialUpgradeType);
     }
@@ -239,22 +239,22 @@ public final class Dictionary
         return this.languageProperties.getProperty("cancel");
     }
     
-    public String helicopterName(HelicopterTypes type)
+    public String helicopterName(HelicopterType type)
     {
         return this.helicopterNames.get(type);
     }
 
-    public List<String> helicopterInfos(HelicopterTypes type)
+    public List<String> helicopterInfos(HelicopterType type)
     {
         return this.helicopterInfos.get(type);
     }
     
-    public String typeName(HelicopterTypes type)
+    public String typeName(HelicopterType type)
     {
         return this.helicopterName(type) + this.languageProperties.getProperty("type");
     }
 
-    public String priceLevel(PriceLevels priceLevel)
+    public String priceLevel(PriceLevel priceLevel)
     {
         return this.languageProperties.getProperty(priceLevel.getDictionaryKey());
     }
@@ -264,7 +264,7 @@ public final class Dictionary
         return this.columnNames;
     }
     
-    public List<String> standardUpgradesImprovements(StandardUpgradeTypes standardUpgradeType)
+    public List<String> standardUpgradesImprovements(StandardUpgradeType standardUpgradeType)
     {
         return standardUpgradesImprovements.get(standardUpgradeType);
     }
@@ -274,7 +274,7 @@ public final class Dictionary
         return standardUpgradesImprovements.get(ENERGY_ABILITY);
     }
     
-    public String standardUpgradeName(StandardUpgradeTypes standardUpgradeType)
+    public String standardUpgradeName(StandardUpgradeType standardUpgradeType)
     {
         return standardUpgradesImprovements.get(standardUpgradeType).get(language.getObjectPosition());
     }

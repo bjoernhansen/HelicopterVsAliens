@@ -5,22 +5,16 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.gui.PriceLevels;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.dictionary.Dictionary;
-import de.helicopter_vs_aliens.util.dictionary.Languages;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 
-import static de.helicopter_vs_aliens.gui.WindowTypes.SETTINGS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.HELIOS;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
+import static de.helicopter_vs_aliens.gui.WindowType.SETTINGS;
+import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
+import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
 
 // TODO für alle Enum-Klassen die Nutzung von Values ersetzen durch getValues (siehe HelicopterTypes) falls in jedem Schritt verwendet
@@ -30,7 +24,7 @@ public class Main
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = true;
+    	TESTMODE = false;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),

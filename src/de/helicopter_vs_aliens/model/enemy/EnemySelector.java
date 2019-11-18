@@ -13,14 +13,14 @@ public class EnemySelector
 
     EnemySelector()
     {
-        EnemyTypes[] values = EnemyTypes.values();
+        EnemyType[] values = EnemyType.values();
         for(int i = 0; i < BORDERS.size()-1; i++)
         {
             map.put(BORDERS.get(i), new RangeTypePair(BORDERS.get(i+1)-1, values[i]));
         }
     }
 
-    public EnemyTypes getType(int key)
+    public EnemyType getType(int key)
     {
         Map.Entry<Integer, RangeTypePair> entry = map.floorEntry(key);
         return entry.getValue().enemyType;
@@ -29,9 +29,9 @@ public class EnemySelector
     private static class RangeTypePair
     {
         final int upper;
-        final EnemyTypes enemyType;
+        final EnemyType enemyType;
 
-        RangeTypePair(int upper, EnemyTypes enemyType)
+        RangeTypePair(int upper, EnemyType enemyType)
         {
             this.upper = upper;
             this.enemyType = enemyType;

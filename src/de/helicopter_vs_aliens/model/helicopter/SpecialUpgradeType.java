@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-public enum SpecialUpgradeTypes {
+public enum SpecialUpgradeType
+{
     SPOTLIGHT,
     GOLIATH_PLATING,
     PIERCING_WARHEADS,
@@ -13,7 +14,7 @@ public enum SpecialUpgradeTypes {
     
     static
     {
-        for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
+        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
         {
             specialUpgradeType.dictionaryKey = "upgrades.special." + KEY_SUFFIXES[specialUpgradeType.ordinal()];
         }

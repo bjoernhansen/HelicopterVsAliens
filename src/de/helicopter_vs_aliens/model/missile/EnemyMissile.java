@@ -7,20 +7,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.*;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.BUSTER;
-import static de.helicopter_vs_aliens.model.missile.EnemyMissileTypes.DISCHARGER;
+import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
+import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 
 
 public class EnemyMissile
@@ -43,7 +43,7 @@ public class EnemyMissile
 	private Color 	 
 		variableGreen;  	// variable grüne Farbe der gegnerischen Geschosse
     	
-    private EnemyMissileTypes
+    private EnemyMissileType
 		type;				// Art des Geschoss
 	
 	
@@ -122,7 +122,7 @@ public class EnemyMissile
         else if(this.rgbColorValue == 255){this.lightUpColor = false;}
     }
     
-    public void launch(Enemy enemy, EnemyMissileTypes missileType, double shootingSpeed, Point2D shootingDirection)
+    public void launch(Enemy enemy, EnemyMissileType missileType, double shootingSpeed, Point2D shootingDirection)
     {
     	this.type = missileType;
     	    	
@@ -156,7 +156,7 @@ public class EnemyMissile
 	
 
 	public static void
-	paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>> enemyMissile)
+	paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissile)
 	{
 		for(EnemyMissile em : enemyMissile.get(ACTIVE))
 		{
@@ -164,7 +164,7 @@ public class EnemyMissile
 		}		
 	}
 
-	public static void updateAll(EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>> enemyMissile,
+	public static void updateAll(EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissile,
 								 Helicopter helicopter)
 	{
 		for(Iterator<EnemyMissile> i = enemyMissile.get(ACTIVE).iterator(); i.hasNext();)

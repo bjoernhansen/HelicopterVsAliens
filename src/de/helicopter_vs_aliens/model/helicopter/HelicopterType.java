@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.PriceLevels;
+import de.helicopter_vs_aliens.gui.PriceLevel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,14 +10,14 @@ import java.util.Collections;
 import java.util.List;
 
 
-public enum HelicopterTypes
+public enum HelicopterType
 {
     PHOENIX,
     ROCH,
     OROCHI
     {
         @Override
-        public List<HelicopterTypes> getUnlockerTypes()
+        public List<HelicopterType> getUnlockerTypes()
         {
             return OROCHI_UNLOCKER;
         }
@@ -25,7 +25,7 @@ public enum HelicopterTypes
     KAMAITACHI
     {
         @Override
-        public List<HelicopterTypes> getUnlockerTypes()
+        public List<HelicopterType> getUnlockerTypes()
         {
             return KAMAITACHI_UNLOCKER;
         }
@@ -33,7 +33,7 @@ public enum HelicopterTypes
     PEGASUS
     {
         @Override
-        public List<HelicopterTypes> getUnlockerTypes()
+        public List<HelicopterType> getUnlockerTypes()
         {
             return PEGASUS_UNLOCKER;
         }
@@ -47,11 +47,11 @@ public enum HelicopterTypes
         }
 
         @Override
-        public PriceLevels getUpgradeCosts(StandardUpgradeTypes standardUpgradeType)
+        public PriceLevel getPriceLevelFor(StandardUpgradeType standardUpgradeType)
         {
-            HelicopterTypes privilegedHelicopter = standardUpgradeType.getPrivilegedHelicopter();
+            HelicopterType privilegedHelicopter = standardUpgradeType.getPrivilegedHelicopter();
             int bestNonFinalMainBossKill = Events.getBestNonFinalMainBossKillBy(privilegedHelicopter);
-            return PriceLevels.getValues()[PriceLevels.getMaximium().ordinal() - bestNonFinalMainBossKill];
+            return PriceLevel.getValues()[PriceLevel.getMaximium().ordinal() - bestNonFinalMainBossKill];
         }
     };
 
@@ -96,10 +96,10 @@ public enum HelicopterTypes
                     new Color(110, 110, 110)}};
     
         
-    private static final HelicopterTypes[]
+    private static final HelicopterType[]
             defensiveCopyOfValues = values();
     
-    private static final List<HelicopterTypes>
+    private static final List<HelicopterType>
         NO_UNLOCKER = Collections.unmodifiableList(new ArrayList<>()),
         OROCHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(PHOENIX, PEGASUS)),
         KAMAITACHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(ROCH, PEGASUS)),
@@ -107,7 +107,7 @@ public enum HelicopterTypes
         
     static
     {
-        for(HelicopterTypes helicopterType : HelicopterTypes.getValues())
+        for(HelicopterType helicopterType : HelicopterType.getValues())
         {
             helicopterType.fifthSpecialdictionaryKey = "upgrades.special.fifth." + helicopterType.getDesignation();
         }
@@ -121,17 +121,17 @@ public enum HelicopterTypes
         return getValues().length;
     }
     
-    public static HelicopterTypes[] getValues()
+    public static HelicopterType[] getValues()
     {
         return defensiveCopyOfValues;
     }
 
-    public List<HelicopterTypes> getUnlockerTypes()
+    public List<HelicopterType> getUnlockerTypes()
     {
         return NO_UNLOCKER;
     }
     
-    public static HelicopterTypes getDefault()
+    public static HelicopterType getDefault()
     {
         return HELIOS;
     }
@@ -151,9 +151,9 @@ public enum HelicopterTypes
         return EFFECT_TIMES[this.ordinal()];
     }
 
-    public PriceLevels getUpgradeCosts(StandardUpgradeTypes standardUpgradeType)
+    public PriceLevel getPriceLevelFor(StandardUpgradeType standardUpgradeType)
     {
-        return PriceLevels.getValues()[COSTS[this.ordinal()][standardUpgradeType.ordinal()]];
+        return PriceLevel.getValues()[COSTS[this.ordinal()][standardUpgradeType.ordinal()]];
     }
 
     public boolean isUnlocked()

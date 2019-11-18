@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.gui;
 
 import java.awt.*;
 
-public enum PriceLevels
+public enum PriceLevel
 {
     VERY_CHEAP,
     CHEAP,
@@ -14,7 +14,7 @@ public enum PriceLevels
     private static final String[]
             key_suffixes = {"veryCheap", "cheap", "medium", "expensive", "extortionate"};
 
-    private static final PriceLevels[]
+    private static final PriceLevel[]
             defensiveCopyOfValues = values();
     
     private static final Color
@@ -26,7 +26,7 @@ public enum PriceLevels
     
     static
     {
-        for(PriceLevels priceLevel : PriceLevels.values())
+        for(PriceLevel priceLevel : PriceLevel.values())
         {
             priceLevel.dictionaryKey = "priceLevels." + key_suffixes[priceLevel.ordinal()];
         }
@@ -36,15 +36,15 @@ public enum PriceLevels
     private String dictionaryKey;
 
 
-    PriceLevels(){}
+    PriceLevel(){}
 
-    PriceLevels (int maxUpgradeLevel)
+    PriceLevel(int maxUpgradeLevel)
     {
         this();
         this.maxUpgradeLevel = maxUpgradeLevel;
     }
 
-    public static PriceLevels getMaximium()
+    public static PriceLevel getMaximium()
     {
         return EXTORTIONATE;
     }
@@ -54,7 +54,7 @@ public enum PriceLevels
         return getValues().length;
     }
 
-    public static PriceLevels[] getValues()
+    public static PriceLevel[] getValues()
     {
         return defensiveCopyOfValues;
     }

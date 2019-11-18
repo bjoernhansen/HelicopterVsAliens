@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.*;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.MovingObject;
@@ -20,10 +20,10 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
-import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
-import static de.helicopter_vs_aliens.model.background.BackgroundTypes.*;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
+import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.model.background.BackgroundType.*;
 
 public class BackgroundObject extends MovingObject
 {	
@@ -77,7 +77,7 @@ public class BackgroundObject extends MovingObject
 		cloudX = 135;				// x-Koordinate der Wolke
     
     // Objekt-Attribute    
-    public BackgroundTypes
+    public BackgroundType
         type;
     
     private int 
@@ -398,7 +398,7 @@ public class BackgroundObject extends MovingObject
         this.paintDesertImage();
     }    
     
-    public static void reset(EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> backgroundObjects)
+    public static void reset(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
     {
     	backgroundObjects.get(INACTIVE).addAll(backgroundObjects.get(ACTIVE));
     	backgroundObjects.get(ACTIVE).clear();
@@ -419,7 +419,7 @@ public class BackgroundObject extends MovingObject
 		cloudX = 135;
     }
     
-    public static void initialize(EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> backgroundObjects)
+    public static void initialize(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
     {    	
     	BackgroundObject firstCactus = new BackgroundObject();
     	firstCactus.makeFirstCactus();
@@ -476,13 +476,13 @@ public class BackgroundObject extends MovingObject
         this.image[1] = null;
     }
 
-	public static void paintBackground(Graphics2D g2d, EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> backgroundObjects)
+	public static void paintBackground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{		
 		paintBackground(g2d);
 		paintBgObjects(g2d, backgroundObjects);
 	}
 
-	public static void update(Controller controller, EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> backgroundObjects)
+	public static void update(Controller controller, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{		
 		backgroundMoves = isBackgroundMoving(controller.enemies, controller.getHelicopter());
 		for(Iterator<BackgroundObject> i = backgroundObjects.get(ACTIVE).iterator(); i.hasNext();)
@@ -502,20 +502,20 @@ public class BackgroundObject extends MovingObject
             updateBackgroundTimer();}
 	}
 
-	private static boolean isBackgroundMoving(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy, Helicopter helicopter)
+	private static boolean isBackgroundMoving(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy, Helicopter helicopter)
 	{
 		return helicopter.isRotorSystemActive
 				&& !isMajorBossActive(enemy)
 				&& helicopter.tractor == null;
 	}
 	
-	private static boolean isMajorBossActive(EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemy)
+	private static boolean isMajorBossActive(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
     	return    !enemy.get(ACTIVE).isEmpty()
 				&& enemy.get(ACTIVE).getFirst().type.isMajorBoss();
 	}
 
-	private static void paintBgObjects(Graphics2D g2d, EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> backgroundObjects)
+	private static void paintBgObjects(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{
         for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
         {
@@ -526,7 +526,7 @@ public class BackgroundObject extends MovingObject
         }
 	}
 
-	private static void generateNewBackgroundObjects(EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> backgroundObjects)
+	private static void generateNewBackgroundObjects(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{
 		int numberOfBackgroundObjects = backgroundObjects.get(ACTIVE).size();
 		if( numberOfBackgroundObjects < 20 && Calculation.creationProbability( 20 - numberOfBackgroundObjects,
@@ -543,7 +543,7 @@ public class BackgroundObject extends MovingObject
 		}
 	}
 
-	public static void paintForeground(Graphics2D g2d, EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> backgroundObjects)
+	public static void paintForeground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{
 		// der Boden
 		g2d.setPaint(Coloration.gradientGround[Events.timeOfDay.ordinal()]);

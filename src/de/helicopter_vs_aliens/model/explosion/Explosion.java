@@ -2,12 +2,11 @@ package de.helicopter_vs_aliens.model.explosion;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -16,13 +15,13 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.gui.Menu.*;
-import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
+import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 
 
 public class Explosion
@@ -71,7 +70,7 @@ public class Explosion
     }    
     
     public static void paintAll(Graphics2D g2d,
-								EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+								EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		for(Explosion exp : explosion.get(ACTIVE))
 		{
@@ -80,7 +79,7 @@ public class Explosion
 	}
     
 	public static void updateAll(Helicopter helicopter,
-								 EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+								 EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
     	for(Iterator<Explosion> i = explosion.get(ACTIVE).iterator(); i.hasNext();)
 		{
@@ -154,7 +153,7 @@ public class Explosion
 	}
     
      
-    public static void start(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion,
+    public static void start(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
                              Helicopter helicopter,
                              double x, double y,
                              ExplosionTypes explosionType,
@@ -162,7 +161,7 @@ public class Explosion
     {
     	start(explosion, helicopter, x, y, explosionType, extraDamage, null);
     }        
-	public static void start(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion,
+	public static void start(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
 							 Helicopter helicopter,
 							 double x, double y,
 							 ExplosionTypes explosionType,

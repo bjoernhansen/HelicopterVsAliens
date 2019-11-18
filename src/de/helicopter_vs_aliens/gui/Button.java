@@ -5,8 +5,8 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Roch;
-import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
@@ -18,8 +18,8 @@ import java.util.List;
 import static de.helicopter_vs_aliens.control.Events.SPOTLIGHT_COSTS;
 import static de.helicopter_vs_aliens.gui.Menu.NUMBER_OF_STARTSCREEN_BUTTONS;
 import static de.helicopter_vs_aliens.gui.Menu.dictionary;
-import static de.helicopter_vs_aliens.gui.PriceLevels.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.gui.PriceLevel.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
 // TODO Vererbung auch für Buttons, Enums für Button-Typen
 
@@ -140,7 +140,7 @@ public class Button
 														 null, false, true));
 			}
 		}
-		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
 			List<String> standardUpgradeLabel = dictionary.standardUpgradesImprovements(standardUpgradeType);
 			
@@ -151,7 +151,7 @@ public class Button
 										String.join(" ", standardUpgradeLabel),
 										dictionary.price(), true, true));
 		}
-		for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
+		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
 		{
 			int i = specialUpgradeType.ordinal();
 			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50,
@@ -184,16 +184,16 @@ public class Button
 		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
 		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
 
-		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
     	{    		
-			if(!helicopter.hasMaxUpgradeLevelFor(standardUpgradeType))
+			if(!helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 			{
 				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
 						= Calculation.costs(helicopter.getType(),
-											helicopter.getUpgradeCost(standardUpgradeType).ordinal(),
+											helicopter.getPriceLevelFor(standardUpgradeType),
 											helicopter.getUpgradeLevelOf(standardUpgradeType));
 				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costColor
-						= helicopter.getUpgradeCost(standardUpgradeType).getColor();
+						= helicopter.getPriceLevelFor(standardUpgradeType).getColor();
 			}
     	}
 		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();
@@ -277,7 +277,7 @@ public class Button
     	}
     }
 	
-	public static void updateScreenMenuButtons(WindowTypes window)
+	public static void updateScreenMenuButtons(WindowType window)
 	{
 		for(int m = 0; m < 8; m++)
 		{

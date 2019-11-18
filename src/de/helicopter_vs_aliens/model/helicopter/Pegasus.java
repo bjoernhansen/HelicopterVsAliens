@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.control.timer.VariableTimer;
@@ -12,16 +12,16 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
-import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
+import static de.helicopter_vs_aliens.gui.WindowType.GAME;
+import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_RATE;
 
 
 public final class Pegasus extends Helicopter
@@ -47,9 +47,9 @@ public final class Pegasus extends Helicopter
     
     
     @Override
-    public HelicopterTypes getType()
+    public HelicopterType getType()
     {
-        return HelicopterTypes.PEGASUS;
+        return HelicopterType.PEGASUS;
     }
 
     @Override
@@ -95,12 +95,12 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         this.releaseEMP(explosion);
     }
 
-    private void releaseEMP(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    private void releaseEMP(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         this.empTimer.start();
         this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
@@ -154,7 +154,7 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    void shoot(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missiles)
+    void shoot(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles)
     {
         super.shoot(missiles);
         if(this.hasInterphaseGenerator)
@@ -202,7 +202,7 @@ public final class Pegasus extends Helicopter
     @Override
     public boolean isFifthSpecialOnMaximumStrength()
     {
-        return this.hasMaxUpgradeLevel[StandardUpgradeTypes.FIRE_RATE.ordinal()];
+        return this.hasMaximumUpgradeLevelFor(FIRE_RATE);
     }
     
     @Override

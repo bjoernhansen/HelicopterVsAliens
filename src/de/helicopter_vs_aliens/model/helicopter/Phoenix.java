@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -19,11 +19,11 @@ import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.PEGASUS;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.FIREPOWER;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.INVINCIBLE;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIREPOWER;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
 
 
 public final class Phoenix extends Helicopter
@@ -48,7 +48,7 @@ public final class Phoenix extends Helicopter
     
     
     @Override
-    public HelicopterTypes getType()
+    public HelicopterType getType()
     {
         return PHOENIX;
     }
@@ -102,7 +102,7 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         if(this.isEnergyAbilityActivatable())
         {
@@ -111,7 +111,7 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         this.prepareTeleportation();
     }
@@ -167,7 +167,7 @@ public final class Phoenix extends Helicopter
     @Override
     public boolean isFifthSpecialOnMaximumStrength()
     {
-        return this.hasMaxUpgradeLevel[FIREPOWER.ordinal()];
+        return this.hasMaximumUpgradeLevelFor(FIREPOWER);
     }
     
     @Override

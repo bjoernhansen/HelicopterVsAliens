@@ -3,13 +3,13 @@ package de.helicopter_vs_aliens.audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.net.URL;
 
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
-import static de.helicopter_vs_aliens.gui.WindowTypes.*;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
+import static de.helicopter_vs_aliens.gui.WindowType.*;
 
 
 public class Audio
@@ -301,12 +301,12 @@ public class Audio
         applause2.stop();
     }
 
-    public static void playSpecialSound(HelicopterTypes helicopterType)
+    public static void playSpecialSound(HelicopterType helicopterType)
     {
         play(getSpecialSound(helicopterType));
     }
 
-    private static AudioClip getSpecialSound(HelicopterTypes helicopterType)
+    private static AudioClip getSpecialSound(HelicopterType helicopterType)
     {
         if(helicopterType == null)
         {

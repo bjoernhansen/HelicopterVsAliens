@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui;
 
-public enum WindowTypes
+public enum WindowType
 {
     INFORMATIONS,
     DESCRIPTION,

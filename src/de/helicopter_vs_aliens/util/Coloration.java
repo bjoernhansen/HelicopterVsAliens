@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import java.awt.Color;
 import java.awt.GradientPaint;
 
-import static de.helicopter_vs_aliens.gui.WindowTypes.*;
+import static de.helicopter_vs_aliens.gui.WindowType.*;
 
 public class Coloration
 {

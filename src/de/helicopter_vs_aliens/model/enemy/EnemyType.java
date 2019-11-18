@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-public enum EnemyTypes
+public enum EnemyType
 {
     // Standard-Gegner
     TINY(1),
@@ -54,7 +54,7 @@ public enum EnemyTypes
     KABOOM(0);
     
     
-    private final static Set<EnemyTypes>
+    private final static Set<EnemyType>
         BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOSS_1, PROTECTOR)),
         STANDARD_TYPES = Collections.unmodifiableSet(EnumSet.range(TINY, TELEPORTER)),
         FINAL_BOSS_SERVANT_TYPES = Collections.unmodifiableSet(EnumSet.range(SMALL_SHIELD_MAKER, PROTECTOR)),
@@ -64,17 +64,17 @@ public enum EnemyTypes
     private final int strength; // Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
     
     
-    EnemyTypes(int strength)
+    EnemyType(int strength)
     {
         this.strength = strength;
     }
     
-    static Set<EnemyTypes> getFinalBossServantTypes()
+    static Set<EnemyType> getFinalBossServantTypes()
     {
         return FINAL_BOSS_SERVANT_TYPES;
     }
     
-    static Set<EnemyTypes> getBarrierTypes()
+    static Set<EnemyType> getBarrierTypes()
     {
         return BARRIERS;
     }

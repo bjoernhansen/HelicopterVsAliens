@@ -19,20 +19,18 @@ import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
-import de.helicopter_vs_aliens.util.dictionary.Languages;
+import de.helicopter_vs_aliens.util.dictionary.Language;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
-import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.WindowTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ENERGY_ABILITY;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.MISSILE_DRIVE;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.ROTOR_SYSTEM;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
+import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.WindowType.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.*;
+import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
+import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
 // TODO mögichst alle längeren Texte innerhalb dieser Klasse ins Dictionary überführen
 // TODO An vielen Stellen im Menü werden Zustände immer wieder neu berechnet anstatt sie einmal zu speichern
@@ -74,15 +72,15 @@ public class Menu
 		moneyDisplayTimer,				// regulieren die Dauer [frames] der Geld-Anzeige im Spiel
 		crossTimer,						// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem Startscreen
 		unlockedTimer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
-		effectTimer[] = new int[HelicopterTypes.size()];	// regulieren die Helikopter-Animationen im Startscreen-Menü
+		effectTimer[] = new int[HelicopterType.size()];	// regulieren die Helikopter-Animationen im Startscreen-Menü
 
-	public static Languages
+	public static Language
 		language = ENGLISH; 			// Sprache; = 0: English; = 1: German
 
-	private static HelicopterTypes
+	private static HelicopterType
 		unlockedType;					// Typ des freigeschalteten Helicopters
 
-	public static WindowTypes
+	public static WindowType
 		window = STARTSCREEN;	// legt das aktuelle Spiel-Menü fest; siehe interface Constants
 	
 	public static boolean
@@ -114,8 +112,8 @@ public class Menu
 		UNLOCKED_DISPLAY_TIME = 300,
 		ENEMY_HEALTH_BAR_WIDTH = 206;
   
-	public static final EnumMap<HelicopterTypes, Helicopter>
-		helicopterDummies = new EnumMap<>(HelicopterTypes.class);
+	public static final EnumMap<HelicopterType, Helicopter>
+		helicopterDummies = new EnumMap<>(HelicopterType.class);
 	 	
     // Menu Objects
     public static String
@@ -145,13 +143,13 @@ public class Menu
 
     public static void initializeMenu(Helicopter helicopter)
     {
-    	for(HelicopterTypes helicopterType : HelicopterTypes.getValues())
+    	for(HelicopterType helicopterType : HelicopterType.getValues())
 		{
 			helicopterDummies.put(helicopterType, HelicopterFactory.create(helicopterType));
 		}
     	
-    	helicopterSelection = (3 + Calculation.random(HelicopterTypes.size()-1))
-    						   %HelicopterTypes.size();
+    	helicopterSelection = (3 + Calculation.random(HelicopterType.size()-1))
+    						   % HelicopterType.size();
     	
     	int px1[] = {19 , 19 , 5};
     	int px2[] = {1004, 1004, 1018};
@@ -224,7 +222,7 @@ public class Menu
 		if(messageTimer > 215){
 			messageTimer = 0;}
 			
-        for(int i = 0; i < HelicopterTypes.size(); i++)
+        for(int i = 0; i < HelicopterType.size(); i++)
         {	        	
         	if(effectTimer[i] > 0){
 				effectTimer[i]--;}
@@ -236,7 +234,7 @@ public class Menu
 			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
-				Events.nextHelicopterType = HelicopterTypes.getValues()[(i + helicopterSelection)%HelicopterTypes.size()];
+				Events.nextHelicopterType = HelicopterType.getValues()[(i + helicopterSelection)% HelicopterType.size()];
 				Helicopter helicopterDummy = helicopterDummies.get(Events.nextHelicopterType);
 				if(Events.hasSelectedHelicopterChanged())
 				{
@@ -290,17 +288,17 @@ public class Menu
          
         for(int i = 0; i < 4; i++)
         {
-        	if(Events.nextHelicopterType != null && Events.nextHelicopterType.ordinal() == (helicopterSelection +i)%HelicopterTypes.size()){g2d.setColor(Color.white);}
+        	if(Events.nextHelicopterType != null && Events.nextHelicopterType.ordinal() == (helicopterSelection +i)% HelicopterType.size()){g2d.setColor(Color.white);}
             else{g2d.setColor(Coloration.lightGray);}
         	g2d.setFont(fontProvider.getBold(20));
         	
-        	String className = Menu.dictionary.typeName(HelicopterTypes.getValues()[(helicopterSelection +i)%HelicopterTypes.size()]);
+        	String className = Menu.dictionary.typeName(HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()]);
         	int sw = g2d.getFontMetrics().stringWidth(className);
         	g2d.drawString(className, 30 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE + (206-sw)/2, 225 + STARTSCREEN_HELICOPTER_OFFSET_Y);
         	
         	g2d.setFont(new Font("Dialog", Font.BOLD, 15));
         	
-        	HelicopterTypes type = HelicopterTypes.getValues()[(helicopterSelection +i)%HelicopterTypes.size()];
+        	HelicopterType type = HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()];
         	for(int j = 0; j < 3; j++)
 			{
 				g2d.drawString(Menu.dictionary.helicopterInfos(type).get(j), 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + j * 20 + STARTSCREEN_HELICOPTER_OFFSET_Y);
@@ -311,7 +309,7 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], Coloration.darkBlue);
             }
-            helicopterDummies.get(HelicopterTypes.getValues()[(helicopterSelection +i)%HelicopterTypes.size()]).startScreenPaint(
+            helicopterDummies.get(HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()]).startScreenPaint(
             	g2d,
 				HELICOPTER_STARTSCREEN_OFFSET.x + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
 				HELICOPTER_STARTSCREEN_OFFSET.y + STARTSCREEN_HELICOPTER_OFFSET_Y);
@@ -319,7 +317,7 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], Coloration.translucentBlack);
             }
-            if(Events.allPlayable || HelicopterTypes.getValues()[(helicopterSelection + i)%HelicopterTypes.size()].isUnlocked())
+            if(Events.allPlayable || HelicopterType.getValues()[(helicopterSelection + i)% HelicopterType.size()].isUnlocked())
             {
             	paintTickmark(g2d, i, 210, 323, 15, 20);
             }
@@ -393,23 +391,23 @@ public class Menu
         
         if(window  == HELICOPTER_TYPES)
         {
-        	if(page > 1 && page < 2 + HelicopterTypes.size())
+        	if(page > 1 && page < 2 + HelicopterType.size())
         	{
-				helicopterDummies.get(HelicopterTypes.getValues()[page-2]).startScreenMenuPaint(g2d);
+				helicopterDummies.get(HelicopterType.getValues()[page-2]).startScreenMenuPaint(g2d);
         	}
         	else if(page == 1)
         	{
         		String tempString = "";
-                StandardUpgradeTypes standardUpgradeType = null;
-                HelicopterTypes helicopterType = null;
+                StandardUpgradeType standardUpgradeType = null;
+                HelicopterType helicopterType = null;
         		// TODO über Standard-Upgrade-Types iterieren
-            	for(int i = 0; i < StandardUpgradeTypes.size() + 1; i++)
+            	for(int i = 0; i < StandardUpgradeType.size() + 1; i++)
             	{
             		// TODO über HelicopterTypes iterieren
-            		for(int j = 0; j < HelicopterTypes.size() + 1; j++)
+            		for(int j = 0; j < HelicopterType.size() + 1; j++)
             		{
-            			if(i > 0){standardUpgradeType = StandardUpgradeTypes.getValues()[i-1];}
-            			if(j > 0){helicopterType = HelicopterTypes.getValues()[j-1];}
+            			if(i > 0){standardUpgradeType = StandardUpgradeType.getValues()[i-1];}
+            			if(j > 0){helicopterType = HelicopterType.getValues()[j-1];}
             			
             			if(j == 0 && i != 0)
             			{
@@ -423,7 +421,7 @@ public class Menu
             			}
             			else if(i != 0)
             			{
-            				PriceLevels upgradeCosts = helicopterType.getUpgradeCosts(standardUpgradeType);
+            				PriceLevel upgradeCosts = helicopterType.getPriceLevelFor(standardUpgradeType);
             				g2d.setColor(upgradeCosts.getColor());
             				tempString = dictionary.priceLevel(upgradeCosts);
             			}
@@ -440,7 +438,7 @@ public class Menu
             	for(int i = 0; i < 6; i++)
             	{
             		// TODO über HelicopterTypes iterieren
-            		for(int j = 0; j < HelicopterTypes.size() + 1; j++)
+            		for(int j = 0; j < HelicopterType.size() + 1; j++)
             		{
             			if(j == 0 && i!=0)
             			{
@@ -449,8 +447,8 @@ public class Menu
             			}
             			else if(j != 0 && i==0)
             			{
-            				g2d.setColor(Coloration.brightenUp(HelicopterTypes.getValues()[j-1].getStandardPrimaryHullColor()));
-            				tempString = Menu.dictionary.helicopterName(HelicopterTypes.getValues()[j-1]);
+            				g2d.setColor(Coloration.brightenUp(HelicopterType.getValues()[j-1].getStandardPrimaryHullColor()));
+            				tempString = Menu.dictionary.helicopterName(HelicopterType.getValues()[j-1]);
             			}
             			else if(i != 0)
             			{
@@ -471,9 +469,9 @@ public class Menu
         	}
         	else
         	{
-        		if(page > 1 && page < 2 + HelicopterTypes.size())
+        		if(page > 1 && page < 2 + HelicopterType.size())
             	{
-					helicopterDummies.get(HelicopterTypes.getValues()[page-2]).startScreenMenuPaint(g2d);
+					helicopterDummies.get(HelicopterType.getValues()[page-2]).startScreenMenuPaint(g2d);
             	}        		
         		int columnDistance = 114/*135*/, topLine = 125, lineDistance = 21, leftColumn = 55, realLeftColumn = leftColumn, xShift = 10;
         		    			
@@ -639,30 +637,28 @@ public class Menu
         }
         
         // Standard-Upgrades
-        for(int i = 0; i < StandardUpgradeTypes.size(); i++)
+        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
         {
-        	g2d.setColor(Coloration.lightOrange);
-    
-            StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.getValues()[i];
+            g2d.setColor(Coloration.lightOrange);
 			String tempString = dictionary.standardUpgradeName(standardUpgradeType);
             g2d.drawString(tempString + ":",
             			   STATUS_BAR_X1, 
-            			   STANDUP_OFFSET_Y + 25 + i * 25);        
+            			   STANDUP_OFFSET_Y + 25 + standardUpgradeType.ordinal() * 25);
            
-            if((i != ENERGY_ABILITY.ordinal() && helicopter.hasMaxUpgradeLevel[i])
-                || ( i == ENERGY_ABILITY.ordinal()
-                	 && helicopter.hasMaxUpgradeLevel[ENERGY_ABILITY.ordinal()]
+            if((standardUpgradeType != ENERGY_ABILITY && helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType)
+                || ( standardUpgradeType == ENERGY_ABILITY
+                	 && helicopter.hasMaximumUpgradeLevelFor(ENERGY_ABILITY)
                 	 && !(helicopter.getType() == OROCHI
-                	 	  && !helicopter.hasMaxUpgradeLevel[MISSILE_DRIVE.ordinal()])))
+                	 	  && !helicopter.hasMaximumUpgradeLevelFor(MISSILE_DRIVE)))))
             {
             	g2d.setColor(Coloration.golden);
             }
             else{g2d.setColor(Color.white);}            
-            if(i == ENERGY_ABILITY.ordinal() && helicopter.getType() == OROCHI)
+            if(standardUpgradeType == ENERGY_ABILITY && helicopter.getType() == OROCHI)
             {
-            	g2d.drawString(dictionary.level() + " " + helicopter.levelOfUpgrade[i] + " / " + (helicopter.levelOfUpgrade[1]-1), STATUS_BAR_X2, STANDUP_OFFSET_Y + 150);
+            	g2d.drawString(dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType) + " / " + (helicopter.getUpgradeLevelOf(MISSILE_DRIVE)-1), STATUS_BAR_X2, STANDUP_OFFSET_Y + 150);
             }
-            else{g2d.drawString(dictionary.level() + " " + (helicopter.levelOfUpgrade[i]), STATUS_BAR_X2, STANDUP_OFFSET_Y + 25 + i * 25);}
+            else{g2d.drawString(dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType), STATUS_BAR_X2, STANDUP_OFFSET_Y + 25 + standardUpgradeType.ordinal() * 25);}
         }
         
         // Spezial-Upgrades
@@ -705,7 +701,8 @@ public class Menu
             if(helicopter.getType() == PHOENIX || helicopter.getType() == PEGASUS)
             {
             	if(!helicopter.isFifthSpecialOnMaximumStrength()){g2d.setColor(Color.white);}
-            	g2d.drawString(dictionary.specialUpgrade(FIFTH_SPECIAL) + " (" + dictionary.level() + " " + (helicopter.levelOfUpgrade[helicopter.getType() == PHOENIX ? 3 : 4]-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
+            	// TODO diese Fallunterscheidung in Methoden auslagern (überschreiben in PHOENIX und PEGASUS)
+            	g2d.drawString(dictionary.specialUpgrade(FIFTH_SPECIAL) + " (" + dictionary.level() + " " + (helicopter.getUpgradeLevelOf(helicopter.getType() == PHOENIX ? FIREPOWER : FIRE_RATE)-1) + ")", STATUS_BAR_X1, SPECUP_OFFSET_Y + 100);
             }
             else
             {
@@ -938,7 +935,7 @@ public class Menu
 		if(Events.timeOfDay == NIGHT){g2d.setColor(Color.red);}
 		// TODO wirklich 2 mal Color.RED? Funktion in Events zur Farbrückgabe verwenden
 		else{g2d.setColor(Color.red);}
-		MultiKillTypes multiKillType = MultiKillTypes.getMultiKillType(Events.lastMultiKill);
+		MultiKillType multiKillType = MultiKillType.getMultiKillType(Events.lastMultiKill);
 		g2d.setFont(fontProvider.getPlain(multiKillType.getTextSize()));
 		FontMetrics fm = g2d.getFontMetrics();
 		int sw = fm.stringWidth(multiKillType.getDesignation());
@@ -1031,7 +1028,7 @@ public class Menu
 		else if(specialInfoSelection == 8)
 		{
 			infoString = "Speed level: "
-						  + helicopter.levelOfUpgrade[ROTOR_SYSTEM.ordinal()]
+						  + helicopter.getUpgradeLevelOf(ROTOR_SYSTEM)
 						  + " +   Speed: " + helicopter.rotorSystem;
 		}
 		else if(specialInfoSelection == 9)
@@ -1406,11 +1403,11 @@ public class Menu
 		updateButtonLabels(helicopter);
 	}
 
-	private static Languages getNextLanguage() {
-		return Languages.values()[(language.ordinal()+1)%Languages.values().length];
+	private static Language getNextLanguage() {
+		return Language.values()[(language.ordinal()+1)% Language.values().length];
 	}
 
-	public static void setLanguage(Languages language)
+	public static void setLanguage(Language language)
 	{
 		Menu.language = language;
 		Controller.getInstance().getDictionary().switchLanguageTo(language);
@@ -1446,7 +1443,7 @@ public class Menu
 		}
 		startscreenMenuButton.get("Cancel").label = dictionary.cancel();
 
-		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
 			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).label =
 				String.join(" ", dictionary.standardUpgradesImprovements(standardUpgradeType));
@@ -1454,7 +1451,7 @@ public class Menu
 				dictionary.price();
 		}
 	
-		for(SpecialUpgradeTypes specialUpgradeType : SpecialUpgradeTypes.values())
+		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
 		{
 			int i = specialUpgradeType.ordinal();
 			repairShopButton.get("Special" + i).label = dictionary.specialUpgrade(specialUpgradeType);
@@ -1625,7 +1622,7 @@ public class Menu
 		}
 	}
 	
-	public static void setStartscreenMessage(HelicopterTypes helicopterType)
+	public static void setStartscreenMessage(HelicopterType helicopterType)
 	{		
 		// TODO Strings in Dictionary auslagern
 		if(!helicopterType.getUnlockerTypes().isEmpty())
@@ -1845,7 +1842,7 @@ public class Menu
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE +
 					"\" face=\"Dialog\" color=\"#D2D2D2\">" +
-		            "Before the game starts, you can select from " + HelicopterTypes.size() + " " +
+		            "Before the game starts, you can select from " + HelicopterType.size() + " " +
 		            "<font color=\"#FFFFD2\">helicopter types" +
 		            "<font color=\"#D2D2D2\"> which differ in their starting " +
 		            "attributes and their available upgrades. With the " +
@@ -2096,7 +2093,7 @@ public class Menu
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
 					"face=\"Dialog\" color=\"#D2D2D2\">" +
-					"You can choose from " + HelicopterTypes.size() + " different " +
+					"You can choose from " + HelicopterType.size() + " different " +
 					"<font color=\"#FFFFD2\">helicopter types" +
 					"<font color=\"#D2D2D2\">. Each " +
 					"of these helicopters has a unique, energy-consuming " +
@@ -2518,7 +2515,7 @@ public class Menu
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
 					"face=\"Dialog\" color=\"#D2D2D2\">" +
-		            "Zu Beginn des Spiels stehen Ihnen " + HelicopterTypes.size() + " verschiedene " +
+		            "Zu Beginn des Spiels stehen Ihnen " + HelicopterType.size() + " verschiedene " +
 		            "<font color=\"#FFFFD2\">Helikopter-Klassen" +
 		            "<font color=\"#D2D2D2\"> mit unterschiedlichen " +
 		            "Startwerten zur " +
@@ -2776,7 +2773,7 @@ public class Menu
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
 					"face=\"Dialog\" color=\"#D2D2D2\">" +
-					"Der Spieler hat die Wahl zwischen " + HelicopterTypes.size() + " verschiedenen " +
+					"Der Spieler hat die Wahl zwischen " + HelicopterType.size() + " verschiedenen " +
 					"Helikopter-Klassen. " +
 					"Jede dieser 5 Klassen verfügt über eine einzigartige, " +
 					"energieverbrauchende Fertigkeit " +
@@ -3130,25 +3127,25 @@ public class Menu
 		if(helicopter.hasFifthSpecial())
 		{
 			repairShopButton.get("Special" + 4).costs = 0;
-		}	
-		for(int i = 0; i < 6; i++)
+		}
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{    		
-			if(helicopter.hasMaxUpgradeLevel[i])
+			if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 			{
-				repairShopButton.get("StandardUpgrade" + i).costs = 0;
+				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs = 0;
 			}
 			else
 			{
-				repairShopButton.get("StandardUpgrade" + i).costs
+				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
 					= Calculation.costs(helicopter.getType(),
-								   helicopter.getUpgradeCost(i).ordinal(),
-								   helicopter.levelOfUpgrade[i]);
+								   		helicopter.getPriceLevelFor(standardUpgradeType),
+								   		helicopter.getUpgradeLevelOf(standardUpgradeType));
 			}    				    		
 		}
 		repairShopButton.get("RepairButton").costs = 0;
 	}
 	
-	public static void unlock(HelicopterTypes heliType)
+	public static void unlock(HelicopterType heliType)
 	{
 		unlockedType = heliType;
 		unlockedTimer = UNLOCKED_DISPLAY_TIME;

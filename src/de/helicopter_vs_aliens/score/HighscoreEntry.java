@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.io.Serializable;
 
@@ -27,7 +27,7 @@ public class HighscoreEntry implements Serializable
 	
 	public long playingTime;
 	
-	public HelicopterTypes
+	public HelicopterType
 		helicopterType;
 	
 	

@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
@@ -24,8 +24,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
-import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
+import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 public class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
@@ -38,8 +38,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		serialVersionUID = 5775063502338544548L, 
 		DELAY = 16;
 
-	private FrameSkipStatusTypes
-		frameSkipStatus = FrameSkipStatusTypes.DISABLED;
+	private FrameSkipStatusType
+		frameSkipStatus = FrameSkipStatusType.DISABLED;
 		
 	static long	
 		tm;
@@ -69,20 +69,20 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 		mouseInWindow = true;
 		
 	private Helicopter
-		helicopter = HelicopterFactory.create(HelicopterTypes.getDefault());
+		helicopter = HelicopterFactory.create(HelicopterType.getDefault());
 
-	public EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>>
-		enemies = new EnumMap<>(CollectionSubgroupTypes.class);
-	public EnumMap<CollectionSubgroupTypes, LinkedList<Missile>>
-		missiles = new EnumMap<>(CollectionSubgroupTypes.class);
-	public EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>>
-		explosions = new EnumMap<>(CollectionSubgroupTypes.class);
-	public EnumMap<CollectionSubgroupTypes, LinkedList<EnemyMissile>>
-		enemyMissiles = new EnumMap<>(CollectionSubgroupTypes.class);
-	public EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>>
-		backgroundObjects = new EnumMap<>(CollectionSubgroupTypes.class);
-	public EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>>
-		powerUps = new EnumMap<>(CollectionSubgroupTypes.class);
+	public EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
+		enemies = new EnumMap<>(CollectionSubgroupType.class);
+	public EnumMap<CollectionSubgroupType, LinkedList<Missile>>
+		missiles = new EnumMap<>(CollectionSubgroupType.class);
+	public EnumMap<CollectionSubgroupType, LinkedList<Explosion>>
+		explosions = new EnumMap<>(CollectionSubgroupType.class);
+	public EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>>
+		enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
+	public EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>>
+		backgroundObjects = new EnumMap<>(CollectionSubgroupType.class);
+	public EnumMap<CollectionSubgroupType, LinkedList<PowerUp>>
+		powerUps = new EnumMap<>(CollectionSubgroupType.class);
 
 	Graphics2D offGraphics;
 
@@ -123,7 +123,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	
 	void initializeLists()
 	{
-		CollectionSubgroupTypes.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
+		CollectionSubgroupType.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
 			this.missiles.put(	   		standardSubgroupTypes, new LinkedList<>());
 			this.explosions.put(	   	standardSubgroupTypes, new LinkedList<>());
 			this.backgroundObjects.put(	standardSubgroupTypes, new LinkedList<>());
@@ -147,7 +147,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void run()
 	{
-		if(this.frameSkipStatus != FrameSkipStatusTypes.ACTIVE){tm = System.currentTimeMillis();}
+		if(this.frameSkipStatus != FrameSkipStatusType.ACTIVE){tm = System.currentTimeMillis();}
 		while(Thread.currentThread() == this.animator)
 		{			
 			repaint();
@@ -157,7 +157,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 				long pauseTime = tm - System.currentTimeMillis();
 				if(pauseTime < 1)
 				{
-					this.frameSkipStatus = FrameSkipStatusTypes.ACTIVE;
+					this.frameSkipStatus = FrameSkipStatusType.ACTIVE;
 				}
 				else{Thread.sleep(pauseTime);}
 			}
@@ -175,8 +175,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	{		
 		if(this.offGraphics != null)
 		{			
-			if(this.frameSkipStatus == FrameSkipStatusTypes.INACTIVE){
-				this.frameSkipStatus = FrameSkipStatusTypes.DISABLED;}
+			if(this.frameSkipStatus == FrameSkipStatusType.INACTIVE){
+				this.frameSkipStatus = FrameSkipStatusType.DISABLED;}
 			else
 			{					
 				if(this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED){Menu.repaintBackground(g, this);}
@@ -188,10 +188,10 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			
 			if(Main.isFullScreen || this.mouseInWindow){updateGame();}
 			
-			if(this.frameSkipStatus == FrameSkipStatusTypes.ACTIVE)
+			if(this.frameSkipStatus == FrameSkipStatusType.ACTIVE)
 			{
 				//skipped_counter++;
-				this.frameSkipStatus = FrameSkipStatusTypes.INACTIVE;
+				this.frameSkipStatus = FrameSkipStatusType.INACTIVE;
 			}
 			else
 			{				

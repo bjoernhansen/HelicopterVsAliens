@@ -1,18 +1,18 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupTypes;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.gui.PriceLevels;
+import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.powerup.PowerUpTypes;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculation;
 import de.helicopter_vs_aliens.util.Coloration;
@@ -26,23 +26,23 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
-import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
-import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.PriceLevels.EXTORTIONATE;
-import static de.helicopter_vs_aliens.gui.WindowTypes.GAME;
-import static de.helicopter_vs_aliens.gui.WindowTypes.STARTSCREEN;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelTypes.BARRIER;
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.KABOOM;
+import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
+import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.PriceLevel.EXTORTIONATE;
+import static de.helicopter_vs_aliens.gui.WindowType.GAME;
+import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.*;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
+import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
 public abstract class Helicopter extends MovingObject
@@ -126,12 +126,8 @@ public abstract class Helicopter extends MovingObject
 		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
 		   		
 		// TODO private machen und lesenden Zugriff über getUpgradeLevel
-		levelOfUpgrade[] = new int[StandardUpgradeTypes.size()];	// Upgrade-Level aller 6 StandardUpgrades
+		levelOfUpgrade[] = new int[StandardUpgradeType.size()];	// Upgrade-Level aller 6 StandardUpgrades
 	
-    // TODO zu einer EnumMap für StandardUpgrades machen
-    private PriceLevels
-        upgradeCosts[] = new PriceLevels[StandardUpgradeTypes.size()]; // Preisniveau für alle 6 StandardUpgrades der aktuellen Helikopter-Klasse
-
 	public long
     	scorescreenTimes[] = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
@@ -159,10 +155,8 @@ public abstract class Helicopter extends MovingObject
 		isContiniousFireEnabled,			// = true: Dauerfeuer aktiv
 		
 		isMovingLeft,
-		isPlayedWithoutCheats = true,			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
-     	// TODO array unnötig, durch Methode ersetzen
-		hasMaxUpgradeLevel[] = new boolean[StandardUpgradeTypes.size()];	// = true: für diese Upgrade wurde bereits die maximale Ausbaustufe erreich
-      
+		isPlayedWithoutCheats = true;			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
+    
     public Point
     	destination = new Point(); 				// dorthin fliegt der Helikopter
 
@@ -488,8 +482,8 @@ public abstract class Helicopter extends MovingObject
 				: this.getType().getStandardSecondaryHullColor();
 	}
 
-	public void update(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile,
-					   EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+	public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
+					   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		this.updateTimer();
 		if(this.canRegenerateEnergy()){this.regenerateEnergy();}
@@ -519,7 +513,7 @@ public abstract class Helicopter extends MovingObject
 		return this.regenerationRate;
 	}
 
-	private void evaluateFire(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missile)
+	private void evaluateFire(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile)
 	{
     	if(this.isReadyForShooting()){this.shoot(missile);}
     	this.fireRateTimer++;
@@ -554,7 +548,7 @@ public abstract class Helicopter extends MovingObject
 	}
 
 	// TODO Code Duplizierungen auflösen
-	void shoot(EnumMap<CollectionSubgroupTypes, LinkedList<Missile>> missiles)
+	void shoot(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles)
 	{
     	if(this.hasPiercingWarheads){Audio.play(Audio.launch2);}
 		else{Audio.play(Audio.launch1);}
@@ -614,7 +608,7 @@ public abstract class Helicopter extends MovingObject
 			missile.launch(this, stunningMissile, 42);
 		}
 	}
-	private void move(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+	private void move(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
 		if(this.isOnTheGround())
 		{
@@ -807,12 +801,9 @@ public abstract class Helicopter extends MovingObject
 	
 	public void initialize(boolean newGame, Savegame savegame)
     {
-    	// TODO über Enum StandardUpgradeTypes iterieren
-        for(int i = 0; i < StandardUpgradeTypes.size(); i++)
+        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 	    {
-    		this.hasMaxUpgradeLevel[i] = false;
-    		this.upgradeCosts[i] =  this.getUpgradeCosts(StandardUpgradeTypes.getValues()[i]);
-    		if(newGame){this.levelOfUpgrade[i] = this.upgradeCosts[i].isCheap() ? 2 : 1;}
+    		if(newGame){this.levelOfUpgrade[standardUpgradeType.ordinal()] = this.getPriceLevelFor(standardUpgradeType).isCheap() ? 2 : 1;}
 	    }
     	if(!newGame){this.restoreLastGameState(savegame);}
     	this.updateProperties(newGame);
@@ -821,11 +812,6 @@ public abstract class Helicopter extends MovingObject
         this.placeAtStartpos();
         this.prepareForMission();
     }
-	
-	PriceLevels getUpgradeCosts(StandardUpgradeTypes standardUpgradeType)
-	{
-		return this.getType().getUpgradeCosts(standardUpgradeType);
-	}
 	
 	private void restoreLastGameState(Savegame savegame)
 	{
@@ -917,9 +903,11 @@ public abstract class Helicopter extends MovingObject
 	
 	public void obtainAllUpgrades()
     {
-    	for(int i = 0; i < StandardUpgradeTypes.size(); i++)
+    	for(int i = 0; i < StandardUpgradeType.size(); i++)
     	{
-    		this.levelOfUpgrade[i] = this.upgradeCosts[i].getMaxUpgradeLevel();
+    		this.maximizeUpgrade(ROTOR_SYSTEM);
+    	 
+    	 
     	}
     	this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
     	this.hasPiercingWarheads = true;
@@ -929,8 +917,13 @@ public abstract class Helicopter extends MovingObject
     	Menu.updateRepairShopButtons(this);
     	this.isPlayedWithoutCheats = false;
     }
-	
-	void getMaximumNumberOfCannons()
+    
+    private void maximizeUpgrade(StandardUpgradeType standardUpgradeType)
+    {
+        this.levelOfUpgrade[standardUpgradeType.ordinal()] = this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel();
+    }
+    
+    void getMaximumNumberOfCannons()
 	{
 		this.numberOfCannons = 2;
 	}
@@ -939,7 +932,7 @@ public abstract class Helicopter extends MovingObject
     {
 		this.hasSpotlights = true;
     	this.obtainFifthSpecial();
-		for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
     	{
     		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaxUpgradeLevel())
     		{
@@ -954,7 +947,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public boolean hasSomeUpgrades()
     {
-    	for(StandardUpgradeTypes standardUpgradeType : StandardUpgradeTypes.getValues())
+    	for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
     	{
     		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaxUpgradeLevel()){return false;}
     	}
@@ -966,7 +959,7 @@ public abstract class Helicopter extends MovingObject
 
 	abstract public void obtainFifthSpecial();
     
-    private boolean hasAllSpecials()
+    private boolean hasAllSpecialUpgrades()
     {
 		return this.hasSpotlights
 			&& this.hasGoliathPlating()
@@ -987,8 +980,14 @@ public abstract class Helicopter extends MovingObject
 	
 	public boolean hasAllUpgrades()
     {
-        for(int i = 0; i < StandardUpgradeTypes.size(); i++){if(!this.hasMaxUpgradeLevel[i]){return false;}}
-		return hasAllSpecials();
+        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+        {
+        	if(!this.hasMaximumUpgradeLevelFor(standardUpgradeType))
+        	{
+        	    return false;
+        	}
+        }
+		return hasAllSpecialUpgrades();
 	}
 
 	public void rotatePropellerSlow()
@@ -1034,7 +1033,7 @@ public abstract class Helicopter extends MovingObject
 		else{this.isCrashing = true;}
     }
     
-    private void crashed(EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+    private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
     	this.isActive = false;
     	this.powerUpDecay();
@@ -1147,14 +1146,6 @@ public abstract class Helicopter extends MovingObject
     	this.adjustFireRate(this.hasBoostedFireRate());
 		this.regenerationRate = Calculation.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
-		for(int i = 0; i < StandardUpgradeTypes.size(); i++)
-		{
-			StandardUpgradeTypes standardUpgradeType = StandardUpgradeTypes.getValues()[i];
-			if(this.getUpgradeLevelOf(standardUpgradeType) >= this.upgradeCosts[i].getMaxUpgradeLevel())
-			{
-				this.hasMaxUpgradeLevel[i] = true;
-			}
-		}
 		this.setSpellCosts();
 	}      
 
@@ -1190,15 +1181,15 @@ public abstract class Helicopter extends MovingObject
 		Coloration.plating = Coloration.percentColor((this.currentPlating)/this.maxPlating());
 	}
 	
-	public void getPowerUp(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
-	                PowerUpTypes powerUpType,
+	public void getPowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
+	                PowerUpType powerUpType,
 	                boolean lastingEffect)
 	{
 		getPowerUp(powerUp, powerUpType, lastingEffect, true);
 	}
 	
-	void getPowerUp(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
-	                PowerUpTypes powerUpType,
+	void getPowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
+	                PowerUpType powerUpType,
 	                boolean lastingEffect,
 	                boolean playSound)
 	{
@@ -1366,8 +1357,8 @@ public abstract class Helicopter extends MovingObject
 		this.setBounds();
 	}
 
-	public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp,
-									  EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion)
+	public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
+									  EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		if(this.isEnergyAbilityActivatable())
 		{
@@ -1375,7 +1366,7 @@ public abstract class Helicopter extends MovingObject
 		}
 	}
 
-	public void useEnergyAbility(EnumMap<CollectionSubgroupTypes, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupTypes, LinkedList<Explosion>> explosion){};
+	public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion){};
 
 	public int abilityId(int i)
     {
@@ -1415,7 +1406,7 @@ public abstract class Helicopter extends MovingObject
 		return this.bonusKillsTimer > 0;
 	}
 
-	public abstract HelicopterTypes getType();
+	public abstract HelicopterType getType();
 	
 	public void installGoliathPlating()
 	{
@@ -1558,16 +1549,10 @@ public abstract class Helicopter extends MovingObject
     
     public void levelUpEffect(int previousLevel){}
     
-    // TODO StandardUpgradeType verwenden statt int i
-    public PriceLevels getUpgradeCost(int i)
+    public PriceLevel getPriceLevelFor(StandardUpgradeType standardUpgradeType)
     {
-        return upgradeCosts[i];
+        return this.getType().getPriceLevelFor(standardUpgradeType);
     }
-
-	public PriceLevels getUpgradeCost(StandardUpgradeTypes standardUpgradeTypes)
-	{
-		return upgradeCosts[standardUpgradeTypes.ordinal()];
-	}
 		
 	public float getPlating()
 	{
@@ -1629,20 +1614,36 @@ public abstract class Helicopter extends MovingObject
 		this.energy = this.getMaximumEnergy();
 	}
 
-	public int getUpgradeLevelOf(StandardUpgradeTypes standardUpgradeType)
+	public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
 		return this.levelOfUpgrade[standardUpgradeType.ordinal()];
 	}
 
-	// TODO unnötig machen
-	public int getUpgradeLevelOf(int standardUpgradeType)
-	{
-		return this.levelOfUpgrade[standardUpgradeType];
-	}
-
-	public void upgrade(StandardUpgradeTypes standardUpgradeType)
+	public void upgrade(StandardUpgradeType standardUpgradeType)
 	{
 		this.levelOfUpgrade[standardUpgradeType.ordinal()]++;
+		switch (standardUpgradeType)
+        {
+            case ROTOR_SYSTEM:
+                this.rotorSystem = Calculation.speed(this.getUpgradeLevelOf(ROTOR_SYSTEM));
+                break;
+            case MISSILE_DRIVE:
+                this.missileDrive = Calculation.missileDrive(this.getUpgradeLevelOf(MISSILE_DRIVE));
+                break;
+            case PLATING:
+                this.currentPlating += this.platingDurabilityFactor * this.getLastPlatingDurabilityIncrease();
+                this.setPercentPlatingDisplayColor();
+                break;
+            case FIREPOWER:
+                this.setCurrentBaseFirepower();
+                break;
+            case FIRE_RATE:
+                this.adjustFireRate(false);
+                break;
+            case ENERGY_ABILITY:
+                this.upgradeEnergyAbility();
+                break;
+        }
 	}
 
 	public float getMissingEnergy()
@@ -1650,8 +1651,8 @@ public abstract class Helicopter extends MovingObject
     	return this.getMaximumEnergy() - this.getCurrentEnergy();
 	}
 
-	public boolean hasMaxUpgradeLevelFor(StandardUpgradeTypes standardUpgradeType)
+	public boolean hasMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
 	{
-		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getUpgradeCost(standardUpgradeType).getMaxUpgradeLevel();
+		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel();
 	}
 }

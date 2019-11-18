@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.util;
 
-import de.helicopter_vs_aliens.model.helicopter.HelicopterTypes;
+import de.helicopter_vs_aliens.gui.PriceLevel;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class Calculation
 	
 	
 	private static final float[]
+        // TODO gehört ins PriceLevel enum
 		COST_FACTOR = {0.375f, 0.75f, 1f, 1.5f, 2.5f},
 		PLASMA_DMG_FACTOR = {3.26f, 3.5f, 3.76f, 4.05f, 4.35f, 4.68f, 5.03f, 5.41f, 5.81f, 6.25f},	// Kamaitachi-Klasse: Faktor, um den sich die Schadenswirkung der Raketen erhöht, wenn diese Plasmaraketen sind
 		SPEED = {3f, 3.4f, 3.8f, 4.2f, 4.8f, 5.4f, 6.0f, 6.8f, 7.6f, 8.5f},
@@ -130,22 +132,23 @@ public class Calculation
     	return random(value)==0;
     }
 	
-    private static int increase(int costs, int level)
+    private static int increase(int priceLevel, int level)
     {
-     	return (int) (COST_FACTOR[costs] * (COST_LEVEL[level-1]));  	
+     	return (int) (COST_FACTOR[priceLevel] * (COST_LEVEL[level-1]));
     }
      
     // bestimmt die tatsächlichen Kosten für ein Upgrades unter Berücksichtigung der "additional costs"
-	// TODO cots als PriceLevel übergeben
-	public static int costs(HelicopterTypes helicopterType, int costs, int upgradeLevel)
+	// TODO helicopter übergeben und infos in der Methode extrahieren
+	// TODO gehört diese Methode in Calculations?
+	public static int costs(HelicopterType helicopterType, PriceLevel priceLevel, int upgradeLevel)
 	{
-		String key = "" + helicopterType.ordinal() + costs + upgradeLevel;
+		String key = "" + helicopterType.ordinal() + priceLevel + upgradeLevel;
 		int extraCosts = 0;
 		if(ADDITIONAL_COSTS.containsKey(key))
 		{
 			extraCosts = ADDITIONAL_COSTS.get(key);
 		}
-		return increase(costs, upgradeLevel) + extraCosts;
+		return increase(priceLevel.ordinal(), upgradeLevel) + extraCosts;
 	}
 	
 	public static float speed(int n)

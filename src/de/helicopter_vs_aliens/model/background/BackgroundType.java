@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.background;
 
-public enum BackgroundTypes
+public enum BackgroundType
 {
     CACTUS,
     STONE,

@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.gui;
 
-enum MultiKillTypes {
+enum MultiKillType
+{
     NICE_CATCH("Nice Catch", 41),
     DOUBLE_KILL("Double Kill", 28),
     TRIPLE_KILL("Triple Kill",36),
@@ -12,7 +13,7 @@ enum MultiKillTypes {
     private String designation;
 
 
-    MultiKillTypes(String designation, int textSize)
+    MultiKillType(String designation, int textSize)
     {
         this.designation = designation;
         this.textSize = textSize;
@@ -28,9 +29,9 @@ enum MultiKillTypes {
         return this.designation;
     }
 
-    public static MultiKillTypes getMultiKillType(int numberOfKills)
+    public static MultiKillType getMultiKillType(int numberOfKills)
     {
-        return MultiKillTypes.values()[multiKillSelectionValue(numberOfKills)];
+        return MultiKillType.values()[multiKillSelectionValue(numberOfKills)];
     }
 
     static private int multiKillSelectionValue(int numberOfKills)

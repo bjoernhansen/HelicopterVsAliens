@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 public final class HelicopterFactory
 {
-    public static Helicopter create(HelicopterTypes type)
+    public static Helicopter create(HelicopterType type)
     {
         switch(type)
         {

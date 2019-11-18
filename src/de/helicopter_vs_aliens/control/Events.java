@@ -8,7 +8,7 @@ import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.gui.WindowTypes;
+import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
@@ -18,21 +18,20 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.DESTROYED;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupTypes.INACTIVE;
-import static de.helicopter_vs_aliens.control.TimesOfDay.DAY;
-import static de.helicopter_vs_aliens.control.TimesOfDay.NIGHT;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
+import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
+import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
 import static de.helicopter_vs_aliens.gui.Menu.window;
-import static de.helicopter_vs_aliens.model.enemy.EnemyTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeTypes.*;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpTypes.*;
-import static de.helicopter_vs_aliens.gui.PriceLevels.REGULAR;
-import static de.helicopter_vs_aliens.gui.WindowTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterTypes.*;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.ENGLISH;
-import static de.helicopter_vs_aliens.util.dictionary.Languages.GERMAN;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
+import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
+import static de.helicopter_vs_aliens.gui.WindowType.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
+import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
 public class Events
 {
@@ -78,15 +77,15 @@ public class Events
     	public static long timeAktu;	// Zeitpunkt der letzten Aktualisierung von playing_time
 	
 	public static long
-		recordTime[][] = new long [HelicopterTypes.size()][NUMBER_OF_BOSS_LEVEL];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
+		recordTime[][] = new long [HelicopterType.size()][NUMBER_OF_BOSS_LEVEL];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
     
     public static boolean
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
-    	reachedLevelTwenty[] = new boolean[HelicopterTypes.size()],
+    	reachedLevelTwenty[] = new boolean[HelicopterType.size()],
     	settingsChanged = false,
     	allPlayable = false;
 
-	public static TimesOfDay
+	public static TimeOfDay
 		timeOfDay = DAY;		// Tageszeit [NIGHT, DAY]
 
 	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
@@ -102,7 +101,7 @@ public class Events
 	public static Enemy
 		boss;							// Referenz auf den aktuellen Endgegner
 
-	public static HelicopterTypes
+	public static HelicopterType
 		nextHelicopterType,				// aktuell im Startmenü ausgewählte Helikopter
 		previousHelicopterType;			// zuletzt im Startmenü ausgewählte Helikopter
 	
@@ -270,7 +269,7 @@ public class Events
 				{					
 					if(!Calculation.isEmpty(recordTime))
 					{
-						for(int i = 0; i < HelicopterTypes.size(); i++)
+						for(int i = 0; i < HelicopterType.size(); i++)
 						{
 							Arrays.fill(recordTime[i], 0);
 							reachedLevelTwenty[i] = false;
@@ -433,8 +432,8 @@ public class Events
 	}
 	
 	private static void repairShopMousePressedLeft(Helicopter helicopter,
-												   EnumMap<CollectionSubgroupTypes, LinkedList<Enemy>> enemies,
-												   EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> bgObject)
+												   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies,
+												   EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject)
 	{
 		// Reparatur des Helikopters
 		if(Menu.repairShopButton.get("RepairButton").bounds.contains(cursor))
@@ -629,18 +628,18 @@ public class Events
 		 *  Die Standard-Upgrades
 		 */			
 		else 
-		{	
-			int selection = Integer.MIN_VALUE;
-			// TODO über Standardupgrades iterieren
-			for(int i = 0; i < StandardUpgradeTypes.size(); i++)
+		{
+			for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 			{
-				if(Menu.repairShopButton.get("StandardUpgrade" + i).bounds.contains(cursor))
+				if(Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).bounds.contains(cursor))
 				{
 					if(helicopter.isDamaged){
 						Menu.block(4);}
-					else if(helicopter.hasMaxUpgradeLevel[i]){
+					else if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType)){
 						Menu.block(5);}
-					else if(money < Calculation.costs(helicopter.getType(), helicopter.getUpgradeCost(i).ordinal(), helicopter.levelOfUpgrade[i]))
+					else if(money < Calculation.costs(  helicopter.getType(),
+                                                        helicopter.getPriceLevelFor(standardUpgradeType),
+                                                        helicopter.getUpgradeLevelOf(standardUpgradeType)))
 					{
 						Menu.block(6);
 					}
@@ -648,70 +647,44 @@ public class Events
 					{
 						Audio.play(Audio.cash);
 						money -= Calculation.costs(	helicopter.getType(),
-													helicopter.getUpgradeCost(i).ordinal(),
-													helicopter.levelOfUpgrade[i]);
-						helicopter.levelOfUpgrade[i]++;
-						if(helicopter.levelOfUpgrade[i] >= helicopter.getUpgradeCost(i).getMaxUpgradeLevel())
+													helicopter.getPriceLevelFor(standardUpgradeType),
+													helicopter.getUpgradeLevelOf(standardUpgradeType));
+						helicopter.upgrade(standardUpgradeType);
+						if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 						{
-							helicopter.hasMaxUpgradeLevel[i] = true;
-							Menu.repairShopButton.get("StandardUpgrade" + i).costs = 0;
+							Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs = 0;
 						}
 						else
 						{
-							Menu.repairShopButton.get("StandardUpgrade" + i).costs
+							Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
 									= Calculation.costs(helicopter.getType(),
-														helicopter.getUpgradeCost(i).ordinal(),
-														helicopter.levelOfUpgrade[i]);
+														helicopter.getPriceLevelFor(standardUpgradeType),
+														helicopter.getUpgradeLevelOf(standardUpgradeType));
 						}
-						selection = i;
 					}					
 					break;
 				}
 			}
-			if(selection == Integer.MIN_VALUE){/**/}
-			else if(selection == 0)
-			{
-				helicopter.rotorSystem = Calculation.speed(helicopter.getUpgradeLevelOf(ROTOR_SYSTEM));
-			}
-			else if(selection == 1)
-			{
-				helicopter.missileDrive = Calculation.missileDrive(helicopter.getUpgradeLevelOf(MISSILE_DRIVE));
-			}
-			else if(selection == 2)
-			{
-				helicopter.currentPlating
-					+= helicopter.platingDurabilityFactor * helicopter.getLastPlatingDurabilityIncrease();
-				helicopter.setPercentPlatingDisplayColor();
-			}
-			else if(selection == 3)
-			{
-				helicopter.setCurrentBaseFirepower();
-			}
-			else if(selection == 4)
-			{
-				helicopter.adjustFireRate(false);
-			}
-			else if(selection == 5)
-			{
-				helicopter.upgradeEnergyAbility();
-			}
 		}
 	}
+	
+	
+	
 		
 	private static void startscreenMousePressedLeft(Helicopter helicopter)
 	{
 		if(Menu.triangle[0].contains(cursor))
 		{
-			Menu.crossPosition = (Menu.crossPosition + 1)%HelicopterTypes.size();
+			Menu.crossPosition = (Menu.crossPosition + 1)% HelicopterType.size();
 			Menu.cross = Menu.getCrossPolygon();
-			Menu.helicopterSelection = (Menu.helicopterSelection + HelicopterTypes.size() - 1)%HelicopterTypes.size();
+			Menu.helicopterSelection = (Menu.helicopterSelection + HelicopterType.size() - 1)% HelicopterType.size();
 			Audio.play(Audio.choose);
 		}
 		else if(Menu.triangle[1].contains(cursor))
 		{
-			Menu.crossPosition = (Menu.crossPosition + HelicopterTypes.size() - 1)%HelicopterTypes.size();
+			Menu.crossPosition = (Menu.crossPosition + HelicopterType.size() - 1)% HelicopterType.size();
 			Menu.cross = Menu.getCrossPolygon();
-			Menu.helicopterSelection = (Menu.helicopterSelection + 1)%HelicopterTypes.size();
+			Menu.helicopterSelection = (Menu.helicopterSelection + 1)% HelicopterType.size();
 			Audio.play(Audio.choose);
 		}
 		else if(Menu.helicopterFrame[0].contains(cursor)||
@@ -726,7 +699,7 @@ public class Events
 			else
 			{
 				Audio.play(Audio.block);
-				Menu.crossPosition = (Events.nextHelicopterType.ordinal() - Menu.helicopterSelection + HelicopterTypes.size())%HelicopterTypes.size();
+				Menu.crossPosition = (Events.nextHelicopterType.ordinal() - Menu.helicopterSelection + HelicopterType.size())% HelicopterType.size();
 				Menu.cross = Menu.getCrossPolygon();
 				Menu.crossTimer = 1;
 				Menu.messageTimer = 1;
@@ -769,7 +742,7 @@ public class Events
 		}		
 	}
 	
-	private static void cancel(EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> bgObject,
+	private static void cancel(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject,
 							   Helicopter helicopter, Savegame savegame)
 	{
 		Audio.play(Audio.choose);
@@ -1083,7 +1056,7 @@ public class Events
 		startGame(savegame.helicopterType, savegame, false);
 	}
 
-	static private void startGame(HelicopterTypes helicopterType, Savegame savegame, boolean isNewGame)
+	static private void startGame(HelicopterType helicopterType, Savegame savegame, boolean isNewGame)
 	{
 		Audio.play(Audio.choose);
 		Helicopter helicopter = HelicopterFactory.create(helicopterType);
@@ -1107,7 +1080,7 @@ public class Events
 		}
 	}
 		
-	private static void restartGame(Helicopter helicopter, EnumMap<CollectionSubgroupTypes, LinkedList<BackgroundObject>> bgObject)
+	private static void restartGame(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject)
 	{		
 		changeWindow(STARTSCREEN);	
 		helicopter.reset();
@@ -1150,14 +1123,14 @@ public class Events
 								    		- helicopter.currentPlating));
 	}
 	
-	private static void changeWindow(WindowTypes newWindow)
+	private static void changeWindow(WindowType newWindow)
 	{		
 		window = newWindow;
 		Audio.refreshBackgroundMusic();
 		Coloration.bg = newWindow == GAME && timeOfDay == DAY ? Coloration.sky: Color.black;
 	}
 
-	private static void newStartscreenMenuWindow(WindowTypes newWindow, boolean hasJustEntered)
+	private static void newStartscreenMenuWindow(WindowType newWindow, boolean hasJustEntered)
 	{
 		if(hasJustEntered){
 			Menu.stopButtonHighlighting(Menu.startscreenButton);}
@@ -1290,7 +1263,7 @@ public class Events
 	
 	public static boolean hasAnyBossBeenKilledBefore()
 	{
-		for(int i = 0; i < HelicopterTypes.size(); i++)
+		for(int i = 0; i < HelicopterType.size(); i++)
 		{
 			if(recordTime[i][0] != 0) return true;
 		}
@@ -1300,7 +1273,7 @@ public class Events
 	public static int getHeliosMaxMoney()
 	{
 		int maxHeliosMoney = 0;
-		for(int i = 0; i < HelicopterTypes.size() - 1; i++)
+		for(int i = 0; i < HelicopterType.size() - 1; i++)
 		{
 			maxHeliosMoney += getHighestRecordMoney(recordTime[i]);
 		}	
@@ -1356,7 +1329,7 @@ public class Events
 		return previousHelicopterType != nextHelicopterType;
 	}
 
-	public static int getBestNonFinalMainBossKillBy(HelicopterTypes privilegedHelicopter)
+	public static int getBestNonFinalMainBossKillBy(HelicopterType privilegedHelicopter)
 	{
 		for(int i = 0; i < 4; i++)
 		{
