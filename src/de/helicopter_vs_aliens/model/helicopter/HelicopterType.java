@@ -2,11 +2,10 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.PriceLevel;
+import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 
@@ -104,7 +103,15 @@ public enum HelicopterType
         OROCHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(PHOENIX, PEGASUS)),
         KAMAITACHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(ROCH, PEGASUS)),
         PEGASUS_UNLOCKER = Collections.unmodifiableList(Arrays.asList(OROCHI, KAMAITACHI));
-        
+    
+    // Die Kosten mancher Upgrades weichen für manche Helicopterklassen vom Standard ab.
+    // Die HashMap ADDITIONAL_STANDARD_UPGRADE_COSTS enthält die Modifikationswerte.
+    private static final Map<String, Integer>
+        ADDITIONAL_STANDARD_UPGRADE_COSTS = setAdditionalCosts();
+    
+    private String
+        fifthSpecialdictionaryKey;
+    
     static
     {
         for(HelicopterType helicopterType : HelicopterType.getValues())
@@ -112,8 +119,6 @@ public enum HelicopterType
             helicopterType.fifthSpecialdictionaryKey = "upgrades.special.fifth." + helicopterType.getDesignation();
         }
     }
-    
-    private String fifthSpecialdictionaryKey;
     
     
     public static int size()
@@ -186,5 +191,50 @@ public enum HelicopterType
     public String getFifthSpecialdictionaryKey()
     {
         return fifthSpecialdictionaryKey;
+    }
+    
+    private static Map<String, Integer> setAdditionalCosts()
+    {
+        HashMap<String, Integer> additionalCosts = new HashMap<> ();
+        
+        // Roch
+        additionalCosts.put("103", -250);
+        additionalCosts.put("136", 126000);
+        additionalCosts.put("137", 502000);
+        additionalCosts.put("141", 250);
+        additionalCosts.put("144", 63000);
+        additionalCosts.put("145", 251000);
+        
+        // Orochi
+        additionalCosts.put("203", -250);
+        additionalCosts.put("231", 250);
+        additionalCosts.put("236", 113000);
+        additionalCosts.put("237", 450000);
+        additionalCosts.put("241", 250);
+        additionalCosts.put("244", 56000);
+        additionalCosts.put("245", 225000);
+        
+        // Kamaitachi
+        additionalCosts.put("331", 250);
+        additionalCosts.put("336", 40000);
+        additionalCosts.put("337", 160000);
+        additionalCosts.put("341", 250);
+        additionalCosts.put("344", 20000);
+        additionalCosts.put("345", 80000);
+        
+        // Pegasus
+        additionalCosts.put("403", -250);
+        additionalCosts.put("436", 74000);
+        additionalCosts.put("437", 299000);
+        additionalCosts.put("444", 37000);
+        additionalCosts.put("445", 150000);
+        
+        return Collections.unmodifiableMap(new HashMap<>(additionalCosts));
+    }
+    
+    public int getAdditionalCosts(StandardUpgradeType standardUpgradeType, int upgradeLevel)
+    {
+        String key = String.format("%d%d%d", this.ordinal(), this.getPriceLevelFor(standardUpgradeType).ordinal(), upgradeLevel);
+        return Optional.ofNullable(ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
     }
 }

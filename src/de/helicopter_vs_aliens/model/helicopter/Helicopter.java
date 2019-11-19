@@ -10,6 +10,7 @@ import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.helicopter.components.Battery;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -900,11 +901,9 @@ public abstract class Helicopter extends MovingObject
 	
 	public void obtainAllUpgrades()
     {
-    	for(int i = 0; i < StandardUpgradeType.size(); i++)
+    	for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
     	{
-    		this.maximizeUpgrade(ROTOR_SYSTEM);
-    	 
-    	 
+    		this.maximizeUpgrade(standardUpgradeType);
     	}
     	this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
     	this.hasPiercingWarheads = true;
@@ -1141,7 +1140,7 @@ public abstract class Helicopter extends MovingObject
     	this.setPercentPlatingDisplayColor();
 		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
-		this.regenerationRate = Calculation.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
+		this.regenerationRate = Battery.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		this.setSpellCosts();
 	}      
@@ -1331,7 +1330,7 @@ public abstract class Helicopter extends MovingObject
 	{
 		int previousLevelOfEnergyAbility = this.getUpgradeLevelOf(ENERGY_ABILITY) - 1;
 		this.energy += this.getMaximumEnergy() - this.getMaximumEnergy(previousLevelOfEnergyAbility);
-		this.regenerationRate = Calculation.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
+		this.regenerationRate = Battery.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
 	}
 
 	public void becomesCenterOf(Explosion exp)
@@ -1364,11 +1363,6 @@ public abstract class Helicopter extends MovingObject
 	}
 
 	public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion){};
-
-	public int abilityId(int i)
-    {
-    	return i == 5 ? 1 + i + this.getType().ordinal() : i;
-    }
 
 	public void beAffectedByCollisionWith(Enemy enemy,
 										  Controller controller,
@@ -1582,8 +1576,7 @@ public abstract class Helicopter extends MovingObject
         return 0;
     }
 
-    // TODO eine Klasse EnergyUnit, Battery oder ähnliches erstellen und dort
-
+    // TODO eine Klasse Battery oder ähnliches erstellen und dort
 	public float getCurrentEnergy()
 	{
 		return this.energy;
@@ -1610,7 +1603,12 @@ public abstract class Helicopter extends MovingObject
 	{
 		this.energy = this.getMaximumEnergy();
 	}
-
+    
+    public float getMissingEnergy()
+    {
+        return this.getMaximumEnergy() - this.getCurrentEnergy();
+    }
+	
 	public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
 		return this.levelOfUpgrade[standardUpgradeType.ordinal()];
@@ -1643,26 +1641,23 @@ public abstract class Helicopter extends MovingObject
         }
 	}
 
-	public float getMissingEnergy()
-	{
-    	return this.getMaximumEnergy() - this.getCurrentEnergy();
-	}
-
 	public boolean hasMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
 	{
 		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel();
 	}
 	
-	// bestimmt die tatsächlichen Kosten für ein Upgrades unter Berücksichtigung der "additional costs"
 	public int getUpgradeCostFor(StandardUpgradeType standardUpgradeType)
 	{
 		int upgradeLevel = this.getUpgradeLevelOf(standardUpgradeType);
 		PriceLevel priceLevel = this.getPriceLevelFor(standardUpgradeType);
 		int baseUpgradeCosts = priceLevel.getBaseUpgradeCosts(upgradeLevel);
-		
-		String key = String.format("%d%d%d", this.getType().ordinal(), priceLevel.ordinal(), upgradeLevel);
-		int additionalUpgradeCosts = Optional.ofNullable(Calculation.ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
+        int additionalUpgradeCosts = this.getAdditionalCosts(standardUpgradeType, upgradeLevel);
 		
 		return baseUpgradeCosts + additionalUpgradeCosts;
 	}
+    
+    private int getAdditionalCosts(StandardUpgradeType standardUpgradeType, int upgradeLevel)
+    {
+        return this.getType().getAdditionalCosts(standardUpgradeType, upgradeLevel);
+    }
 }
