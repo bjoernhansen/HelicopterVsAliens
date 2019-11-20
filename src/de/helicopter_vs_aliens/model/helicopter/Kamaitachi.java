@@ -28,6 +28,10 @@ public final class Kamaitachi extends Helicopter
     private static final int
         RAPIDFIRE_AMOUNT = 2;
     
+    private static final float[]
+        // Faktor, um den sich die Schadenswirkung der Raketen erhöht, wenn diese Plasmaraketen sind
+        PLASMA_DMG_FACTOR = {3.26f, 3.5f, 3.76f, 4.05f, 4.35f, 4.68f, 5.03f, 5.41f, 5.81f, 6.25f};
+    
     private int
         plasmaActivationTimer; // Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
     
@@ -176,7 +180,16 @@ public final class Kamaitachi extends Helicopter
         return  super.getBaseDamage()
                 * ((this.plasmaActivationTimer == 0)
                     ? 1
-                    : Calculation.plasmaDamageFactor(this.getUpgradeLevelOf(ENERGY_ABILITY)));
+                    : this.plasmaDamageFactor(this.getUpgradeLevelOf(ENERGY_ABILITY)));
+    }
+    
+    private float plasmaDamageFactor(int n)
+    {
+        if(n > 0 && n <= PLASMA_DMG_FACTOR.length)
+        {
+            return PLASMA_DMG_FACTOR[n-1];
+        }
+        return 0;
     }
     
     @Override

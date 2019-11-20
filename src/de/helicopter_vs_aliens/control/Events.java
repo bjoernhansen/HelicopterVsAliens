@@ -1134,10 +1134,15 @@ public class Events
 	// überprüfen, ob Level-Up Voraussetzungen erfüll. Wenn ja: Schwierigkeitssteigerung
 	static void checkForLevelup(Controller controller, Helicopter helicopter)
 	{
-		if( killsAfterLevelUp >= Calculation.kills(level) && level < 50)
+		if( killsAfterLevelUp >= numberOfKillsNecessaryForNextLevelUp() && level < 50)
 		{
 			levelUp(controller, 1);
 		}
+	}
+	
+	public static int numberOfKillsNecessaryForNextLevelUp()
+	{
+		return 5 - 5 * (int)((float)(level-1)/10) + level;
 	}
 
 	// erhöht das Spiel-Level auf "nr_of_levelUp" mit allen Konsequenzen

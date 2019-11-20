@@ -78,17 +78,20 @@ public abstract class Helicopter extends MovingObject
         FAST_ROTATIONAL_SPEED	= 12,
         DAY_BONUS_FACTOR = 60,
         NIGHT_BONUS_FACTOR = 90,
-		START_ENERGY = 150,
-		ENERGY[] = {0, 100, 190, 270, 340, 400, 450, 490, 520, 540};
+		START_ENERGY = 150;
+		
     
     private static final float
         NOSEDIVE_SPEED = 12f,	        // Geschwindigkeit des Helikopters bei Absturz
         INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f,
         STANDARD_PROTECTION_FACTOR = 1.0f,
         STANDARD_BASE_PROTECTION_FACTOR = 1.0f,
-        PLATING_MULTIPLIER = 1.3f,
-        PLATING_DURABILITY[] = {1.5f, 2.6f, 4.0f, 5.6f, 7.7f, 9.6f, 11.8f, 14.2f, 17.0f, 20f};
-        
+        PLATING_MULTIPLIER = 1.3f;
+	
+	
+
+    
+    
     private static final Point
 		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
     
@@ -170,6 +173,9 @@ public abstract class Helicopter extends MovingObject
 		bonusKills,							// Anzahl der Kills, für den aktuelken Mulikill-Award
 		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen Multikill-Awards ohne Bonus
 		bonusKillsTimer;					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
+    
+    Battery
+        battery = new Battery();
     
 	public Point2D
   		location = new Point2D.Float();	        // exakter Aufenthaltsort
@@ -1130,8 +1136,8 @@ public abstract class Helicopter extends MovingObject
     
     private void updateProperties(boolean fullPlating)
     {
-    	this.rotorSystem = Calculation.speed(this.getUpgradeLevelOf(ROTOR_SYSTEM));
-    	this.missileDrive = Calculation.missileDrive(this.getUpgradeLevelOf(MISSILE_DRIVE));
+    	this.rotorSystem = this.getSpeed();
+    	this.missileDrive = this.getMissileDrive();
     	if(fullPlating)
     	{
     		this.getMaximumPlating();
@@ -1228,12 +1234,13 @@ public abstract class Helicopter extends MovingObject
 
 	public void adjustFireRate(boolean poweredUp)
 	{
-		this.timeBetweenTwoShots = Calculation.fireRate(calculateSumOfFireRateBooster(poweredUp));
+	    // TODO überprüfen ob man direkt hier hasBoostedFireRate() nutzen kann und somit Parameter wegfallen kann
+		this.timeBetweenTwoShots = this.getFireRate(poweredUp);
 	}
 
 	public int calculateSumOfFireRateBooster(boolean poweredUp)
 	{
-		return this.getUpgradeLevelOf(FIRE_RATE)
+		return this.getUpgradeLevelOf(StandardUpgradeType.FIRE_RATE)
 				+ (poweredUp ? FIRE_RATE_POWERUP_LEVEL : 0);
 	}
 
@@ -1451,7 +1458,7 @@ public abstract class Helicopter extends MovingObject
 	
 	public void setCurrentBaseFirepower()
 	{
-		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * Calculation.dmg(this.getUpgradeLevelOf(FIREPOWER)));
+		this.currentBaseFirepower = (int)(this.getMissileDamageFactor() * this.getFirepower());
 	}
 	
 	public boolean isFifthSpecialOnMaximumStrength()
@@ -1567,15 +1574,41 @@ public abstract class Helicopter extends MovingObject
         return this.getUpgradeLevelOf(PLATING);
     }
     
+    private float getSpeed()
+    {
+        return ROTOR_SYSTEM.getMagnitude(this.getUpgradeLevelOf(ROTOR_SYSTEM));
+    }
+    
+    private int getMissileDrive()
+    {
+        return (int)MISSILE_DRIVE.getMagnitude(this.getUpgradeLevelOf(StandardUpgradeType.MISSILE_DRIVE));
+    }
+    
     private float getPlating(int platingLevel)
     {
-        if(platingLevel >= 1 && platingLevel <= 10)
-        {
-            return PLATING_MULTIPLIER * PLATING_DURABILITY[platingLevel-1];
-        }
-        return 0;
+        return PLATING_MULTIPLIER * PLATING.getMagnitude(platingLevel);
     }
-
+    
+    private int getFirepower()
+    {
+        return (int)FIREPOWER.getMagnitude(this.getUpgradeLevelOf(FIREPOWER));
+    }
+    
+    public int getEmpDamage()
+    {
+        return (int)FIREPOWER.getMagnitude(this.getUpgradeLevelOf(ENERGY_ABILITY));
+    }
+    
+    private int getFireRate(boolean poweredUp)
+    {
+        return (int)FIRE_RATE.getMagnitude(calculateSumOfFireRateBooster(poweredUp));
+    }
+    
+    private int getMaximumEnergy(int level)
+    {
+        return START_ENERGY + (int)ENERGY_ABILITY.getMagnitude(level);
+    }
+    
     // TODO eine Klasse Battery oder ähnliches erstellen und dort
 	public float getCurrentEnergy()
 	{
@@ -1590,14 +1623,10 @@ public abstract class Helicopter extends MovingObject
 	public int getMaximumEnergy()
 	{
 		int levelOfEnergyAbility = this.getUpgradeLevelOf(ENERGY_ABILITY);
-		return getMaximumEnergy(levelOfEnergyAbility);
+		return this.getMaximumEnergy(levelOfEnergyAbility);
 	}
 
-	private static int getMaximumEnergy(int n)
-	{
-		if(n > 0 && n < 11){return START_ENERGY + ENERGY[n-1];}
-		return 0;
-	}
+	
 
 	public void restoreEnergy()
 	{
@@ -1620,10 +1649,10 @@ public abstract class Helicopter extends MovingObject
 		switch (standardUpgradeType)
         {
             case ROTOR_SYSTEM:
-                this.rotorSystem = Calculation.speed(this.getUpgradeLevelOf(ROTOR_SYSTEM));
+                this.rotorSystem = this.getSpeed();
                 break;
             case MISSILE_DRIVE:
-                this.missileDrive = Calculation.missileDrive(this.getUpgradeLevelOf(MISSILE_DRIVE));
+                this.missileDrive = this.getMissileDrive();
                 break;
             case PLATING:
                 this.currentPlating += this.platingDurabilityFactor * this.getLastPlatingDurabilityIncrease();

@@ -1472,7 +1472,7 @@ public class Enemy extends MovingObject
 				&&((Events.lastCreationTimer > 20  && !Events.isBossLevel()) ||
 				   (Events.lastCreationTimer > 135 ) )
 				&& nrOfEnemies < (maxNr + maxBarrierNr)
-				&& Calculation.creationProbability(
+				&& creationProbability(
 						Events.isBossLevel()
 							? 0
 							: (maxNr + maxBarrierNr) - nrOfEnemies, 1)
@@ -2974,10 +2974,7 @@ public class Enemy extends MovingObject
 
 	private void empShock(Controller controller, Helicopter helicopter)
     {
-    	this.takeDamage((int)( (this.type.isMajorBoss()
-    							? EMP_DAMAGE_FACTOR_BOSS
-    							: EMP_DAMAGE_FACTOR_ORDINARY) 
-    						 * Calculation.dmg(helicopter.getUpgradeLevelOf(ENERGY_ABILITY))));
+    	this.takeDamage((int)this.getEmpVulnerabilityFactor() * helicopter.getEmpDamage());
 		this.isEmpShocked = true;
 		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
 		this.disableSiteEffects(helicopter);
@@ -3007,7 +3004,14 @@ public class Enemy extends MovingObject
 			this.die(controller, helicopter, null);
 		}
     }
-	
+    
+    private float getEmpVulnerabilityFactor()
+    {
+        return this.type.isMajorBoss()
+                ? EMP_DAMAGE_FACTOR_BOSS
+                : EMP_DAMAGE_FACTOR_ORDINARY;
+    }
+		
 	private boolean hasToTurnAtXBorder()
 	{
 		return this.barrierTeleportTimer == DISABLED

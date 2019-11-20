@@ -9,6 +9,7 @@ import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
 
@@ -181,16 +182,17 @@ public class Missile extends MovingObject
 					&& enemy.empSlowedTimer == 0)
 				{
 					enemy.teleport();
-				} else if (!enemy.isInvincible())
+				}
+				else if (!enemy.isInvincible())
 				{
 					enemy.hitByMissile(helicopter, this, controller.explosions);
-				} else if (!this.bounced
+				}
+				else if (!this.bounced
 					&& enemy.teleportTimer < 1
 					&& !(enemy.type == BOSS_2_SERVANT))
 				{
 					Audio.play(Audio.rebound);
-					this.speed = -Math.signum(this.speed)
-						* Calculation.missileDrive(1);
+					this.speed = -Math.signum(this.speed) * StandardUpgradeType.MISSILE_DRIVE.getMagnitude(1);
 					this.dangerous = true;
 					this.bounced = true;
 				}

@@ -17,6 +17,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.MovingObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.components.Battery;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
 
@@ -529,9 +530,10 @@ public class BackgroundObject extends MovingObject
 	private static void generateNewBackgroundObjects(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{
 		int numberOfBackgroundObjects = backgroundObjects.get(ACTIVE).size();
-		if( numberOfBackgroundObjects < 20 && Calculation.creationProbability( 20 - numberOfBackgroundObjects,
-				groundFactor) &&
-			generalObjectTimer == 0 && backgroundMoves)
+		if( numberOfBackgroundObjects < 20
+				&& creationProbability( 20 - numberOfBackgroundObjects, groundFactor)
+				&& generalObjectTimer == 0
+				&& backgroundMoves)
 		{
 			generalObjectTimer = 20;
 			Iterator<BackgroundObject> i = backgroundObjects.get(INACTIVE).iterator();

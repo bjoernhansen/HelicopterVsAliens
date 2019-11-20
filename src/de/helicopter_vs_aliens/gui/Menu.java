@@ -977,7 +977,7 @@ public class Menu
 			infoString = "Kills bis LevelUp: "
 						  + Events.killsAfterLevelUp
 						  + "/"
-						  + Calculation.kills(Events.level);
+						  + Events.numberOfKillsNecessaryForNextLevelUp();
 		}
 		else if(specialInfoSelection == 2)
 		{

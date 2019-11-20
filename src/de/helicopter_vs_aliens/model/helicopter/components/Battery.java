@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter.components;
 
+// TODO Battery Klasse fertig stellen
 public class Battery
 {
     public static final float []
@@ -15,5 +16,18 @@ public class Battery
         if(n >= 1 && n <= 10){return REGENERATION[n-1];}
         return 0;
     }
+    
+    
+    public void discharge()
+    {
+        this.capacity = 0;
+    }
+    
+    
+    public void restore()
+    {
+        //this.capacity = this.getMaximumEnergy();
+    }
+    
     
 }
