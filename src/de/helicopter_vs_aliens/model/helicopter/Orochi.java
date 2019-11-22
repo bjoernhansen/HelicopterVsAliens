@@ -98,9 +98,9 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void upgradeEnergyAbility()
+    public void updateEnergyAbility()
     {
-        super.upgradeEnergyAbility();
+        super.updateEnergyAbility();
         this.setSpellCosts();
     }
     
@@ -124,10 +124,10 @@ public final class Orochi extends Helicopter
     boolean isShootingStunningMissile()
     {
         if (this.isNextMissileStunner
-            && (this.energy >= this.spellCosts
+            && (this.currentEnergy >= this.spellCosts
             || this.hasUnlimitedEnergy()))
         {
-            this.energy -= this.hasUnlimitedEnergy()
+            this.currentEnergy -= this.hasUnlimitedEnergy()
                 ? 0
                 : this.spellCosts;
             return true;
@@ -170,7 +170,7 @@ public final class Orochi extends Helicopter
     Color getInputColorCannon()
     {
         if (this.isNextMissileStunner
-            && (this.energy >= this.spellCosts
+            && (this.currentEnergy >= this.spellCosts
             || this.hasUnlimitedEnergy()))
         {
             return Coloration.variableBlue;

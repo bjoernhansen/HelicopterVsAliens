@@ -133,11 +133,11 @@ public abstract class Helicopter extends MovingObject
     	scorescreenTimes[] = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float
-		rotorSystem,						// legt die aktuelle Geschwindigkeit des Helikopters fest
-		currentPlating;						// aktuelle Panzerung (immer <= maximale Panzerung)
+		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
+	
 
 	float
-		energy;							    // verfügbare Energie;
+            currentEnergy;							    // verfügbare Energie;
     
     int
     	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
@@ -195,7 +195,8 @@ public abstract class Helicopter extends MovingObject
         slowedTimer;		// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
     
     private float 
-    	speed;     			// aktuelle Geschwindigkeit des Helikopters
+    	speed,     			// aktuelle Geschwindigkeit des Helikopters
+        currentPlating;		// aktuelle Panzerung (immer <= maximale Panzerung)
     
     private boolean
 		isCrashing;			// Helikopter befindet sich im Sturzflug
@@ -825,7 +826,7 @@ public abstract class Helicopter extends MovingObject
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
 		this.numberOfCannons = savegame.numberOfCannons;
 		this.currentPlating = savegame.currentPlating;
-		this.energy = savegame.energy;
+		this.currentEnergy = savegame.energy;
 		
 		if(savegame.hasFifthSpecial)
 		{
@@ -900,8 +901,8 @@ public abstract class Helicopter extends MovingObject
     	this.numberOfRepairs++;
 		this.isDamaged = false;
 		this.isCrashing = false;
-    	this.getMaximumPlating();
-    	this.setPercentPlatingDisplayColor();
+    	this.restorePlating();
+    	this.setRelativePlatingDisplayColor();
 		Menu.repairShopButton.get("RepairButton").costs = 0;
     }
 	
@@ -1027,7 +1028,7 @@ public abstract class Helicopter extends MovingObject
     {
     	this.isDamaged = true;
 		this.isRotorSystemActive = false;
-		this.energy = 0;
+		this.currentEnergy = 0;
 		this.destination.setLocation(this.bounds.getX() + 40, 520);
 		if(this.tractor != null){this.stopTractor();}
 		this.numberOfCrashes++;
@@ -1123,10 +1124,15 @@ public abstract class Helicopter extends MovingObject
     {
         this.currentPlating = Math.max(this.currentPlating - this.getProtectionFactor() * ENEMY_MISSILE_DAMAGE_FACTOR, 0f);
         this.startRecentDamageTimer();
-		if(this.currentPlating <= 0 && !this.isDamaged)
+		if(this.isDestinedToCrash())
 		{
 			this.crash();
 		}
+    }
+    
+    public boolean hasDestroyedPlating()
+    {
+        return this.currentPlating <= 0;
     }
     
     void startRecentDamageTimer()
@@ -1136,21 +1142,31 @@ public abstract class Helicopter extends MovingObject
     
     private void updateProperties(boolean fullPlating)
     {
-    	this.rotorSystem = this.getSpeed();
-    	this.missileDrive = this.getMissileDrive();
+    	this.updateRotorSystem();
+    	this.updateMissileDrive();
     	if(fullPlating)
     	{
-    		this.getMaximumPlating();
+    		this.restorePlating();
     		this.restoreEnergy();
     	}
-    	this.setPercentPlatingDisplayColor();
+    	this.setRelativePlatingDisplayColor();
 		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
-		this.regenerationRate = Battery.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
+        this.updateRegenerationRate();
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		this.setSpellCosts();
-	}      
-
+	}
+    
+    private void updateMissileDrive()
+    {
+        this.missileDrive = this.getMissileDrive();
+    }
+    
+    private void updateRotorSystem()
+	{
+		rotorSystem = this.getSpeed();
+	}
+	
 	void setSpellCosts()
 	{
 		this.spellCosts = this.getType().getSpellCosts();
@@ -1178,9 +1194,9 @@ public abstract class Helicopter extends MovingObject
 		}		
 	}
 
-	public void setPercentPlatingDisplayColor()
+	public void setRelativePlatingDisplayColor()
 	{		
-		Coloration.plating = Coloration.percentColor((this.currentPlating)/this.maxPlating());
+		Coloration.plating = Coloration.percentColor(this.getRelativePlating());
 	}
 	
 	public void getPowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
@@ -1249,42 +1265,82 @@ public abstract class Helicopter extends MovingObject
 	public void useReparationPowerUp()
 	{
 		Audio.play(Audio.cash);
-		float maxPlating = this.maxPlating();
-		if(this.currentPlating < maxPlating)
+		if(!this.hasMaximumPlating())
 		{
 			this.currentPlating
 				= Math.min(
-					maxPlating,
-					this.currentPlating
-						+ Math.max(1, (   maxPlating
-										- this.currentPlating)/2));
+                    this.getMaximumPlating(),
+					this.currentPlating + Math.max(1, this.missingPlating()/2));
 		}
 	}
-	
-	public float kaboomDamage()
+    
+    public boolean hasMaximumPlating()
+    {
+        return currentPlating >= this.getMaximumPlating();
+    }
+    
+    public float kaboomDamage()
 	{		
-		return Math.max(4, 2*this.currentPlating /3);
+		return Math.max(4, 2*this.currentPlating/3);
 	}
+    
+    
+    private void restorePlating()
+    {
+        this.currentPlating = this.getMaximumPlating();
+    }
 	
-	public float maxPlating()
+	public float getMaximumPlating()
 	{
-		return this.getPlating() * this.platingDurabilityFactor;
+		return this.platingDurabilityFactor * this.getBasePlating();
 	}
-	
-	private void getMaximumPlating()
-	{
-		this.currentPlating = this.maxPlating();
-	}
-
+    
+    public float getBasePlating()
+    {
+        return getBasePlating(this.getPlatingLevel());
+    }
+    
+    private float getBasePlating(int platingLevel)
+    {
+        return PLATING_MULTIPLIER * PLATING.getMagnitude(platingLevel);
+    }
+    
+    private int getPlatingLevel()
+    {
+        return this.getUpgradeLevelOf(PLATING);
+    }
+    
+    private void updatePlating()
+    {
+        this.currentPlating += this.getLastPlatingDurabilityIncrease();
+        this.setRelativePlatingDisplayColor();
+    }
+    
+    public float getLastPlatingDurabilityIncrease()
+    {
+        return this.platingDurabilityFactor * (this.getBasePlating() - this.getPreviousBasePlating());
+    }
+    
+    private float getPreviousBasePlating()
+    {
+        int previousPlatingLevel = this.getPlatingLevel() - 1;
+        return this.getBasePlating(previousPlatingLevel);
+    }
+    
+    public float getCurrentPlating()
+    {
+        return currentPlating;
+    }
+    
 	public void receiveStaticCharged(float degree)
 	{
 		if(!this.isInvincible())
 		{			
-			this.energy 
+			this.currentEnergy
 				= this.hasUnlimitedEnergy()
-					? this.energy 
+					? this.currentEnergy
 					: Math.max( 0, 
-								this.energy 
+								this.currentEnergy
 								-degree*this.getEnergyDrain());
 			this.slowDown();
 		}
@@ -1330,17 +1386,22 @@ public abstract class Helicopter extends MovingObject
 
 	boolean hasEnoughEnergyForAbility()
 	{
-		return this.energy >= this.spellCosts || this.hasUnlimitedEnergy();
+		return this.currentEnergy >= this.spellCosts || this.hasUnlimitedEnergy();
 	}
 
-	public void upgradeEnergyAbility()
+	public void updateEnergyAbility()
 	{
 		int previousLevelOfEnergyAbility = this.getUpgradeLevelOf(ENERGY_ABILITY) - 1;
-		this.energy += this.getMaximumEnergy() - this.getMaximumEnergy(previousLevelOfEnergyAbility);
-		this.regenerationRate = Battery.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
+		this.currentEnergy += this.getMaximumEnergy() - this.getMaximumEnergy(previousLevelOfEnergyAbility);
+		this.updateRegenerationRate();
 	}
-
-	public void becomesCenterOf(Explosion exp)
+    
+    private void updateRegenerationRate()
+    {
+        this.regenerationRate = Battery.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
+    }
+    
+    public void becomesCenterOf(Explosion exp)
 	{
 		exp.ellipse.setFrameFromCenter(
 			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
@@ -1383,10 +1444,7 @@ public abstract class Helicopter extends MovingObject
 					: this.getCollisionAudio());
 		}
 		this.slowedTimer = 2;
-		this.currentPlating
-				= Math.max(
-				this.currentPlating - enemy.collisionDamage(this),
-				0);
+		this.currentPlating = Math.max(0, this.currentPlating - enemy.collisionDamage(this));
 	}
     
     void startRecentDamageEffect(Enemy enemy)
@@ -1409,8 +1467,8 @@ public abstract class Helicopter extends MovingObject
 	public void installGoliathPlating()
 	{
 		this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
-		this.currentPlating += this.getPlating();
-		this.setPercentPlatingDisplayColor();
+		this.currentPlating += this.getBasePlating();
+		this.setRelativePlatingDisplayColor();
 	}
 	
 	public int getGoliathCosts()
@@ -1551,29 +1609,7 @@ public abstract class Helicopter extends MovingObject
     {
         return this.getType().getPriceLevelFor(standardUpgradeType);
     }
-		
-	public float getPlating()
-	{
-		int platingLevel = this.getPlatingLevel();
-        return getPlating(platingLevel);
-	}
-	
-	public float getLastPlatingDurabilityIncrease()
-	{
-		return this.getPlating() - this.getPreviousPlating();
-	}
-    
-    private float getPreviousPlating()
-    {
-        int previousPlatingLevel = this.getPlatingLevel() - 1;
-        return this.getPlating(previousPlatingLevel);
-    }
-    
-    private int getPlatingLevel()
-    {
-        return this.getUpgradeLevelOf(PLATING);
-    }
-    
+	   
     private float getSpeed()
     {
         return ROTOR_SYSTEM.getMagnitude(this.getUpgradeLevelOf(ROTOR_SYSTEM));
@@ -1582,11 +1618,6 @@ public abstract class Helicopter extends MovingObject
     private int getMissileDrive()
     {
         return (int)MISSILE_DRIVE.getMagnitude(this.getUpgradeLevelOf(StandardUpgradeType.MISSILE_DRIVE));
-    }
-    
-    private float getPlating(int platingLevel)
-    {
-        return PLATING_MULTIPLIER * PLATING.getMagnitude(platingLevel);
     }
     
     private int getFirepower()
@@ -1604,33 +1635,31 @@ public abstract class Helicopter extends MovingObject
         return (int)FIRE_RATE.getMagnitude(calculateSumOfFireRateBooster(poweredUp));
     }
     
-    private int getMaximumEnergy(int level)
+    private float getMaximumEnergy(int level)
     {
-        return START_ENERGY + (int)ENERGY_ABILITY.getMagnitude(level);
+        return START_ENERGY + ENERGY_ABILITY.getMagnitude(level);
     }
     
     // TODO eine Klasse Battery oder ähnliches erstellen und dort
 	public float getCurrentEnergy()
 	{
-		return this.energy;
+		return this.currentEnergy;
 	}
 
 	public void rechargeEnergy(float energyBoost)
 	{
-		this.energy = Math.max(0, Math.min(this.getMaximumEnergy(), this.getCurrentEnergy() + energyBoost));
+		this.currentEnergy = Math.max(0, Math.min(this.getMaximumEnergy(), this.getCurrentEnergy() + energyBoost));
 	}
 
-	public int getMaximumEnergy()
+	public float getMaximumEnergy()
 	{
 		int levelOfEnergyAbility = this.getUpgradeLevelOf(ENERGY_ABILITY);
 		return this.getMaximumEnergy(levelOfEnergyAbility);
 	}
 
-	
-
 	public void restoreEnergy()
 	{
-		this.energy = this.getMaximumEnergy();
+		this.currentEnergy = this.getMaximumEnergy();
 	}
     
     public float getMissingEnergy()
@@ -1649,14 +1678,13 @@ public abstract class Helicopter extends MovingObject
 		switch (standardUpgradeType)
         {
             case ROTOR_SYSTEM:
-                this.rotorSystem = this.getSpeed();
+                this.updateRotorSystem();
                 break;
             case MISSILE_DRIVE:
-                this.missileDrive = this.getMissileDrive();
+                this.updateMissileDrive();
                 break;
             case PLATING:
-                this.currentPlating += this.platingDurabilityFactor * this.getLastPlatingDurabilityIncrease();
-                this.setPercentPlatingDisplayColor();
+                this.updatePlating();
                 break;
             case FIREPOWER:
                 this.setCurrentBaseFirepower();
@@ -1665,12 +1693,12 @@ public abstract class Helicopter extends MovingObject
                 this.adjustFireRate(false);
                 break;
             case ENERGY_ABILITY:
-                this.upgradeEnergyAbility();
+                this.updateEnergyAbility();
                 break;
         }
 	}
-
-	public boolean hasMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
+    
+    public boolean hasMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
 	{
 		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel();
 	}
@@ -1688,5 +1716,30 @@ public abstract class Helicopter extends MovingObject
     private int getAdditionalCosts(StandardUpgradeType standardUpgradeType, int upgradeLevel)
     {
         return this.getType().getAdditionalCosts(standardUpgradeType, upgradeLevel);
+    }
+    
+    public float missingPlating()
+    {
+        return this.getMaximumPlating() - this.getCurrentPlating();
+    }
+    
+    public void destroyPlating()
+    {
+        this.currentPlating = 0f;
+    }
+    
+    public float getRelativePlating()
+    {
+        return this.getCurrentPlating() / this.getMaximumPlating();
+    }
+    
+    public float getRelativeEnergy()
+    {
+        return this.getCurrentEnergy() / this.getMaximumEnergy();
+    }
+    
+    public boolean isDestinedToCrash()
+    {
+        return this.hasDestroyedPlating() && !this.isDamaged;
     }
 }

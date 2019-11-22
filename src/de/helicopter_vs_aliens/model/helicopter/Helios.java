@@ -93,7 +93,7 @@ public final class Helios extends Helicopter
     private void activatePowerUpGenerator(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWERUP_DURATION);
-        this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+        this.currentEnergy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
         Calculation.randomize();
         for(int i = 0; i < 3; i++)
         {

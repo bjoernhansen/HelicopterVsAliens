@@ -183,7 +183,7 @@ public class Savegame implements Serializable
 		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
 		this.numberOfCannons = helicopter.numberOfCannons;
 		this.hasFifthSpecial = helicopter.hasFifthSpecial();
-		this.currentPlating = helicopter.currentPlating;
+		this.currentPlating = helicopter.getCurrentPlating();
 		this.energy = helicopter.getCurrentEnergy();
 		this.enemiesSeen = helicopter.numberOfEnemiesSeen;
 		this.enemiesKilled = helicopter.numberOfEnemiesKilled;

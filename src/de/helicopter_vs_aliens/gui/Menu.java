@@ -1075,6 +1075,14 @@ public class Menu
 		{
 			infoString = helicopter.getTypeSpecificDebuggingOutput();
 		}
+		else if(specialInfoSelection == 15)
+		{
+			infoString = String.format( "Hitpoints: %.2f/%.2f; Energie: %.2f/%.2f",
+                                        helicopter.getCurrentPlating(),
+                                        helicopter.getMaximumPlating(),
+                                        helicopter.getCurrentEnergy(),
+                                        helicopter.getMaximumEnergy());
+		}
         g2d.drawString("Info: " + infoString, 20, 155);
     }
 	
@@ -1138,8 +1146,8 @@ public class Menu
     
     private static void paintHealthBar(Graphics2D g2d, Helicopter helicopter, int x, int y, int length, boolean rahmen)
     {
-    	float relativeEnergy = helicopter.getCurrentEnergy() / helicopter.getMaximumEnergy();
-    	float relativeLife = helicopter.currentPlating /helicopter.maxPlating();
+    	float relativeEnergy = helicopter.getRelativeEnergy();
+    	float relativePlating = helicopter.getRelativePlating();
         if(rahmen)
     	{
     		g2d.setColor(Coloration.lightestGray);
@@ -1162,9 +1170,9 @@ public class Menu
         g2d.setColor(helicopter.isInvincible()
         				? Color.yellow 
         				: Color.green);
-        g2d.fillRect(x+3, y+14, (int)(length * relativeLife), 8);
+        g2d.fillRect(x+3, y+14, (int)(length * relativePlating), 8);
         g2d.setColor(helicopter.recentDamageTimer == 0 ? Color.red : Coloration.variableRed);
-        g2d.fillRect(x+3 + (int)(length * relativeLife), y+14, length - (int)(length * relativeLife), 8);
+        g2d.fillRect(x+3 + (int)(length * relativePlating), y+14, length - (int)(length * relativePlating), 8);
     }
 	
     private static void paintCollectedPowerUps(Graphics2D g2d)
@@ -1278,7 +1286,7 @@ public class Menu
         	}
         	g2d.setFont(fontProvider.getBold(16));
         	g2d.setColor(Coloration.plating);
-        	int percentPlating = (Math.round(100f*helicopter.currentPlating /helicopter.maxPlating()));
+        	int percentPlating = (Math.round(100 * helicopter.getRelativePlating()));
         	FontMetrics fm = g2d.getFontMetrics();        	
             int sw = fm.stringWidth(""+percentPlating);
             g2d.drawString(percentPlating + "%", 203 - sw + x, STANDUP_OFFSET_Y + y + 69);

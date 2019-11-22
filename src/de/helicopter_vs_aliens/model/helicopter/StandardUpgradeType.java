@@ -71,7 +71,7 @@ public enum StandardUpgradeType
     {
         if(level > 0 && level <= magnitudes[this.ordinal()].length)
         {
-            return magnitudes[this.ordinal()][level];
+            return magnitudes[this.ordinal()][level-1];
         }
         else return 0;
     }

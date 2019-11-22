@@ -10,7 +10,6 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.util.EnumMap;
@@ -81,7 +80,7 @@ public final class Kamaitachi extends Helicopter
     private void activatePlasma()
     {
         Audio.play(Audio.plasmaOn);
-        this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+        this.currentEnergy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
         this.plasmaActivationTimer = POWERUP_DURATION;
     }
 

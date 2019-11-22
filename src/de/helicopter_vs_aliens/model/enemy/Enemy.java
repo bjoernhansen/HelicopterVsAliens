@@ -4028,8 +4028,7 @@ public class Enemy extends MovingObject
 			}
 			this.destroy(helicopter);
 		}				
-		if(	helicopter.currentPlating <= 0
-			&& !helicopter.isDamaged)
+		if(	helicopter.isDestinedToCrash())
 		{
 			helicopter.crash();
 		}		

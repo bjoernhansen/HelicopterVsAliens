@@ -223,7 +223,7 @@ public final class Phoenix extends Helicopter
         this.isSearchingForTeleportDestination = false;
         this.destination.setLocation(x, y);
         
-        if(	(this.energy >= this.spellCosts || this.hasUnlimitedEnergy())
+        if(	(this.currentEnergy >= this.spellCosts || this.hasUnlimitedEnergy())
             && !this.isDamaged
             && !Menu.isMenuVisible
             && !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
@@ -234,7 +234,7 @@ public final class Phoenix extends Helicopter
             && y < this.bounds.getY() + 106))
         {
             Audio.play(Audio.teleport1);
-            this.energy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+            this.currentEnergy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
             this.pastTeleportTime = System.currentTimeMillis();
             
             this.nextLocation.setLocation(x, y);

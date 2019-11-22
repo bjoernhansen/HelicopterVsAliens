@@ -50,7 +50,7 @@ public class Events
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
 		SAVE_ANYWAY = true;
-	public static final int NUMBER_OF_DEBUGGING_INFOS = 15;
+	public static final int NUMBER_OF_DEBUGGING_INFOS = 16;
 	
 	public static HighscoreEntry[][]
 		highscore = new HighscoreEntry[7][10];
@@ -252,7 +252,7 @@ public class Events
 				}
 				else if(e.getKeyChar() == 'n')
 				{
-					helicopter.currentPlating = 0f;
+					helicopter.destroyPlating();
 					helicopter.crash();
 				}
 				else if(e.getKeyChar() == 't'){
@@ -438,7 +438,7 @@ public class Events
 		// Reparatur des Helikopters
 		if(Menu.repairShopButton.get("RepairButton").bounds.contains(cursor))
 		{
-			if(	helicopter.currentPlating == helicopter.maxPlating())
+			if(	helicopter.hasMaximumPlating())
 			{
 				Menu.block(1);
 			}
@@ -1094,13 +1094,15 @@ public class Events
 		Audio.applause1.stop();
 		playingTime += System.currentTimeMillis() - timeAktu;
 		Menu.repairShopTime = Menu.returnTimeDisplayText(playingTime);
-		helicopter.setPercentPlatingDisplayColor();
-		if(helicopter.currentPlating < helicopter.maxPlating())
+		helicopter.setRelativePlatingDisplayColor();
+		if(!helicopter.hasMaximumPlating())
 	    {
 			Menu.repairShopButton.get("RepairButton").costs = repairFee(helicopter, helicopter.isDamaged);
 	    }
-		else{
-			Menu.repairShopButton.get("RepairButton").costs = 0;}
+		else
+		{
+			Menu.repairShopButton.get("RepairButton").costs = 0;
+		}
 		Menu.clearMessage();
 		Menu.messageTimer = 0;
 	}
@@ -1110,8 +1112,7 @@ public class Events
 		return (totalLoss
 					? TOTAL_LOSS_REPAIR_BASE_FEE 
 					: DEFAULT_REPAIR_BASE_FEE) 
-				+ 25 * Math.round( 6.5f * ( helicopter.maxPlating()
-								    		- helicopter.currentPlating));
+				+ 25 * Math.round( 6.5f * helicopter.missingPlating());
 	}
 	
 	private static void changeWindow(WindowType newWindow)
