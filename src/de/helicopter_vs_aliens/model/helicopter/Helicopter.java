@@ -72,14 +72,13 @@ public abstract class Helicopter extends MovingObject
         RECENT_DAMAGE_TIME = 50,        // Zeitrate in der die Lebenspunktleiste nach Kollisionen blinkt
         SLOW_TIME = 100,
         FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
-        ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
+        STATIC_CHARGE_ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
         STANDARD_PLATING_STRENGTH = 1,
         SLOW_ROTATIONAL_SPEED	= 7,
         FAST_ROTATIONAL_SPEED	= 12,
         DAY_BONUS_FACTOR = 60,
         NIGHT_BONUS_FACTOR = 90,
 		START_ENERGY = 150;
-		
     
     private static final float
         NOSEDIVE_SPEED = 12f,	        // Geschwindigkeit des Helikopters bei Absturz
@@ -87,10 +86,6 @@ public abstract class Helicopter extends MovingObject
         STANDARD_PROTECTION_FACTOR = 1.0f,
         STANDARD_BASE_PROTECTION_FACTOR = 1.0f,
         PLATING_MULTIPLIER = 1.3f;
-	
-	
-
-    
     
     private static final Point
 		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
@@ -136,8 +131,8 @@ public abstract class Helicopter extends MovingObject
 		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
 	
 
-	float
-            currentEnergy;							    // verfügbare Energie;
+	private float
+        currentEnergy;						// verfügbare Energie;
     
     int
     	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
@@ -826,7 +821,8 @@ public abstract class Helicopter extends MovingObject
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
 		this.numberOfCannons = savegame.numberOfCannons;
 		this.currentPlating = savegame.currentPlating;
-		this.currentEnergy = savegame.energy;
+		
+		this.setCurrentEnergy(savegame.energy);
 		
 		if(savegame.hasFifthSpecial)
 		{
@@ -1028,12 +1024,22 @@ public abstract class Helicopter extends MovingObject
     {
     	this.isDamaged = true;
 		this.isRotorSystemActive = false;
-		this.currentEnergy = 0;
+		this.discharge();
 		this.destination.setLocation(this.bounds.getX() + 40, 520);
 		if(this.tractor != null){this.stopTractor();}
 		this.numberOfCrashes++;
 		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosions);}
 		else{this.isCrashing = true;}
+    }
+	
+	void discharge()
+	{
+		this.setCurrentEnergy(0.0f);
+	}
+    
+    private void setCurrentEnergy(float currentEnergy)
+    {
+        this.currentEnergy = Math.max(0, Math.min(this.getMaximumEnergy(), currentEnergy));
     }
     
     private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
@@ -1332,17 +1338,16 @@ public abstract class Helicopter extends MovingObject
         return currentPlating;
     }
     
-	public void receiveStaticCharged(float degree)
+	public void receiveStaticCharge(float degree)
 	{
 		if(!this.isInvincible())
-		{			
-			this.currentEnergy
-				= this.hasUnlimitedEnergy()
-					? this.currentEnergy
-					: Math.max( 0, 
-								this.currentEnergy
-								-degree*this.getEnergyDrain());
-			this.slowDown();
+		{
+            this.slowDown();
+		    if(!this.hasUnlimitedEnergy())
+            {
+                float energyConsumption = degree * this.getStaticChargeEnergyDrain();
+                this.drainEnergy(energyConsumption);
+            }
 		}
 	}
     
@@ -1351,9 +1356,9 @@ public abstract class Helicopter extends MovingObject
         this.slowedTimer = SLOW_TIME;
     }
     
-    float getEnergyDrain()
+    float getStaticChargeEnergyDrain()
     {
-        return ENERGY_DRAIN;
+        return STATIC_CHARGE_ENERGY_DRAIN;
     }
     
     public boolean canCollideWith(Enemy e)
@@ -1386,13 +1391,14 @@ public abstract class Helicopter extends MovingObject
 
 	boolean hasEnoughEnergyForAbility()
 	{
-		return this.currentEnergy >= this.spellCosts || this.hasUnlimitedEnergy();
+		return this.getCurrentEnergy() >= this.spellCosts || this.hasUnlimitedEnergy();
 	}
 
 	public void updateEnergyAbility()
 	{
 		int previousLevelOfEnergyAbility = this.getUpgradeLevelOf(ENERGY_ABILITY) - 1;
-		this.currentEnergy += this.getMaximumEnergy() - this.getMaximumEnergy(previousLevelOfEnergyAbility);
+		float energyBoost = this.getMaximumEnergy() - this.getMaximumEnergy(previousLevelOfEnergyAbility);
+		this.rechargeEnergy(energyBoost);
 		this.updateRegenerationRate();
 	}
     
@@ -1648,7 +1654,7 @@ public abstract class Helicopter extends MovingObject
 
 	public void rechargeEnergy(float energyBoost)
 	{
-		this.currentEnergy = Math.max(0, Math.min(this.getMaximumEnergy(), this.getCurrentEnergy() + energyBoost));
+	    this.setCurrentEnergy(this.getCurrentEnergy() + energyBoost);
 	}
 
 	public float getMaximumEnergy()
@@ -1659,14 +1665,34 @@ public abstract class Helicopter extends MovingObject
 
 	public void restoreEnergy()
 	{
-		this.currentEnergy = this.getMaximumEnergy();
+		this.setCurrentEnergy(this.getMaximumEnergy());
 	}
     
     public float getMissingEnergy()
     {
         return this.getMaximumEnergy() - this.getCurrentEnergy();
     }
-	
+    
+    protected void consumeSpellCosts()
+    {
+        this.drainEnergy(this.getEffectiveSpellCosts());
+    }
+    
+	void drainEnergy(float energyConsumption)
+	{
+	    this.rechargeEnergy(-energyConsumption);
+	}
+	   
+    protected float getEffectiveSpellCosts()
+    {
+        return this.hasUnlimitedEnergy() ? 0.0f : this.spellCosts;
+    }
+    
+    protected boolean isDischarged()
+    {
+        return this.getCurrentEnergy() <= 0;
+    }
+    
 	public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
 		return this.levelOfUpgrade[standardUpgradeType.ordinal()];

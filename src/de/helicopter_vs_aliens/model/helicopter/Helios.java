@@ -24,7 +24,8 @@ public final class Helios extends Helicopter
 {
     public static final float
         HELIOS_MAX_MONEY_DIVISOR = 110250;        // Summe der ersten 49 natürlichen Zahlen (0.5 * 49 * 50) * NIGHT_BONUS_FACTOR
-        
+    public static final float END_OF_POWERUP_GENERATION_PROBABILITY = 0.7f;
+    
     private int
         powerUpGeneratorTimer;
     
@@ -93,7 +94,7 @@ public final class Helios extends Helicopter
     private void activatePowerUpGenerator(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWERUP_DURATION);
-        this.currentEnergy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+        this.consumeSpellCosts();
         Calculation.randomize();
         for(int i = 0; i < 3; i++)
         {
@@ -108,7 +109,7 @@ public final class Helios extends Helicopter
                 this.getPowerUp( powerUp, PowerUpType.values()[Calculation.getRandomOrderValue(i)],
                         false, i == 0);
             }
-            if(Calculation.tossUp(0.7f)){break;}
+            if(Calculation.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}
         }
     }
 

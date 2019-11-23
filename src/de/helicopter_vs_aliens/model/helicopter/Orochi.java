@@ -123,13 +123,10 @@ public final class Orochi extends Helicopter
     @Override
     boolean isShootingStunningMissile()
     {
-        if (this.isNextMissileStunner
-            && (this.currentEnergy >= this.spellCosts
-            || this.hasUnlimitedEnergy()))
+        // TODO boolsche Methode, die mehr macht als einen boolean zu berechnen --> ändern
+        if (this.isNextMissileStunner && this.hasEnoughEnergyForAbility())
         {
-            this.currentEnergy -= this.hasUnlimitedEnergy()
-                ? 0
-                : this.spellCosts;
+            this.consumeSpellCosts();
             return true;
         }
         return false;
@@ -169,9 +166,7 @@ public final class Orochi extends Helicopter
     @Override
     Color getInputColorCannon()
     {
-        if (this.isNextMissileStunner
-            && (this.currentEnergy >= this.spellCosts
-            || this.hasUnlimitedEnergy()))
+        if (this.isNextMissileStunner && this.hasEnoughEnergyForAbility())
         {
             return Coloration.variableBlue;
         }

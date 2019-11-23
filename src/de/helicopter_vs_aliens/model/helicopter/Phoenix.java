@@ -223,18 +223,11 @@ public final class Phoenix extends Helicopter
         this.isSearchingForTeleportDestination = false;
         this.destination.setLocation(x, y);
         
-        if(	(this.currentEnergy >= this.spellCosts || this.hasUnlimitedEnergy())
-            && !this.isDamaged
-            && !Menu.isMenuVisible
-            && !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
-            && y >= GROUND_Y)
-            && !(	   x > this.bounds.getX() + 33
-            && x < this.bounds.getX() + 133
-            && y > this.bounds.getY() + 6
-            && y < this.bounds.getY() + 106))
+        if(this.canTeleportTo(x, y))
         {
             Audio.play(Audio.teleport1);
-            this.currentEnergy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+            
+            this.consumeSpellCosts();
             this.pastTeleportTime = System.currentTimeMillis();
             
             this.nextLocation.setLocation(x, y);
@@ -248,6 +241,23 @@ public final class Phoenix extends Helicopter
             this.bonusKillsTimer = NICE_CATCH_TIME;
             this.bonusKillsMoney = 0;
         }
+    }
+    
+    private boolean canTeleportTo(int x, int y)
+    {
+        return this.hasEnoughEnergyForAbility()
+                && !this.isDamaged
+                && !Menu.isMenuVisible
+                && !this.hasValidTeleportDestination(x, y);
+    }
+    
+    private boolean hasValidTeleportDestination(int x, int y)
+    {
+        return  !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y && y >= GROUND_Y)
+                && !(	   x > this.bounds.getX() + 33
+                        && x < this.bounds.getX() + 133
+                        && y > this.bounds.getY() + 6
+                        && y < this.bounds.getY() + 106);
     }
     
     @Override

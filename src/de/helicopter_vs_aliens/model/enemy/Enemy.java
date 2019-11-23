@@ -43,7 +43,6 @@ import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.*;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
@@ -4497,7 +4496,7 @@ public class Enemy extends MovingObject
 									 Helicopter helicopter)
 	{
 		this.staticChargeTimer = STATIC_CHARGE_TIME;
-		helicopter.receiveStaticCharged(2.5f);
+		helicopter.receiveStaticCharge(2.5f);
 		Audio.play(Audio.emp);
 		Explosion.start(explosion, helicopter, (int)this.bounds.getCenterX(), (int)this.bounds.getCenterY(), STUNNING, false, this);
 	}

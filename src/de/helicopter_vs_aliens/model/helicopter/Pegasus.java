@@ -103,7 +103,7 @@ public final class Pegasus extends Helicopter
     private void releaseEMP(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         this.empTimer.start();
-        this.currentEnergy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+        this.consumeSpellCosts();
         Audio.play(Audio.emp);
         Explosion.start(explosion,
                 this,

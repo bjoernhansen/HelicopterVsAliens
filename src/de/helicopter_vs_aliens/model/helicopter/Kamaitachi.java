@@ -80,7 +80,7 @@ public final class Kamaitachi extends Helicopter
     private void activatePlasma()
     {
         Audio.play(Audio.plasmaOn);
-        this.currentEnergy -= this.hasUnlimitedEnergy() ? 0 : this.spellCosts;
+        this.consumeSpellCosts();
         this.plasmaActivationTimer = POWERUP_DURATION;
     }
 

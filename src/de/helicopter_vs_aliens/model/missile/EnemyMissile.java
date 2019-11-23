@@ -95,7 +95,7 @@ public class EnemyMissile
     	else 
     	{
     		Audio.play(Audio.explosion5);
-    		helicopter.receiveStaticCharged(1.0f);
+    		helicopter.receiveStaticCharge(1.0f);
     	}
         this.hasHit = true;
     }

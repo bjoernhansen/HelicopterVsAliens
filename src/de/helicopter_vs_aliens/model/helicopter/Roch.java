@@ -94,7 +94,7 @@ public final class Roch extends Helicopter
     @Override
     public boolean isEnergyAbilityActivatable()
     {
-        return this.currentEnergy >= POWER_SHIELD_ACTIVATION_THRESHOLD && this.hasEnoughEnergyForAbility();
+        return this.getCurrentEnergy() >= POWER_SHIELD_ACTIVATION_THRESHOLD && this.hasEnoughEnergyForAbility();
     }
 
     @Override
@@ -133,15 +133,14 @@ public final class Roch extends Helicopter
             if(this.isPowerShieldActivated)
             {
                 this.shutDownPowerShield();
-                this.currentEnergy = 0;
+                this.discharge();
             }
         }
         else
         {
-            this.currentEnergy
-                    -= this.hasUnlimitedEnergy()
-                    ? 0.0
-                    : this.spellCosts * enemy.collisionDamage(this);
+            float energyConsumption = this.collisionPowerShieldConsumption(enemy);
+            this.drainEnergy(energyConsumption);
+            
             if(this.isInvincible())
             {
                 if(playCollisionSound){Audio.play(Audio.shieldUp);}
@@ -149,7 +148,14 @@ public final class Roch extends Helicopter
             else if(playCollisionSound){Audio.play(Audio.explosion1);}
         }
     }
-
+    
+    private float collisionPowerShieldConsumption(Enemy enemy)
+    {
+        return this.hasUnlimitedEnergy()
+                ? 0.0f
+                : this.spellCosts * enemy.collisionDamage(this);
+    }
+    
     @Override
     float calculateEnergyRegenerationRate()
     {
@@ -180,34 +186,38 @@ public final class Roch extends Helicopter
         if(this.canAbsorbMissileDamage())
         {
             Audio.play(Audio.shieldUp);
-            this.currentEnergy -= this.hasUnlimitedEnergy()
-                ? 0
-                : this.getProtectionFactor()
-                    * ENEMY_MISSILE_DAMAGE_FACTOR
-                    * this.spellCosts;
+            this.drainEnergy(this.missileDamagePowerShieldConsumption());
         }
         else
         {
             if(this.isPowerShieldActivated)
             {
                 this.shutDownPowerShield();
-                this.currentEnergy = 0;
+                this.discharge();
             }
             super.takeMissileDamage();
         }
     }
     
+    private float missileDamagePowerShieldConsumption()
+    {
+        return  this.hasUnlimitedEnergy()
+                ? 0.0f
+                : this.getProtectionFactor()
+                  * ENEMY_MISSILE_DAMAGE_FACTOR
+                  * this.spellCosts;
+    }
+    
     private boolean canAbsorbMissileDamage()
     {
-        return this.isPowerShieldActivated
-                && this.hasEnoughEnergyForMissileDamageAbsorption();
+        return this.isPowerShieldActivated && this.hasEnoughEnergyForMissileDamageAbsorption();
     }
     
     private boolean hasEnoughEnergyForMissileDamageAbsorption()
     {
-        return this.currentEnergy >= this.getProtectionFactor()
-                                * ENEMY_MISSILE_DAMAGE_FACTOR
-                                * this.spellCosts
+        return this.getCurrentEnergy() >= this.getProtectionFactor()
+                                            * ENEMY_MISSILE_DAMAGE_FACTOR
+                                            * this.spellCosts
                 || this.hasUnlimitedEnergy();
     }
     
@@ -262,7 +272,7 @@ public final class Roch extends Helicopter
                        EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         super.update(missile, explosion);
-        if(this.isPowerShieldActivated && this.currentEnergy == 0)
+        if(this.isPowerShieldActivated && this.isDischarged())
         {
             this.shutDownPowerShield();
         }
@@ -278,16 +288,15 @@ public final class Roch extends Helicopter
     {
         return this.isPowerShieldActivated
             && (this.hasUnlimitedEnergy()
-            || this.currentEnergy
-            >= this.spellCosts * enemy.collisionDamage(this));
+                || this.getCurrentEnergy() >= this.spellCosts * enemy.collisionDamage(this));
     }
     
     @Override
-    float getEnergyDrain()
+    float getStaticChargeEnergyDrain()
     {
         return this.isPowerShieldActivated
                 ? REDUCED_ENERGY_DRAIN
-                : super.getEnergyDrain();
+                : super.getStaticChargeEnergyDrain();
     }
     
     @Override
