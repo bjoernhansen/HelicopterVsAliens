@@ -157,13 +157,13 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    float calculateEnergyRegenerationRate()
+    float getRegenerationRate()
     {
         return this.isPowerShieldActivated
                 ? this.hasUnlimitedEnergy()
                     ? 0
                     : POWER_SHIELD_E_LOSS_RATE
-                : this.regenerationRate;
+                : this.getRegenerationRate();
     }
     
     @Override
