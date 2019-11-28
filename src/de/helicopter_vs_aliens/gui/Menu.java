@@ -34,6 +34,7 @@ import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
 // TODO mögichst alle längeren Texte innerhalb dieser Klasse ins Dictionary überführen
 // TODO An vielen Stellen im Menü werden Zustände immer wieder neu berechnet anstatt sie einmal zu speichern
+// TODO Klasse ist zu groß --> splitten
 public class Menu
 {
 	private static final String
@@ -542,7 +543,7 @@ public class Menu
         	g2d.drawString(activationState(Controller.antialiasing)			, SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 2 * SETTING_LINE_SPACING);
         	
         	g2d.setColor(Coloration.golden);
-        	g2d.drawString(language == ENGLISH ? "English" : "Deutsch"				, SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 3 * SETTING_LINE_SPACING);
+        	g2d.drawString(language.getNativeName(), SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 3 * SETTING_LINE_SPACING);
         	
         	if(page == 4){g2d.setColor(Color.white);}
         	g2d.drawString(HighscoreEntry.currentPlayerName, SETTING_LEFT + SETTING_COLUMN_SPACING, SETTING_TOP + 4 * SETTING_LINE_SPACING);
@@ -592,15 +593,15 @@ public class Menu
     	// allgmeine Anzeigen
     	g2d.setPaint(Coloration.gradientVariableWhite);
         g2d.setFont(fontProvider.getPlain(52));
-        String inputString = language == ENGLISH ? "Repair shop" : "Werkstatt";
+        String inputString = dictionary.repairShop();
         g2d.drawString(inputString, 251 + (285 - g2d.getFontMetrics().stringWidth(inputString))/2, 65);
         g2d.setColor(Coloration.lightOrange);
         g2d.setFont(fontProvider.getPlain(22));
-        g2d.drawString((language == ENGLISH ? "Credit: " : "Guthaben: ") + Events.money + " €", 27, 35);
-        g2d.drawString((language == ENGLISH ? "Current level: " : "aktuelles Level: ") + Events.level, 562, 35);
+        g2d.drawString(String.format("%s: %d €", dictionary.credit(), Events.money), 27, 35);
+		g2d.drawString(String.format("%s: %d", dictionary.currentLevel(), Events.level), 562, 35);
         g2d.setFont(fontProvider.getPlain(18));
-        g2d.drawString(dictionary.playingTime() + repairShopTime, 27, 75);
-              
+        g2d.drawString(String.format("%s: %s", dictionary.playingTime(), repairShopTime), 27, 75);
+        
         // Helicopter-Anzeige
         paintHelicopterDisplay(g2d, helicopter, 0, 10); //58
         
@@ -610,7 +611,7 @@ public class Menu
         // Die Einsätze
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(language == ENGLISH ? "Mission:" : "Einsatz:", 27, 382);
+        g2d.drawString(String.format("%s:", dictionary.mission()), 27, 382);
    
         repairShopButton.get("Einsatz").paint(g2d);
                        
@@ -623,18 +624,10 @@ public class Menu
         
         g2d.setColor(Coloration.lightOrange);
         g2d.setFont(fontProvider.getBold(16));
-        g2d.drawString(language == ENGLISH ? "State:" : "Zustand:", STATUS_BAR_X1, STANDUP_OFFSET_Y - 5);
-        
-        if(helicopter.isDamaged)
-        {            
-            g2d.setColor(Color.red);
-            g2d.drawString(language == ENGLISH ? "damaged" : "beschädigt", STATUS_BAR_X2, STANDUP_OFFSET_Y - 5);
-        }
-        else
-        {
-            g2d.setColor(Color.green);
-            g2d.drawString(language == ENGLISH ? "ready" : "einsatzbereit", STATUS_BAR_X2, STANDUP_OFFSET_Y - 5);
-        }
+        g2d.drawString(String.format("%s:", dictionary.state()), STATUS_BAR_X1, STANDUP_OFFSET_Y - 5);
+    
+        g2d.setColor(helicopter.isDamaged ? Color.red : Color.green);
+        g2d.drawString(dictionary.stateCondition(helicopter.isDamaged), STATUS_BAR_X2, STANDUP_OFFSET_Y - 5);
         
         // Standard-Upgrades
         for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
@@ -869,8 +862,7 @@ public class Menu
 				Events.lastBonus = 0;
 				Events.lastExtraBonus = 0;
 			}
-			else if(	moneyDisplayTimer >
-						BONUS_DISPLAY_TIME + 100)
+			else if(moneyDisplayTimer > MONEY_DISPLAY_TIME)
 			{
 				moneyDisplayTimer = DISABLED;
 			}				
@@ -1197,11 +1189,12 @@ public class Menu
         		       292, 449);
     }
     
-    private static void paintTimeDisplay(Graphics2D g2d, long zeit)
+    private static void paintTimeDisplay(Graphics2D g2d, long time)
     {
     	g2d.setColor(Color.white);        
         g2d.setFont(fontProvider.getPlain(18));
-        String outputstring = dictionary.playingTime() + returnTimeDisplayText(zeit);
+        String outputstring = String.format("%s: %s", dictionary.playingTime(), returnTimeDisplayText(time));
+        // TODO besser lösen -> String abmessen
         g2d.drawString(outputstring, language == ENGLISH ? 646 : 661, 450);
     }
     
@@ -1282,7 +1275,7 @@ public class Menu
         	{
         		g2d.setColor(Color.red);
                 g2d.setFont(fontProvider.getPlain(14));
-                g2d.drawString(language == ENGLISH ? "damaged" : "beschädigt", 34 + x, 216 + y);
+                g2d.drawString(dictionary.damaged(), 34 + x, 216 + y);
         	}
         	g2d.setFont(fontProvider.getBold(16));
         	g2d.setColor(Coloration.plating);
@@ -1428,7 +1421,7 @@ public class Menu
 		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()];
 		repairShopButton.get("Einsatz").secondLabel = Button.SOLD[language.ordinal()][Events.timeOfDay.ordinal()];
 		
-		inGameButton.get("RepairShop").label =  dictionary.repairShop();
+		inGameButton.get("RepairShop").label =  dictionary.toTheRepairShop();
 		inGameButton.get("MainMenu").label =    dictionary.mainMenu();
 		inGameButton.get("MMNewGame1").label =  dictionary.startNewGame();
 		inGameButton.get("MMStopMusic").label = Button.MUSIC[language.ordinal()][Audio.isSoundOn ? 0 : 1];

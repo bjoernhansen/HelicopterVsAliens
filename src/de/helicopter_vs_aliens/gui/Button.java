@@ -121,7 +121,7 @@ public class Button
 	{
 		Menu.repairShopButton.put("RepairButton", new Button(23, 287, 205, 50, dictionary.repair(), dictionary.price(), true, true));
 		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()], SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0], false, true));
-		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, dictionary.repairShop(), null, false, false));
+		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, dictionary.toTheRepairShop(), null, false, false));
 		Menu.inGameButton.put("MainMenu",     new Button(897, 431, 121, 25, dictionary.mainMenu(), null, false, false));
 		Menu.inGameButton.put("MMNewGame1",   new Button(385, 116, 211, 35, dictionary.startNewGame(), null, false, false));
 		Menu.inGameButton.put("MMStopMusic",  new Button(385, 161, 211, 35, MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1], null, false, false));

@@ -183,7 +183,6 @@ public final class Dictionary
         return specialUpgrades.get(FIFTH_SPECIAL);
     }
     
-    
     public String thirdCannon()
     {
         return this.languageProperties.getProperty("thirdCannon");
@@ -219,6 +218,11 @@ public final class Dictionary
         return this.languageProperties.getProperty("repairShop");
     }
     
+    public String toTheRepairShop()
+    {
+        return this.languageProperties.getProperty("toTheRepairShop");
+    }
+    
     public String mainMenu()
     {
         return this.languageProperties.getProperty("mainMenu");
@@ -237,6 +241,36 @@ public final class Dictionary
     public String cancel()
     {
         return this.languageProperties.getProperty("cancel");
+    }
+    
+    public String credit()
+    {
+        return this.languageProperties.getProperty("credit");
+    }
+    
+    public String mission()
+    {
+        return this.languageProperties.getProperty("mission");
+    }
+    
+    public String state()
+    {
+        return this.languageProperties.getProperty("state");
+    }
+    
+    public String damaged()
+    {
+        return this.languageProperties.getProperty("state.damaged");
+    }
+    
+    public String stateCondition(boolean damaged)
+    {
+        return this.languageProperties.getProperty(damaged ? "state.damaged" : "state.ready");
+    }
+    
+    public String currentLevel()
+    {
+        return this.languageProperties.getProperty("currentLevel");
     }
     
     public String helicopterName(HelicopterType type)

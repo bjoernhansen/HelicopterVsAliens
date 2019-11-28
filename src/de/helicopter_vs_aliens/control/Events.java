@@ -610,6 +610,7 @@ public class Events
 				Menu.block(4);}
 			else if(helicopter.hasFifthSpecial()){
 				Menu.block(7);}
+			// TODO helicopter.getFifthSpecialCosts
 			else if(money < Helicopter.CHEAP_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < Roch.JUMBO_MISSILE_COSTS))
 			{
 				Menu.block(6);
@@ -617,8 +618,10 @@ public class Events
 			else
 			{
 				Audio.play(Audio.cash);
+				// TODO auch hier: helicopter.getFifthSpecialCosts
 				money -= helicopter.getType() == ROCH ? Roch.JUMBO_MISSILE_COSTS : Helicopter.CHEAP_SPECIAL_COSTS;
 				helicopter.obtainFifthSpecial();
+				// TODO adjustFirerate in obtainFifthSpecial integrieren, PowerUp firerate berücksichtigen
 				if(helicopter.getType() == KAMAITACHI || helicopter.getType() == PEGASUS){helicopter.adjustFireRate(false);}
 				Menu.repairShopButton.get("Special" + 4).costs = 0;
 			}
