@@ -35,7 +35,7 @@ public final class Dictionary
         specialUpgrades = new EnumMap<>(SpecialUpgradeType.class);
     
     private EnumMap<StandardUpgradeType, List<String>>
-            standardUpgradesImprovements = new EnumMap<>(StandardUpgradeType.class);
+        standardUpgradesImprovements = new EnumMap<>(StandardUpgradeType.class);
 
     private EnumMap<HelicopterType, String>
         helicopterNames = new EnumMap<>(HelicopterType.class);
@@ -44,7 +44,8 @@ public final class Dictionary
         helicopterInfos = new EnumMap<>(HelicopterType.class);
 
     private List <String>
-        columnNames = new ArrayList<>();
+        columnNames = new ArrayList<>(),
+        settingOptions = new ArrayList<>();
     
     
     public Dictionary()
@@ -132,10 +133,17 @@ public final class Dictionary
             }
             helicopterInfos.put(type, infos);
         }
-        
-        for(int i = 0; i < Menu.NUMBER_OF_COLUMN_NAMES; i++)
+    
+        columnNames.clear();
+        for(int i = 1; i <= Menu.NUMBER_OF_COLUMN_NAMES; i++)
         {
             columnNames.add(this.languageProperties.getProperty("highscore.columnNames." + i));
+        }
+    
+        settingOptions.clear();
+        for(int i = 1; i <= Menu.NUMBER_OF_SETTING_OPTIONS; i++)
+        {
+            settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
         }
         
         accountForHelicopterChange();
@@ -261,6 +269,26 @@ public final class Dictionary
     public String damaged()
     {
         return this.languageProperties.getProperty("state.damaged");
+    }
+    
+    public String developedBy()
+    {
+        return this.languageProperties.getProperty("developedBy");
+    }
+    
+    public String settingOption(int optionNumber)
+    {
+        return settingOptions.get(optionNumber);
+    }
+    
+    public String helicopterSelectionRequest()
+    {
+        return this.languageProperties.getProperty("helicopterSelectionRequest");
+    }
+    
+    public String settings()
+    {
+        return this.languageProperties.getProperty("settings");
     }
     
     public String stateCondition(boolean damaged)

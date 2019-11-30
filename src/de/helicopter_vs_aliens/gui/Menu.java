@@ -39,10 +39,13 @@ public class Menu
 {
 	private static final String
 		VERSION =   "Version 1.3.4",			// Spielversion
-		GAME_NAME = "Helicopter vs. Aliens";
+		GAME_NAME = "Helicopter vs. Aliens",
+	    DEVELOPERS_NAME = "Björn Hansen";
 	
 	public static final int
-		NUMBER_OF_COLUMN_NAMES = 8;
+		NUMBER_OF_COLUMN_NAMES = 8,
+        NUMBER_OF_SETTING_OPTIONS = 5,
+        NUMBER_OF_STARTSCREEN_HELICOPTERS = 4;
 
 	private static final int
     	SCORESCREEN_SPACE_BETWEEN_ROWS = 30,
@@ -56,6 +59,7 @@ public class Menu
     	SETTING_TOP = 130,
 
     	DISABLED = -1;
+     
 	
 	public static final Point
 		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262),
@@ -230,7 +234,7 @@ public class Menu
         }
 		Events.previousHelicopterType = Events.nextHelicopterType;
         Events.nextHelicopterType = null;
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < NUMBER_OF_STARTSCREEN_HELICOPTERS; i++)
 		{
 			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
@@ -268,13 +272,13 @@ public class Menu
         g2d.drawString(VERSION, 1016 - g2d.getFontMetrics().stringWidth(VERSION), 20);
         g2d.setColor(Coloration.darkGray);
         g2d.setFont(fontProvider.getItalicBold(15));
-        g2d.drawString((language == ENGLISH ? "developed by" : "ein Spiel von") + " Björn Hansen", 505, 120);
+        g2d.drawString(String.format("%s %s", dictionary.developedBy(), DEVELOPERS_NAME), 505, 120);
         
         if(messageTimer == 0)
         {
         	g2d.setColor(Coloration.variableYellow);
         	g2d.setFont(fontProvider.getPlain(29));
-        	String tempString = language == ENGLISH ? "Select a helicopter!" : "Wählen Sie einen Helikopter aus!";
+        	String tempString = dictionary.helicopterSelectionRequest();
         	g2d.drawString(tempString, (512 - g2d.getFontMetrics().stringWidth(tempString)/2), 185);
         }
         else
@@ -287,22 +291,32 @@ public class Menu
         	g2d.drawString(message[2], (512 - g2d.getFontMetrics().stringWidth(message[2])/2), 210);
         }                
          
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < NUMBER_OF_STARTSCREEN_HELICOPTERS; i++)
         {
-        	if(Events.nextHelicopterType != null && Events.nextHelicopterType.ordinal() == (helicopterSelection +i)% HelicopterType.size()){g2d.setColor(Color.white);}
+        	if(    Events.nextHelicopterType != null
+                && Events.nextHelicopterType.ordinal() == (helicopterSelection +i)% HelicopterType.size())
+        	{
+        	    g2d.setColor(Color.white);
+        	}
             else{g2d.setColor(Coloration.lightGray);}
         	g2d.setFont(fontProvider.getBold(20));
         	
         	String className = Menu.dictionary.typeName(HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()]);
         	int sw = g2d.getFontMetrics().stringWidth(className);
-        	g2d.drawString(className, 30 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE + (206-sw)/2, 225 + STARTSCREEN_HELICOPTER_OFFSET_Y);
+        	g2d.drawString(
+        	        className,
+                    30 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE + (206-sw)/2,
+                    225 + STARTSCREEN_HELICOPTER_OFFSET_Y);
         	
         	g2d.setFont(new Font("Dialog", Font.BOLD, 15));
         	
         	HelicopterType type = HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()];
         	for(int j = 0; j < 3; j++)
 			{
-				g2d.drawString(Menu.dictionary.helicopterInfos(type).get(j), 29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE, 380 + j * 20 + STARTSCREEN_HELICOPTER_OFFSET_Y);
+				g2d.drawString(
+				        Menu.dictionary.helicopterInfos(type).get(j),
+                        29 + STARTSCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
+                        380 + j * 20 + STARTSCREEN_HELICOPTER_OFFSET_Y);
 			}
         	
           
@@ -375,7 +389,7 @@ public class Menu
         g2d.setFont(fontProvider.getPlain(29));
         if(window == SETTINGS)
         {
-        	g2d.drawString(language == ENGLISH ? "Settings" : "Optionen", 40, 55);           
+        	g2d.drawString(dictionary.settings(), 40, 55);
         }
         else{g2d.drawString(startscreenMenuButton.get(Integer.toString(page)).label, 40, 55);}
        
@@ -456,11 +470,15 @@ public class Menu
             				g2d.setColor(Color.white);
             				if(i==1)
             				{
-            					tempString = Events.recordTime[j-1][i-1] == 0 ? "" : Long.toString(Events.recordTime[j-1][i-1]) + " min";
+            					tempString = Events.recordTime[j-1][i-1] == 0
+                                                ? ""
+                                                : Long.toString(Events.recordTime[j-1][i-1]) + " min";
             				}
             				else
             				{
-            					tempString = Events.recordTime[j-1][i-1] == 0 ? "" : Long.toString(Events.recordTime[j-1][i-1]-Events.recordTime[j-1][i-2]) + " min";
+            					tempString = Events.recordTime[j-1][i-1] == 0
+                                                ? ""
+                                                : Long.toString(Events.recordTime[j-1][i-1]-Events.recordTime[j-1][i-2]) + " min";
             				}
             				
             			}
@@ -473,15 +491,24 @@ public class Menu
         		if(page > 1 && page < 2 + HelicopterType.size())
             	{
 					helicopterDummies.get(HelicopterType.getValues()[page-2]).startScreenMenuPaint(g2d);
-            	}        		
-        		int columnDistance = 114/*135*/, topLine = 125, lineDistance = 21, leftColumn = 55, realLeftColumn = leftColumn, xShift = 10;
+            	}
+            	
+        		int columnDistance = 114,
+                    topLine = 125,
+                    lineDistance = 21,
+                    leftColumn = 55,
+                    realLeftColumn = leftColumn,
+                    xShift = 10;
         		    			
         		g2d.setColor(Color.lightGray);    			
         		for(int i = 0; i < NUMBER_OF_COLUMN_NAMES; i++)
     			{
     				if(i == 1){realLeftColumn = leftColumn - 46;}
     				else if(i == 2){realLeftColumn = leftColumn + 42;}
-    				g2d.drawString(dictionary.columnNames().get(i), 	realLeftColumn + i * columnDistance, topLine - lineDistance);
+    				g2d.drawString(
+    						dictionary.columnNames().get(i),
+							realLeftColumn + i * columnDistance,
+							topLine - lineDistance);
     			}
     			
         		for(int j = 0; j < HighscoreEntry.NUMBER_OF_ENTRIES; j++)
@@ -512,13 +539,12 @@ public class Menu
         else if(window  == SETTINGS)
         {        	
         	g2d.setFont(fontProvider.getPlain(18));
-        	
         	g2d.setColor(Coloration.lightestGray);
-        	g2d.drawString(language == ENGLISH ? "Display:"		: "Darstellung: "	, SETTING_LEFT		, SETTING_TOP + 0 * SETTING_LINE_SPACING);
-        	g2d.drawString(language == ENGLISH ? "Music:" 		: "Musik: "			, SETTING_LEFT		, SETTING_TOP + 1 * SETTING_LINE_SPACING);
-        	g2d.drawString(language == ENGLISH ? "Antialiasing:": "Kantenglättung: ", SETTING_LEFT		, SETTING_TOP + 2 * SETTING_LINE_SPACING);
-        	g2d.drawString(language == ENGLISH ? "Language: " 	: "Sprache: "		, SETTING_LEFT		, SETTING_TOP + 3 * SETTING_LINE_SPACING);
-        	g2d.drawString(language == ENGLISH ? "Player name:"	: "Spielername:"	, SETTING_LEFT		, SETTING_TOP + 4 * SETTING_LINE_SPACING);
+        	
+        	for(int i = 0; i < NUMBER_OF_SETTING_OPTIONS; i++)
+            {
+                g2d.drawString(dictionary.settingOption(i), SETTING_LEFT, SETTING_TOP + i * SETTING_LINE_SPACING);
+            }
         	        	
         	g2d.setColor(Coloration.golden);
         	g2d.drawString( Button.DISPLAY[language.ordinal()][Main.isFullScreen ? 1 : 0]
@@ -939,7 +965,7 @@ public class Menu
 		if(Events.timeOfDay == NIGHT){g2d.setColor(Color.red);}
         else{g2d.setColor(Coloration.red);}
         g2d.setFont(fontProvider.getPlain(22));
-        g2d.drawString((language == ENGLISH ? "Credit: " : "Guthaben: ") + Events.money + " €", 20, 35);
+        g2d.drawString(String.format("%s: %d €", dictionary.credit(), Events.money), 20, 35);
         if(Events.lastBonus > 0)
         {            
             if(Events.timeOfDay == NIGHT){g2d.setColor(Coloration.MONEY_DISPLAY_NIGHT_RED);}
