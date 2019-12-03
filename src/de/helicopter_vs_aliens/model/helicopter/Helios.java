@@ -106,7 +106,7 @@ public final class Helios extends Helicopter
             }
             else
             {
-                this.getPowerUp( powerUp, PowerUpType.values()[Calculation.getRandomOrderValue(i)],
+                this.getPowerUp( powerUp, PowerUpType.getValues()[Calculation.getRandomOrderValue(i)],
                         false, i == 0);
             }
             if(Calculation.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}

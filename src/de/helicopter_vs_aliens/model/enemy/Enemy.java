@@ -4347,7 +4347,7 @@ public class Enemy extends MovingObject
 				 this, 
 				 Calculation.tossUp(0.14f)
 					? REPARATION
-					: PowerUpType.values()[Calculation.random(this.type.isMajorBoss() ? 5 : 6)], false);
+					: PowerUpType.getValues()[Calculation.random(this.type.isMajorBoss() ? 5 : 6)], false);
 		
 	}
 	

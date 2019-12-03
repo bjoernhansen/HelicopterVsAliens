@@ -1,9 +1,26 @@
+Primäre Reihenfolge:
+
+1. Dictionary und Helicopter Class Inheritance abschließen --> Merge in Master-Branch
+2. neuer Branch --> JavaFX und zu Malendes auslagern
+   --> Interface Paintable
+   --> Abstrakte Klasse Appearance erbt von Paintable
+   --> hat Referenz auf MovingObject (wird intern auf das richtige Objekt gecastet)
+   --> Moving Object erbt auch von Paintable und ruft paintrable von Appearance, auf welches es eine Referenz gibt
+   --> eventuell mit "leichten" Klasse beginnen PowerUps, Backgrpund, etc.
+3. zum Beispiel Timer oder Inheritance für Enemy und andere Klassen (zum Beispiel PowerUps)
+
+
+Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kerhwerte unterbinden innerhalb gewisser Zeit
+wenn gedreht an Barrier
+
+Ausweichenden Lilanen sollten immer vom Helicopter weg ausweichen
+
+
 Dictionary für Sprachespezifische einführen, Übersetzungen mit Properties einlesen
 
 Vererbung auch für andere Klassen wie zum Beispiel PowerUps einführen
 
-
-
+UnitTests (JUnit5) einführen, zunächst für kleine Klassen
 
 zuerst: die JavaFX-Sachen ausprobieren (zuerst evtl. in einem Testprojekt)
 

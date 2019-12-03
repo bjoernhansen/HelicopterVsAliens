@@ -299,4 +299,10 @@ public final class Phoenix extends Helicopter
             this.bonusKillsMoney += Events.lastBonus;
         }
     }
+    
+    @Override
+    public boolean hasTimeRecordingMissiles()
+    {
+        return true;
+    }
 }

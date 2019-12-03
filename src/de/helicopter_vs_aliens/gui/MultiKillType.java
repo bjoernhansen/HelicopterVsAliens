@@ -8,11 +8,18 @@ enum MultiKillType
     MEGA_KILL("Mega Kill",41),
     MULTI_KILL("Multi Kill", 47),
     MONSTER_KILL("Monster Kill", 52);
-
-    private int textSize;
-    private String designation;
-
-
+    
+    
+    private static final MultiKillType[]
+        defensiveCopyOfValues = values();
+    
+    private int
+        textSize;
+    
+    private String
+        designation;
+    
+    
     MultiKillType(String designation, int textSize)
     {
         this.designation = designation;
@@ -31,11 +38,16 @@ enum MultiKillType
 
     public static MultiKillType getMultiKillType(int numberOfKills)
     {
-        return MultiKillType.values()[multiKillSelectionValue(numberOfKills)];
+        return MultiKillType.getValues()[multiKillSelectionValue(numberOfKills)];
     }
 
     static private int multiKillSelectionValue(int numberOfKills)
     {
         return numberOfKills > 5 ? 5 : numberOfKills - 1;
+    }
+    
+    public static MultiKillType[] getValues()
+    {
+        return defensiveCopyOfValues;
     }
 }

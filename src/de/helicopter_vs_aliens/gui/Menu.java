@@ -25,6 +25,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.BlockMessage.*;
 import static de.helicopter_vs_aliens.gui.WindowType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
@@ -41,7 +42,7 @@ public class Menu
 		VERSION =   "Version 1.3.4",			// Spielversion
 		GAME_NAME = "Helicopter vs. Aliens",
 	    DEVELOPERS_NAME = "Björn Hansen";
-	
+		
 	public static final int
 		NUMBER_OF_COLUMN_NAMES = 8,
         NUMBER_OF_SETTING_OPTIONS = 5,
@@ -59,12 +60,14 @@ public class Menu
     	SETTING_TOP = 130,
 
     	DISABLED = -1;
-     
 	
 	public static final Point
 		HELICOPTER_STARTSCREEN_OFFSET = new Point(66, 262),
 		NUMBER_OF_STARTSCREEN_BUTTONS = new Point(2, 3);
-		
+    
+    private static final String[]
+        emptyMessage = {"", "", "", ""};
+	
 	public static int
 		page, 							// ausgewählte Seite im Startscreen-Menü
 		helicopterSelection,			// Helicopterauswahl im Startscreen-Menü
@@ -126,6 +129,7 @@ public class Menu
 
     static String
 		highlightedButton = "",
+        // TODO daraus eine Liste<String> machen
 		message[] = new String [4];
     
     static GradientPaint  [] 
@@ -604,11 +608,13 @@ public class Menu
 	{
     	identifyHighlightedButtons(helicopter, repairShopButton);
 		
-		if(messageTimer != 0){
-			messageTimer++;}
+		if(messageTimer != 0)
+		{
+			messageTimer++;
+		}
 		if(messageTimer > 110)
 		{
-			message[0] = message[1] = message[2] = message[3] = "";
+			clearMessage();
 			messageTimer = 0;
 		}
 		if(!helicopter.isDamaged){helicopter.rotatePropellerSlow();}
@@ -1210,9 +1216,7 @@ public class Menu
     {        
         g2d.setColor(Color.white);        
         g2d.setFont(fontProvider.getPlain(18));
-        g2d.drawString("FPS: " + (fps == 0 ? (language == ENGLISH ? 
-        		       "please wait" : "bitte warten") : fps), 
-        		       292, 449);
+        g2d.drawString("FPS: " + (fps == 0 ? dictionary.pleaseWait() : fps), 292, 449);
     }
     
     private static void paintTimeDisplay(Graphics2D g2d, long time)
@@ -1285,12 +1289,12 @@ public class Menu
             if(unlockedTimer > UNLOCKED_DISPLAY_TIME - 50)
             {
             	g2d.setColor(Coloration.red);
-            	typeName = (language == ENGLISH ? "not available" : "nicht verfügbar");
+            	typeName = dictionary.unavailable();
             }
             else
             {
             	g2d.setColor(Coloration.darkArrowGreen);
-            	typeName = (language == ENGLISH ? "unlocked" : "freigeschaltet");
+            	typeName = dictionary.unlocked();
             }
             g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 249 + y);
         }
@@ -1478,7 +1482,7 @@ public class Menu
 				dictionary.price();
 		}
 	
-		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
+		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
 		{
 			int i = specialUpgradeType.ordinal();
 			repairShopButton.get("Special" + i).label = dictionary.specialUpgrade(specialUpgradeType);
@@ -1531,127 +1535,16 @@ public class Menu
     	return new Polygon(tempX, tempY, 12);
     }
 	
-	public static void block(int nr)
+	public static void block(BlockMessage blockMessage)
 	{
 		Audio.play(Audio.block);
-		setMessage(nr);
+        message = dictionary.blockMessage(blockMessage);
 		messageTimer = 1;
-	}
-    
-	private static void setMessage(int nr)
-	{		
-		if(language ==  ENGLISH)
-		{
-			// TODO mindestens Konstanten festlegen für die MEssages, besser ENUM definieren
-			if(nr == 1)
-			{
-				message[0] = "Your helicopter";
-				message[1] = "has been repaired";
-				message[2] = "already.";
-				message[3] = "";
-			}		
-			else if(nr == 2)
-			{
-				message[0] = "Your helicopter";
-				message[1] = "must be repaire";				   
-				message[2] = "before starting a";
-				message[3] = "new mission.";    
-			}		
-			else if(nr == 4)
-			{
-				message[0] = "Your helicopter";
-				message[1] = "must be repaired";				   
-				message[2] = "bevor the installation";
-				message[3] = "of new upgrades.";   	
-			}		
-			else if(nr == 5)
-			{
-				message[0] = "This upgrade reached";
-				message[1] = "maximum level.";				   
-				message[2] = "";
-				message[3] = "";
-			}		
-			else if(nr == 6)
-			{
-				message[0] = "You cannot afford";
-				message[1] = "this upgrade.";				   
-				message[2] = "";
-				message[3] = ""; 
-			}		
-			else if(nr == 7)
-			{
-				message[0] = "You got this special";
-				message[1] = "upgrade already.";				   
-				message[2] = "";
-				message[3] = "";   
-			}
-			else if(nr == 9)
-			{
-				message[0] = "You cannot afford";
-				message[1] = "the repairs.";				   
-				message[2] = "";
-				message[3] = "";   
-			}
-			else assert false;
-		}
-		else if(language == GERMAN)
-		{
-			if(nr == 1)					  
-			{
-				message[0] = "Ihr Helikopter ist";
-				message[1] = "bereits repariert ";
-				message[2] = "worden.";
-				message[3] = "";
-			}		
-			else if(nr == 2)
-			{
-				message[0] = "Vor einem neuen";
-				message[1] = "Einsatz muss Ihr";				   
-				message[2] = "Helikopter";
-				message[3] = "repariert werden!";   
-			}		
-			else if(nr == 4)
-			{
-				message[0] = "Vor der Installation";
-				message[1] = "neuer Upgrades muss";				   
-				message[2] = "Ihr Helikopter";
-				message[3] = "repariert werden!";   	
-			}		
-			else if(nr == 5)
-			{
-				message[0] = "Für dieses Upgrade";
-				message[1] = "wurde die maximale";				   
-				message[2] = "Ausbaustufe bereits";
-				message[3] = "erreicht.";
-			}		
-			else if(nr == 6)
-			{
-				message[0] = "Ihre finanziellen";
-				message[1] = "Mittel reichen für";
-				message[2] = "diese Anschaffung";
-				message[3] = "nicht aus.";	
-			}		
-			else if(nr == 7)
-			{
-				message[0] = "Sie haben dieses";
-				message[1] = "Spezial-Upgrade";				   
-				message[2] = "bereits erworben.";
-				message[3] = "";   
-			}
-			else if(nr == 9)
-			{
-				message[0] = "Für eine Reparatur ";
-				message[1] = "reicht ihr Guthaben ";				   
-				message[2] = "nicht aus.";
-				message[3] = "";   
-			}
-			else assert false;
-		}
 	}
 	
 	public static void setStartscreenMessage(HelicopterType helicopterType)
 	{		
-		// TODO Strings in Dictionary auslagern
+		// TODO Strings in Dictionary (2 weitere für BlockMessage) auslagern
 		if(!helicopterType.getUnlockerTypes().isEmpty())
 		{			
 			if(language == ENGLISH)
@@ -1690,10 +1583,7 @@ public class Menu
 	   
 	public static void clearMessage()
 	{
-		message[0] = "";
-		message[1] = "";				   
-		message[2] = "";
-		message[3] = "";   
+	    message = emptyMessage;
 	}
 	
 	

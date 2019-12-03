@@ -13,7 +13,7 @@ public class EnemySelector
 
     EnemySelector()
     {
-        EnemyType[] values = EnemyType.values();
+        EnemyType[] values = EnemyType.getValues();
         for(int i = 0; i < BORDERS.size()-1; i++)
         {
             map.put(BORDERS.get(i), new RangeTypePair(BORDERS.get(i+1)-1, values[i]));

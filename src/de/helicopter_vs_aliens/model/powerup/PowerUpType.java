@@ -7,5 +7,13 @@ public enum PowerUpType
     UNLIMITRED_ENERGY,
     BOOSTED_FIRE_RATE,
     REPARATION,
-    BONUS_INCOME,
+    BONUS_INCOME;
+    
+    private static final PowerUpType[]
+            defensiveCopyOfValues = values();
+    
+    public static PowerUpType[] getValues()
+    {
+        return defensiveCopyOfValues;
+    }
 }

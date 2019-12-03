@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
+import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -42,7 +43,11 @@ public final class Dictionary
 
     private EnumMap<HelicopterType, List<String>>
         helicopterInfos = new EnumMap<>(HelicopterType.class);
-
+    
+    private EnumMap<BlockMessage, String[]>
+            blockMessages = new EnumMap<>(BlockMessage.class);
+    
+    
     private List <String>
         columnNames = new ArrayList<>(),
         settingOptions = new ArrayList<>();
@@ -110,7 +115,7 @@ public final class Dictionary
 
     private void accountForLanguageChange()
     {
-        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
+        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
         {
             if(specialUpgradeType == SpecialUpgradeType.FIFTH_SPECIAL){break;}
             specialUpgrades.put(specialUpgradeType, this.languageProperties.getProperty(specialUpgradeType.getDictionaryKey()));
@@ -132,6 +137,16 @@ public final class Dictionary
                 infos.add(this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".infos." + i));
             }
             helicopterInfos.put(type, infos);
+        }
+    
+        for(BlockMessage blockMessage : BlockMessage.getValues())
+        {
+            String [] message = new String[4];
+            for(int i = 1; i <= 4; i++)
+            {
+                message[i-1]  = this.languageProperties.getProperty(blockMessage.getKey() + i);
+            }
+            blockMessages.put(blockMessage, message);
         }
     
         columnNames.clear();
@@ -276,6 +291,22 @@ public final class Dictionary
         return this.languageProperties.getProperty("developedBy");
     }
     
+    public String unavailable()
+    {
+        return this.languageProperties.getProperty("unavailable");
+    }
+    
+    public String unlocked()
+    {
+        return this.languageProperties.getProperty("unlocked");
+    }
+    
+    public String pleaseWait()
+    {
+        return this.languageProperties.getProperty("pleaseWait");
+    }
+    
+    
     public String settingOption(int optionNumber)
     {
         return settingOptions.get(optionNumber);
@@ -339,5 +370,10 @@ public final class Dictionary
     public String standardUpgradeName(StandardUpgradeType standardUpgradeType)
     {
         return standardUpgradesImprovements.get(standardUpgradeType).get(language.getObjectPosition());
+    }
+    
+    public String [] blockMessage(BlockMessage blockMessage)
+    {
+        return blockMessages.get(blockMessage);
     }
 }

@@ -150,7 +150,7 @@ public class Button
 										String.join(" ", standardUpgradeLabel),
 										dictionary.price(), true, true));
 		}
-		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
+		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
 		{
 			int i = specialUpgradeType.ordinal();
 			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50,

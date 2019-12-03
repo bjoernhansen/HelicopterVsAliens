@@ -63,7 +63,10 @@ public enum EnemyType
       
     private final int strength; // Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
     
+    private static final EnemyType[]
+            defensiveCopyOfValues = values();
     
+       
     EnemyType(int strength)
     {
         this.strength = strength;
@@ -122,5 +125,10 @@ public enum EnemyType
     public int getStrength()
     {
         return this.strength;
+    }
+    
+    public static EnemyType[] getValues()
+    {
+        return defensiveCopyOfValues;
     }
 }

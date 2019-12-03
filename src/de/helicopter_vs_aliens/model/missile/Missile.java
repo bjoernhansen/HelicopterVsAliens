@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.MovingObject;
@@ -11,7 +10,6 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
 import java.util.*;
@@ -22,7 +20,6 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
 
 public class Missile extends MovingObject
@@ -54,7 +51,7 @@ public class Missile extends MovingObject
 	public ExplosionTypes
 		typeOfExplosion;
 
-	private int
+	public int
 		sisterKills,			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
 		nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
 	
@@ -79,15 +76,14 @@ public class Missile extends MovingObject
 		this.setDmg(helicopter.getBaseDamage());
 		this.hits.clear();
 		
-		// TODO ggf. HelicopterType abfragen anders lösen
-		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
+		if(helicopter.hasKillCountingMissiles())
 		{
 			this.kills = 0;
 			this.earnedMoney = 0;
 			this.sisterKills = 0;
 			this.nrOfHittingSisters = 0;
 		}
-		else if(helicopter.getType() == PHOENIX)
+		else if(helicopter.hasTimeRecordingMissiles())
 		{
 			this.launchingTime = System.currentTimeMillis();
 		}		
@@ -150,7 +146,7 @@ public class Missile extends MovingObject
 		if(!this.flying)
 		{
 			i.remove();	
-			this.inactivate(controller.missiles, helicopter);
+			helicopter.inactivate(controller.missiles, this);
 		}
 		this.setPaintBounds();
 	}
@@ -289,64 +285,6 @@ public class Missile extends MovingObject
 				     (this.paintBounds.y),
 				     (int)(0.2*Math.abs(this.speed)*this.paintBounds.width),
 				     (this.paintBounds.height));
-	}
-	
-	// TODO nach Helicopter schieben und auf Roch und Orochi verteilen
-	private void inactivate(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile, Helicopter helicopter)
-	{							
-		if(helicopter.getType() == ROCH || helicopter.getType() == OROCHI)
-		{
-			if(this.sister[0] == null && this.sister[1] == null)
-			{							
-				if(this.kills + this.sisterKills > 1)
-				{
-					if(helicopter.getType() == ROCH)
-					{										
-						Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 0.5f, 0.75f, 3.0f);
-					}
-					else if(helicopter.getType() == OROCHI)
-					{
-						int nonFailedShots = (this.kills > 0 ? 1 : 0) + this.nrOfHittingSisters;
-						if(nonFailedShots == 1)
-						{										
-							Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 0.25f, 0.0f, 0.25f);
-						}
-						if(nonFailedShots == 2)
-						{										
-							Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 1.5f, 0.0f, 1.5f);
-						}
-						else if(nonFailedShots == 3)
-						{										
-							Events.extraReward(this.kills + this.sisterKills, this.earnedMoney, 4f, 0.0f, 4f);
-						}
-						else assert false;
-					}	
-				}
-			}
-			else if(this.kills + this.sisterKills > 0)
-			{
-				for(int j = 0; true; j++)
-				{
-					if(this.sister[j] != null)
-					{
-						this.sister[j].earnedMoney += this.earnedMoney;
-						this.sister[j].sisterKills += this.kills + this.sisterKills;
-						this.sister[j].nrOfHittingSisters += ((this.kills > 0 ? 1 : 0) + this.nrOfHittingSisters);
-						break;
-					}
-				}							
-			}
-			for(int j = 0; j < 2; j++)
-			{
-				if(this.sister[j] != null)
-				{
-					if(this.sister[j].sister[0] == this){this.sister[j].sister[0] = null;}
-					else if(this.sister[j].sister[1] == this){this.sister[j].sister[1] = null;}
-					else assert false;
-				}
-			}									
-		}					
-		missile.get(CollectionSubgroupType.INACTIVE).add(this);
 	}
 	
 	public static boolean canTakeCredit(Missile missile, Enemy enemy)

@@ -16,6 +16,7 @@ import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
@@ -346,5 +347,48 @@ public final class Roch extends Helicopter
                 missile.credit();
             }
         }
+    }
+    
+    @Override
+    public boolean hasKillCountingMissiles()
+    {
+        return true;
+    }
+    
+    @Override
+    public void inactivate(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    {
+        if(missile.sister[0] == null && missile.sister[1] == null)
+        {
+            if(missile.kills + missile.sisterKills > 1)
+            {
+                Events.extraReward(missile.kills + missile.sisterKills, missile.earnedMoney, 0.5f, 0.75f, 3.0f);
+            }
+        }
+        else if(missile.kills + missile.sisterKills > 0)
+        {
+            for(int j = 0; true; j++)
+            {
+                if(missile.sister[j] != null)
+                {
+                    missile.sister[j].earnedMoney += missile.earnedMoney;
+                    missile.sister[j].sisterKills += missile.kills + missile.sisterKills;
+                    missile.sister[j].nrOfHittingSisters += ((missile.kills > 0 ? 1 : 0) + missile.nrOfHittingSisters);
+                    break;
+                }
+            }
+        }
+        for(int j = 0; j < 2; j++)
+        {
+            if(missile.sister[j] != null)
+            {
+                if(missile.sister[j].sister[0] == missile){
+                    missile.sister[j].sister[0] = null;}
+                else if(missile.sister[j].sister[1] == missile){
+                    missile.sister[j].sister[1] = null;}
+                else assert false;
+            }
+        }
+        missiles.get(INACTIVE).add(missile);
     }
 }

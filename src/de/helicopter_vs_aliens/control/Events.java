@@ -23,6 +23,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.BlockMessage.*;
 import static de.helicopter_vs_aliens.gui.Button.STARTSCREEN_MENU_BUTTON;
 import static de.helicopter_vs_aliens.gui.Menu.window;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
@@ -440,11 +441,11 @@ public class Events
 		{
 			if(	helicopter.hasMaximumPlating())
 			{
-				Menu.block(1);
+				Menu.block(HELICOPTER_ALREADY_REPAIRED);
 			}
 			else if(money < repairFee(helicopter, helicopter.isDamaged))
 			{
-				Menu.block(9);
+				Menu.block(NOT_ENOUGH_MONEY_FOR_REPAIRS);
 			}
 			else
 			{
@@ -481,7 +482,7 @@ public class Events
 		else if(Menu.repairShopButton.get("Einsatz").bounds.contains(cursor))
 		{
 			if(helicopter.isDamaged){
-				Menu.block(2);}
+				Menu.block(UNREPAIRED_BEFORE_MISSION);}
 			else
 			{				
 				Menu.stopButtonHighlighting(Menu.repairShopButton);
@@ -497,11 +498,11 @@ public class Events
 		else if(Menu.repairShopButton.get("Special0").bounds.contains(cursor))
 		{
 			if(helicopter.isDamaged){
-				Menu.block(4);}
+				Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 			else if(helicopter.hasSpotlights){
-				Menu.block(7);}
+				Menu.block(UPGRADE_ALREADY_INSTALLED);}
 			else if(money < SPOTLIGHT_COSTS){
-				Menu.block(6);}
+				Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);}
 			else
 			{
 				Audio.play(Audio.cash);
@@ -530,12 +531,12 @@ public class Events
 		else if(Menu.repairShopButton.get("Special1").bounds.contains(cursor))
 		{
 			if(helicopter.isDamaged){
-				Menu.block(4);}
+				Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 			else if(helicopter.hasGoliathPlating()){
-				Menu.block(7);}
+				Menu.block(UPGRADE_ALREADY_INSTALLED);}
 			else if(money < helicopter.getGoliathCosts())
 			{
-				Menu.block(6);
+				Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
 			}
 			else
 			{
@@ -549,12 +550,12 @@ public class Events
 		else if(Menu.repairShopButton.get("Special2").bounds.contains(cursor))
 		{
 			if(helicopter.isDamaged){
-				Menu.block(4);}
+				Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 			else if(helicopter.hasPiercingWarheads){
-				Menu.block(7);}
+				Menu.block(UPGRADE_ALREADY_INSTALLED);}
 			else if(money < helicopter.getPiercingWarheadsCosts())
 			{
-				Menu.block(6);
+				Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
 			}
 			else
 			{
@@ -568,15 +569,15 @@ public class Events
 		else if(Menu.repairShopButton.get("Special3").bounds.contains(cursor))
 		{
 			if(helicopter.isDamaged){
-				Menu.block(4);}
+				Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 			else if(helicopter.hasAllCannons())
 			{
-				Menu.block(7);
+				Menu.block(UPGRADE_ALREADY_INSTALLED);
 			}
 			else if(	(money < Helicopter.STANDARD_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < Roch.ROCH_SECOND_CANNON_COSTS)) &&
 						!((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && recordTime[OROCHI.ordinal()][4]!=0)) && money >= Helicopter.CHEAP_SPECIAL_COSTS && helicopter.numberOfCannons == 1))
 			{
-				Menu.block(6);
+				Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
 			}
 			else
 			{
@@ -607,13 +608,13 @@ public class Events
 		else if(Menu.repairShopButton.get("Special4").bounds.contains(cursor))
 		{
 			if(helicopter.isDamaged){
-				Menu.block(4);}
+				Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 			else if(helicopter.hasFifthSpecial()){
-				Menu.block(7);}
+				Menu.block(UPGRADE_ALREADY_INSTALLED);}
 			// TODO helicopter.getFifthSpecialCosts
 			else if(money < Helicopter.CHEAP_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < Roch.JUMBO_MISSILE_COSTS))
 			{
-				Menu.block(6);
+				Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
 			}
 			else
 			{
@@ -637,12 +638,12 @@ public class Events
 				if(Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).bounds.contains(cursor))
 				{
 					if(helicopter.isDamaged){
-						Menu.block(4);}
+						Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 					else if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType)){
-						Menu.block(5);}
+						Menu.block(REACHED_MAXIMUM_LEVEL);}
 					else if(money < helicopter.getUpgradeCostFor(standardUpgradeType))
 					{
-						Menu.block(6);
+						Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE );
 					}
 					else
 					{

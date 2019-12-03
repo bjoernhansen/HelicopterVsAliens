@@ -19,7 +19,6 @@ import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
 
-// TODO für alle Enum-Klassen die Nutzung von Values ersetzen durch getValues (siehe HelicopterTypes) falls in jedem Schritt verwendet
 public class Main
 {
 	public static final Dimension
@@ -57,36 +56,6 @@ public class Main
     {
     	if(TESTMODE)
         {
-        	/*Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
-            EnumMap<SpecialUpgradeTypes, String> map = dictionary.getSpecialUpgrades();
-            map.values().forEach(System.out::println);
-
-            dictionary.switchLanguageTo(ENGLISH);
-            map.values().forEach(System.out::println);
-       
-            dictionary.switchHelicopterTypeTo(HELIOS);
-            map.values().forEach(System.out::println);*/
-
-
-
-        	/*
-			Dictionary dictionary = new Dictionary(Languages.GERMAN, HelicopterTypes.OROCHI);
-
-			for(HelicopterTypes type : HelicopterTypes.values())
-			{
-				System.out.println(dictionary.getHelicopterName(type));
-				System.out.println(dictionary.getHelicopterInfos(type).toString());
-			}
-			dictionary.switchLanguageTo(ENGLISH);
-
-			for(HelicopterTypes type : HelicopterTypes.values())
-			{
-				System.out.println(dictionary.getHelicopterName(type));
-				System.out.println(dictionary.getHelicopterInfos(type).toString());
-			}
-
-			dictionary.switchHelicopterTypeTo(HELIOS);
-			*/
 
 		}
         else

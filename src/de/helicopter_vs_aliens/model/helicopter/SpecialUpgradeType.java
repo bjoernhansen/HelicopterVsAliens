@@ -8,21 +8,31 @@ public enum SpecialUpgradeType
     EXTRA_CANNONS,
     FIFTH_SPECIAL;
     
-    private static final String[] KEY_SUFFIXES = {"spotlight", "goliath", "warheads", "secondCannon", "fifth"};
+    private static final String[]
+        KEY_SUFFIXES = {"spotlight", "goliath", "warheads", "secondCannon", "fifth"};
     
-    private String dictionaryKey;
+    private static final SpecialUpgradeType[]
+            defensiveCopyOfValues = values();
+    
+    private String
+        dictionaryKey;
+    
     
     static
     {
-        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.values())
+        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
         {
             specialUpgradeType.dictionaryKey = "upgrades.special." + KEY_SUFFIXES[specialUpgradeType.ordinal()];
         }
     }
-
     
     public String getDictionaryKey()
     {
         return dictionaryKey;
+    }
+    
+    public static SpecialUpgradeType[] getValues()
+    {
+        return defensiveCopyOfValues;
     }
 }

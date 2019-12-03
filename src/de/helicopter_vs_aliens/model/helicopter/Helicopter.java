@@ -1768,4 +1768,19 @@ public abstract class Helicopter extends MovingObject
     {
         return this.hasDestroyedPlating() && !this.isDamaged;
     }
+    
+    public boolean hasTimeRecordingMissiles()
+    {
+    	return false;
+    }
+	
+	public boolean hasKillCountingMissiles()
+	{
+		return false;
+	}
+    
+    public void inactivate(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    {
+        missiles.get(INACTIVE).add(missile);
+    }
 }

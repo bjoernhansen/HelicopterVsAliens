@@ -23,9 +23,12 @@ public enum StandardUpgradeType
                             {80, 64, 51, 41, 33, 26, 21, 17, 13, 11, 9, 7, 6, 5, 4},        // FIRE_RATE
                             {0, 100, 190, 270, 340, 400, 450, 490, 520, 540}};              // ENERGY_ABILITY
     
+    private static final StandardUpgradeType[]
+            defensiveCopyOfValues = values();
+    
     static
     {
-        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.values())
+        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
         {
             standardUpgradeType.dictionaryKey = "upgrades.standard." + KEY_SUFFIXES[standardUpgradeType.ordinal()];
         }
@@ -33,15 +36,11 @@ public enum StandardUpgradeType
     
     private String
             dictionaryKey;
-       
     
     public String getDictionaryKey()
     {
         return dictionaryKey;
     }
-    
-    private static final StandardUpgradeType[]
-            defensiveCopyOfValues = values();
     
     private HelicopterType
             privilegedHelicopter;
