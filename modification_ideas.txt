@@ -1,5 +1,14 @@
 Primäre Reihenfolge:
 
+Design Idee:
+1. Interface Paintable
+3. GraphicalRepresentation implementiert auch Paintable
+2. GameEntity (implementiert Paintable) und hat private Referenz auf GraphicalRepresentation, paint ruft paint vonGraphicalRepresetation auf
+5. verschiedene MissileTypen (Code in HelicopterSubklassen teilweise hierher überführen)
+4. Generischen ObjectRecycler (zum Beispiel für Missiles verschiedener Subklassen)
+Abstract Facotory HelicopterEquipmentFacotry, für Helicopter selbst, und Raketen, evtl. ObjectREcycler und ähnliches
+http://www.java2s.com/Tutorials/Java/java.util.function/Supplier/index.htm
+
 1. Dictionary und Helicopter Class Inheritance abschließen --> Merge in Master-Branch
 2. neuer Branch --> JavaFX und zu Malendes auslagern
    --> Interface Paintable
