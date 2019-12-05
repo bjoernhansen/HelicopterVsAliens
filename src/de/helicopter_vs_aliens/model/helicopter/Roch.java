@@ -164,7 +164,7 @@ public final class Roch extends Helicopter
                 ? this.hasUnlimitedEnergy()
                     ? 0
                     : POWER_SHIELD_E_LOSS_RATE
-                : this.getRegenerationRate();
+                : super.getRegenerationRate();
     }
     
     @Override
