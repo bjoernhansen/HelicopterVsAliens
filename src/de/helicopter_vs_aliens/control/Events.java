@@ -633,8 +633,10 @@ public class Events
 		 */			
 		else 
 		{
+
 			for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 			{
+				//TODO für StandardUpgrades ggf. EnumMap
 				if(Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).bounds.contains(cursor))
 				{
 					if(helicopter.isDamaged){

@@ -170,7 +170,7 @@ public abstract class Helicopter extends MovingObject
 		bonusKillsTimer;					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
     
     Battery
-        battery = new Battery();
+        battery = Battery.createFor(this.getType());
     
 	public Point2D
   		location = new Point2D.Float();	        // exakter Aufenthaltsort
@@ -505,10 +505,10 @@ public abstract class Helicopter extends MovingObject
 	
 	void regenerateEnergy()
     {
-    	this.rechargeEnergy(this.calculateEnergyRegenerationRate());
+    	this.rechargeEnergy(this.getRegenerationRate());
     }
 
-    float calculateEnergyRegenerationRate()
+    float getRegenerationRate()
 	{
 		return this.regenerationRate;
 	}
