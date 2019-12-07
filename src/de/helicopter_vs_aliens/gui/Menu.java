@@ -10,7 +10,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
-import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
@@ -25,7 +25,6 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.BlockMessage.*;
 import static de.helicopter_vs_aliens.gui.WindowType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
@@ -230,7 +229,9 @@ public class Menu
 			messageTimer++;}
 		if(messageTimer > 215){
 			messageTimer = 0;}
-			
+
+		// TODO evtl. ist hier kein array effectTimer, sondern ein einzelner Wert erforderlich, da die effekte scheinbar
+		// nicht gleichzeitig erfolgen können (reset bei wechsel des selektierten Helikopters
         for(int i = 0; i < HelicopterType.size(); i++)
         {	        	
         	if(effectTimer[i] > 0){
@@ -248,7 +249,7 @@ public class Menu
 				if(Events.hasSelectedHelicopterChanged())
 				{
 					helicopterDummy.initMenuEffect(i);
-					Arrays.fill(effectTimer, 0);
+					resetEffectTimer();
 					effectTimer[Events.nextHelicopterType.ordinal()] = Events.nextHelicopterType.getEffectTime();
 				}
 				helicopterDummy.updateMenuEffect();
@@ -257,12 +258,17 @@ public class Menu
 		}
 		if(Events.nextHelicopterType == null)
 		{
-			Arrays.fill(effectTimer, 0);
+			resetEffectTimer();
 		}
 		if(Events.hasSelectedHelicopterChanged() && Events.previousHelicopterType != null)
 		{
 			helicopterDummies.get(Events.previousHelicopterType).stoptMenuEffect();
 		}
+	}
+
+	private static void resetEffectTimer()
+	{
+		Arrays.fill(effectTimer, 0);
 	}
 
 	static void paintStartscreen(Graphics2D g2d, Helicopter helicopter)
@@ -1117,7 +1123,7 @@ public class Menu
 							boolean showFps)
 	{
 		paintBossHealthBar(g2d);
-		paintHealthBar(g2d, helicopter, 5, MovingObject.GROUND_Y + 5);
+		paintHealthBar(g2d, helicopter, 5, GameEntity.GROUND_Y + 5);
 		paintCollectedPowerUps(g2d);			
 		if(showFps){paintFpsDisplay(g2d);}
 		

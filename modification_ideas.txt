@@ -69,7 +69,6 @@ Aktuelle geplante Änderungen nach Weiterbildung
 -	JavaFX verwenden für Grafiken, vorher alle Zeichenanweisungen von eigenen Methoden aufrufen lassen, um die Portierung für JavaFX und Android (wie funktioniert es da?) zu erleichtern
 -	Version ohne Michael-Sounds für compaktere Version
 -	Refactoring: viel kleinere Klassen, viel in einzelne Pakete auslagern, mehr Vererbung und Interfaces verwenden
--	Enums verwenden
 -	Kollision verbessern ggf. Shape, Area, JavaFX verwenden
 
 

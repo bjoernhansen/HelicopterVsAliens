@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -43,7 +43,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
-public abstract class Helicopter extends MovingObject
+public abstract class Helicopter extends GameEntity
 {
     public static final int
 		// TODO einstellen auf 60 Frames per Second
@@ -78,7 +78,8 @@ public abstract class Helicopter extends MovingObject
         FAST_ROTATIONAL_SPEED	= 12,
         DAY_BONUS_FACTOR = 60,
         NIGHT_BONUS_FACTOR = 90,
-		START_ENERGY = 150;
+		START_ENERGY = 150,
+		SPOTLIGHT_COSTS = 35000;
     
     private static final float
         NOSEDIVE_SPEED = 12f,	        // Geschwindigkeit des Helikopters bei Absturz
@@ -1783,4 +1784,14 @@ public abstract class Helicopter extends MovingObject
     {
         missiles.get(INACTIVE).add(missile);
     }
+
+	public int getFifthSpecialCosts()
+	{
+		return CHEAP_SPECIAL_COSTS;
+	}
+
+	public int getSpotlightCosts()
+	{
+		return SPOTLIGHT_COSTS;
+	}
 }

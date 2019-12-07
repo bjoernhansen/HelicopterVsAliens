@@ -21,7 +21,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
@@ -49,7 +49,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
 
-public class Enemy extends MovingObject
+public class Enemy extends GameEntity
 {
 	private static class FinalEnemysOperator
     {	
@@ -359,8 +359,9 @@ public class Enemy extends MovingObject
 		miniBossProb = miniBossProb == STANDARD_MINI_BOSS_PROB ? CHEAT_MINI_BOSS_PROB: STANDARD_MINI_BOSS_PROB;
 	}
 	
-	public void paint(Graphics2D g2d, Helicopter helicopter)
+	public void paint(Graphics2D g2d)
 	{				
+		Helicopter helicopter = Controller.getInstance().getHelicopter();
 		boolean cloaked = (this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME+CLOAKED_TIME);
 		int g2DSel = this.direction.x == -1 ? 0 : 1;
 		
@@ -2609,13 +2610,13 @@ public class Enemy extends MovingObject
 	{
 		for(int i = 0; i < currentNumberOfBarriers; i++)
 		{    			
-			livingBarrier[i].paint(g2d, helicopter);
+			livingBarrier[i].paint(g2d);
 		}
 		for(Enemy enemy : controller.enemies.get(ACTIVE))
 		{
 			if(enemy.isVisableNonBarricadeVessel(helicopter.canDetectCloakedVessels()))
 			{
-				enemy.paint(g2d, helicopter);
+				enemy.paint(g2d);
 			}
 		}
 	}
@@ -3930,7 +3931,7 @@ public class Enemy extends MovingObject
 	{
 		for(Enemy e : controller.enemies.get(DESTROYED))
 		{
-			e.paint(g2d, helicopter);
+			e.paint(g2d);
 		}
 	}
 

@@ -27,10 +27,10 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 public final class Roch extends Helicopter
 {
     public static final int
-        JUMBO_MISSILE_COSTS = 25000,
         ROCH_SECOND_CANNON_COSTS = 225000;
     
     private static final int
+        JUMBO_MISSILE_COSTS = 25000,
         POWER_SHIELD_ACTIVATION_THRESHOLD = 75,
         REDUCED_ENERGY_DRAIN = 10;
 
@@ -390,5 +390,11 @@ public final class Roch extends Helicopter
             }
         }
         missiles.get(INACTIVE).add(missile);
+    }
+
+    @Override
+    public int getFifthSpecialCosts()
+    {
+        return JUMBO_MISSILE_COSTS;
     }
 }

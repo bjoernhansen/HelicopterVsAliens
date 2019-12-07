@@ -243,7 +243,7 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 			// zeichnen aller sichtbaren Objekte						
 			BackgroundObject.paintBackground(g2d, this.backgroundObjects);
 			Menu.paintBackgroundDisplays( g2d, this, this.helicopter);
-			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d, this.helicopter);}
+			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d);}
 			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
 			Missile.paintAllMissiles( g2d, this);
 			Enemy.paintAllActive(g2d, this, this.helicopter);

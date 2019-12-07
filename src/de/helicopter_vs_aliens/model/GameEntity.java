@@ -5,7 +5,8 @@ import de.helicopter_vs_aliens.util.Calculation;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
-public abstract class MovingObject
+
+public abstract class GameEntity implements Paintable
 {
 	public final static int
 		GROUND_Y = 426;
@@ -18,8 +19,11 @@ public abstract class MovingObject
 	
 	public Rectangle
         paintBounds = new Rectangle();
-	
-	
+
+	public GraphicalRepresentation
+		graphicalRepresentation;
+
+
 	protected void setPaintBounds()
 	{
 		this.setPaintBounds(this.paintBounds.width,

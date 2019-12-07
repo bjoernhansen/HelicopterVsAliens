@@ -14,10 +14,9 @@ import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.components.Battery;
 import de.helicopter_vs_aliens.util.Coloration;
 import de.helicopter_vs_aliens.util.Calculation;
 
@@ -26,7 +25,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundType.*;
 
-public class BackgroundObject extends MovingObject
+public class BackgroundObject extends GameEntity
 {	
 	private static final int
 		// Sternkoordinaten
@@ -182,7 +181,7 @@ public class BackgroundObject extends MovingObject
     	}
     }
     
-    private void paint(Graphics2D g2d)
+    public void paint(Graphics2D g2d)
     {
     	// Kaktus
         if(this.type == CACTUS)

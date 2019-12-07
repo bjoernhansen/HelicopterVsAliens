@@ -13,7 +13,7 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.MovingObject;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.Coloration;
@@ -24,7 +24,7 @@ import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 
-public class PowerUp extends MovingObject
+public class PowerUp extends GameEntity
 {
 	private static final int
 		GAME_SIZE = 30,
@@ -89,7 +89,7 @@ public class PowerUp extends MovingObject
 		}	
 	}
 
-	private void paint(Graphics2D g2d){paint(g2d, this.paintBounds.x);}
+	public void paint(Graphics2D g2d){paint(g2d, this.paintBounds.x);}
     
     public void paint(Graphics2D g2d, int x)
 	{

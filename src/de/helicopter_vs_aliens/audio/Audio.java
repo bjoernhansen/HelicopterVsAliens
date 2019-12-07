@@ -205,14 +205,7 @@ public class Audio
                 return victory;
             }
             return scorescreen;
-            // TODO Lösen über Zugegörigkeit zu einem EnumSet und innerhalb einer Methode
-        } else if (Menu.window == INFORMATIONS
-                || Menu.window == DESCRIPTION
-                || Menu.window == SETTINGS
-                || Menu.window == CONTACT
-                || Menu.window == HELICOPTER_TYPES
-                || Menu.window == HIGHSCORE
-                || Menu.window == STARTSCREEN)
+        } else if (Menu.window.isMainMenuWindow())
         {
             return mainMenu;
         } else if (Events.level >= 1 && Events.level < 10)

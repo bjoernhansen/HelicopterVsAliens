@@ -38,7 +38,6 @@ public class Events
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
-		SPOTLIGHT_COSTS = 35000,
 		START = 0,					// Timer Start
 		NUMBER_OF_BOSS_LEVEL = 5;
 	
@@ -501,12 +500,12 @@ public class Events
 				Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 			else if(helicopter.hasSpotlights){
 				Menu.block(UPGRADE_ALREADY_INSTALLED);}
-			else if(money < SPOTLIGHT_COSTS){
+			else if(money < helicopter.getSpotlightCosts()){
 				Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);}
 			else
 			{
 				Audio.play(Audio.cash);
-				money -= SPOTLIGHT_COSTS;				
+				money -= helicopter.getSpotlightCosts();
 				helicopter.hasSpotlights = true;
 				timeOfDay = NIGHT;
 				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
@@ -611,16 +610,14 @@ public class Events
 				Menu.block(UNREPAIRED_BEFORE_UPGRADE);}
 			else if(helicopter.hasFifthSpecial()){
 				Menu.block(UPGRADE_ALREADY_INSTALLED);}
-			// TODO helicopter.getFifthSpecialCosts
-			else if(money < Helicopter.CHEAP_SPECIAL_COSTS || (helicopter.getType() == ROCH && money < Roch.JUMBO_MISSILE_COSTS))
+			else if(money < helicopter.getFifthSpecialCosts())
 			{
 				Menu.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
 			}
 			else
 			{
 				Audio.play(Audio.cash);
-				// TODO auch hier: helicopter.getFifthSpecialCosts
-				money -= helicopter.getType() == ROCH ? Roch.JUMBO_MISSILE_COSTS : Helicopter.CHEAP_SPECIAL_COSTS;
+				money -= helicopter.getFifthSpecialCosts();
 				helicopter.obtainFifthSpecial();
 				// TODO adjustFirerate in obtainFifthSpecial integrieren, PowerUp firerate berücksichtigen
 				if(helicopter.getType() == KAMAITACHI || helicopter.getType() == PEGASUS){helicopter.adjustFireRate(false);}

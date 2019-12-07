@@ -25,7 +25,7 @@ public class Main
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
 	
 	private final static boolean
-    	TESTMODE = false;
+    	TESTMODE = true;
     
     private final static Dimension
 		STANDARD_RESULUTION = new Dimension(1280, 720),

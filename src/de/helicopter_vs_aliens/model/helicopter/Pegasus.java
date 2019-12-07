@@ -266,6 +266,7 @@ public final class Pegasus extends Helicopter
         
         // EMP wave animation in start menu
         if(Menu.window == STARTSCREEN
+                // TODO vermutlich unnötig
             && Menu.effectTimer[PEGASUS.ordinal()] > 0
             && this.empWave != null)
         {
