@@ -3,14 +3,14 @@ package de.helicopter_vs_aliens.util.dictionary;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
-import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
+import de.helicopter_vs_aliens.model.helicopter.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import static de.helicopter_vs_aliens.gui.BlockMessage.HELICOPTER_NOT_AVAILABLE;
+import static de.helicopter_vs_aliens.gui.BlockMessage.HELIOS_NOT_AVAILABLE;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
@@ -46,7 +46,6 @@ public final class Dictionary
     
     private EnumMap<BlockMessage, String[]>
             blockMessages = new EnumMap<>(BlockMessage.class);
-    
     
     private List <String>
         columnNames = new ArrayList<>(),
@@ -148,7 +147,7 @@ public final class Dictionary
             }
             blockMessages.put(blockMessage, message);
         }
-    
+        
         columnNames.clear();
         for(int i = 1; i <= Menu.NUMBER_OF_COLUMN_NAMES; i++)
         {
@@ -375,5 +374,28 @@ public final class Dictionary
     public String [] blockMessage(BlockMessage blockMessage)
     {
         return blockMessages.get(blockMessage);
+    }
+    
+    public String [] helicopterNotAvailable(HelicopterType helicopterType)
+    {
+        String [] message = {"", "", "", ""};
+        switch(helicopterType)
+        {
+            case HELIOS:
+                return this.blockMessage(HELIOS_NOT_AVAILABLE);
+            case OROCHI:
+            case KAMAITACHI:
+            case PEGASUS:
+                message[0] = String.format(
+                                blockMessages.get(HELICOPTER_NOT_AVAILABLE)[0],
+                                this.typeName(helicopterType));
+                message[1] = String.format(
+                                blockMessages.get(HELICOPTER_NOT_AVAILABLE)[1]);
+                message[2] = String.format(
+                                blockMessages.get(HELICOPTER_NOT_AVAILABLE)[2],
+                                this.helicopterName(helicopterType.getUnlockerTypes().get(0)),
+                                this.typeName(helicopterType.getUnlockerTypes().get(1)));
+        }
+        return message;
     }
 }
