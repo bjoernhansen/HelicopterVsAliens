@@ -1548,43 +1548,9 @@ public class Menu
 		messageTimer = 1;
 	}
 	
-	public static void setStartscreenMessage(HelicopterType helicopterType)
-	{		
-		// TODO Strings in Dictionary (2 weitere für BlockMessage) auslagern
-		if(!helicopterType.getUnlockerTypes().isEmpty())
-		{			
-			if(language == ENGLISH)
-			{
-				message[0] = Menu.dictionary.helicopterName(helicopterType) + " type helicopters are not available yet.";
-				message[1] = "They will be unlocked after you reached level 20 with a";
-				message[2] = Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(0)) + " or a " + Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(1)) + " type helicopter for the first time.";
-				message[3] = "";
-			}
-			else
-			{
-				message[0] = "Die " +  Menu.dictionary.helicopterName(helicopterType) + "-Klasse ist noch nicht verfügbar.";
-				message[1] = "Sie wird freigeschaltet, sobald Sie erstmalig mit der" ;
-				message[2] = Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(0)) + "- oder der " + Menu.dictionary.helicopterName(helicopterType.getUnlockerTypes().get(1)) + "-Klasse Level 20 erreicht haben.";
-				message[3] = "";   
-			}			
-		}
-		else if(helicopterType == HELIOS)
-		{
-			if(language == ENGLISH)
-			{
-				message[0] = "Helios type helicopters are not available yet.";
-				message[1] = "They will be unlocked after you defeated";
-				message[2] = "a boss enemy for the first time.";
-				message[3] = "";
-			}
-			else
-			{
-				message[0] = "Die Helios-Klasse ist noch nicht verfügbar.";
-				message[1] = "Sie wird freigeschaltet, sobald sie erstmalig" ;				   
-				message[2] = "einen Boss-Gegner besiegt haben.";
-				message[3] = "";   
-			}
-		}
+	public static void setStartscreenMessageForBlocking(HelicopterType helicopterType)
+	{
+		message = dictionary.helicopterNotAvailable(helicopterType);
 	}	
 	   
 	public static void clearMessage()

@@ -19,13 +19,14 @@ http://www.java2s.com/Tutorials/Java/java.util.function/Supplier/index.htm
 3. zum Beispiel Timer oder Inheritance für Enemy und andere Klassen (zum Beispiel PowerUps)
 
 
+Generics: http://www.angelikalanger.com/Articles/EffectiveJava/30.GenericsIntro/30.GenericsIntro.html
+
+
 Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kerhwerte unterbinden innerhalb gewisser Zeit
 wenn gedreht an Barrier
 
 Ausweichenden Lilanen sollten immer vom Helicopter weg ausweichen
 
-
-Dictionary für Sprachespezifische einführen, Übersetzungen mit Properties einlesen
 
 Vererbung auch für andere Klassen wie zum Beispiel PowerUps einführen
 
@@ -53,6 +54,8 @@ https://www.canoo.com/blog/2012/09/21/take-care-of-the-javafx-scene-graph/?lang=
 https://jaxenter.com/tutorial-a-glimpse-at-javafxs-canvas-api-105696.html
 https://docs.oracle.com/javase/8/javafx/graphics-tutorial/canvas.htm
 
+https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
+https://www.informatik-aktuell.de/entwicklung/programmiersprachen/zeichnen-in-javafx-komponenten.html
 
 	Modell View Controller & JavaFX
 	JavaFX AnimationTimer

@@ -1,8 +1,7 @@
 package de.helicopter_vs_aliens.gui;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
 
 public enum BlockMessage
 {
@@ -12,15 +11,14 @@ public enum BlockMessage
     REACHED_MAXIMUM_LEVEL,
     NOT_ENOUGH_MONEY_FOR_UPGRADE,
     UPGRADE_ALREADY_INSTALLED,
-    NOT_ENOUGH_MONEY_FOR_REPAIRS/*,
-    HELICOPTER_NOT_AVAILABLE,
-    HELIOS_NOT_AVAILABLE*/
-    ;
+    NOT_ENOUGH_MONEY_FOR_REPAIRS,
+    HELIOS_NOT_AVAILABLE,
+    HELICOPTER_NOT_AVAILABLE;
     
     
     private static final BlockMessage[]
         defensiveCopyOfValues = values();
-    
+        
     private static final List<String>
         SUBKEYS = Collections.unmodifiableList(Arrays.asList(
                 "helicopterAlreadyRepaired.",
@@ -29,7 +27,9 @@ public enum BlockMessage
                 "reachendMaximumLevel.",
                 "notEnoughMoneyForUpgrade.",
                 "upgradeAlreadyInstalled.",
-                "notEnoughMoneyForRepairs."));
+                "notEnoughMoneyForRepairs.",
+                "heliosNotAvailable.",
+                "helicopterNotAvailable."));
     
     
     public String getKey()

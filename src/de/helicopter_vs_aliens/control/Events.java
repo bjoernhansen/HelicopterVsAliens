@@ -667,6 +667,7 @@ public class Events
 	
 	private static void startscreenMousePressedLeft(Helicopter helicopter)
 	{
+		// TODO evtl. nach Menu auslagern
 		if(Menu.triangle[0].contains(cursor))
 		{
 			Menu.crossPosition = (Menu.crossPosition + 1)% HelicopterType.size();
@@ -697,7 +698,7 @@ public class Events
 				Menu.cross = Menu.getCrossPolygon();
 				Menu.crossTimer = 1;
 				Menu.messageTimer = 1;
-				Menu.setStartscreenMessage(Events.nextHelicopterType);
+				Menu.setStartscreenMessageForBlocking(nextHelicopterType);
 			}
 		}
 		else if(Menu.startscreenButton.get("00").bounds.contains(cursor))

@@ -7,6 +7,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.GraphicalRepresentation;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -102,7 +103,6 @@ public abstract class Helicopter extends GameEntity
 		    							HELICOPTER_SIZE.width, 
 		    							HELICOPTER_SIZE.height);
        
-    
     public int
 		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
 		currentBaseFirepower,				// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
