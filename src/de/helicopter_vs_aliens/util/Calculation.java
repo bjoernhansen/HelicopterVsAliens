@@ -4,9 +4,9 @@ import java.awt.geom.Point2D;
 import java.util.Random;
 
 
-public class Calculation
+public final class Calculation
 {
-	public final static double
+    public final static double
 		ROOT05 = Math.sqrt(2)/2.0;
 	
 	public final static Point2D 
@@ -17,6 +17,12 @@ public class Calculation
 	
 	private static Random
         random = new Random();
+    
+        
+    private Calculation() throws Exception
+    {
+        throw new Exception();
+    }
 	
 	public static void randomize()
     {        
@@ -86,4 +92,9 @@ public class Calculation
 	{		
 		return Math.min(eMax, bMax) - Math.max(eMin, bMin);
 	}
+	
+	public static int constrainToRange(int value, int min, int max)
+    {
+        return Math.max(min, Math.min(value, max));
+    }
 }

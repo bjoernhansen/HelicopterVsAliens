@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -23,7 +24,7 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 
 
-public class EnemyMissile
+public class EnemyMissile implements Paintable
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
@@ -34,22 +35,22 @@ public class EnemyMissile
 	
 	private int
 		rgbColorValue,	// aktueller Integer-Farbwert für die RGB-Rotkomponente der Geschoss-Farbe [0-255]
-		diameter;			// Geschoss-Durchmesser
+		diameter;		// Geschoss-Durchmesser
     
 	private boolean
 		hasHit,			// = true: Hat den Helikoper getroffen und kann entsorgt werden
     	lightUpColor; 	// = true: Farbe der grünen Geschosse wird heller, sonst dunkler
     
-	private Color 	 
-		variableGreen;  	// variable grüne Farbe der gegnerischen Geschosse
+	private Color
+        variableColor;  // variable grüne Farbe der gegnerischen Geschosse
     	
     private EnemyMissileType
 		type;				// Art des Geschoss
 	
 	
-    private void paint(Graphics2D g2d)
+    public void paint(Graphics2D g2d)
     {
-        g2d.setColor(this.variableGreen);
+        g2d.setColor(this.variableColor);
         g2d.fillOval((int)this.location.getX(), 
         			 (int)this.location.getY(), 
         			      this.diameter, 
@@ -112,11 +113,11 @@ public class EnemyMissile
         }        
         if(this.type == DISCHARGER)
         {
-        	this.variableGreen = new Color(this.rgbColorValue, 255, 0);
+        	this.variableColor = new Color(this.rgbColorValue, 255, 0);
         }
         else
         {
-        	this.variableGreen = new Color(255, this.rgbColorValue, (int)(0.65f * this.rgbColorValue));
+        	this.variableColor = new Color(255, this.rgbColorValue, (int)(0.65f * this.rgbColorValue));
         }  
         if(this.rgbColorValue == 0){this.lightUpColor = true;}
         else if(this.rgbColorValue == 255){this.lightUpColor = false;}

@@ -238,7 +238,7 @@ public class Audio
         } else if (Events.level == 49)
         {
             return level_49;
-        } else if (Events.level == 50)
+        } else if (Events.level == Events.MAXIMUM_LEVEL)
         {
             return finalBossLevel;
         }

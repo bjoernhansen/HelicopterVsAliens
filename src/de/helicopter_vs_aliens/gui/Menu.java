@@ -10,10 +10,13 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PowerUpPainter;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Coloration;
@@ -24,6 +27,7 @@ import de.helicopter_vs_aliens.util.dictionary.Language;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
+import static de.helicopter_vs_aliens.control.Events.MAXIMUM_LEVEL;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
@@ -45,7 +49,8 @@ public class Menu
 	public static final int
 		NUMBER_OF_COLUMN_NAMES = 8,
         NUMBER_OF_SETTING_OPTIONS = 5,
-        NUMBER_OF_STARTSCREEN_HELICOPTERS = 4;
+        NUMBER_OF_STARTSCREEN_HELICOPTERS = 4,
+		POWER_UP_SIZE = 23;
 
 	private static final int
     	SCORESCREEN_SPACE_BETWEEN_ROWS = 30,
@@ -532,8 +537,8 @@ public class Menu
         				g2d.drawString(tempEntry.playerName, leftColumn - 46 + xShift + columnDistance, topLine + j * lineDistance);
         				g2d.setColor(Coloration.brightenUp(tempEntry.helicopterType.getStandardPrimaryHullColor()));
 						g2d.drawString(Menu.dictionary.helicopterName(tempEntry.helicopterType),   realLeftColumn + xShift + 2 * columnDistance, topLine + j * lineDistance);
-        				g2d.setColor(tempEntry.maxLevel > 50 ? Coloration.HS_GREEN : Coloration.HS_RED);
-        				int printLevel = tempEntry.maxLevel > 50 ? 50 : tempEntry.maxLevel;
+        				g2d.setColor(tempEntry.maxLevel > MAXIMUM_LEVEL ? Coloration.HS_GREEN : Coloration.HS_RED);
+        				int printLevel = tempEntry.maxLevel > MAXIMUM_LEVEL ? MAXIMUM_LEVEL : tempEntry.maxLevel;
         				g2d.drawString(toStringWithSpace(printLevel), realLeftColumn + xShift + 3 * columnDistance, topLine + j * lineDistance);
     					g2d.setColor(Color.white);
         				g2d.drawString(toStringWithSpace((int)tempEntry.playingTime) + " min", realLeftColumn + xShift + 4 * columnDistance, topLine + j * lineDistance);
@@ -589,13 +594,17 @@ public class Menu
         }        
         else if(window  == DESCRIPTION && page == 5)
         {
-        	int x = 52, y = 120, yOffset = 35, size = PowerUp.MENU_SIZE;
-        	PowerUp.paint(g2d, x, y + 0 * yOffset, size, size, Color.orange, Coloration.golden);
-        	PowerUp.paint(g2d, x, y + 1 * yOffset, size, size, Color.blue, Color.cyan);
-        	PowerUp.paint(g2d, x, y + 2 * yOffset, size, size, Color.white, Color.red);
-        	PowerUp.paint(g2d, x, y + 3 * yOffset, size, size, Color.green, Color.yellow);
-        	PowerUp.paint(g2d, x, y + 4 * yOffset, size, size, Color.magenta, Color.black);
-        	PowerUp.paint(g2d, x, y + 5 * yOffset, size, size, Color.red, Color.orange);
+        	int x = 52, y = 120, yOffset = 35;
+        	for(PowerUpType powerUpType : PowerUpType.getValues())
+			{
+				PowerUpPainter powerUpRepresentation = GraphicsManager.getInstance().getGraphicalRepresentation(PowerUp.class);
+				powerUpRepresentation.paint(
+								g2d,
+								x, y + powerUpType.getMenuPosition() * yOffset,
+								POWER_UP_SIZE, POWER_UP_SIZE,
+								powerUpType.getSurfaceColor(),
+								powerUpType.getCrossColor());
+			}
         }
     }    
   
@@ -787,7 +796,7 @@ public class Menu
         
         startscreenMenuButton.get("Cancel").paint(g2d);
 		
-		if(Events.level > 50)
+		if(Events.level > MAXIMUM_LEVEL)
 		{
 			g2d.setColor(Color.green);
 			if(language == ENGLISH)
@@ -1212,7 +1221,7 @@ public class Menu
 		{
 			if(collectedPowerUp[i] != null)
 			{
-				collectedPowerUp[i].paint(g2d, 166 + j * 28);
+				((PowerUpPainter)GraphicsManager.getInstance().getGraphicalRepresentation(PowerUp.class)).paint(g2d, collectedPowerUp[i], 166 + j * 28);
 				j++;
 			}
 		}
@@ -2972,12 +2981,11 @@ public class Menu
 
 	public static void updateCollectedPowerUps(Helicopter helicopter, PowerUp powerUp)
 	{
-		helicopter.powerUpTimer[powerUp.type.ordinal()] = Math.max(helicopter.powerUpTimer[powerUp.type.ordinal()], Helicopter.POWERUP_DURATION);
-		if(collectedPowerUp[powerUp.type.ordinal()] == null){powerUp.moveToStatusbar();}
+		helicopter.powerUpTimer[powerUp.getType().ordinal()] = Math.max(helicopter.powerUpTimer[powerUp.getType().ordinal()], Helicopter.POWERUP_DURATION);
+		if(collectedPowerUp[powerUp.getType().ordinal()] == null){powerUp.moveToStatusbar();}
 		else
 		{
-			collectedPowerUp[powerUp.type.ordinal()].surface = Coloration.setAlpha(collectedPowerUp[powerUp.type.ordinal()].surface, 255);
-			collectedPowerUp[powerUp.type.ordinal()].cross = Coloration.setAlpha(collectedPowerUp[powerUp.type.ordinal()].cross, 255);
+			collectedPowerUp[powerUp.getType().ordinal()].setOpaque();
 		}
 	}
 

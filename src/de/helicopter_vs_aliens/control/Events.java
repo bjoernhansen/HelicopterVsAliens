@@ -39,21 +39,22 @@ public class Events
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
 		START = 0,					// Timer Start
-		NUMBER_OF_BOSS_LEVEL = 5;
+		NUMBER_OF_BOSS_LEVEL = 5,
+		NUMBER_OF_DEBUGGING_INFOS = 16,
+		MAXIMUM_LEVEL = 50;
+	
+	public static final boolean
+		CHEATS_ACTIVATABLE = true,
+		SAVE_ANYWAY = true;
+	
+	public static HighscoreEntry[][]
+		highscore = new HighscoreEntry[7][10];
 	
 	private static final int
 		COMPARISON_RECORD_TIME = 60,	// angenommene Bestzeit für besiegen von Boss 5
 		TOTAL_LOSS_REPAIR_BASE_FEE = 875,
 		DEFAULT_REPAIR_BASE_FEE = 350,
 		MAX_MONEY = 5540500;			// für Komplettausbau erforderliche Geldmenge
-
-	public static final boolean
-		CHEATS_ACTIVATABLE = true,
-		SAVE_ANYWAY = true;
-	public static final int NUMBER_OF_DEBUGGING_INFOS = 16;
-	
-	public static HighscoreEntry[][]
-		highscore = new HighscoreEntry[7][10];
 	
 	static Point 
 		cursor = new Point();	// die letzten Maus-Koordinaten

@@ -7,7 +7,6 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.model.GameEntity;
-import de.helicopter_vs_aliens.model.GraphicalRepresentation;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -357,13 +356,6 @@ public abstract class Helicopter extends GameEntity
 		this.inputLamp = this.hasSpotlightsTurnedOn() ? Coloration.randomLight : Coloration.darkYellow;
 	}
 	
-	private boolean hasSpotlightsTurnedOn()
-	{
-		return this.hasSpotlights
-				&& Events.timeOfDay == NIGHT
-				&& Menu.window == GAME;
-	}
-	
 	Color getInputColorCannon()
 	{
 		return this.isInvincible()
@@ -490,6 +482,13 @@ public abstract class Helicopter extends GameEntity
 		if(this.canRegenerateEnergy()){this.regenerateEnergy();}
 		this.evaluateFire(missile);
 		this.move(explosion);
+	}
+	
+	private boolean hasSpotlightsTurnedOn()
+	{
+		return this.hasSpotlights
+				&& Events.timeOfDay == NIGHT
+				&& Menu.window == GAME;
 	}
  
 	boolean canRegenerateEnergy()
@@ -740,7 +739,6 @@ public abstract class Helicopter extends GameEntity
 				this.location.getX() + (distance > localSpeed ? localSpeed : distance),
 				this.location.getY());
 			enemy.setTouchedSiteToRight();
-
 		}
 		else if(pseudoAngle < -Calculation.ROOT05)
 		{
@@ -1102,8 +1100,9 @@ public abstract class Helicopter extends GameEntity
 				if(this.powerUpTimer[i] == 0 && Menu.collectedPowerUp[i] != null)
 				{
 					Audio.play(Audio.powerUpFade2);
-					Menu.collectedPowerUp[i].collected = true;
+					Menu.collectedPowerUp[i].collect();
 					Menu.collectedPowerUp[i] = null;
+					// TODO magic number
 					if(i == 3){this.adjustFireRate(false);}
 				}
 				else if(this.powerUpTimer[i] == POWERUP_DURATION/4)
@@ -1112,15 +1111,14 @@ public abstract class Helicopter extends GameEntity
 				}
 				else if(this.powerUpTimer[i] < POWERUP_DURATION/4 && Menu.collectedPowerUp[i] != null)
 				{
-					if(this.powerUpTimer[i]%32 > 15)
+					int alphaStepSize = 17 * ((this.powerUpTimer[i])%16);
+				    if(this.powerUpTimer[i]%32 > 15)
 			    	{
-			    		Menu.collectedPowerUp[i].surface = Coloration.setAlpha(Menu.collectedPowerUp[i].surface, 17 * ((this.powerUpTimer[i])%16));
-			    		Menu.collectedPowerUp[i].cross =   Coloration.setAlpha(Menu.collectedPowerUp[i].cross,   17 * ((this.powerUpTimer[i])%16));
+			    		Menu.collectedPowerUp[i].setAlpha(alphaStepSize);
 			    	}
 					else
 					{
-						Menu.collectedPowerUp[i].surface = Coloration.setAlpha(Menu.collectedPowerUp[i].surface, 255 - 17 * ((this.powerUpTimer[i])%16));
-						Menu.collectedPowerUp[i].cross = Coloration.setAlpha(Menu.collectedPowerUp[i].cross,     255 - 17 * ((this.powerUpTimer[i])%16));
+                        Menu.collectedPowerUp[i].setAlpha(Coloration.MAX_VALUE - alphaStepSize);
 					}
 				}
 			}
@@ -1222,7 +1220,7 @@ public abstract class Helicopter extends GameEntity
 		{
 			if(playSound){Audio.play(Audio.powerUpFade2);}
 			this.powerUpTimer[powerUpType.ordinal()] = 0;
-			Menu.collectedPowerUp[powerUpType.ordinal()].collected = true;
+			Menu.collectedPowerUp[powerUpType.ordinal()].collect();
 			Menu.collectedPowerUp[powerUpType.ordinal()] = null;
 			if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(false);}
 		} 
@@ -1241,10 +1239,7 @@ public abstract class Helicopter extends GameEntity
 			}
 			else
 			{
-				Menu.collectedPowerUp[powerUpType.ordinal()].surface
-					= Coloration.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].surface, 255);
-				Menu.collectedPowerUp[powerUpType.ordinal()].cross
-					= Coloration.setAlpha(Menu.collectedPowerUp[powerUpType.ordinal()].cross, 255);
+                Menu.collectedPowerUp[powerUpType.ordinal()].setOpaque();
 			}			
 		}		
 	}

@@ -1,22 +1,21 @@
 package de.helicopter_vs_aliens.model.powerup;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.util.Coloration;
+
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
-import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.GameEntity;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.util.Coloration;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
@@ -26,49 +25,40 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 public class PowerUp extends GameEntity
 {
-	private static final int
-		GAME_SIZE = 30,
+    private static final int
+        SIZE = 30,
 		POWERUP_STOP_POSITION = 1004;
-	
-	public static final int
-		MENU_SIZE = 23;
-	
+		
 	private static final double
 		POWER_UP_WORTH_MULTIPLIER = 7.5;
 		
 	private int
-		direction;
-	
-	public boolean
-		collected;        // = true: PowerUp kann in die LinkedList für inaktive PowerUps verschoben werden
-		private boolean stopped;		// nur Helios-Klasse; =true: PowerUp fällt zu Boden
-	
-	private int 
-		worth;			// nur für PowerUps vom Typ 5; bestimmt, wie viel Geld der Spieler für das Einsammeln erhält
-	
-	private boolean
-		inStatusBar;	// = true: PowerUp befindet sich in der Statusbar
-	
-	public PowerUpType
+		direction,
+        worth;		    // nur für PowerUps vom Typ BONUS_INCOME; bestimmt, wie viel Geld der Spieler für das Einsammeln erhält
+    
+    private boolean
+        wasCollected,   // = true: PowerUp kann in die LinkedList für inaktive PowerUps verschoben werden
+        hasStopped,	    // nur Helios-Klasse; = true: PowerUp fällt zu Boden
+		isInStatusBar;	// = true: PowerUp befindet sich in der Statusbar
+    
+    private PowerUpType
 		type;
 	
 	private Point2D 
 		speed = new Point2D.Float();	// Geschwindigkeit des PowerUps
-	
-	public Color
-		surface,		// Farben des PowerUps, hängen vom Typ ab
-		cross;							
+    
+    private Color
+        surfaceColor,	// Farben des PowerUps, hängen vom Typ ab
+		crossColor;
 
 		
-	public static void
-	updateAll(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
-			  Helicopter helicopter)
+	public static void updateAll(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, Helicopter helicopter)
 	{
     	for(Iterator<PowerUp> i = powerUp.get(ACTIVE).iterator(); i.hasNext();)
 		{
 			PowerUp pu = i.next();
 			pu.update(helicopter);			
-			if(pu.collected)
+			if(pu.wasCollected)
 			{
 				i.remove();
 				powerUp.get(INACTIVE).add(pu);
@@ -76,58 +66,36 @@ public class PowerUp extends GameEntity
 		}		
 	}
 
-	public static void
-	paintAll(Graphics2D g2d,
-			 EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
+	public static void paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
 	{
 		for(PowerUp pu : powerUp.get(ACTIVE))
 		{
-			if (!pu.inStatusBar)
+			if (!pu.isInStatusBar)
 			{
 				pu.paint(g2d);
 			}
 		}	
 	}
 
-	public void paint(Graphics2D g2d){paint(g2d, this.paintBounds.x);}
-    
-    public void paint(Graphics2D g2d, int x)
-	{
-		paint(	g2d,
-				x, 
-				this.paintBounds.y,
-				this.paintBounds.width,
-				this.paintBounds.height,
-				this.surface, this.cross);		
-	}
-    
-	public static void paint(Graphics2D g2d, int x, int y, int width, int height, Color surface, Color cross)
-	{		
-		g2d.setPaint(surface);
-		g2d.fillRoundRect(x, y, width, height, 12, 12);
-		g2d.setStroke(new BasicStroke(width/5, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-		g2d.setPaint(cross);
-		g2d.drawLine(x + width/2, y + height/5, x + width/2, y + (4 * height)/5);
-		g2d.drawLine(x + width/5, y + height/2, x + (4 * width)/5, y + height/2);		
-		g2d.setStroke(new BasicStroke(1));
-		g2d.setPaint(Coloration.dimColor(surface, 0.75f));
-		g2d.drawRoundRect(x, y, width, height, 12, 12);		
-	}
+	public void paint(Graphics2D g2d)
+    {
+        GraphicsManager.getInstance().paint(this);
+    }
 	
 	private void update(Helicopter helicopter)
 	{		
 		if(this.bounds.intersects(helicopter.bounds)){this.collect(helicopter);}		
 		
-		if(!this.stopped 
+		if(!this.hasStopped
 		   && helicopter.canImmobilizePowerUp()
 		   && this.hasReachedStopPosition())
 		{
 			this.stop();
 		}
 		
-		if(!this.inStatusBar)
+		if(!this.isInStatusBar)
 		{
-			if(!this.stopped)
+			if(!this.hasStopped)
 			{
 				double new_y_speed = 0.20 * this.direction * this.speed.getX();
 				this.speed.setLocation(0.25 * this.direction + this.speed.getX(), 
@@ -146,13 +114,13 @@ public class PowerUp extends GameEntity
 						- this.speed.getX()
 						- (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
 					Math.min(this.bounds.getY() - this.speed.getY(), 
-							GROUND_Y - this.bounds.getHeight()), 
-					GAME_SIZE, GAME_SIZE);
+							GROUND_Y - this.bounds.getHeight()),
+                    SIZE, SIZE);
 			
 			if(   (this.speed.getX() == 0 && this.bounds.getMaxX() < 0) 
 			    ||(this.speed.getX() != 0 && this.bounds.getMaxY() < 0))
 			{
-				this.collected = true;
+				this.collect();
 			}
 			this.setPaintBounds();
 		}		
@@ -165,51 +133,30 @@ public class PowerUp extends GameEntity
 	
 	private void make(double x, double y, PowerUpType powerUpType, int powerUpWorth, int powerUpDirection)
 	{
-		this.bounds.setRect(x, y, GAME_SIZE, GAME_SIZE);
-		this.setPaintBounds(GAME_SIZE, GAME_SIZE);
-		this.collected = false;
-		this.stopped = false;
-		this.inStatusBar = false;
+		this.bounds.setRect(x, y, SIZE, SIZE);
+		this.setPaintBounds(SIZE, SIZE);
+		this.wasCollected = false;
+		this.hasStopped = false;
+		this.isInStatusBar = false;
 		this.speed.setLocation(0, 0);
 		this.direction = powerUpDirection;
 		this.type = powerUpType;
-		if(this.type == TRIPLE_DAMAGE)
+        this.surfaceColor = this.type.getSurfaceColor();
+        this.crossColor = this.type.getCrossColor();
+		if(this.type == BONUS_INCOME)
 		{
-			this.surface = Color.magenta;
-			this.cross = Color.black;
+            this.worth = powerUpWorth;
 		}
-		else if(this.type == INVINCIBLE)
-		{
-			this.surface = Color.green;
-			this.cross = Color.yellow;
-		}
-		else if(this.type == UNLIMITRED_ENERGY)
-		{
-			this.surface = Color.blue;
-			this.cross = Color.cyan;
-		}
-		else if(this.type == BOOSTED_FIRE_RATE)
-		{
-			this.surface = Color.red;
-			this.cross = Color.orange;
-		}
-		else if(this.type == REPARATION)
-		{
-			this.surface = Color.white;
-			this.cross = Color.red;
-		}
-		else
-		{
-			this.surface = Color.orange;
-			this.cross = Coloration.golden;
-			this.worth = powerUpWorth;
-		} 
 	}
+    
+    public void collect()
+    {
+        this.wasCollected = true;
+    }
 	
 	private void collect(Helicopter helicopter)
 	{
-		this.collected = true;
-		
+		collect();
 		if(this.type.ordinal() > 3 || helicopter.powerUpTimer[this.type.ordinal()] ==  0)
 		{
 			Audio.play(Audio.powerAnnouncer[this.type.ordinal()]);
@@ -260,6 +207,7 @@ public class PowerUp extends GameEntity
 		}
 	}
 
+	// TODO energyBoost gehört in die Helicopter-Klasse
 	private static float energyBoost(Helicopter helicopter)
 	{
 		return Math.max(10, 2*helicopter.getMissingEnergy()/3);
@@ -269,10 +217,10 @@ public class PowerUp extends GameEntity
 	{
 		Menu.collectedPowerUp[this.type.ordinal()] = this;
 		this.speed.setLocation(0, 0);
-		this.inStatusBar = true;
-		this.collected = false;
-		this.bounds.setRect(100, 432, MENU_SIZE, MENU_SIZE);	
-		this.setPaintBounds(MENU_SIZE, MENU_SIZE);
+		this.isInStatusBar = true;
+		this.wasCollected = false;
+		this.bounds.setRect(100, 432, Menu.POWER_UP_SIZE, Menu.POWER_UP_SIZE);
+		this.setPaintBounds(Menu.POWER_UP_SIZE, Menu.POWER_UP_SIZE);
 	}
 
 	public static void activate(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, Enemy enemy,
@@ -301,7 +249,34 @@ public class PowerUp extends GameEntity
 	
 	private void stop()
 	{
-		this.stopped = true;
+		this.hasStopped = true;
 		this.speed.setLocation(0, 0);
 	}
+    
+    public PowerUpType getType()
+    {
+        return type;
+    }
+    
+    public void setOpaque()
+    {
+        this.surfaceColor = Coloration.setOpaque(this.surfaceColor);
+        this.crossColor = Coloration.setOpaque(this.crossColor);
+    }
+    
+    public void setAlpha(int alpha)
+    {
+        this.surfaceColor = Coloration.setAlpha(this.surfaceColor, alpha);
+        this.crossColor = Coloration.setAlpha(this.crossColor, alpha);
+    }
+    
+    public Color getSurfaceColor()
+    {
+        return surfaceColor;
+    }
+    
+    public Color getCrossColor()
+    {
+        return crossColor;
+    }
 }

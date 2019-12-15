@@ -18,6 +18,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameEntityActivation;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -66,8 +67,8 @@ public class Enemy extends GameEntity
 	// Konstanten	
 	private static final Point2D 
 		ZERO_SPEED = new Point2D.Float(0, 0);
-	
-	private static final Point 		
+    
+    private static final Point
 		TURN_DISTANCE = new Point(50, 10),
 		TARGET_DISTANCE_VARIANCE = new Point(10, 3),
 		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10),
@@ -1343,7 +1344,7 @@ public class Enemy extends GameEntity
 			maxBarrierNr = 3;}
 		else if(level == 49){
 			maxNr = 7;}
-		else if(level == 50)
+		else if(level == Events.MAXIMUM_LEVEL)
 		{
 			creationStop = true;
 			bossSelection = FINAL_BOSS;
@@ -1472,11 +1473,10 @@ public class Enemy extends GameEntity
 				&&((Events.lastCreationTimer > 20  && !Events.isBossLevel()) ||
 				   (Events.lastCreationTimer > 135 ) )
 				&& nrOfEnemies < (maxNr + maxBarrierNr)
-				&& creationProbability(
-						Events.isBossLevel()
-							? 0
-							: (maxNr + maxBarrierNr) - nrOfEnemies, 1)
-				&& !(Events.level > 50)
+				&& Events.isBossLevel()
+                    ? GameEntityActivation.isQuicklyApproved()
+                    : GameEntityActivation.isApproved(maxNr + maxBarrierNr - nrOfEnemies)
+				&& !(Events.level > Events.MAXIMUM_LEVEL)
 				&& !(!enemy.get(ACTIVE).isEmpty()
 						&& enemy.get(ACTIVE).getFirst().type.isMajorBoss());
 	}
@@ -4348,7 +4348,7 @@ public class Enemy extends GameEntity
 				 this, 
 				 Calculation.tossUp(0.14f)
 					? REPARATION
-					: PowerUpType.getValues()[Calculation.random(this.type.isMajorBoss() ? 5 : 6)], false);
+					: PowerUpType.getValues()[Calculation.random(this.type.isMajorBoss() ? PowerUpType.size() - 1 : PowerUpType.size())], false);
 		
 	}
 	

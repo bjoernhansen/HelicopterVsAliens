@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.control;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -236,7 +237,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	
 	private void paintFrame(Graphics g)
 	{
-		Graphics2D g2d = (Graphics2D) g;		
+		Graphics2D g2d = (Graphics2D) g;
+		GraphicsManager.getInstance().setGraphics2D(g2d);
 		
 		if(Menu.window == GAME)
 		{						

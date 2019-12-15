@@ -279,7 +279,7 @@ public class Missile extends GameEntity
 					 (this.paintBounds.height));
 		
 		g2d.setColor(Coloration.translucentWhite);
-		g2d.fillRect((int)(this.getPaintMaxX()
+		g2d.fillRect((int)(this.paintBounds.x + this.paintBounds.width
 						*(this.speed >= 0 ? -this.speed/5 : 1) 
 						+(this.speed >= 0 ? -6 : 11)),
 				     (this.paintBounds.y),

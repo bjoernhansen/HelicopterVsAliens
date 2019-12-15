@@ -14,6 +14,7 @@ import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameEntityActivation;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -26,7 +27,7 @@ import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundType.*;
 
 public class BackgroundObject extends GameEntity
-{	
+{
 	private static final int
 		// Sternkoordinaten
 		NR_OF_STARS = 40,
@@ -57,6 +58,8 @@ public class BackgroundObject extends GameEntity
 	private static final BufferedImage[]
     	CACTUS_IMG = paintCactusImage(),
     	PALM_CROWN_IMG = paintPalmCrownImage();
+	public static final int MAXIMUM_NUMBER = 20;
+	public static final int ACTIVATION_PAUSE_DURATION = 20;
 	
 	// statische Variablen
 	public static boolean
@@ -64,7 +67,7 @@ public class BackgroundObject extends GameEntity
 	   
     private static int
 		backgroundObjectSelection = TOTAL_FREQUENCY,
-    	groundFactor = 3,			// legt fest, wie viele Objekte erscheinen (auf Wüste weniger als auf anderem Boden)
+    	probabilityReductionFactor = 3,			// legt fest, wie viele Objekte erscheinen (auf Wüste weniger als auf anderem Boden)
 		mutualExclusionFactor,	// sorgt dafür, dass an der selben Stelle nicht Wüste und Berg gleichzeitig auftreten können
     	
     	// Timmer zur Sicherstellung eines zeitlichen Mindestabstand zwischen 2 Hintergrundobjekten
@@ -316,7 +319,7 @@ public class BackgroundObject extends GameEntity
         	this.type = DESERT;
             this.plane = 0;
             this.width = 600 + Calculation.random(400);
-            groundFactor = 17;
+            probabilityReductionFactor = 17;
             if(mutualExclusionFactor < this.width/2)
             {
             	mutualExclusionFactor = this.width/2;
@@ -391,7 +394,7 @@ public class BackgroundObject extends GameEntity
         this.type = DESERT;
         this.plane = 0;
         this.width = 800;            
-        groundFactor = 17;
+        probabilityReductionFactor = 17;
         mutualExclusionFactor = this.width/2;
         generalObjectTimer = 0;
         backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
@@ -456,7 +459,7 @@ public class BackgroundObject extends GameEntity
     	if(mutualExclusionFactor == 1 )
 		{
 			backgroundObjectSelection = TOTAL_FREQUENCY;
-			groundFactor = 3;
+			probabilityReductionFactor = 3;
 		}
 		if(mutualExclusionFactor > 0 ){
 			mutualExclusionFactor--;}
@@ -529,12 +532,12 @@ public class BackgroundObject extends GameEntity
 	private static void generateNewBackgroundObjects(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{
 		int numberOfBackgroundObjects = backgroundObjects.get(ACTIVE).size();
-		if( numberOfBackgroundObjects < 20
-				&& creationProbability( 20 - numberOfBackgroundObjects, groundFactor)
+		if( numberOfBackgroundObjects < MAXIMUM_NUMBER
+				&& GameEntityActivation.isApproved( MAXIMUM_NUMBER - numberOfBackgroundObjects, probabilityReductionFactor)
 				&& generalObjectTimer == 0
 				&& backgroundMoves)
 		{
-			generalObjectTimer = 20;
+			generalObjectTimer = ACTIVATION_PAUSE_DURATION;
 			Iterator<BackgroundObject> i = backgroundObjects.get(INACTIVE).iterator();
 	    	BackgroundObject bgo;
 			if(i.hasNext()){bgo = i.next(); i.remove();}	
