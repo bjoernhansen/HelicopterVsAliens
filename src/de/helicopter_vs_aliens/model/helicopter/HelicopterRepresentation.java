@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.model.GraphicalRepresentation;
 
 import java.awt.*;
 
+
 public class HelicopterRepresentation extends GraphicalRepresentation<Helicopter>
 {
     @Override
