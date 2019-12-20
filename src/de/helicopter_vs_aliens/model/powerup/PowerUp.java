@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.model.powerup;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -61,7 +62,8 @@ public class PowerUp extends GameEntity
 			if(pu.wasCollected)
 			{
 				i.remove();
-				powerUp.get(INACTIVE).add(pu);
+				Controller.getInstance().getGameEntityRecycler().store(pu);
+				// powerUp.get(INACTIVE).add(pu);
 			}
 		}		
 	}
@@ -224,12 +226,15 @@ public class PowerUp extends GameEntity
 	}
 
 	public static void activate(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, Enemy enemy,
-								PowerUpType type, boolean to_status_bar)
+								PowerUpType type, boolean isIntendedForStatusBar)
 	{
+		PowerUp pu = Controller.getInstance().getGameEntityRecycler().retrieve(PowerUp.class);
+		
+		/*
 		Iterator<PowerUp> i = powerUp.get(INACTIVE).iterator();
-		PowerUp pu;					
 		if(i.hasNext()){pu = i.next(); i.remove();}	
-		else{pu = new PowerUp();}	
+		else{pu = new PowerUp();}*/
+		
 		if(enemy != null)
 		{
 			pu.make(enemy.bounds.getX(), 
@@ -244,7 +249,7 @@ public class PowerUp extends GameEntity
 		    pu.make(0, 0, type, 0, 0);
 		}
 		powerUp.get(ACTIVE).add(pu);
-		if(to_status_bar){pu.moveToStatusbar();}		
+		if(isIntendedForStatusBar){pu.moveToStatusbar();}
 	}
 	
 	private void stop()

@@ -1023,7 +1023,7 @@ public class Menu
 			infoString = "Aktive PowerUps: "
 						  + controller.powerUps.get(ACTIVE).size()
 						  + ";   Inaktive PowerUps: "
-						  + controller.powerUps.get(INACTIVE).size();
+						  + controller.getGameEntityRecycler().sizeOf(PowerUp.class);
 		}
 		else if(specialInfoSelection == 3)
 		{

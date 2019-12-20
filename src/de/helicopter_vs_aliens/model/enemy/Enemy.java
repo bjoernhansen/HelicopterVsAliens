@@ -18,7 +18,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameEntityActivation;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -202,7 +201,7 @@ public class Enemy extends GameEntity
 		ROP_CLOAKED = new RescaleOp(scales, offsets, null);
     
 	private static boolean
-		creationStop =  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
+			wasEnemyCreationPaused =  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
 		makeBossTwoServants =  false,	// make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
 		makeBoss4Servant =  false,
 	    makeAllBoss5Servants =  false,
@@ -1168,7 +1167,7 @@ public class Enemy extends GameEntity
 		else if(level == 5){selection = 15;}
 		else if(level == 6)
 		{			
-			creationStop = false;
+			wasEnemyCreationPaused = false;
 			maxNr = 3;
 			bossSelection = null;
 			selection = 25;
@@ -1187,7 +1186,7 @@ public class Enemy extends GameEntity
 		}
 		else if(level == 10)
 		{
-			creationStop = true;
+			wasEnemyCreationPaused = true;
 			bossSelection = BOSS_1;
 			selection = 0;
 			helicopter.powerUpDecay();
@@ -1216,7 +1215,7 @@ public class Enemy extends GameEntity
 			selectionBarrier = 4;}
 		else if(level == 16)
 		{			
-			creationStop = false;
+			wasEnemyCreationPaused = false;
 			maxNr = 4;
 			bossSelection = null;
 			selection = 155;	
@@ -1230,7 +1229,7 @@ public class Enemy extends GameEntity
 			maxBarrierNr = 3;}
 		else if(level == 20)
 		{
-			creationStop = true;
+			wasEnemyCreationPaused = true;
 			bossSelection = BOSS_2;
 			selection = 0;
 			helicopter.powerUpDecay();
@@ -1257,7 +1256,7 @@ public class Enemy extends GameEntity
 		else if(level == 25){selection = 660;}		
 		else if(level == 26)
 		{
-			creationStop = false;
+			wasEnemyCreationPaused = false;
 			maxNr = 4;
 			bossSelection = null;
 			selection = 735;	
@@ -1271,7 +1270,7 @@ public class Enemy extends GameEntity
 			maxNr = 4; maxBarrierNr = 3;}
 		else if(level == 30)
 		{
-			creationStop = true;
+			wasEnemyCreationPaused = true;
 			bossSelection = BOSS_3;
 			selection = 0;	
 			helicopter.powerUpDecay();
@@ -1294,7 +1293,7 @@ public class Enemy extends GameEntity
 		else if(level == 35){selection = 3180;} 
 		else if(level == 36)
 		{
-			creationStop = false;
+			wasEnemyCreationPaused = false;
 			maxNr = 4;
 			bossSelection = null;
 			selection = 4185;
@@ -1308,7 +1307,7 @@ public class Enemy extends GameEntity
 			maxNr = 4; maxBarrierNr = 3;}
 		else if(level == 40)
 		{
-			creationStop = true;
+			wasEnemyCreationPaused = true;
 			bossSelection = BOSS_4;
 			selection = 0;
 			helicopter.powerUpDecay();
@@ -1331,7 +1330,7 @@ public class Enemy extends GameEntity
 		else if(level == 45){selection = 26285;}
 		else if(level == 46)
 		{
-			creationStop = false;
+			wasEnemyCreationPaused = false;
 			maxNr = 5;
 			bossSelection = null;
 			selection = 31810;
@@ -1346,7 +1345,7 @@ public class Enemy extends GameEntity
 			maxNr = 7;}
 		else if(level == Events.MAXIMUM_LEVEL)
 		{
-			creationStop = true;
+			wasEnemyCreationPaused = true;
 			bossSelection = FINAL_BOSS;
 			selection = 0;
 			helicopter.powerUpDecay();
@@ -1356,16 +1355,20 @@ public class Enemy extends GameEntity
 	/** Methoden zur Erstellung von Gegnern
 	 */	
 	
+	// TODO die Begrenzung nach Anzahl funktioniert nicht mehr
 	public static void generateNewEnemies(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy, Helicopter helicopter)
 	{
 		Events.lastCreationTimer++;
 		if(lastCarrier != null){
 			createCarrierServants(helicopter, enemy);}
-		else if(creationStop){
+		else if(wasEnemyCreationPaused){
 			verifyCreationStop(enemy, helicopter);}
 		if(bossServantCreationApproved()){
 			createBossServant(helicopter, enemy);}
-		else if(enemyCreationApproved(enemy)){creation(helicopter, enemy);}
+		else if(enemyCreationApproved(enemy))
+		{
+			creation(helicopter, enemy);
+		}
 	}
 	
 	private static void createCarrierServants(Helicopter helicopter,
@@ -1390,7 +1393,7 @@ public class Enemy extends GameEntity
 			&& !(helicopter.isPoweredUp()
 				 && Events.isBossLevel()) )
 		{
-			creationStop = false;
+			wasEnemyCreationPaused = false;
 			if(Events.isBossLevel())
 			{
 				maxNr = 1;
@@ -1450,7 +1453,7 @@ public class Enemy extends GameEntity
 											EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
     	makeBossTwoServants = false;
-		creationStop = true;
+		wasEnemyCreationPaused = true;
 		bossSelection = BOSS_2_SERVANT;
 		maxNr = 12;
 		for(int m = 0; m < maxNr; m++){creation(helicopter, enemy);}
@@ -1466,21 +1469,27 @@ public class Enemy extends GameEntity
 		});
     }	
 
-    private static boolean enemyCreationApproved(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static boolean enemyCreationApproved(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
 	{		
-		int nrOfEnemies = enemy.get(ACTIVE).size();
-		return !creationStop
-				&&((Events.lastCreationTimer > 20  && !Events.isBossLevel()) ||
-				   (Events.lastCreationTimer > 135 ) )
-				&& nrOfEnemies < (maxNr + maxBarrierNr)
-				&& Events.isBossLevel()
-                    ? GameEntityActivation.isQuicklyApproved()
-                    : GameEntityActivation.isApproved(maxNr + maxBarrierNr - nrOfEnemies)
-				&& !(Events.level > Events.MAXIMUM_LEVEL)
-				&& !(!enemy.get(ACTIVE).isEmpty()
-						&& enemy.get(ACTIVE).getFirst().type.isMajorBoss());
+		int numberOfEnemies = enemies.get(ACTIVE).size();
+		return     !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
+				&& !isMajorBossActive(enemies)
+				&& !wasEnemyCreationPaused
+				&& !Events.wasMaximumLevelExceeded()
+				&& Events.hasEnoughTimePassedSinceLastCreation()
+				&& Events.wereRandomRequirementsMet(maxNr + maxBarrierNr - numberOfEnemies);
 	}
-    
+	
+	private static boolean isMajorBossActive(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+	{
+		return !enemy.get(ACTIVE).isEmpty() && enemy.get(ACTIVE).getFirst().type.isMajorBoss();
+	}
+	
+	private static boolean hasNumberOfEnemiesReachedLimit(int numberOfEnemies)
+	{
+		return numberOfEnemies >= maxNr + maxBarrierNr;
+	}
+	
 	private static void creation(Helicopter helicopter,
 								 EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{

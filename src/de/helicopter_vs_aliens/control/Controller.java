@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.entities.GameEntityRecycler;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
-public class Controller extends JPanel implements Runnable, KeyListener,
+public final class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
 									   WindowListener
 {
@@ -87,12 +88,27 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 
 	Graphics2D offGraphics;
 
-	private Thread animator;
-	private Image offImage;
-	private Dimension offDimension;
-	private Shape offscreenClip;
-	private Rectangle2D wholeScreenClip;
-	private Dictionary dictionary = new Dictionary();
+	private Thread
+		animator;
+	
+	private Image
+		offImage;
+	
+	private Dimension
+		offDimension;
+	
+	private Shape
+		offscreenClip;
+	
+	private Rectangle2D
+		wholeScreenClip;
+	
+	private Dictionary
+		dictionary = new Dictionary();
+	
+	private GameEntityRecycler
+		gameEntityRecycler = new GameEntityRecycler();
+	
 	
 	private Controller(){}
 	
@@ -124,6 +140,8 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 	
 	void initializeLists()
 	{
+		// TODO alle Listen von inaktivierten überführen in GameEntityRecycler
+		// TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
 		CollectionSubgroupType.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
 			this.missiles.put(	   		standardSubgroupTypes, new LinkedList<>());
 			this.explosions.put(	   	standardSubgroupTypes, new LinkedList<>());
@@ -377,5 +395,10 @@ public class Controller extends JPanel implements Runnable, KeyListener,
 
 	public Dictionary getDictionary() {
 		return dictionary;
+	}
+	
+	public GameEntityRecycler getGameEntityRecycler()
+	{
+		return gameEntityRecycler;
 	}
 }

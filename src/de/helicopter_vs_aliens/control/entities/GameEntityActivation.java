@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control;
+package de.helicopter_vs_aliens.control.entities;
 
 import de.helicopter_vs_aliens.util.Calculation;
 

@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.control;
 
+import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -1035,7 +1036,8 @@ public class Events
 		controller.missiles.get(ACTIVE).clear();
 		controller.enemyMissiles.get(INACTIVE).addAll(controller.enemyMissiles.get(ACTIVE));
 		controller.enemyMissiles.get(ACTIVE).clear();
-		controller.powerUps.get(INACTIVE).addAll(controller.powerUps.get(ACTIVE));
+		//controller.powerUps.get(INACTIVE).addAll(controller.powerUps.get(ACTIVE));
+		controller.getGameEntityRecycler().storeAll(controller.powerUps.get(ACTIVE));
 		controller.powerUps.get(ACTIVE).clear();
 		if(Menu.collectedPowerUp[3] != null)
 		{
@@ -1345,5 +1347,28 @@ public class Events
 		money += lastBonus;
 		overallEarnings += lastBonus;
 		lastExtraBonus = 0;
+	}
+	
+	public static boolean hasEnoughTimePassedSinceLastCreation()
+	{
+		if(isBossLevel())
+		{
+			return lastCreationTimer > 135;
+		}
+		return lastCreationTimer > 20;
+	}
+	
+	public static boolean wereRandomRequirementsMet(int numberOfMissingEnemies)
+	{
+		if(isBossLevel())
+		{
+			return GameEntityActivation.isQuicklyApproved();
+		}
+		return GameEntityActivation.isApproved(numberOfMissingEnemies);
+	}
+	
+	public static boolean wasMaximumLevelExceeded()
+	{
+		return level > MAXIMUM_LEVEL;
 	}
 }
