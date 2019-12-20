@@ -1,5 +1,7 @@
 package de.helicopter_vs_aliens.model;
 
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterRepresentation;
 import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.Rectangle;
