@@ -1390,7 +1390,7 @@ public class Enemy extends GameEntity
 	{
 		if(	enemy.get(ACTIVE).isEmpty()
 			&& lastCarrier == null
-			&& !(helicopter.isPoweredUp()
+			&& !(helicopter.hasPowerUpsDisallowedAtBossLevel()
 				 && Events.isBossLevel()) )
 		{
 			wasEnemyCreationPaused = false;

@@ -25,8 +25,8 @@ public abstract class GameEntity implements Paintable
 	
 	protected void setPaintBounds(int width, int height)
 	{
-		this.paintBounds.setBounds((int)this.bounds.getX(),
-									(int)this.bounds.getY(), 
+		this.paintBounds.setBounds(	(int)Math.round(this.bounds.getX()),
+									(int)Math.round(this.bounds.getY()),
 									width, 
 									height);
 	}

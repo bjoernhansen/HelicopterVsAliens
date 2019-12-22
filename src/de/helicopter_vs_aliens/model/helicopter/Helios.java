@@ -159,4 +159,10 @@ public final class Helios extends Helicopter
         Events.overallEarnings += lastBonus;
         Menu.moneyDisplayTimer = Events.START;
     }
+
+    @Override
+    public boolean hasPowerUpsDisallowedAtBossLevel()
+    {
+        return false;
+    }
 }

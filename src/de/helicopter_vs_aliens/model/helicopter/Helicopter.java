@@ -1177,9 +1177,8 @@ public abstract class Helicopter extends GameEntity
 		this.spellCosts = this.getType().getSpellCosts();
 	}
 
-	public boolean isPoweredUp()
+	public boolean hasPowerUpsDisallowedAtBossLevel()
 	{
-		if(this.getType() == HELIOS){return false;}
 		for(int i = 0; i < 4; i++)
 		{
 			if(this.powerUpTimer[i] != 0

@@ -595,9 +595,9 @@ public class Menu
         else if(window  == DESCRIPTION && page == 5)
         {
         	int x = 52, y = 120, yOffset = 35;
+			PowerUpPainter powerUpRepresentation = GraphicsManager.getInstance().getGraphicalRepresentation(PowerUp.class);
         	for(PowerUpType powerUpType : PowerUpType.getValues())
 			{
-				PowerUpPainter powerUpRepresentation = GraphicsManager.getInstance().getGraphicalRepresentation(PowerUp.class);
 				powerUpRepresentation.paint(
 								g2d,
 								x, y + powerUpType.getMenuPosition() * yOffset,
