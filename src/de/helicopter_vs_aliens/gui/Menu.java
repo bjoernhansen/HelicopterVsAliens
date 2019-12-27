@@ -12,7 +12,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.PowerUpPainter;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.RectanglularGameEntity;
 import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
@@ -1132,7 +1132,7 @@ public class Menu
 							boolean showFps)
 	{
 		paintBossHealthBar(g2d);
-		paintHealthBar(g2d, helicopter, 5, GameEntity.GROUND_Y + 5);
+		paintHealthBar(g2d, helicopter, 5, RectanglularGameEntity.GROUND_Y + 5);
 		paintCollectedPowerUps(g2d);			
 		if(showFps){paintFpsDisplay(g2d);}
 		

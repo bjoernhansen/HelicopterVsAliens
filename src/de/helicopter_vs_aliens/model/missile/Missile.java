@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.missile;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.RectanglularGameEntity;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -22,7 +22,7 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
 
 
-public class Missile extends GameEntity
+public class Missile extends RectanglularGameEntity
 {	
 	private static final float
 		STANDARD_DAMAGE_FACTOR = 1.0f,

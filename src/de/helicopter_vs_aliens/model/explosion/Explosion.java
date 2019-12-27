@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -25,7 +26,7 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 
 // TODO wieso erbt Explosion nicht von GameEntity?
-public class Explosion implements Paintable
+public class Explosion extends GameEntity
 {
     public int 
     	time,				// vergangene Zeit [frames] seit Starten der Explosion

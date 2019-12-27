@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.RectanglularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -43,7 +43,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
-public abstract class Helicopter extends GameEntity
+public abstract class Helicopter extends RectanglularGameEntity
 {
     public static final int
 		// TODO einstellen auf 60 Frames per Second

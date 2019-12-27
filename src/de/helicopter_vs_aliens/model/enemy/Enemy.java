@@ -21,7 +21,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.RectanglularGameEntity;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
@@ -49,7 +49,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
 
-public class Enemy extends GameEntity
+public class Enemy extends RectanglularGameEntity
 {
 	private static class FinalEnemysOperator
     {	

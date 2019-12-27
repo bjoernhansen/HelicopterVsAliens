@@ -15,7 +15,7 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.RectanglularGameEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.util.Coloration;
@@ -26,7 +26,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundType.*;
 
-public class BackgroundObject extends GameEntity
+public class BackgroundObject extends RectanglularGameEntity
 {
 	private static final int
 		// Sternkoordinaten
