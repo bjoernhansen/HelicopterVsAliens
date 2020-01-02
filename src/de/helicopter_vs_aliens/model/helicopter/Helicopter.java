@@ -119,17 +119,16 @@ public abstract class Helicopter extends RectanglularGameEntity
 		numberOfMiniBossSeen,				// Anzahl der erschienenen Mini-Bosse
 		numberOfMiniBossKilled,				// Anzahl der vernichteten Mini-Bosse
 
-		powerUpTimer[] = new int [4], 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
-		   		
-		// TODO private machen und lesenden Zugriff über getUpgradeLevel
-		levelOfUpgrade[] = new int[StandardUpgradeType.size()];	// Upgrade-Level aller 6 StandardUpgrades
+		powerUpTimer[] = new int [4]; 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
+  
+	private Map<StandardUpgradeType, Integer>
+        levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
 	
 	public long
     	scorescreenTimes[] = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float
 		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
-	
 
 	private float
         currentEnergy;						// verfügbare Energie;
@@ -151,7 +150,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 		isContiniousFireEnabled,			// = true: Dauerfeuer aktiv
 		
 		isMovingLeft,
-		isPlayedWithoutCheats = true;			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
+		isPlayedWithCheats = true;			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
     
     public Point
     	destination = new Point(); 				// dorthin fliegt der Helikopter
@@ -800,12 +799,20 @@ public abstract class Helicopter extends RectanglularGameEntity
 	
 	public void initialize(boolean newGame, Savegame savegame)
     {
-        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-	    {
-    		if(newGame){this.levelOfUpgrade[standardUpgradeType.ordinal()] = this.getPriceLevelFor(standardUpgradeType).isCheap() ? 2 : 1;}
-	    }
+		if(newGame)
+		{
+			for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+			{
+				this.levelsOfStandardUpgrades.put(standardUpgradeType, this.getPriceLevelFor(standardUpgradeType).isCheap() ? 2 : 1);
+			}
+		}
     	if(!newGame){this.restoreLastGameState(savegame);}
-    	this.updateProperties(newGame);
+    	this.updateProperties();
+    	if(newGame)
+        {
+            this.restorePlating();
+            this.restoreEnergy();
+        }
     	this.fireRateTimer = this.timeBetweenTwoShots;
         this.empWave = null;
         this.placeAtStartpos();
@@ -814,7 +821,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 	
 	private void restoreLastGameState(Savegame savegame)
 	{
-		this.levelOfUpgrade = savegame.levelOfUpgrade.clone();
+		this.levelsOfStandardUpgrades = new EnumMap<>(savegame.levelsOfStandardUpgrades);
 		this.hasSpotlights = savegame.spotlight;
 		this.platingDurabilityFactor = savegame.platingDurabilityFactor;
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
@@ -834,7 +841,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.numberOfMiniBossKilled = savegame.miniBossKilled;
 		this.numberOfCrashes = savegame.numberOfCrashes;
 		this.numberOfRepairs = savegame.numberOfRepairs;
-		this.isPlayedWithoutCheats = savegame.noCheatsUsed;
+		this.isPlayedWithCheats = savegame.wasCreatedThroughCheating;
 		this.missileCounter = savegame.missileCounter;
 		this.hitCounter = savegame.hitCounter;
 		
@@ -847,7 +854,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.resetStateGeneral(true);
         this.resetStateTypeSpecific();
         this.isDamaged = false;
-		this.isPlayedWithoutCheats = true;
+		this.isPlayedWithCheats = false;
 		this.resetCounterForHighscore();
 		this.resetSpecialUpgrades();
         Arrays.fill(this.scorescreenTimes, 0);
@@ -910,21 +917,30 @@ public abstract class Helicopter extends RectanglularGameEntity
     	this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
     	this.hasPiercingWarheads = true;
     	this.getMaximumNumberOfCannons();
-    	this.updateProperties(true);
-		this.isDamaged = false;
-    	Menu.updateRepairShopButtons(this);
-    	this.isPlayedWithoutCheats = false;
+        makeAdjustmentsForCheatedUpgrades();
     }
+    
+    
     
     private void maximizeUpgrade(StandardUpgradeType standardUpgradeType)
     {
-        this.levelOfUpgrade[standardUpgradeType.ordinal()] = this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel();
+        this.levelsOfStandardUpgrades.put(standardUpgradeType, this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel());
     }
     
     void getMaximumNumberOfCannons()
 	{
 		this.numberOfCannons = 2;
 	}
+    
+    private void makeAdjustmentsForCheatedUpgrades()
+    {
+        this.updateProperties();
+        this.restorePlating();
+        this.restoreEnergy();
+        this.isDamaged = false;
+        Menu.updateRepairShopButtons(this);
+        this.isPlayedWithCheats = true;
+    }
 	
 	public void obtainSomeUpgrades()
     {
@@ -934,13 +950,10 @@ public abstract class Helicopter extends RectanglularGameEntity
     	{
     		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaxUpgradeLevel())
     		{
-    			this.levelOfUpgrade[standardUpgradeType.ordinal()] = EXTORTIONATE.getMaxUpgradeLevel();
+    			this.levelsOfStandardUpgrades.put(standardUpgradeType, EXTORTIONATE.getMaxUpgradeLevel());
     		}
-    	}        		
-    	this.updateProperties(true);
-		this.isDamaged = false;
-    	Menu.updateRepairShopButtons(this);
-    	this.isPlayedWithoutCheats = false;
+    	}
+        makeAdjustmentsForCheatedUpgrades();
     }
 	
 	public boolean hasSomeUpgrades()
@@ -1036,9 +1049,9 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.setCurrentEnergy(0.0f);
 	}
     
-    private void setCurrentEnergy(float currentEnergy)
+    private void setCurrentEnergy(float newEnergy)
     {
-        this.currentEnergy = Math.max(0, Math.min(this.getMaximumEnergy(), currentEnergy));
+        this.currentEnergy = Math.max(0, Math.min(this.getMaximumEnergy(), newEnergy));
     }
     
     private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
@@ -1145,15 +1158,10 @@ public abstract class Helicopter extends RectanglularGameEntity
         this.recentDamageTimer = RECENT_DAMAGE_TIME;
     }
     
-    private void updateProperties(boolean fullPlating)
+    private void updateProperties()
     {
     	this.updateRotorSystem();
     	this.updateMissileDrive();
-    	if(fullPlating)
-    	{
-    		this.restorePlating();
-    		this.restoreEnergy();
-    	}
     	this.setRelativePlatingDisplayColor();
 		this.setCurrentBaseFirepower();
     	this.adjustFireRate(this.hasBoostedFireRate());
@@ -1161,6 +1169,10 @@ public abstract class Helicopter extends RectanglularGameEntity
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		this.setSpellCosts();
 	}
+	
+	
+	
+	
     
     private void updateMissileDrive()
     {
@@ -1690,12 +1702,13 @@ public abstract class Helicopter extends RectanglularGameEntity
     
 	public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
-		return this.levelOfUpgrade[standardUpgradeType.ordinal()];
+		return this.levelsOfStandardUpgrades.get(standardUpgradeType);
 	}
 
 	public void upgrade(StandardUpgradeType standardUpgradeType)
 	{
-		this.levelOfUpgrade[standardUpgradeType.ordinal()]++;
+		Integer currentLevelOfUpgrade = this.levelsOfStandardUpgrades.get(standardUpgradeType);
+		this.levelsOfStandardUpgrades.put(standardUpgradeType, currentLevelOfUpgrade + 1);
 		switch (standardUpgradeType)
         {
             case ROTOR_SYSTEM:
@@ -1788,4 +1801,14 @@ public abstract class Helicopter extends RectanglularGameEntity
 	{
 		return SPOTLIGHT_COSTS;
 	}
+    
+    public Map<StandardUpgradeType, Integer> getLevelsOfStandardUpgrades()
+    {
+        return new EnumMap<>(this.levelsOfStandardUpgrades);
+    }
+    
+    public boolean isCountingAsFairPlayedHelicopter()
+    {
+        return !this.isPlayedWithCheats || Events.IS_SAVEGAME_SAVED_ANYWAY;
+    }
 }

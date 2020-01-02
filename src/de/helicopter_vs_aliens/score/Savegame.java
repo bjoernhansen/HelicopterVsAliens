@@ -16,18 +16,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.EnumMap;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
 
 public class Savegame implements Serializable
 {
-	private static final int
+	private static final transient int
 		OVERALL_HIGHSCORE_INDEX = 6;
 	
-	private static final long
-		serialVersionUID = 1L;	
-	
-	private static final String 
+	private static final transient String
 		FILENAME = "savegame";
 	
 	String
@@ -52,8 +51,7 @@ public class Savegame implements Serializable
 		missileCounter,
 		hitCounter,
 		platingDurabilityFactor,
-		numberOfCannons,
-		levelOfUpgrade[] = new int[StandardUpgradeType.size()];
+		numberOfCannons;
 	
 	public long
 		playingTime,
@@ -68,12 +66,15 @@ public class Savegame implements Serializable
 		originalResulution,
 		standardBackgroundMusic,
 		isSoundOn,
-		valid,
+        isValid,
 		spotlight,
 		hasPiercingWarheads,
 		hasFifthSpecial,
-		noCheatsUsed,
+        wasCreatedThroughCheating,
 		reachedLevelTwenty[] = new boolean [HelicopterType.size()];
+    
+    public Map<StandardUpgradeType, Integer>
+            levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);
 	
 	public HelicopterType
 		helicopterType;
@@ -87,7 +88,7 @@ public class Savegame implements Serializable
 		
 	private Savegame()
 	{
-		this.valid = false;
+		this.isValid = false;
 		this.currentPlayerName = HighscoreEntry.currentPlayerName;
 	}
 	
@@ -109,7 +110,7 @@ public class Savegame implements Serializable
 			Events.highscore = temp.highscore.clone();
 			output = temp;
 		}		
-		else{output = new Savegame();}		
+		else{output = new Savegame();}
 				
 		return output;
 	}
@@ -135,10 +136,10 @@ public class Savegame implements Serializable
 		return new Savegame();
 	}
 			
-	public void saveToFile(Helicopter helicopter, boolean validity)
+	public void saveToFile(Helicopter helicopter)
 	{				
-		this.save(helicopter, validity);
-		Menu.startscreenButton.get("11").enabled = validity;
+		this.save(helicopter);
+		Menu.startscreenButton.get("11").enabled = this.isValid;
 		writeToFile();			
 	}
 		
@@ -155,10 +156,8 @@ public class Savegame implements Serializable
 		}
 	}
 
-	private void save(Helicopter helicopter, boolean validity)
-	{		
-		this.valid = validity;
-		
+	private void save(Helicopter helicopter)
+	{
 		this.currentPlayerName = HighscoreEntry.currentPlayerName;
 		this.language = Menu.language;
 		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
@@ -177,7 +176,7 @@ public class Savegame implements Serializable
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
 		this.highscore = Events.highscore.clone();
 		this.helicopterType = helicopter.getType();
-		this.levelOfUpgrade = helicopter.levelOfUpgrade.clone();
+		this.levelsOfStandardUpgrades = helicopter.getLevelsOfStandardUpgrades();
 		this.spotlight = helicopter.hasSpotlights;
 		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
 		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
@@ -191,18 +190,33 @@ public class Savegame implements Serializable
 		this.miniBossKilled = helicopter.numberOfMiniBossKilled;
 		this.numberOfCrashes = helicopter.numberOfCrashes;
 		this.numberOfRepairs = helicopter.numberOfRepairs;
-		this.noCheatsUsed = helicopter.isPlayedWithoutCheats;
+		this.wasCreatedThroughCheating = helicopter.isPlayedWithCheats;
 		this.missileCounter = helicopter.missileCounter;
 		this.hitCounter = helicopter.hitCounter;
 	}	
 	
 	public void saveInHighscore()
 	{
-		if(this.valid && (this.noCheatsUsed || Events.SAVE_ANYWAY))
+	    if(this.isWorthyForHighscore())
 		{				
 			HighscoreEntry tempEntry = new HighscoreEntry(this);
 			HighscoreEntry.putEntry(Events.highscore[this.helicopterType.ordinal()], tempEntry);
 			HighscoreEntry.putEntry(Events.highscore[OVERALL_HIGHSCORE_INDEX], tempEntry);
 		}
 	}
+    
+    private boolean isWorthyForHighscore()
+    {
+        return this.isValid && (!this.wasCreatedThroughCheating || Events.IS_SAVEGAME_SAVED_ANYWAY);
+    }
+    
+    public void becomeValid()
+    {
+        this.isValid = true;
+    }
+    
+    public void loseValidity()
+    {
+        this.isValid = false;
+    }
 }

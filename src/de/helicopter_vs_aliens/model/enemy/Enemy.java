@@ -1199,7 +1199,7 @@ public class Enemy extends RectanglularGameEntity
 			maxBarrierNr = 1;
 			selectionBarrier = 2;
 			
-			if(( helicopter.isPlayedWithoutCheats || Events.SAVE_ANYWAY)
+			if(	 helicopter.isCountingAsFairPlayedHelicopter()
 				 && !Events.hasAnyBossBeenKilledBefore())
 			{
 				Menu.unlock(HELIOS);
@@ -1233,7 +1233,7 @@ public class Enemy extends RectanglularGameEntity
 			bossSelection = BOSS_2;
 			selection = 0;
 			helicopter.powerUpDecay();
-			if((helicopter.isPlayedWithoutCheats ||Events.SAVE_ANYWAY) && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
+			if(helicopter.isCountingAsFairPlayedHelicopter() && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
 			{
 				Events.reachedLevelTwenty[helicopter.getType().ordinal()] = true;
 				helicopter.updateUnlockedHelicopters();

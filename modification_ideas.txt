@@ -49,6 +49,7 @@ JavaFX Canvas verwenden
 	GaussianBlur, Shadow, Lightning, …
 
 Hilfreiche Links dazu:
+https://jaxenter.com/tutorial-a-glimpse-at-javafxs-canvas-api-105696.html
 https://gamedevelopment.tutsplus.com/tutorials/introduction-to-javafx-for-game-development--cms-23835
 https://www.canoo.com/blog/2012/09/21/take-care-of-the-javafx-scene-graph/?lang=de
 https://jaxenter.com/tutorial-a-glimpse-at-javafxs-canvas-api-105696.html

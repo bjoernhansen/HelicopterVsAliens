@@ -46,7 +46,7 @@ public class Events
 	
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
-		SAVE_ANYWAY = true;
+		IS_SAVEGAME_SAVED_ANYWAY = true;
 	
 	public static HighscoreEntry[][]
 		highscore = new HighscoreEntry[7][10];
@@ -180,7 +180,7 @@ public class Events
 							lastBonus = MAX_MONEY - money;
 						}
 						money = MAX_MONEY;
-						helicopter.isPlayedWithoutCheats = false;
+						helicopter.isPlayedWithCheats = true;
 					}
 					else
 					{
@@ -217,7 +217,7 @@ public class Events
 						if(isBossLevel()){nr_of_levelUp = 1;}
 						playingTime += (nr_of_levelUp + Calculation.random(nr_of_levelUp)) * 60000;
 						levelUp(controller, nr_of_levelUp);
-						helicopter.isPlayedWithoutCheats = false;
+						helicopter.isPlayedWithCheats = true;
 					}					
 				}
 				else if(e.getKeyChar() == '+')
@@ -226,7 +226,7 @@ public class Events
 					{
 						playingTime += (1 + (Calculation.tossUp(0.4f) ? 1 : 0)) * 60000;
 						levelUp(controller, 1);
-						helicopter.isPlayedWithoutCheats = false;
+						helicopter.isPlayedWithCheats = true;
 					}
 				}
 				else if(e.getKeyChar() =='s')
@@ -244,13 +244,13 @@ public class Events
 						helicopter.repair();
 						helicopter.restoreEnergy();
 						isRestartWindowVisible = false;
-						helicopter.isPlayedWithoutCheats = false;
+						helicopter.isPlayedWithCheats = true;
 					}								
 				}
 				else if(e.getKeyChar() == 'm')
 				{
 					Enemy.changeMiniBossProb();
-					helicopter.isPlayedWithoutCheats = false;
+					helicopter.isPlayedWithCheats = true;
 				}
 				else if(e.getKeyChar() == 'n')
 				{
@@ -278,17 +278,16 @@ public class Events
 						}
 						heliosMaxMoney = getHeliosMaxMoney();
 						savegame.saveInHighscore();
-						savegame.saveToFile(helicopter, false);
+                        Controller.savegame.loseValidity();
+						savegame.saveToFile(helicopter);
 						Audio.play(Audio.emp);
 					}
 				}
 				else if(e.getKeyChar() == '#')
-				{					
-					if((helicopter.isPlayedWithoutCheats || SAVE_ANYWAY) && savegame.valid)
-					{
-						savegame.saveInHighscore();
-					}
-					savegame.saveToFile(helicopter, false);
+				{
+					savegame.saveInHighscore();
+                    Controller.savegame.loseValidity();
+					savegame.saveToFile(helicopter);
 					Audio.play(Audio.emp);
 				}
 			}
@@ -362,8 +361,9 @@ public class Events
 			if(Menu.isMenuVisible)
 			{
 				if(Menu.inGameButton.get("MMNewGame1").bounds.contains(cursor))
-				{					
-					Controller.savegame.saveToFile(helicopter, true);
+				{
+                    Controller.savegame.becomeValid();
+				    Controller.savegame.saveToFile(helicopter);
 					conditionalReset(controller, helicopter, true);
 					restartGame(helicopter, controller.backgroundObjects);
 					Audio.applause1.stop();
@@ -374,8 +374,9 @@ public class Events
 					switchAudioActivationState(Controller.savegame);
 				}
 				else if(Menu.inGameButton.get("MMNewGame2").bounds.contains(cursor))
-				{					
-					Controller.savegame.saveToFile(helicopter, true);
+				{
+                    Controller.savegame.becomeValid();
+				    Controller.savegame.saveToFile(helicopter);
 					Controller.shutDown();
 				}
 				else if( 	(Menu.inGameButton.get("MainMenu").bounds.contains(cursor)
@@ -426,7 +427,8 @@ public class Events
 				changeWindow(SCORESCREEN);	
 															
 				helicopter.isDamaged = false;
-				Controller.savegame.saveToFile(helicopter, true);
+                Controller.savegame.becomeValid();
+				Controller.savegame.saveToFile(helicopter);
 				Coloration.updateScorescreenColors(helicopter);
 			}
 			else{enterRepairShop(helicopter);}
@@ -726,7 +728,7 @@ public class Events
 		}
 		else if(Menu.startscreenButton.get("11").bounds.contains(cursor))
 		{
-			if(Controller.savegame.valid)
+			if(Controller.savegame.isValid)
 			{
 				Audio.play(Audio.levelUp);
 				startGame(Controller.savegame);
@@ -747,7 +749,8 @@ public class Events
 		{				
 			savegame.saveInHighscore();
 			restartGame(helicopter, bgObject);
-			savegame.saveToFile(helicopter, false);
+			savegame.loseValidity();
+			savegame.saveToFile(helicopter);
 			Menu.startscreenMenuButton.get("Cancel").highlighted = false;
 		}
 		else if(window == DESCRIPTION)
@@ -1070,7 +1073,8 @@ public class Events
 		Button.initialize(helicopter);
 		if(isNewGame)
 		{
-			Controller.savegame.saveToFile(helicopter, true);
+			Controller.savegame.becomeValid();
+			Controller.savegame.saveToFile(helicopter);
 		}
 		else
 		{
@@ -1091,7 +1095,8 @@ public class Events
 		Audio.play(Audio.choose);	
 		timeAktu = System.currentTimeMillis();
 		helicopter.prepareForMission();
-		Controller.savegame.saveToFile(helicopter, true);
+		Controller.savegame.becomeValid();
+		Controller.savegame.saveToFile(helicopter);
 	}
 	
 	private static void enterRepairShop(Helicopter helicopter)
@@ -1249,7 +1254,7 @@ public class Events
 		long highscoreTime = (playingTime + System.currentTimeMillis() - timeAktu)/60000;
 		helicopter.scorescreenTimes[bossNr] = highscoreTime;
 				
-		if(helicopter.isPlayedWithoutCheats || SAVE_ANYWAY)
+		if(helicopter.isCountingAsFairPlayedHelicopter())
 		{			
 			recordTime[helicopter.getType().ordinal()][bossNr]
 				= recordTime[helicopter.getType().ordinal()][bossNr] == 0

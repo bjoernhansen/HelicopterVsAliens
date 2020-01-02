@@ -165,7 +165,7 @@ public class Button
 		}
 				
 		Menu.startscreenButton.get("11").marked = true;   // Der "Letztes Spiel fortsetzen"-Button ist markiert
-		Menu.startscreenButton.get("11").enabled = Controller.savegame.valid;
+		Menu.startscreenButton.get("11").enabled = Controller.savegame.isValid;
 		
 		Menu.startscreenMenuButton.put("Cancel", new Button( 849, 410, 150, 30, Menu.dictionary.cancel(), null, false, true));
 
