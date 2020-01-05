@@ -172,7 +172,7 @@ public class Menu
 	    triangle[0] = new Polygon(px1, py, 3);
 	    triangle[1] = new Polygon(px2, py, 3);
 	    
-	    Button.initializeButtons(helicopter);
+	    Button.initializeButtons();
 	    for(int i = 0; i < 4; i++)
 	    {
 	    	helicopterFrame[i]
