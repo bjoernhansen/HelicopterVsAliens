@@ -65,7 +65,7 @@ public enum PriceLevel
         return defensiveCopyOfValues;
     }
 
-    public int getMaxUpgradeLevel()
+    public int getMaximumUpgradeLevel()
     {
         return this.maxUpgradeLevel;
     }

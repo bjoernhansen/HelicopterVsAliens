@@ -71,7 +71,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		mouseInWindow = true;
 		
 	private Helicopter
-		helicopter = HelicopterFactory.create(HelicopterType.getDefault());
+		helicopter;// = HelicopterFactory.create(HelicopterType.getDefault());
 
 	public EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupType.class);

@@ -130,14 +130,10 @@ public abstract class Helicopter extends RectanglularGameEntity
     public float
 		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
 
-	private float
-        currentEnergy;						// verfügbare Energie;
-    
     int
     	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
     
     float
-        regenerationRate,					// Energiezuwachs pro Simulationsschritt
         spellCosts;							// Energiekosten für die Nutzung des Energie-Upgrades
     
     public boolean
@@ -509,7 +505,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 
     float getRegenerationRate()
 	{
-		return this.regenerationRate;
+		return this.battery.regenerationRate;
 	}
 
 	private void evaluateFire(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile)
@@ -796,28 +792,35 @@ public abstract class Helicopter extends RectanglularGameEntity
 	   	 	this.bounds.getWidth(),
 	   	 	this.bounds.getHeight());
 	}
-	
-	public void initialize(boolean newGame, Savegame savegame)
-    {
-		if(newGame)
+
+
+	public void initializeForNewGame()
+	{
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
-			for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-			{
-				this.levelsOfStandardUpgrades.put(standardUpgradeType, this.getPriceLevelFor(standardUpgradeType).isCheap() ? 2 : 1);
-			}
+			this.levelsOfStandardUpgrades.put(standardUpgradeType, this.getType().getInitialUpgradeLevelFor(standardUpgradeType));
 		}
-    	if(!newGame){this.restoreLastGameState(savegame);}
-    	this.updateProperties();
-    	if(newGame)
-        {
-            this.restorePlating();
-            this.restoreEnergy();
-        }
-    	this.fireRateTimer = this.timeBetweenTwoShots;
-        this.empWave = null;
-        this.placeAtStartpos();
-        this.prepareForMission();
-    }
+		generalInitialization();
+	}
+
+	public void initializeFromSavegame(Savegame savegame)
+	{
+		this.restoreLastGameState(savegame);
+		generalInitialization();
+	}
+
+	private void generalInitialization()
+	{
+		this.updateProperties();
+
+		// TODO das passiert auch in updateProperties(), notwendig? Wo wird UpdateProperties ausgeführt?
+		this.fireRateTimer = this.timeBetweenTwoShots;
+
+		this.empWave = null;
+		this.placeAtStartpos();
+		this.prepareForMission();
+	}
+
 	
 	private void restoreLastGameState(Savegame savegame)
 	{
@@ -827,8 +830,9 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
 		this.numberOfCannons = savegame.numberOfCannons;
 		this.currentPlating = savegame.currentPlating;
-		
-		this.setCurrentEnergy(savegame.energy);
+
+		this.battery.upgradeTo(this.levelsOfStandardUpgrades.get(ENERGY_ABILITY));
+		this.battery.setCurrentCharge(savegame.currentEnergy);
 		
 		if(savegame.hasFifthSpecial)
 		{
@@ -919,12 +923,10 @@ public abstract class Helicopter extends RectanglularGameEntity
     	this.getMaximumNumberOfCannons();
         makeAdjustmentsForCheatedUpgrades();
     }
-    
-    
-    
+
     private void maximizeUpgrade(StandardUpgradeType standardUpgradeType)
     {
-        this.levelsOfStandardUpgrades.put(standardUpgradeType, this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel());
+        this.levelsOfStandardUpgrades.put(standardUpgradeType, this.getType().getMaximumUpgradeLevelFor(standardUpgradeType));
     }
     
     void getMaximumNumberOfCannons()
@@ -948,9 +950,9 @@ public abstract class Helicopter extends RectanglularGameEntity
     	this.obtainFifthSpecial();
 		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
     	{
-    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaxUpgradeLevel())
+    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaximumUpgradeLevel())
     		{
-    			this.levelsOfStandardUpgrades.put(standardUpgradeType, EXTORTIONATE.getMaxUpgradeLevel());
+    			this.levelsOfStandardUpgrades.put(standardUpgradeType, EXTORTIONATE.getMaximumUpgradeLevel());
     		}
     	}
         makeAdjustmentsForCheatedUpgrades();
@@ -960,7 +962,7 @@ public abstract class Helicopter extends RectanglularGameEntity
     {
     	for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
     	{
-    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaxUpgradeLevel()){return false;}
+    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaximumUpgradeLevel()){return false;}
     	}
     	if(!this.hasSpotlights){return false;}
     	else return this.hasFifthSpecial();
@@ -1042,16 +1044,6 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.numberOfCrashes++;
 		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosions);}
 		else{this.isCrashing = true;}
-    }
-	
-	void discharge()
-	{
-		this.setCurrentEnergy(0.0f);
-	}
-    
-    private void setCurrentEnergy(float newEnergy)
-    {
-        this.currentEnergy = Math.max(0, Math.min(this.getMaximumEnergy(), newEnergy));
     }
     
     private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
@@ -1169,20 +1161,16 @@ public abstract class Helicopter extends RectanglularGameEntity
 		if(Menu.window != GAME){this.fireRateTimer = this.timeBetweenTwoShots;}
 		this.setSpellCosts();
 	}
-	
-	
-	
-	
-    
+
+	private void updateRotorSystem()
+	{
+		rotorSystem = this.getSpeed();
+	}
+
     private void updateMissileDrive()
     {
         this.missileDrive = this.getMissileDrive();
     }
-    
-    private void updateRotorSystem()
-	{
-		rotorSystem = this.getSpeed();
-	}
 	
 	void setSpellCosts()
 	{
@@ -1391,6 +1379,8 @@ public abstract class Helicopter extends RectanglularGameEntity
 				: STANDARD_PROTECTION_FACTOR;
 	}
 
+
+
 	public boolean isEnergyAbilityActivatable()
 	{		
 		return this.hasEnoughEnergyForAbility();
@@ -1411,8 +1401,11 @@ public abstract class Helicopter extends RectanglularGameEntity
     
     private void updateRegenerationRate()
     {
-        this.regenerationRate = Battery.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
+        this.battery.regenerationRate = Battery.regeneration(this.getUpgradeLevelOf(ENERGY_ABILITY));
     }
+
+
+
     
     public void becomesCenterOf(Explosion exp)
 	{
@@ -1647,16 +1640,28 @@ public abstract class Helicopter extends RectanglularGameEntity
     {
         return (int)FIRE_RATE.getMagnitude(calculateSumOfFireRateBooster(poweredUp));
     }
-    
+
+	// TODO eine Klasse Battery oder ähnliches erstellen und dort
     private float getMaximumEnergy(int level)
     {
         return START_ENERGY + ENERGY_ABILITY.getMagnitude(level);
     }
-    
-    // TODO eine Klasse Battery oder ähnliches erstellen und dort
+
+	void discharge()
+	{
+		this.setCurrentEnergy(0.0f);
+	}
+
+	private void setCurrentEnergy(float newEnergy)
+	{
+		this.battery.setCurrentCharge(newEnergy);
+		//this.currentEnergy = Calculation.constrainToRange(newEnergy, 0, this.getMaximumEnergy());
+	}
+
 	public float getCurrentEnergy()
 	{
-		return this.currentEnergy;
+		return this.battery.getCurrentCharge();
+		//return this.currentEnergy;
 	}
 
 	public void rechargeEnergy(float energyBoost)
@@ -1699,7 +1704,12 @@ public abstract class Helicopter extends RectanglularGameEntity
     {
         return this.getCurrentEnergy() <= 0;
     }
-    
+
+	public float getRelativeEnergy()
+	{
+		return this.getCurrentEnergy() / this.getMaximumEnergy();
+	}
+
 	public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
 		return this.levelsOfStandardUpgrades.get(standardUpgradeType);
@@ -1734,7 +1744,7 @@ public abstract class Helicopter extends RectanglularGameEntity
     
     public boolean hasMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
 	{
-		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getPriceLevelFor(standardUpgradeType).getMaxUpgradeLevel();
+		return this.getUpgradeLevelOf(standardUpgradeType) >= this.getType().getMaximumUpgradeLevelFor(standardUpgradeType);
 	}
 	
 	public int getUpgradeCostFor(StandardUpgradeType standardUpgradeType)
@@ -1766,12 +1776,7 @@ public abstract class Helicopter extends RectanglularGameEntity
     {
         return this.getCurrentPlating() / this.getMaximumPlating();
     }
-    
-    public float getRelativeEnergy()
-    {
-        return this.getCurrentEnergy() / this.getMaximumEnergy();
-    }
-    
+
     public boolean isDestinedToCrash()
     {
         return this.hasDestroyedPlating() && !this.isDamaged;

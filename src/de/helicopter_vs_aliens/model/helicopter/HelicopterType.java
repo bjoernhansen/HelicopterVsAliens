@@ -2,11 +2,10 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.util.Calculation;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 
 public enum HelicopterType
@@ -156,9 +155,19 @@ public enum HelicopterType
         return EFFECT_TIMES[this.ordinal()];
     }
 
+    public int getMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
+    {
+        return this.getPriceLevelFor(standardUpgradeType).getMaximumUpgradeLevel();
+    }
+
     public PriceLevel getPriceLevelFor(StandardUpgradeType standardUpgradeType)
     {
         return PriceLevel.getValues()[COSTS[this.ordinal()][standardUpgradeType.ordinal()]];
+    }
+
+    public int getInitialUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
+    {
+        return this.getPriceLevelFor(standardUpgradeType).isCheap() ? 2 : 1;
     }
 
     public boolean isUnlocked()

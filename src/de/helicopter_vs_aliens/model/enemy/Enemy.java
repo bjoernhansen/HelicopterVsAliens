@@ -1149,19 +1149,24 @@ public class Enemy extends RectanglularGameEntity
 	/** 
 	 ** 	Level-Anpassung
 	 **/
-	
+
+	// TODO dies sollten wohl keine statischen Methoden innerhalb von Enemy sein
+	public static void adaptToFirstLevel()
+	{
+		maxNr = 2;
+		bossSelection = null;
+		selection = 3;
+		maxBarrierNr = 0;
+		selectionBarrier = 1;
+	}
+
 	public static void adaptToLevel(Helicopter helicopter, int level, boolean isRealLevelUp)
 	{		
 		if(level == 1)
 		{
-			maxNr = 2;
-			bossSelection = null;
-			selection = 3;
-			maxBarrierNr = 0;
-			selectionBarrier = 1;
+			adaptToFirstLevel();
 		}
-		else if(level == 2){
-			maxNr = 3;}
+		else if(level == 2){maxNr = 3;}
 		else if(level == 3){selection = 6;}
 		else if(level == 4){selection = 10; maxBarrierNr = 1;}
 		else if(level == 5){selection = 15;}

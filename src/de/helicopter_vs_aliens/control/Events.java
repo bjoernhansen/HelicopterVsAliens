@@ -691,18 +691,13 @@ public class Events
 				Menu.helicopterFrame[2].contains(cursor)||
 				Menu.helicopterFrame[3].contains(cursor))
 		{				
-			if(allPlayable || Events.nextHelicopterType.isUnlocked())
+			if(allPlayable || nextHelicopterType.isUnlocked())
 			{
-				startGame(Events.nextHelicopterType, Controller.savegame, true);
+				startNewGame(nextHelicopterType, Controller.savegame);
 			}
 			else
 			{
-				Audio.play(Audio.block);
-				Menu.crossPosition = (Events.nextHelicopterType.ordinal() - Menu.helicopterSelection + HelicopterType.size())% HelicopterType.size();
-				Menu.cross = Menu.getCrossPolygon();
-				Menu.crossTimer = 1;
-				Menu.messageTimer = 1;
-				Menu.setStartscreenMessageForBlocking(nextHelicopterType);
+				Menu.blockHelicopterSelection(nextHelicopterType);
 			}
 		}
 		else if(Menu.startscreenButton.get("00").bounds.contains(cursor))
@@ -731,7 +726,7 @@ public class Events
 			if(Controller.savegame.isValid)
 			{
 				Audio.play(Audio.levelUp);
-				startGame(Controller.savegame);
+				startSavedGame(Controller.savegame);
 			}
 			else{Audio.play(Audio.block);}			
 		}		
@@ -932,19 +927,33 @@ public class Events
 			}
 		}	
 	}
-	
-	private static void initialize(Helicopter helicopter, 
-	                               Savegame savegame, 
-	                               boolean newGame)
-	{			
-		if(newGame){reset();}
-		else{restore(savegame);}
-		changeWindow(GAME);	
-		timeAktu = System.currentTimeMillis();
-		for(int i =  level - ((level - 1) % 5); i <= level; i++)
+
+	private static void initializeFromSavegame(Helicopter helicopter, Savegame savegame)
+	{
+		restore(savegame);
+		for(int i =  highestSavePointLevelBefore(level); i <= level; i++)
 		{
 			Enemy.adaptToLevel(helicopter, i, false);
 		}
+		generalInitialization();
+	}
+
+	private static int highestSavePointLevelBefore(int level)
+	{
+		return level - ((level - 1) % 5);
+	}
+
+	private static void initializeForNewGame(Helicopter helicopter)
+	{
+		reset();
+		Enemy.adaptToFirstLevel();
+		generalInitialization();
+	}
+
+	private static void generalInitialization()
+	{
+		changeWindow(GAME);
+		timeAktu = System.currentTimeMillis();
 	}
 
 	// Rücksetzen einiger Variablen bei Neustart des Spiels
@@ -1052,36 +1061,34 @@ public class Events
 		}
 	}
 
-	static private void startGame(Savegame savegame)
+	static private void startNewGame(HelicopterType helicopterType, Savegame savegame)
 	{
-		startGame(savegame.helicopterType, savegame, false);
+		Audio.play(Audio.applause1);
+		Helicopter newHelicopter = HelicopterFactory.createForNewGame(helicopterType);
+		Controller.getInstance().setHelicopter(newHelicopter);
+		savegame.saveInHighscore();
+		initializeForNewGame(newHelicopter);
+		Controller.savegame.becomeValid();
+		Controller.savegame.saveToFile(newHelicopter);
+		performGeneralActionsBeforeGameStart();
 	}
 
-	static private void startGame(HelicopterType helicopterType, Savegame savegame, boolean isNewGame)
+	static private void startSavedGame(Savegame savegame)
+	{
+		Helicopter savedHelicopter = HelicopterFactory.createFromSavegame(savegame);
+		Controller.getInstance().setHelicopter(savedHelicopter);
+		initializeFromSavegame(savedHelicopter, savegame);
+		Menu.updateRepairShopButtons(savedHelicopter);
+		performGeneralActionsBeforeGameStart();
+	}
+
+	private static void performGeneralActionsBeforeGameStart()
 	{
 		Audio.play(Audio.choose);
-		Helicopter helicopter = HelicopterFactory.create(helicopterType);
-		Controller.getInstance().setHelicopter(helicopter);
-		if(isNewGame)
-		{
-			Audio.play(Audio.applause1);
-			savegame.saveInHighscore();
-		}
 		Menu.reset();
-		helicopter.initialize(isNewGame, savegame);
-		initialize(helicopter, savegame, isNewGame);
-		Button.initialize(helicopter);
-		if(isNewGame)
-		{
-			Controller.savegame.becomeValid();
-			Controller.savegame.saveToFile(helicopter);
-		}
-		else
-		{
-			Menu.updateRepairShopButtons(helicopter);
-		}
+		Button.initialize();
 	}
-		
+
 	private static void restartGame(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject)
 	{		
 		changeWindow(STARTSCREEN);	

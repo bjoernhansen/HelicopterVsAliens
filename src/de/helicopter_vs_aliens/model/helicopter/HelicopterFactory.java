@@ -1,7 +1,24 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.score.Savegame;
+
+
 public final class HelicopterFactory
 {
+    public static Helicopter createForNewGame(HelicopterType type)
+    {
+        Helicopter helicopter = create(type);
+        helicopter.initializeForNewGame();
+        return helicopter;
+    }
+
+    public static Helicopter createFromSavegame(Savegame savegame)
+    {
+        Helicopter helicopter = create(savegame.helicopterType);
+        helicopter.initializeFromSavegame(savegame);
+        return helicopter;
+    }
+
     public static Helicopter create(HelicopterType type)
     {
         switch(type)

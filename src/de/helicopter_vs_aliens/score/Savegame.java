@@ -60,7 +60,7 @@ public class Savegame implements Serializable
 
 	public float
 		currentPlating,
-		energy;
+		currentEnergy;
 
 	public boolean
 		originalResulution,
@@ -183,7 +183,7 @@ public class Savegame implements Serializable
 		this.numberOfCannons = helicopter.numberOfCannons;
 		this.hasFifthSpecial = helicopter.hasFifthSpecial();
 		this.currentPlating = helicopter.getCurrentPlating();
-		this.energy = helicopter.getCurrentEnergy();
+		this.currentEnergy = helicopter.getCurrentEnergy();
 		this.enemiesSeen = helicopter.numberOfEnemiesSeen;
 		this.enemiesKilled = helicopter.numberOfEnemiesKilled;
 		this.miniBossSeen = helicopter.numberOfMiniBossSeen;

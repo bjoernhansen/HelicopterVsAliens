@@ -178,8 +178,9 @@ public class Button
 	// Helicopter-spezifische Anpassung der Werkstatt-Button-Beschriftungen
 	// TODO vielleicht können die spezifischen Beschriftungen unnötig gemacht werden, wenn gleich die richtigen Werte verwendet werden
 	// TODO sollte nach Menu verschoben werden
-	public static void initialize(Helicopter helicopter)
+	public static void initialize()
 	{
+		Helicopter helicopter = Controller.getInstance().getHelicopter();
 		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
 		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
 

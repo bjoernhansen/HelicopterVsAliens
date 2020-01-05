@@ -3124,4 +3124,14 @@ public class Menu
 		levelDisplayTimer.start();
 		unlockedTimer = 0;
 	}
+
+	public static void blockHelicopterSelection(HelicopterType nextHelicopterType)
+	{
+		Audio.play(Audio.block);
+		crossPosition = (Events.nextHelicopterType.ordinal() - helicopterSelection + HelicopterType.size())% HelicopterType.size();
+		cross = getCrossPolygon();
+		crossTimer = 1;
+		messageTimer = 1;
+		setStartscreenMessageForBlocking(nextHelicopterType);
+	}
 }
