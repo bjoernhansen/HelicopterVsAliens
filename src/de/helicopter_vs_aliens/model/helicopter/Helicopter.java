@@ -154,7 +154,8 @@ public abstract class Helicopter extends RectanglularGameEntity
     // TODO noch Phoenix auslagern
     public Point
     	priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
-    public boolean
+
+	public boolean
         isSearchingForTeleportDestination;	    // = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
     
 	public int
@@ -800,6 +801,8 @@ public abstract class Helicopter extends RectanglularGameEntity
 		{
 			this.levelsOfStandardUpgrades.put(standardUpgradeType, this.getType().getInitialUpgradeLevelFor(standardUpgradeType));
 		}
+		restorePlating();
+		restoreEnergy();
 		generalInitialization();
 	}
 
@@ -824,7 +827,11 @@ public abstract class Helicopter extends RectanglularGameEntity
 	
 	private void restoreLastGameState(Savegame savegame)
 	{
-		this.levelsOfStandardUpgrades = new EnumMap<>(savegame.levelsOfStandardUpgrades);
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		{
+			Integer upgradeLevel = savegame.levelsOfStandardUpgrades.get(standardUpgradeType);
+			this.levelsOfStandardUpgrades.put(standardUpgradeType, upgradeLevel);
+		}
 		this.hasSpotlights = savegame.spotlight;
 		this.platingDurabilityFactor = savegame.platingDurabilityFactor;
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;

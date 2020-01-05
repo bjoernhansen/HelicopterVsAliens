@@ -74,7 +74,7 @@ public class Savegame implements Serializable
 		reachedLevelTwenty[] = new boolean [HelicopterType.size()];
     
     public Map<StandardUpgradeType, Integer>
-            levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);
+        levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);
 	
 	public HelicopterType
 		helicopterType;
