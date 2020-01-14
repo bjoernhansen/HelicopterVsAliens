@@ -118,7 +118,8 @@ public final class Orochi extends Helicopter
     @Override
     boolean canRegenerateEnergy()
     {
-        return !this.isDamaged && !this.isNextMissileStunner;
+        return super.canRegenerateEnergy()
+                && !this.isNextMissileStunner;
     }
     
     @Override

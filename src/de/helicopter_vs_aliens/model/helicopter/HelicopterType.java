@@ -145,7 +145,7 @@ public enum HelicopterType
         return this.name().toLowerCase();
     }
 
-    int getSpellCosts()
+    public int getSpellCosts()
     {
         return SPELL_COSTS[this.ordinal()];
     }

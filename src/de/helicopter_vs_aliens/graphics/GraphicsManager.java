@@ -18,7 +18,6 @@ public class GraphicsManager
     
     private static final GraphicsManager
         instance = new GraphicsManager();
-        
     
     private GraphicsManager()
     {

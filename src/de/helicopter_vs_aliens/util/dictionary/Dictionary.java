@@ -331,21 +331,31 @@ public final class Dictionary
         return this.languageProperties.getProperty("currentLevel");
     }
     
-    public String helicopterName(HelicopterType type)
-    {
-        return this.helicopterNames.get(type);
-    }
-
     public List<String> helicopterInfos(HelicopterType type)
     {
         return this.helicopterInfos.get(type);
+    }
+    
+    public String typeName()
+    {
+        return typeName(helicopterType);
     }
     
     public String typeName(HelicopterType type)
     {
         return this.helicopterName(type) + this.languageProperties.getProperty("type");
     }
-
+    
+    public String helicopterName()
+    {
+        return this.helicopterName(this.helicopterType);
+    }
+    
+    public String helicopterName(HelicopterType type)
+    {
+        return this.helicopterNames.get(type);
+    }
+    
     public String priceLevel(PriceLevel priceLevel)
     {
         return this.languageProperties.getProperty(priceLevel.getDictionaryKey());

@@ -1,13 +1,17 @@
 package de.helicopter_vs_aliens.model.helicopter.components;
 
+import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.util.Calculation;
 
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 
-// TODO Battery Klasse fertig stellen
+
 public class Battery
 {
+    private static final int
+        START_ENERGY = 150;
+    
     public static final float []
         REGENERATION = {0.030f, 0.036f, 0.044f, 0.053f, 0.063f, 0.076f, 0.092f, 0.111f, 0.134f, 0.162f};
 
@@ -17,9 +21,7 @@ public class Battery
 
     private float
         currentCharge,
-        capacity;
-
-    public float
+        capacity,
         regenerationRate;  // Energiezuwachs pro Simulationsschritt
 
     HelicopterType
@@ -39,24 +41,22 @@ public class Battery
         this.upgradeTo(initialUpgradeLevel);
         this.currentCharge = this.capacity;
     }
-
-    public void upgrade()
+    
+    private static float getMaximumCapacity(int upgradeLevel)
     {
-        upgradeTo(this.upgradeLevel + 1);
+        return START_ENERGY + ENERGY_ABILITY.getMagnitude(upgradeLevel);
     }
-
+    
     public void upgradeTo(int newUpgradeLevel)
     {
+        int previousUpgradeLevel = this.upgradeLevel;
         this.upgradeLevel = Calculation.constrainToRange(newUpgradeLevel, this.upgradeLevel, this.maximumUpgradeLevel);
-        this.update();
-    }
-
-    private void update()
-    {
-        this.capacity = ENERGY_ABILITY.getMagnitude(upgradeLevel);
+        this.capacity = getMaximumCapacity(upgradeLevel);
         this.regenerationRate = regeneration(upgradeLevel);
+        float energyBoost = this.capacity - Battery.getMaximumCapacity(previousUpgradeLevel);
+        this.recharge(energyBoost);
     }
-
+   
     public static float regeneration(int n)
     {
         if(n >= 1 && n <= 10){return REGENERATION[n-1];}
@@ -80,7 +80,62 @@ public class Battery
 
     public void setCurrentCharge(float currentCharge)
     {
-        this.currentCharge = currentCharge;
-
+        this.currentCharge = Calculation.constrainToRange(currentCharge, 0, this.capacity);
+    }
+    
+    public float getCapacity()
+    {
+        return this.capacity;
+    }
+    
+    public void recharge(float energyBoost)
+    {
+        this.setCurrentCharge(this.currentCharge + energyBoost);
+    }
+    
+    public void recharge()
+    {
+        this.setCurrentCharge(this.currentCharge + this.regenerationRate);
+    }
+    
+    public float getMissingEnergy()
+    {
+        return this.capacity - this.currentCharge;
+    }
+    
+    public void drain(float energyConsumption)
+    {
+        this.recharge(-energyConsumption);
+    }
+    
+    public boolean isDischarged()
+    {
+        return this.currentCharge <= 0;
+    }
+    
+    public float getStateOfCharge()
+    {
+        return this.currentCharge / this.capacity;
+    }
+    
+    public float getRegenerationRate()
+    {
+        return regenerationRate;
+    }
+    
+    public void boostCharge()
+    {
+        float energyBoost = Math.max(10, 2*this.getMissingEnergy()/3);
+        this.recharge(energyBoost);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return String.format(
+                "Battery(%.2f/%.2f) of %s",
+                this.currentCharge,
+                this.capacity,
+                Menu.dictionary.helicopterName());
     }
 }

@@ -1108,7 +1108,7 @@ public class Menu
 		}   
 		else if(specialInfoSelection == 13)
 		{
-			infoString = Menu.dictionary.typeName(helicopter.getType());
+			infoString = Menu.dictionary.typeName();
 		}
 		else if(specialInfoSelection == 14)
 		{

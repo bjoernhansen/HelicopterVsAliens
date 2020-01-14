@@ -179,7 +179,7 @@ public class PowerUp extends RectanglularGameEntity
 			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel())
 			{
-				helicopter.rechargeEnergy(PowerUp.energyBoost(helicopter));
+				helicopter.boostEnergy();
 				Menu.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
@@ -206,12 +206,6 @@ public class PowerUp extends RectanglularGameEntity
 			Events.overallEarnings += Events.lastBonus;
 			Events.extraBonusCounter += Events.lastBonus;
 		}
-	}
-
-	// TODO energyBoost gehört in die Helicopter-Klasse
-	private static float energyBoost(Helicopter helicopter)
-	{
-		return Math.max(10, 2*helicopter.getMissingEnergy()/3);
 	}
 
 	public void moveToStatusbar()

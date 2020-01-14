@@ -17,6 +17,8 @@ public enum PriceLevel
     private static final PriceLevel[]
             defensiveCopyOfValues = values();
     
+    //TODO unmodifiable lists daraus machen
+    
     private static final float[]
             UPGRADE_LEVEL_COST_FACTORS = {500, 2000, 6000, 16000, 36000, 80000, 176000, 368000, 792000};
         

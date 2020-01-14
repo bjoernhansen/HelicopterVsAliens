@@ -214,11 +214,11 @@ public final class Phoenix extends Helicopter
     @Override
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
     {
-        this.teleportTo(mouseEvent.getX()- Main.displayShift.width,
-                        mouseEvent.getY()- Main.displayShift.height);
+        this.tryToTeleportTo(mouseEvent.getX()- Main.displayShift.width,
+                             mouseEvent.getY()- Main.displayShift.height);
     }
     
-    public void teleportTo(int x, int y)
+    public void tryToTeleportTo(int x, int y)
     {
         this.isSearchingForTeleportDestination = false;
         this.destination.setLocation(x, y);
@@ -248,7 +248,7 @@ public final class Phoenix extends Helicopter
         return this.hasEnoughEnergyForAbility()
                 && !this.isDamaged
                 && !Menu.isMenuVisible
-                && !this.hasValidTeleportDestination(x, y);
+                && this.hasValidTeleportDestination(x, y);
     }
     
     private boolean hasValidTeleportDestination(int x, int y)

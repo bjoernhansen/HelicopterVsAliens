@@ -48,15 +48,24 @@ JavaFX Canvas verwenden
 	https://docs.oracle.com/javase/8/javafx/api/javafx/scene/effect/Effect.html
 	GaussianBlur, Shadow, Lightning, …
 
-Hilfreiche Links dazu:
+Hilfreiche Links zu JavaFX:
+https://docs.oracle.com/javase/8/javase-clienttechnologies.htm
 https://jaxenter.com/tutorial-a-glimpse-at-javafxs-canvas-api-105696.html
 https://gamedevelopment.tutsplus.com/tutorials/introduction-to-javafx-for-game-development--cms-23835
-https://www.canoo.com/blog/2012/09/21/take-care-of-the-javafx-scene-graph/?lang=de
-https://jaxenter.com/tutorial-a-glimpse-at-javafxs-canvas-api-105696.html
-https://docs.oracle.com/javase/8/javafx/graphics-tutorial/canvas.htm
-
 https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 https://www.informatik-aktuell.de/entwicklung/programmiersprachen/zeichnen-in-javafx-komponenten.html
+https://docs.oracle.com/javafx/2/canvas/jfxpub-canvas.htm
+https://docs.oracle.com/javase/8/javafx/api/javafx/scene/canvas/GraphicsContext.html
+
+
+Links zu JavaFX 3D
+https://www.genuinecoder.com/javafx-3d/
+https://docs.oracle.com/javase/8/javafx/graphics-tutorial/javafx-3d-graphics.htm
+https://www.genuinecoder.com/javafx-3d-tutorial-introduction/ (inkl. 3 Videos)
+https://www.youtube.com/watch?v=CO0q99ZJouM
+https://www.tutorialspoint.com/javafx/javafx_3d_shapes.htm
+https://objectcomputing.com/resources/publications/sett/may-2012-experiments-with-javafx-3d-scenes
+http://interactivemesh.org/testspace/j3dmeetsjfx.html
 
 	Modell View Controller & JavaFX
 	JavaFX AnimationTimer

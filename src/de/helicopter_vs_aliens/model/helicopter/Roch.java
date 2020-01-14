@@ -95,7 +95,7 @@ public final class Roch extends Helicopter
     @Override
     public boolean isEnergyAbilityActivatable()
     {
-        return this.getCurrentEnergy() >= POWER_SHIELD_ACTIVATION_THRESHOLD && this.hasEnoughEnergyForAbility();
+        return this.battery.getCurrentCharge() >= POWER_SHIELD_ACTIVATION_THRESHOLD && this.hasEnoughEnergyForAbility();
     }
 
     @Override
@@ -134,13 +134,13 @@ public final class Roch extends Helicopter
             if(this.isPowerShieldActivated)
             {
                 this.shutDownPowerShield();
-                this.discharge();
+                this.battery.discharge();
             }
         }
         else
         {
             float energyConsumption = this.collisionPowerShieldConsumption(enemy);
-            this.drainEnergy(energyConsumption);
+            this.battery.drain(energyConsumption);
             
             if(this.isInvincible())
             {
@@ -187,14 +187,14 @@ public final class Roch extends Helicopter
         if(this.canAbsorbMissileDamage())
         {
             Audio.play(Audio.shieldUp);
-            this.drainEnergy(this.missileDamagePowerShieldConsumption());
+            this.battery.drain(this.missileDamagePowerShieldConsumption());
         }
         else
         {
             if(this.isPowerShieldActivated)
             {
                 this.shutDownPowerShield();
-                this.discharge();
+                this.battery.discharge();
             }
             super.takeMissileDamage();
         }
@@ -216,9 +216,9 @@ public final class Roch extends Helicopter
     
     private boolean hasEnoughEnergyForMissileDamageAbsorption()
     {
-        return this.getCurrentEnergy() >= this.getProtectionFactor()
-                                            * ENEMY_MISSILE_DAMAGE_FACTOR
-                                            * this.spellCosts
+        return this.battery.getCurrentCharge() >= this.getProtectionFactor()
+                                                * ENEMY_MISSILE_DAMAGE_FACTOR
+                                                * this.spellCosts
                 || this.hasUnlimitedEnergy();
     }
     
@@ -273,7 +273,7 @@ public final class Roch extends Helicopter
                        EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         super.update(missile, explosion);
-        if(this.isPowerShieldActivated && this.isDischarged())
+        if(this.isPowerShieldActivated && this.battery.isDischarged())
         {
             this.shutDownPowerShield();
         }
@@ -289,7 +289,7 @@ public final class Roch extends Helicopter
     {
         return this.isPowerShieldActivated
             && (this.hasUnlimitedEnergy()
-                || this.getCurrentEnergy() >= this.spellCosts * enemy.collisionDamage(this));
+                || this.battery.getCurrentCharge() >= this.spellCosts * enemy.collisionDamage(this));
     }
     
     @Override
@@ -396,5 +396,12 @@ public final class Roch extends Helicopter
     public int getFifthSpecialCosts()
     {
         return JUMBO_MISSILE_COSTS;
+    }
+    
+    @Override
+    boolean canRegenerateEnergy()
+    {
+        return super.canRegenerateEnergy()
+                && !this.isPowerShieldActivated;
     }
 }

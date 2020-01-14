@@ -97,4 +97,9 @@ public final class Calculation
     {
         return Math.max(min, Math.min(value, max));
     }
+	
+	public static float constrainToRange(float value, float min, float max)
+	{
+		return Math.max(min, Math.min(value, max));
+	}
 }
