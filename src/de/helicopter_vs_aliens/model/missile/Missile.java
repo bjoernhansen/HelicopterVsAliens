@@ -244,6 +244,7 @@ public class Missile extends RectanglularGameEntity
 										this.bounds.getMaxY());
 	}
 
+	@Override
 	public void paint(Graphics2D g2d)
 	{		
 		g2d.setColor(Coloration.red);

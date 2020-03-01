@@ -29,7 +29,7 @@ public class GameEntityRecycler
         Queue <T> gameEntityQueue = (Queue<T>)recyclingQueues.get(gameEntity.getClass());
         if(gameEntityQueue == null)
         {
-            gameEntityQueue = new LinkedList<T>();
+            gameEntityQueue = new LinkedList<>();
             recyclingQueues.put(gameEntity.getClass(), gameEntityQueue);
         }
         gameEntityQueue.add(gameEntity);
@@ -44,7 +44,7 @@ public class GameEntityRecycler
         Queue <T> gameEntityQueue = (Queue<T>)recyclingQueues.get(gameEntities.getClass());
         if(gameEntityQueue == null)
         {
-            gameEntityQueue = new LinkedList<T>();
+            gameEntityQueue = new LinkedList<>();
             recyclingQueues.put(gameEntities.getClass(), gameEntityQueue);
         }
         gameEntityQueue.addAll(gameEntities);

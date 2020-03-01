@@ -78,6 +78,7 @@ public class PowerUp extends RectanglularGameEntity
 		}	
 	}
 
+	@Override
 	public void paint(Graphics2D g2d)
     {
         GraphicsManager.getInstance().paint(this);

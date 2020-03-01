@@ -219,7 +219,8 @@ public abstract class Helicopter extends RectanglularGameEntity
     	this.paintBounds.setSize(HELICOPTER_SIZE);
     }
     
-    public void paint(Graphics2D g2d)
+    @Override
+	public void paint(Graphics2D g2d)
     {
     	paint(g2d, this.paintBounds.x, this.paintBounds.y);
     }

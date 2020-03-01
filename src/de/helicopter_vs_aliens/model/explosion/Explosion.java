@@ -114,7 +114,8 @@ public class Explosion extends GameEntity
 				+ STARTSCREEN_HELICOPTER_OFFSET_Y);
     }
 
-    public void paint(Graphics2D g2d)
+    @Override
+	public void paint(Graphics2D g2d)
     {    	
     	if(this.type == STUNNING || this.type == EMP)
 		{

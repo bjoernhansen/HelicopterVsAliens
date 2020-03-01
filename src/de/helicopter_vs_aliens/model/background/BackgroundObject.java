@@ -184,7 +184,8 @@ public class BackgroundObject extends RectanglularGameEntity
     	}
     }
     
-    public void paint(Graphics2D g2d)
+    @Override
+	public void paint(Graphics2D g2d)
     {
     	// Kaktus
         if(this.type == CACTUS)

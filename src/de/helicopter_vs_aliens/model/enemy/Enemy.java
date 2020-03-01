@@ -359,6 +359,7 @@ public class Enemy extends RectanglularGameEntity
 		miniBossProb = miniBossProb == STANDARD_MINI_BOSS_PROB ? CHEAT_MINI_BOSS_PROB: STANDARD_MINI_BOSS_PROB;
 	}
 	
+	@Override
 	public void paint(Graphics2D g2d)
 	{				
 		Helicopter helicopter = Controller.getInstance().getHelicopter();

@@ -49,7 +49,8 @@ public class EnemyMissile extends GameEntity
 		type;				// Art des Geschoss
 	
 	
-    public void paint(Graphics2D g2d)
+    @Override
+	public void paint(Graphics2D g2d)
     {
         g2d.setColor(this.variableColor);
         g2d.fillOval((int)this.location.getX(), 
