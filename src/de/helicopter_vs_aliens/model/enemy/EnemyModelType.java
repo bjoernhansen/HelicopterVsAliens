@@ -4,6 +4,6 @@ public enum EnemyModelType
 {
     TIT,
     CARGO,
-    // TODO Helicopter nimmt gelegenhtlich Schaden, wenn er von unten die Barrier berührt.
+    // TODO Helicopter nimmt gelegentlich Schaden, wenn er von unten die Barrier berührt.
     BARRIER
 }

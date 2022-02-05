@@ -158,7 +158,7 @@ public class Menu
     {
     	for(HelicopterType helicopterType : HelicopterType.getValues())
 		{
-			helicopterDummies.put(helicopterType, HelicopterFactory.create(helicopterType));
+			helicopterDummies.put(helicopterType, helicopterType.getInstance());
 		}
     	
     	helicopterSelection = (3 + Calculation.random(HelicopterType.size()-1))
@@ -487,13 +487,13 @@ public class Menu
             				{
             					tempString = Events.recordTime[j-1][i-1] == 0
                                                 ? ""
-                                                : Long.toString(Events.recordTime[j-1][i-1]) + " min";
+                                                : Events.recordTime[j - 1][i - 1] + " min";
             				}
             				else
             				{
             					tempString = Events.recordTime[j-1][i-1] == 0
                                                 ? ""
-                                                : Long.toString(Events.recordTime[j-1][i-1]-Events.recordTime[j-1][i-2]) + " min";
+                                                : Events.recordTime[j - 1][i - 1] - Events.recordTime[j - 1][i - 2] + " min";
             				}
             				
             			}
@@ -538,7 +538,7 @@ public class Menu
         				g2d.setColor(Coloration.brightenUp(tempEntry.helicopterType.getStandardPrimaryHullColor()));
 						g2d.drawString(Menu.dictionary.helicopterName(tempEntry.helicopterType),   realLeftColumn + xShift + 2 * columnDistance, topLine + j * lineDistance);
         				g2d.setColor(tempEntry.maxLevel > MAXIMUM_LEVEL ? Coloration.HS_GREEN : Coloration.HS_RED);
-        				int printLevel = tempEntry.maxLevel > MAXIMUM_LEVEL ? MAXIMUM_LEVEL : tempEntry.maxLevel;
+        				int printLevel = Math.min(tempEntry.maxLevel, MAXIMUM_LEVEL);
         				g2d.drawString(toStringWithSpace(printLevel), realLeftColumn + xShift + 3 * columnDistance, topLine + j * lineDistance);
     					g2d.setColor(Color.white);
         				g2d.drawString(toStringWithSpace((int)tempEntry.playingTime) + " min", realLeftColumn + xShift + 4 * columnDistance, topLine + j * lineDistance);

@@ -171,7 +171,7 @@ public final class Dictionary
     
     private String getFifthSpecial()
     {
-        return this.languageProperties.getProperty(this.helicopterType.getFifthSpecialdictionaryKey());
+        return this.languageProperties.getProperty(this.helicopterType.getFifthSpecialDictionaryKey());
     }
     
     private List<String> determineEnergyAbility()

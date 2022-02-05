@@ -4,7 +4,8 @@ import java.util.*;
 
 // TODO Timer-Klasse überall verwenden, wo integer-Counter verwendet werden
 // TODO es muss festgelegt werden können, wann ein Timer heruntergezählt wird, jeder Timer braucht somit eine eigene
-// Bedingung (eine Methode) welche bei jedem Timer abgefragt wird. Zwei Ansätze sind denkbar: 1. übergfeben von Lambda Ausdrucl an Methode
+// Bedingung (eine Methode) welche bei jedem Timer abgefragt wird. Zwei Ansätze sind denkbar: 1. übergeben von Lambda
+// Ausdruck an Methode
 // oder verschiedene Unterklassen
 // TODO bei Fensterwechsel Bedingung, die bestimmt, ob Timer wegfällt
 public class Timer

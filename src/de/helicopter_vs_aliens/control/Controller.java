@@ -33,7 +33,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
 									   WindowListener
 {
-	private static int
+	private static final int
 		BACKGROUND_PAINT_DISABLED = -1;
 
 	private static final long
@@ -71,7 +71,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		mouseInWindow = true;
 		
 	private Helicopter
-		helicopter = HelicopterFactory.create(HelicopterType.getDefault());
+		helicopter = HelicopterType.getDefault().getInstance();
 
 	public EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupType.class);
