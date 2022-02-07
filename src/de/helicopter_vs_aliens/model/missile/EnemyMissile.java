@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.model.missile;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -9,17 +8,15 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.model.GameEntity;
-import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;

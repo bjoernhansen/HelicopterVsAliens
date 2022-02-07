@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.model.background;
+package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
@@ -20,7 +20,7 @@ import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.model.background.BackgroundType.*;
+import static de.helicopter_vs_aliens.model.scenery.BackgroundType.*;
 
 // TODO Alles Allgemeines zu Backgrounds, was sich nicht auf die Background-Objekte bezieht in eigene Klasse
 // TODO diese Klasse bekommt dann auch einen eigenen Painter
@@ -68,9 +68,6 @@ public class BackgroundObject extends RectangularGameEntity
 		stoneTimer,
     	hillTimer;
     
-    public static float
-		cloudX = 135;				// x-Koordinate der Wolke
-    
     // Objekt-Attribute    
     public BackgroundType
         type;
@@ -84,10 +81,10 @@ public class BackgroundObject extends RectangularGameEntity
 		x;		// x-Koordinate
 	
 	private BufferedImage[]
-			images = new BufferedImage[2];		// Hintergrundobjekt-Bild (für Tag- udn Nachteinsatz)
-    
+		images = new BufferedImage[2];        // Hintergrundobjekt-Bild (für Tag- udn Nachteinsatz)
+	
 	private Color[]
-			colors = new Color[2];  			// nur für Palmen: Stammfarbe;
+		colors = new Color[2];            // nur für Palmen: Stammfarbe;
 	
 	private BackgroundObjectPainter
 		backgroundObjectPainter = GraphicsManager.getInstance().getPainter(BackgroundObject.class);
@@ -110,6 +107,7 @@ public class BackgroundObject extends RectangularGameEntity
         }    
         
         // Auswahl des Modells anhand der ermittelten Zufallszahl
+		// TODO Auswahl der Modelle in eine Factory Auslagern und mit Subtypen von BackgroundObject arbeiten
         if( random >= 0 && random < CACTUS_FREQUENCY)
         {           
             // Kaktus
@@ -254,7 +252,6 @@ public class BackgroundObject extends RectangularGameEntity
 		else{bgo = new BackgroundObject();}
 		bgo.makeFirstDesert();		
 		backgroundObjects.get(ACTIVE).add(bgo);
-		cloudX = 135;
     }
     
     public static void initialize(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
@@ -269,14 +266,7 @@ public class BackgroundObject extends RectangularGameEntity
     	firstDesert.makeFirstDesert();
     	backgroundObjects.get(ACTIVE).add(firstDesert);
     }
-	
-    private static void moveCloud()
-    {    	
-    	cloudX -= backgroundMoves ? 0.5f : 0.125f;
-		if(cloudX < -250){
-			cloudX = 1000;}
-    }
-    
+	   
     private static void updateBackgroundTimer()
     {
     	if(mutualExclusionFactor == 1 )
@@ -315,8 +305,7 @@ public class BackgroundObject extends RectangularGameEntity
 				i.remove();
 				backgroundObjects.get(INACTIVE).add(bgo);
 			}
-		}		
-		moveCloud();
+		}
 		generateNewBackgroundObjects(backgroundObjects);
 		if(backgroundMoves){
             updateBackgroundTimer();}

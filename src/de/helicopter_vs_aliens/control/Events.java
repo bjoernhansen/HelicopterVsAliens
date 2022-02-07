@@ -1,11 +1,12 @@
 package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
@@ -462,8 +463,11 @@ public class Events
 					enemies.get(ACTIVE).clear();
 					level = level - ((level - 1) % 5);						
 					Enemy.adaptToLevel(helicopter, level, false);
-					if(level < 6){
-						BackgroundObject.reset(bgObject);}
+					if(level < 6)
+					{
+						BackgroundObject.reset(bgObject);
+						Scenery.reset();
+					}
 					killsAfterLevelUp = 0;
 					enemies.get(INACTIVE).addAll(enemies.get(DESTROYED));
 					enemies.get(DESTROYED).clear();
@@ -1039,8 +1043,11 @@ public class Events
 			killsAfterLevelUp = 0;
 			controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
 			controller.enemies.get(DESTROYED).clear();
-			if(level < 6){
-				BackgroundObject.reset(controller.backgroundObjects);}
+			if(level < 6)
+			{
+				BackgroundObject.reset(controller.backgroundObjects);
+				Scenery.reset();
+			}
 		}									
 		controller.explosions.get(INACTIVE).addAll(controller.explosions.get(ACTIVE));
 		controller.explosions.get(ACTIVE).clear();
@@ -1094,6 +1101,7 @@ public class Events
 		changeWindow(STARTSCREEN);	
 		helicopter.reset();
 		BackgroundObject.reset(bgObject);
+		Scenery.reset();
 	}
 
 	private static void startMission(Helicopter helicopter)

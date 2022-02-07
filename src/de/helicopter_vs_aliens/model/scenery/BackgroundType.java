@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.model.background;
+package de.helicopter_vs_aliens.model.scenery;
 
 public enum BackgroundType
 {

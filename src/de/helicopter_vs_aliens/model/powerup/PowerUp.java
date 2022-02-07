@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 

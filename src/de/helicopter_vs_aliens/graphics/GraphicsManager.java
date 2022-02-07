@@ -1,7 +1,9 @@
 package de.helicopter_vs_aliens.graphics;
 
 import de.helicopter_vs_aliens.model.Paintable;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -29,6 +31,8 @@ public class GraphicsManager
         painters.put(Missile.class, new MissilePainter());
         painters.put(EnemyMissile.class, new EnemyMissilePainter());
         painters.put(BackgroundObject.class, new BackgroundObjectPainter());
+        painters.put(Scenery.class, new SceneryPainter());
+        painters.put(Explosion.class, new ExplosionPainter());
     }
     
     public static GraphicsManager getInstance()

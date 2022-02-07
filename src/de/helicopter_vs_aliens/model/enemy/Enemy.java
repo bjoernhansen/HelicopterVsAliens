@@ -19,7 +19,7 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -36,7 +36,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
 import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.*;
@@ -63,7 +63,10 @@ public class Enemy extends RectangularGameEntity
     	}
     }	
 	
-	// Konstanten	
+	// Konstanten
+	public static final int
+		SPEED_KILL_BONUS_TIME 	= 15;    // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
+	
 	private static final Point2D 
 		ZERO_SPEED = new Point2D.Float(0, 0);
     
@@ -102,59 +105,58 @@ public class Enemy extends RectangularGameEntity
 		
 	private static final int 				
 		// Raum-Konstanten
-		SAVE_ZONE_WIDTH			= 116;
-	private static final int APPEARANCE_DISTANCE		= 10;
-	private static final int SHIELD_TARGET_DISTANCE  = 20;
-	private static final int DISAPPEARANCE_DISTANCE	= 100;
-	private static final int BARRIER_DISTANCE		= 100;
-	private static final int ROCK_WIDTH				= 300;
-	private static final int KABOOM_WIDTH			= 120;
-	private static final int FINAL_BOSS_WIDTH		= 450;
-	private static final int PROTECTOR_WIDTH 		= 90;
-	private static final int KABOOM_Y_TURN_LINE		= GROUND_Y - (int)(HEIGHT_FACTOR*KABOOM_WIDTH);
-
-	private static final int// Zeit-Konstanten
-		CLOAKING_TIME			= 135;    // Zeit, die beim Tarn- und Enttarnvorgang vergeht
-		private static final int CLOAKED_TIME 			= 135;    // Zeit, die ein Gegner getarnt bleibt
-		private static final int ROCKFREE_TIME			= 250;    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
-	 	private static final int EMP_SLOW_TIME			= 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
-	 	private static final int EMP_SLOW_TIME_BOSS		= 110;
-	private static final int SNOOZE_TIME 			= 100;    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
-	 	private static final int INACTIVATION_TIME		= 150;
-	private static final int STUNNING_TIME_BASIS 	= 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
-	 	public static final int SPEED_KILL_BONUS_TIME 	= 15;    // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
-	 	private static final int BORROW_TIME				= 65;
-	private static final int MIN_TURN_TIME			= 31;
-	private static final int MIN_TURN_NOISELESS_TIME = 15;
-	private static final int STATIC_CHARGE_TIME		= 110;
-	private static final int MAX_BARRIER_NUMBER		= 3;
-
-	private static final int// Level-Voraussetzungen
-	 	MIN_BARRIER_LEVEL		= 2;
-	private static final int MIN_POWER_UP_LEVEL		= 3;
-	private static final int MIN_FUTURE_LEVEL		= 8;
-	private static final int MIN_KABOOM_LEVEL		= 12;
-	private static final int MIN_SPIN_SHOOTER_LEVEL 	= 23;
-	private static final int MIN_ROCK_LEVEL			= 27;
-	private static final int MIN_BUSTER_LEVEL		= 29;
-
-	private static final int// für Boss-Gegner
-	 	NR_OF_BOSS_5_SERVANTS 	= 5;
-	private static final int BOSS_5_HEAL_RATE		= 11;
-	private static final int STANDARD_REWARD_FACTOR	= 1;
-	private static final int MINI_BOSS_REWARD_FACTOR	= 4;
-
-	private static final int// TODO die 4 austauschen / anders lösen
-		PRE_READY 				= 1;
-	private static final int READY 					= 0;
-	private static final int ACTIVE_TIMER 			= 1;
-	private static final int DISABLED 				= -1;
-
-	private static final int MIN_ABSENT_TIME[]		= {175,	// SMALL_SHIELD_MAKER
-		                 		   175, // BIG_SHIELD_MAKER
-		                 		   900,	// BODYGUARD
-		                 		   250, // HEALER
-		                 		   90}; // PROTECTOR
+		SAVE_ZONE_WIDTH = 116,
+		APPEARANCE_DISTANCE = 10,
+		SHIELD_TARGET_DISTANCE = 20,
+		DISAPPEARANCE_DISTANCE = 100,
+		BARRIER_DISTANCE = 100,
+		ROCK_WIDTH = 300,
+		KABOOM_WIDTH = 120,
+		FINAL_BOSS_WIDTH = 450,
+		PROTECTOR_WIDTH = 90,
+		KABOOM_Y_TURN_LINE = GROUND_Y - (int) (HEIGHT_FACTOR * KABOOM_WIDTH),
+	
+	// Zeit-Konstanten
+		CLOAKING_TIME = 135,    // Zeit, die beim Tarn- und Enttarnvorgang vergeht
+		CLOAKED_TIME = 135,     // Zeit, die ein Gegner getarnt bleibt
+		ROCKFREE_TIME = 250,    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
+		EMP_SLOW_TIME = 175,    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
+		EMP_SLOW_TIME_BOSS = 110,
+		SNOOZE_TIME = 100,    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
+		INACTIVATION_TIME = 150,
+		STUNNING_TIME_BASIS = 45,    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
+		BORROW_TIME = 65,
+		MIN_TURN_TIME = 31,
+		MIN_TURN_NOISELESS_TIME = 15,
+		STATIC_CHARGE_TIME = 110,
+		MAX_BARRIER_NUMBER = 3,
+	
+	    // Level-Voraussetzungen
+		MIN_BARRIER_LEVEL = 2,
+		MIN_POWER_UP_LEVEL = 3,
+		MIN_FUTURE_LEVEL = 8,
+		MIN_KABOOM_LEVEL = 12,
+		MIN_SPIN_SHOOTER_LEVEL = 23,
+		MIN_ROCK_LEVEL = 27,
+		MIN_BUSTER_LEVEL = 29,
+	
+	    // für Boss-Gegner
+		NR_OF_BOSS_5_SERVANTS = 5,
+		BOSS_5_HEAL_RATE = 11,
+		STANDARD_REWARD_FACTOR = 1,
+		MINI_BOSS_REWARD_FACTOR = 4,
+	
+	    // TODO die 4 austauschen / anders lösen
+		PRE_READY = 1,
+		READY = 0,
+		ACTIVE_TIMER = 1,
+		DISABLED = -1,
+		
+	    MIN_ABSENT_TIME[] = { 175,  // SMALL_SHIELD_MAKER
+		    				  175,  // BIG_SHIELD_MAKER
+							  900,  // BODYGUARD
+							  250,  // HEALER
+							   90}; // PROTECTOR
 	
 	private static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
@@ -201,7 +203,7 @@ public class Enemy extends RectangularGameEntity
 		ROP_CLOAKED = new RescaleOp(scales, offsets, null);
     
 	private static boolean
-			wasEnemyCreationPaused =  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
+		wasEnemyCreationPaused =  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
 		makeBossTwoServants =  false,	// make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
 		makeBoss4Servant =  false,
 	    makeAllBoss5Servants =  false,
@@ -874,9 +876,12 @@ public class Enemy extends RectangularGameEntity
 					(int) (offsetY + 0.6f * this.paintBounds.height),
 					(int) (			  0.18f * this.paintBounds.width));
 		}
-				
-		/*g2d.setColor(Color.red);
-		g2d.draw3DRect(offset_x, offset_y, this.bounds.getWidth() - 1, this.bounds.getHeight() - 1, true);*/
+		
+		boolean showRedFrame = false;
+		if(showRedFrame){
+			g2d.setColor(Color.red);
+		    g2d.drawRect(offsetX, offsetY, (int)(this.bounds.getWidth() - 1), (int)(this.bounds.getHeight() - 1));
+		}
 	}
 	
 	private void paintBarrier(Graphics2D g2d,
@@ -3549,9 +3554,8 @@ public class Enemy extends RectangularGameEntity
 		return this.tractor == AbilityStatusType.READY
 				&& !this.isEmpSlowed()
 				&& this.cloakingTimer < 1
-				&& this.bounds.getMaxX() < 982;
+				&& this.bounds.getMaxX() < Main.VIRTUAL_DIMENSION.width;
 	}
-
 
 	private void startTractor(Helicopter helicopter)
 	{

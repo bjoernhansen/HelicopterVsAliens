@@ -1,116 +1,20 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.Main;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.background.BackgroundObject;
-import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.EnumMap;
-import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.model.RectangularGameEntity.GROUND_Y;
-import static de.helicopter_vs_aliens.model.background.BackgroundType.*;
+import static de.helicopter_vs_aliens.model.scenery.BackgroundType.*;
 
+//TODO hier auch mit Subklassen arbeiten, die von BackgroundObject erben
 public class BackgroundObjectPainter extends Painter<BackgroundObject>
 {
-    private static final int
-        NR_OF_STARS = 40,
-        // Sternkoordinaten
-        STARS[][] = new int [2][NR_OF_STARS];
-    
     private static final BufferedImage[]
         CACTUS_IMG = paintCactusImage(),
         PALM_CROWN_IMG = paintPalmCrownImage();
-    
-    static{
-        initializeStars();
-    }
-    
-    private static void initializeStars()
-    {
-        for(int i = 0; i < NR_OF_STARS; i++)
-        {
-            STARS[0][i] = Calculations.random(982);
-            STARS[1][i] = Calculations.random(GROUND_Y);
-        }
-    }
-    
-    public static void paintBackground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
-    {
-        paintBackground(g2d);
-        paintBgObjects(g2d, backgroundObjects);
-    }
-    
-    private static void paintBackground(Graphics2D g2d)
-    {
-        // Sonne bzw. Mond
-        int coronaRadiusIncrease = 0;
-        if(Events.timeOfDay == NIGHT) {g2d.setColor(Colorations.lighterYellow); }
-        else
-        {
-            g2d.setColor(Colorations.randomLight);
-            coronaRadiusIncrease = (Colorations.randomSunlightBlue - 175)/20;
-        }
-        g2d.fillOval(865, 30, 60, 60);
-        g2d.setColor(Colorations.translucentSun);
-        g2d.setStroke(new BasicStroke(35));
-        g2d.drawOval(855-coronaRadiusIncrease, 20-coronaRadiusIncrease,
-                80+2*coronaRadiusIncrease, 80+2*coronaRadiusIncrease);
-        g2d.setStroke(new BasicStroke(1));
-        
-        // Sterne
-        if(Events.timeOfDay == NIGHT)
-        {
-            g2d.setColor(Color.white);
-            for(int m = 0; m < 40; m++)
-            {
-                g2d.drawLine(STARS[0][m], STARS[1][m],
-                        STARS[0][m], STARS[1][m]);
-            }
-        }
-        
-        // Wolke
-        g2d.setPaint(Colorations.gradientCloud[Events.timeOfDay.ordinal()]);
-        g2d.fillOval((int) BackgroundObject.cloudX, 51,  82, 45);
-        g2d.fillOval((int)(BackgroundObject.cloudX + 41), 63, 150, 60);
-        g2d.fillOval((int)(BackgroundObject.cloudX + 68), 40,  60, 53);
-    }
-    
-    private static void paintBgObjects(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
-    {
-        for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
-        {
-            if (bgo.getPlane() == -1)
-            {
-                bgo.paint(g2d);
-            }
-        }
-    }
-        
-    public static void paintForeground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
-    {
-        // der Boden
-        g2d.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
-        g2d.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
-        
-        // Objekte vor dem Helikopter
-        for(int j = 0; j < 3; j++)
-        {
-            for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
-            {
-                if (bgo.getPlane() == j)
-                {
-                    bgo.paint(g2d);
-                }
-            }
-        }
-    }
     
     @Override
     void paint(Graphics2D g2d, BackgroundObject backgroundObject)
