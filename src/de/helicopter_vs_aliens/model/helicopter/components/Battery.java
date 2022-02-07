@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.helicopter.components;
 
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
-import de.helicopter_vs_aliens.util.Calculation;
+import de.helicopter_vs_aliens.util.Calculations;
 
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 
@@ -14,11 +14,13 @@ public class Battery
     
     public static final float []
         REGENERATION = {0.030f, 0.036f, 0.044f, 0.053f, 0.063f, 0.076f, 0.092f, 0.111f, 0.134f, 0.162f};
-
+    
+    private final int
+            maximumUpgradeLevel;
+    
     private int
-        upgradeLevel,
-        maximumUpgradeLevel;
-
+        upgradeLevel;
+    
     private float
         currentCharge,
         capacity,
@@ -50,7 +52,7 @@ public class Battery
     public void upgradeTo(int newUpgradeLevel)
     {
         int previousUpgradeLevel = this.upgradeLevel;
-        this.upgradeLevel = Calculation.constrainToRange(newUpgradeLevel, this.upgradeLevel, this.maximumUpgradeLevel);
+        this.upgradeLevel = Calculations.constrainToRange(newUpgradeLevel, this.upgradeLevel, this.maximumUpgradeLevel);
         this.capacity = getMaximumCapacity(upgradeLevel);
         this.regenerationRate = regeneration(upgradeLevel);
         float energyBoost = this.capacity - Battery.getMaximumCapacity(previousUpgradeLevel);
@@ -80,7 +82,7 @@ public class Battery
 
     public void setCurrentCharge(float currentCharge)
     {
-        this.currentCharge = Calculation.constrainToRange(currentCharge, 0, this.capacity);
+        this.currentCharge = Calculations.constrainToRange(currentCharge, 0, this.capacity);
     }
     
     public float getCapacity()

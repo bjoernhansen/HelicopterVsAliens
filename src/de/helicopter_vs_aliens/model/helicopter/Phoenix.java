@@ -10,8 +10,8 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
+import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.Calculations;
 
 import java.applet.AudioClip;
 import java.awt.*;
@@ -153,7 +153,7 @@ public final class Phoenix extends Helicopter
                 && enemy.collisionDamageTimer == 0
                 && !(enemy.type == KABOOM)
                 && this.enhancedRadiationTimer == 0
-                && Calculation.tossUp(ENHANCED_RADIATION_PROB);
+                && Calculations.tossUp(ENHANCED_RADIATION_PROB);
     }
     
     @Override
@@ -190,8 +190,8 @@ public final class Phoenix extends Helicopter
         if (this.hasShortrangeRadiation)
         {
             g2d.setColor(this.enhancedRadiationTimer == 0
-                ? Coloration.radiation[Events.timeOfDay.ordinal()]
-                : Coloration.enhancedRadiation[Events.timeOfDay.ordinal()]);
+                ? Colorations.radiation[Events.timeOfDay.ordinal()]
+                : Colorations.enhancedRadiation[Events.timeOfDay.ordinal()]);
             g2d.fillOval(left + (this.hasLeftMovingAppearance() ? -9 : 35), top + 19, 96, 54);
         }
         super.paintComponents(g2d, left, top);

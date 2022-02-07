@@ -11,8 +11,8 @@ import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.model.helicopter.*;
-import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
+import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -215,7 +215,7 @@ public class Events
 										+ (nr_of_levelUp%10 == 0 ? 0 : 1) 
 										- level;
 						if(isBossLevel()){nr_of_levelUp = 1;}
-						playingTime += (nr_of_levelUp + Calculation.random(nr_of_levelUp)) * 60000;
+						playingTime += (nr_of_levelUp + Calculations.random(nr_of_levelUp)) * 60000;
 						levelUp(controller, nr_of_levelUp);
 						helicopter.isPlayedWithCheats = true;
 					}					
@@ -224,7 +224,7 @@ public class Events
 				{
 					if(level < 50)
 					{
-						playingTime += (1 + (Calculation.tossUp(0.4f) ? 1 : 0)) * 60000;
+						playingTime += (1 + (Calculations.tossUp(0.4f) ? 1 : 0)) * 60000;
 						levelUp(controller, 1);
 						helicopter.isPlayedWithCheats = true;
 					}
@@ -269,7 +269,7 @@ public class Events
 				}
 				else if(e.getKeyChar() == '-')
 				{					
-					if(!Calculation.isEmpty(recordTime))
+					if(!Calculations.isEmpty(recordTime))
 					{
 						for(int i = 0; i < HelicopterType.size(); i++)
 						{
@@ -429,7 +429,7 @@ public class Events
 				helicopter.isDamaged = false;
                 Controller.savegame.becomeValid();
 				Controller.savegame.saveToFile(helicopter);
-				Coloration.updateScorescreenColors(helicopter);
+				Colorations.updateScorescreenColors(helicopter);
 			}
 			else{enterRepairShop(helicopter);}
 		}
@@ -453,7 +453,7 @@ public class Events
 			else
 			{
 				money -= repairFee(helicopter, helicopter.isDamaged);
-				timeOfDay = (!helicopter.hasSpotlights || Calculation.tossUp(0.33f)) ? DAY : NIGHT;
+				timeOfDay = (!helicopter.hasSpotlights || Calculations.tossUp(0.33f)) ? DAY : NIGHT;
 				Menu.repairShopButton.get("Einsatz").label = Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()];
 												
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
@@ -523,8 +523,8 @@ public class Events
 				{
 					if (enemy.type != ROCK)
 					{
-						enemy.farbe1 = Coloration.dimColor(enemy.farbe1, Coloration.BARRIER_NIGHT_DIM_FACTOR);
-						enemy.farbe2 = Coloration.dimColor(enemy.farbe2, Coloration.BARRIER_NIGHT_DIM_FACTOR);
+						enemy.farbe1 = Colorations.dimColor(enemy.farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+						enemy.farbe2 = Colorations.dimColor(enemy.farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
 						enemy.repaint();
 					}
 				}
@@ -1138,7 +1138,7 @@ public class Events
 	{		
 		window = newWindow;
 		Audio.refreshBackgroundMusic();
-		Coloration.bg = newWindow == GAME && timeOfDay == DAY ? Coloration.sky: Color.black;
+		Colorations.bg = newWindow == GAME && timeOfDay == DAY ? Colorations.sky: Color.black;
 	}
 
 	private static void newStartscreenMenuWindow(WindowType newWindow, boolean hasJustEntered)
@@ -1331,7 +1331,7 @@ public class Events
 
 	public static int bonusIncomePercentage()
 	{		
-		return Calculation.percentage(extraBonusCounter, overallEarnings);
+		return Calculations.percentage(extraBonusCounter, overallEarnings);
 	}
 
 	public static void updateTimer()

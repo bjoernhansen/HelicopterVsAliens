@@ -8,7 +8,7 @@ import java.awt.GradientPaint;
 
 import static de.helicopter_vs_aliens.gui.WindowType.*;
 
-public class Coloration
+public final class Colorations
 {
 	public static final int 
 		FRAME = 3,
@@ -142,7 +142,12 @@ public class Coloration
     										  0, 447, dimColor(stones[0], 0.65f), true),
     					   new GradientPaint( 0,  412, stones[1],
     							   			  0, 447, dimColor(stones[1], 0.65f), true)};
-                   
+	
+	private Colorations() throws Exception
+	{
+		throw new Exception();
+	}
+	
 	public static Color dimColor(Color color, float dim)
     {
     	int r = Math.min(MAX_VALUE, (int)(color.getRed()*dim));
@@ -192,7 +197,7 @@ public class Coloration
     		randomSunlightBlue += lighter ? 1 : -1;
 			if(randomSunlightBlue > 205){lighter = false;}
 			else if(randomSunlightBlue < 175){lighter = true;}
-			else if(Calculation.tossUp(0.045f)){lighter = !lighter;}
+			else if(Calculations.tossUp(0.045f)){lighter = !lighter;}
 			randomLight = new Color(MAX_VALUE, MAX_VALUE, randomSunlightBlue);
     	}
     }
@@ -238,9 +243,9 @@ public class Coloration
     public static void updateScorescreenColors(Helicopter helicopter)
     {       
     	scorescreen[0] = percentColor(Events.bonusIncomePercentage());
-    	scorescreen[1] = percentColor(Calculation.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
-    	scorescreen[2] = percentColor(Calculation.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
-    	scorescreen[3] = percentColor(Calculation.percentage(helicopter.hitCounter, helicopter.missileCounter));
+    	scorescreen[1] = percentColor(Calculations.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
+    	scorescreen[2] = percentColor(Calculations.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
+    	scorescreen[3] = percentColor(Calculations.percentage(helicopter.hitCounter, helicopter.missileCounter));
     }
     
     static Color percentColor(int percentage){return percentColor(((float)percentage)/100);}
@@ -269,7 +274,7 @@ public class Coloration
     
     public static Color brightenUp(Color color)
     {
-    	float colorMax = Calculation.max(color.getRed(), color.getGreen(), color.getBlue());
+    	float colorMax = Calculations.max(color.getRed(), color.getGreen(), color.getBlue());
     	float factor = MAX_VALUE/colorMax;
     	return new Color(Math.min(MAX_VALUE, (int)(color.getRed()*factor)), Math.min(MAX_VALUE, (int)(color.getGreen()*factor)),Math.min(MAX_VALUE, (int)(color.getBlue()*factor)));	
     }

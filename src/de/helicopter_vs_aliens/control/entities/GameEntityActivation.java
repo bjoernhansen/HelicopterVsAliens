@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.control.entities;
 
-import de.helicopter_vs_aliens.util.Calculation;
+import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +33,7 @@ public final class GameEntityActivation
     
     public static boolean isApproved(int numberOfMissingEntities, int probabilityReductionFactor)
     {
-        int index = Calculation.constrainToRange(numberOfMissingEntities, 1, PROBABILITIES.size())-1;
-        return Calculation.random(probabilityReductionFactor * PROBABILITIES.get(index)) == 0;
+        int index = Calculations.constrainToRange(numberOfMissingEntities, 1, PROBABILITIES.size())-1;
+        return Calculations.random(probabilityReductionFactor * PROBABILITIES.get(index)) == 0;
     }
 }

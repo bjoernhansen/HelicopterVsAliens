@@ -4,13 +4,12 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.RectanglularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -23,7 +22,7 @@ import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 
-public class PowerUp extends RectanglularGameEntity
+public class PowerUp extends RectangularGameEntity
 {
     private static final int
         SIZE = 30,
@@ -67,23 +66,6 @@ public class PowerUp extends RectanglularGameEntity
 		}		
 	}
 
-	public static void paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
-	{
-		for(PowerUp pu : powerUp.get(ACTIVE))
-		{
-			if (!pu.isInStatusBar)
-			{
-				pu.paint(g2d);
-			}
-		}	
-	}
-
-	@Override
-	public void paint(Graphics2D g2d)
-    {
-        GraphicsManager.getInstance().paint(this);
-    }
-	
 	private void update(Helicopter helicopter)
 	{		
 		if(this.bounds.intersects(helicopter.bounds)){this.collect(helicopter);}		
@@ -259,14 +241,14 @@ public class PowerUp extends RectanglularGameEntity
     
     public void setOpaque()
     {
-        this.surfaceColor = Coloration.setOpaque(this.surfaceColor);
-        this.crossColor = Coloration.setOpaque(this.crossColor);
+        this.surfaceColor = Colorations.setOpaque(this.surfaceColor);
+        this.crossColor = Colorations.setOpaque(this.crossColor);
     }
     
     public void setAlpha(int alpha)
     {
-        this.surfaceColor = Coloration.setAlpha(this.surfaceColor, alpha);
-        this.crossColor = Coloration.setAlpha(this.crossColor, alpha);
+        this.surfaceColor = Colorations.setAlpha(this.surfaceColor, alpha);
+        this.crossColor = Colorations.setAlpha(this.crossColor, alpha);
     }
     
     public Color getSurfaceColor()
@@ -278,4 +260,9 @@ public class PowerUp extends RectanglularGameEntity
     {
         return crossColor;
     }
+	
+	public boolean isInStatusBar()
+	{
+		return isInStatusBar;
+	}
 }

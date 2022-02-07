@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
-import de.helicopter_vs_aliens.util.Calculation;
+import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -95,10 +95,10 @@ public final class Helios extends Helicopter
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWERUP_DURATION);
         this.consumeSpellCosts();
-        Calculation.randomize();
+        Calculations.randomize();
         for(int i = 0; i < 3; i++)
         {
-            if(Calculation.getRandomOrderValue(i) == REPARATION.ordinal())
+            if(Calculations.getRandomOrderValue(i) == REPARATION.ordinal())
             {
                 if(i == 0){
                     Audio.play(Audio.powerAnnouncer[REPARATION.ordinal()]);}
@@ -106,10 +106,10 @@ public final class Helios extends Helicopter
             }
             else
             {
-                this.getPowerUp( powerUp, PowerUpType.getValues()[Calculation.getRandomOrderValue(i)],
+                this.getPowerUp( powerUp, PowerUpType.getValues()[Calculations.getRandomOrderValue(i)],
                         false, i == 0);
             }
-            if(Calculation.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}
+            if(Calculations.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}
         }
     }
 

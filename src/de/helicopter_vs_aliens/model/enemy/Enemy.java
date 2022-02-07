@@ -21,7 +21,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.RectanglularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
@@ -29,8 +29,8 @@ import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
-import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
+import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.Calculations;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -49,7 +49,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
 
-public class Enemy extends RectanglularGameEntity
+public class Enemy extends RectangularGameEntity
 {
 	private static class FinalEnemysOperator
     {	
@@ -370,7 +370,7 @@ public class Enemy extends RectanglularGameEntity
 		{
 			if(this.isInvincible())
 			{	
-				this.paintImage(g2d, -this.direction.x, Coloration.variableGreen, false);
+				this.paintImage(g2d, -this.direction.x, Colorations.variableGreen, false);
 			}
 			else if(this.alpha != 255)
 			{
@@ -401,8 +401,8 @@ public class Enemy extends RectanglularGameEntity
 			{
 				Color inputColorRoof
 					= this.alpha < 255 
-						? Coloration.setAlpha(Coloration.variableGreen, this.alpha)
-						: Coloration.variableGreen;
+						? Colorations.setAlpha(Colorations.variableGreen, this.alpha)
+						: Colorations.variableGreen;
 				
 				this.paintCannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, inputColorRoof);
 			}
@@ -489,7 +489,7 @@ public class Enemy extends RectanglularGameEntity
 			if(this.model != BARRIER)
 			{				
 				this.graphics[j].setComposite(AlphaComposite.Src);
-				this.graphics[j].setColor(Coloration.translucentDarkestBlack);
+				this.graphics[j].setColor(Colorations.translucentDarkestBlack);
 				this.graphics[j].fillRect(0, 0, this.image[j].getWidth(), this.image[j].getHeight());
 			}			
 			this.paintImage(this.graphics[j], 1-2*j, null, true);
@@ -505,8 +505,8 @@ public class Enemy extends RectanglularGameEntity
 	{
 		Helicopter.paintRotor(	g2d,
 								!this.isDestroyed
-									?(Coloration.setAlpha(Coloration.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], this.alpha))
-									: Coloration.dimColor(Coloration.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], Coloration.DESTRUCTION_DIM_FACTOR),
+									?(Colorations.setAlpha(Colorations.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], this.alpha))
+									: Colorations.dimColor(Colorations.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
 								x, y, this.paintBounds.width, this.paintBounds.height, 5, (this.speedLevel.equals(ZERO_SPEED) ? (this.snoozeTimer <= SNOOZE_TIME ? 3 : 0) : 8) * (this.isClockwiseBarrier ? -1 : 1) * this.lifetime%360,
 								24, BARRIER_BORDER_SIZE, this.snoozeTimer == 0);
 		this.paintBarrierCannon(g2d, x, y);
@@ -519,11 +519,11 @@ public class Enemy extends RectanglularGameEntity
 		for(int i = 0; i < 3; i++)
 		{
 			tempColor = (this.barrierShootTimer != DISABLED && this.barrierShootTimer <= this.shotsPerCycle * this.shootingRate && i != 0 && !this.isDestroyed)
-							?  Coloration.variableGreen
+							?  Colorations.variableGreen
 							: !this.isDestroyed
-								? Coloration.barrierColor[i][Events.timeOfDay.ordinal()]
-								: Coloration.dimColor(Coloration.barrierColor[i][Events.timeOfDay.ordinal()], Coloration.DESTRUCTION_DIM_FACTOR);
-			if(this.alpha != 255){tempColor = Coloration.setAlpha(tempColor, this.alpha);}
+								? Colorations.barrierColor[i][Events.timeOfDay.ordinal()]
+								: Colorations.dimColor(Colorations.barrierColor[i][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR);
+			if(this.alpha != 255){tempColor = Colorations.setAlpha(tempColor, this.alpha);}
 			g2d.setColor(tempColor);
 			
 			distanceX = (int) ((0.45f + i * 0.01f) * this.paintBounds.width);
@@ -570,7 +570,7 @@ public class Enemy extends RectanglularGameEntity
 											backgroundColor,
 											0, 
 											y + 0.3f*thicknessFactor*this.paintBounds.height,
-											Coloration.dimColor(backgroundColor, 0.85f),
+											Colorations.dimColor(backgroundColor, 0.85f),
 											true));
 			
 			g2d.fillRect(x + (int)(thicknessFactor/2 * this.paintBounds.width),
@@ -673,7 +673,7 @@ public class Enemy extends RectanglularGameEntity
 											inputColor,
 											(int) (horizontal ? 0 : x + 1.0f * thicknessFactor * width),
 											(int) (horizontal ?     y + 1.0f * thicknessFactor * height : 0),
-											Coloration.dimColor(inputColor, dimFactor),
+											Colorations.dimColor(inputColor, dimFactor),
 											true));		
 		
 		g2d.fillRoundRect(	(int) (x - (directionX == 1 ? xShiftLeft : xShiftRight) * width),
@@ -739,7 +739,7 @@ public class Enemy extends RectanglularGameEntity
 										color, 
 										0, 
 										y + (yShift + height) * this.paintBounds.height,
-										Coloration.dimColor(color, 0.5f),
+										Colorations.dimColor(color, 0.5f),
 										true));
 		
 		g2d.fillRoundRect(	(int) (x + (directionX == 1
@@ -775,8 +775,8 @@ public class Enemy extends RectanglularGameEntity
 		{
 			if(this.isDestroyed && Events.timeOfDay == NIGHT)
 			{
-				mainColorLight = Coloration.dimColor(this.farbe1, 1.3f * Coloration.NIGHT_DIM_FACTOR);
-				mainColorDark  = Coloration.dimColor(this.farbe2, 1.3f * Coloration.NIGHT_DIM_FACTOR);
+				mainColorLight = Colorations.dimColor(this.farbe1, 1.3f * Colorations.NIGHT_DIM_FACTOR);
+				mainColorDark  = Colorations.dimColor(this.farbe2, 1.3f * Colorations.NIGHT_DIM_FACTOR);
 			}
 			else
 			{
@@ -787,25 +787,25 @@ public class Enemy extends RectanglularGameEntity
 		else
 		{
 			mainColorLight = color;
-			mainColorDark = Coloration.dimColor(color, 1.5f);
+			mainColorDark = Colorations.dimColor(color, 1.5f);
 		}		
 		
-		if(this.model == BARRIER){barColor = Coloration.barrierColor[Coloration.FRAME][Events.timeOfDay.ordinal()];}
-		else if(!this.isDestroyed && (this.tractor == AbilityStatusType.ACTIVE || this.shootTimer > 0 || this.isShielding)){barColor = Coloration.variableGreen;}
+		if(this.model == BARRIER){barColor = Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];}
+		else if(!this.isDestroyed && (this.tractor == AbilityStatusType.ACTIVE || this.shootTimer > 0 || this.isShielding)){barColor = Colorations.variableGreen;}
 		else if(!this.isDestroyed && !imagePaint && this.isInvincible()){barColor = Color.green;}
 		else if(this.isMiniBoss){barColor = this.farbe2;}
-		else{barColor = Coloration.enemyGray;}
-		inactiveNozzleColor = Coloration.INACTIVE_NOZZLE;
+		else{barColor = Colorations.enemyGray;}
+		inactiveNozzleColor = Colorations.INACTIVE_NOZZLE;
 		
 		if(this.model == BARRIER && Events.timeOfDay == NIGHT)
 		{
-			inactiveNozzleColor = Coloration.barrierColor[Coloration.NOZZLE][Events.timeOfDay.ordinal()];
+			inactiveNozzleColor = Colorations.barrierColor[Colorations.NOZZLE][Events.timeOfDay.ordinal()];
 		}
 		
 		if(this.isDestroyed)
 		{
-			barColor = Coloration.dimColor(barColor, Events.timeOfDay == NIGHT ? 1.3f * Coloration.NIGHT_DIM_FACTOR : 1);
-			inactiveNozzleColor = Coloration.dimColor(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * Coloration.NIGHT_DIM_FACTOR : 1);
+			barColor = Colorations.dimColor(barColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
+			inactiveNozzleColor = Colorations.dimColor(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
 		}
 				
 		//Malen des Gegners
@@ -858,7 +858,7 @@ public class Enemy extends RectanglularGameEntity
 					(int)(offsetY
 							+ this.paintBounds.height
 							  *(this.model == TIT ? 0.067f : 0.125f)), 
-					Color.red.equals(color) ? Coloration.cloakedBossEye : null,
+					Color.red.equals(color) ? Colorations.cloakedBossEye : null,
 					directionX,
 					getarnt && !imagePaint);
 		}		
@@ -895,7 +895,7 @@ public class Enemy extends RectanglularGameEntity
 		this.paintBarrierEyes(g2d,
 								offsetX,
 								offsetY,
-								Coloration.barrierColor[Coloration.EYES][Events.timeOfDay.ordinal()],
+								Colorations.barrierColor[Colorations.EYES][Events.timeOfDay.ordinal()],
 								imagePaint);
 		
 		// Turbinen-Innenraum
@@ -920,7 +920,7 @@ public class Enemy extends RectanglularGameEntity
 										mainColorDark,
 										0, 
 										offsetY + 0.045f*this.paintBounds.height,
-										Coloration.dimColor(mainColorDark, 0.85f),
+										Colorations.dimColor(mainColorDark, 0.85f),
 										true));	
 		
 		g2d.fillOval(offsetX + distanceX,
@@ -1008,7 +1008,7 @@ public class Enemy extends RectanglularGameEntity
 				mainColorLight,
 				0,
 				offsetY + this.paintBounds.height,
-				Coloration.dimColor(mainColorLight, 0.5f),
+				Colorations.dimColor(mainColorLight, 0.5f),
 				true);
 			
 		g2d.setPaint(this.gradientColor);		
@@ -1020,8 +1020,8 @@ public class Enemy extends RectanglularGameEntity
 							this.paintBounds.x,
 							this.paintBounds.y,
 							this.alpha != 255 
-								? Coloration.setAlpha(Coloration.variableRed, this.alpha)
-								: Coloration.variableRed,
+								? Colorations.setAlpha(Colorations.variableRed, this.alpha)
+								: Colorations.variableRed,
 							false);
 	}
 	
@@ -1040,7 +1040,7 @@ public class Enemy extends RectanglularGameEntity
 					 y - borderDistance + this.paintBounds.height - eyeSize,
 					 eyeSize, eyeSize);
 		
-		if(!imagePaint && !(this.snoozeTimer > SNOOZE_TIME)){g2d.setPaint(Coloration.reversedRandomRed(color));}
+		if(!imagePaint && !(this.snoozeTimer > SNOOZE_TIME)){g2d.setPaint(Colorations.reversedRandomRed(color));}
 		g2d.fillOval(x + borderDistance,
 					 y - borderDistance + this.paintBounds.height - eyeSize,
 					 eyeSize, eyeSize);
@@ -1084,7 +1084,7 @@ public class Enemy extends RectanglularGameEntity
 	public static void paintEnergyBeam(Graphics2D g2d, int x1, int y1, int x2, int y2)
 	{
 		g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-		g2d.setColor(Coloration.green);
+		g2d.setColor(Colorations.green);
 		g2d.drawLine(x1, y1, x2, y2);
 		g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g2d.setColor(Color.green);
@@ -1100,8 +1100,8 @@ public class Enemy extends RectanglularGameEntity
 							+ this.paintBounds.height
 							  *(this.model == TIT ? 0.067f : 0.125f)), 
 					 this.alpha != 255 
-						? Coloration.setAlpha(Coloration.variableRed, this.alpha)
-						: Coloration.variableRed,
+						? Colorations.setAlpha(Colorations.variableRed, this.alpha)
+						: Colorations.variableRed,
 					 -this.direction.x, 
 					 false);
 	}
@@ -1138,11 +1138,11 @@ public class Enemy extends RectanglularGameEntity
 		{
 			g2d.setColor(this.isLivingBoss()
 				 	? (this.alpha == 255 
-				 		? Coloration.variableRed
-				 		: Coloration.setAlpha(Coloration.variableRed, this.alpha))
+				 		? Colorations.variableRed
+				 		: Colorations.setAlpha(Colorations.variableRed, this.alpha))
 				 	: (this.alpha == 255 
-				 		? Coloration.windowBlue
-				 		: Coloration.setAlpha(Coloration.windowBlue, this.alpha)));
+				 		? Colorations.windowBlue
+				 		: Colorations.setAlpha(Colorations.windowBlue, this.alpha)));
 		}
 		else{g2d.setColor(color);}		
 	}
@@ -1382,8 +1382,8 @@ public class Enemy extends RectanglularGameEntity
 	{
 		for(int m = 0; 
 				m < (lastCarrier.isMiniBoss
-						? 5 + Calculation.random(3)
-						: 2 + Calculation.random(2));
+						? 5 + Calculations.random(3)
+						: 2 + Calculations.random(2));
 				m++)
 			{
 				creation(helicopter, enemy);
@@ -1521,11 +1521,11 @@ public class Enemy extends RectanglularGameEntity
 		
 		if(this.model != BARRIER)
 		{
-			this.farbe1 = Coloration.dimColor(this.farbe1, 1.3f);
-			this.farbe2 = Coloration.dimColor(this.farbe1, this.dimFactor);
+			this.farbe1 = Colorations.dimColor(this.farbe1, 1.3f);
+			this.farbe2 = Colorations.dimColor(this.farbe1, this.dimFactor);
 		}		
 		if(this.canBecomeMiniBoss()){this.turnIntoMiniBoss(helicopter);}
-		this.rewardModifier = this.isBoss() ? 0 : 5 - Calculation.random(11);
+		this.rewardModifier = this.isBoss() ? 0 : 5 - Calculations.random(11);
 		this.startingHitpoints = this.hitpoints;
 		
 		// Festlegen der Höhe und der y-Position des Gegners
@@ -1575,7 +1575,7 @@ public class Enemy extends RectanglularGameEntity
 		this.model = TIT;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
 		this.setX(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
-		this.direction.setLocation(-1, Calculation.randomDirection());
+		this.direction.setLocation(-1, Calculations.randomDirection());
 		this.callBack = 0;
 		this.shield = 0;
 		this.dimFactor = 1.5f;
@@ -1666,7 +1666,7 @@ public class Enemy extends RectanglularGameEntity
 		return Events.level >= MIN_BARRIER_LEVEL 
 				&& !Events.isBossLevel()
 				&& barrierTimer == 0
-				&& (Calculation.tossUp(0.35f)
+				&& (Calculations.tossUp(0.35f)
 					|| (numberOfEnemies - currentNumberOfBarriers >= maxNr))
 				&& currentNumberOfBarriers < maxBarrierNr;
 	}
@@ -1679,11 +1679,11 @@ public class Enemy extends RectanglularGameEntity
 		helicopter.numberOfEnemiesSeen--;
 		this.hitpoints = Integer.MAX_VALUE;
 		this.rotorColor = 1;
-		this.isClockwiseBarrier = Calculation.tossUp();
+		this.isClockwiseBarrier = Calculations.tossUp();
 				
 		if(this.type == BARRIER_0 || this.type == BARRIER_1)
 		{
-			this.farbe1 = Coloration.bleach(Color.green, 0.6f);
+			this.farbe1 = Colorations.bleach(Color.green, 0.6f);
 			this.isLasting = true;
 			
 			// Level 2
@@ -1699,7 +1699,7 @@ public class Enemy extends RectanglularGameEntity
 		// Level 12
 		else if(this.type == BARRIER_2)
 		{
-			this.farbe1 = Coloration.bleach(Color.yellow, 0.6f);
+			this.farbe1 = Colorations.bleach(Color.yellow, 0.6f);
 			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
 			this.setVarWidth(65);
 			
@@ -1710,7 +1710,7 @@ public class Enemy extends RectanglularGameEntity
 		// Level 15
 		else if(this.type == BARRIER_3)
 		{
-			this.farbe1 = Coloration.bleach(new Color(255, 192, 0), 0.0f);
+			this.farbe1 = Colorations.bleach(new Color(255, 192, 0), 0.0f);
 			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
 			this.setVarWidth(105);
 			if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
@@ -1718,7 +1718,7 @@ public class Enemy extends RectanglularGameEntity
 			this.setLocation(this.targetSpeedLevel.getX() >= 5
 									? -this.bounds.getWidth()-APPEARANCE_DISTANCE
 									: this.bounds.getX(),
-							  GROUND_Y - this.bounds.getWidth() - (5 + Calculation.random(11)));
+							  GROUND_Y - this.bounds.getWidth() - (5 + Calculations.random(11)));
 			this.hasYPosSet = true;
 		}
 		// Level 18
@@ -1729,8 +1729,8 @@ public class Enemy extends RectanglularGameEntity
 			this.barrierShootTimer = READY;
 			this.setBarrierShootingProperties();
 			this.shotRotationSpeed
-				= Calculation.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL
-					? Calculation.randomDirection()*(this.shootingRate /3 + Calculation.random(10))
+				= Calculations.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL
+					? Calculations.randomDirection()*(this.shootingRate /3 + Calculations.random(10))
 					: 0;	
 			
 			this.isLasting = true;
@@ -1749,7 +1749,7 @@ public class Enemy extends RectanglularGameEntity
 		// Level 42
 		else if(this.type == BARRIER_6)
 		{
-			this.farbe1 = Coloration.bleach(Color.green, 0.6f);
+			this.farbe1 = Colorations.bleach(Color.green, 0.6f);
 			this.setVarWidth(80);
 			
 			this.isLasting = true;
@@ -1757,7 +1757,7 @@ public class Enemy extends RectanglularGameEntity
 		// Level 44
 		else if(this.type == BARRIER_7)
 		{
-			this.farbe1 = Coloration.bleach(Coloration.cloaked, 0.6f);
+			this.farbe1 = Colorations.bleach(Colorations.cloaked, 0.6f);
 			this.setVarWidth(100);
 						
 			this.barrierTeleportTimer = READY;
@@ -1765,16 +1765,16 @@ public class Enemy extends RectanglularGameEntity
 			this.startBarrierUncloaking(helicopter);
 						
 			this.hasYPosSet = true;
-			this.callBack = 1 + Calculation.random(4);
+			this.callBack = 1 + Calculations.random(4);
 		}
 		
-		this.farbe2 = Coloration.dimColor(this.farbe1, 0.75f);
+		this.farbe2 = Colorations.dimColor(this.farbe1, 0.75f);
 		this.deactivationProb = 1.0f / this.type.getStrength();
 				
 		if(Events.timeOfDay == NIGHT)
 		{
-			this.farbe1 = Coloration.dimColor(this.farbe1, Coloration.BARRIER_NIGHT_DIM_FACTOR);
-			this.farbe2 = Coloration.dimColor(this.farbe2, Coloration.BARRIER_NIGHT_DIM_FACTOR);
+			this.farbe1 = Colorations.dimColor(this.farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+			this.farbe2 = Colorations.dimColor(this.farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
 		}		
 		barrierTimer = (int)((helicopter.bounds.getWidth() + this.bounds.getWidth())/2);
 	}
@@ -1782,15 +1782,15 @@ public class Enemy extends RectanglularGameEntity
     private void assignRandomBarrierType()
     {
         int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
-            ? Calculation.random(3)
+            ? Calculations.random(3)
             : 0;
-        int selectedBarrierIndex = Calculation.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyType.getBarrierTypes().size()));
+        int selectedBarrierIndex = Calculations.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyType.getBarrierTypes().size()));
         this.type = (EnemyType) EnemyType.getBarrierTypes().toArray()[selectedBarrierIndex];
     }
     
     private boolean isBarrierFromFutureCreationApproved()
     {
-        return Calculation.tossUp(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
+        return Calculations.tossUp(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
     }
     
     private void placeAtPausePosition()
@@ -1807,7 +1807,7 @@ public class Enemy extends RectanglularGameEntity
 				&& Events.level >= MIN_ROCK_LEVEL 
 				&& !Events.isBossLevel()
 				&& rockTimer == 0
-				&& Calculation.tossUp(ROCK_PROB);
+				&& Calculations.tossUp(ROCK_PROB);
 	}
 	
 	private void createRock(Helicopter helicopter)
@@ -1816,7 +1816,7 @@ public class Enemy extends RectanglularGameEntity
 		this.type = ROCK;
 		this.model = CARGO;	
 		helicopter.numberOfEnemiesSeen--;
-		this.farbe1 = new Color((180 + Calculation.random(30)), (120 + Calculation.random(30)),(0 + Calculation.random(15)));
+		this.farbe1 = new Color((180 + Calculations.random(30)), (120 + Calculations.random(30)),(0 + Calculations.random(15)));
 		this.hitpoints = 1;
 		this.invincibleTimer = Integer.MAX_VALUE;
 			
@@ -1833,7 +1833,7 @@ public class Enemy extends RectanglularGameEntity
 	{		
 		return Events.level >= MIN_KABOOM_LEVEL 
 				&& !Events.isBossLevel()
-				&& Calculation.tossUp(KABOOM_PROB);
+				&& Calculations.tossUp(KABOOM_PROB);
 	}
 	
 	private void createKaboom(Helicopter helicopter)
@@ -1850,16 +1850,16 @@ public class Enemy extends RectanglularGameEntity
 	
 	private void createStandardEnemy()
 	{
-		this.type = enemySelector.getType(Calculation.random(selection));
+		this.type = enemySelector.getType(Calculations.random(selection));
 		//this.type = CARRIER;
 
 		switch(this.type)
 		{
 			// Level 1
 			case TINY:
-				this.farbe1 = new Color((180 + Calculation.random(30)),
-						(120 + Calculation.random(30)),
-						(0 + Calculation.random(15)));
+				this.farbe1 = new Color((180 + Calculations.random(30)),
+						(120 + Calculations.random(30)),
+						(0 + Calculations.random(15)));
 				this.hitpoints = 2;
 				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
@@ -1871,10 +1871,10 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 3
 			case SMALL:
-				this.farbe1 = new Color((140 + Calculation.random(25)),
-						(65 + Calculation.random(35)),
-						(0 + Calculation.random(25)));
-				this.hitpoints = 3 + Calculation.random(3);
+				this.farbe1 = new Color((140 + Calculations.random(25)),
+						(65 + Calculations.random(35)),
+						(0 + Calculations.random(25)));
+				this.hitpoints = 3 + Calculations.random(3);
 				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(), //d
 						0.5*Math.random());	//d
@@ -1884,10 +1884,10 @@ public class Enemy extends RectanglularGameEntity
 
 			// level 5
 			case RUNABOUT:
-				this.farbe1 = new Color((100 + Calculation.random(30)),
-						(100 + Calculation.random(30)),
-						(40 + Calculation.random(25)));
-				this.hitpoints = 2 + Calculation.random(2);
+				this.farbe1 = new Color((100 + Calculations.random(30)),
+						(100 + Calculations.random(30)),
+						(40 + Calculations.random(25)));
+				this.hitpoints = 2 + Calculations.random(2);
 				this.setVarWidth(100);
 				this.targetSpeedLevel.setLocation(2 + 2*Math.random(), //d
 						2.5 + 1.5*Math.random());		//d
@@ -1898,9 +1898,9 @@ public class Enemy extends RectanglularGameEntity
 			// Level 7
 			case FREIGHTER:
 				this.model = CARGO;
-				this.farbe1 = new Color((100 + Calculation.random(30)),
-						(50 + Calculation.random(30)),
-						(45 + Calculation.random(20)));
+				this.farbe1 = new Color((100 + Calculations.random(30)),
+						(50 + Calculations.random(30)),
+						(45 + Calculations.random(20)));
 				this.setHitpoints(25);
 				this.setVarWidth(145);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
@@ -1912,9 +1912,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 11
 			case BATCHWISE:
-				this.farbe1 = new Color((135 + Calculation.random(30)),
-						(80+ Calculation.random(20)),
-						(85 + Calculation.random(30)));
+				this.farbe1 = new Color((135 + Calculations.random(30)),
+						(80+ Calculations.random(20)),
+						(85 + Calculations.random(30)));
 				this.setHitpoints(16);
 				this.setVarWidth(130);
 				this.targetSpeedLevel.setLocation(7 + 4*Math.random(), //d
@@ -1925,9 +1925,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 13
 			case SINUS:
-				this.farbe1 = new Color((185 + Calculation.random(40)),
-						( 70 + Calculation.random(30)),
-						(135 + Calculation.random(40)));
+				this.farbe1 = new Color((185 + Calculations.random(40)),
+						( 70 + Calculations.random(30)),
+						(135 + Calculations.random(40)));
 				this.setHitpoints(6);
 				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(2.5 + 2.5*Math.random(), 11); //d
@@ -1940,9 +1940,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 16
 			case DODGER:
-				this.farbe1 = new Color((85 + Calculation.random(20)),
-						(35 + Calculation.random(30)),
-						(95 + Calculation.random(30)));
+				this.farbe1 = new Color((85 + Calculations.random(20)),
+						(35 + Calculations.random(30)),
+						(95 + Calculations.random(30)));
 				this.setHitpoints(24);
 				this.setVarWidth(170);
 				this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(), //d
@@ -1953,9 +1953,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 21
 			case CHAOS:
-				this.farbe1 = new Color((150 + Calculation.random(20)),
-						(130 + Calculation.random(25)),
-						( 75 + Calculation.random(30)));
+				this.farbe1 = new Color((150 + Calculations.random(20)),
+						(130 + Calculations.random(25)),
+						( 75 + Calculations.random(30)));
 				this.setHitpoints(22);
 				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(), //d
@@ -1967,9 +1967,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 24
 			case CALLBACK:
-				this.farbe1 = new Color((70 + Calculation.random(40)),
-						(130 + Calculation.random(50)),
-						(30 + Calculation.random(45)));
+				this.farbe1 = new Color((70 + Calculations.random(40)),
+						(130 + Calculations.random(50)),
+						(30 + Calculations.random(45)));
 				this.setHitpoints(30);
 				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(), //d
@@ -1983,9 +1983,9 @@ public class Enemy extends RectanglularGameEntity
 			case SHOOTER:
 				this.model = CARGO;
 
-				this.farbe1 = new Color(80 + Calculation.random(25),
-						80 + Calculation.random(25),
-						80 + Calculation.random(25));
+				this.farbe1 = new Color(80 + Calculations.random(25),
+						80 + Calculations.random(25),
+						80 + Calculations.random(25));
 				this.setHitpoints(60);
 				this.setVarWidth(80);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
@@ -2000,7 +2000,7 @@ public class Enemy extends RectanglularGameEntity
 			case CLOAK:
 				this.model = CARGO;
 
-				this.farbe1 = Coloration.cloaked;
+				this.farbe1 = Colorations.cloaked;
 				this.setHitpoints(100);
 				this.setVarWidth(85);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
@@ -2022,9 +2022,9 @@ public class Enemy extends RectanglularGameEntity
 			case CARRIER:
 				this.model = CARGO;
 
-				this.farbe1 = new Color(70 + Calculation.random(15),
-						60 + Calculation.random(10),
-						45 + Calculation.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
+				this.farbe1 = new Color(70 + Calculations.random(15),
+						60 + Calculations.random(10),
+						45 + Calculations.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
 				this.setHitpoints(450);
 				this.setVarWidth(165);
 				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
@@ -2037,9 +2037,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 37
 			case YELLOW:
-				this.farbe1 = new Color((180 + Calculation.random(50)),
-						(230 + Calculation.random(20)),
-						(20 + Calculation.random(60)));
+				this.farbe1 = new Color((180 + Calculations.random(50)),
+						(230 + Calculations.random(20)),
+						(20 + Calculations.random(60)));
 				this.setHitpoints(140);
 				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(), //d
@@ -2052,9 +2052,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 41
 			case AMBUSH:
-				this.farbe1 = new Color( 30 + Calculation.random(40),
-						60 + Calculation.random(40),
-						120 + Calculation.random(40));
+				this.farbe1 = new Color( 30 + Calculations.random(40),
+						60 + Calculations.random(40),
+						120 + Calculations.random(40));
 				this.setHitpoints(150);
 				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0); //d
@@ -2066,7 +2066,7 @@ public class Enemy extends RectanglularGameEntity
 
 			 // Level 43
 			case LOOPING:
-				this.farbe1 = Coloration.cloaked;
+				this.farbe1 = Colorations.cloaked;
 				this.setHitpoints(330);
 				this.setVarWidth(105);
 				this.targetSpeedLevel.setLocation(9, 11);	//d
@@ -2080,9 +2080,9 @@ public class Enemy extends RectanglularGameEntity
 
 			// Level 45
 			case CAPTURER:
-				this.farbe1 = new Color(  5 + Calculation.random(55),
-						105 + Calculation.random(40),
-						90 + Calculation.random(30));
+				this.farbe1 = new Color(  5 + Calculations.random(55),
+						105 + Calculations.random(40),
+						90 + Calculations.random(30));
 				this.setHitpoints(520);
 				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(), //d
@@ -2096,9 +2096,9 @@ public class Enemy extends RectanglularGameEntity
 			case TELEPORTER:
 				this.model = CARGO;
 
-				this.farbe1 = new Color(190 + Calculation.random(40),
-						10 + Calculation.random(60),
-						15 + Calculation.random(60));
+				this.farbe1 = new Color(190 + Calculations.random(40),
+						10 + Calculations.random(60),
+						15 + Calculations.random(60));
 				this.setHitpoints(500);
 				this.setVarWidth(130);
 				this.targetSpeedLevel.setLocation( 1 + Math.random(), //d
@@ -2114,9 +2114,9 @@ public class Enemy extends RectanglularGameEntity
 	{
 		if(explosionCreation){this.type = BOLT;}
 		
-		this.farbe1 = new Color(75 + Calculation.random(30),
-								75 + Calculation.random(30),
-								75 + Calculation.random(30) );
+		this.farbe1 = new Color(75 + Calculations.random(30),
+								75 + Calculations.random(30),
+								75 + Calculations.random(30) );
 		this.setHitpoints(26);
 		this.setVarWidth(70);
 		
@@ -2131,15 +2131,15 @@ public class Enemy extends RectanglularGameEntity
 		{
 			this.targetSpeedLevel.setLocation( 10 + 7.5*Math.random(), //d
 													0.5 + 3*Math.random());			//d	
-			this.callBack = 1 + Calculation.random(3);
-			this.direction.x = Calculation.randomDirection();
+			this.callBack = 1 + Calculations.random(3);
+			this.direction.x = Calculations.randomDirection();
 			this.invincibleTimer = 67;
 		}
 		else 
 		{
 			this.targetSpeedLevel.setLocation( 12 + 3.5*Math.random(), //d
 													0.5 + 3*Math.random());		//d			
-			if(Calculation.tossUp()){this.callBack = 1;}
+			if(Calculations.tossUp()){this.callBack = 1;}
 		}
 	}
 	
@@ -2183,19 +2183,19 @@ public class Enemy extends RectanglularGameEntity
 								65,
 								this.bounds.getHeight());
 			this.hasYPosSet = true;
-			this.farbe1 = new Color(80 + Calculation.random(25), 80 + Calculation.random(25), 80 + Calculation.random(25));
+			this.farbe1 = new Color(80 + Calculations.random(25), 80 + Calculations.random(25), 80 + Calculations.random(25));
 			this.hitpoints = 15;					
 			this.targetSpeedLevel.setLocation(3 + 10.5*Math.random(), //d
 												  3 + 10.5*Math.random()); //d
 		
-			this.direction.x = Calculation.randomDirection();
+			this.direction.x = Calculations.randomDirection();
 			this.invincibleTimer = 67;
 		}
 		// Level 30
 		else if( this.type == BOSS_3)
 		{			
 			this.setWidth(250);
-			this.farbe1 = Coloration.cloaked;
+			this.farbe1 = Colorations.cloaked;
 			this.hitpoints = 1750;
 			this.targetSpeedLevel.setLocation(5, 4); //d
 
@@ -2229,14 +2229,14 @@ public class Enemy extends RectanglularGameEntity
 		{	
 			this.bounds.setRect(boss.getX(),
 								boss.getY(),
-								85 + Calculation.random(15),
+								85 + Calculations.random(15),
 							    this.bounds.getHeight());
 			this.hasYPosSet = true;
-			this.farbe1 = new Color(80 + Calculation.random(20), 80 + Calculation.random(20), 80 + Calculation.random(20));
-			this.hitpoints = 100 + Calculation.random(50);
+			this.farbe1 = new Color(80 + Calculations.random(20), 80 + Calculations.random(20), 80 + Calculations.random(20));
+			this.hitpoints = 100 + Calculations.random(50);
 			this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(), //d
 												  6 + 2.5*Math.random()); //d
-			this.direction.x = Calculation.randomDirection();
+			this.direction.x = Calculations.randomDirection();
 			this.isExplodable = true;
 		}	
 		// Level 50
@@ -2247,7 +2247,7 @@ public class Enemy extends RectanglularGameEntity
 								    FINAL_BOSS_WIDTH,
 								    FINAL_BOSS_WIDTH * HEIGHT_FACTOR);
 						
-			this.farbe1 = Coloration.brown;
+			this.farbe1 = Colorations.brown;
 			this.hitpoints = 25000;	
 			this.targetSpeedLevel.setLocation(23.5, 0); //d
 
@@ -2269,7 +2269,7 @@ public class Enemy extends RectanglularGameEntity
 									boss.getY(),
 									this.type == SMALL_SHIELD_MAKER ? 125 : 145,
 								    this.bounds.getHeight());			
-				this.direction.x = Calculation.randomDirection();
+				this.direction.x = Calculations.randomDirection();
 				
 				this.shieldMakerTimer = READY;
 				this.setShieldingPosition();
@@ -2297,7 +2297,7 @@ public class Enemy extends RectanglularGameEntity
 									boss.getY(),
 									225,
 								    this.bounds.getHeight());					
-				this.farbe1 = Coloration.cloaked;
+				this.farbe1 = Colorations.cloaked;
 				this.hitpoints = 7500;					
 				this.targetSpeedLevel.setLocation(1, 2); //d
 
@@ -2333,8 +2333,8 @@ public class Enemy extends RectanglularGameEntity
 				
 				helicopter.numberOfEnemiesSeen--;
 				this.hitpoints = Integer.MAX_VALUE;
-				this.isClockwiseBarrier = Calculation.tossUp();
-				this.farbe1 = Coloration.bleach(new Color(170, 0, 255), 0.6f);
+				this.isClockwiseBarrier = Calculations.tossUp();
+				this.farbe1 = Colorations.bleach(new Color(170, 0, 255), 0.6f);
 				this.targetSpeedLevel.setLocation(ZERO_SPEED);
 				
 				this.deactivationProb = 0.04f;
@@ -2347,11 +2347,11 @@ public class Enemy extends RectanglularGameEntity
 				this.shotSpeed = 10;
 				this.shotType = BUSTER;
 				this.isStunnable = false;
-				this.farbe2 = Coloration.dimColor(this.farbe1, 0.75f);
+				this.farbe2 = Colorations.dimColor(this.farbe1, 0.75f);
 				if(Events.timeOfDay == NIGHT)
 				{
-					this.farbe1 = Coloration.dimColor(this.farbe1, Coloration.BARRIER_NIGHT_DIM_FACTOR);
-					this.farbe2 = Coloration.dimColor(this.farbe2, Coloration.BARRIER_NIGHT_DIM_FACTOR);
+					this.farbe1 = Colorations.dimColor(this.farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+					this.farbe2 = Colorations.dimColor(this.farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
 				}
 				Events.boss.operator.servants[this.id()] = this;
 			}			
@@ -2365,7 +2365,7 @@ public class Enemy extends RectanglularGameEntity
 				&& this.model != BARRIER
 				&& !(this.type == ROCK)
 				&& !(this.type == KABOOM)
-				&& Calculation.tossUp(miniBossProb)
+				&& Calculations.tossUp(miniBossProb)
 				&& this.type.isSuitableMiniBoss();
 	}
 
@@ -2382,7 +2382,7 @@ public class Enemy extends RectanglularGameEntity
 		this.isExplodable = false;
 		this.callBack += 2;
 		this.canTurn = true;
-		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && Calculation.tossUp(0.2f)) ||
+		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && Calculations.tossUp(0.2f)) ||
 		      this.shootTimer == 0 )
 		{
 			this.cloakingTimer = 0;
@@ -2419,32 +2419,32 @@ public class Enemy extends RectanglularGameEntity
 	{
 		if(this.barrierTeleportTimer != DISABLED || this.borrowTimer != DISABLED)
 		{
-			this.shootingRate = 35 + Calculation.random(15);
+			this.shootingRate = 35 + Calculations.random(15);
 		}
 		else
 		{
-			this.shootingRate = 25 + Calculation.random(25);
+			this.shootingRate = 25 + Calculations.random(25);
 		}
 			
-		if(this.barrierTeleportTimer == DISABLED){this.shootPause = 2 * this.shootingRate + 20 + Calculation.random(40);}
-		this.shotsPerCycle = 2 + Calculation.random(9);
+		if(this.barrierTeleportTimer == DISABLED){this.shootPause = 2 * this.shootingRate + 20 + Calculations.random(40);}
+		this.shotsPerCycle = 2 + Calculations.random(9);
 		this.shootingCycleLength = this.shootPause + this.shootingRate * this.shotsPerCycle;
-		this.shotSpeed = 5 + Calculation.random(6);
-		if(this.barrierTeleportTimer != DISABLED || (Calculation.tossUp(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
+		this.shotSpeed = 5 + Calculations.random(6);
+		if(this.barrierTeleportTimer != DISABLED || (Calculations.tossUp(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
 		{
-			if(this.barrierTeleportTimer == DISABLED){this.farbe1 = Coloration.bleach(new Color(170, 0, 255), 0.6f);}
+			if(this.barrierTeleportTimer == DISABLED){this.farbe1 = Colorations.bleach(new Color(170, 0, 255), 0.6f);}
 			this.shotType = BUSTER;
 		}
 		else
 		{
-			this.farbe1 = Coloration.bleach(Color.red, 0.6f);
+			this.farbe1 = Colorations.bleach(Color.red, 0.6f);
 			this.shotType = DISCHARGER;
 		}
 	}
 
 	private void setHitpoints(int hitpoints)
 	{
-		this.hitpoints = hitpoints + Calculation.random(hitpoints/2);
+		this.hitpoints = hitpoints + Calculations.random(hitpoints/2);
 	}
 	
 	private void setX(double x)
@@ -2481,7 +2481,7 @@ public class Enemy extends RectanglularGameEntity
 	
 	private void setVarWidth(int width)
 	{
-		setWidth(width + Calculation.random(width/(this.model == BARRIER ? 5 : 10)));
+		setWidth(width + Calculations.random(width/(this.model == BARRIER ? 5 : 10)));
 	}
 	
 	private void setHeight()
@@ -2749,12 +2749,12 @@ public class Enemy extends RectanglularGameEntity
 	boolean hasLateralFaceTouchWith(Enemy barrier)
 	{
 		return  
-			Calculation.getIntersectionLength(	this.bounds.getMinX(),
+			Calculations.getIntersectionLength(	this.bounds.getMinX(),
 											this.bounds.getMaxX(),
 											barrier.bounds.getMinX(),
 											barrier.bounds.getMaxX())										 
 			<										 									 
-			Calculation.getIntersectionLength(	this.bounds.getMinY(),
+			Calculations.getIntersectionLength(	this.bounds.getMinY(),
 											this.bounds.getMaxY(),
 											barrier.bounds.getMinY(),
 											barrier.bounds.getMaxY());	
@@ -2804,12 +2804,12 @@ public class Enemy extends RectanglularGameEntity
 			&& this.chaosTimer == READY
 			&& this.dodgeTimer == READY)
 		{
-			if( Calculation.tossUp(0.2f)
+			if( Calculations.tossUp(0.2f)
 			    && this.type.isShieldMaker())
 			{
 				this.direction.x = -this.direction.x;
 			}
-			if( Calculation.tossUp(0.2f))
+			if( Calculations.tossUp(0.2f))
 			{
 				this.direction.y = -this.direction.y;
 			}			
@@ -3170,7 +3170,7 @@ public class Enemy extends RectanglularGameEntity
 		{
 			if(this.operator.servants[serantType] == null)
 			{	
-				if(Calculation.tossUp(RETURN_PROB[serantType])
+				if(Calculations.tossUp(RETURN_PROB[serantType])
 					&& this.operator.timeSinceDeath[serantType] > MIN_ABSENT_TIME[serantType])
 				{
 					makeBoss5Servant[serantType] = true;
@@ -3245,7 +3245,7 @@ public class Enemy extends RectanglularGameEntity
     	// Boss-Gegner mit der Fähigkeit "Kamikaze" drehen mit einer bestimmten
     	// Wahrscheinlichkeit um, wenn sie dem Helikopter das Heck zugekehrt haben.
     	if(	this.isBoss()
-    		&& Calculation.tossUp(0.008f)
+    		&& Calculations.tossUp(0.008f)
     		&& ( (this.bounds.getMinX() > helicopter.bounds.getMaxX() 
     			   && this.direction.x == 1) 
     			 ||
@@ -3318,7 +3318,7 @@ public class Enemy extends RectanglularGameEntity
 		}
 		else if(this.borrowTimer == READY
 				&&( (this.type != PROTECTOR 
-				     && Calculation.tossUp(0.004f))
+				     && Calculations.tossUp(0.004f))
 				    || 
 				    (this.type == PROTECTOR 
 				     && (helicopter.bounds.getX() > boss.getX() - 225) ))) 
@@ -3338,7 +3338,7 @@ public class Enemy extends RectanglularGameEntity
 	{
 		if(	this.shootTimer == 0
 			&& !this.isEmpSlowed()
-			&& Calculation.tossUp(0.1f)
+			&& Calculations.tossUp(0.1f)
 			&& this.bounds.getX() + this.bounds.getWidth() > 0
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
 			&& ((this.direction.x == -1 
@@ -3368,7 +3368,7 @@ public class Enemy extends RectanglularGameEntity
 	{		
 		return this.type == BOSS_3 
 				|| this.isMiniBoss
-				|| (this.type == BIG_SHIELD_MAKER && Calculation.tossUp());
+				|| (this.type == BIG_SHIELD_MAKER && Calculations.tossUp());
 	}
 
 	private void evaluateBarrierShooting(Controller controller,
@@ -3403,7 +3403,7 @@ public class Enemy extends RectanglularGameEntity
 							  - (this.bounds.getX() +       this.bounds.getWidth()/2)), 
 						  (helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP) 
 						  	  - (this.bounds.getY() +       this.bounds.getHeight()/2)) ;
-				float distance = (float) Calculation.ZERO_POINT.distance(this.shootingDirection);
+				float distance = (float) Calculations.ZERO_POINT.distance(this.shootingDirection);
 				this.shootingDirection.setLocation(this.shootingDirection.getX()/distance,
 													this.shootingDirection.getY()/distance);
 			}
@@ -3436,7 +3436,7 @@ public class Enemy extends RectanglularGameEntity
 			this.cloakingTimer = ACTIVE_TIMER;
 			if(this.bounds.getMaxX() > 0){Audio.play(Audio.cloak);}
 		}	
-		else if(this.barrierTeleportTimer == READY && Calculation.tossUp(0.004f))
+		else if(this.barrierTeleportTimer == READY && Calculations.tossUp(0.004f))
 		{
 			this.startBarrierUncloaking(helicopter);
 		}
@@ -3490,7 +3490,7 @@ public class Enemy extends RectanglularGameEntity
 			if(enemy.get(ACTIVE).size() < 15
 			   && (    this.spawningHornetTimer == 60
 			   	    || this.spawningHornetTimer == 90
-			   	    || Calculation.tossUp(0.02f)))
+			   	    || Calculations.tossUp(0.02f)))
 			{
 				boss.setLocation(	this.bounds.getX() + this.bounds.getWidth() /2, 
 									this.bounds.getY() + this.bounds.getHeight()/2);
@@ -3724,7 +3724,7 @@ public class Enemy extends RectanglularGameEntity
 						SNOOZE_TIME 
 						+ (inactivation
 							? INACTIVATION_TIME
-							  + Calculation.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
+							  + Calculations.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
 							:0));
 		this.speedLevel.setLocation(ZERO_SPEED);
 		if(this.targetSpeedLevel.getY() != 0
@@ -4069,7 +4069,7 @@ public class Enemy extends RectanglularGameEntity
 			if(this.model == BARRIER)
 			{
 				if(	helicopter.hasTripleDmg()
-					&&  Calculation.tossUp(
+					&&  Calculations.tossUp(
 							this.deactivationProb
 							*(helicopter.bonusKillsTimer
 								> NICE_CATCH_TIME
@@ -4077,7 +4077,7 @@ public class Enemy extends RectanglularGameEntity
 				{
 					this.hitpoints = 0;
 				}
-				else if(Calculation.tossUp(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
+				else if(Calculations.tossUp(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
 				{
 					this.snooze(true);
 				}
@@ -4138,7 +4138,7 @@ public class Enemy extends RectanglularGameEntity
 		if(this.model == BARRIER)
 		{
 			if((missile.typeOfExplosion == JUMBO || missile.typeOfExplosion == PHASE_SHIFT || missile.extraDamage)
-				&& Calculation.tossUp(	0.5f
+				&& Calculations.tossUp(	0.5f
 									* this.deactivationProb
 									* (( (missile.typeOfExplosion == JUMBO
 											|| missile.typeOfExplosion == PHASE_SHIFT)
@@ -4146,7 +4146,7 @@ public class Enemy extends RectanglularGameEntity
 			{
 				this.hitpoints = 0;
 			}
-			else if(Calculation.tossUp(this.deactivationProb *(missile.typeOfExplosion == PLASMA ? 2 : 1)))
+			else if(Calculations.tossUp(this.deactivationProb *(missile.typeOfExplosion == PLASMA ? 2 : 1)))
 			{
 				this.snooze(true);
 			}
@@ -4229,7 +4229,7 @@ public class Enemy extends RectanglularGameEntity
 		return this.canInstantTurn
 				|| this.canTurn
 					&& !this.canEarlyTurn
-					&& Calculation.tossUp(this.isMiniBoss
+					&& Calculations.tossUp(this.isMiniBoss
 										? this.isCarrier ? 0.2f : 0.5f
 										: this.isCarrier ? 0.1f : 0.25f);
 	}
@@ -4271,8 +4271,8 @@ public class Enemy extends RectanglularGameEntity
 		this.isDestroyed = true;
 		if(this.cloakingTimer > 0){this.uncloak(DISABLED);}
 		this.teleportTimer = DISABLED;
-		this.farbe1 = Coloration.dimColor(this.farbe1, Coloration.DESTRUCTION_DIM_FACTOR);
-		this.farbe2 = Coloration.dimColor(this.farbe2, Coloration.DESTRUCTION_DIM_FACTOR);
+		this.farbe1 = Colorations.dimColor(this.farbe1, Colorations.DESTRUCTION_DIM_FACTOR);
+		this.farbe2 = Colorations.dimColor(this.farbe2, Colorations.DESTRUCTION_DIM_FACTOR);
 		
 		this.repaint();
 	
@@ -4295,8 +4295,8 @@ public class Enemy extends RectanglularGameEntity
 	private void uncloak(int nextCloakingState)
 	{
 		this.alpha = 255;
-		this.farbe1 = Coloration.setAlpha(this.farbe1, 255);
-		this.farbe2 = Coloration.setAlpha(this.farbe2, 255);
+		this.farbe1 = Colorations.setAlpha(this.farbe1, 255);
+		this.farbe2 = Colorations.setAlpha(this.farbe2, 255);
 		this.cloakingTimer = nextCloakingState;
 	}
 
@@ -4347,7 +4347,7 @@ public class Enemy extends RectanglularGameEntity
 	{		
 		return this.model != BARRIER
 			   &&( (!Events.isBossLevel()
-				    &&( ( Calculation.tossUp(POWER_UP_PROB)
+				    &&( ( Calculations.tossUp(POWER_UP_PROB)
 						  && Events.level >= MIN_POWER_UP_LEVEL) 
 						|| this.isMiniBoss))
 				|| this.type == BOSS_1
@@ -4361,9 +4361,9 @@ public class Enemy extends RectanglularGameEntity
 		PowerUp.activate(helicopter, 
 				 powerUp, 
 				 this, 
-				 Calculation.tossUp(0.14f)
+				 Calculations.tossUp(0.14f)
 					? REPARATION
-					: PowerUpType.getValues()[Calculation.random(this.type.isMajorBoss() ? PowerUpType.size() - 1 : PowerUpType.size())], false);
+					: PowerUpType.getValues()[Calculations.random(this.type.isMajorBoss() ? PowerUpType.size() - 1 : PowerUpType.size())], false);
 		
 	}
 	
@@ -4476,7 +4476,7 @@ public class Enemy extends RectanglularGameEntity
 	{
 		if(Events.boss.operator.servants[this.shieldingBrotherId()] == null)
 		{
-			this.isUpperShieldMaker = Calculation.tossUp();
+			this.isUpperShieldMaker = Calculations.tossUp();
 		}
 		else
 		{

@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.model.RectanglularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -15,8 +15,8 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.Calculation;
-import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
 
 import java.applet.AudioClip;
 import java.awt.*;
@@ -43,7 +43,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
-public abstract class Helicopter extends RectanglularGameEntity
+public abstract class Helicopter extends RectangularGameEntity
 {
     public static final int
 		// TODO einstellen auf 60 Frames per Second
@@ -94,11 +94,11 @@ public abstract class Helicopter extends RectanglularGameEntity
 		HELICOPTER_SIZE = new Dimension(122, 69);
     
     private static final Rectangle
-    	INITIAL_BOUNDS = new Rectangle(	150, 
-		    							GROUND_Y 
-		    							- HELICOPTER_SIZE.height 
-		    							- NO_COLLISION_HEIGHT, 
-		    							HELICOPTER_SIZE.width, 
+    	INITIAL_BOUNDS = new Rectangle(	150,
+		    							GROUND_Y
+		    							- HELICOPTER_SIZE.height
+		    							- NO_COLLISION_HEIGHT,
+		    							HELICOPTER_SIZE.width,
 		    							HELICOPTER_SIZE.height);
        
     public int
@@ -173,9 +173,9 @@ public abstract class Helicopter extends RectanglularGameEntity
     Point2D
         nextLocation = new Point2D.Float();
     
-  	public Enemy 
+  	public Enemy
   		tractor;			// Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
- 	    
+ 	  
   	public Explosion
 		empWave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
 	
@@ -184,24 +184,24 @@ public abstract class Helicopter extends RectanglularGameEntity
         timeBetweenTwoShots,// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
         slowedTimer;		// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
     
-    private float 
+    private float
     	speed,     			// aktuelle Geschwindigkeit des Helikopters
         currentPlating;		// aktuelle Panzerung (immer <= maximale Panzerung)
     
     private boolean
 		isCrashing;			// Helikopter befindet sich im Sturzflug
-      
+    
     // Grundfarben zur Berechnung der Gradientenfarben
     // TODO ggf. eigene Klase für Farben einführen
     Color
-    	inputColorCannon, 
-    	inputColorHull, 
-    	inputColorWindow, 
-    	inputColorFuss1, 
-    	inputColorFuss2, 
+    	inputColorCannon,
+    	inputColorHull,
+    	inputColorWindow,
+    	inputColorFuss1,
+    	inputColorFuss2,
     	inputGray,
-    	inputLightGray, 
-    	inputLamp;                             
+    	inputLightGray,
+    	inputLamp;
     
     // Gradientenfarben
     GradientPaint
@@ -210,7 +210,7 @@ public abstract class Helicopter extends RectanglularGameEntity
     	gradientWindow, 				// Fensterfarbe
     	gradientCannon2and3,			// Farbe der zweiten und dritten Bordkanone
     	gradientFuss1, 					// Farben der Landekufen
-    	gradientFuss2, 					
+    	gradientFuss2,
     	gradientCannonHole;				// Farbe der Bordkanonen-Öffnung
 	   
     
@@ -222,21 +222,23 @@ public abstract class Helicopter extends RectanglularGameEntity
     @Override
 	public void paint(Graphics2D g2d)
     {
+		// GraphicsManager.getInstance().paint(this);
     	paint(g2d, this.paintBounds.x, this.paintBounds.y);
     }
     
-    // TODO left / top ersetzen durch Point position
     public void paint(Graphics2D g2d, int left, int top)
     {
-    	// TODO Alles was mit "malen" zusammenhängt in eine eigene Klasse auslagern
-        this.determineColors(left, top);
+		this.determineColors(left, top);
     	this.paintComponents(g2d, left, top);
-            
-        //zu Testzwecken: 
-        /*
-        g2d.setColor(Color.red);
-        g2d.draw(this.bounds);
-        g2d.fillOval((int) this.location.getX()-2, (int) this.location.getY()-2, 4, 4); */
+        
+        //zu Testzwecken:
+		boolean showRedFrame = false;
+        if (showRedFrame)
+        {
+            g2d.setColor(Color.red);
+            g2d.draw(this.bounds);
+            g2d.fillOval((int) this.location.getX() - 2, (int) this.location.getY() - 2, 4, 4);
+        }
     }
     
     private void determineColors(int left, int top)
@@ -295,7 +297,7 @@ public abstract class Helicopter extends RectanglularGameEntity
         {
             if(Events.timeOfDay == NIGHT && Menu.window == GAME)
             {
-                g2d.setColor(Coloration.translucentWhite);
+                g2d.setColor(Colorations.translucentWhite);
                 g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -135 : -43), top-96, 300, 300, (this.hasLeftMovingAppearance() ? 165 : -15), 30);
             }
             g2d.setPaint(this.gradientHull);
@@ -322,16 +324,16 @@ public abstract class Helicopter extends RectanglularGameEntity
     
     private void determineGradientColors(int left, int top)
 	{
-		this.gradientHull = new GradientPaint(0, top-10, Coloration.dimColor(this.inputColorHull, 1.65f),
-			0, top+ 2, Coloration.dimColor(this.inputColorHull, 0.75f), true);
-		this.gradientCannon1 = new GradientPaint(0, top+56, Coloration.dimColor(this.inputColorCannon, 1.65f),
-			0, top+64, Coloration.dimColor(this.inputColorCannon, 0.55f), true);
-		this.gradientWindow = new GradientPaint(0, top-10, Coloration.dimColor(this.inputColorWindow, 2.2f),
-			0, top+ 2, Coloration.dimColor(this.inputColorWindow, 0.70f), true);
-		this.gradientCannon2and3 = new GradientPaint(0, top+28, Coloration.dimColor(this.inputColorCannon, 1.7f),
-			0, top+35, Coloration.dimColor(this.inputColorCannon, 0.4f), true);
-		this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, Coloration.dimColor(this.inputColorFuss1, 0.44f), true);
-		this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, Coloration.dimColor(this.inputColorFuss2, 0.55f), true);
+		this.gradientHull = new GradientPaint(0, top-10, Colorations.dimColor(this.inputColorHull, 1.65f),
+			0, top+ 2, Colorations.dimColor(this.inputColorHull, 0.75f), true);
+		this.gradientCannon1 = new GradientPaint(0, top+56, Colorations.dimColor(this.inputColorCannon, 1.65f),
+			0, top+64, Colorations.dimColor(this.inputColorCannon, 0.55f), true);
+		this.gradientWindow = new GradientPaint(0, top-10, Colorations.dimColor(this.inputColorWindow, 2.2f),
+			0, top+ 2, Colorations.dimColor(this.inputColorWindow, 0.70f), true);
+		this.gradientCannon2and3 = new GradientPaint(0, top+28, Colorations.dimColor(this.inputColorCannon, 1.7f),
+			0, top+35, Colorations.dimColor(this.inputColorCannon, 0.4f), true);
+		this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, Colorations.dimColor(this.inputColorFuss1, 0.44f), true);
+		this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, Colorations.dimColor(this.inputColorFuss2, 0.55f), true);
 		this.gradientCannonHole = this.getGradientCannonHoleColor();
 	}
     
@@ -345,32 +347,32 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.inputColorCannon = this.getInputColorCannon();
 		this.inputColorHull = this.getInputColorHull();
 		this.inputColorWindow = this.getInputColorWindow();
-		this.inputColorFuss1 = Coloration.lighterGray;
-		this.inputColorFuss2 = Coloration.enemyGray;
-		this.inputGray = Coloration.gray;
-		this.inputLightGray = Coloration.lightGray;
-		this.inputLamp = this.hasSpotlightsTurnedOn() ? Coloration.randomLight : Coloration.darkYellow;
+		this.inputColorFuss1 = Colorations.lighterGray;
+		this.inputColorFuss2 = Colorations.enemyGray;
+		this.inputGray = Colorations.gray;
+		this.inputLightGray = Colorations.lightGray;
+		this.inputLamp = this.hasSpotlightsTurnedOn() ? Colorations.randomLight : Colorations.darkYellow;
 	}
 	
 	Color getInputColorCannon()
 	{
 		return this.isInvincible()
-			? Coloration.variableGreen
+			? Colorations.variableGreen
 			: this.getSecondaryHullColor();
 	}
 	
 	private Color getInputColorHull()
 	{
 		return this.isInvincible()
-			? Coloration.variableGreen
+			? Colorations.variableGreen
 			: this.getPrimaryHullColor();
 	}
 	
 	private Color getInputColorWindow()
 	{
 		return this.hasTripleDmg() || this.hasBoostedFireRate()
-			? Coloration.variableRed
-			: Coloration.windowBlue;
+			? Colorations.variableRed
+			: Colorations.windowBlue;
 	}
 	
 	private void paintMainRotor(Graphics2D g2d, int left, int top)
@@ -419,7 +421,7 @@ public abstract class Helicopter extends RectanglularGameEntity
         if(this.getType() == HELIOS && Menu.window == STARTSCREEN)
         {
             g2d.setFont(Menu.fontProvider.getBold(12));
-            g2d.setColor(Coloration.brown);
+            g2d.setColor(Colorations.brown);
             g2d.drawString(Menu.language == ENGLISH ? "Special mode" : "Spezial-Modus:", left-27, top-4);
         }
     }
@@ -438,8 +440,8 @@ public abstract class Helicopter extends RectanglularGameEntity
     				width-2*distanceX,
     				height-2*distanceY,
     				nrOfBlades, pos, bladeWidth, active, true);
-	}   
-    
+	}
+ 
 	static void paintRotor(Graphics2D g2d, Color color,
 						   int x, int y, int width, int height,
 						   int numberOfBlades, int pos, int bladeWidth,
@@ -447,14 +449,14 @@ public abstract class Helicopter extends RectanglularGameEntity
 	{
 		if(active)
 	    {
-	       	g2d.setColor((Events.timeOfDay == DAY || enemiePaint) ? Coloration.translucentGray : Coloration.translucentWhite);
-	       	g2d.fillOval(x, y, width, height); 
+	       	g2d.setColor((Events.timeOfDay == DAY || enemiePaint) ? Colorations.translucentGray : Colorations.translucentWhite);
+	       	g2d.fillOval(x, y, width, height);
 	    }
-	    g2d.setColor(color);	        
+	    g2d.setColor(color);
 	    for(int i = 0; i < numberOfBlades; i++)
 	    {
 	       	g2d.fillArc(x, y, width, height, -10-pos+i*(360/ numberOfBlades), bladeWidth);
-	    }		
+	    }
 	}
 
 	public Color getPrimaryHullColor()
@@ -483,16 +485,12 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.move(explosion);
 	}
 	
-	
-	
 	private boolean hasSpotlightsTurnedOn()
 	{
 		return this.hasSpotlights
 				&& Events.timeOfDay == NIGHT
 				&& Menu.window == GAME;
 	}
- 
-	
 
 	void updateTimer()
 	{
@@ -501,8 +499,6 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.evaluatePowerUpActivationStates();
 	}
 	
-	
-
 	private void evaluateFire(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile)
 	{
     	if(this.isReadyForShooting()){this.shoot(missile);}
@@ -510,20 +506,20 @@ public abstract class Helicopter extends RectanglularGameEntity
 	}
 	
 	public boolean hasTripleDmg()
-	{		
+	{
 		return this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] > 0;
 	}
 	
 	public boolean isInvincible()
-	{		
+	{
 		return this.powerUpTimer[INVINCIBLE.ordinal()] > 0;
 	}
 	
 	private boolean hasBoostedFireRate()
-	{		
+	{
 		return this.powerUpTimer[BOOSTED_FIRE_RATE.ordinal()] > 0;
 	}
-		
+	
 	private boolean isReadyForShooting()
 	{
 		return   	this.isContiniousFireEnabled
@@ -593,6 +589,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 			missile.launch(this, stunningMissile, 42);
 		}
 	}
+	
 	private void move(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
 		if(this.isOnTheGround())
@@ -700,61 +697,61 @@ public abstract class Helicopter extends RectanglularGameEntity
 	}
 
 	public boolean isLocationAdaptionApproved(Enemy enemy)
-	{		
+	{
 		return enemy.bounds.intersects(this.bounds)
-				&& enemy.alpha == 255 
+				&& enemy.alpha == 255
 				&& enemy.borrowTimer != 0;
 	}
 
 	void adaptPosTo(Enemy enemy)
-	{		
-		double 
+	{
+		double
 			x = this.bounds.getCenterX() - enemy.bounds.getCenterX(),
 		 	y = this.bounds.getCenterY() - enemy.bounds.getCenterY(),
-			pseudoAngle = (x/ Calculation.ZERO_POINT.distance(x, y)),
+			pseudoAngle = (x/ Calculations.ZERO_POINT.distance(x, y)),
 			distance,
 			localSpeed = enemy.hasUnresolvedIntersection ? this.speed : Double.MAX_VALUE;
 			
-		if(pseudoAngle > Calculation.ROOT05)
+		if(pseudoAngle > Calculations.ROOT05)
 		{
-			// Right	
-			// new pos x: enemy.getMaxX() + (this.moves_left ? 39 : 83) 
+			// Right
+			// new pos x: enemy.getMaxX() + (this.moves_left ? 39 : 83)
 			distance = (enemy.bounds.getX() + enemy.bounds.getWidth()) + (this.isMovingLeft ? 39 : 83) - this.location.getX();
 			this.nextLocation.setLocation(
-				this.location.getX() + (distance > localSpeed ? localSpeed : distance),
+				this.location.getX() + Math.min(distance, localSpeed),
 				this.location.getY());
 			enemy.setTouchedSiteToRight();
 		}
-		else if(pseudoAngle < -Calculation.ROOT05)
+		else if(pseudoAngle < -Calculations.ROOT05)
 		{
 			// Left
 			// new pos x: enemy.bounds.x - this.bounds.getWidth() + (this.moves_left ? 39 : 83)
 			distance = this.location.getX() - enemy.bounds.getX() + this.bounds.getWidth() - (this.isMovingLeft ? 39 : 83);
 			this.nextLocation.setLocation(
-				this.location.getX() - (distance > localSpeed ? localSpeed : distance),
+				this.location.getX() - Math.min(distance, localSpeed),
 				this.location.getY());
 			enemy.setTouchedSiteToLeft();
 		}
-		else 
-		{			
+		else
+		{
 			if(this.bounds.getCenterY() > enemy.bounds.getCenterY())
 			{
-				// Bottom	
+				// Bottom
 				// new pos y: enemy.bounds.getMaxY() + 56
 				distance = enemy.bounds.getMaxY() + 56 - this.location.getY();
 				this.nextLocation.setLocation(
 					this.location.getX(),
-					this.location.getY() + (distance > localSpeed ? localSpeed : distance));
+					this.location.getY() + Math.min(distance, localSpeed));
 				enemy.setTouchedSiteToBottom();
 			}
 			else
 			{
-				// Top	
+				// Top
 				// new pos y: enemy.bounds.y - this.bounds.getHeight() + 56
 				distance = this.location.getY() - enemy.bounds.getY() + this.bounds.getHeight() - 56;
 				this.nextLocation.setLocation(
 					this.location.getX(),
-					this.location.getY() - (distance > localSpeed ? localSpeed : distance));
+					this.location.getY() - Math.min(distance, localSpeed));
 				enemy.setTouchedSiteToTop();
 			}
 			if(this.tractor != null){this.stopTractor();}
@@ -762,19 +759,19 @@ public abstract class Helicopter extends RectanglularGameEntity
 	}
 	
 	void correctAndSetCoordinates()
-	{    	
+	{
     	this.location.setLocation
 		(
 			Math.max(40, Math.min(1024, this.nextLocation.getX())),
 			Math.max(32, Math.min(407, this.nextLocation.getY()))
-		);    	    	
+		);
    	 	this.setBounds();
 	}
 
 	void setBounds()
 	{
 		this.bounds.setRect(
-	   	 	this.location.getX() 
+	   	 	this.location.getX()
 	   	 		- (this.isMovingLeft
 	   	 			? FOCAL_PNT_X_LEFT
 	   	 			: FOCAL_PNT_X_RIGHT),
@@ -842,7 +839,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 		this.hitCounter = savegame.hitCounter;
 		
 		this.scorescreenTimes = savegame.scorescreenTimes.clone();
-	}	
+	}
     
     public void reset()
     {
@@ -1013,8 +1010,8 @@ public abstract class Helicopter extends RectanglularGameEntity
     {
     	this.isMovingLeft = false;
     	this.bounds.setRect(INITIAL_BOUNDS);
-    	this.location.setLocation(this.bounds.getX() + FOCAL_PNT_X_RIGHT, 
-    							  INITIAL_BOUNDS.y + FOCAL_PNT_Y_POS);    	
+    	this.location.setLocation(this.bounds.getX() + FOCAL_PNT_X_RIGHT,
+    							  INITIAL_BOUNDS.y + FOCAL_PNT_Y_POS);
     	this.setPaintBounds();
     }
     
@@ -1044,12 +1041,12 @@ public abstract class Helicopter extends RectanglularGameEntity
 		if(Events.level < 51 && explosion != null)
 		{
 			Audio.play(Audio.explosion3);
-			Explosion.start(explosion, 
-							this, 
-							(int)(this.bounds.getX() 
+			Explosion.start(explosion,
+							this,
+							(int)(this.bounds.getX()
 								+ (this.isMovingLeft
-									? FOCAL_PNT_X_LEFT 
-									: FOCAL_PNT_X_RIGHT)), 
+									? FOCAL_PNT_X_LEFT
+									: FOCAL_PNT_X_RIGHT)),
 							(int)(this.bounds.getY() + FOCAL_PNT_Y_EXP),
                     ORDINARY,
 							false);
@@ -1079,7 +1076,7 @@ public abstract class Helicopter extends RectanglularGameEntity
 					Events.extraReward(this.bonusKills,
 										this.bonusKillsMoney,
 										0.5f, 0.75f, 3.5f); // 0.25f, 0.5f, 3.0f);
-				}				
+				}
 				this.bonusKillsMoney = 0;
 				this.bonusKills = 0;
 			}
@@ -1114,11 +1111,11 @@ public abstract class Helicopter extends RectanglularGameEntity
 			    	}
 					else
 					{
-                        Menu.collectedPowerUp[i].setAlpha(Coloration.MAX_VALUE - alphaStepSize);
+                        Menu.collectedPowerUp[i].setAlpha(Colorations.MAX_VALUE - alphaStepSize);
 					}
 				}
 			}
-		}		
+		}
 	}
 	
 	public void takeMissileDamage()
@@ -1175,12 +1172,12 @@ public abstract class Helicopter extends RectanglularGameEntity
 		for(int i = 0; i < 4; i++){if(this.powerUpTimer[i] < Integer.MAX_VALUE/2)
 		{
 			this.powerUpTimer[i] = Math.min(POWERUP_DURATION/4 + 1, this.powerUpTimer[i]);}
-		}		
+		}
 	}
 
 	public void setRelativePlatingDisplayColor()
-	{		
-		Coloration.plating = Coloration.percentColor(this.getRelativePlating());
+	{
+		Colorations.plating = Colorations.percentColor(this.getRelativePlating());
 	}
 	
 	public void getPowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
@@ -1202,25 +1199,25 @@ public abstract class Helicopter extends RectanglularGameEntity
 			Menu.collectedPowerUp[powerUpType.ordinal()].collect();
 			Menu.collectedPowerUp[powerUpType.ordinal()] = null;
 			if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(false);}
-		} 
+		}
 		else
 		{
 			if(playSound){Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);}
 			this.powerUpTimer[powerUpType.ordinal()] = lastingEffect
-												? Integer.MAX_VALUE 
+												? Integer.MAX_VALUE
 												: Math.max(
 													this.powerUpTimer[powerUpType.ordinal()],
 													POWERUP_DURATION);
 			if(Menu.collectedPowerUp[powerUpType.ordinal()] == null)
-			{								
+			{
 				PowerUp.activate(this, powerUp, null, powerUpType, true);
 				if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(true);}
 			}
 			else
 			{
                 Menu.collectedPowerUp[powerUpType.ordinal()].setOpaque();
-			}			
-		}		
+			}
+		}
 	}
 	
 	public void setActivationState(boolean activationState)
@@ -1261,7 +1258,7 @@ public abstract class Helicopter extends RectanglularGameEntity
     }
     
     public float kaboomDamage()
-	{		
+	{
 		return Math.max(4, 2*this.currentPlating/3);
 	}
     
@@ -1337,23 +1334,23 @@ public abstract class Helicopter extends RectanglularGameEntity
     }
     
     public boolean canCollideWith(Enemy e)
-	{		
+	{
 		return this.basicCollisionRequirementsSatisfied(e)
-			   && !(e.model == BARRIER 
-						&& (    e.alpha != 255 
+			   && !(e.model == BARRIER
+						&& (    e.alpha != 255
 							||  e.borrowTimer == 0
 							|| !e.hasUnresolvedIntersection));
 	}
 
 	public boolean basicCollisionRequirementsSatisfied(Enemy e)
-	{		
+	{
 		return !this.isDamaged
 				&& e.isOnScreen()
 				&& e.bounds.intersects(this.bounds);
 	}
 	
 	public float getProtectionFactor()
-	{		
+	{
 		return this.isInvincible()
 				? INVULNERABILITY_PROTECTION_FACTOR
 				: STANDARD_PROTECTION_FACTOR;
@@ -1364,13 +1361,13 @@ public abstract class Helicopter extends RectanglularGameEntity
 	{
 		exp.ellipse.setFrameFromCenter(
 			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
-			this.bounds.getY() + FOCAL_PNT_Y_EXP, 
+			this.bounds.getY() + FOCAL_PNT_Y_EXP,
 			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
 			this.bounds.getY() + FOCAL_PNT_Y_EXP);
 	}
  
 	public boolean isOnTheGround()
-	{		
+	{
 		return this.bounds.getMaxY() + NO_COLLISION_HEIGHT == GROUND_Y;
 	}
 
@@ -1406,7 +1403,7 @@ public abstract class Helicopter extends RectanglularGameEntity
     }
     
     public boolean hasPerformedTeleportKill()
-	{		
+	{
 		return this.bonusKillsTimer > 0;
 	}
 
@@ -1657,7 +1654,7 @@ public abstract class Helicopter extends RectanglularGameEntity
         }
     }
     
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion){};
+    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion){}
     
     public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
@@ -1666,7 +1663,7 @@ public abstract class Helicopter extends RectanglularGameEntity
     
     public void upgrade(StandardUpgradeType standardUpgradeType)
     {
-        Integer currentLevelOfUpgrade = this.getUpgradeLevelOf(standardUpgradeType);
+        int currentLevelOfUpgrade = this.getUpgradeLevelOf(standardUpgradeType);
         this.setUpgradeLevelOf(standardUpgradeType, currentLevelOfUpgrade + 1);
     }
 	

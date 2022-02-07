@@ -4,19 +4,18 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityRecycler;
 import de.helicopter_vs_aliens.control.timer.Timer;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.*;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 
 import javax.swing.*;
@@ -71,7 +70,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		mouseInWindow = true;
 		
 	private Helicopter
-		helicopter = HelicopterType.getDefault().getInstance();
+		helicopter = HelicopterType.getDefault().makeInstance();
 
 	public EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupType.class);
@@ -215,7 +214,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			else
 			{				
 				//unskipped_counter++;
-				this.offGraphics.setColor(Coloration.bg);
+				this.offGraphics.setColor(Colorations.bg);
 				this.offGraphics.fill(this.wholeScreenClip);	
 				paintFrame(this.offGraphics);
 			}			
@@ -231,7 +230,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			calculateFps();
 			if(!Menu.isMenuVisible)
 			{				
-		    	Coloration.calculateVariableGameColors(this.framesCounter);
+		    	Colorations.calculateVariableGameColors(this.framesCounter);
 				BackgroundObject.update(this, this.backgroundObjects);
 				Events.updateTimer();
 				Menu.updateDisplays(this.helicopter);
@@ -248,7 +247,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		}
 		else
 		{
-			Coloration.calculateVariableMenuColors(this.framesCounter);
+			Colorations.calculateVariableMenuColors(this.framesCounter);
 			Menu.update(this, this.helicopter);
 		}
 	}
@@ -261,17 +260,17 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		if(Menu.window == GAME)
 		{						
 			// zeichnen aller sichtbaren Objekte						
-			BackgroundObject.paintBackground(g2d, this.backgroundObjects);
+			BackgroundObjectPainter.paintBackground(g2d, this.backgroundObjects);
 			Menu.paintBackgroundDisplays( g2d, this, this.helicopter);
 			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d);}
 			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
-			Missile.paintAllMissiles( g2d, this);
+			MissilePainter.paintAllMissiles( g2d, this);
 			Enemy.paintAllActive(g2d, this, this.helicopter);
-			EnemyMissile.paintAll(g2d, this.enemyMissiles);
+			EnemyMissilePainter.paintAll(g2d, this.enemyMissiles);
 			this.helicopter.paint(g2d);
 			Explosion.paintAll(g2d, this.explosions);
-			PowerUp.paintAll(g2d, this.powerUps);
-			BackgroundObject.paintForeground(g2d, this.backgroundObjects);
+			PowerUpPainter.paintAll(g2d, this.powerUps);
+			BackgroundObjectPainter.paintForeground(g2d, this.backgroundObjects);
 		}
 		Menu.paint(g2d, this, this.helicopter);
 	}

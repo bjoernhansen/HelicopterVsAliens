@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.powerup;
 
 import java.awt.*;
 
-import static de.helicopter_vs_aliens.util.Coloration.golden;
+import static de.helicopter_vs_aliens.util.Colorations.golden;
 import static java.awt.Color.*;
 
 

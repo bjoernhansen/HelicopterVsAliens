@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 
-public abstract class RectanglularGameEntity extends GameEntity
+public abstract class RectangularGameEntity extends GameEntity
 // TODO möglichst so vereinheitlichen, dass alle von GameEnitiy erben können
 {
 	public static final  int
@@ -12,9 +12,11 @@ public abstract class RectanglularGameEntity extends GameEntity
 		GROUND_Y = 426;
 		
 	// TODO paintBound sind vermutlich nur da, da in floats gerechnet aber in int gezeichnet wird, diese Funktionalität in eigene Klasse auslagern
+	// TODO bounds sollten nicht public sein, lieber einen Accessor schreiben
 	public Rectangle2D
 		bounds = new Rectangle2D.Float();
 	
+	//TODO paintBounds sollten nicht public sein, lieber einen Accessor schreiben
 	public Rectangle
         paintBounds = new Rectangle();
 	

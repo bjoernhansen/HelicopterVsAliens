@@ -3,16 +3,17 @@ package de.helicopter_vs_aliens.model.missile;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.RectanglularGameEntity;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.background.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.util.Coloration;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.model.background.BackgroundObject.BG_SPEED;
@@ -22,7 +23,7 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
 
 
-public class Missile extends RectanglularGameEntity
+public class Missile extends RectangularGameEntity
 {	
 	private static final float
 		STANDARD_DAMAGE_FACTOR = 1.0f,
@@ -38,7 +39,7 @@ public class Missile extends RectanglularGameEntity
 		speed;			// Geschwindigkeit der Rakete
 	
 	public boolean
-		extraDamage,		// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
+		extraDamage,	// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
 		dangerous,		// = true: kann den Helicopter beschädigen
 		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
@@ -116,21 +117,13 @@ public class Missile extends RectanglularGameEntity
 							* (this.typeOfExplosion == PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : STANDARD_DAMAGE_FACTOR)
 							* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
-
-	public static void paintAllMissiles(Graphics2D g2d, Controller controller)
-	{
-		for(Missile m : controller.missiles.get(ACTIVE))
-		{
-			m.paint(g2d);
-		}		
-	}
-
+	
 	public static void updateAll(Controller controller, Helicopter helicopter)
 	{
 		for(Iterator<Missile> i = controller.missiles.get(ACTIVE).iterator(); i.hasNext();)
 		{
-			Missile m = i.next();
-			m.update(controller, i, helicopter);
+			Missile missile = i.next();
+			missile.update(controller, i, helicopter);
 		}
 	}
 
@@ -242,50 +235,6 @@ public class Missile extends RectanglularGameEntity
 										this.bounds.getY(),
 										intersectLineX,
 										this.bounds.getMaxY());
-	}
-
-	@Override
-	public void paint(Graphics2D g2d)
-	{		
-		g2d.setColor(Coloration.red);
-		g2d.fillRect(this.paintBounds.x
-							+(this.speed >= 0 ? 0 : this.paintBounds.width + 3),
-					 this.paintBounds.y-2,
-					  2, 
-					 this.paintBounds.height+4);
-		
-		g2d.fillRect(this.paintBounds.x
-							+ (this.speed >= 0 ? 2 : this.paintBounds.width + 1),
-					 this.paintBounds.y-1,
-					  2,
-					 this.paintBounds.height+2);
-		
-		g2d.fillRect(this.paintBounds.x
-							+(this.speed >= 0 ? 4 : 1),
-					 (this.paintBounds.y),
-					 (this.paintBounds.width),
-					 (this.paintBounds.height));
-					
-		g2d.setColor(Coloration.pink);
-		g2d.fillRect(this.paintBounds.x+(this.speed >= 0 ? 2 : 0),
-					 this.paintBounds.y+1,
-					 this.paintBounds.width+3,
-					 this.paintBounds.height-2);
-		
-		g2d.setColor(Color.yellow);
-		g2d.fillRect(this.paintBounds.x
-						+(this.speed >= 0 ? -3 : this.paintBounds.width+5),
-					 (this.paintBounds.y),
-					  3,
-					 (this.paintBounds.height));
-		
-		g2d.setColor(Coloration.translucentWhite);
-		g2d.fillRect((int)(this.paintBounds.x + this.paintBounds.width
-						*(this.speed >= 0 ? -this.speed/5 : 1) 
-						+(this.speed >= 0 ? -6 : 11)),
-				     (this.paintBounds.y),
-				     (int)(0.2*Math.abs(this.speed)*this.paintBounds.width),
-				     (this.paintBounds.height));
 	}
 	
 	public static boolean canTakeCredit(Missile missile, Enemy enemy)

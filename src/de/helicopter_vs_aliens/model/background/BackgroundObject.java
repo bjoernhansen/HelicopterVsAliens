@@ -1,38 +1,32 @@
 package de.helicopter_vs_aliens.model.background;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
+import de.helicopter_vs_aliens.graphics.BackgroundObjectPainter;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.helicopter_vs_aliens.*;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
-import de.helicopter_vs_aliens.model.RectanglularGameEntity;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.util.Coloration;
-import de.helicopter_vs_aliens.util.Calculation;
-
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.background.BackgroundType.*;
 
-public class BackgroundObject extends RectanglularGameEntity
+// TODO Alles Allgemeines zu Backgrounds, was sich nicht auf die Background-Objekte bezieht in eigene Klasse
+// TODO diese Klasse bekommt dann auch einen eigenen Painter
+public class BackgroundObject extends RectangularGameEntity
 {
 	private static final int
-		// Sternkoordinaten
-		NR_OF_STARS = 40,
-		STARS[][] = new int [2][NR_OF_STARS],
-		
 		// Häufigkeit mit der Hintergrundobjekte eines bestimmten Typs erscheinen
     	CACTUS_FREQUENCY = 8,
     	STONE_FREQUENCY = 40,
@@ -54,16 +48,14 @@ public class BackgroundObject extends RectanglularGameEntity
 	
 	public static final	float
 		BG_SPEED = 2.0f;
-		
-	private static final BufferedImage[]
-    	CACTUS_IMG = paintCactusImage(),
-    	PALM_CROWN_IMG = paintPalmCrownImage();
-	public static final int MAXIMUM_NUMBER = 20;
-	public static final int ACTIVATION_PAUSE_DURATION = 20;
+	
+	public static final int
+	    MAXIMUM_NUMBER = 20,
+		ACTIVATION_PAUSE_DURATION = 20;
 	
 	// statische Variablen
 	public static boolean
-            backgroundMoves;		// = true: bewegter Hintergrund
+        backgroundMoves;		// = true: bewegter Hintergrund
 	   
     private static int
 		backgroundObjectSelection = TOTAL_FREQUENCY,
@@ -76,7 +68,7 @@ public class BackgroundObject extends RectanglularGameEntity
 		stoneTimer,
     	hillTimer;
     
-    private static float
+    public static float
 		cloudX = 135;				// x-Koordinate der Wolke
     
     // Objekt-Attribute    
@@ -86,152 +78,20 @@ public class BackgroundObject extends RectanglularGameEntity
     private int 
     	width,	// Gesamtbreite eines Hintergrundobjektes
     	plane,	// Ebene, in welche das Hintergrundobjekte gezeichnet wird 
-		coordOfComponents[][] = new int[2][4]; 	// definiert Hintergrundobjekt-spezifische Koordinaten und Maße
+		coordinatesOfComponents[][] = new int[2][4]; 	// definiert Hintergrundobjekt-spezifische Koordinaten und Maße
    
 	private float
 		x;		// x-Koordinate
 	
-	private BufferedImage[] 
-		image = new BufferedImage[2];		// Hintergrundobjekt-Bild (für Tag- udn Nachteinsatz)
+	private BufferedImage[]
+			images = new BufferedImage[2];		// Hintergrundobjekt-Bild (für Tag- udn Nachteinsatz)
     
-	private Color[] 
-		myColor = new Color[2];  			// nur für Palmen: Stammfarbe;
+	private Color[]
+			colors = new Color[2];  			// nur für Palmen: Stammfarbe;
+	
+	private BackgroundObjectPainter
+		backgroundObjectPainter = GraphicsManager.getInstance().getPainter(BackgroundObject.class);
     
-               
-    private static BufferedImage [] paintCactusImage()
-    {
-    	Graphics2D g2d;
-    	GradientPaint[] myGradientColor = new GradientPaint[3];
-    	BufferedImage[] cactusImage = new BufferedImage[2];
-    	for(int i = 0; i < 2; i++)
-    	{
-    		cactusImage[i] = new BufferedImage(52, 197, BufferedImage.TYPE_INT_ARGB);
-    		g2d =  (Graphics2D) cactusImage[i].getGraphics();
-    		g2d.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-									RenderingHints.VALUE_ANTIALIAS_ON);
-    		myGradientColor[0] = new GradientPaint(	 2,  0, Coloration.myGreen[0][i],
-													15,  0, Coloration.dimColor(Coloration.myGreen[0][i], 0.80f), true);
-			myGradientColor[1] = new GradientPaint(	 8,  0, Coloration.myGreen[1][i],
-													17,  0, Coloration.dimColor(Coloration.myGreen[1][i], 0.80f), true);
-			myGradientColor[2] = new GradientPaint(	 9,  0, Coloration.myGreen[2][i],
-													17,  0, Coloration.dimColor(Coloration.myGreen[2][i], 0.85f), true);
-			g2d.setPaint(myGradientColor[0]);           
-			g2d.fillOval( 11, 62, 30, 135);
-			g2d.setPaint(myGradientColor[1]);
-			g2d.fillOval( 33,  0, 19, 124);
-			g2d.setPaint(myGradientColor[2]);
-			g2d.fillOval(  0, 34, 17, 94);  
-    	}	
-    	return cactusImage;
-    }
-    
-    private static BufferedImage [] paintPalmCrownImage()
-    {
-    	Graphics2D g2DPalmCrown;
-    	BufferedImage[] palmCrownImage = new BufferedImage[2];
-    	for(int i = 0; i < 2; i++)
-    	{
-    		palmCrownImage[i] = 	new BufferedImage(209, 27, BufferedImage.TYPE_INT_ARGB);
-    		g2DPalmCrown = (Graphics2D) palmCrownImage[i].getGraphics();
-    		g2DPalmCrown.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-												RenderingHints.VALUE_ANTIALIAS_ON);						
-			g2DPalmCrown.setPaint(new GradientPaint(	0,  4, Coloration.myGreen[0][i],
- 														0, 17, Coloration.dimColor(Coloration.myGreen[0][i],
- 														0.65f), true));
-			g2DPalmCrown.fillArc(115, 1, 94, 26, 0, 225);
-			g2DPalmCrown.setPaint(new GradientPaint(	0,  3, Coloration.myGreen[1][i],
- 														0, 13, Coloration.dimColor(Coloration.myGreen[1][i],
- 														0.60f), true));
-			g2DPalmCrown.fillArc(0, 0 , 125, 21, -45, 225);
-			g2DPalmCrown.setPaint(new GradientPaint(	0, 17, Coloration.myGreen[2][i],
- 														0, 23, Coloration.dimColor(Coloration.myGreen[2][i],
- 														0.65f), true));
-			g2DPalmCrown.fillArc(55, 14, 68, 11, -45, 240);
-    	}
-    	return palmCrownImage;
-    }
-    
-    private void paintPalmStemImage()
-    {
-    	for(int i = 0; i < 2; i++)
-    	{
-    		this.image[i] = new BufferedImage(20, 80 + this.coordOfComponents[0][0] + 6, BufferedImage.TYPE_INT_ARGB);
-        	Graphics2D g2DPalmStem = (Graphics2D)this.image[i].getGraphics();
-        	g2DPalmStem.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-    								RenderingHints.VALUE_ANTIALIAS_ON); 
-        	
-    		g2DPalmStem.setPaint( new GradientPaint(	12, 0,  this.myColor[i],
-    			 										23, 0, 	Coloration.dimColor(this.myColor[i], 0.75f), true));
-    		this.myColor[i] = null;
-    		g2DPalmStem.fillRect(0, 0, 20, 80 + this.coordOfComponents[0][0]);
-    		g2DPalmStem.fillArc( 0, 73 + this.coordOfComponents[0][0], 20, 12, 180, 180);
-    	}
-    }
-          
-    private void paintDesertImage()
-    {
-    	for(int i = 0; i < 2; i++)
-    	{
-    		this.image[i] = new BufferedImage(this.width, 35, BufferedImage.TYPE_INT_ARGB);
-        	Graphics2D g2DDesert = (Graphics2D) this.image[i] .getGraphics();
-        	g2DDesert.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-										RenderingHints.VALUE_ANTIALIAS_ON); 
-        	g2DDesert.setPaint(new GradientPaint(	 0 + this.x,  0, Coloration.sand[i],
-													10 + this.x, 20, Coloration.dimColor(Coloration.sand[i], 0.9f), true));
-        	g2DDesert.fillArc(0, -35, 300, 70, 180, 90);
-        	g2DDesert.fillRect(149, 0, this.width - 298, 35);
-        	g2DDesert.fillArc(this.width - 300, -35, 300, 70, 270, 90);
-    	}
-    }
-    
-    @Override
-	public void paint(Graphics2D g2d)
-    {
-    	// Kaktus
-        if(this.type == CACTUS)
-        {        	
-        	g2d.drawImage(CACTUS_IMG[Events.timeOfDay.ordinal()], (int) this.x, 235, null);
-        }
-        
-        // Steine
-        if(this.type == STONE)
-        { 
-        	g2d.setPaint(Coloration.gradientStones[Events.timeOfDay.ordinal()]);
-            g2d.fillOval( (int)(this.x + this.coordOfComponents[0][0]), 
-            			  400 + this.coordOfComponents[0][1],
-            			  this.coordOfComponents[0][2], 
-            			  this.coordOfComponents[0][3]);
-        }
-        
-        // Berge im Hintergrund in Bodenfarbe
-        if(this.type == HILL)
-        {        	
-        	g2d.setPaint(Coloration.gradientHills[Events.timeOfDay.ordinal()]);
-            g2d.fillArc( (int)(this.x + this.coordOfComponents[0][0]), 
-            			 400 + this.coordOfComponents[0][1], 
-            			 this.coordOfComponents[0][2], 
-            			 this.coordOfComponents[0][3], 0, 180);
-            g2d.fillArc( (int)(this.x + this.coordOfComponents[1][0]), 
-            			 400 + this.coordOfComponents[1][1], 
-            			 this.coordOfComponents[1][2], 
-            			 this.coordOfComponents[1][3], 0, 180);                                 
-        } 
-              
-        // Sand
-        if(this.type == DESERT)
-        {
-        	g2d.drawImage(this.image[Events.timeOfDay.ordinal()], (int)this.x, 426, null);
-        }
-        
-        // Palme
-        if(this.type == PALM)
-        {
-        	g2d.drawImage( this.image[Events.timeOfDay.ordinal()], (int)(this.x + 110),
-        				   350 - this.coordOfComponents[0][0], null);
-        	g2d.drawImage( PALM_CROWN_IMG[Events.timeOfDay.ordinal()], (int)this.x,
-        				   340 - this.coordOfComponents[0][0], null);        	
-        }
-    }    
     
     private void preset()
     {        
@@ -240,7 +100,7 @@ public class BackgroundObject extends RectanglularGameEntity
     	// Sicherstellen, dass zwischen dem Erscheinen von zwei Kakteen bzw. 
     	// zwei Steinen eine gewisse Mindestzeit vergangen ist
         int random = (cactusTimer > 0 ? CACTUS_FREQUENCY : 0)
-        			 + Calculation.random(
+        			 + Calculations.random(
         					 backgroundObjectSelection
         					 - (cactusTimer > 0 ? CACTUS_FREQUENCY : 0)
         					 - (stoneTimer > 0 ? STONE_FREQUENCY  : 0) );
@@ -255,7 +115,7 @@ public class BackgroundObject extends RectanglularGameEntity
             // Kaktus
         	this.type = CACTUS; 
             this.width = 50;
-            this.plane = Calculation.randomDirection();
+            this.plane = Calculations.randomDirection();
             cactusTimer = 125;
         }                
         else if( random >= CACTUS_FREQUENCY && random < UP_TO_STONE_FREQUENCY)
@@ -264,11 +124,11 @@ public class BackgroundObject extends RectanglularGameEntity
         	if(random < UP_TO_STONE_FREQUENCY - STONE_FREQUENCY/2 && !(hillTimer > 0)){this.plane = -1;}
         	else{this.plane = 2;}                      
             this.type = STONE;            
-            this.coordOfComponents[0][0] = 0; 					   // position (x)            
-            this.coordOfComponents[0][3] = 35; 					   // width
-            this.coordOfComponents[0][2] = 50 + Calculation.random(75); // height
-            this.coordOfComponents[0][1] = 12;  				   // position (y)
-            this.width = 125 + this.coordOfComponents[0][2];
+            this.coordinatesOfComponents[0][0] = 0; 					   // position (x)
+            this.coordinatesOfComponents[0][3] = 35; 					   // width
+            this.coordinatesOfComponents[0][2] = 50 + Calculations.random(75); // height
+            this.coordinatesOfComponents[0][1] = 12;  				   // position (y)
+            this.width = 125 + this.coordinatesOfComponents[0][2];
             stoneTimer = 75;
         } 
         else if( random >= UP_TO_STONE_FREQUENCY && random < UP_TO_PALM_FREQUENCY)
@@ -276,17 +136,18 @@ public class BackgroundObject extends RectanglularGameEntity
             // Palme
         	this.type = PALM; 
             this.width = 225;
-            if(Calculation.tossUp()){this.plane = 1;}
+            if(Calculations.tossUp()){this.plane = 1;}
             else{this.plane = -1;}                      
             int a, b, c;
-            a = 184 + Calculation.random(12);
-            b = 150 + Calculation.random(12);
-            c = 104 + Calculation.random(12);
-            this.myColor[1] = new Color(a, b,c);
-            this.myColor[0] = Coloration.dimColor(this.myColor[1], Coloration.NIGHT_DIM_FACTOR);
-            this.coordOfComponents[0][0] = 20 + Calculation.random(70);
+            a = 184 + Calculations.random(12);
+            b = 150 + Calculations.random(12);
+            c = 104 + Calculations.random(12);
+            this.colors[1] = new Color(a, b,c);
+            this.colors[0] = Colorations.dimColor(this.colors[1], Colorations.NIGHT_DIM_FACTOR);
+            this.coordinatesOfComponents[0][0] = 20 + Calculations.random(70);
             cactusTimer = 140;
-            this.paintPalmStemImage();
+			backgroundObjectPainter.paintPalmStemImage(this);
+			clearColors();
         }
         else if( random >= UP_TO_PALM_FREQUENCY && random < UP_TO_HILL_FREQUENCY)
         {            
@@ -295,17 +156,17 @@ public class BackgroundObject extends RectanglularGameEntity
             this.plane = -1;
             for(int i = 0; i < 2; i++)
             {
-            	this.coordOfComponents[i][3] = 75 + Calculation.random(120); 			 // height
-            	this.coordOfComponents[i][2] = (int)((1 + Math.random()/3) 
-            										 *this.coordOfComponents[i][3]); // width
-            	this.coordOfComponents[i][1] = -this.coordOfComponents[i][3]/4+8; 	 // position (y)
+            	this.coordinatesOfComponents[i][3] = 75 + Calculations.random(120); 			 // height
+            	this.coordinatesOfComponents[i][2] = (int)((1 + Math.random()/3)
+            										 *this.coordinatesOfComponents[i][3]); // width
+            	this.coordinatesOfComponents[i][1] = -this.coordinatesOfComponents[i][3]/4+8; 	 // position (y)
             }              
-            this.coordOfComponents[0][0] = 0; 										 // position (x)
-            this.coordOfComponents[1][0] = this.coordOfComponents[0][2]/3 
-            							   + Calculation.random(this.coordOfComponents[0][2]/2);
-            this.width = Math.max(this.coordOfComponents[1][0] 
-                                  + this.coordOfComponents[1][2], 
-                                  this.coordOfComponents[0][2]); 
+            this.coordinatesOfComponents[0][0] = 0; 										 // position (x)
+            this.coordinatesOfComponents[1][0] = this.coordinatesOfComponents[0][2]/3
+            							   + Calculations.random(this.coordinatesOfComponents[0][2]/2);
+            this.width = Math.max(this.coordinatesOfComponents[1][0]
+                                  + this.coordinatesOfComponents[1][2],
+                                  this.coordinatesOfComponents[0][2]);
             backgroundObjectSelection = UP_TO_HILL_FREQUENCY;
             if(mutualExclusionFactor < this.width/2)
             {
@@ -319,7 +180,7 @@ public class BackgroundObject extends RectanglularGameEntity
             // Sand
         	this.type = DESERT;
             this.plane = 0;
-            this.width = 600 + Calculation.random(400);
+            this.width = 600 + Calculations.random(400);
             probabilityReductionFactor = 17;
             if(mutualExclusionFactor < this.width/2)
             {
@@ -327,46 +188,19 @@ public class BackgroundObject extends RectanglularGameEntity
             }
             generalObjectTimer = 0;
             backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
-            this.paintDesertImage();
+			backgroundObjectPainter.paintDesertImage(this);
         }        
     }
-    
-    private static void paintBackground(Graphics2D g2d)
-    {
-    	// Sonne bzw. Mond
-    	int coronaRadiusIncrease = 0;
-        if(Events.timeOfDay == NIGHT) {g2d.setColor(Coloration.lighterYellow); }
-        else
-        {
-        	g2d.setColor(Coloration.randomLight);
-        	coronaRadiusIncrease = (Coloration.randomSunlightBlue - 175)/20;
-        }      
-        g2d.fillOval(865, 30, 60, 60);
-        g2d.setColor(Coloration.translucentSun);
-        g2d.setStroke(new BasicStroke(35));
-        g2d.drawOval(855-coronaRadiusIncrease, 20-coronaRadiusIncrease,
-        			 80+2*coronaRadiusIncrease, 80+2*coronaRadiusIncrease);
-        g2d.setStroke(new BasicStroke(1));        
-                 
-        // Sterne
-        if(Events.timeOfDay == NIGHT)
-        {
-            g2d.setColor(Color.white);
-            for(int m = 0; m < 40; m++)
-            {                
-                g2d.drawLine(STARS[0][m], STARS[1][m], 
-                			 STARS[0][m], STARS[1][m]);
-            }
-        }
-        
-        // Wolke
-        g2d.setPaint(Coloration.gradientCloud[Events.timeOfDay.ordinal()]);
-        g2d.fillOval((int) cloudX, 51,  82, 45);
-        g2d.fillOval((int)(cloudX + 41), 63, 150, 60);
-        g2d.fillOval((int)(cloudX + 68), 40,  60, 53);
-    }   
-        
-    private void makeFirstCactus()
+	
+	private void clearColors()
+	{
+		for(int i = 0; i < 2; i++)
+		{
+			this.colors[i] = null;
+		}
+	}
+	
+	private void makeFirstCactus()
     {
 		this.x = 436;
 		this.type = CACTUS;
@@ -379,14 +213,14 @@ public class BackgroundObject extends RectanglularGameEntity
 		this.x = 638;
 		this.type = HILL;
 		this.width = 151;		
-		this.coordOfComponents[0][0] = 60;
-		this.coordOfComponents[0][1] = -9;
-		this.coordOfComponents[0][2] = 151;
-		this.coordOfComponents[0][3] = 75;
-		this.coordOfComponents[1][0] = 0;
-		this.coordOfComponents[1][1] = -28;
-		this.coordOfComponents[1][2] = 151;
-		this.coordOfComponents[1][3] = 112;
+		this.coordinatesOfComponents[0][0] = 60;
+		this.coordinatesOfComponents[0][1] = -9;
+		this.coordinatesOfComponents[0][2] = 151;
+		this.coordinatesOfComponents[0][3] = 75;
+		this.coordinatesOfComponents[1][0] = 0;
+		this.coordinatesOfComponents[1][1] = -28;
+		this.coordinatesOfComponents[1][2] = 151;
+		this.coordinatesOfComponents[1][3] = 112;
     }
     
     private void makeFirstDesert()
@@ -399,7 +233,7 @@ public class BackgroundObject extends RectanglularGameEntity
         mutualExclusionFactor = this.width/2;
         generalObjectTimer = 0;
         backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
-        this.paintDesertImage();
+        backgroundObjectPainter.paintDesertImage(this);
     }    
     
     public static void reset(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
@@ -434,20 +268,8 @@ public class BackgroundObject extends RectanglularGameEntity
     	BackgroundObject firstDesert = new BackgroundObject();
     	firstDesert.makeFirstDesert();
     	backgroundObjects.get(ACTIVE).add(firstDesert);
-    	initializeStars();
-    	paintCactusImage();
-    	paintPalmCrownImage();
     }
-    
-    private static void initializeStars()
-    {
-    	for(int i = 0; i < NR_OF_STARS; i++)
-		{
-			STARS[0][i] = Calculation.random(982);
-			STARS[1][i] = Calculation.random(GROUND_Y);
-		}
-    }
-    
+	
     private static void moveCloud()
     {    	
     	cloudX -= backgroundMoves ? 0.5f : 0.125f;
@@ -476,15 +298,9 @@ public class BackgroundObject extends RectanglularGameEntity
     
     private void clearImage()
     {
-    	this.image[0] = null; 
-        this.image[1] = null;
+    	this.images[0] = null;
+        this.images[1] = null;
     }
-
-	public static void paintBackground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
-	{		
-		paintBackground(g2d);
-		paintBgObjects(g2d, backgroundObjects);
-	}
 
 	public static void update(Controller controller, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{		
@@ -519,17 +335,6 @@ public class BackgroundObject extends RectanglularGameEntity
 				&& enemy.get(ACTIVE).getFirst().type.isMajorBoss();
 	}
 
-	private static void paintBgObjects(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
-	{
-        for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
-        {
-            if (bgo.plane == -1)
-            {
-                bgo.paint(g2d);
-            }
-        }
-	}
-
 	private static void generateNewBackgroundObjects(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
 	{
 		int numberOfBackgroundObjects = backgroundObjects.get(ACTIVE).size();
@@ -548,22 +353,38 @@ public class BackgroundObject extends RectanglularGameEntity
 		}
 	}
 
-	public static void paintForeground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
+	public int getCoordinateOfComponent(int i, int j)
 	{
-		// der Boden
-		g2d.setPaint(Coloration.gradientGround[Events.timeOfDay.ordinal()]);
-        g2d.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
-        
-        // Objekte vor dem Helikopter
-    	for(int j = 0; j < 3; j++)
-		{
-            for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
-            {
-                if (bgo.plane == j)
-                {
-                    bgo.paint(g2d);
-                }
-            }
-		}
+		return coordinatesOfComponents[i][j];
+	}
+	
+	public float getX()
+	{
+		return x;
+	}
+	
+	public int getPlane()
+	{
+		return plane;
+	}
+	
+	public BufferedImage getImage(int index)
+	{
+		return images[index];
+	}
+	
+	public void setImage(int index, BufferedImage image)
+	{
+		this.images[index] = image;
+	}
+	
+	public int getWidth()
+	{
+		return width;
+	}
+	
+	public Color getColor(int index)
+	{
+		return colors[index];
 	}
 }

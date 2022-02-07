@@ -9,14 +9,13 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
@@ -170,7 +169,7 @@ public final class Orochi extends Helicopter
     {
         if (this.isNextMissileStunner && this.hasEnoughEnergyForAbility())
         {
-            return Coloration.variableBlue;
+            return Colorations.variableBlue;
         }
         return super.getInputColorCannon();
     }

@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Random;
 
 
-public final class Calculation
+public final class Calculations
 {
     public final static double
 		ROOT05 = Math.sqrt(2)/2.0;
@@ -19,7 +19,7 @@ public final class Calculation
         random = new Random();
     
         
-    private Calculation() throws Exception
+    private Calculations() throws Exception
     {
         throw new Exception();
     }

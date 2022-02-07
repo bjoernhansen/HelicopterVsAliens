@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -48,21 +49,6 @@ public class EnemyMissile extends GameEntity
     private EnemyMissileType
 		type;				// Art des Geschoss
 	
-	
-    @Override
-	public void paint(Graphics2D g2d)
-    {
-        g2d.setColor(this.variableColor);
-        g2d.fillOval((int)this.location.getX(), 
-        			 (int)this.location.getY(), 
-        			      this.diameter, 
-        			      this.diameter);   
-        g2d.setColor(this.type == BUSTER ? Color.orange : Color.white);
-        g2d.drawOval((int)this.location.getX(),
-        		     (int)this.location.getY(),
-        		          this.diameter, 
-        		          this.diameter);
-    }
     
     private void update(Helicopter helicopter)
     {    		
@@ -155,18 +141,7 @@ public class EnemyMissile extends GameEntity
 		this.hasHit = false;
 		this.lightUpColor = true;
     }
-    
 	
-
-	public static void
-	paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissile)
-	{
-		for(EnemyMissile em : enemyMissile.get(ACTIVE))
-		{
-			em.paint(g2d);
-		}		
-	}
-
 	public static void updateAll(EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissile,
 								 Helicopter helicopter)
 	{
@@ -185,4 +160,24 @@ public class EnemyMissile extends GameEntity
 			}
 		}		
 	}
-}    
+	
+	public Point2D getLocation()
+	{
+		return location;
+	}
+	
+	public int getDiameter()
+	{
+		return diameter;
+	}
+	
+	public Color getVariableColor()
+	{
+		return variableColor;
+	}
+	
+	public EnemyMissileType getType()
+	{
+		return type;
+	}
+}

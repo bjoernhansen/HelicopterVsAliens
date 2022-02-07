@@ -256,7 +256,7 @@ public enum HelicopterType
         return Optional.ofNullable(ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
     }
     
-    public Helicopter getInstance()
+    public Helicopter makeInstance()
     {
         return instance.get();
     }

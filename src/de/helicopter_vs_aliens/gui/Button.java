@@ -8,13 +8,13 @@ import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.score.HighscoreEntry;
-import de.helicopter_vs_aliens.util.Coloration;
+import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import static de.helicopter_vs_aliens.gui.Menu.NUMBER_OF_STARTSCREEN_BUTTONS;
+import static de.helicopter_vs_aliens.gui.Menu.NUMBER_OF_START_SCREEN_BUTTONS;
 import static de.helicopter_vs_aliens.gui.Menu.dictionary;
 import static de.helicopter_vs_aliens.gui.PriceLevel.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
@@ -127,12 +127,12 @@ public class Button
 		Menu.inGameButton.put("MMNewGame2",   new Button(385, 206, 211, 35, dictionary.quit(), null, false, false));
 		Menu.inGameButton.put("MMCancel",     new Button(385, 251, 211, 35, dictionary.cancel(), null, false, false));
 				
-		for(int i = 0; i < NUMBER_OF_STARTSCREEN_BUTTONS.x; i++)
+		for(int i = 0; i < NUMBER_OF_START_SCREEN_BUTTONS.x; i++)
 		{
-			for(int j = 0; j < NUMBER_OF_STARTSCREEN_BUTTONS.y; j++)
+			for(int j = 0; j < NUMBER_OF_START_SCREEN_BUTTONS.y; j++)
 			{
 				Menu.startscreenButton.put( Integer.toString(i)+j,
-											 new Button(  27 + Menu.STARTSCREEN_OFFSET_X + i * 750,
+											 new Button(  27 + Menu.START_SCREEN_OFFSET_X + i * 750,
 														 110 + j * 40, 211, 30,
 														 STARTSCREEN_BUTTON_LABEL[Menu.language.ordinal()][i][j],
 														 null, false, true));
@@ -221,18 +221,18 @@ public class Button
 			String usedLabel = buttonLabel != null ? buttonLabel : this.label;
 			if((this.highlighted && this.enabled) || !this.translucent)
 			{
-				g2d.setPaint(this.highlighted ? Coloration.gradientVariableGray : Coloration.lightestGray);
+				g2d.setPaint(this.highlighted ? Colorations.gradientVariableGray : Colorations.lightestGray);
 				g2d.fill(this.bounds);
 			}
 	    	g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-	    	if(this.costColor == null){g2d.setColor(this.enabled ? this.marked ? Coloration.variableWhite : Color.white : Coloration.lightGray);}
+	    	if(this.costColor == null){g2d.setColor(this.enabled ? this.marked ? Colorations.variableWhite : Color.white : Colorations.lightGray);}
 	        else{g2d.setColor(this.costColor);}
 	    	if(this.translucent){g2d.draw(this.bounds);}
 	    	else
 	    	{
 	    		g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)this.bounds.getY());
 	        	g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX()), (int)(this.bounds.getY()+this.bounds.getHeight()));
-	        	if(this.costColor == null){g2d.setColor(Coloration.gray);}
+	        	if(this.costColor == null){g2d.setColor(Colorations.gray);}
 	            else{g2d.setColor(this.costColor);}
 	        	g2d.drawLine((int)(this.bounds.getX()+this.bounds.getWidth()), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
 	        	g2d.drawLine((int)this.bounds.getX(), (int)(this.bounds.getY()+this.bounds.getHeight()), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
@@ -241,7 +241,7 @@ public class Button
 	        	        
 	        if(this.secondLabel != null || this.costButton)
 	        {	        	
-	        	if(this.costColor == null){g2d.setColor(Coloration.lightOrange);}
+	        	if(this.costColor == null){g2d.setColor(Colorations.lightOrange);}
 	            else{g2d.setColor(this.costColor);}
 	        	g2d.setFont(Menu.fontProvider.getBold(14));
 	        	g2d.drawString(usedLabel, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 20);
@@ -251,8 +251,8 @@ public class Button
 	        	if(this.translucent)
 	        	{
 	        		g2d.setFont(Menu.fontProvider.getBold(15));
-	        		if(this.enabled){g2d.setColor(this.marked ? Coloration.variableMarkedButton : Color.yellow); }
-		        	else{g2d.setColor(Coloration.lightGray);}
+	        		if(this.enabled){g2d.setColor(this.marked ? Colorations.variableMarkedButton : Color.yellow); }
+		        	else{g2d.setColor(Colorations.lightGray);}
 	        	}
 	        	else
 	        	{
