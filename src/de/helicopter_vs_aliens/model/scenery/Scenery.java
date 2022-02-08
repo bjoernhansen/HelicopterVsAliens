@@ -16,15 +16,17 @@ public class Scenery extends GameEntity
     private static final int
         NR_OF_STARS = 60;
     
-    // Sternkoordinaten
-    private static List<Point>
-        stars = new ArrayList<>(NR_OF_STARS);
-    
-    static{
+    public Scenery()
+    {
         initializeStars();
     }
     
-    private static void initializeStars()
+    // Sternkoordinaten
+    private List<Point>
+        stars = new ArrayList<>(NR_OF_STARS);
+    
+    
+    private void initializeStars()
     {
         List<Point> calculatedStars = new ArrayList<>(NR_OF_STARS);
         for(int i = 0; i < NR_OF_STARS; i++)
@@ -36,20 +38,20 @@ public class Scenery extends GameEntity
         stars = List.copyOf(calculatedStars);
     }
     
-    private static float
+    private float
         cloudX = 135;                // x-Koordinate der Wolke
         
-    public static void reset()
+    public void reset()
     {
         cloudX = 135;
     }
     
-    public static void update()
+    public void update()
     {
         moveCloud();
     }
     
-    private static void moveCloud()
+    private void moveCloud()
     {
         cloudX -= BackgroundObject.backgroundMoves ? 0.5f : 0.125f;
         if (cloudX < -250)
@@ -58,12 +60,12 @@ public class Scenery extends GameEntity
         }
     }
     
-    public static List<Point> getStars()
+    public List<Point> getStars()
     {
         return stars;
     }
     
-    public static float getCloudX()
+    public float getCloudX()
     {
         return cloudX;
     }

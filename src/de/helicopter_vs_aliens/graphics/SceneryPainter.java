@@ -18,13 +18,14 @@ import static de.helicopter_vs_aliens.model.RectangularGameEntity.GROUND_Y;
 
 public class SceneryPainter extends Painter<Scenery>
 {
-    public static void paintBackground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
+    public static void paintBackground(Graphics2D g2d, Scenery scenery, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
     {
-        paintBackground(g2d);
+        scenery.paint(g2d);
         paintBgObjects(g2d, backgroundObjects);
     }
     
-    private static void paintBackground(Graphics2D g2d)
+    @Override
+    void paint(Graphics2D g2d, Scenery scenery)
     {
         // Sonne bzw. Mond
         int coronaRadiusIncrease = 0;
@@ -38,24 +39,24 @@ public class SceneryPainter extends Painter<Scenery>
         g2d.setColor(Colorations.translucentSun);
         g2d.setStroke(new BasicStroke(35));
         g2d.drawOval(855-coronaRadiusIncrease, 20-coronaRadiusIncrease,
-                80+2*coronaRadiusIncrease, 80+2*coronaRadiusIncrease);
+            80+2*coronaRadiusIncrease, 80+2*coronaRadiusIncrease);
         g2d.setStroke(new BasicStroke(1));
         
         // Sterne
         if(Events.timeOfDay == NIGHT)
         {
             g2d.setColor(Color.white);
-    
+            
             // TODO in eine drawPoint-Methode auslagern, sobald es den Graphics2DAdapter gibt
-            Scenery.getStars()
+            scenery.getStars()
                    .forEach(star -> g2d.drawLine(star.x, star.y, star.x, star.y));
         }
         
         // Wolke
         g2d.setPaint(Colorations.gradientCloud[Events.timeOfDay.ordinal()]);
-        g2d.fillOval((int) Scenery.getCloudX(), 51,  82, 45);
-        g2d.fillOval((int)(Scenery.getCloudX() + 41), 63, 150, 60);
-        g2d.fillOval((int)(Scenery.getCloudX() + 68), 40,  60, 53);
+        g2d.fillOval((int) scenery.getCloudX(), 51,  82, 45);
+        g2d.fillOval((int)(scenery.getCloudX() + 41), 63, 150, 60);
+        g2d.fillOval((int)(scenery.getCloudX() + 68), 40,  60, 53);
     }
     
     private static void paintBgObjects(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
@@ -86,11 +87,5 @@ public class SceneryPainter extends Painter<Scenery>
                 }
             }
         }
-    }
-    
-    @Override
-    void paint(Graphics2D g2d, Scenery scenery)
-    {
-        // TODO diese Methode verwenden, sobald eine SceneryInstanz verwendet wird
     }
 }

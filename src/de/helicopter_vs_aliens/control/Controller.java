@@ -49,7 +49,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public static boolean
 		antialiasing = true;
 		
-	private static Controller
+	private static final Controller
 		controller = new Controller();
 		
 	public static Savegame
@@ -104,10 +104,13 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	private Rectangle2D
 		wholeScreenClip;
 	
-	private Dictionary
+	private final Scenery
+		scenery = new Scenery();
+	
+	private final Dictionary
 		dictionary = new Dictionary();
 	
-	private GameEntityRecycler
+	private final GameEntityRecycler
 		gameEntityRecycler = new GameEntityRecycler();
 	
 	
@@ -234,7 +237,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			{				
 		    	Colorations.calculateVariableGameColors(this.framesCounter);
 				BackgroundObject.update(this, this.backgroundObjects);
-				Scenery.update();
+				scenery.update();
 				Events.updateTimer();
 				Menu.updateDisplays(this.helicopter);
 				Enemy.updateAllDestroyed(this, this.helicopter);
@@ -263,7 +266,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		if(Menu.window == GAME)
 		{						
 			// zeichnen aller sichtbaren Objekte						
-			SceneryPainter.paintBackground(g2d, this.backgroundObjects);
+			SceneryPainter.paintBackground(g2d, scenery, this.backgroundObjects);
 			Menu.paintBackgroundDisplays( g2d, this, this.helicopter);
 			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d);}
 			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
@@ -402,5 +405,10 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public GameEntityRecycler getGameEntityRecycler()
 	{
 		return gameEntityRecycler;
+	}
+	
+	public Scenery getScenery()
+	{
+		return this.scenery;
 	}
 }

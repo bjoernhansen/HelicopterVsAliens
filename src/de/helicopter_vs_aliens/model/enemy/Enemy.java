@@ -61,9 +61,12 @@ public class Enemy extends RectangularGameEntity
     		this.servants = new Enemy [NR_OF_BOSS_5_SERVANTS];
     		this.timeSinceDeath = new int [NR_OF_BOSS_5_SERVANTS];
     	}
-    }	
+    }
 	
 	// Konstanten
+	public static boolean
+	    SHOW_RED_FRAME = false;
+	
 	public static final int
 		SPEED_KILL_BONUS_TIME 	= 15;    // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
 	
@@ -195,7 +198,7 @@ public class Enemy extends RectangularGameEntity
 		barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
 		
 	// für die Tarnung nötige Variablen
-    private static float[] 
+    private static final float[]
     	scales = { 1f, 1f, 1f, RADAR_STRENGTH },
     	offsets = new float[4];	
 	
@@ -340,16 +343,16 @@ public class Enemy extends RectangularGameEntity
 	private GradientPaint 
 		gradientColor;
 	
-	private Graphics2D []
+	private final Graphics2D []
 		graphics = new Graphics2D [2];
 	
 	private FinalEnemysOperator
 		operator;
 	
-	private BufferedImage [] 
+	private final BufferedImage []
 		image = new BufferedImage[4];
 		
-	private Point2D
+	private final Point2D
 		targetSpeedLevel = new Point2D.Float(),		// Anfangsgeschwindigkeit
 		speedLevel = new Point2D.Float(),			// auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
 		speed = new Point2D.Float(),				// tatsächliche Geschwindigkeit
@@ -877,8 +880,7 @@ public class Enemy extends RectangularGameEntity
 					(int) (			  0.18f * this.paintBounds.width));
 		}
 		
-		boolean showRedFrame = false;
-		if(showRedFrame){
+		if(SHOW_RED_FRAME){
 			g2d.setColor(Color.red);
 		    g2d.drawRect(offsetX, offsetY, (int)(this.bounds.getWidth() - 1), (int)(this.bounds.getHeight() - 1));
 		}
@@ -1821,7 +1823,9 @@ public class Enemy extends RectangularGameEntity
 		this.type = ROCK;
 		this.model = CARGO;	
 		helicopter.numberOfEnemiesSeen--;
-		this.farbe1 = new Color((180 + Calculations.random(30)), (120 + Calculations.random(30)),(0 + Calculations.random(15)));
+		this.farbe1 = new Color((180 + Calculations.random(30)),
+								(120 + Calculations.random(30)),
+								(  0 + Calculations.random(15)));
 		this.hitpoints = 1;
 		this.invincibleTimer = Integer.MAX_VALUE;
 			
@@ -1863,8 +1867,8 @@ public class Enemy extends RectangularGameEntity
 			// Level 1
 			case TINY:
 				this.farbe1 = new Color((180 + Calculations.random(30)),
-						(120 + Calculations.random(30)),
-						(0 + Calculations.random(15)));
+										(120 + Calculations.random(30)),
+										(  0 + Calculations.random(15)));
 				this.hitpoints = 2;
 				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
@@ -1877,8 +1881,8 @@ public class Enemy extends RectangularGameEntity
 			// Level 3
 			case SMALL:
 				this.farbe1 = new Color((140 + Calculations.random(25)),
-						(65 + Calculations.random(35)),
-						(0 + Calculations.random(25)));
+										( 65 + Calculations.random(35)),
+										(  0 + Calculations.random(25)));
 				this.hitpoints = 3 + Calculations.random(3);
 				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(), //d
@@ -4280,7 +4284,7 @@ public class Enemy extends RectangularGameEntity
 		
 		this.repaint();
 	
-		if(helicopter.tractor != null && helicopter.tractor == this)
+		if(helicopter.tractor == this)
 		{
 			helicopter.stopTractor();
 		}		

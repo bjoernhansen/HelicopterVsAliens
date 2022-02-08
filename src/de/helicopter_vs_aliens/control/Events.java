@@ -119,7 +119,8 @@ public class Events
 				Controller.shutDown();}
 			else if(window != REPAIR_SHOP)
 			{
-				cancel(controller.backgroundObjects, helicopter, savegame);
+				// TODO über Controller beziehen, nicht alles einzeln und getter definieren
+				cancel(controller.getScenery(), controller.backgroundObjects, helicopter, savegame);
 			}
 		}		
 		else if(window == SETTINGS && Menu.page == 4)
@@ -216,7 +217,7 @@ public class Events
 										+ (nr_of_levelUp%10 == 0 ? 0 : 1) 
 										- level;
 						if(isBossLevel()){nr_of_levelUp = 1;}
-						playingTime += (nr_of_levelUp + Calculations.random(nr_of_levelUp)) * 60000;
+						playingTime += (nr_of_levelUp + Calculations.random(nr_of_levelUp)) * 60000L;
 						levelUp(controller, nr_of_levelUp);
 						helicopter.isPlayedWithCheats = true;
 					}					
@@ -337,7 +338,7 @@ public class Events
 		}
 		else if(window == REPAIR_SHOP)
 		{
-			repairShopMousePressedLeft(helicopter, controller.enemies, controller.backgroundObjects);
+			repairShopMousePressedLeft(helicopter, controller.getScenery(), controller.enemies, controller.backgroundObjects);
 		}
 		else if(window == STARTSCREEN)
 		{
@@ -345,7 +346,8 @@ public class Events
 		}
 		else if(Menu.startscreenMenuButton.get("Cancel").bounds.contains(cursor))
 		{
-			cancel(controller.backgroundObjects, helicopter, Controller.savegame);
+			// TODO viel mehr über den Controller beziehen, nicht alles einzeln übergeben, getter definieren
+			cancel(controller.getScenery(), controller.backgroundObjects, helicopter, Controller.savegame);
 		}
 		else 
 		{		
@@ -366,7 +368,7 @@ public class Events
                     Controller.savegame.becomeValid();
 				    Controller.savegame.saveToFile(helicopter);
 					conditionalReset(controller, helicopter, true);
-					restartGame(helicopter, controller.backgroundObjects);
+					restartGame(helicopter, controller.getScenery(), controller.backgroundObjects);
 					Audio.applause1.stop();
 				}
 				else if(Menu.inGameButton.get("MMStopMusic").bounds.contains(cursor))
@@ -437,6 +439,7 @@ public class Events
 	}
 	
 	private static void repairShopMousePressedLeft(Helicopter helicopter,
+												   Scenery scenery,
 												   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies,
 												   EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject)
 	{
@@ -465,8 +468,9 @@ public class Events
 					Enemy.adaptToLevel(helicopter, level, false);
 					if(level < 6)
 					{
+						// TODO ggf. wird BackgroundObject reset innerhalb von scenery reset aufgerufen (aufruf immer gemeinsam?)
 						BackgroundObject.reset(bgObject);
-						Scenery.reset();
+						scenery.reset();
 					}
 					killsAfterLevelUp = 0;
 					enemies.get(INACTIVE).addAll(enemies.get(DESTROYED));
@@ -740,14 +744,14 @@ public class Events
 		}		
 	}
 	
-	private static void cancel(EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject,
+	private static void cancel(Scenery scenery, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject,
 							   Helicopter helicopter, Savegame savegame)
 	{
 		Audio.play(Audio.choose);
 		if(window == SCORESCREEN)
 		{				
 			savegame.saveInHighscore();
-			restartGame(helicopter, bgObject);
+			restartGame(helicopter, scenery, bgObject);
 			savegame.loseValidity();
 			savegame.saveToFile(helicopter);
 			Menu.startscreenMenuButton.get("Cancel").highlighted = false;
@@ -1046,7 +1050,7 @@ public class Events
 			if(level < 6)
 			{
 				BackgroundObject.reset(controller.backgroundObjects);
-				Scenery.reset();
+				controller.getScenery().reset();
 			}
 		}									
 		controller.explosions.get(INACTIVE).addAll(controller.explosions.get(ACTIVE));
@@ -1096,12 +1100,13 @@ public class Events
 		Button.initialize();
 	}
 
-	private static void restartGame(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject)
+	// TODO die bgObject List sollte teil innerhalb von Scenery definiert werden
+	private static void restartGame(Helicopter helicopter, Scenery scenery, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject)
 	{		
 		changeWindow(STARTSCREEN);	
 		helicopter.reset();
 		BackgroundObject.reset(bgObject);
-		Scenery.reset();
+		scenery.reset();
 	}
 
 	private static void startMission(Helicopter helicopter)
