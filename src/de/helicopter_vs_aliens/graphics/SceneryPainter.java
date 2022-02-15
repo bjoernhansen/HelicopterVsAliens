@@ -24,6 +24,36 @@ public class SceneryPainter extends Painter<Scenery>
         paintBgObjects(g2d, backgroundObjects);
     }
     
+    private static void paintBgObjects(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
+    {
+        for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
+        {
+            if (bgo.getPlane() == -1)
+            {
+                bgo.paint(g2d);
+            }
+        }
+    }
+    
+    public static void paintForeground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
+    {
+        // der Boden
+        g2d.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
+        g2d.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
+        
+        // Objekte vor dem Helikopter
+        for(int j = 0; j < 3; j++)
+        {
+            for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
+            {
+                if (bgo.getPlane() == j)
+                {
+                    bgo.paint(g2d);
+                }
+            }
+        }
+    }
+    
     @Override
     void paint(Graphics2D g2d, Scenery scenery)
     {
@@ -57,35 +87,5 @@ public class SceneryPainter extends Painter<Scenery>
         g2d.fillOval((int) scenery.getCloudX(), 51,  82, 45);
         g2d.fillOval((int)(scenery.getCloudX() + 41), 63, 150, 60);
         g2d.fillOval((int)(scenery.getCloudX() + 68), 40,  60, 53);
-    }
-    
-    private static void paintBgObjects(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
-    {
-        for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
-        {
-            if (bgo.getPlane() == -1)
-            {
-                bgo.paint(g2d);
-            }
-        }
-    }
-    
-    public static void paintForeground(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> backgroundObjects)
-    {
-        // der Boden
-        g2d.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
-        g2d.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
-        
-        // Objekte vor dem Helikopter
-        for(int j = 0; j < 3; j++)
-        {
-            for (BackgroundObject bgo : backgroundObjects.get(ACTIVE))
-            {
-                if (bgo.getPlane() == j)
-                {
-                    bgo.paint(g2d);
-                }
-            }
-        }
     }
 }

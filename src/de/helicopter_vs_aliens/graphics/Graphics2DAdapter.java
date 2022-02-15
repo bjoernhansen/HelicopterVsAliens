@@ -11,4 +11,11 @@ public class Graphics2DAdapter implements GraphicsAdapter
     {
         this.graphics2D = Objects.requireNonNull(graphics2D);
     }
+    
+    
+    
+    
+    
+    
+    
 }

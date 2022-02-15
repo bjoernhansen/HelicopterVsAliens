@@ -79,8 +79,8 @@ public class Events
 		playingTime;            		// bisher vergangene Spielzeit
     	public static long timeAktu;	// Zeitpunkt der letzten Aktualisierung von playing_time
 	
-	public static long
-		recordTime[][] = new long [HelicopterType.size()][NUMBER_OF_BOSS_LEVEL];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
+	public static long [][]
+		recordTime = new long [HelicopterType.size()][NUMBER_OF_BOSS_LEVEL];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
     
     public static boolean
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
@@ -417,14 +417,14 @@ public class Events
 			{
 				if(level > 50)
 				{
-					playingTime = 60000 * helicopter.scorescreenTimes[4];
+					playingTime = 60000 * helicopter.scoreScreenTimes[4];
 				}
 				else
 				{
 					playingTime = playingTime
 						     	   + System.currentTimeMillis() 
 						           - timeAktu;
-					helicopter.scorescreenTimes[4] = playingTime /60000;
+					helicopter.scoreScreenTimes[4] = playingTime /60000;
 				}				
 							   
 				changeWindow(SCORESCREEN);	
@@ -998,7 +998,7 @@ public class Events
 		Audio.play(Audio.choose);
 		
 		helicopter.bonusKillsTimer = 1;
-		if(helicopter.getType() == KAMAITACHI){helicopter.evaluateBonusKills();}
+		if(helicopter.getType() == KAMAITACHI){((Kamaitachi)helicopter).evaluateBonusKills();}
 		helicopter.resetStateGeneral(totalReset);
         helicopter.resetStateTypeSpecific();
 		
@@ -1272,7 +1272,7 @@ public class Events
 	{
 		int bossNr = getBossNr();
 		long highscoreTime = (playingTime + System.currentTimeMillis() - timeAktu)/60000;
-		helicopter.scorescreenTimes[bossNr] = highscoreTime;
+		helicopter.scoreScreenTimes[bossNr] = highscoreTime;
 				
 		if(helicopter.isCountingAsFairPlayedHelicopter())
 		{			

@@ -12,6 +12,15 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 
 public class EnemyMissilePainter extends Painter<EnemyMissile>
 {
+    public static void
+    paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissile)
+    {
+        for(EnemyMissile em : enemyMissile.get(ACTIVE))
+        {
+            em.paint(g2d);
+        }
+    }
+    
     @Override
     void paint(Graphics2D g2d, EnemyMissile enemyMissile)
     {
@@ -25,14 +34,5 @@ public class EnemyMissilePainter extends Painter<EnemyMissile>
                 (int)enemyMissile.getLocation().getY(),
                 enemyMissile.getDiameter(),
                 enemyMissile.getDiameter());
-    }
-    
-    public static void
-    paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissile)
-    {
-        for(EnemyMissile em : enemyMissile.get(ACTIVE))
-        {
-            em.paint(g2d);
-        }
     }
 }

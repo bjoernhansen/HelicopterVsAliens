@@ -101,9 +101,13 @@ public enum HelicopterType
                     new Color(125, 125, 125),
                     new Color(110, 110, 110)}};
     
-        
-    private static final HelicopterType[]
-        defensiveCopyOfValues = values();
+    private static final List<Class<? extends Helicopter>>
+        helicopterClasses = List.of(Phoenix.class, Roch.class, Orochi.class, Kamaitachi.class, Pegasus.class, Helios.class);
+    
+    private static final Class<? extends Helicopter>  test = Roch.class;
+    
+    private static final List<HelicopterType>
+        listOfValues = List.of(values());
     
     private static final List<HelicopterType>
         NO_UNLOCKER = Collections.unmodifiableList(new ArrayList<>()),
@@ -121,7 +125,7 @@ public enum HelicopterType
     
     private final Supplier<? extends Helicopter>
         instance;
-    
+       
     
     HelicopterType(Supplier<? extends Helicopter> instance)
     {
@@ -131,12 +135,12 @@ public enum HelicopterType
     
     public static int size()
     {
-        return getValues().length;
+        return getValues().size();
     }
     
-    public static HelicopterType[] getValues()
+    public static List<HelicopterType> getValues()
     {
-        return defensiveCopyOfValues;
+        return listOfValues;
     }
 
     public List<HelicopterType> getUnlockerTypes()
@@ -259,5 +263,9 @@ public enum HelicopterType
     public Helicopter makeInstance()
     {
         return instance.get();
+    }
+    
+    public Class<? extends Helicopter> getHelicopterClass(){
+        return this.helicopterClasses.get(this.ordinal());
     }
 }

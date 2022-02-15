@@ -16,8 +16,8 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.model.enemy.Enemy.SPEED_KILL_BONUS_TIME;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 
@@ -99,6 +99,26 @@ public final class Kamaitachi extends Helicopter
             this.plasmaActivationTimer--;
             if(this.plasmaActivationTimer == 30){
                 Audio.play(Audio.plasmaOff);}
+        }
+    }
+    
+    public void evaluateBonusKills()
+    {
+        if(this.bonusKillsTimer > 0)
+        {
+            this.bonusKillsTimer--;
+            if(this.bonusKillsTimer == 0)
+            {
+                if(this.bonusKills > 1)
+                {
+                    Events.extraReward(
+                        this.bonusKills,
+                        this.bonusKillsMoney,
+                        0.5f, 0.75f, 3.5f); // 0.25f, 0.5f, 3.0f);
+                }
+                this.bonusKillsMoney = 0;
+                this.bonusKills = 0;
+            }
         }
     }
     

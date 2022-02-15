@@ -36,8 +36,6 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
-import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
-import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
@@ -47,9 +45,9 @@ public abstract class Helicopter extends RectangularGameEntity
 {
     public static final int
 		// TODO einstellen auf 60 Frames per Second
-		POWERUP_DURATION = 930,         // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
-		NO_COLLISION_DAMAGE_TIME = 20,   // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
-    	INVULNERABILITY_DAMAGE_REDUCTION = 80,        // %-Wert der Schadensreduzierung bei Unverwundbarleit
+		POWERUP_DURATION = 930,         		// Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
+		NO_COLLISION_DAMAGE_TIME = 20,   		// Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
+    	INVULNERABILITY_DAMAGE_REDUCTION = 80,	// %-Wert der Schadensreduzierung bei Unverwundbarleit
 		STANDARD_SPECIAL_COSTS = 125000,
 		CHEAP_SPECIAL_COSTS = 10000;
     
@@ -120,11 +118,11 @@ public abstract class Helicopter extends RectangularGameEntity
 
 		powerUpTimer[] = new int [4]; 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
   
-	private Map<StandardUpgradeType, Integer>
+	private final Map<StandardUpgradeType, Integer>
         levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
 	
-	public long
-    	scorescreenTimes[] = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
+	public long []
+		scoreScreenTimes = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		
     public float
 		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
@@ -233,7 +231,7 @@ public abstract class Helicopter extends RectangularGameEntity
         
         //zu Testzwecken:
 		boolean showRedFrame = false;
-        if (showRedFrame)
+		if (showRedFrame)
         {
             g2d.setColor(Color.red);
             g2d.draw(this.bounds);
@@ -838,7 +836,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.missileCounter = savegame.missileCounter;
 		this.hitCounter = savegame.hitCounter;
 		
-		this.scorescreenTimes = savegame.scorescreenTimes.clone();
+		this.scoreScreenTimes = savegame.scorescreenTimes.clone();
 	}
     
     public void reset()
@@ -850,7 +848,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isPlayedWithCheats = false;
 		this.resetCounterForHighscore();
 		this.resetSpecialUpgrades();
-        Arrays.fill(this.scorescreenTimes, 0);
+        Arrays.fill(this.scoreScreenTimes, 0);
     }
 	
 	
@@ -1054,34 +1052,6 @@ public abstract class Helicopter extends RectangularGameEntity
 		Events.isRestartWindowVisible = true;
 		this.isCrashing = false;
     }
-		
-    // TODO auslagern nach Phoenix und Kamaitachi
-	public void evaluateBonusKills()
-	{
-    	if(this.bonusKillsTimer > 0)
-		{
-			this.bonusKillsTimer--;
-			if(	this.getType() == PHOENIX
-			    && this.bonusKillsTimer == NICE_CATCH_TIME - TELEPORT_KILL_TIME
-			    && this.bonusKills > 1)
-			{
-				Events.extraReward(this.bonusKills,
-									this.bonusKillsMoney,
-									0.75f, 0.75f, 3.5f);
-			}
-			else if(this.getType() == KAMAITACHI && this.bonusKillsTimer == 0)
-			{
-				if(this.bonusKills > 1)
-				{
-					Events.extraReward(this.bonusKills,
-										this.bonusKillsMoney,
-										0.5f, 0.75f, 3.5f); // 0.25f, 0.5f, 3.0f);
-				}
-				this.bonusKillsMoney = 0;
-				this.bonusKills = 0;
-			}
-		}
-	}
 
 	private void evaluatePowerUpActivationStates()
 	{

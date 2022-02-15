@@ -61,6 +61,22 @@ public final class Phoenix extends Helicopter
         this.evaluateBonusKills();
     }
     
+    private void evaluateBonusKills()
+    {
+        if(this.bonusKillsTimer > 0)
+        {
+            this.bonusKillsTimer--;
+            if(	this.bonusKillsTimer == NICE_CATCH_TIME - TELEPORT_KILL_TIME
+                && this.bonusKills > 1)
+            {
+                Events.extraReward(
+                    this.bonusKills,
+                    this.bonusKillsMoney,
+                    0.75f, 0.75f, 3.5f);
+            }
+        }
+    }
+    
     @Override
     void resetFifthSpecial()
     {

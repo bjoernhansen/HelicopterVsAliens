@@ -247,7 +247,7 @@ public class Menu
 			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
-				Events.nextHelicopterType = HelicopterType.getValues()[(i + helicopterSelection)% HelicopterType.size()];
+				Events.nextHelicopterType = HelicopterType.getValues().get((i + helicopterSelection)% HelicopterType.size());
 				Helicopter helicopterDummy = helicopterDummies.get(Events.nextHelicopterType);
 				if(Events.hasSelectedHelicopterChanged())
 				{
@@ -314,7 +314,7 @@ public class Menu
             else{g2d.setColor(Colorations.lightGray);}
         	g2d.setFont(fontProvider.getBold(20));
         	
-        	String className = Menu.dictionary.typeName(HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()]);
+        	String className = Menu.dictionary.typeName(HelicopterType.getValues().get((helicopterSelection +i)% HelicopterType.size()));
         	int sw = g2d.getFontMetrics().stringWidth(className);
         	g2d.drawString(
         	        className,
@@ -323,7 +323,7 @@ public class Menu
         	
         	g2d.setFont(new Font("Dialog", Font.BOLD, 15));
         	
-        	HelicopterType type = HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()];
+        	HelicopterType type = HelicopterType.getValues().get((helicopterSelection +i)% HelicopterType.size());
         	for(int j = 0; j < 3; j++)
 			{
 				g2d.drawString(
@@ -337,7 +337,7 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], Colorations.darkBlue);
             }
-            helicopterDummies.get(HelicopterType.getValues()[(helicopterSelection +i)% HelicopterType.size()]).startScreenPaint(
+            helicopterDummies.get(HelicopterType.getValues().get((helicopterSelection +i)% HelicopterType.size())).startScreenPaint(
             	g2d,
 				HELICOPTER_START_SCREEN_OFFSET.x + START_SCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
 				HELICOPTER_START_SCREEN_OFFSET.y + START_SCREEN_HELICOPTER_OFFSET_Y);
@@ -345,8 +345,9 @@ public class Menu
             {
             	paintFrame(g2d, helicopterFrame[i], Colorations.translucentBlack);
             }
-            if(Events.allPlayable || HelicopterType.getValues()[(helicopterSelection + i)% HelicopterType.size()].isUnlocked())
+            if(Events.allPlayable || HelicopterType.getValues().get((helicopterSelection + i)% HelicopterType.size()).isUnlocked())
             {
+				// TODO diese boundaries als Konstante festlegen
             	paintTickmark(g2d, i, 210, 323, 15, 20);
             }
         }
@@ -421,7 +422,7 @@ public class Menu
         {
         	if(page > 1 && page < 2 + HelicopterType.size())
         	{
-				helicopterDummies.get(HelicopterType.getValues()[page-2]).startScreenMenuPaint(g2d);
+				helicopterDummies.get(HelicopterType.getValues().get(page-2)).startScreenMenuPaint(g2d);
         	}
         	else if(page == 1)
         	{
@@ -435,7 +436,7 @@ public class Menu
             		for(int j = 0; j < HelicopterType.size() + 1; j++)
             		{
             			if(i > 0){standardUpgradeType = StandardUpgradeType.getValues()[i-1];}
-            			if(j > 0){helicopterType = HelicopterType.getValues()[j-1];}
+            			if(j > 0){helicopterType = HelicopterType.getValues().get(j-1);}
             			
             			if(j == 0 && i != 0)
             			{
@@ -475,8 +476,8 @@ public class Menu
             			}
             			else if(j != 0 && i==0)
             			{
-            				g2d.setColor(Colorations.brightenUp(HelicopterType.getValues()[j-1].getStandardPrimaryHullColor()));
-            				tempString = Menu.dictionary.helicopterName(HelicopterType.getValues()[j-1]);
+            				g2d.setColor(Colorations.brightenUp(HelicopterType.getValues().get(j-1).getStandardPrimaryHullColor()));
+            				tempString = Menu.dictionary.helicopterName(HelicopterType.getValues().get(j-1));
             			}
             			else if(i != 0)
             			{
@@ -503,7 +504,7 @@ public class Menu
         	{
         		if(page > 1 && page < 2 + HelicopterType.size())
             	{
-					helicopterDummies.get(HelicopterType.getValues()[page-2]).startScreenMenuPaint(g2d);
+					helicopterDummies.get(HelicopterType.getValues().get(page-2)).startScreenMenuPaint(g2d);
             	}
             	
         		int columnDistance = 114,
@@ -799,11 +800,11 @@ public class Menu
 			g2d.setColor(Color.green);
 			if(language == ENGLISH)
 			{
-				g2d.drawString("Mission completed in " + minuten(helicopter.scorescreenTimes[4]) + "!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS -9);
+				g2d.drawString("Mission completed in " + minuten(helicopter.scoreScreenTimes[4]) + "!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS -9);
 			}
 			else
 			{
-				g2d.drawString("Mission in " + minuten(helicopter.scorescreenTimes[4]) + " erfüllt!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS -9);
+				g2d.drawString("Mission in " + minuten(helicopter.scoreScreenTimes[4]) + " erfüllt!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS -9);
 			}			
 		}
 		else
@@ -811,11 +812,11 @@ public class Menu
 			g2d.setColor(Color.red);
 			if(language == ENGLISH)
 			{
-				g2d.drawString("Mission failed after " + minuten(helicopter.scorescreenTimes[4]) + " in level " + Events.level + "!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS - 9);
+				g2d.drawString("Mission failed after " + minuten(helicopter.scoreScreenTimes[4]) + " in level " + Events.level + "!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS - 9);
 			}
 			else
 			{
-				g2d.drawString("Mission nach " + minuten(helicopter.scorescreenTimes[4]) + " in Level " + Events.level + " gescheitert!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS - 9);
+				g2d.drawString("Mission nach " + minuten(helicopter.scoreScreenTimes[4]) + " in Level " + Events.level + " gescheitert!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS - 9);
 			}
 		}
         g2d.setColor(Color.white);
@@ -826,7 +827,7 @@ public class Menu
         	if(i < (Events.level-1)/10)
         	{
         		g2d.setColor(Color.green);
-        		g2d.drawString(minuten(i == 0 ? helicopter.scorescreenTimes[0] : helicopter.scorescreenTimes[i] - helicopter.scorescreenTimes[i-1]) + " (Boss " + (i+1) + ")", SCORE_SCREEN_X_POS_1, SCORE_SCREEN_Y_POS - 9 + SCORE_SCREEN_SPACE_BETWEEN_ROWS * (i+1));
+        		g2d.drawString(minuten(i == 0 ? helicopter.scoreScreenTimes[0] : helicopter.scoreScreenTimes[i] - helicopter.scoreScreenTimes[i-1]) + " (Boss " + (i+1) + ")", SCORE_SCREEN_X_POS_1, SCORE_SCREEN_Y_POS - 9 + SCORE_SCREEN_SPACE_BETWEEN_ROWS * (i+1));
         	}
         	else
         	{
@@ -836,6 +837,7 @@ public class Menu
         }
 		
         g2d.setColor(Color.white);
+		// TODO hier dictionary einsetzen und loop erzeugen
 		g2d.drawString((language == ENGLISH ? "Crash landings: " : "Bruchlandungen: ") 
 										+ helicopter.numberOfCrashes,
 				SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 1 + 11);
@@ -1130,6 +1132,7 @@ public class Menu
 							boolean showFps)
 	{
 		paintBossHealthBar(g2d);
+		// TODO Konstante einsetzen
 		paintHealthBar(g2d, helicopter, 5, RectangularGameEntity.GROUND_Y + 5);
 		paintCollectedPowerUps(g2d);			
 		if(showFps){paintFpsDisplay(g2d);}
@@ -1539,7 +1542,8 @@ public class Menu
 		
 	public static Polygon getCrossPolygon()
     {
-    	return getCrossPolygon(	190, 100, 15, 38 + START_SCREEN_OFFSET_X
+    	// TODO mit Konstanten arbeiten, ggf. braucht man nicht zwei Methoden --> lokale Variablen einsetzen
+		return getCrossPolygon(	190, 100, 15, 38 + START_SCREEN_OFFSET_X
     								+ crossPosition * HELICOPTER_DISTANCE,
     								247 + START_SCREEN_HELICOPTER_OFFSET_Y);
     }

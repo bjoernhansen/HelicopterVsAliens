@@ -171,7 +171,7 @@ public class Savegame implements Serializable
 		this.bonusCounter = Events.overallEarnings;
 		this.extraBonusCounter = Events.extraBonusCounter;
 		this.playingTime = Events.playingTime;
-		this.scorescreenTimes = helicopter.scorescreenTimes.clone();
+		this.scorescreenTimes = helicopter.scoreScreenTimes.clone();
 		this.recordTime = Events.recordTime.clone();
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
 		this.highscore = Events.highscore.clone();
