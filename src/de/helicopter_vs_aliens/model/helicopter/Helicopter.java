@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
@@ -43,6 +44,7 @@ import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 public abstract class Helicopter extends RectangularGameEntity
 {
+	// TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit settern arbeiten, sonst private
     public static final int
 		// TODO einstellen auf 60 Frames per Second
 		POWERUP_DURATION = 930,         		// Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
@@ -56,8 +58,8 @@ public abstract class Helicopter extends RectangularGameEntity
         FOCAL_PNT_X_RIGHT		= 83,
         FOCAL_PNT_Y_EXP			= 44,
         FOCAL_PNT_Y_POS	 		= 56;
-    
-    static final int
+	
+	static final int
         GOLIATH_PLATING_STRENGTH = 2,
         STANDARD_GOLIATH_COSTS = 75000,
         NO_COLLISION_HEIGHT	= 6;
@@ -65,7 +67,7 @@ public abstract class Helicopter extends RectangularGameEntity
     static final float
         ENEMY_MISSILE_DAMAGE_FACTOR =  0.5f,
         STANDARD_MISSILE_DAMAGE_FACTOR =  1.0f;
-        
+	
     private static final int
         RECENT_DAMAGE_TIME = 50,        // Zeitrate in der die Lebenspunktleiste nach Kollisionen blinkt
         SLOW_TIME = 100,
@@ -85,7 +87,7 @@ public abstract class Helicopter extends RectangularGameEntity
         STANDARD_BASE_PROTECTION_FACTOR = 1.0f,
         PLATING_MULTIPLIER = 1.3f;
     
-    private static final Point
+    public static final Point
 		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
     
     private static final Dimension
@@ -127,7 +129,7 @@ public abstract class Helicopter extends RectangularGameEntity
     public float
 		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
 
-    int
+    public int
     	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
     
     float
@@ -173,10 +175,7 @@ public abstract class Helicopter extends RectangularGameEntity
     
   	public Enemy
   		tractor;			// Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
- 	  
-  	public Explosion
-		empWave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
-	
+		
 	private int
 		fireRateTimer,  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
         timeBetweenTwoShots,// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
@@ -189,28 +188,6 @@ public abstract class Helicopter extends RectangularGameEntity
     private boolean
 		isCrashing;			// Helikopter befindet sich im Sturzflug
     
-    // Grundfarben zur Berechnung der Gradientenfarben
-    // TODO ggf. eigene Klase für Farben einführen
-    Color
-    	inputColorCannon,
-    	inputColorHull,
-    	inputColorWindow,
-    	inputColorFuss1,
-    	inputColorFuss2,
-    	inputGray,
-    	inputLightGray,
-    	inputLamp;
-    
-    // Gradientenfarben
-    GradientPaint
-    	gradientHull, 					// Hauptfarbe des Helikopters
-    	gradientCannon1,				// Farbe der ersten Bordkanone
-    	gradientWindow, 				// Fensterfarbe
-    	gradientCannon2and3,			// Farbe der zweiten und dritten Bordkanone
-    	gradientFuss1, 					// Farben der Landekufen
-    	gradientFuss2,
-    	gradientCannonHole;				// Farbe der Bordkanonen-Öffnung
-	   
     
     public Helicopter()
     {
@@ -220,256 +197,8 @@ public abstract class Helicopter extends RectangularGameEntity
     @Override
 	public void paint(Graphics2D g2d)
     {
-		// GraphicsManager.getInstance().paint(this);
-    	paint(g2d, this.paintBounds.x, this.paintBounds.y);
+		GraphicsManager.getInstance().paint(this);
     }
-    
-    public void paint(Graphics2D g2d, int left, int top)
-    {
-		this.determineColors(left, top);
-    	this.paintComponents(g2d, left, top);
-        
-        //zu Testzwecken:
-		boolean showRedFrame = false;
-		if (showRedFrame)
-        {
-            g2d.setColor(Color.red);
-            g2d.draw(this.bounds);
-            g2d.fillOval((int) this.location.getX() - 2, (int) this.location.getY() - 2, 4, 4);
-        }
-    }
-    
-    private void determineColors(int left, int top)
-    {
-        this.determineInputColors();
-        this.determineGradientColors(left, top);
-    }
-    
-    void paintComponents(Graphics2D g2d, int left, int top)
-    {
-        this.paintRotorHead(g2d, left, top);
-        this.paintSkids(g2d, left, top);
-        this.paintHull(g2d, left, top);
-        this.paintCannons(g2d, left, top);
-        this.paintSpotlights(g2d, left, top);
-        this.paintMainRotor(g2d, left, top);
-        this.paintTailRotor(g2d, left, top);
-    }
-    
-    private void paintRotorHead(Graphics2D g2d, int left, int top)
-    {
-        g2d.setColor(this.inputLightGray);
-        g2d.setStroke(new BasicStroke(2));
-        g2d.drawLine(left+(this.hasLeftMovingAppearance() ? 39 : 83), top+14, left+(this.hasLeftMovingAppearance() ? 39 : 83), top+29);
-    }
-    
-    boolean hasLeftMovingAppearance()
-    {
-        return this.isMovingLeft && Menu.window == GAME;
-    }
-    
-    private void paintSkids(Graphics2D g2d, int left, int top)
-    {
-        g2d.setPaint(this.gradientFuss2);
-        g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 25 : 54), top+70, 43, 5, 5, 5);
-        g2d.setPaint(this.gradientFuss1);
-        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-        g2d.drawLine(left+61, top+66, left+61, top+69);
-        g2d.drawLine(left+(this.hasLeftMovingAppearance() ? 33 : 89), top+66, left+(this.hasLeftMovingAppearance() ? 33 : 89), top+69);
-        g2d.setStroke(new BasicStroke(1));
-    }
-    
-    private void paintHull(Graphics2D g2d, int left, int top)
-    {
-        g2d.setPaint(this.gradientHull);
-        g2d.fillOval(left+(this.hasLeftMovingAppearance() ?  2 : 45), top+29, 75, 34);
-        g2d.fillRect(left+(this.hasLeftMovingAppearance() ? 92 : -7), top+31, 37,  8);
-        g2d.fillArc (left+(this.hasLeftMovingAppearance() ? 34 : 23), top+11, 65, 40, 180, 180);
-        g2d.setPaint(this.gradientWindow);
-        g2d.fillArc (left+(this.hasLeftMovingAppearance() ?  1 : 69), top+33, 52, 22, (this.hasLeftMovingAppearance() ? 75 : -15), 120);
-    }
-    
-    private void paintSpotlights(Graphics2D g2d, int left, int top)
-    {
-        if(this.hasSpotlights)
-        {
-            if(Events.timeOfDay == NIGHT && Menu.window == GAME)
-            {
-                g2d.setColor(Colorations.translucentWhite);
-                g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -135 : -43), top-96, 300, 300, (this.hasLeftMovingAppearance() ? 165 : -15), 30);
-            }
-            g2d.setPaint(this.gradientHull);
-            g2d.fillRect(left+(this.hasLeftMovingAppearance() ? 4 : 106), top+50, 12, 8);
-            g2d.setColor(this.inputLamp);
-            g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -1 : 115), top+50, 8, 8, (this.hasLeftMovingAppearance() ? -90 : 90), 180);
-        }
-    }
-    
-    void paintCannons(Graphics2D g2d, int left, int top)
-    {
-        g2d.setPaint(this.gradientCannon1);
-        g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 26 : 53), top+52, 43, 13, 12, 12);
-        g2d.setPaint(this.gradientCannonHole);
-        g2d.fillOval(left+(this.hasLeftMovingAppearance() ? 27 : 90), top+54, 5, 9);
-        if(this.numberOfCannons >= 2)
-        {
-            g2d.setPaint(this.gradientCannon2and3);
-            g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 32 : 27), top+27, 63, 6, 6, 6);
-            g2d.setPaint(this.gradientCannonHole);
-            g2d.fillOval(left+(this.hasLeftMovingAppearance() ? 33 : 86), top+28, 3, 4);
-        }
-    }
-    
-    private void determineGradientColors(int left, int top)
-	{
-		this.gradientHull = new GradientPaint(0, top-10, Colorations.dimColor(this.inputColorHull, 1.65f),
-			0, top+ 2, Colorations.dimColor(this.inputColorHull, 0.75f), true);
-		this.gradientCannon1 = new GradientPaint(0, top+56, Colorations.dimColor(this.inputColorCannon, 1.65f),
-			0, top+64, Colorations.dimColor(this.inputColorCannon, 0.55f), true);
-		this.gradientWindow = new GradientPaint(0, top-10, Colorations.dimColor(this.inputColorWindow, 2.2f),
-			0, top+ 2, Colorations.dimColor(this.inputColorWindow, 0.70f), true);
-		this.gradientCannon2and3 = new GradientPaint(0, top+28, Colorations.dimColor(this.inputColorCannon, 1.7f),
-			0, top+35, Colorations.dimColor(this.inputColorCannon, 0.4f), true);
-		this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, Colorations.dimColor(this.inputColorFuss1, 0.44f), true);
-		this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, Colorations.dimColor(this.inputColorFuss2, 0.55f), true);
-		this.gradientCannonHole = this.getGradientCannonHoleColor();
-	}
-    
-    GradientPaint getGradientCannonHoleColor()
-    {
-        return this.gradientHull;
-    }
-    
-    void determineInputColors()
-	{
-		this.inputColorCannon = this.getInputColorCannon();
-		this.inputColorHull = this.getInputColorHull();
-		this.inputColorWindow = this.getInputColorWindow();
-		this.inputColorFuss1 = Colorations.lighterGray;
-		this.inputColorFuss2 = Colorations.enemyGray;
-		this.inputGray = Colorations.gray;
-		this.inputLightGray = Colorations.lightGray;
-		this.inputLamp = this.hasSpotlightsTurnedOn() ? Colorations.randomLight : Colorations.darkYellow;
-	}
-	
-	Color getInputColorCannon()
-	{
-		return this.isInvincible()
-			? Colorations.variableGreen
-			: this.getSecondaryHullColor();
-	}
-	
-	private Color getInputColorHull()
-	{
-		return this.isInvincible()
-			? Colorations.variableGreen
-			: this.getPrimaryHullColor();
-	}
-	
-	private Color getInputColorWindow()
-	{
-		return this.hasTripleDmg() || this.hasBoostedFireRate()
-			? Colorations.variableRed
-			: Colorations.windowBlue;
-	}
-	
-	private void paintMainRotor(Graphics2D g2d, int left, int top)
-	{
-		paintRotor(g2d,
-			this.inputGray,
-			left+(this.hasLeftMovingAppearance() ? -36 : 8),
-			top-5,
-			150, 37, 3,
-            this.rotorPosition,
-			12,
-			this.isRotorSystemActive,
-			false);
-	}
-	
-	private void paintTailRotor(Graphics2D g2d, int left, int top)
-	{
-		paintRotor(g2d,
-			this.inputGray,
-			left+(this.hasLeftMovingAppearance() ?  107 : -22),
-			top+14,
-			37, 37, 3,
-            this.rotorPosition,
-			12,
-			this.isRotorSystemActive,
-			false);
-	}
-	
-	public void startScreenMenuPaint(Graphics2D g2d)
-	{
-		this.rotatePropellerSlow();
-		this.paint(g2d, HELICOPTER_MENU_PAINT_POS.x, HELICOPTER_MENU_PAINT_POS.y);
-	}
-    
-    public void startScreenPaint(Graphics2D g2d, int left, int top)
-    {
-        this.paint(g2d, left, top);
-        if(Events.recordTime[this.getType().ordinal()][4] > 0 && Menu.window == STARTSCREEN)
-        {
-            g2d.setFont(Menu.fontProvider.getBold(12));
-            g2d.setColor(Color.yellow);
-            g2d.drawString(Menu.language == ENGLISH ? "Record time:" : "Bestzeit:", left-27, top+67);
-            g2d.drawString(Menu.minuten(Events.recordTime[this.getType().ordinal()][4]),left-27, top+80);
-        }
-    
-        if(this.getType() == HELIOS && Menu.window == STARTSCREEN)
-        {
-            g2d.setFont(Menu.fontProvider.getBold(12));
-            g2d.setColor(Colorations.brown);
-            g2d.drawString(Menu.language == ENGLISH ? "Special mode" : "Spezial-Modus:", left-27, top-4);
-        }
-    }
-	
- 
-	public static void paintRotor(Graphics2D g2d, Color color,
-								  int x, int y, int width, int height,
-								  int nrOfBlades, int pos, int bladeWidth,
-								  float borderDistance, boolean active)
-	{
-    	int distanceX = (int) (borderDistance * width),
-    		distanceY = (int) (borderDistance * height);
-    	paintRotor(g2d, color,
-    				x+distanceX,
-    				y+distanceY,
-    				width-2*distanceX,
-    				height-2*distanceY,
-    				nrOfBlades, pos, bladeWidth, active, true);
-	}
- 
-	static void paintRotor(Graphics2D g2d, Color color,
-						   int x, int y, int width, int height,
-						   int numberOfBlades, int pos, int bladeWidth,
-						   boolean active, boolean enemiePaint)
-	{
-		if(active)
-	    {
-	       	g2d.setColor((Events.timeOfDay == DAY || enemiePaint) ? Colorations.translucentGray : Colorations.translucentWhite);
-	       	g2d.fillOval(x, y, width, height);
-	    }
-	    g2d.setColor(color);
-	    for(int i = 0; i < numberOfBlades; i++)
-	    {
-	       	g2d.fillArc(x, y, width, height, -10-pos+i*(360/ numberOfBlades), bladeWidth);
-	    }
-	}
-
-	public Color getPrimaryHullColor()
-	{
-		return this.hasGoliathPlating()
-				? this.getType().getPlatedPrimaryHullColor()
-				: this.getType().getStandardPrimaryHullColor();
-	}
-
-	public Color getSecondaryHullColor()
-	{
-		return this.hasGoliathPlating()
-				? this.getType().getPlatedSecondaryHullColor()
-				: this.getType().getStandardSecondaryHullColor();
-	}
 
 	public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
 					   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
@@ -483,7 +212,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.move(explosion);
 	}
 	
-	private boolean hasSpotlightsTurnedOn()
+	public boolean hasSpotlightsTurnedOn()
 	{
 		return this.hasSpotlights
 				&& Events.timeOfDay == NIGHT
@@ -513,7 +242,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		return this.powerUpTimer[INVINCIBLE.ordinal()] > 0;
 	}
 	
-	private boolean hasBoostedFireRate()
+	public boolean hasBoostedFireRate()
 	{
 		return this.powerUpTimer[BOOSTED_FIRE_RATE.ordinal()] > 0;
 	}
@@ -696,7 +425,7 @@ public abstract class Helicopter extends RectangularGameEntity
 
 	public boolean isLocationAdaptionApproved(Enemy enemy)
 	{
-		return enemy.bounds.intersects(this.bounds)
+		return enemy.getBounds().intersects(this.bounds)
 				&& enemy.alpha == 255
 				&& enemy.borrowTimer != 0;
 	}
@@ -704,8 +433,8 @@ public abstract class Helicopter extends RectangularGameEntity
 	void adaptPosTo(Enemy enemy)
 	{
 		double
-			x = this.bounds.getCenterX() - enemy.bounds.getCenterX(),
-		 	y = this.bounds.getCenterY() - enemy.bounds.getCenterY(),
+			x = this.bounds.getCenterX() - enemy.getBounds().getCenterX(),
+		 	y = this.bounds.getCenterY() - enemy.getBounds().getCenterY(),
 			pseudoAngle = (x/ Calculations.ZERO_POINT.distance(x, y)),
 			distance,
 			localSpeed = enemy.hasUnresolvedIntersection ? this.speed : Double.MAX_VALUE;
@@ -714,7 +443,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			// Right
 			// new pos x: enemy.getMaxX() + (this.moves_left ? 39 : 83)
-			distance = (enemy.bounds.getX() + enemy.bounds.getWidth()) + (this.isMovingLeft ? 39 : 83) - this.location.getX();
+			distance = enemy.getBounds().getMaxX() + (this.isMovingLeft ? 39 : 83) - this.location.getX();
 			this.nextLocation.setLocation(
 				this.location.getX() + Math.min(distance, localSpeed),
 				this.location.getY());
@@ -724,7 +453,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			// Left
 			// new pos x: enemy.bounds.x - this.bounds.getWidth() + (this.moves_left ? 39 : 83)
-			distance = this.location.getX() - enemy.bounds.getX() + this.bounds.getWidth() - (this.isMovingLeft ? 39 : 83);
+			distance = this.location.getX() - enemy.getBounds().getX() + this.bounds.getWidth() - (this.isMovingLeft ? 39 : 83);
 			this.nextLocation.setLocation(
 				this.location.getX() - Math.min(distance, localSpeed),
 				this.location.getY());
@@ -732,11 +461,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		}
 		else
 		{
-			if(this.bounds.getCenterY() > enemy.bounds.getCenterY())
+			if(this.bounds.getCenterY() > enemy.getBounds().getCenterY())
 			{
 				// Bottom
 				// new pos y: enemy.bounds.getMaxY() + 56
-				distance = enemy.bounds.getMaxY() + 56 - this.location.getY();
+				distance = enemy.getBounds().getMaxY() + 56 - this.location.getY();
 				this.nextLocation.setLocation(
 					this.location.getX(),
 					this.location.getY() + Math.min(distance, localSpeed));
@@ -746,7 +475,7 @@ public abstract class Helicopter extends RectangularGameEntity
 			{
 				// Top
 				// new pos y: enemy.bounds.y - this.bounds.getHeight() + 56
-				distance = this.location.getY() - enemy.bounds.getY() + this.bounds.getHeight() - 56;
+				distance = this.location.getY() - enemy.getBounds().getY() + this.bounds.getHeight() - 56;
 				this.nextLocation.setLocation(
 					this.location.getX(),
 					this.location.getY() - Math.min(distance, localSpeed));
@@ -778,7 +507,6 @@ public abstract class Helicopter extends RectangularGameEntity
 	   	 	this.bounds.getHeight());
 	}
 
-
 	public void initializeForNewGame()
 	{
 		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
@@ -796,11 +524,10 @@ public abstract class Helicopter extends RectangularGameEntity
 		generalInitialization();
 	}
 
-	private void generalInitialization()
+	void generalInitialization()
 	{
         this.setSpellCosts();
 		this.fireRateTimer = this.timeBetweenTwoShots;
-		this.empWave = null;
 		this.placeAtStartpos();
 		this.prepareForMission();
 	}
@@ -896,7 +623,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isCrashing = false;
     	this.restorePlating();
     	this.setRelativePlatingDisplayColor();
-		Menu.repairShopButton.get("RepairButton").costs = 0;
+		Menu.repairShopButton.get("RepairButton").setCostsToZero();
     }
 	
 	public void obtainAllUpgrades()
@@ -1195,7 +922,12 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isActive = activationState;
 		this.isRotorSystemActive = activationState;
 	}
-
+	
+	public void adjustFireRate()
+	{
+		adjustFireRate(false);
+	}
+	
 	public void adjustFireRate(boolean poweredUp)
 	{
 	    // TODO überprüfen ob man direkt hier hasBoostedFireRate() nutzen kann und somit Parameter wegfallen kann
@@ -1316,7 +1048,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		return !this.isDamaged
 				&& e.isOnScreen()
-				&& e.bounds.intersects(this.bounds);
+				&& e.getBounds().intersects(this.bounds);
 	}
 	
 	public float getProtectionFactor()
@@ -1326,7 +1058,6 @@ public abstract class Helicopter extends RectangularGameEntity
 				: STANDARD_PROTECTION_FACTOR;
 	}
 	
-    
     public void becomesCenterOf(Explosion exp)
 	{
 		exp.ellipse.setFrameFromCenter(
@@ -1600,7 +1331,7 @@ public abstract class Helicopter extends RectangularGameEntity
         return this.hasEnoughEnergyForAbility();
     }
     
-    boolean hasEnoughEnergyForAbility()
+    public boolean hasEnoughEnergyForAbility()
     {
         return this.battery.getCurrentCharge() >= this.spellCosts || this.hasUnlimitedEnergy();
     }
@@ -1656,7 +1387,7 @@ public abstract class Helicopter extends RectangularGameEntity
                 this.setCurrentBaseFirepower();
                 break;
             case FIRE_RATE:
-                this.adjustFireRate(false);
+                this.adjustFireRate();
                 break;
             case ENERGY_ABILITY:
                 this.updateEnergyAbility();
@@ -1738,4 +1469,18 @@ public abstract class Helicopter extends RectangularGameEntity
     {
         return !this.isPlayedWithCheats || Events.IS_SAVEGAME_SAVED_ANYWAY;
     }
+	
+	public Color getPrimaryHullColor()
+	{
+		return this.hasGoliathPlating()
+			? this.getType().getPlatedPrimaryHullColor()
+			: this.getType().getStandardPrimaryHullColor();
+	}
+	
+	public Color getSecondaryHullColor()
+	{
+		return this.hasGoliathPlating()
+			? this.getType().getPlatedSecondaryHullColor()
+			: this.getType().getStandardSecondaryHullColor();
+	}
 }

@@ -1,285 +1,298 @@
 package de.helicopter_vs_aliens.gui;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.helicopter.Roch;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.score.HighscoreEntry;
-import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import static de.helicopter_vs_aliens.gui.Menu.NUMBER_OF_START_SCREEN_BUTTONS;
-import static de.helicopter_vs_aliens.gui.Menu.dictionary;
-import static de.helicopter_vs_aliens.gui.PriceLevel.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 
-// TODO Vererbung auch für Buttons, Enums für Button-Typen
-
-public class Button
+public class Button extends GameEntity
 {
-	private static final int 
-		BUTTON_DISTANCE = 60;
-	
-	static final Point 
-		STANDARD_UPGRADE_LOCATION = new Point(559, 95);
-		
-	private static final Dimension 
-		UPGRADE_BUTTON_SIZE = new Dimension(193, 50);
-	   
-    // Beschriftungen in deutscher und englischer Sprache
-	public static final String[][] 
+	// Beschriftungen in deutscher und englischer Sprache
+	public static final String[][]
 		MISSION = 		{{"Start overnight mission", "Start daytime mission"},
-                         {"Nachteinsatz starten", "Tageinsatz starten"}},
+						 {"Nachteinsatz starten", "Tageinsatz starten"}},
 		SOLD = 			{{"Low salary", "High salary"},
-                         {"geringer Sold", "hoher Sold"}},
+			 			 {"geringer Sold", "hoher Sold"}},
 		DISPLAY = 		{{"Window mode", "Fullscreen mode"},
-                         {"Fenstermodus", "Vollbildmodus"}},
-		ANTIALIAZING =  {{"Turn off antialiasing", "Turn on antialiasing" },
-                         {"Kantenglättung aus", "Kantenglättung an"}},
+						 {"Fenstermodus", "Vollbildmodus"}},
 		MUSIC = 		{{"Turn off music", "Turn on music" },
-                         {"Musik ausschalten", "Musik einschalten"}};
-
-	public static final String[][][] STARTSCREEN_MENU_BUTTON
-			=	{{{"Plot", "Changes since 1.0", "Game instructions", 
-				   "Changes since 1.1", "Credits", "Copyright", "", ""},    															
-				  {"Game description", "Finances & Repair", "Upgrades", 
+						 {"Musik ausschalten", "Musik einschalten"}};
+	
+	public static final String[][][]
+		LABELS_OF_START_SCREEN_MENU_BUTTONS
+			=	{{{"Plot", "Changes since 1.0", "Game instructions",
+				   "Changes since 1.1", "Credits", "Copyright", "", ""},
+				  {"Game description", "Finances & Repair", "Upgrades",
 				   "Boss-Enemies", "Controls", "Power-ups", "Helicopter types",
 				   "Special mode"},
-				  {"Window mode", "Turn off antialiasing", "Turn off music", 
+				  {"Window mode", "Turn off antialiasing", "Turn off music",
 				   "German", "Player name", "",
 				   Audio.MICHAEL_MODE ? "Change music mode": "", ""},
 				  {"Contact", "", "", "", "", "", "", ""},
 				  {"General information", "Upgrade costs", "Phönix",  "Roch",
 				   "Orochi", "Kamaitachi", "Pegasus", "Helios"},
-				  {"Record times", "Overall", "Phoenix",  "Roch", "Orochi", 
-				   "Kamaitachi", "Pegasus", "Helios"}},
+				  {"Record times", "Overall", "Phoenix",  "Roch", "Orochi",
+				   "Kamaitachi", "Pegasus", "Helios"}
+				 },
 				 {{"Handlung", "Änderungen seit 1.0", "Spielanleitung",
 				   "Änderungen seit 1.1", "Credits", "Copyright", "", ""},
-				  {"Spielbeschreibung", "Finanzen/Reparatur", "Upgrades", 
-				   "Boss-Gegner", "Bedienung", "PowerUps", "Helikopter-Klassen",
-				   "Spezial-Modus"},
-				  {"Fenstermodus", "Antialiasing aus", "Musik ausschalten", 
-				   "Englisch", "Spielername", "",
-				   Audio.MICHAEL_MODE ? "Musik ändern": "", ""},
-				  {"Kontakt", "", "", "", "", "", "", ""},
-				  {"Allgemeines", "Upgrade-Kosten","Phönix", "Roch",  "Orochi",
-				   "Kamaitachi", "Pegasus", "Helios"},
-				  {"Bestzeiten", "Gesamt", "Phönix",  "Roch", "Orochi",
-				   "Kamaitachi", "Pegasus", "Helios"}}};
-
-	static final String STARTSCREEN_BUTTON_LABEL[][][]
-    		= 	{{{"Informations",  "Highscore", "Contact"}, 
-    			  {"Settings", "Resume last game", "Quit"}},
-                 {{"Informationen", "Highscore", "Kontakt"}, 
-    			  {"Einstellungen", "Letztes Spiel fortsetzen", "Beenden"}}};
+				 {"Spielbeschreibung", "Finanzen/Reparatur", "Upgrades",
+				  "Boss-Gegner", "Bedienung", "PowerUps", "Helikopter-Klassen",
+				  "Spezial-Modus"},
+				 {"Fenstermodus", "Antialiasing aus", "Musik ausschalten",
+				  "Englisch", "Spielername", "",
+				  Audio.MICHAEL_MODE ? "Musik ändern": "", ""},
+				 {"Kontakt", "", "", "", "", "", "", ""},
+				 {"Allgemeines", "Upgrade-Kosten","Phönix", "Roch",  "Orochi",
+				  "Kamaitachi", "Pegasus", "Helios"},
+				 {"Bestzeiten", "Gesamt", "Phönix",  "Roch", "Orochi",
+				  "Kamaitachi", "Pegasus", "Helios"}
+				}};
 	
-	public int costs;				// Preis, falls es ein Kauf-Button in der Werkstatt ist
-	 	
-	public boolean
-		highlighted;    // = true: animierter Button; wird = true gesetzt, wenn Maus über Button führt
-	public boolean enabled;
-	public boolean marked;			// farbliche Hervorhebungen bei besonderer Funktion
+	static final String
+		LABELS_OF_START_SCREEN_BUTTONS[][][]
+			= 	{{{"Informations",  "Highscore", "Contact"},
+				  {"Settings", "Resume last game", "Quit"}},
+				 {{"Informationen", "Highscore", "Kontakt"},
+				  {"Einstellungen", "Letztes Spiel fortsetzen", "Beenden"}}};
 	
-	public String
-		label;            // Beschriftung
-	public String secondLabel;	// zweite Beschriftung, falls vorhanden
+	static final Point
+		STANDARD_UPGRADE_BUTTON_OFFSET = new Point(559, 95);
 	
-	public Color
-			costColor;		// Farbe, falls es ein Upgrade-Button in der Werkstatt ist
+	private static final int
+		BUTTON_DISTANCE = 60,
+		MAIN_MENU_BUTTON_X = 385,
+		GROUND_BUTTON_Y = 431,
+		LEFT_SIDE_REPAIR_SHOP_BUTTON_X = 23;
 	
-	public Rectangle2D
+	private static final Point
+		START_SCREEN_MENU_CANCEL_BUTTON_POSITION = new Point(849, 410),
+		START_SCREEN_MENU_BUTTON_OFFSET 		 = new Point( 23, 370),
+        START_SCREEN_MENU_BUTTON_DISTANCE 		 = new Point(160,  40),
+		START_SCREEN_BUTTON_OFFSET 				 = new Point( 27, 110),
+		START_SCREEN_BUTTON_DISTANCE 			 = new Point(750,  40),
+        SPECIAL_UPGRADE_BUTTON_OFFSET 			 = new Point(771, 155);
+    
+	private static final Dimension
+        UPGRADE_BUTTON_SIZE 			  = new Dimension(193, 50),
+        START_SCREEN_MENU_BUTTON_SIZE 	  = new Dimension(150, 30),
+        GROUND_BUTTON_SIZE 				  = new Dimension(121, 25),
+        LEFT_SIDE_REPAIR_SHOP_BUTTON_SIZE = new Dimension(205, 50),
+		SPECIAL_UPGRADE_BUTTON_SIZE 	  = new Dimension(184, 50),
+        MAIN_MENU_BUTTON_SIZE 			  = new Dimension(211, 35);
+	
+	// TODO das sollte nicht alles public sein --> accessoren verwenden
+	// Instanz-Variablen
+	private int
+		costs;			// Preis, falls es ein Kauf-Button in der Werkstatt ist
+	
+	private boolean
+		isHighlighted,	// = true: animierter Button; wird = true gesetzt, wenn Maus über Button führt
+		isEnabled,
+		isMarked;		// farbliche Hervorhebungen bei besonderer Funktion
+	
+	private String
+		label,			// Beschriftung
+		secondLabel;	// zweite Beschriftung, falls vorhanden
+	
+	private Color
+		costColor;		// Farbe, falls es ein Upgrade-Button in der Werkstatt ist
+	
+	private Rectangle2D
 		bounds;		// Maße und Koordinaten des Buttons
 	
 	private boolean
-		costButton,	// = true: Kaufbutton
-		translucent;	// = true: durchsichtig
+		isCostButton,	// = true: Kaufbutton
+		isTranslucent;	// = true: durchsichtig
 	
+	
+	static Button makeStandardUpradeButton(StandardUpgradeType standardUpgradeType){
+		List<String> standardUpgradeLabel = Menu.dictionary.standardUpgradesImprovements(standardUpgradeType);
+		return new Button(	STANDARD_UPGRADE_BUTTON_OFFSET.x,
+							STANDARD_UPGRADE_BUTTON_OFFSET.y + standardUpgradeType.ordinal() * BUTTON_DISTANCE,
+							UPGRADE_BUTTON_SIZE.width,
+							UPGRADE_BUTTON_SIZE.height,
+							String.join(" ", standardUpgradeLabel),
+							Menu.dictionary.price(),
+							true,
+							true);
+	}
+	
+	static Button makeStartScreenMenuCancelButton()
+	{
+		return new Button( START_SCREEN_MENU_CANCEL_BUTTON_POSITION.x,
+                           START_SCREEN_MENU_CANCEL_BUTTON_POSITION.y,
+                           START_SCREEN_MENU_BUTTON_SIZE.width,
+                           START_SCREEN_MENU_BUTTON_SIZE.height,
+                           Menu.dictionary.cancel(),
+                           null,
+                           false,
+                           true);
+	}
+	
+	static Button makeStartScreenMenuButton(int buttonIndex)
+	{
+		int i = buttonIndex/2, j = buttonIndex%2;
+		return new Button(  START_SCREEN_MENU_BUTTON_OFFSET.x + i * START_SCREEN_MENU_BUTTON_DISTANCE.x,
+                            START_SCREEN_MENU_BUTTON_OFFSET.y + j * START_SCREEN_MENU_BUTTON_DISTANCE.y,
+                            START_SCREEN_MENU_BUTTON_SIZE.width,
+                            START_SCREEN_MENU_BUTTON_SIZE.height,
+                            "",
+                            null,
+                            false,
+                            true);
+	}
+	
+	static Button makeSpecialUpgradeButton(SpecialUpgradeType specialUpgradeType)
+	{
+		return new Button(	SPECIAL_UPGRADE_BUTTON_OFFSET.x,
+							SPECIAL_UPGRADE_BUTTON_OFFSET.y + specialUpgradeType.ordinal() * BUTTON_DISTANCE,
+							SPECIAL_UPGRADE_BUTTON_SIZE.width,
+							SPECIAL_UPGRADE_BUTTON_SIZE.height,
+			                Menu.dictionary.specialUpgrade(specialUpgradeType),
+			                Menu.dictionary.price(),
+			                true,
+			                true);
+	}
+	
+	static Button makeStartScreenButton(int indexX, int indexY)
+	{
+		return new Button(  START_SCREEN_BUTTON_OFFSET.x + Menu.START_SCREEN_OFFSET_X + indexX * START_SCREEN_BUTTON_DISTANCE.x,
+							START_SCREEN_BUTTON_OFFSET.y + indexY * START_SCREEN_BUTTON_DISTANCE.y,
+							211,
+							30,
+			                LABELS_OF_START_SCREEN_BUTTONS[Menu.language.ordinal()][indexX][indexY],
+			                null,
+                            false,
+                            true);
+	}
+	
+	static Button makeMainMenuButton(int posY, String label)
+	{
+		return new Button(MAIN_MENU_BUTTON_X, posY, MAIN_MENU_BUTTON_SIZE.width, MAIN_MENU_BUTTON_SIZE.height, label, null, false, false);
+	}
+	
+	static Button makeGroundButton(int posX, String label)
+	{
+		return new Button(posX, GROUND_BUTTON_Y, GROUND_BUTTON_SIZE.width, GROUND_BUTTON_SIZE.height, label, null, false, false);
+	}
+	
+	static Button makeLeftSideRepairShopButton(int posY, String label, String priceLabel)
+	{
+		return new Button(LEFT_SIDE_REPAIR_SHOP_BUTTON_X, posY, LEFT_SIDE_REPAIR_SHOP_BUTTON_SIZE.width, LEFT_SIDE_REPAIR_SHOP_BUTTON_SIZE.height, label, priceLabel, true, true);
+	}
 	
     private Button(int x, int y, int width, int height, String label, String second_label, boolean cost_button, boolean translucent)
 	{
 		this.bounds = new Rectangle2D.Float(x, y, width, height);
-		this.label = label;	
+		this.label = label;
 		this.secondLabel = second_label;
 		this.costs = 0;
-		this.costButton = cost_button;
+		this.isCostButton = cost_button;
 		this.costColor = null;
-		this.translucent = translucent;
-		this.highlighted = false;
-		this.enabled = true;
-		this.marked = false;
-	}		
-	
-    // Erstellen und Pre-Initialisieren der Buttons
-	static void initializeButtons()
-	{
-		Menu.repairShopButton.put("RepairButton", new Button(23, 287, 205, 50, dictionary.repair(), dictionary.price(), true, true));
-		Menu.repairShopButton.put("Einsatz", new Button(23, 395, 205, 50, MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()], SOLD[Menu.language.ordinal()][0], false, true));
-		Menu.inGameButton.put("RepairShop",   new Button(451, 431, 121, 25, dictionary.toTheRepairShop(), null, false, false));
-		Menu.inGameButton.put("MainMenu",     new Button(897, 431, 121, 25, dictionary.mainMenu(), null, false, false));
-		Menu.inGameButton.put("MMNewGame1",   new Button(385, 116, 211, 35, dictionary.startNewGame(), null, false, false));
-		Menu.inGameButton.put("MMStopMusic",  new Button(385, 161, 211, 35, MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1], null, false, false));
-		Menu.inGameButton.put("MMNewGame2",   new Button(385, 206, 211, 35, dictionary.quit(), null, false, false));
-		Menu.inGameButton.put("MMCancel",     new Button(385, 251, 211, 35, dictionary.cancel(), null, false, false));
-				
-		for(int i = 0; i < NUMBER_OF_START_SCREEN_BUTTONS.x; i++)
-		{
-			for(int j = 0; j < NUMBER_OF_START_SCREEN_BUTTONS.y; j++)
-			{
-				Menu.startscreenButton.put( Integer.toString(i)+j,
-											 new Button(  27 + Menu.START_SCREEN_OFFSET_X + i * 750,
-														 110 + j * 40, 211, 30,
-														 STARTSCREEN_BUTTON_LABEL[Menu.language.ordinal()][i][j],
-														 null, false, true));
-			}
-		}
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-		{
-			List<String> standardUpgradeLabel = dictionary.standardUpgradesImprovements(standardUpgradeType);
-			
-			Menu.repairShopButton.put( "StandardUpgrade" + standardUpgradeType.ordinal(),
-										new Button(STANDARD_UPGRADE_LOCATION.x,
-										STANDARD_UPGRADE_LOCATION.y + standardUpgradeType.ordinal() * BUTTON_DISTANCE,
-										UPGRADE_BUTTON_SIZE.width, UPGRADE_BUTTON_SIZE.height,
-										String.join(" ", standardUpgradeLabel),
-										dictionary.price(), true, true));
-		}
-		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
-		{
-			int i = specialUpgradeType.ordinal();
-			Menu.repairShopButton.put("Special" + i, new Button(771, 155 + i * 60, 184, 50,
-																dictionary.specialUpgrade(specialUpgradeType),
-																dictionary.price(),
-																true,
-																true));
-		}
-		for(int m = 0; m < 8; m++)
-		{				
-			int i = m/2, j = m%2;			
-			Menu.startscreenMenuButton.put(Integer.toString(m), new Button( 23 + i * 160, 370 + j * 40, 150, 30, "", null, false, true));
-		}
-				
-		Menu.startscreenButton.get("11").marked = true;   // Der "Letztes Spiel fortsetzen"-Button ist markiert
-		Menu.startscreenButton.get("11").enabled = Controller.savegame.isValid;
-		
-		Menu.startscreenMenuButton.put("Cancel", new Button( 849, 410, 150, 30, Menu.dictionary.cancel(), null, false, true));
-
-		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
-		{
-			Menu.startscreenButton.get("10").marked = true;
-		}
-	}
-    
-	// Helicopter-spezifische Anpassung der Werkstatt-Button-Beschriftungen
-	// TODO vielleicht können die spezifischen Beschriftungen unnötig gemacht werden, wenn gleich die richtigen Werte verwendet werden
-	// TODO sollte nach Menu verschoben werden
-	public static void initialize()
-	{
-		Helicopter helicopter = Controller.getInstance().getHelicopter();
-		Menu.repairShopButton.get("Einsatz").label = MISSION[Menu.language.ordinal()][Events.timeOfDay.ordinal()];
-		Menu.repairShopButton.get("Einsatz").secondLabel = SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
-
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-    	{    		
-			if(!helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
-			{
-				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
-						= helicopter.getUpgradeCostFor(standardUpgradeType);
-				Menu.repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costColor
-						= helicopter.getPriceLevelFor(standardUpgradeType).getColor();
-			}
-    	}
-		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();
-		Menu.repairShopButton.get("StandardUpgrade" + 5).label = String.join(" ", standardUpgradeLabel);
-		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.SPOTLIGHT.ordinal()).costs = helicopter.getSpotlightCosts();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.SPOTLIGHT.ordinal()).costColor = CHEAP.getColor();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.GOLIATH_PLATING.ordinal()).costs = helicopter.getGoliathCosts();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.GOLIATH_PLATING.ordinal()).costColor = (helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.PIERCING_WARHEADS.ordinal()).costs = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.PIERCING_WARHEADS.ordinal()).costColor = (helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).costs = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS ;
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).costColor = (helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).label = dictionary.extraCannons();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).costs = helicopter.getFifthSpecialCosts();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).costColor = helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor();
-		Menu.repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).label = dictionary.fifthSpecial();
+		this.isTranslucent = translucent;
+		this.isHighlighted = false;
+		this.isEnabled = true;
+		this.isMarked = false;
 	}
 	
-	void paint(Graphics2D g2d){paint(g2d, null, false);}
-	void paint(Graphics2D g2d, String buttonLabel){paint(g2d, buttonLabel, false);}
-	void paint(Graphics2D g2d, boolean loner){paint(g2d, null, loner);}
-	private void paint(Graphics2D g2d, String buttonLabel, boolean loner)
+	public boolean isCostButton()
 	{
-    	if(!this.label.equals("") && !loner)
-    	{
-			String usedLabel = buttonLabel != null ? buttonLabel : this.label;
-			if((this.highlighted && this.enabled) || !this.translucent)
-			{
-				g2d.setPaint(this.highlighted ? Colorations.gradientVariableGray : Colorations.lightestGray);
-				g2d.fill(this.bounds);
-			}
-	    	g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-	    	if(this.costColor == null){g2d.setColor(this.enabled ? this.marked ? Colorations.variableWhite : Color.white : Colorations.lightGray);}
-	        else{g2d.setColor(this.costColor);}
-	    	if(this.translucent){g2d.draw(this.bounds);}
-	    	else
-	    	{
-	    		g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)this.bounds.getY());
-	        	g2d.drawLine((int)this.bounds.getX(), (int)this.bounds.getY(), (int)(this.bounds.getX()), (int)(this.bounds.getY()+this.bounds.getHeight()));
-	        	if(this.costColor == null){g2d.setColor(Colorations.gray);}
-	            else{g2d.setColor(this.costColor);}
-	        	g2d.drawLine((int)(this.bounds.getX()+this.bounds.getWidth()), (int)this.bounds.getY(), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
-	        	g2d.drawLine((int)this.bounds.getX(), (int)(this.bounds.getY()+this.bounds.getHeight()), (int)(this.bounds.getX() + this.bounds.getWidth()), (int)(this.bounds.getY()+this.bounds.getHeight()));
-	    	}
-	        g2d.setStroke(new BasicStroke(1));        
-	        	        
-	        if(this.secondLabel != null || this.costButton)
-	        {	        	
-	        	if(this.costColor == null){g2d.setColor(Colorations.lightOrange);}
-	            else{g2d.setColor(this.costColor);}
-	        	g2d.setFont(Menu.fontProvider.getBold(14));
-	        	g2d.drawString(usedLabel, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 20);
-	        }
-	        else
-	        {
-	        	if(this.translucent)
-	        	{
-	        		g2d.setFont(Menu.fontProvider.getBold(15));
-	        		if(this.enabled){g2d.setColor(this.marked ? Colorations.variableMarkedButton : Color.yellow); }
-		        	else{g2d.setColor(Colorations.lightGray);}
-	        	}
-	        	else
-	        	{
-	        		g2d.setFont(Menu.fontProvider.getPlain(18));
-	        		g2d.setColor(Color.black);
-	        	}        		
-	        	FontMetrics fm = g2d.getFontMetrics();        	
-	            int sw = fm.stringWidth(usedLabel);
-		        g2d.drawString(usedLabel, (int)(this.bounds.getX() + (this.bounds.getWidth()-sw)/2), (int)(this.bounds.getY() + this.bounds.getHeight() - this.bounds.getHeight()/2+6));
-	        }        
-	        g2d.setColor(Color.white);
-	        if(this.costs != 0)
-	        {            
-	            g2d.drawString(this.secondLabel + this.costs + " €", (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
-	        }
-	        else if(!this.costButton && this.secondLabel != null)
-	        {
-	        	g2d.drawString(this.secondLabel, (int)this.bounds.getX() + 7, (int)this.bounds.getY() + 40);
-	        }
-    	}
-    }
-	
-	public static void updateScreenMenuButtons(WindowType window)
-	{
-		for(int m = 0; m < 8; m++)
-		{
-			Menu.startscreenMenuButton.get(Integer.toString(m)).label = STARTSCREEN_MENU_BUTTON[Menu.language.ordinal()][window.ordinal()][m];
-		}
+		return isCostButton;
 	}
-}	
+	
+	public boolean isTranslucent()
+	{
+		return isTranslucent;
+	}
+	
+	public int getCosts()
+	{
+		return costs;
+	}
+	
+	public void setCosts(int costs)
+	{
+		this.costs = costs;
+	}
+	
+	public void setCostsToZero()
+	{
+		this.costs = 0;
+	}
+	
+	public boolean isHighlighted()
+	{
+		return isHighlighted;
+	}
+	
+	public void setHighlighted(boolean highlighted)
+	{
+		isHighlighted = highlighted;
+	}
+	
+	public boolean isEnabled()
+	{
+		return isEnabled;
+	}
+	
+	public void setEnabled(boolean enabled)
+	{
+		isEnabled = enabled;
+	}
+	
+	public boolean isMarked()
+	{
+		return isMarked;
+	}
+	
+	public void setMarked(boolean marked)
+	{
+		isMarked = marked;
+	}
+	
+	public String getLabel()
+	{
+		return label;
+	}
+	
+	public boolean isLabelEmpty()
+	{
+		return label.equals("");
+	}
+	
+	public void setLabel(String label)
+	{
+		this.label = label;
+	}
+	
+	public String getSecondLabel()
+	{
+		return secondLabel;
+	}
+	
+	public void setSecondLabel(String secondLabel)
+	{
+		this.secondLabel = secondLabel;
+	}
+	
+	public Color getCostColor()
+	{
+		return costColor;
+	}
+	
+	public void setCostColor(Color costColor)
+	{
+		this.costColor = costColor;
+	}
+	
+	public Rectangle2D getBounds()
+	{
+		return bounds;
+	}
+}

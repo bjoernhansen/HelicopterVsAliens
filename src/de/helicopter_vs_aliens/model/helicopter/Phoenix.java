@@ -10,11 +10,9 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.applet.AudioClip;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -200,20 +198,6 @@ public final class Phoenix extends Helicopter
     }
     
     @Override
-    void paintComponents(Graphics2D g2d, int left, int top)
-    {
-        // Nahkampfbestrahlung
-        if (this.hasShortrangeRadiation)
-        {
-            g2d.setColor(this.enhancedRadiationTimer == 0
-                ? Colorations.radiation[Events.timeOfDay.ordinal()]
-                : Colorations.enhancedRadiation[Events.timeOfDay.ordinal()]);
-            g2d.fillOval(left + (this.hasLeftMovingAppearance() ? -9 : 35), top + 19, 96, 54);
-        }
-        super.paintComponents(g2d, left, top);
-    }
-    
-    @Override
     public boolean isTakingKaboomDamageFrom(Enemy enemy)
     {
         return super.isTakingKaboomDamageFrom(enemy) && !this.hasShortrangeRadiation;
@@ -320,5 +304,15 @@ public final class Phoenix extends Helicopter
     public boolean hasTimeRecordingMissiles()
     {
         return true;
+    }
+    
+    public int getEnhancedRadiationTimer()
+    {
+        return enhancedRadiationTimer;
+    }
+    
+    public boolean hasShortrangeRadiation()
+    {
+        return hasShortrangeRadiation;
     }
 }

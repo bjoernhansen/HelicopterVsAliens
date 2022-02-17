@@ -10,6 +10,7 @@ import static de.helicopter_vs_aliens.gui.WindowType.*;
 
 public final class Colorations
 {
+	// alle Farben, die sich nicht ändern, sollten final sein, alle final colors sollten in in Upper-Snake-Case
 	public static final int 
 		FRAME = 3,
 		NOZZLE = 4,

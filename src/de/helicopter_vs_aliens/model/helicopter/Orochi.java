@@ -165,29 +165,6 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    Color getInputColorCannon()
-    {
-        if (this.isNextMissileStunner && this.hasEnoughEnergyForAbility())
-        {
-            return Colorations.variableBlue;
-        }
-        return super.getInputColorCannon();
-    }
-    
-    @Override
-    void paintCannons(Graphics2D g2d, int left, int top)
-    {
-        super.paintCannons(g2d, left, top);
-        if (this.numberOfCannons == 3)
-        {
-            g2d.setPaint(this.gradientCannon2and3);
-            g2d.fillRoundRect(left + (this.hasLeftMovingAppearance() ? 38 : 37), top + 41, 47, 6, 6, 6);
-            g2d.setPaint(this.gradientCannonHole);
-            g2d.fillOval(left + (this.hasLeftMovingAppearance() ? 39 : 80), top + 42, 3, 4);
-        }
-    }
-    
-    @Override
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
     {
         this.isNextMissileStunner = false;
@@ -279,5 +256,10 @@ public final class Orochi extends Helicopter
             }
         }
         super.inactivate(missiles, missile);
+    }
+    
+    public boolean isNextMissileStunner()
+    {
+        return isNextMissileStunner;
     }
 }

@@ -18,7 +18,9 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.HelicopterPainter;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
@@ -93,7 +95,7 @@ public class Enemy extends RectangularGameEntity
 
 		// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
 		RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampfbestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollsionen  mit dem Helikopter erleidet
-		TELEPORT_DAMAGE_FACTOR = 4f,			// Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisonen unmittelbar nach einem Transportvorgang
+		TELEPORT_DAMAGE_FACTOR = 4f,			// Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
 		EMP_DAMAGE_FACTOR_BOSS = 1.5f,			// Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
 		EMP_DAMAGE_FACTOR_ORDINARY = 2.5f,		// Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
 
@@ -122,7 +124,7 @@ public class Enemy extends RectangularGameEntity
 	// Zeit-Konstanten
 		CLOAKING_TIME = 135,    // Zeit, die beim Tarn- und Enttarnvorgang vergeht
 		CLOAKED_TIME = 135,     // Zeit, die ein Gegner getarnt bleibt
-		ROCKFREE_TIME = 250,    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
+		ROCK_FREE_TIME = 250,    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
 		EMP_SLOW_TIME = 175,    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
 		EMP_SLOW_TIME_BOSS = 110,
 		SNOOZE_TIME = 100,    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
@@ -226,7 +228,7 @@ public class Enemy extends RectangularGameEntity
 
 	public int
 		hitpoints,						// aktuelle Hitpoints
-		startingHitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegers)
+		startingHitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegners)
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
 		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
@@ -298,7 +300,7 @@ public class Enemy extends RectangularGameEntity
 		shotSpeed,
 		shotRotationSpeed,
 		
-		// Regulation des Stuneffekte nach Treffer durch Stopp-Rakete der Orochi-Klasse
+		// Regulation des Stun-Effektes nach Treffer durch Stopp-Rakete der Orochi-Klasse
 		nonStunableTimer,
 		totalStunningTime,
 		knockBackDirection;
@@ -508,7 +510,7 @@ public class Enemy extends RectangularGameEntity
 	
 	private void paintRotor(Graphics2D g2d, int x, int y)
 	{
-		Helicopter.paintRotor(	g2d,
+		HelicopterPainter.paintRotor(	g2d,
 								!this.isDestroyed
 									?(Colorations.setAlpha(Colorations.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], this.alpha))
 									: Colorations.dimColor(Colorations.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
@@ -1072,11 +1074,11 @@ public class Enemy extends RectangularGameEntity
 		paintEnergyBeam(	g2d,
 							this.paintBounds.x,
 							this.paintBounds.y + 1,
-							(int)(helicopter.bounds.getX() 
+							(int)(helicopter.getBounds().getX() 
 								+ (helicopter.isMovingLeft
 									? Helicopter.FOCAL_PNT_X_LEFT 
 									: Helicopter.FOCAL_PNT_X_RIGHT)),  // 114 
-							(int)(helicopter.bounds.getY() 
+							(int)(helicopter.getBounds().getY() 
 								+ Helicopter.FOCAL_PNT_Y_EXP));
 	}
 	
@@ -1783,7 +1785,7 @@ public class Enemy extends RectangularGameEntity
 			this.farbe1 = Colorations.dimColor(this.farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
 			this.farbe2 = Colorations.dimColor(this.farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
 		}		
-		barrierTimer = (int)((helicopter.bounds.getWidth() + this.bounds.getWidth())/2);
+		barrierTimer = (int)((helicopter.getBounds().getWidth() + this.bounds.getWidth())/2);
 	}
     
     private void assignRandomBarrierType()
@@ -2400,24 +2402,24 @@ public class Enemy extends RectangularGameEntity
 
 	private void placeNearHelicopter(Helicopter helicopter)
 	{		
-		boolean isLeftOfHelicopter = !(helicopter.bounds.getMaxX() + (0.5f * this.bounds.getWidth() + BARRIER_DISTANCE) < 1024);
+		boolean isLeftOfHelicopter = !(helicopter.getBounds().getMaxX() + (0.5f * this.bounds.getWidth() + BARRIER_DISTANCE) < 1024);
 					
 		int x, 
-			y = (int)(helicopter.bounds.getY() 
-				+ helicopter.bounds.getHeight()/2
+			y = (int)(helicopter.getBounds().getY() 
+				+ helicopter.getBounds().getHeight()/2
 				- this.bounds.getWidth()
 				+ Math.random()*this.bounds.getWidth());
 		
 		if(isLeftOfHelicopter)
 		{
-			x = (int)(helicopter.bounds.getX() 
+			x = (int)(helicopter.getBounds().getX() 
 				-3*this.bounds.getWidth()/2  
 				- 10
 				+ Math.random()*(this.bounds.getWidth()/3));	
 		}
 		else
 		{
-			x = (int)(helicopter.bounds.getMaxX() 
+			x = (int)(helicopter.getBounds().getMaxX() 
 				+ BARRIER_DISTANCE);		
 		}
 		this.setLocation(x,
@@ -2672,12 +2674,11 @@ public class Enemy extends RectangularGameEntity
 		this.move();
 		
 		if(helicopter.canCollideWith(this)){this.collision(controller, helicopter);}
-		if(helicopter.getType() == PEGASUS){this.checkForEmpStrike(controller, helicopter);}
+		if(helicopter.getType() == PEGASUS){this.checkForEmpStrike(controller, (Pegasus)helicopter);}
 		if(this.hasDeadlyGroundContact()){this.destroy(helicopter, controller.powerUps, false);}
 		if(this.isToBeRemoved()){this.prepareRemoval();}
 		this.setPaintBounds();
 	}	
-	
 	
 	private void updateStoppableTimer()
 	{
@@ -2791,8 +2792,6 @@ public class Enemy extends RectangularGameEntity
 		if( this.turnTimer > 0) {this.turnTimer--;}
 		if( this.stunningTimer > 0) {this.stunningTimer--;}
 	}
-	
-
 
 	private void calculateFlightManeuver(Controller controller,
 										 Helicopter helicopter)
@@ -2808,7 +2807,7 @@ public class Enemy extends RectangularGameEntity
 		if(this.batchWiseMove != 0){
 			evaluateBatchWiseMove();}
 					
-		// Chaosflug
+		// Chaos-Flug
 		if(    this.canMoveChaotic
 			&& this.chaosTimer == READY
 			&& this.dodgeTimer == READY)
@@ -2837,12 +2836,12 @@ public class Enemy extends RectangularGameEntity
 		if( this.canLearnKamikaze
 				
 			&& ((this.direction.x == 1 
-					&& helicopter.bounds.getMaxX() < this.bounds.getMinX() 
-					&& this.bounds.getX() - helicopter.bounds.getX() < 620)
+					&& helicopter.getBounds().getMaxX() < this.bounds.getMinX() 
+					&& this.bounds.getX() - helicopter.getBounds().getX() < 620)
 				||
 				(this.direction.x == -1 
-					&& this.bounds.getMaxX() < helicopter.bounds.getMinX() 
-					&& helicopter.bounds.getX() - this.bounds.getX() < 620)))
+					&& this.bounds.getMaxX() < helicopter.getBounds().getMinX() 
+					&& helicopter.getBounds().getX() - this.bounds.getX() < 620)))
 		{
 			this.startKamikazeMode();
 			this.direction.x = -1;
@@ -2889,13 +2888,13 @@ public class Enemy extends RectangularGameEntity
 		//Chaos-SpeedUp
 		if(	this.canChaosSpeedup
 			&& this.speedLevel.getX() == this.targetSpeedLevel.getX()
-			&& helicopter.bounds.getX() - this.bounds.getX() > -350	)
+			&& helicopter.getBounds().getX() - this.bounds.getX() > -350	)
 		{				
 			this.speedLevel.setLocation(6 + this.targetSpeedLevel.getX(), //d
 										 this.speedLevel.getY());
 		}
 		if(this.canChaosSpeedup
-		   && (helicopter.bounds.getX() - this.bounds.getX()) > -160)
+		   && (helicopter.getBounds().getX() - this.bounds.getX()) > -160)
 		{			
 			this.canMoveChaotic = true;
 			this.speedLevel.setLocation(this.speedLevel.getX(),
@@ -2984,24 +2983,24 @@ public class Enemy extends RectangularGameEntity
 	}
 	
 	private void checkForEmpStrike(Controller controller,
-								   Helicopter helicopter)
+								   Pegasus pegasus)
 	{
-		if(helicopter.empWave != null)
+		if(pegasus.empWave != null)
 		{
-			if(this.isEmpShockable(helicopter))
+			if(this.isEmpShockable(pegasus))
 			{
-				this.empShock(controller, helicopter);
+				this.empShock(controller, pegasus);
 			}
 		}
 		else{this.isEmpShocked = false;}
 	}
 
-	private void empShock(Controller controller, Helicopter helicopter)
+	private void empShock(Controller controller, Pegasus pegasus)
     {
-    	this.takeDamage((int)this.getEmpVulnerabilityFactor() * helicopter.getEmpDamage());
+    	this.takeDamage((int)this.getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
 		this.isEmpShocked = true;
 		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
-		this.disableSiteEffects(helicopter);
+		this.disableSiteEffects(pegasus);
 				
 		if(this.hasHPsLeft())
 		{			
@@ -3014,18 +3013,18 @@ public class Enemy extends RectangularGameEntity
 											? EMP_SLOW_TIME_BOSS 
 											: EMP_SLOW_TIME;
 			}
-			this.reactToHit(helicopter, null);
+			this.reactToHit(pegasus, null);
 			
-			Explosion.start(controller.explosions, helicopter,
+			Explosion.start(controller.explosions, pegasus,
 							this.bounds.getCenterX(), 
 							this.bounds.getCenterY(), STUNNING, false);
 		}
 		else
 		{
 			Audio.play(Audio.explosion2);
-			helicopter.empWave.kills++;
-			helicopter.empWave.earnedMoney += this.calculateReward(helicopter);
-			this.die(controller, helicopter, null);
+			pegasus.empWave.kills++;
+			pegasus.empWave.earnedMoney += this.calculateReward(pegasus);
+			this.die(controller, pegasus, null);
 		}
     }
     
@@ -3107,7 +3106,7 @@ public class Enemy extends RectangularGameEntity
 		if(this.type == ROCK)
 		{
 			currentRock = null;
-			rockTimer = ROCKFREE_TIME;
+			rockTimer = ROCK_FREE_TIME;
 		}
 		else if(this.isMiniBoss)
 		{
@@ -3115,13 +3114,13 @@ public class Enemy extends RectangularGameEntity
 		}		
 	}	
 	
-	private boolean isEmpShockable(Helicopter helicopter)
+	private boolean isEmpShockable(Pegasus pegasus)
 	{
 		return     !this.isEmpShocked
 				&& !this.isDestroyed
 				&& !this.isInvincible()
 				&& !(this.barrierTeleportTimer != DISABLED && this.barrierShootTimer == DISABLED)
-				&& helicopter.empWave.ellipse.intersects(this.bounds);
+				&& pegasus.empWave.ellipse.intersects(this.bounds);
 	}	
 
 	private void evaluateSpeedup(Helicopter helicopter)
@@ -3146,7 +3145,7 @@ public class Enemy extends RectangularGameEntity
 			this.speedup = 3;
 			this.canSinusMove = false;
 			this.speedLevel.setLocation(this.speedLevel.getX(), 1.5); //d
-			if(this.bounds.getY() < helicopter.bounds.getY()){this.direction.y = 1;}
+			if(this.bounds.getY() < helicopter.getBounds().getY()){this.direction.y = 1;}
 			else{this.direction.y = -1;}	
 		}		
 	}
@@ -3154,9 +3153,9 @@ public class Enemy extends RectangularGameEntity
 	private boolean atEyeLevel(Helicopter helicopter)
 	{
 		return this.bounds.intersects(Integer.MIN_VALUE/2, 
-									  helicopter.bounds.getY(),
+									  helicopter.getBounds().getY(),
 									  Integer.MAX_VALUE,
-									  helicopter.bounds.getHeight());
+									  helicopter.getBounds().getHeight());
 	}
 	
 	private void finalBossAction()
@@ -3255,20 +3254,20 @@ public class Enemy extends RectangularGameEntity
     	// Wahrscheinlichkeit um, wenn sie dem Helikopter das Heck zugekehrt haben.
     	if(	this.isBoss()
     		&& Calculations.tossUp(0.008f)
-    		&& ( (this.bounds.getMinX() > helicopter.bounds.getMaxX() 
+    		&& ( (this.bounds.getMinX() > helicopter.getBounds().getMaxX() 
     			   && this.direction.x == 1) 
     			 ||
-    			 (helicopter.bounds.getMinX() > this.bounds.getMaxX()
+    			 (helicopter.getBounds().getMinX() > this.bounds.getMaxX()
     			   && this.direction.x == -1)))		
     	{
 			this.direction.x = -this.direction.x;	
 			this.speedLevel.setLocation(0, this.speedLevel.getY());
 		}		
 		
-    	if(((this.bounds.getMaxX() > helicopter.bounds.getMinX() && this.direction.x == -1)&&
-			(this.bounds.getMaxX() - helicopter.bounds.getMinX() ) < 620) ||
-		   ((helicopter.bounds.getMaxX() > this.bounds.getMinX() && this.direction.x == 1)&&
-			(helicopter.bounds.getMaxX() - this.bounds.getMinX() < 620)))		    
+    	if(((this.bounds.getMaxX() > helicopter.getBounds().getMinX() && this.direction.x == -1)&&
+			(this.bounds.getMaxX() - helicopter.getBounds().getMinX() ) < 620) ||
+		   ((helicopter.getBounds().getMaxX() > this.bounds.getMinX() && this.direction.x == 1)&&
+			(helicopter.getBounds().getMaxX() - this.bounds.getMinX() < 620)))		    
 		{			
 			if(!this.canLearnKamikaze)
 			{
@@ -3276,13 +3275,13 @@ public class Enemy extends RectangularGameEntity
 											 this.speedLevel.getY());
 			}						
 			if(this.direction.y == 1 
-				&& helicopter.bounds.getY()  < this.bounds.getY())				
+				&& helicopter.getBounds().getY()  < this.bounds.getY())				
 			{							
 				this.direction.y = -1;				
 				this.speedLevel.setLocation(this.speedLevel.getX(), 0);
 			}
 			else if(this.direction.y == -1 
-					&& helicopter.bounds.getMaxY() > this.bounds.getMaxY())
+					&& helicopter.getBounds().getMaxY() > this.bounds.getMaxY())
 			{
 				this.direction.y = 1;
 				this.speedLevel.setLocation(this.speedLevel.getX(), 0);
@@ -3330,7 +3329,7 @@ public class Enemy extends RectangularGameEntity
 				     && Calculations.tossUp(0.004f))
 				    || 
 				    (this.type == PROTECTOR 
-				     && (helicopter.bounds.getX() > boss.getX() - 225) ))) 
+				     && (helicopter.getBounds().getX() > boss.getX() - 225) ))) 
 		{			
 			this.borrowTimer = 2 * BORROW_TIME
 								+ this.shootingRate * this.shotsPerCycle
@@ -3351,14 +3350,14 @@ public class Enemy extends RectangularGameEntity
 			&& this.bounds.getX() + this.bounds.getWidth() > 0
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
 			&& ((this.direction.x == -1 
-				 && helicopter.bounds.intersects(	
+				 && helicopter.getBounds().intersects(	
 						 				this.bounds.getX() + Integer.MIN_VALUE/2, 
 						 				this.bounds.getY() + (this.model == TIT ? 0 : this.bounds.getWidth()/2) - 15,
 						 				Integer.MAX_VALUE/2, 
 						 				EnemyMissile.DIAMETER+30))
 				||
 				((this.direction.x == 1 
-				  && helicopter.bounds.intersects(
+				  && helicopter.getBounds().intersects(
 						  				this.bounds.getX(), 
 						  				this.bounds.getY() + (this.model == TIT ? 0 : this.bounds.getWidth()/2) - 15,
 								 		Integer.MAX_VALUE/2, 
@@ -3387,8 +3386,8 @@ public class Enemy extends RectangularGameEntity
 		{
 			this.barrierShootTimer = this.shootingCycleLength;
 			if(	this.shotRotationSpeed == 0
-				&&	  (helicopter.bounds.getX()    < this.bounds.getX()         && this.shootingDirection.getX() > 0)
-					||(helicopter.bounds.getMaxX() > this.bounds.getMaxX() && this.shootingDirection.getX() < 0) )
+				&&	  (helicopter.getBounds().getX()    < this.bounds.getX()         && this.shootingDirection.getX() > 0)
+					||(helicopter.getBounds().getMaxX() > this.bounds.getMaxX() && this.shootingDirection.getX() < 0) )
 			{
 				this.shootingDirection.setLocation(-this.shootingDirection.getX(), this.shootingDirection.getY());
 			}
@@ -3408,9 +3407,9 @@ public class Enemy extends RectangularGameEntity
 			{
 				// Schussrichtung wird auf Helicopter ausgerichtet
 				this.shootingDirection.setLocation(
-						( (helicopter.bounds.getX() + (helicopter.isMovingLeft ? Helicopter.FOCAL_PNT_X_LEFT : Helicopter.FOCAL_PNT_X_RIGHT))
+						( (helicopter.getBounds().getX() + (helicopter.isMovingLeft ? Helicopter.FOCAL_PNT_X_LEFT : Helicopter.FOCAL_PNT_X_RIGHT))
 							  - (this.bounds.getX() +       this.bounds.getWidth()/2)), 
-						  (helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP) 
+						  (helicopter.getBounds().getY() + Helicopter.FOCAL_PNT_Y_EXP) 
 						  	  - (this.bounds.getY() +       this.bounds.getHeight()/2)) ;
 				float distance = (float) Calculations.ZERO_POINT.distance(this.shootingDirection);
 				this.shootingDirection.setLocation(this.shootingDirection.getX()/distance,
@@ -4066,7 +4065,7 @@ public class Enemy extends RectangularGameEntity
 	public void reactToRadiation(Controller controller, Helicopter helicopter)
 	{
 		if(	this.teleportTimer == READY){this.teleport();}
-		else if(this.canTakeCollisonDamage())
+		else if(this.canTakeCollisionDamage())
 		{
 			this.takeDamage((int)(
 				helicopter.currentBaseFirepower
@@ -4102,7 +4101,7 @@ public class Enemy extends RectangularGameEntity
 		}		
 	}
 
-	private boolean canTakeCollisonDamage()
+	private boolean canTakeCollisionDamage()
 	{		
 		return 	   !this.isDestroyed
 				&& !this.isExplodable
@@ -4208,8 +4207,8 @@ public class Enemy extends RectangularGameEntity
 		if(this.canDoHitTriggeredTurn())
 		{
 			if(this.canLearnKamikaze){this.startKamikazeMode();}
-			     if(this.bounds.getMinX() > helicopter.bounds.getMinX()){this.direction.x = -1;}
-			else if(this.bounds.getMaxX() < helicopter.bounds.getMaxX()){this.direction.x = 1;}				
+			     if(this.bounds.getMinX() > helicopter.getBounds().getMinX()){this.direction.x = -1;}
+			else if(this.bounds.getMaxX() < helicopter.getBounds().getMaxX()){this.direction.x = 1;}				
 		}
 		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
 		
@@ -4431,7 +4430,7 @@ public class Enemy extends RectangularGameEntity
 			Events.level = Events.maxLevel = 51;
 			helicopter.isDamaged = true;
 		
-			helicopter.destination.setLocation(helicopter.bounds.getX()+40, 
+			helicopter.destination.setLocation(helicopter.getBounds().getX()+40, 
 											   520.0);	
 			Events.determineHighscoreTimes(helicopter);
 		}
@@ -4543,8 +4542,8 @@ public class Enemy extends RectangularGameEntity
 					 && Events.boss.shield > 0 
 					 && this.bounds.getMinX() > Events.boss.bounds.getMinX() 
 				     && this.bounds.getMaxX() < Events.boss.bounds.getMaxX())
-				&& !( (     (helicopter.bounds.getX() - this.bounds.getMaxX() > -500)
-						 && (helicopter.bounds.getX() - this.bounds.getX() 	  <  150))	
+				&& !( (     (helicopter.getBounds().getX() - this.bounds.getMaxX() > -500)
+						 && (helicopter.getBounds().getX() - this.bounds.getX() 	  <  150))	
 					  && this.canKamikaze
 					  && this.direction.x == -1);
 	}

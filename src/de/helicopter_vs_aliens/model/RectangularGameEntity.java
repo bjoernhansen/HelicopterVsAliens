@@ -13,11 +13,11 @@ public abstract class RectangularGameEntity extends GameEntity
 		
 	// TODO paintBound sind vermutlich nur da, da in floats gerechnet aber in int gezeichnet wird, diese Funktionalität in eigene Klasse auslagern
 	// TODO bounds sollten nicht public sein, lieber einen Accessor schreiben
-	public Rectangle2D
+	protected Rectangle2D
 		bounds = new Rectangle2D.Float();
 	
 	//TODO paintBounds sollten nicht public sein, lieber einen Accessor schreiben
-	public Rectangle
+	protected Rectangle
         paintBounds = new Rectangle();
 	
 	protected void setPaintBounds()
@@ -31,5 +31,15 @@ public abstract class RectangularGameEntity extends GameEntity
 									(int)Math.round(this.bounds.getY()),
 									width, 
 									height);
+	}
+	
+	public Rectangle getPaintBounds()
+	{
+		return paintBounds;
+	}
+	
+	public Rectangle2D getBounds()
+	{
+		return bounds;
 	}
 }

@@ -253,22 +253,6 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    void paintComponents(Graphics2D g2d, int left, int top)
-    {
-        super.paintComponents(g2d, left, top);
-        if(this.isPowerShieldActivated)
-        {
-            this.paintPowerShield(g2d, left, top);
-        }
-    }
-    
-    private void paintPowerShield(Graphics2D g2d, int left, int top)
-    {
-        g2d.setColor(Colorations.shieldColor[Menu.window == STARTSCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
-        g2d.fillOval(left+(this.hasLeftMovingAppearance() ? -9 : 35), top+19, 96, 54);
-    }
-    
-    @Override
     public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
                        EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
@@ -403,5 +387,10 @@ public final class Roch extends Helicopter
     {
         return super.canRegenerateEnergy()
                 && !this.isPowerShieldActivated;
+    }
+    
+    public boolean isPowerShieldActivated()
+    {
+        return isPowerShieldActivated;
     }
 }

@@ -101,11 +101,6 @@ public enum HelicopterType
                     new Color(125, 125, 125),
                     new Color(110, 110, 110)}};
     
-    private static final List<Class<? extends Helicopter>>
-        helicopterClasses = List.of(Phoenix.class, Roch.class, Orochi.class, Kamaitachi.class, Pegasus.class, Helios.class);
-    
-    private static final Class<? extends Helicopter>  test = Roch.class;
-    
     private static final List<HelicopterType>
         listOfValues = List.of(values());
     
@@ -263,9 +258,5 @@ public enum HelicopterType
     public Helicopter makeInstance()
     {
         return instance.get();
-    }
-    
-    public Class<? extends Helicopter> getHelicopterClass(){
-        return this.helicopterClasses.get(this.ordinal());
     }
 }

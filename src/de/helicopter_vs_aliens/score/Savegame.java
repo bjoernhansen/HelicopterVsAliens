@@ -139,10 +139,9 @@ public class Savegame implements Serializable
 	public void saveToFile(Helicopter helicopter)
 	{				
 		this.save(helicopter);
-		Menu.startscreenButton.get("11").enabled = this.isValid;
+		Menu.startScreenButtons.get("11").setEnabled(this.isValid);
 		writeToFile();			
 	}
-		
 	
 	public void writeToFile()
 	{

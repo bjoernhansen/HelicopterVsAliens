@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 
 import java.awt.*;
@@ -40,13 +41,13 @@ public class Explosion extends GameEntity
 		maxRadius,	// maximaler Explosionsradius
    		broadness;	// breite des animierten Explosionsringes
 	
-    private float[]
+    private final float[]
     	progress = new float[2];	// reguliert das Fortschreiten der Explosionsanimation       
     
     private Color 
     	color;	// Typ- und zeitabhängige (time, s.o.) Farbe der Explosion
     
-    private Point2D 
+    private final Point2D
 		center = new Point2D.Float();			// Zentrum der Exploson
 
 	private ExplosionTypes
@@ -79,7 +80,7 @@ public class Explosion extends GameEntity
 				i.remove();
 				if(exp.type == EMP)
 				{
-					helicopter.empWave = null;
+					((Pegasus)helicopter).empWave = null;
 					if(exp.kills > 1)
 					{
 						Events.extraReward(exp.kills, exp.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
@@ -124,8 +125,8 @@ public class Explosion extends GameEntity
 		}
 		if(this.source != null)
 		{
-			this.center.setLocation((int)this.source.bounds.getCenterX(),
-				(int)this.source.bounds.getCenterY());
+			this.center.setLocation((int)this.source.getBounds().getCenterX(),
+				(int)this.source.getBounds().getCenterY());
 		}
 	}
 	
@@ -152,7 +153,8 @@ public class Explosion extends GameEntity
                              boolean extraDamage)
     {
     	start(explosion, helicopter, x, y, explosionType, extraDamage, null);
-    }        
+    }
+	
 	public static void start(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
 							 Helicopter helicopter,
 							 double x, double y,
@@ -169,17 +171,17 @@ public class Explosion extends GameEntity
 		// kann wahrscheinlich in den EMP spezifischen bereich verschoben werden
 		helicopter.becomesCenterOf(exp);
 		exp.type = explosionType;
-		if(source != null){exp.source = source;}	
+		if(source != null){exp.source = source;}
 		else exp.source = null;
 		if(explosionType != EMP)
 		{
 			exp.maxTime = 35;
 			exp.maxRadius = 65 + (explosionType == JUMBO  || explosionType == PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
 	    	exp.broadness =  50 + (explosionType == JUMBO  || explosionType == PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
-		}		
-		// EMP-Shockwave
+		}
 		else
-		{			
+		{
+			// EMP-Shockwave
 			if(window == STARTSCREEN)
 			{
 				exp.maxTime = 20;
@@ -192,8 +194,8 @@ public class Explosion extends GameEntity
 				exp.maxTime = 20 + level;
 				exp.maxRadius = 75 + (int)(19 + 3f * level * level);
 				exp.broadness = 30 + 3 * (level);
-			}			  	
-	    	helicopter.empWave = exp;
+			}
+			((Pegasus)helicopter).empWave = exp;
 	    	exp.earnedMoney = 0;
 	    	exp.kills = 0;
 		}			

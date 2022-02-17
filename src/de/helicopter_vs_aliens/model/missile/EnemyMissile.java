@@ -28,7 +28,7 @@ public class EnemyMissile extends GameEntity
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
 	
-	private Point2D 
+	private final Point2D
 		location = new Point2D.Float(),
 		speed    = new Point2D.Float(); // Geschwindigkeit der gegnerischen Geschosse
 	
@@ -53,7 +53,7 @@ public class EnemyMissile extends GameEntity
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
 		if(	helicopter.canBeHit()
-			&& helicopter.bounds.intersectsLine( this.location.getX() + this.diameter/2,
+			&& helicopter.getBounds().intersectsLine( this.location.getX() + this.diameter/2,
 												  this.location.getY(),
 												  this.location.getX() + this.diameter/2,
 												  this.location.getY() + this.diameter))
@@ -70,11 +70,11 @@ public class EnemyMissile extends GameEntity
     		helicopter.takeMissileDamage();
     		Explosion.start(Controller.getInstance().explosions,
     						helicopter,
-							(int)(helicopter.bounds.getX()
+							(int)(helicopter.getBounds().getX()
 									+ (helicopter.isMovingLeft
 										? Helicopter.FOCAL_PNT_X_LEFT
 										: Helicopter.FOCAL_PNT_X_RIGHT)),
-							(int)(helicopter.bounds.getY() + Helicopter.FOCAL_PNT_Y_EXP),
+							(int)(helicopter.getBounds().getY() + Helicopter.FOCAL_PNT_Y_EXP),
                     ORDINARY,
 							false);
     	}
@@ -114,8 +114,8 @@ public class EnemyMissile extends GameEntity
     	    	
     	if(enemy.model == BARRIER)
     	{
-    		this.location.setLocation(enemy.bounds.getX() + (enemy.bounds.getWidth() -this.diameter)/2,
-					  				  enemy.bounds.getY() + (enemy.bounds.getHeight()-this.diameter)/2);
+    		this.location.setLocation(enemy.getBounds().getX() + (enemy.getBounds().getWidth() -this.diameter)/2,
+					  				  enemy.getBounds().getY() + (enemy.getBounds().getHeight()-this.diameter)/2);
     		this.speed.setLocation(	shootingSpeed * shootingDirection.getX(),
 		 							shootingSpeed * shootingDirection.getY());
     	}
@@ -125,13 +125,13 @@ public class EnemyMissile extends GameEntity
     		    		
     		if(enemy.model == TIT)
     		{
-    			this.location.setLocation(enemy.bounds.getX() + (enemy.direction.x == -1 ? 0 : enemy.bounds.getWidth()),
-    									  enemy.bounds.getY() );
+    			this.location.setLocation(enemy.getBounds().getX() + (enemy.direction.x == -1 ? 0 : enemy.getBounds().getWidth()),
+    									  enemy.getBounds().getY() );
     		}
 	    	else if(enemy.model == CARGO)
 	    	{
-	    		this.location.setLocation(enemy.bounds.getX() + (enemy.direction.x == -1 ? 0 : enemy.bounds.getWidth()),
-	    								  enemy.bounds.getY() + (enemy.bounds.getHeight()-this.diameter)/2);
+	    		this.location.setLocation(enemy.getBounds().getX() + (enemy.direction.x == -1 ? 0 : enemy.getBounds().getWidth()),
+	    								  enemy.getBounds().getY() + (enemy.getBounds().getHeight()-this.diameter)/2);
 	    	}
     	}    	
     	this.diameter = ((this.type == DISCHARGER) ? DIAMETER : (DIAMETER + 2));

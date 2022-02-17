@@ -21,11 +21,15 @@ public enum WindowType
 
 
     private final static Set<WindowType>
-            MAIN_MENU_WINDOWS = Collections.unmodifiableSet(EnumSet.complementOf(EnumSet.of(GAME, REPAIR_SHOP, SCORESCREEN)));
-
-
+        MAIN_MENU_WINDOWS = Collections.unmodifiableSet(EnumSet.complementOf(EnumSet.of(GAME, REPAIR_SHOP, SCORESCREEN))),
+        START_SCREEN_MENU_WINDOWS = Collections.unmodifiableSet(EnumSet.complementOf(EnumSet.of(STARTSCREEN, GAME, REPAIR_SHOP, SCORESCREEN)));
+    
     public boolean isMainMenuWindow()
     {
         return MAIN_MENU_WINDOWS.contains(this);
+    }
+    
+    public static Set<WindowType> getStartScreenMenuWindows(){
+        return START_SCREEN_MENU_WINDOWS;
     }
 }

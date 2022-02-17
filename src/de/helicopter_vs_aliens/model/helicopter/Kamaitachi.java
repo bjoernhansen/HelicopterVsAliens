@@ -169,29 +169,7 @@ public final class Kamaitachi extends Helicopter
         this.plasmaActivationTimer = 0;
     }
     
-    @Override
-    Color getInputColorCannon()
-    {
-        if(this.plasmaActivationTimer > POWERUP_DURATION/4)
-        {
-            return Color.green;
-        }
-        else if(this.plasmaActivationTimer == 0)
-        {
-            return super.getInputColorCannon();
-        }
-        return this.isInvincible()
-                ? Colorations.reversedRandomGreen()
-                : Colorations.variableGreen;
-    }
-    
-    @Override
-    GradientPaint getGradientCannonHoleColor()
-    {
-        return this.plasmaActivationTimer == 0
-                ? this.gradientHull
-                : Colorations.cannonHoleGreen;
-    }
+
     
     @Override
     public float getBaseDamage()
@@ -223,5 +201,10 @@ public final class Kamaitachi extends Helicopter
         this.bonusKillsTimer += SPEED_KILL_BONUS_TIME;
         this.bonusKills++;
         this.bonusKillsMoney += Events.lastBonus;
+    }
+    
+    public int getPlasmaActivationTimer()
+    {
+        return plasmaActivationTimer;
     }
 }

@@ -27,16 +27,16 @@ public class PowerUpPainter extends Painter<PowerUp>
     @Override
     void paint(Graphics2D g2d, PowerUp powerUp)
     {
-        paint(g2d, powerUp, powerUp.paintBounds.x);
+        paint(g2d, powerUp, powerUp.getPaintBounds().x);
     }
     
     public void paint(Graphics2D g2d, PowerUp powerUp, int x)
     {
         paint(	g2d,
                 x,
-                powerUp.paintBounds.y,
-                powerUp.paintBounds.width,
-                powerUp.paintBounds.height,
+                powerUp.getPaintBounds().y,
+                powerUp.getPaintBounds().width,
+                powerUp.getPaintBounds().height,
                 powerUp.getSurfaceColor(),
                 powerUp.getCrossColor());
     }

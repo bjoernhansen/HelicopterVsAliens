@@ -94,7 +94,7 @@ public class Missile extends RectangularGameEntity
 								- (helicopter.isMovingLeft
 									? (this.typeOfExplosion == JUMBO ? 30 : 20)
 									: 0), 
-							helicopter.bounds.getY() + y, 
+							helicopter.getBounds().getY() + y,
 							this.typeOfExplosion == JUMBO  ? 30 : 20,
 							this.typeOfExplosion == JUMBO ? 6 : 4);
 		this.setPaintBounds((int)this.bounds.getWidth(),
@@ -145,7 +145,7 @@ public class Missile extends RectangularGameEntity
 	private void checkForHitHelicopter(Helicopter helicopter)
 	{
 		if(	this.dangerous 
-			&& helicopter.bounds.intersects(this.bounds))
+			&& helicopter.getBounds().intersects(this.bounds))
 		{
 			Audio.play(Audio.explosion2);
 			this.dangerous = false;
@@ -224,12 +224,12 @@ public class Missile extends RectangularGameEntity
 			= (int)(this.bounds.getX()
 					+ (this.speed < 0 ? 0 : this.bounds.getWidth()) 
 					+ (this.speed < 0 
-						? 2*e.bounds.getWidth()/15 
+						? 2*e.getBounds().getWidth()/15
 						: -(e.model == TIT 
-							? e.bounds.getWidth()/3 
-							: 2*e.bounds.getWidth()/15)));		
+							? e.getBounds().getWidth()/3
+							: 2*e.getBounds().getWidth()/15)));
 		
-		return e.bounds.intersectsLine(	intersectLineX,
+		return e.getBounds().intersectsLine(	intersectLineX,
 										this.bounds.getY(),
 										intersectLineX,
 										this.bounds.getMaxY());
@@ -250,12 +250,12 @@ public class Missile extends RectangularGameEntity
 	private boolean couldHit(Enemy enemy)
 	{		
 		return 	  (this.speed > 0 
-				   && enemy.bounds.intersects(	this.bounds.getX(), 
+				   && enemy.getBounds().intersects(	this.bounds.getX(),
 					   							this.bounds.getY()-1, 
 					   							20 * this.speed, 
 					   							this.bounds.getWidth()+2))
 				||(this.speed < 0 
-				   && enemy.bounds.intersects(	this.bounds.getMaxX() + 20 * this.speed, 
+				   && enemy.getBounds().intersects(	this.bounds.getMaxX() + 20 * this.speed,
 												this.bounds.getY()-1, 
 												-20 * this.speed,
 												this.bounds.getWidth()+2));

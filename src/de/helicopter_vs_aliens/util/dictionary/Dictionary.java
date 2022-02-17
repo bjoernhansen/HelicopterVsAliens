@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.util.dictionary;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
+import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.model.helicopter.*;
 
 import java.io.IOException;
@@ -32,22 +33,22 @@ public final class Dictionary
     private HelicopterType
         helicopterType = HelicopterType.getDefault();
 
-    private EnumMap<SpecialUpgradeType, String>
+    private final EnumMap<SpecialUpgradeType, String>
         specialUpgrades = new EnumMap<>(SpecialUpgradeType.class);
     
-    private EnumMap<StandardUpgradeType, List<String>>
+    private final EnumMap<StandardUpgradeType, List<String>>
         standardUpgradesImprovements = new EnumMap<>(StandardUpgradeType.class);
 
-    private EnumMap<HelicopterType, String>
+    private final EnumMap<HelicopterType, String>
         helicopterNames = new EnumMap<>(HelicopterType.class);
 
-    private EnumMap<HelicopterType, List<String>>
+    private final EnumMap<HelicopterType, List<String>>
         helicopterInfos = new EnumMap<>(HelicopterType.class);
     
-    private EnumMap<BlockMessage, String[]>
+    private final EnumMap<BlockMessage, String[]>
             blockMessages = new EnumMap<>(BlockMessage.class);
     
-    private List <String>
+    private final List <String>
         columnNames = new ArrayList<>(),
         settingOptions = new ArrayList<>();
     
@@ -245,6 +246,11 @@ public final class Dictionary
         return this.languageProperties.getProperty("toTheRepairShop");
     }
     
+    public String goToRepairShop()
+    {
+        return this.languageProperties.getProperty("goToRepairShow");
+    }
+    
     public String mainMenu()
     {
         return this.languageProperties.getProperty("mainMenu");
@@ -253,6 +259,11 @@ public final class Dictionary
     public String startNewGame()
     {
         return this.languageProperties.getProperty("startNewGame");
+    }
+    
+    public String messageAfterCrash(boolean isGameOver)
+    {
+        return isGameOver ? this.startNewGame() : this.goToRepairShop();
     }
     
     public String quit()
@@ -376,8 +387,17 @@ public final class Dictionary
         return standardUpgradesImprovements.get(ENERGY_ABILITY);
     }
     
+    public String genericEnergyAbility(){
+        String dictionaryKey = "upgrades.standard.energyAbility." + (language.getObjectPosition()+1);
+        return this.languageProperties.getProperty(dictionaryKey);
+    }
+    
     public String standardUpgradeName(StandardUpgradeType standardUpgradeType)
     {
+        if (Menu.window == WindowType.HELICOPTER_TYPES && standardUpgradeType == ENERGY_ABILITY)
+        {
+            return genericEnergyAbility();
+        }
         return standardUpgradesImprovements.get(standardUpgradeType).get(language.getObjectPosition());
     }
     
@@ -399,8 +419,7 @@ public final class Dictionary
                 message[0] = String.format(
                                 blockMessages.get(HELICOPTER_NOT_AVAILABLE)[0],
                                 this.typeName(helicopterType));
-                message[1] = String.format(
-                                blockMessages.get(HELICOPTER_NOT_AVAILABLE)[1]);
+                message[1] = blockMessages.get(HELICOPTER_NOT_AVAILABLE)[1];
                 message[2] = String.format(
                                 blockMessages.get(HELICOPTER_NOT_AVAILABLE)[2],
                                 this.helicopterName(helicopterType.getUnlockerTypes().get(0)),

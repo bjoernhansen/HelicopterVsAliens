@@ -20,7 +20,7 @@ public enum BlockMessage
         defensiveCopyOfValues = values();
         
     private static final List<String>
-        SUBKEYS = Collections.unmodifiableList(Arrays.asList(
+        SUBKEYS = List.of(
                 "helicopterAlreadyRepaired.",
                 "notRepairedBeforeMission.",
                 "notRepairedBeforeUpgrade.",
@@ -29,7 +29,7 @@ public enum BlockMessage
                 "upgradeAlreadyInstalled.",
                 "notEnoughMoneyForRepairs.",
                 "heliosNotAvailable.",
-                "helicopterNotAvailable."));
+                "helicopterNotAvailable.");
     
     
     public String getKey()

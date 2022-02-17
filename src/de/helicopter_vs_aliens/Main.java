@@ -56,9 +56,6 @@ public class Main
     	if(TESTMODE)
         {
 
-
-
-
 		}
         else
         {
@@ -110,15 +107,14 @@ public class Main
     {
         isFullScreen = !isFullScreen;
         
-        Button.STARTSCREEN_MENU_BUTTON[ENGLISH.ordinal()][SETTINGS.ordinal()][0]
+        Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[ENGLISH.ordinal()][SETTINGS.ordinal()][0]
         	= Button.DISPLAY[ENGLISH.ordinal()][isFullScreen ? 0 : 1];
-		Button.STARTSCREEN_MENU_BUTTON[GERMAN.ordinal()][SETTINGS.ordinal()][0]
+		Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[GERMAN.ordinal()][SETTINGS.ordinal()][0]
 			= Button.DISPLAY[GERMAN.ordinal()][isFullScreen ? 0 : 1];
    
 		if(currentButton != null)
 		{
-			currentButton.label
-				= Button.DISPLAY[Menu.language.ordinal()][isFullScreen ? 0 : 1];
+			currentButton.setLabel(Button.DISPLAY[Menu.language.ordinal()][isFullScreen ? 0 : 1]);
 		}
 		    
         frame.dispose();

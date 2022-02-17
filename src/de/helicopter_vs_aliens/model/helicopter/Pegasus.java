@@ -27,12 +27,14 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_
 public final class Pegasus extends Helicopter
 {
     private static final int[]
-        INTERPHASE_GENERATOR_ALPHA = {110, 70}, // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung
         SHIFT_TIME = {225, 185, 151, 124, 102, 83, 68, 56, 45, 37, 30, 25};
     
     private static final int
         EMP_TIMER_DURATION = 67;
-
+    
+    public Explosion
+        empWave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
+    
     private int
         shiftTime;                  // Zeit [frames], die verstreichen muss, bis der Interphasengenerator aktiviert wird
 
@@ -44,6 +46,7 @@ public final class Pegasus extends Helicopter
 
     private boolean
         hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator
+    
     
     
     @Override
@@ -183,7 +186,7 @@ public final class Pegasus extends Helicopter
                 && super.basicCollisionRequirementsSatisfied(e);
     }
 
-    private boolean isInPhase()
+    public boolean isInPhase()
     {
         return this.interphaseGeneratorTimer.isActive() || !this.hasInterphaseGenerator || Menu.window != GAME;
     }
@@ -238,47 +241,6 @@ public final class Pegasus extends Helicopter
     }
     
     @Override
-    void determineInputColors()
-    {
-        super.determineInputColors();
-        if(!this.isInPhase())
-        {
-            // TODO HashMap daraus machen und hier verwenden
-            this.inputColorCannon = Colorations.setAlpha(this.inputColorCannon, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputColorHull =   Colorations.setAlpha(this.inputColorHull, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputColorWindow = Colorations.setAlpha(this.inputColorWindow, INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()] );
-            this.inputColorFuss1 =  Colorations.setAlpha(this.inputColorFuss1, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputColorFuss2 =  Colorations.setAlpha(this.inputColorFuss2, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputGray = 		Colorations.setAlpha(this.inputGray, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputLightGray = 	Colorations.setAlpha(this.inputLightGray, 	INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-            this.inputLamp = 		Colorations.setAlpha(this.inputLamp, 		INTERPHASE_GENERATOR_ALPHA[Events.timeOfDay.ordinal()]);
-        }
-    }
-    
-    @Override
-    void paintComponents(Graphics2D g2d, int left, int top)
-    {
-        super.paintComponents(g2d, left, top);
-        
-        // EMP wave animation in start menu
-        if(Menu.window == STARTSCREEN
-                // TODO vermutlich unnötig
-            && Menu.effectTimer[PEGASUS.ordinal()] > 0
-            && this.empWave != null)
-        {
-            if(this.empWave.time >= this.empWave.maxTime)
-            {
-                this.empWave = null;
-            }
-            else
-            {
-                this.empWave.update();
-                this.empWave.paint(g2d);
-            }
-        }
-    }
-    
-    @Override
     public String getTypeSpecificDebuggingOutput()
     {
         return String.format("emp Timer: %d; phaseShift Timer: %d", this.empTimer.getTimeLeft(), this.interphaseGeneratorTimer.getTimeLeft());
@@ -297,5 +259,12 @@ public final class Pegasus extends Helicopter
     {
         super.prepareForMission();
         this.restartInterphaseGenerator();
+    }
+    
+    @Override
+    void generalInitialization()
+    {
+        super.generalInitialization();
+        this.empWave = null;
     }
 }

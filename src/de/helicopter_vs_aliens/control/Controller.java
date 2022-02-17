@@ -136,7 +136,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);		
-		Menu.initializeMenu(this.helicopter);
+		Menu.initializeMenu();
 		Menu.updateButtonLabels(this.helicopter);
 		this.initializeLists();
 		BackgroundObject.initialize(this.backgroundObjects);

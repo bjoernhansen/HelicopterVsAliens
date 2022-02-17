@@ -43,7 +43,7 @@ public class PowerUp extends RectangularGameEntity
     private PowerUpType
 		type;
 	
-	private Point2D 
+	private final Point2D
 		speed = new Point2D.Float();	// Geschwindigkeit des PowerUps
     
     private Color
@@ -68,7 +68,7 @@ public class PowerUp extends RectangularGameEntity
 
 	private void update(Helicopter helicopter)
 	{		
-		if(this.bounds.intersects(helicopter.bounds)){this.collect(helicopter);}		
+		if(this.bounds.intersects(helicopter.getBounds())){this.collect(helicopter);}
 		
 		if(!this.hasStopped
 		   && helicopter.canImmobilizePowerUp()
@@ -213,11 +213,11 @@ public class PowerUp extends RectangularGameEntity
 		
 		if(enemy != null)
 		{
-			pu.make(enemy.bounds.getX(), 
-					enemy.bounds.getY(), 
+			pu.make(enemy.getBounds().getX(),
+					enemy.getBounds().getY(),
 					type,
 					(int)(POWER_UP_WORTH_MULTIPLIER * enemy.type.getStrength()),
-					helicopter.bounds.getX() > enemy.bounds.getX() 
+					helicopter.getBounds().getX() > enemy.getBounds().getX()
 					|| helicopter.canImmobilizePowerUp() ? -1 : 1 );
 		}
 		else

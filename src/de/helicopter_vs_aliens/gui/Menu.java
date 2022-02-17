@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.gui;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import de.helicopter_vs_aliens.*;
 import de.helicopter_vs_aliens.audio.Audio;
@@ -8,6 +9,7 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.PowerUpPainter;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.helicopter.*;
@@ -26,6 +28,8 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.Events.MAXIMUM_LEVEL;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.PriceLevel.*;
+import static de.helicopter_vs_aliens.gui.PriceLevel.CHEAP;
 import static de.helicopter_vs_aliens.gui.WindowType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
@@ -38,6 +42,9 @@ import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 // TODO Klasse ist zu groß --> splitten
 public class Menu
 {
+	public static final int
+		START_SCREEN_MENU_BUTTON_MAX_COUNT = 8;
+	
 	private static final String
 		VERSION =   "Version 1.3.4",			// Spielversion
 		GAME_NAME = "Helicopter vs. Aliens",
@@ -111,7 +118,7 @@ public class Menu
 	 	HELICOPTER_DISTANCE = 250,                		// Abstand zwischen den Helikopter auf dem Startscreen
 		START_SCREEN_HELICOPTER_OFFSET_Y = 33;    		// y-Verschiebung der Helicopter-Leiste im Startscreen-Menü
 
-	private static final int 	
+	private static final int
     	STATUS_BAR_X1 = 268,                   			// x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,erste Spalte)
     	STATUS_BAR_X2 = 421,                   			// x-Postion der Schrift in der Statusanzeige (Werkstatt-Menü,zweite Spalte)
     	STANDARD_UPGRADE_OFFSET_Y = 148,                // y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
@@ -139,8 +146,8 @@ public class Menu
 	   
     public static HashMap<String, Button>
 		inGameButton = new HashMap<>(),
-		startscreenButton = new HashMap<>(),
-		startscreenMenuButton = new HashMap<>(),
+		startScreenButtons = new HashMap<>(),
+		startScreenMenuButtons = new HashMap<>(),
 		repairShopButton = new HashMap<>();
     
     public static Label label;
@@ -148,11 +155,11 @@ public class Menu
 	public static Rectangle[] helicopterFrame = new Rectangle[NUMBER_OF_START_SCREEN_HELICOPTERS];
     public static FontProvider fontProvider = new FontProvider();
     public static Dictionary dictionary = Controller.getInstance().getDictionary();
-
+	
 	public static final Timer
 		levelDisplayTimer = new Timer(LEVEL_DISPLAY_TIME);			// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
 
-    public static void initializeMenu(Helicopter helicopter)
+    public static void initializeMenu()
     {
     	for(HelicopterType helicopterType : HelicopterType.getValues())
 		{
@@ -170,28 +177,28 @@ public class Menu
 	    triangle[0] = new Polygon(px1, py, 3);
 	    triangle[1] = new Polygon(px2, py, 3);
 	    
-	    Button.initializeButtons();
+	    initializeButtons();
 	    for(int i = 0; i < NUMBER_OF_START_SCREEN_HELICOPTERS; i++)
 	    {
 	    	helicopterFrame[i]
 	    	    = new Rectangle(  30 + START_SCREEN_OFFSET_X
-	    							 + i * HELICOPTER_DISTANCE, 
+	    							 + i * HELICOPTER_DISTANCE,
 	    						 239 + START_SCREEN_HELICOPTER_OFFSET_Y, 206, 116);
 	    }
-    }    
-	    
+    }
+	   
     static void paintGui(Graphics2D g2d, Helicopter helicopter)
 	{
-		// Werkstatt-Button						
+		// Werkstatt-Button
 		if(Events.isRestartWindowVisible)
 		{
 			boolean gameOver;
 			gameOver = Events.money <= Events.repairFee(helicopter, helicopter.isDamaged)
 						|| Events.level >= 51;
 			paintRestartWindow(g2d, helicopter, gameOver);
-		}	
+		}
 		else
-		{	
+		{
 			if(helicopter.isOnTheGround())
 			{
 				inGameButton.get("RepairShop").paint(g2d);
@@ -200,16 +207,17 @@ public class Menu
 			}
 			if(isMenuVisible){
 				paintIngameMenu(g2d);}
-		}		
+		}
 	}
 	
 	private static void paintIngameMenu(Graphics2D g2d)
-    {      
+    {
     	paintFrame(g2d,363, 77, 256, 231, Colorations.golden);
         g2d.setColor(Colorations.red);
         g2d.setFont(fontProvider.getPlain(25));
         g2d.drawString(dictionary.mainMenu(), 422 + (language == ENGLISH ? 6 : 0), 106);
-        inGameButton.get("MMNewGame1").paint(g2d);
+		
+		inGameButton.get("MMNewGame1").paint(g2d);
         inGameButton.get("MMStopMusic").paint(g2d);
         inGameButton.get("MMNewGame2").paint(g2d);
         inGameButton.get("MMCancel").paint(g2d);
@@ -221,9 +229,9 @@ public class Menu
     
     
     static void updateStartscreen(Helicopter helicopter, int counter)
-	{    	
+	{
     	Colorations.calculateVariableGameColors(counter);
-    	identifyHighlightedButtons(helicopter, startscreenButton);
+    	identifyHighlightedButtons(helicopter, startScreenButtons);
         if(crossTimer > CROSS_MAX_DISPLAY_TIME){
 			crossTimer = 0;}
         else if(crossTimer > 0 ){
@@ -236,7 +244,7 @@ public class Menu
 		// TODO evtl. ist hier kein array effectTimer, sondern ein einzelner Wert erforderlich, da die effekte scheinbar
 		// nicht gleichzeitig erfolgen können (reset bei wechsel des selektierten Helikopters
         for(int i = 0; i < HelicopterType.size(); i++)
-        {	        	
+        {
         	if(effectTimer[i] > 0){
 				effectTimer[i]--;}
         }
@@ -257,7 +265,7 @@ public class Menu
 				}
 				helicopterDummy.updateMenuEffect();
 				break;
-			}			
+			}
 		}
 		if(Events.nextHelicopterType == null)
 		{
@@ -275,11 +283,11 @@ public class Menu
 	}
 
 	static void paintStartscreen(Graphics2D g2d, Helicopter helicopter)
-    {    	    	
+    {
     	g2d.setPaint(Colorations.gradientVariableWhite);
         g2d.setFont(fontProvider.getPlain(80));
         g2d.drawString(GAME_NAME, 512 - g2d.getFontMetrics().stringWidth(GAME_NAME)/2, 85);
-                       
+        
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(16));
         g2d.drawString(VERSION, 1016 - g2d.getFontMetrics().stringWidth(VERSION), 20);
@@ -302,8 +310,8 @@ public class Menu
         	g2d.drawString(message[0], (512 - g2d.getFontMetrics().stringWidth(message[0])/2), 160);
         	g2d.drawString(message[1], (512 - g2d.getFontMetrics().stringWidth(message[1])/2), 185);
         	g2d.drawString(message[2], (512 - g2d.getFontMetrics().stringWidth(message[2])/2), 210);
-        }                
-         
+        }
+        
         for(int i = 0; i < NUMBER_OF_START_SCREEN_HELICOPTERS; i++)
         {
         	if(    Events.nextHelicopterType != null
@@ -331,16 +339,21 @@ public class Menu
                         29 + START_SCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
                         380 + j * 20 + START_SCREEN_HELICOPTER_OFFSET_Y);
 			}
-        	
           
             if(	helicopterFrame[i].contains(helicopter.destination))
             {
             	paintFrame(g2d, helicopterFrame[i], Colorations.darkBlue);
             }
-            helicopterDummies.get(HelicopterType.getValues().get((helicopterSelection +i)% HelicopterType.size())).startScreenPaint(
+    
+            Helicopter nextStartScreenHelicopter = helicopterDummies.get(HelicopterType.getValues()
+                                                                                       .get((helicopterSelection + i) % HelicopterType.size()));
+			HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(nextStartScreenHelicopter.getClass());
+			helicopterPainter.startScreenPaint(
             	g2d,
+                nextStartScreenHelicopter,
 				HELICOPTER_START_SCREEN_OFFSET.x + START_SCREEN_OFFSET_X + i * HELICOPTER_DISTANCE,
 				HELICOPTER_START_SCREEN_OFFSET.y + START_SCREEN_HELICOPTER_OFFSET_Y);
+            // TODO destination darf keine Eigenschaft von Helicopter sein
             if(!helicopterFrame[i].contains(helicopter.destination.x, helicopter.destination.y))
             {
             	paintFrame(g2d, helicopterFrame[i], Colorations.translucentBlack);
@@ -352,10 +365,10 @@ public class Menu
             }
         }
         
-        // die Buttons        
+        // die Buttons
         for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++){
-			startscreenButton.get(Integer.toString(i)+j).paint(g2d);}}
-                   
+			startScreenButtons.get(Integer.toString(i)+j).paint(g2d);}}
+        
         // die grünen Pfeile
         for(int i = 0; i < 2; i++)
         {
@@ -371,14 +384,14 @@ public class Menu
 	    	int alpha = (int)(255*(((double)CROSS_MAX_DISPLAY_TIME- crossTimer)/(CROSS_MAX_DISPLAY_TIME/2)));
 	    	if(crossTimer < CROSS_MAX_DISPLAY_TIME/2){g2d.setColor(Color.red);}
 		    else{g2d.setColor(Colorations.setAlpha(Color.red, alpha));}
-		    g2d.fill(cross);	    
+		    g2d.fill(cross);
 		    if(crossTimer < CROSS_MAX_DISPLAY_TIME/2){g2d.setColor(Colorations.red);}
 		    else{g2d.setColor(Colorations.setAlpha(Colorations.red, alpha));}
 		    g2d.setStroke(new BasicStroke(2));
 		    g2d.draw(cross);
 		    g2d.setStroke(new BasicStroke(1));
-	    }	    
-    }    
+	    }
+    }
     
     private static void paintTickmark(Graphics2D g2d, int i, int x, int y, int w, int h)
 	{
@@ -395,35 +408,38 @@ public class Menu
 				y + h + START_SCREEN_HELICOPTER_OFFSET_Y);
 	}
     
-    static void updateAndPaintStartscreenMenu(Graphics2D g2d,
-											  Helicopter helicopter,
-											  int counter)
-    {    	
+    static void updateAndPaintStartscreenMenu(Graphics2D g2d, int counter)
+    {
+		// TODO mindestens auf mehrere Methoden aufteilen
+		
     	g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(29));
         if(window == SETTINGS)
         {
         	g2d.drawString(dictionary.settings(), 40, 55);
         }
-        else{g2d.drawString(startscreenMenuButton.get(Integer.toString(page)).label, 40, 55);}
+        else{g2d.drawString(startScreenMenuButtons.get(Integer.toString(page)).getLabel(), 40, 55);}
        
         paintFrameLine(g2d, 26, 67, 971);
         paintFrame(g2d, 26, 21, 971, 317);
-                
-        // die Buttons        
-        boolean loner = startscreenMenuButton.get("1").label.equals("");
-        for(int m = 0; m < 8; m++)
+        
+        // die Buttons
+		if (!showOnlyCancelButton())
 		{
-        	startscreenMenuButton.get(Integer.toString(m)).paint(g2d, loner);
-        }
-        startscreenMenuButton.get("Cancel").paint(g2d);
+			for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
+			{
+				startScreenMenuButtons.get(Integer.toString(m))
+									  .paint(g2d);
+			}
+		}
+        startScreenMenuButtons.get("Cancel").paint(g2d);
         
         if(window  == HELICOPTER_TYPES)
         {
         	if(page > 1 && page < 2 + HelicopterType.size())
         	{
-				helicopterDummies.get(HelicopterType.getValues().get(page-2)).startScreenMenuPaint(g2d);
-        	}
+                paintHelicopterInStartScreenMenu(g2d);
+            }
         	else if(page == 1)
         	{
         		String tempString = "";
@@ -454,13 +470,14 @@ public class Menu
             				g2d.setColor(upgradeCosts.getColor());
             				tempString = dictionary.priceLevel(upgradeCosts);
             			}
+						if(tempString == null) tempString = "Erwischt!";
             			g2d.drawString(tempString, 200 + (j-1) * 135, 140 + (i == 0 ? 0 : 5) + (i-1) * 32);
             		}
             	}
         	}
         }
         else if(window  == HIGHSCORE)
-        {       	
+        {
         	if(page == 0)
         	{
         		String tempString = "";
@@ -504,8 +521,8 @@ public class Menu
         	{
         		if(page > 1 && page < 2 + HelicopterType.size())
             	{
-					helicopterDummies.get(HelicopterType.getValues().get(page-2)).startScreenMenuPaint(g2d);
-            	}
+                    paintHelicopterInStartScreenMenu(g2d);
+                }
             	
         		int columnDistance = 114,
                     topLine = 125,
@@ -514,7 +531,7 @@ public class Menu
                     realLeftColumn = leftColumn,
                     xShift = 10;
         		    			
-        		g2d.setColor(Color.lightGray);    			
+        		g2d.setColor(Color.lightGray);
         		for(int i = 0; i < NUMBER_OF_COLUMN_NAMES; i++)
     			{
     				if(i == 1){realLeftColumn = leftColumn - 46;}
@@ -530,7 +547,7 @@ public class Menu
     				HighscoreEntry tempEntry = Events.highscore[page==1?6:page-2][j];
     				
         			if(tempEntry != null)
-    				{    					
+    				{
         				g2d.setColor(Color.white);
         				g2d.drawString(toStringWithSpace(j+1, false), leftColumn + xShift , topLine + j * lineDistance);
         				g2d.drawString(tempEntry.playerName, leftColumn - 46 + xShift + columnDistance, topLine + j * lineDistance);
@@ -548,10 +565,10 @@ public class Menu
     				}
         			else break;
     			}
-        	}        	
-        }        
+        	}
+        }
         else if(window  == SETTINGS)
-        {        	
+        {
         	g2d.setFont(fontProvider.getPlain(18));
         	g2d.setColor(Colorations.lightestGray);
         	
@@ -559,13 +576,13 @@ public class Menu
             {
                 g2d.drawString(dictionary.settingOption(i), SETTING_LEFT, SETTING_TOP + i * SETTING_LINE_SPACING);
             }
-        	        	
+        	   
         	g2d.setColor(Colorations.golden);
         	g2d.drawString( Button.DISPLAY[language.ordinal()][Main.isFullScreen ? 1 : 0]
-        				 	  + (!Main.isFullScreen ? "" : " (" 
+        				 	  + (!Main.isFullScreen ? "" : " ("
         				 		   + (hasOriginalResulution
         				 			   ? Main.currentDisplayMode.getWidth()
-        				 				   + "x" 
+        				 				   + "x"
         				 				   + Main.currentDisplayMode.getHeight()
         				 			   : "1280x720") + ")"),
         				 	SETTING_LEFT + SETTING_COLUMN_SPACING,
@@ -577,7 +594,7 @@ public class Menu
         	{
         		g2d.setColor(Colorations.golden);
         		g2d.drawString("(" + (Audio.standardBackgroundMusic ? "Classic" : "Michael" + (language == ENGLISH ? " mode" : "-Modus")) + ")", SETTING_LEFT + SETTING_COLUMN_SPACING + 25, SETTING_TOP + SETTING_LINE_SPACING);
-        	}        	
+        	}
         	
         	g2d.setColor(Controller.antialiasing ? Color.green : Color.red);
         	g2d.drawString(activationState(Controller.antialiasing)			, SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 2 * SETTING_LINE_SPACING);
@@ -587,7 +604,7 @@ public class Menu
         	
         	if(page == 4){g2d.setColor(Color.white);}
         	g2d.drawString(HighscoreEntry.currentPlayerName, SETTING_LEFT + SETTING_COLUMN_SPACING, SETTING_TOP + 4 * SETTING_LINE_SPACING);
-        	        	
+        	
         	if(page == 4 && (counter/30)%2 == 0){g2d.drawString("|", SETTING_LEFT + SETTING_COLUMN_SPACING + g2d.getFontMetrics().stringWidth(HighscoreEntry.currentPlayerName), SETTING_TOP + 4 * SETTING_LINE_SPACING);}
         
         } else if (window == DESCRIPTION && page == 5)
@@ -605,16 +622,28 @@ public class Menu
 						powerUpType.getCrossColor());
 			}
 		}
-    }    
-  
-	private static String toStringWithSpace(int value)
+    }
+	
+	private static boolean showOnlyCancelButton()
+	{
+		return startScreenMenuButtons.get("1").isLabelEmpty();
+	}
+	
+	private static void paintHelicopterInStartScreenMenu(Graphics2D g2d)
+    {
+        Helicopter startScreenMenuHelicopter = helicopterDummies.get(HelicopterType.getValues().get(page-2));
+		HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(startScreenMenuHelicopter.getClass());
+        helicopterPainter.startScreenMenuPaint(g2d, startScreenMenuHelicopter);
+    }
+    
+    private static String toStringWithSpace(int value)
     {
     	return toStringWithSpace(value, true);
     }
     private static String toStringWithSpace(int value, boolean big)
-	{		
-		return (big	? (value >= 100 ? "" : "  ") : "") 
-				+ (value >= 10 ? "" : "  ") 
+	{
+		return (big	? (value >= 100 ? "" : "  ") : "")
+				+ (value >= 10 ? "" : "  ")
 				+ value;
 	}
 
@@ -635,7 +664,7 @@ public class Menu
 	}
 
 	static void paintRepairShop(Graphics2D g2d, Helicopter helicopter)
-    {     	
+    {
     	// allgmeine Anzeigen
     	g2d.setPaint(Colorations.gradientVariableWhite);
         g2d.setFont(fontProvider.getPlain(52));
@@ -660,8 +689,8 @@ public class Menu
         g2d.drawString(String.format("%s:", dictionary.mission()), 27, 382);
    
         repairShopButton.get("Einsatz").paint(g2d);
-                       
-        // Die Status-Leiste     
+        
+        // Die Status-Leiste
         paintFrame(g2d, 251, 117, 285, 326);
         
         g2d.setColor(Color.yellow);
@@ -681,7 +710,7 @@ public class Menu
             g2d.setColor(Colorations.lightOrange);
 			String tempString = dictionary.standardUpgradeName(standardUpgradeType);
             g2d.drawString(tempString + ":",
-            			   STATUS_BAR_X1, 
+            			   STATUS_BAR_X1,
             			   STANDARD_UPGRADE_OFFSET_Y + 25 + standardUpgradeType.ordinal() * 25);
            
             if((standardUpgradeType != ENERGY_ABILITY && helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType)
@@ -692,7 +721,7 @@ public class Menu
             {
             	g2d.setColor(Colorations.golden);
             }
-            else{g2d.setColor(Color.white);}            
+            else{g2d.setColor(Color.white);}
             if(standardUpgradeType == ENERGY_ABILITY && helicopter.getType() == OROCHI)
             {
             	g2d.drawString(dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType) + " / " + (helicopter.getUpgradeLevelOf(MISSILE_DRIVE)-1), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y + 150);
@@ -703,17 +732,17 @@ public class Menu
         // Spezial-Upgrades
 		// TODO überprüfen, ob iterieren über eine Schliefe möglich ist
         if(helicopter.hasSpotlights)
-        {            
+        {
             g2d.setColor(Colorations.golden);
             g2d.drawString(dictionary.specialUpgrade(SPOTLIGHT), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 0);
-        }       
+        }
         if(helicopter.hasGoliathPlating())
-        {            
+        {
             g2d.setColor(Colorations.golden);
             g2d.drawString(dictionary.specialUpgrade(GOLIATH_PLATING), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 25);
-        }       
+        }
         if(helicopter.hasPiercingWarheads)
-        {            
+        {
             g2d.setColor(Colorations.golden);
             g2d.drawString(dictionary.specialUpgrade(PIERCING_WARHEADS), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 50);
         }
@@ -749,25 +778,25 @@ public class Menu
             }
         }
         
-        // Standard-Upgrades     
+        // Standard-Upgrades
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(language == ENGLISH ? "Standard upgrades:" : "Standard-Upgrades:", Button.STANDARD_UPGRADE_LOCATION.x + 4, 82);
+        g2d.drawString(language == ENGLISH ? "Standard upgrades:" : "Standard-Upgrades:", Button.STANDARD_UPGRADE_BUTTON_OFFSET.x + 4, 82);
         g2d.setFont(fontProvider.getPlain(15));
         for(int i = 0; i < 6; i++){
 			repairShopButton.get("StandardUpgrade" + i).paint(g2d);}
-                
-        // Message Box        
+        
+        // Message Box
         paintMessageFrame(g2d);
         
         // Spezial-Upgrades
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(language == ENGLISH ? "Special upgrades:" : "Spezial-Upgrades:", 774, 142);        
+        g2d.drawString(language == ENGLISH ? "Special upgrades:" : "Spezial-Upgrades:", 774, 142);
         g2d.setFont(fontProvider.getPlain(15));
         for(int i = 0; i < 5; i++){
 			repairShopButton.get("Special" + i).paint(g2d);}
-    }  
+    }
     
     private static void paintMessageFrame(Graphics2D g2d)
     {
@@ -778,7 +807,7 @@ public class Menu
     }
     
 	static void paintScorescreen(Graphics2D g2d, Helicopter helicopter)
-	{    	
+	{
     	// Helikopter-Anzeige
     	paintHelicopterDisplay(g2d, helicopter, 0, 5);
     	
@@ -786,14 +815,14 @@ public class Menu
         g2d.setFont(fontProvider.getPlain(60));
         String temporaryString = language == ENGLISH ? "Game statistics" : "Spielstatistik";
         g2d.drawString((temporaryString), (981-g2d.getFontMetrics().stringWidth(temporaryString))/2, 65);
-         
+        
         paintFrame(g2d, 619, 90, 376, 298);
         paintFrameLine(g2d, 621, 140, 372);
         paintFrameLine(g2d, 621, 249, 372);
         paintFrame(g2d, 297, 90, 250, 200);
         
         
-        startscreenMenuButton.get("Cancel").paint(g2d);
+        startScreenMenuButtons.get("Cancel").paint(g2d);
 		
 		if(Events.level > MAXIMUM_LEVEL)
 		{
@@ -805,7 +834,7 @@ public class Menu
 			else
 			{
 				g2d.drawString("Mission in " + minuten(helicopter.scoreScreenTimes[4]) + " erfüllt!", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS -9);
-			}			
+			}
 		}
 		else
 		{
@@ -838,25 +867,25 @@ public class Menu
 		
         g2d.setColor(Color.white);
 		// TODO hier dictionary einsetzen und loop erzeugen
-		g2d.drawString((language == ENGLISH ? "Crash landings: " : "Bruchlandungen: ") 
+		g2d.drawString((language == ENGLISH ? "Crash landings: " : "Bruchlandungen: ")
 										+ helicopter.numberOfCrashes,
 				SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 1 + 11);
-        g2d.drawString((language == ENGLISH ? "Repairs: " : "Reparaturen: ") 
+        g2d.drawString((language == ENGLISH ? "Repairs: " : "Reparaturen: ")
         								+ helicopter.numberOfRepairs,
 				SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 2 + 11);
-        g2d.drawString((language == ENGLISH ? "Overall earnings: " : "Gesamt-Sold: ") 
+        g2d.drawString((language == ENGLISH ? "Overall earnings: " : "Gesamt-Sold: ")
         								+  Events.overallEarnings + " €",
 				SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 3 + 11);
         
-        int        
+        int
         percentage = Events.bonusIncomePercentage();
         g2d.setColor(Colorations.scorescreen[0]);
         g2d.drawString((language == ENGLISH ? "Additional income due to extra boni: " : "Zusätzliche Einahmen durch Extra-Boni: +") + percentage + "%", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 5);
-               
+        
         percentage = Calculations.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen);
         g2d.setColor(Colorations.scorescreen[1]);
         g2d.drawString((language == ENGLISH ? "Defeated enemies: " : "Besiegte Gegner: ") + helicopter.numberOfEnemiesKilled + (language == ENGLISH ? " of " : " von ") + helicopter.numberOfEnemiesSeen + " (" + percentage + "%)", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 6);
-            
+        
         percentage = Calculations.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen);
         g2d.setColor(Colorations.scorescreen[2]);
         g2d.drawString((language == ENGLISH ? "Defeated mini-bosses: " : "Besiegte Mini-Bosse: ") + helicopter.numberOfMiniBossKilled + (language == ENGLISH ? " of " : " von ") + helicopter.numberOfMiniBossSeen + " (" + percentage + "%)", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 7);
@@ -867,9 +896,9 @@ public class Menu
 	}
 	
 	public static void updateScorescreen(Helicopter helicopter)
-	{		
+	{
     	helicopter.rotatePropellerSlow();
-		startscreenMenuButton.get("Cancel").highlighted = startscreenMenuButton.get("Cancel").bounds.contains(helicopter.destination);
+		startScreenMenuButtons.get("Cancel").setHighlighted(startScreenMenuButtons.get("Cancel").getBounds().contains(helicopter.destination));
 	}
 	
 	public static String minuten(long spielzeit)
@@ -912,7 +941,7 @@ public class Menu
 			else if(moneyDisplayTimer > MONEY_DISPLAY_TIME)
 			{
 				moneyDisplayTimer = DISABLED;
-			}				
+			}
 		}
 	}
 	
@@ -921,7 +950,7 @@ public class Menu
 		if(unlockedTimer > 0)
     	{
 			updateUnlockedInfo(helicopter);
-		}		
+		}
 	}
 	
 	public static void
@@ -943,13 +972,13 @@ public class Menu
 				&& !Events.isRestartWindowVisible))
 		{
 			paintCreditDisplay(g2d);
-		}		
+		}
 		if(specialInfoSelection != 0)
 		{
 			paintSpecialInfoDisplay( g2d, controller, helicopter);
 		}
 	}
-		
+	
 	private static void paintLevelDisplay(Graphics2D g2d)
     {
 		if(Events.timeOfDay == NIGHT){g2d.setColor(Color.white);}
@@ -982,13 +1011,13 @@ public class Menu
     }
 	
 	private static void paintCreditDisplay(Graphics2D g2d)
-    {	
+    {
 		if(Events.timeOfDay == NIGHT){g2d.setColor(Color.red);}
         else{g2d.setColor(Colorations.red);}
         g2d.setFont(fontProvider.getPlain(22));
         g2d.drawString(String.format("%s: %d €", dictionary.credit(), Events.money), 20, 35);
         if(Events.lastBonus > 0)
-        {            
+        {
             if(Events.timeOfDay == NIGHT){g2d.setColor(Colorations.MONEY_DISPLAY_NIGHT_RED);}
             else{g2d.setColor(Colorations.darkerOrange);}
             if(moneyDisplayTimer <= 23){g2d.setFont(new Font("Dialog", Font.PLAIN, moneyDisplayTimer));}
@@ -997,12 +1026,12 @@ public class Menu
             g2d.drawString("+" + Events.lastBonus + " €", 20, 60);
             if(Events.lastExtraBonus > 0)
             {
-            	if(Events.timeOfDay == NIGHT){g2d.setColor(Color.yellow);}            
+            	if(Events.timeOfDay == NIGHT){g2d.setColor(Color.yellow);}
             	else{g2d.setColor(Colorations.darkYellow);}
             	g2d.drawString("+" + Events.lastExtraBonus + " €", 20, 86);
-            }                    
-        }        
-    }	
+            }
+        }
+    }
 	
 	private static void paintSpecialInfoDisplay(Graphics2D g2d,
 												Controller controller,
@@ -1085,13 +1114,13 @@ public class Menu
 								? 100*helicopter.numberOfEnemiesKilled /helicopter.numberOfEnemiesSeen
 								: 0;
 			infoString = (language == ENGLISH
-							? "Defeated enemies: " 
-							: "Besiegte Gegner: ") 
+							? "Defeated enemies: "
+							: "Besiegte Gegner: ")
 						  + helicopter.numberOfEnemiesKilled
-						  + (language == ENGLISH ? " of " : " von ") 
+						  + (language == ENGLISH ? " of " : " von ")
 						  + helicopter.numberOfEnemiesSeen
-						  + " (" 
-						  + percentage 
+						  + " ("
+						  + percentage
 						  + "%)";
 		}
 		else if(specialInfoSelection == 12)
@@ -1101,11 +1130,11 @@ public class Menu
 								: 0;
 			infoString = "Missile counter: "
 						  + helicopter.missileCounter
-						  + "; Hit counter: " 
+						  + "; Hit counter: "
 						  + helicopter.hitCounter
-						  + "; Hit rate: " 
+						  + "; Hit rate: "
 						  + percentage;
-		}   
+		}
 		else if(specialInfoSelection == 13)
 		{
 			infoString = Menu.dictionary.typeName();
@@ -1134,7 +1163,7 @@ public class Menu
 		paintBossHealthBar(g2d);
 		// TODO Konstante einsetzen
 		paintHealthBar(g2d, helicopter, 5, RectangularGameEntity.GROUND_Y + 5);
-		paintCollectedPowerUps(g2d);			
+		paintCollectedPowerUps(g2d);
 		if(showFps){paintFpsDisplay(g2d);}
 		
 		if(helicopter.isOnTheGround())
@@ -1146,13 +1175,13 @@ public class Menu
 											 - Events.timeAktu);
 			}
 			else{paintTimeDisplay(g2d, Events.playingTime);}
-		}		
+		}
 		if(unlockedTimer > 0)
     	{
     		paintHelicopterDisplay(g2d, helicopterDummies.get(unlockedType),
     								 unlockedDisplayPosition(unlockedTimer),
     								 -50);
-		}		
+		}
 	}
 	
 	private static void paintBossHealthBar(Graphics2D g2d)
@@ -1160,7 +1189,7 @@ public class Menu
 		if(Enemy.currentMiniBoss != null)
 		{
 			paintBossHealthBar(g2d, Enemy.currentMiniBoss);
-		}		
+		}
 		else if(Events.boss != null && Events.level < 51)
 		{
 			paintBossHealthBar(g2d, Events.boss);
@@ -1175,9 +1204,9 @@ public class Menu
         else{g2d.setColor(Colorations.red);}
         g2d.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.startingHitpoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints)/boss.startingHitpoints, 10);
         if(Events.timeOfDay == NIGHT){g2d.setColor(Color.white);}
-        else{g2d.setColor(Color.black);}        
+        else{g2d.setColor(Color.black);}
         g2d.drawRect(813, 5, ENEMY_HEALTH_BAR_WIDTH, 10);
-    }	
+    }
 	
 	private static void paintHealthBar(Graphics2D g2d, Helicopter helicopter, int x, int y)
     {
@@ -1191,11 +1220,11 @@ public class Menu
         if(rahmen)
     	{
     		g2d.setColor(Colorations.lightestGray);
-    		g2d.fillRect(x+1, y+1, length + 4, 23);            
+    		g2d.fillRect(x+1, y+1, length + 4, 23);
             g2d.setColor(Colorations.lightGray);
             g2d.fillRect(x+2, y+2, length+2, 10);
             g2d.fillRect(x+2, y+13, length+2, 10);
-    	}    	        
+    	}
     	if(!helicopter.isEnergyAbilityActivatable())
     	{
     		g2d.setColor(Color.cyan);
@@ -1208,7 +1237,7 @@ public class Menu
         g2d.fillRect(x+3 + (int)(length * relativeEnergy), y+3, length - (int)(length * relativeEnergy), 8);
       
         g2d.setColor(helicopter.isInvincible()
-        				? Color.yellow 
+        				? Color.yellow
         				: Color.green);
         g2d.fillRect(x+3, y+14, (int)(length * relativePlating), 8);
         g2d.setColor(helicopter.recentDamageTimer == 0 ? Color.red : Colorations.variableRed);
@@ -1231,15 +1260,15 @@ public class Menu
 	}
 	
     private static void paintFpsDisplay(Graphics2D g2d)
-    {        
-        g2d.setColor(Color.white);        
+    {
+        g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(18));
         g2d.drawString("FPS: " + (fps == 0 ? dictionary.pleaseWait() : fps), 292, 449);
     }
     
     private static void paintTimeDisplay(Graphics2D g2d, long time)
     {
-    	g2d.setColor(Color.white);        
+    	g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(18));
         String outputstring = String.format("%s: %s", dictionary.playingTime(), returnTimeDisplayText(time));
         // TODO besser lösen -> String abmessen
@@ -1251,14 +1280,14 @@ public class Menu
     	long h, min, sek;
         h = ((zeit - (zeit%3600000))/3600000);
         min = (zeit - (zeit%60000))/60000;
-        sek = (zeit - (zeit%1000))/1000;        
-        return (h%100 > 9?"":"0") + (h%100) 
+        sek = (zeit - (zeit%1000))/1000;
+        return (h%100 > 9?"":"0") + (h%100)
 		   		+ ":" + (min%60  > 9?"":"0") + (min%60)
 		   		+ ":" + (sek%60  > 9?"":"0") + (sek%60);
     }
     
     static void updateUnlockedInfo(Helicopter helicopter)
-	{    	
+	{
 		unlockedTimer--;
 		if(unlockedTimer ==  UNLOCKED_DISPLAY_TIME - 50)
 		{
@@ -1291,18 +1320,19 @@ public class Menu
         g2d.setFont(fontProvider.getBold(20));
         String typeName = Menu.dictionary.typeName(helicopter.getType());
         g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 113 + y);
+	
+		HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(helicopter.getClass());
+		helicopterPainter.displayPaint(g2d, helicopter, 59 + x, 141 + y);
         
-        helicopter.paint(g2d, 59 + x, 141 + y);
-                
         paintFrameLine(g2d, 28 + x, 126 + y, 196);
     	paintFrameLine(g2d, 28 + x, 226 + y, 196);
         
         if(window  != GAME)
-        {      	
+        {
         	paintHealthBar(g2d, helicopter, 30 + x, 230 + y, 187, false);
         }
         else
-        {       	
+        {
             g2d.setFont(fontProvider.getBold(18));
             if(unlockedTimer > UNLOCKED_DISPLAY_TIME - 50)
             {
@@ -1316,9 +1346,9 @@ public class Menu
             }
             g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 249 + y);
         }
-               
+        
         if(window  == REPAIR_SHOP)
-        {       	
+        {
         	if(helicopter.isDamaged)
         	{
         		g2d.setColor(Color.red);
@@ -1328,20 +1358,20 @@ public class Menu
         	g2d.setFont(fontProvider.getBold(16));
         	g2d.setColor(Colorations.plating);
         	int percentPlating = (Math.round(100 * helicopter.getRelativePlating()));
-        	FontMetrics fm = g2d.getFontMetrics();        	
+        	FontMetrics fm = g2d.getFontMetrics();
             int sw = fm.stringWidth(""+percentPlating);
             g2d.drawString(percentPlating + "%", 203 - sw + x, STANDARD_UPGRADE_OFFSET_Y + y + 69);
-        }        
-    }    
-              
+        }
+    }
+    
     private static void paintRestartWindow(Graphics2D g2d,
 										   Helicopter helicopter,
 										   boolean gameOver)
-    {   	
+    {
     	if(!gameOver)
     	{
     		paintFrame(g2d,363, 147, 256, 111, Colorations.golden);
-    	}  
+    	}
     	else if(Events.level < 51 || helicopter.getType() == HELIOS)
     	{
     		paintFrame(g2d,363, 112, 256, 146, Colorations.golden);
@@ -1354,7 +1384,7 @@ public class Menu
     	{
     		paintFrame(g2d,363, 64, 256, 194, Colorations.golden);
     	}
-    	      
+    	   
         g2d.setFont(fontProvider.getPlain(18));
         g2d.setColor(Colorations.red);
         if(!gameOver)
@@ -1363,20 +1393,20 @@ public class Menu
             g2d.drawString((language == ENGLISH ? "severely damaged!"   : "schwer beschädigt!"),   410, 197);
         }
         else if(Events.level < 51)
-        {            
+        {
             g2d.drawString((language == ENGLISH ? "Your helicopter was"        : "Ihr Helikopter wurde"),	   	390, 137);
             g2d.drawString((language == ENGLISH ? "severely damaged!"          : "schwer beschädigt!")  , 	    390, 155);
             g2d.drawString((language == ENGLISH ? "Unfortunately, you "        : "Leider reicht ihr Guthaben"), 390, 179);
             g2d.drawString((language == ENGLISH ? "cannot afford the repairs." : "nicht für eine Reparatur."),  390, 197);
         }
         else
-        {            
+        {
             if(helicopter.getType() == HELIOS)
             {
-            	g2d.drawString((language == ENGLISH ? "Congratulations!"         : "Herzlichen Glückwunsch!"),	   390,137);
-                g2d.drawString((language == ENGLISH ? "The attack was repulsed." : "Der Angriff wurde abgwehrt."), 390,155);
-                g2d.drawString((language == ENGLISH ? "Once again, mankind"      : "Wieder einmal lebt die"),	   390,179);
-                g2d.drawString((language == ENGLISH ? "lives in peace!"          : "Menschheit in Frieden!"),	   390,197);
+            	g2d.drawString((language == ENGLISH ? "Congratulations!"         : "Herzlichen Glückwunsch!"),	    390,137);
+                g2d.drawString((language == ENGLISH ? "The attack was repulsed." : "Der Angriff wurde abgewehrt."), 390,155);
+                g2d.drawString((language == ENGLISH ? "Once again, mankind"      : "Wieder einmal lebt die"),	    390,179);
+                g2d.drawString((language == ENGLISH ? "lives in peace!"          : "Menschheit in Frieden!"),	    390,197);
             }
             else
             {
@@ -1389,28 +1419,24 @@ public class Menu
                 g2d.drawString((language == ENGLISH ? "finally stop the invasion."	: "nur Helikopter der Helios-"),	390,196-i);
                 g2d.drawString((language == ENGLISH ? ""							: "Klasse die Alien-Invasion"),		390,214-i);
                 g2d.drawString((language == ENGLISH ? ""							: "endgültig stoppen."),			390,232-i);
-            }            
-        }        
-        if(gameOver){
-			inGameButton.get("MMNewGame2").paint(g2d, (language == ENGLISH ? "Start a new game!"  : "Neues Spiel starten!"));}
-        else		 {
-			inGameButton.get("MMNewGame2").paint(g2d, (language == ENGLISH ? "Go to repair shop!" : "Zurück zur Werkstatt!"));}
-    }    
+            }
+        }
+		inGameButton.get("MMNewGame2").setLabel(dictionary.messageAfterCrash(gameOver));
+		inGameButton.get("MMNewGame2").paint(g2d);
+    }
     
-    
-    
-/** Grafical objects **/
+/** Graphical objects **/
     
     private static void paintFrame(Graphics2D g2d, Rectangle frame, Color filledColor)
-    {  
+    {
     	paintFrame(g2d, frame.x, frame.y, frame.width, frame.height, filledColor);
-    }    
+    }
     
     private static void paintFrame(Graphics2D g2d, int left, int top, int width, int height)
     {
     	paintFrame(g2d, left, top, width, height, null);
     }
-        
+    
     static void paintFrame(Graphics2D g2d, int left, int top, int width, int height, Color filledColor)
     {
 		ArrayList<GradientPaint> gradientPaintList = new ArrayList<>(4);
@@ -1423,7 +1449,7 @@ public class Menu
     	{
     		g2d.setPaint(filledColor);
     		g2d.fillRect(left, top, width, height);
-    	} 
+    	}
     	g2d.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
     	g2d.setPaint(gradientPaintList.get(0));
     	g2d.drawLine(left+1, top, left+width-2, top);
@@ -1434,7 +1460,7 @@ public class Menu
     	g2d.setPaint(gradientPaintList.get(3));
     	g2d.drawLine(left+width, top+1, left+width, top+height-2);
         g2d.setStroke(new BasicStroke(1));
-    }    
+    }
     
     private static void paintFrameLine(Graphics2D g2d, int left, int top, int width)
     {
@@ -1445,8 +1471,8 @@ public class Menu
     	g2d.setPaint(frameLineGradientPaint);
     	g2d.drawLine(left+1, top, left+width-2, top);
         g2d.setStroke(new BasicStroke(1));
-    }  
-        
+    }
+    
 	public static void changeLanguage(Helicopter helicopter, Savegame savegame)
 	{
 		Events.settingsChanged = true;
@@ -1465,81 +1491,85 @@ public class Menu
 		Menu.language = language;
 		Controller.getInstance().getDictionary().switchLanguageTo(language);
 	}
-		
+	
+	public static void updateScreenMenuButtons(WindowType window)
+	{
+		for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
+		{
+			startScreenMenuButtons.get(Integer.toString(m)).setLabel(Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[language.ordinal()][window.ordinal()][m]);
+		}
+	}
+	
 	public static void updateButtonLabels(Helicopter helicopter)
 	{
-		repairShopButton.get("RepairButton").label = dictionary.repair();
-		repairShopButton.get("RepairButton").secondLabel = dictionary.price();
-		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()];
-		repairShopButton.get("Einsatz").secondLabel = Button.SOLD[language.ordinal()][Events.timeOfDay.ordinal()];
+		repairShopButton.get("RepairButton").setLabel(dictionary.repair());
+		repairShopButton.get("RepairButton").setSecondLabel(dictionary.price());
+		repairShopButton.get("Einsatz").setLabel(Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()]);
+		repairShopButton.get("Einsatz").setSecondLabel(Button.SOLD[language.ordinal()][Events.timeOfDay.ordinal()]);
 		
-		inGameButton.get("RepairShop").label =  dictionary.toTheRepairShop();
-		inGameButton.get("MainMenu").label =    dictionary.mainMenu();
-		inGameButton.get("MMNewGame1").label =  dictionary.startNewGame();
-		inGameButton.get("MMStopMusic").label = Button.MUSIC[language.ordinal()][Audio.isSoundOn ? 0 : 1];
-		inGameButton.get("MMNewGame2").label =  dictionary.quit();
-		inGameButton.get("MMCancel").label =    dictionary.cancel();
-				
+		inGameButton.get("RepairShop").setLabel(dictionary.toTheRepairShop());
+		inGameButton.get("MainMenu").setLabel(dictionary.mainMenu());
+		inGameButton.get("MMNewGame1").setLabel(dictionary.startNewGame());
+		inGameButton.get("MMStopMusic").setLabel(Button.MUSIC[language.ordinal()][Audio.isSoundOn ? 0 : 1]);
+		inGameButton.get("MMNewGame2").setLabel(dictionary.quit());
+		inGameButton.get("MMCancel").setLabel(dictionary.cancel());
+		
 		for(int i = 0; i < NUMBER_OF_START_SCREEN_BUTTONS.x; i++)
 		{
 			for(int j = 0; j < NUMBER_OF_START_SCREEN_BUTTONS.y; j++)
 			{
-				startscreenButton.get(Integer.toString(i)+j).label =
-					Button.STARTSCREEN_BUTTON_LABEL[language.ordinal()][i][j];
+				startScreenButtons.get(Integer.toString(i)+j).setLabel(Button.LABELS_OF_START_SCREEN_BUTTONS[language.ordinal()][i][j]);
 			}
 		}
 		
-		for(int m = 0; m < 8; m++)
-		{						
-			startscreenMenuButton.get(Integer.toString(m)).label =
-				Button.STARTSCREEN_MENU_BUTTON[language.ordinal()][SETTINGS.ordinal()][m];
+		for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
+		{
+			startScreenMenuButtons.get(Integer.toString(m)).setLabel(Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[language.ordinal()][SETTINGS.ordinal()][m]);
 		}
-		startscreenMenuButton.get("Cancel").label = dictionary.cancel();
+		startScreenMenuButtons.get("Cancel").setLabel(dictionary.cancel());
 
 		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
-			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).label =
-				String.join(" ", dictionary.standardUpgradesImprovements(standardUpgradeType));
-			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).secondLabel =
-				dictionary.price();
+			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setLabel(String.join(" ", dictionary.standardUpgradesImprovements(standardUpgradeType)));
+			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setSecondLabel(dictionary.price());
 		}
 	
 		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
 		{
 			int i = specialUpgradeType.ordinal();
-			repairShopButton.get("Special" + i).label = dictionary.specialUpgrade(specialUpgradeType);
-			repairShopButton.get("Special" + i).secondLabel = dictionary.price();
-		}		
+			repairShopButton.get("Special" + i).setLabel(dictionary.specialUpgrade(specialUpgradeType));
+			repairShopButton.get("Special" + i).setSecondLabel(dictionary.price());
+		}
 		if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
 		{
-			repairShopButton.get("Special" + 3).label  = dictionary.thirdCannon();
+			repairShopButton.get("Special" + 3).setLabel(dictionary.thirdCannon());
 		}
 		// TODO wieso nochmal? in schleife schon passiert
-		//repairShopButton.get("Special" + 4).label = dictionary.specialUpgrade(FIFTH_SPECIAL);
+		//repairShopButton.get("Special" + 4).setLabel(dictionary.specialUpgrade(FIFTH_SPECIAL));
 	}
  
 	static void identifyHighlightedButtons(Helicopter helicopter, HashMap<String, Button> buttons)
 	{
     	if(	highlightedButton.equals("")
-        	|| !buttons.get(highlightedButton).bounds.contains(helicopter.destination))
+        	|| !buttons.get(highlightedButton).getBounds().contains(helicopter.destination))
         {
         	if(!highlightedButton.equals(""))
         	{
-        		buttons.get(highlightedButton).highlighted = false;
+        		buttons.get(highlightedButton).setHighlighted(false);
         		highlightedButton = "";
         	}
 			for(Map.Entry<String, Button> buttonEntry : buttons.entrySet())
 			{
-				if (buttonEntry.getValue().bounds.contains(helicopter.destination.x, helicopter.destination.y))
+				if (buttonEntry.getValue().getBounds().contains(helicopter.destination.x, helicopter.destination.y))
 				{
-					buttonEntry.getValue().highlighted = true;
+					buttonEntry.getValue().setHighlighted(true);
 					highlightedButton = buttonEntry.getKey();
 					break;
 				}
 			}
         }
 	}
-		
+	
 	public static Polygon getCrossPolygon()
     {
     	// TODO mit Konstanten arbeiten, ggf. braucht man nicht zwei Methoden --> lokale Variablen einsetzen
@@ -1568,8 +1598,8 @@ public class Menu
 	public static void setStartscreenMessageForBlocking(HelicopterType helicopterType)
 	{
 		message = dictionary.helicopterNotAvailable(helicopterType);
-	}	
-	   
+	}
+	
 	public static void clearMessage()
 	{
 	    message = emptyMessage;
@@ -1577,15 +1607,15 @@ public class Menu
 	
 	
 	public static void updateLabeltext()
-	{	    
+	{
 		label.setText("");
-	    		
+	 
 		if(language == ENGLISH)
 		{
 			if(window  == INFORMATIONS)
 			{
 				if(page == 0)
-				{				
+				{
 					// Handlung
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog\"" +
@@ -1601,7 +1631,7 @@ public class Menu
 					"world's capital Cairo. Karanijem Su, president of the " +
 					"World Government, has declared a state of emergency " +
 					"and is now asking reservists and volunteers from all " +
-					"over the world for help. You are one of them." + 
+					"over the world for help. You are one of them." +
 			        "</b></font></html>"
 			        );
 				}
@@ -1668,17 +1698,17 @@ public class Menu
 					"application and does no longer " +
 					"depent on the explorer. <br>- A save function as well as a <font color=\"#FFFFD2\">" +
 					"highscore<font color=\"#D2D2D2\"> is now available."+
-					"<br>- Lots of new enemy classes have been implemented." +					
+					"<br>- Lots of new enemy classes have been implemented." +
 					"<br>- Many other changes affecting controls, game balance, " +
 					"graphics or the upgrade system were made." +
 					"</b></font></span></html>"
 					);
 				}
 				else if(page == 4)
-				{				
+				{
 					// Credits
 					label.setText(
-					"<html><font size = \"" + (HTML_SIZE-1) + 
+					"<html><font size = \"" + (HTML_SIZE-1) +
 					"\" face=\"Dialog\" color=\"#D2D2D2\"><b>" +
 					"Special thanks to all my beta testers, who extensively " +
 					"played HelicopterDefence 1.0 and supported me with " +
@@ -1721,15 +1751,15 @@ public class Menu
 					"for the development of this game.<br><br>You want to be " +
 					"a beta tester? No problem! Send your improvement " +
 					"suggestions to: <font color=\"#FFFFD2\">" +
-					"info@HelicopterDefence.de<font color=\"#D2D2D2\">" +				
+					"info@HelicopterDefence.de<font color=\"#D2D2D2\">" +
 					"</font></b></html>"
 					);
-				}		
+				}
 				else if(page == 5)
-				{				
+				{
 					// Copyright
 					label.setText(
-					"<html><font size = \"" + HTML_SIZE + 
+					"<html><font size = \"" + HTML_SIZE +
 					"\" face=\"Dialog\" color=\"#D2D2D2\">" +
 					"This is a freeware game. The passing on of this game " +
 					"to others is therefore explicitly allowed and you can " +
@@ -1743,7 +1773,7 @@ public class Menu
 			else if(window  == DESCRIPTION)
 			{
 				if(page == 0)
-				{				
+				{
 					// Spielbeschreibung
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE +
@@ -1813,7 +1843,7 @@ public class Menu
 				{
 					// Upgrades
 					label.setText(
-					"<html><font size = \"" + HTML_SIZE + 
+					"<html><font size = \"" + HTML_SIZE +
 					"\" face=\"Dialog\" color=\"#D2D2D2\">" +
 					"There are two types of upgrades: " +
 					"<font color=\"#FFFFD2\">Standard upgrades<font " +
@@ -1888,7 +1918,7 @@ public class Menu
 					// Bedienung
 					label.setText(
 					"<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-					"face=\"Dialog\" color=\"#D2D2D2\"><b>" +		
+					"face=\"Dialog\" color=\"#D2D2D2\"><b>" +
 					"HelicopterDefence is exclusively mouse controlled:<br>" +
 					"Your Helicopter always moves towards the mouse cursor. " +
 					"Press the left mouse button to launch missiles. " +
@@ -1921,16 +1951,16 @@ public class Menu
 					"color=\"#FFFFD2\">electro magnetic " +
 					"pulse<font color=\"#D2D2D2\"> (" +
 					"<font color=\"#FFFFD2\">Pegasus-class" +
-					"<font color=\"#D2D2D2\">): Press the right mouse button." +					
+					"<font color=\"#D2D2D2\">): Press the right mouse button." +
 					"<br>- Using the <font color=\"#FFFFD2\">PU generator" +
 					"<font color=\"#D2D2D2\"> (" +
 					"<font color=\"#FFFFD2\">Helios " +
-					"class<font color=\"#D2D2D2\">): Press the right mouse " +					
+					"class<font color=\"#D2D2D2\">): Press the right mouse " +
 					"<br>After landing the helicopter, the " +
 					"<font color=\"#FFFFD2\">" +
 					"repair shop<font color=\"#D2D2D2\"> button becomes " +
 					"visible. Press this button to enter the repair shop." +
-				    "</b></font></html>" 
+				    "</b></font></html>"
 					);
 				}
 				else if(page == 5)
@@ -1956,20 +1986,20 @@ public class Menu
 					Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Indestructibility " +
 					"for 15 seconds " +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-					"<font size = \"" + (HTML_SIZE-1) + "\">" + 
+					"<font size = \"" + (HTML_SIZE-1) + "\">" +
 					"Triple damage for 15 seconds" +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
 					"<font size = \"" + (HTML_SIZE-1) + "\">" +
 					"Increased fire rate for 15 seconds" +
-					"</b></font></html>" 
+					"</b></font></html>"
 					);
-				}				
+				}
 				else if(page == 7)
 				{
 					// Spezial-Modus
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
-					"\" color=\"#D2D2D2\">" +										
+					"\" color=\"#D2D2D2\">" +
 					"In <font color=\"#FFFFD2\">special mode<font color=\"#D2D2D2\">, players do not receive any "
 					+ "financial reward for the "
 					+ "destruction of a hostile flying vessel. Instead, "
@@ -1985,16 +2015,16 @@ public class Menu
 					+ "support. Fortunately, in a moment of despair, a "
 					+ "league of helicopter pilots formed, willing to "
 					+ "spend a part of their income to pilots of Helios "
-					+ "type helicopters."				
+					+ "type helicopters."
 					+ "<font color=\"#D2D2D2\">" +
 					"</font></html>"
 					);
-				}				
+				}
 			}
 			else if(window  == HELICOPTER_TYPES)
 			{
 				if(page == 0)
-				{				
+				{
 					// Allgemein
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
@@ -2026,7 +2056,7 @@ public class Menu
 					"descriptions of each helicopter type." +
 					"</font></html>"
 		            );
-				}				
+				}
 				else if(page == 2)
 				{
 					// Phönix
@@ -2076,7 +2106,7 @@ public class Menu
 					// Roch
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
-					"face=\"Dialog\" color=\"#D2D2D2\">" +	
+					"face=\"Dialog\" color=\"#D2D2D2\">" +
 					"For all <font color=\"#FFFFD2\">Roch type helicopters" +
 					"<font color=\"#D2D2D2\">, the <font color=\"#FFFFD2\">" +
 					"firepower standard upgrades<font color=\"#D2D2D2\"> as " +
@@ -2099,7 +2129,7 @@ public class Menu
 					"with the same missile, he will be rewarded with " +
 					"<font color=\"#FFFFD2\">bonus credit." +
 					"</font></html>"
-		            ); 
+		            );
 				}
 				else if(page == 4)
 				{
@@ -2132,16 +2162,16 @@ public class Menu
 					"least two of these destroy a hostile flying vessel, " +
 					"the helicopter's pilot will be rewarded with a " +
 					"<font color=\"#FFFFD2\">bonus " +
-					"credit<font color=\"#D2D2D2\">." + 
+					"credit<font color=\"#D2D2D2\">." +
 					"</font></html>"
-					); 
+					);
 				}
 				else if(page == 5)
 				{
-					// Kamaitachi				
+					// Kamaitachi
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
-					"face=\"Dialog\" color=\"#D2D2D2\">" +	
+					"face=\"Dialog\" color=\"#D2D2D2\">" +
 					"<font color=\"#FFFFD2\">Kamaitachi type helicopters" +
 					"<font color=\"#D2D2D2\"> have weak " +
 					"<font color=\"#FFFFD2\">firepower" +
@@ -2168,8 +2198,8 @@ public class Menu
 					"will be rewarded for his brave actions with generous " +
 					"<font color=\"#FFFFD2\">bonus credit" +
 					"</font></html>"
-		            ); 
-				}				
+		            );
+				}
 				else if(page == 6)
 				{
 					// Pegasus
@@ -2206,8 +2236,8 @@ public class Menu
 					"resulting in severe damage. After launching a missile, " +
 					"the helicopter shifts back into its original state." +
 					"</b></font></html>"
-		            ); 
-				}	
+		            );
+				}
 				else if(page == 7)
 				{
 					// Helios
@@ -2238,9 +2268,9 @@ public class Menu
 					+ "special mode.<font color=\"#D2D2D2\">" +
 					"<font color=\"#D2D2D2\">" +
 					"</font></html>"
-		            ); 
+		            );
 				}
-			}			
+			}
 			else if(window  == CONTACT)
 			{
 				if(page == 0)
@@ -2270,7 +2300,7 @@ public class Menu
 			if(window  == INFORMATIONS)
 			{
 				if(page == 0)
-				{				
+				{
 					// Handlung
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
@@ -2280,13 +2310,13 @@ public class Menu
 					"über 100 Jahre zurück liegt, hat es keine " +
 					"kriegerischen Auseinandersetzungen unter Menschen mehr " +
 			        "gegeben und Ausgaben für militärische Zwecke sind " +
-			        "folglich auf ein Minimum reduziert worden. " +	    
+			        "folglich auf ein Minimum reduziert worden. " +
 			        "\n\nDoch nun wurden tausende feindlicher Flugobjekte " +
 			        "unbekannter Herkunft über der nördlichen " +
 			        "Sahara und an der afrikanischen Mittelmeerküste " +
 			        "gesichtet. Einige dieser Flugobjekte haben bereits die " +
 			        "nordafrikanischen Megametropolen unter Beschuss " +
-			        "genommen, darunter auch Welthauptstadt Kairo. " +	    
+			        "genommen, darunter auch Welthauptstadt Kairo. " +
 			        "\n\nKaranijem Su, der Präsident der Weltregierung, hat " +
 			        "den Ausnahmezustand verhängt und bittet " +
 			        "Reservisten und Freiwillige aus aller Welt um Hilfe. " +
@@ -2345,7 +2375,7 @@ public class Menu
 					"<font color=\"#FFFFD2\">PowerUps" +
 					"<font color=\"#D2D2D2\"> " +
 					"verlieren, welche den Helikopter kurzfristig " +
-					"verbessern.<br>" +					
+					"verbessern.<br>" +
 					"- Das Spiel läuft in einer vom Explorer unabhängigen " +
 					"Applikation.<br>" +
 					"- Eine Speicherfunktion und eine Highscore wurden implementiert.<br>" +
@@ -2357,7 +2387,7 @@ public class Menu
 					);
 				}
 				else if(page == 4)
-				{				
+				{
 					// Credits
 					label.setText(
 					"<html><font size = \"" + (HTML_SIZE-1) + "\" " +
@@ -2376,7 +2406,7 @@ public class Menu
 					"<font color=\"#D2D2D2\"> für eine Vielzahl " +
 					"wertvoller technischer Ratschläge, welche meine " +
 					"Entwicklungsarbeit an diesem Spiel erheblich " +
-					"bereichert haben. Ich bedanke mich auch bei " + 
+					"bereichert haben. Ich bedanke mich auch bei " +
 					"<font color=\"#FFFFD2\">Michael Sujatta" +
 					"<font color=\"#D2D2D2\"> fürs Korrekturlesen und bei " +
 					"<font color=\"#FFFFD2\">Hauke Holm" +
@@ -2395,12 +2425,12 @@ public class Menu
 					"hat den Grundstein zur Entwicklung dieses Spiels " +
 					"gelegt.<br><br>Du möchtest auch Beta-Tester werden? " +
 					"Kein Problem! Schicke Deine Verbesserungsvorschläge an: " +
-					"<font color=\"#FFFFD2\">info@HelicopterDefence.de" +			
+					"<font color=\"#FFFFD2\">info@HelicopterDefence.de" +
 					"</font></b></html>"
 					);
-				}		
+				}
 				else if(page == 5)
-				{				
+				{
 					// Copyright
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
@@ -2416,7 +2446,7 @@ public class Menu
 			else if(window  == DESCRIPTION)
 			{
 				if(page == 0)
-				{				
+				{
 					// Spielbeschreibung
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
@@ -2569,7 +2599,7 @@ public class Menu
 					// Bedienung
 					label.setText(
 					"<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-					"face=\"Dialog\" color=\"#D2D2D2\"><b>" +		
+					"face=\"Dialog\" color=\"#D2D2D2\"><b>" +
 					"Die Steuerung des Helikopters erfolgt ausschließlich mit der Maus:<br>" +
 					"Der Helikopter bewegt sich immer auf den Maus-Cursor " +
 					"zu. " +
@@ -2612,7 +2642,7 @@ public class Menu
 				    "<font color=\"#FFFFD2\">Werkstatt" +
 				    "<font color=\"#D2D2D2\"> " +
 				    "zurückkehren kann." +
-				    "</font></html>" 
+				    "</font></html>"
 					);
 				}
 				else if(page == 5)
@@ -2638,12 +2668,12 @@ public class Menu
 					Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Unverwundbarkeit " +
 					"für 15 Sekunden " +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-					"<font size = \"" + (HTML_SIZE-1) + "\">" + 
+					"<font size = \"" + (HTML_SIZE-1) + "\">" +
 					"3-fache Feuerkraft für 15 " + "Sekunden" +
 					"<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
 					"<font size = \"" + (HTML_SIZE-1) + "\">" +
 					"erhöhte Schussrate für 15 Sekunden " +
-					"</b></font></html>" 
+					"</b></font></html>"
 					);
 				}
 				else if(page == 7)
@@ -2651,7 +2681,7 @@ public class Menu
 					// Spezial-Modus
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
-					"\" color=\"#D2D2D2\">" +										
+					"\" color=\"#D2D2D2\">" +
 					"Im <font color=\"#FFFFD2\">Spezial-Modus"
 					+ "<font color=\"#D2D2D2\"> erhält der Spieler keine "
 					+ "Belohnung für "
@@ -2674,7 +2704,7 @@ public class Menu
 			else if(window  == HELICOPTER_TYPES)
 			{
 				if(page == 0)
-				{				
+				{
 					// Allgemein
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
@@ -2703,7 +2733,7 @@ public class Menu
 					"Beschreibungen zu den einzelnen Helikopter-Klassen." +
 					"</font></html>"
 		            );
-				}				
+				}
 				else if(page == 2)
 				{
 					// Phönix
@@ -2754,13 +2784,13 @@ public class Menu
 					"Teleporters erhält der Spieler einen Extra-Bonus." +
 					"</b></font></html>"
 					);
-				}				
+				}
 				else if(page == 3)
 				{
 					// Roch
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
-					"face=\"Dialog\" color=\"#D2D2D2\">" +	
+					"face=\"Dialog\" color=\"#D2D2D2\">" +
 					"Für die  <font color=\"#FFFFD2\">Roch-Klasse " +
 					"<font color=\"#D2D2D2\"> kann die " +
 					"<font color=\"#FFFFD2\">Feuerkraft" +
@@ -2792,7 +2822,7 @@ public class Menu
 					"einem  <font color=\"#FFFFD2\">Extra-Bonus" +
 					"<font color=\"#D2D2D2\"> belohnt." +
 					"</font></html>"
-		            ); 
+		            );
 				}
 				else if(page == 4)
 				{
@@ -2827,16 +2857,16 @@ public class Menu
 					"jeweils ein oder mehrere feindliche Flugobjekte " +
 					"ausschalten, dann wird dies mit einem " +
 					"<font color=\"#FFFFD2\">Extra-Bonus" +
-					"<font color=\"#D2D2D2\"> belohnt." + 
+					"<font color=\"#D2D2D2\"> belohnt." +
 					"</font></html>"
-					); 
+					);
 				}
 				else if(page == 5)
 				{
-					// Kamaitachi				
+					// Kamaitachi
 					label.setText(
 					"<html><font size = \"" + HTML_SIZE + "\" " +
-					"face=\"Dialog\" color=\"#D2D2D2\">" +	
+					"face=\"Dialog\" color=\"#D2D2D2\">" +
 					"Die reine Feuerkraft der <font color=\"#FFFFD2\">" +
 					"Kamaitachi-Klasse<font color=\"#D2D2D2\"> ist sehr " +
 					"gering. Dank der preiswerten " +
@@ -2864,7 +2894,7 @@ public class Menu
 					"<font color=\"#D2D2D2\"> " +
 					"belohnt." +
 					"</font></html>"
-		            ); 
+		            );
 				}
 				else if(page == 6)
 				{
@@ -2909,14 +2939,14 @@ public class Menu
 					"einer Rakete füllt der Helikopter allerdings wieder in " +
 					"seinen Normalzustand zurück." +
 					"</b></font></html>"
-		            ); 
-				}	
+		            );
+				}
 				else if(page == 7)
 				{
 					// Helios
 					label.setText(
-					"<html><font size = \"" + (HTML_SIZE) + "\" " +										
-					"face=\"Dialog\" color=\"#D2D2D2\">" +					
+					"<html><font size = \"" + (HTML_SIZE) + "\" " +
+					"face=\"Dialog\" color=\"#D2D2D2\">" +
 					"Mit dem Ziel eine besonders schlagfertige Helikopter-"
 					+ "Klasse zu erschaffen, haben die Konstrukteure der "
 					+ "<font color=\"#FFFFD2\">Helios-Klasse<font color=\"#D2D2D2\"> ihre Upgrade-Erfahrung mit allen anderen "
@@ -2933,9 +2963,9 @@ public class Menu
 					+ "von PowerUps nutzen. Die Helios-Klasse lässt sich nur "
 					+ "im <font color=\"#FFFFD2\">Spezial-Modus<font color=\"#D2D2D2\"> spielen."
 					+ "</font></html>"
-		            ); 
+		            );
 				}
-			}			
+			}
 			else if(window  == CONTACT)
 			{
 				if(page == 0)
@@ -2962,7 +2992,7 @@ public class Menu
 	}
 
 	private static String activationState(boolean on)
-	{		
+	{
 		return on ? (language == ENGLISH ? "on" : "an"):(language == ENGLISH ? "off" : "aus");
 	}
 	
@@ -2975,14 +3005,14 @@ public class Menu
 		crossTimer = 0;
 		messageTimer = 0;
 		if(justEntered){
-			stopButtonHighlighting(startscreenButton);}
+			stopButtonHighlighting(startScreenButtons);}
 	}
 	
 	public static void stopButtonHighlighting(HashMap<String, Button> button)
 	{
 		if(!highlightedButton.equals(""))
 		{
-			button.get(highlightedButton).highlighted = false;
+			button.get(highlightedButton).setHighlighted(false);
 			highlightedButton = "";
 		}
 	}
@@ -2999,53 +3029,52 @@ public class Menu
 
 	public static void updateRepairShopButtons(Helicopter helicopter)
 	{
-		repairShopButton.get("Einsatz").label = Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()];
-		repairShopButton.get("Einsatz").secondLabel = Button.SOLD[language.ordinal()][helicopter.hasSpotlights ? 1 : 0];
+		repairShopButton.get("Einsatz").setLabel(Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()]);
+		repairShopButton.get("Einsatz").setSecondLabel(Button.SOLD[language.ordinal()][helicopter.hasSpotlights ? 1 : 0]);
 		if(helicopter.hasSpotlights)
 		{
-			repairShopButton.get("Special" + 0).costs = 0;
+			repairShopButton.get("Special" + 0).setCostsToZero();
 		}
 		if(helicopter.hasGoliathPlating())
 		{
-			repairShopButton.get("Special" + 1).costs = 0;
+			repairShopButton.get("Special" + 1).setCostsToZero();
 		}
 		if(helicopter.hasPiercingWarheads)
 		{
-			repairShopButton.get("Special" + 2).costs = 0;
+			repairShopButton.get("Special" + 2).setCostsToZero();
 		}
 		if(helicopter.numberOfCannons != 1)
 		{
 			if(helicopter.hasAllCannons())
 	    	{
-	    		repairShopButton.get("Special" + 3).costs = 0;
+	    		repairShopButton.get("Special" + 3).setCostsToZero();
 	    		if(helicopter.numberOfCannons == 3)
 	    		{
-	    			repairShopButton.get("Special" + 3).label = dictionary.thirdCannon();
+	    			repairShopButton.get("Special" + 3).setLabel(dictionary.thirdCannon());
 	    		}
 	    	}
 	    	else
 	    	{
-	    		repairShopButton.get("Special" + 3).costs = 125000;
-	    		repairShopButton.get("Special" + 3).label = dictionary.thirdCannon();
+	    		repairShopButton.get("Special" + 3).setCosts(125000);
+	    		repairShopButton.get("Special" + 3).setLabel(dictionary.thirdCannon());
 	    	}
 		}
 		if(helicopter.hasFifthSpecial())
 		{
-			repairShopButton.get("Special" + 4).costs = 0;
+			repairShopButton.get("Special" + 4).setCostsToZero();
 		}
 		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-		{    		
+		{
 			if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 			{
-				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs = 0;
+				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCostsToZero();
 			}
 			else
 			{
-				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).costs
-					= helicopter.getUpgradeCostFor(standardUpgradeType);
-			}    				    		
+				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCosts(helicopter.getUpgradeCostFor(standardUpgradeType));
+			}
 		}
-		repairShopButton.get("RepairButton").costs = 0;
+		repairShopButton.get("RepairButton").setCostsToZero();
 	}
 	
 	public static void unlock(HelicopterType heliType)
@@ -3060,23 +3089,23 @@ public class Menu
 		{
 			paintForegroundDisplays(g2d, controller, helicopter, controller.showFps);
 			paintGui(g2d, helicopter);
-		}			
+		}
 		else if(window  == REPAIR_SHOP)
-		{				
+		{
 			paintRepairShop(g2d, helicopter);
-		}		 
+		}
 		else if(window  == STARTSCREEN)
-		{				
+		{
 			paintStartscreen(g2d, helicopter);
 		}
 		else if(window  == SCORESCREEN)
-		{				
+		{
 			paintScorescreen(g2d, helicopter);
-		}		
+		}
 		else
-		{				
-			updateAndPaintStartscreenMenu(g2d, helicopter, controller.framesCounter);
-		}		
+		{
+			updateAndPaintStartscreenMenu(g2d, controller.framesCounter);
+		}
 	}
 	
 	public static void repaintBackground(Graphics g, Controller controller)
@@ -3093,21 +3122,21 @@ public class Menu
 	public static void update(Controller controller, Helicopter helicopter)
 	{
 		if(window  == REPAIR_SHOP)
-		{			
+		{
 			updateRepairShop(helicopter);
-		}		 
+		}
 		else if(window  == STARTSCREEN)
-		{						
+		{
 			updateStartscreen(helicopter, controller.framesCounter);
 		}
 		else if(window  == SCORESCREEN)
 		{
 			updateScorescreen(helicopter);
-		}		
+		}
 		else
-		{				
-			identifyHighlightedButtons(helicopter, startscreenMenuButton);
-		}		
+		{
+			identifyHighlightedButtons(helicopter, startScreenMenuButtons);
+		}
 	}
 
 	public static void adaptToWindowMode(Dimension displayShift)
@@ -3119,7 +3148,7 @@ public class Menu
 	
 	public static void reset()
 	{
-		stopButtonHighlighting(startscreenButton);
+		stopButtonHighlighting(startScreenButtons);
 		cross = null;
 		crossTimer = 0;
 		messageTimer = 0;
@@ -3128,6 +3157,7 @@ public class Menu
 	public static void conditionalReset()
 	{
 		isMenuVisible = false;
+		inGameButton.get("MMNewGame2").setLabel(dictionary.quit());
 		moneyDisplayTimer = DISABLED;
 		levelDisplayTimer.start();
 		unlockedTimer = 0;
@@ -3141,5 +3171,85 @@ public class Menu
 		crossTimer = 1;
 		messageTimer = 1;
 		setStartscreenMessageForBlocking(nextHelicopterType);
+	}
+	
+	// Erstellen und Pre-Initialisieren der Buttons
+	// TODO mit einen Enum für die Buttons arbeiten --> EnumMap verwe
+	static void initializeButtons()
+	{
+		repairShopButton.put("RepairButton", Button.makeLeftSideRepairShopButton(287, dictionary.repair(), dictionary.price()));
+		repairShopButton.put("Einsatz", 	 Button.makeLeftSideRepairShopButton(395, Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()], Button.SOLD[language.ordinal()][0]));
+		
+		inGameButton.put("RepairShop",   Button.makeGroundButton(451, dictionary.toTheRepairShop()));
+		inGameButton.put("MainMenu",     Button.makeGroundButton(897, dictionary.mainMenu()));
+		
+		inGameButton.put("MMNewGame1",   Button.makeMainMenuButton(116, dictionary.startNewGame()));
+		inGameButton.put("MMStopMusic",  Button.makeMainMenuButton(161, Button.MUSIC[language.ordinal()][Audio.isSoundOn ? 0 : 1]));
+		inGameButton.put("MMNewGame2",   Button.makeMainMenuButton(206, dictionary.quit()));
+		inGameButton.put("MMCancel",     Button.makeMainMenuButton(251, dictionary.cancel()));
+		
+		for(int i = 0; i < NUMBER_OF_START_SCREEN_BUTTONS.x; i++)
+		{
+			for(int j = 0; j < NUMBER_OF_START_SCREEN_BUTTONS.y; j++)
+			{
+				startScreenButtons.put( Integer.toString(i)+j, Button.makeStartScreenButton(i, j));
+			}
+		}
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		{
+			repairShopButton.put( "StandardUpgrade" + standardUpgradeType.ordinal(), Button.makeStandardUpradeButton(standardUpgradeType));
+		}
+		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
+		{
+			repairShopButton.put("Special" + specialUpgradeType.ordinal(), Button.makeSpecialUpgradeButton(specialUpgradeType));
+		}
+		for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
+		{
+			startScreenMenuButtons.put(Integer.toString(m), Button.makeStartScreenMenuButton(m));
+		}
+		
+		startScreenButtons.get("11").setMarked(true);   // Der "Letztes Spiel fortsetzen"-Button ist markiert
+		startScreenButtons.get("11").setEnabled(Controller.savegame.isValid);
+		
+		startScreenMenuButtons.put("Cancel", Button.makeStartScreenMenuCancelButton());
+		
+		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
+		{
+			startScreenButtons.get("10").setMarked(true);
+		}
+	}
+	
+	// Helicopter-spezifische Anpassung der Werkstatt-Button-Beschriftungen
+	// TODO vielleicht können die spezifischen Beschriftungen unnötig gemacht werden, wenn gleich die richtigen Werte verwendet werden
+	// TODO sollte nach Menu verschoben werden
+	public static void finalizeRepairShopButtons()
+	{
+		Helicopter helicopter = Controller.getInstance().getHelicopter();
+		repairShopButton.get("Einsatz").setLabel(Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()]);
+		repairShopButton.get("Einsatz").setSecondLabel(Button.SOLD[language.ordinal()][helicopter.hasSpotlights ? 1 : 0]);
+		
+		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		{
+			if(!helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
+			{
+				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCosts(helicopter.getUpgradeCostFor(standardUpgradeType));
+				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCostColor(helicopter.getPriceLevelFor(standardUpgradeType).getColor());
+			}
+		}
+		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();
+		repairShopButton.get("StandardUpgrade" + 5).setLabel(String.join(" ", standardUpgradeLabel));
+		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden
+		repairShopButton.get("Special" + SpecialUpgradeType.SPOTLIGHT.ordinal()).setCosts(helicopter.getSpotlightCosts());
+		repairShopButton.get("Special" + SpecialUpgradeType.SPOTLIGHT.ordinal()).setCostColor(CHEAP.getColor());
+		repairShopButton.get("Special" + SpecialUpgradeType.GOLIATH_PLATING.ordinal()).setCosts(helicopter.getGoliathCosts());
+		repairShopButton.get("Special" + SpecialUpgradeType.GOLIATH_PLATING.ordinal()).setCostColor((helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		repairShopButton.get("Special" + SpecialUpgradeType.PIERCING_WARHEADS.ordinal()).setCosts((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		repairShopButton.get("Special" + SpecialUpgradeType.PIERCING_WARHEADS.ordinal()).setCostColor((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).setCosts((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).setCostColor((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor());
+		repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).setLabel(dictionary.extraCannons());
+		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setCosts(helicopter.getFifthSpecialCosts());
+		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setCostColor(helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor());
+		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setLabel(dictionary.fifthSpecial());
 	}
 }
