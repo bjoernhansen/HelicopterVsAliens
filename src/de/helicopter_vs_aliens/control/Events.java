@@ -1,40 +1,38 @@
 package de.helicopter_vs_aliens.control;
 
-import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
-import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.score.HighscoreEntry;
 import de.helicopter_vs_aliens.Main;
-import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
 import de.helicopter_vs_aliens.gui.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.WindowType;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.*;
-import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.score.HighscoreEntry;
+import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.*;
 import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.BlockMessage.*;
-import static de.helicopter_vs_aliens.gui.Button.LABELS_OF_START_SCREEN_MENU_BUTTONS;
 import static de.helicopter_vs_aliens.gui.Menu.window;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
 import static de.helicopter_vs_aliens.gui.WindowType.*;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
-import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
-import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 public class Events
 {
@@ -801,7 +799,7 @@ public class Events
 													 Helicopter helicopter,
 													 Savegame savegame)
 	{
-		for(int m = 0; m < 8; m++)
+		for(int m = 0; m < Menu.START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
 		{
 			Button currentButton = Menu.startScreenMenuButtons.get(Integer.toString(m));
 			if(	 currentButton.getBounds().contains(cursor) &&
@@ -898,14 +896,9 @@ public class Events
 		Controller.antialiasing = !Controller.antialiasing;
 		offGraphics.setRenderingHint( 
 				RenderingHints.KEY_ANTIALIASING,
-				Controller.antialiasing ?
-					RenderingHints.VALUE_ANTIALIAS_ON : 
-					RenderingHints.VALUE_ANTIALIAS_OFF);
-		LABELS_OF_START_SCREEN_MENU_BUTTONS[ENGLISH.ordinal()][SETTINGS.ordinal()][1]
-		    = ANTIALIAZING[ENGLISH.ordinal()][Controller.antialiasing ? 0 : 1];
-		LABELS_OF_START_SCREEN_MENU_BUTTONS[GERMAN.ordinal()][SETTINGS.ordinal()][1]
-		    = ANTIALIAZING[GERMAN.ordinal()][Controller.antialiasing ? 0 : 1];
-		currentButton.setLabel(ANTIALIAZING[Menu.language.ordinal()][Controller.antialiasing ? 0 : 1]);
+				Controller.antialiasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+		Menu.dictionary.updateAntialiasing();
+		currentButton.setLabel(Menu.dictionary.antialiasing());
 	}
 
 	static void mouseReleased(MouseEvent mouseEvent, Helicopter helicopter)
@@ -1163,7 +1156,7 @@ public class Events
 		Audio.play(Audio.choose);		
 		window = newWindow;
 		Menu.adaptToNewWindow(hasJustEntered);
-		Menu.updateScreenMenuButtons(window);
+		Menu.updateStartScreenMenuButtons();
 	}
 
 	// überprüfen, ob Level-Up Voraussetzungen erfüll. Wenn ja: Schwierigkeitssteigerung
@@ -1264,10 +1257,9 @@ public class Events
 		savegame.isSoundOn = Audio.isSoundOn;
 		settingsChanged = true;
 		Audio.refreshBackgroundMusic();
-		LABELS_OF_START_SCREEN_MENU_BUTTONS[ENGLISH.ordinal()][SETTINGS.ordinal()][2] = Button.MUSIC[ENGLISH.ordinal()][Audio.isSoundOn ? 0 : 1];
-		LABELS_OF_START_SCREEN_MENU_BUTTONS[GERMAN.ordinal()][SETTINGS.ordinal()][2] = Button.MUSIC[GERMAN.ordinal()][Audio.isSoundOn ? 0 : 1];
-		Menu.inGameButton.get("MMStopMusic").setLabel(Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1]);
-		Menu.startScreenMenuButtons.get("2").setLabel(Button.MUSIC[Menu.language.ordinal()][Audio.isSoundOn ? 0 : 1]);
+		Menu.dictionary.updateAudioActivation();
+		Menu.inGameButton.get("MMStopMusic").setLabel(Menu.dictionary.audioActivation());
+		Menu.startScreenMenuButtons.get("2").setLabel(Menu.dictionary.audioActivation());
 	}
 	
 	public static void determineHighscoreTimes(Helicopter helicopter)

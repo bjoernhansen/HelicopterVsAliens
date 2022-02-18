@@ -21,11 +21,11 @@ public class Audio
         NUMBER_OF_ANNOUNCERS = 6;
 
     public static boolean
-        isSoundOn = false,            // = true: Hintergrundmusik wird abgespielt
+        isSoundOn = true,            // = true: Hintergrundmusik wird abgespielt
         standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
 
     public static AudioClip
-            currentBg,        // Die aktuell abgespielte Hintergrund-Musik
+        currentBg,        // Die aktuell abgespielte Hintergrund-Musik
 
         // Menü-Sounds
         block,

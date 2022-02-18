@@ -11,10 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import static de.helicopter_vs_aliens.gui.WindowType.SETTINGS;
-import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
-import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
+import java.util.Optional;
 
 
 public class Main
@@ -105,24 +102,17 @@ public class Main
     
     public static void switchDisplayMode(Button currentButton)
     {
-        isFullScreen = !isFullScreen;
-        
-        Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[ENGLISH.ordinal()][SETTINGS.ordinal()][0]
-        	= Button.DISPLAY[ENGLISH.ordinal()][isFullScreen ? 0 : 1];
-		Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[GERMAN.ordinal()][SETTINGS.ordinal()][0]
-			= Button.DISPLAY[GERMAN.ordinal()][isFullScreen ? 0 : 1];
-   
-		if(currentButton != null)
-		{
-			currentButton.setLabel(Button.DISPLAY[Menu.language.ordinal()][isFullScreen ? 0 : 1]);
-		}
-		    
+        // TODO jedes Mal zu Beginn ein Wechsel? Ist das so gewünscht?
+		isFullScreen = !isFullScreen;
+	
+		Menu.dictionary.updateDisplayMode();
+		Optional.ofNullable(currentButton).ifPresent(button -> button.setLabel(Menu.dictionary.displayMode()));
+				    
         frame.dispose();
         frame.setUndecorated(isFullScreen);
         
         if(isFullScreen)
 		{
-    		//Menu.startscreen_menu_button.get("5").enabled = true;
         	device.setFullScreenWindow(frame);
         	activateDisplayMode();
 		}

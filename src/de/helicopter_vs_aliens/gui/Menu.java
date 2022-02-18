@@ -225,9 +225,6 @@ public class Menu
     
     /** Update- and Paint-Methoden */
 	
-    
-    
-    
     static void updateStartscreen(Helicopter helicopter, int counter)
 	{
     	Colorations.calculateVariableGameColors(counter);
@@ -1492,12 +1489,13 @@ public class Menu
 		Controller.getInstance().getDictionary().switchLanguageTo(language);
 	}
 	
-	public static void updateScreenMenuButtons(WindowType window)
+	public static void updateStartScreenMenuButtons()
 	{
 		for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
 		{
-			startScreenMenuButtons.get(Integer.toString(m)).setLabel(Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[language.ordinal()][window.ordinal()][m]);
+			startScreenMenuButtons.get(Integer.toString(m)).setLabel(dictionary.startScreenMenuButtonName(m));
 		}
+		startScreenMenuButtons.get("Cancel").setLabel(dictionary.cancel());
 	}
 	
 	public static void updateButtonLabels(Helicopter helicopter)
@@ -1522,11 +1520,7 @@ public class Menu
 			}
 		}
 		
-		for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
-		{
-			startScreenMenuButtons.get(Integer.toString(m)).setLabel(Button.LABELS_OF_START_SCREEN_MENU_BUTTONS[language.ordinal()][SETTINGS.ordinal()][m]);
-		}
-		startScreenMenuButtons.get("Cancel").setLabel(dictionary.cancel());
+		updateStartScreenMenuButtons();
 
 		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{

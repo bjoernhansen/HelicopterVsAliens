@@ -23,37 +23,6 @@ public class Button extends GameEntity
 		MUSIC = 		{{"Turn off music", "Turn on music" },
 						 {"Musik ausschalten", "Musik einschalten"}};
 	
-	public static final String[][][]
-		LABELS_OF_START_SCREEN_MENU_BUTTONS
-			=	{{{"Plot", "Changes since 1.0", "Game instructions",
-				   "Changes since 1.1", "Credits", "Copyright", "", ""},
-				  {"Game description", "Finances & Repair", "Upgrades",
-				   "Boss-Enemies", "Controls", "Power-ups", "Helicopter types",
-				   "Special mode"},
-				  {"Window mode", "Turn off antialiasing", "Turn off music",
-				   "German", "Player name", "",
-				   Audio.MICHAEL_MODE ? "Change music mode": "", ""},
-				  {"Contact", "", "", "", "", "", "", ""},
-				  {"General information", "Upgrade costs", "Phönix",  "Roch",
-				   "Orochi", "Kamaitachi", "Pegasus", "Helios"},
-				  {"Record times", "Overall", "Phoenix",  "Roch", "Orochi",
-				   "Kamaitachi", "Pegasus", "Helios"}
-				 },
-				 {{"Handlung", "Änderungen seit 1.0", "Spielanleitung",
-				   "Änderungen seit 1.1", "Credits", "Copyright", "", ""},
-				 {"Spielbeschreibung", "Finanzen/Reparatur", "Upgrades",
-				  "Boss-Gegner", "Bedienung", "PowerUps", "Helikopter-Klassen",
-				  "Spezial-Modus"},
-				 {"Fenstermodus", "Antialiasing aus", "Musik ausschalten",
-				  "Englisch", "Spielername", "",
-				  Audio.MICHAEL_MODE ? "Musik ändern": "", ""},
-				 {"Kontakt", "", "", "", "", "", "", ""},
-				 {"Allgemeines", "Upgrade-Kosten","Phönix", "Roch",  "Orochi",
-				  "Kamaitachi", "Pegasus", "Helios"},
-				 {"Bestzeiten", "Gesamt", "Phönix",  "Roch", "Orochi",
-				  "Kamaitachi", "Pegasus", "Helios"}
-				}};
-	
 	static final String
 		LABELS_OF_START_SCREEN_BUTTONS[][][]
 			= 	{{{"Informations",  "Highscore", "Contact"},
@@ -263,7 +232,7 @@ public class Button extends GameEntity
 	
 	public boolean isLabelEmpty()
 	{
-		return label.equals("");
+		return label == null || label.equals("");
 	}
 	
 	public void setLabel(String label)

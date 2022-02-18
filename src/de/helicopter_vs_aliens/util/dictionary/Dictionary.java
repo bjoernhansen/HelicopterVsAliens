@@ -1,10 +1,15 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
+import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
-import de.helicopter_vs_aliens.model.helicopter.*;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,7 +17,8 @@ import java.util.*;
 
 import static de.helicopter_vs_aliens.gui.BlockMessage.HELICOPTER_NOT_AVAILABLE;
 import static de.helicopter_vs_aliens.gui.BlockMessage.HELIOS_NOT_AVAILABLE;
-import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.EXTRA_CANNONS;
+import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.FIFTH_SPECIAL;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
@@ -46,7 +52,10 @@ public final class Dictionary
         helicopterInfos = new EnumMap<>(HelicopterType.class);
     
     private final EnumMap<BlockMessage, String[]>
-            blockMessages = new EnumMap<>(BlockMessage.class);
+        blockMessages = new EnumMap<>(BlockMessage.class);
+    
+    private final EnumMap<WindowType, List<String>>
+        startScreenMenuButtonName = new EnumMap<>(WindowType.class);
     
     private final List <String>
         columnNames = new ArrayList<>(),
@@ -148,6 +157,18 @@ public final class Dictionary
             }
             blockMessages.put(blockMessage, message);
         }
+    
+        for(WindowType windowType : WindowType.getNonSettingsStartScreenMenuWindows())
+        {
+            List<String> buttonLabels = new ArrayList<>();
+            for(int m = 0; m < Menu.START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
+            {
+                buttonLabels.add(this.languageProperties.getProperty(windowType.getButtonLabelKeyPrefix() + m));
+            }
+            startScreenMenuButtonName.put(windowType, buttonLabels);
+        }
+    
+        updateSettingsLabels();
         
         columnNames.clear();
         for(int i = 1; i <= Menu.NUMBER_OF_COLUMN_NAMES; i++)
@@ -163,7 +184,52 @@ public final class Dictionary
         
         accountForHelicopterChange();
     }
-
+    
+    private void updateSettingsLabels()
+    {
+        List<String> settingsLabels = new ArrayList<>();
+        settingsLabels.add(displayMode());
+        settingsLabels.add(antialiasing());
+        settingsLabels.add(audioActivation());
+        settingsLabels.add(this.languageProperties.getProperty(WindowType.SETTINGS.getButtonLabelKeyPrefix() + 3));
+        settingsLabels.add(this.languageProperties.getProperty(WindowType.SETTINGS.getButtonLabelKeyPrefix() + 4));
+        settingsLabels.add(changeMusicModeLabel());
+        startScreenMenuButtonName.put(WindowType.SETTINGS, settingsLabels);
+    }
+    
+    public void updateDisplayMode()
+    {
+        startScreenMenuButtonName.get(WindowType.SETTINGS).set(0, displayMode());
+    }
+    
+    public String displayMode()
+    {
+        String key = "displayMode." + (Main.isFullScreen ? "window" : "fullscreen");
+        return this.languageProperties.getProperty(key);
+    }
+    
+    public void updateAntialiasing()
+    {
+        startScreenMenuButtonName.get(WindowType.SETTINGS).set(1, antialiasing());
+    }
+    
+    public String antialiasing()
+    {
+        String key = "antialiazing." + (Controller.antialiasing ? "off" : "on");
+        return this.languageProperties.getProperty(key);
+    }
+    
+    public void updateAudioActivation()
+    {
+        startScreenMenuButtonName.get(WindowType.SETTINGS).set(2, audioActivation());
+    }
+    
+    public String audioActivation()
+    {
+        String key = "music." + (Audio.isSoundOn ? "off" : "on");
+        return this.languageProperties.getProperty(key);
+    }
+    
     private void accountForHelicopterChange()
     {
         specialUpgrades.put(FIFTH_SPECIAL, getFifthSpecial());
@@ -316,10 +382,14 @@ public final class Dictionary
         return this.languageProperties.getProperty("pleaseWait");
     }
     
-    
     public String settingOption(int optionNumber)
     {
         return settingOptions.get(optionNumber);
+    }
+    
+    public String changeMusicModeLabel()
+    {
+        return Audio.MICHAEL_MODE ? this.languageProperties.getProperty("buttonLabel.startScreenMenu.settings.5") : "";
     }
     
     public String helicopterSelectionRequest()
@@ -426,5 +496,12 @@ public final class Dictionary
                                 this.typeName(helicopterType.getUnlockerTypes().get(1)));
         }
         return message;
+    }
+    
+    public String startScreenMenuButtonName(int buttonIndex)
+    {
+        return Menu.window.isNonSettingsStartScreenMenuWindow()
+                ? startScreenMenuButtonName.get(Menu.window).get(buttonIndex)
+                : "";
     }
 }
