@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.gui.Button;
+import de.helicopter_vs_aliens.gui.button.Button;
 
 import java.awt.*;
 import java.util.HashMap;

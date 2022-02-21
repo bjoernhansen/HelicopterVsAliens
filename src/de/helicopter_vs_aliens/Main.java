@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens;
 
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Button;
+import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -40,11 +40,15 @@ public class Main
 		frame;
     
     private static DisplayMode
-		originalDisplayMode,
+		originalDisplayMode;
+	
+	private static final DisplayMode
 		standardDisplayMode = new DisplayMode(  STANDARD_RESULUTION.width,
     									STANDARD_RESULUTION.height,
     								  	32, 60);
-	public static DisplayMode currentDisplayMode;
+	
+	public static DisplayMode
+		currentDisplayMode;
 
 	
 	
@@ -106,7 +110,7 @@ public class Main
 		isFullScreen = !isFullScreen;
 	
 		Menu.dictionary.updateDisplayMode();
-		Optional.ofNullable(currentButton).ifPresent(button -> button.setLabel(Menu.dictionary.displayMode()));
+		Optional.ofNullable(currentButton).ifPresent(button -> button.setLabel(Menu.dictionary.oppositeDisplayMode()));
 				    
         frame.dispose();
         frame.setUndecorated(isFullScreen);

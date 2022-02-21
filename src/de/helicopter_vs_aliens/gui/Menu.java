@@ -11,6 +11,8 @@ import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.PowerUpPainter;
+import de.helicopter_vs_aliens.gui.button.Button;
+import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -363,8 +365,9 @@ public class Menu
         }
         
         // die Buttons
-        for(int i = 0; i < 2; i++){for(int j = 0; j < 3; j++){
-			startScreenButtons.get(Integer.toString(i)+j).paint(g2d);}}
+		StartScreenButtonType.getValues()
+							 .forEach(buttonType -> startScreenButtons.get(buttonType.getKey())
+																	  .paint(g2d));
         
         // die grünen Pfeile
         for(int i = 0; i < 2; i++)
@@ -575,7 +578,7 @@ public class Menu
             }
         	   
         	g2d.setColor(Colorations.golden);
-        	g2d.drawString( Button.DISPLAY[language.ordinal()][Main.isFullScreen ? 1 : 0]
+        	g2d.drawString( dictionary.displayMode()
         				 	  + (!Main.isFullScreen ? "" : " ("
         				 		   + (hasOriginalResulution
         				 			   ? Main.currentDisplayMode.getWidth()
@@ -1502,23 +1505,19 @@ public class Menu
 	{
 		repairShopButton.get("RepairButton").setLabel(dictionary.repair());
 		repairShopButton.get("RepairButton").setSecondLabel(dictionary.price());
-		repairShopButton.get("Einsatz").setLabel(Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()]);
-		repairShopButton.get("Einsatz").setSecondLabel(Button.SOLD[language.ordinal()][Events.timeOfDay.ordinal()]);
+		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
+		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
 		
 		inGameButton.get("RepairShop").setLabel(dictionary.toTheRepairShop());
 		inGameButton.get("MainMenu").setLabel(dictionary.mainMenu());
 		inGameButton.get("MMNewGame1").setLabel(dictionary.startNewGame());
-		inGameButton.get("MMStopMusic").setLabel(Button.MUSIC[language.ordinal()][Audio.isSoundOn ? 0 : 1]);
+		inGameButton.get("MMStopMusic").setLabel(dictionary.audioActivation());
 		inGameButton.get("MMNewGame2").setLabel(dictionary.quit());
 		inGameButton.get("MMCancel").setLabel(dictionary.cancel());
 		
-		for(int i = 0; i < NUMBER_OF_START_SCREEN_BUTTONS.x; i++)
-		{
-			for(int j = 0; j < NUMBER_OF_START_SCREEN_BUTTONS.y; j++)
-			{
-				startScreenButtons.get(Integer.toString(i)+j).setLabel(Button.LABELS_OF_START_SCREEN_BUTTONS[language.ordinal()][i][j]);
-			}
-		}
+		StartScreenButtonType.getValues()
+							 .forEach(buttonType -> startScreenButtons.get(buttonType.getKey())
+																	  .setLabel(buttonType.getLabel()));
 		
 		updateStartScreenMenuButtons();
 
@@ -3023,8 +3022,8 @@ public class Menu
 
 	public static void updateRepairShopButtons(Helicopter helicopter)
 	{
-		repairShopButton.get("Einsatz").setLabel(Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()]);
-		repairShopButton.get("Einsatz").setSecondLabel(Button.SOLD[language.ordinal()][helicopter.hasSpotlights ? 1 : 0]);
+		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
+		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
 		if(helicopter.hasSpotlights)
 		{
 			repairShopButton.get("Special" + 0).setCostsToZero();
@@ -3171,24 +3170,22 @@ public class Menu
 	// TODO mit einen Enum für die Buttons arbeiten --> EnumMap verwe
 	static void initializeButtons()
 	{
-		repairShopButton.put("RepairButton", Button.makeLeftSideRepairShopButton(287, dictionary.repair(), dictionary.price()));
-		repairShopButton.put("Einsatz", 	 Button.makeLeftSideRepairShopButton(395, Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()], Button.SOLD[language.ordinal()][0]));
+		repairShopButton.put("RepairButton", Button.makeRepairButton(287, dictionary.repair(), dictionary.price()));
+		repairShopButton.put("Einsatz", 	 Button.makeMissionButton(395, dictionary.mission(), dictionary.sold()));
 		
 		inGameButton.put("RepairShop",   Button.makeGroundButton(451, dictionary.toTheRepairShop()));
 		inGameButton.put("MainMenu",     Button.makeGroundButton(897, dictionary.mainMenu()));
 		
 		inGameButton.put("MMNewGame1",   Button.makeMainMenuButton(116, dictionary.startNewGame()));
-		inGameButton.put("MMStopMusic",  Button.makeMainMenuButton(161, Button.MUSIC[language.ordinal()][Audio.isSoundOn ? 0 : 1]));
+		inGameButton.put("MMStopMusic",  Button.makeMainMenuButton(161, dictionary.audioActivation()));
 		inGameButton.put("MMNewGame2",   Button.makeMainMenuButton(206, dictionary.quit()));
 		inGameButton.put("MMCancel",     Button.makeMainMenuButton(251, dictionary.cancel()));
 		
-		for(int i = 0; i < NUMBER_OF_START_SCREEN_BUTTONS.x; i++)
-		{
-			for(int j = 0; j < NUMBER_OF_START_SCREEN_BUTTONS.y; j++)
-			{
-				startScreenButtons.put( Integer.toString(i)+j, Button.makeStartScreenButton(i, j));
-			}
-		}
+		StartScreenButtonType.getValues()
+							 .forEach(buttonType -> startScreenButtons.put( buttonType.getKey(),
+								 											Button.makeStartScreenButton(buttonType)));
+		
+		// TODO wie oben machen: key ist den Types bekannt
 		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
 			repairShopButton.put( "StandardUpgrade" + standardUpgradeType.ordinal(), Button.makeStandardUpradeButton(standardUpgradeType));
@@ -3202,25 +3199,24 @@ public class Menu
 			startScreenMenuButtons.put(Integer.toString(m), Button.makeStartScreenMenuButton(m));
 		}
 		
-		startScreenButtons.get("11").setMarked(true);   // Der "Letztes Spiel fortsetzen"-Button ist markiert
-		startScreenButtons.get("11").setEnabled(Controller.savegame.isValid);
+		startScreenButtons.get(StartScreenButtonType.RESUME_LAST_GAME.getKey()).setMarked(true);
+		startScreenButtons.get(StartScreenButtonType.RESUME_LAST_GAME.getKey()).setEnabled(Controller.savegame.isValid);
 		
 		startScreenMenuButtons.put("Cancel", Button.makeStartScreenMenuCancelButton());
 		
 		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
 		{
-			startScreenButtons.get("10").setMarked(true);
+			startScreenButtons.get(StartScreenButtonType.SETTINGS.getKey()).setMarked(true);
 		}
 	}
 	
 	// Helicopter-spezifische Anpassung der Werkstatt-Button-Beschriftungen
 	// TODO vielleicht können die spezifischen Beschriftungen unnötig gemacht werden, wenn gleich die richtigen Werte verwendet werden
-	// TODO sollte nach Menu verschoben werden
 	public static void finalizeRepairShopButtons()
 	{
 		Helicopter helicopter = Controller.getInstance().getHelicopter();
-		repairShopButton.get("Einsatz").setLabel(Button.MISSION[language.ordinal()][Events.timeOfDay.ordinal()]);
-		repairShopButton.get("Einsatz").setSecondLabel(Button.SOLD[language.ordinal()][helicopter.hasSpotlights ? 1 : 0]);
+		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
+		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
 		
 		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
@@ -3245,5 +3241,13 @@ public class Menu
 		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setCosts(helicopter.getFifthSpecialCosts());
 		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setCostColor(helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor());
 		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setLabel(dictionary.fifthSpecial());
+	}
+	
+	public static void updateRepairShopButtonsAfterSpotlightPurchase()
+	{
+		// TODO Enum für RepairShopButtons anlegen
+		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
+		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
+		repairShopButton.get("Special" + 0).setCostsToZero();
 	}
 }

@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.gui.Button;
+import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -33,7 +33,7 @@ public class ButtonPainter extends Painter<Button>
             }
             g2d.setStroke(new BasicStroke(1));
             
-            if(button.getSecondLabel() != null || button.isCostButton())
+            if(button.hasSecondLabel() || button.isCostButton())
             {
                 if(button.getCostColor() == null){g2d.setColor(Colorations.lightOrange);}
                 else{g2d.setColor(button.getCostColor());}
@@ -62,7 +62,7 @@ public class ButtonPainter extends Painter<Button>
             {
                 g2d.drawString(button.getSecondLabel() + button.getCosts() + " €", (int)button.getBounds().getX() + 7, (int)button.getBounds().getY() + 40);
             }
-            else if(!button.isCostButton() && button.getSecondLabel() != null)
+            else if(!button.isCostButton() && button.hasSecondLabel())
             {
                 g2d.drawString(button.getSecondLabel(), (int)button.getBounds().getX() + 7, (int)button.getBounds().getY() + 40);
             }

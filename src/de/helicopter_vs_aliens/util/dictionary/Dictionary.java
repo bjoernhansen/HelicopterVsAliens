@@ -3,10 +3,10 @@ package de.helicopter_vs_aliens.util.dictionary;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.gui.BlockMessage;
-import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.gui.WindowType;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.TimeOfDay;
+import de.helicopter_vs_aliens.gui.*;
+import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -32,7 +32,7 @@ public final class Dictionary
     private final Properties
         defaultLanguageProperties = new Properties(),
         languageProperties = new Properties(defaultLanguageProperties);
-
+    
     private Language
         language;
     
@@ -44,10 +44,10 @@ public final class Dictionary
     
     private final EnumMap<StandardUpgradeType, List<String>>
         standardUpgradesImprovements = new EnumMap<>(StandardUpgradeType.class);
-
+    
     private final EnumMap<HelicopterType, String>
         helicopterNames = new EnumMap<>(HelicopterType.class);
-
+    
     private final EnumMap<HelicopterType, List<String>>
         helicopterInfos = new EnumMap<>(HelicopterType.class);
     
@@ -57,7 +57,7 @@ public final class Dictionary
     private final EnumMap<WindowType, List<String>>
         startScreenMenuButtonName = new EnumMap<>(WindowType.class);
     
-    private final List <String>
+    private final List<String>
         columnNames = new ArrayList<>(),
         settingOptions = new ArrayList<>();
     
@@ -66,24 +66,24 @@ public final class Dictionary
     {
         this(Language.getDefault(), HelicopterType.getDefault());
     }
-
+    
     public Dictionary(Language language, HelicopterType helicopterType)
     {
         loadDefaultLanguageProperties();
         this.switchLanguageTo(language);
         this.switchHelicopterTypeTo(helicopterType);
     }
-
+    
     private void loadDefaultLanguageProperties()
     {
         loadLanguageProperties(ENGLISH, defaultLanguageProperties);
     }
-
+    
     private void reloadLanguageProperties()
     {
         loadLanguageProperties(this.language, languageProperties);
     }
-
+    
     private void loadLanguageProperties(Language language, Properties properties)
     {
         try
@@ -91,93 +91,98 @@ public final class Dictionary
             String filename = getFilename(language);
             URL url = Dictionary.class.getResource(filename);
             properties.load(url.openStream());
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             e.printStackTrace();
         }
     }
-
+    
     private String getFilename(Language language)
     {
         return FILENAME_PREFIX + language.getCode() + FILENAME_EXTENSION;
     }
-
+    
     public void switchLanguageTo(Language language)
     {
-        if(this.language != language)
+        if (this.language != language)
         {
             this.language = language;
             reloadLanguageProperties();
             accountForLanguageChange();
         }
     }
-
+    
     public void switchHelicopterTypeTo(HelicopterType helicopterType)
     {
-        if(this.helicopterType != helicopterType)
+        if (this.helicopterType != helicopterType)
         {
             this.helicopterType = helicopterType;
             accountForHelicopterChange();
         }
     }
-
+    
     private void accountForLanguageChange()
     {
-        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
+        for (SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
         {
-            if(specialUpgradeType == SpecialUpgradeType.FIFTH_SPECIAL){break;}
+            if (specialUpgradeType == SpecialUpgradeType.FIFTH_SPECIAL)
+            {
+                break;
+            }
             specialUpgrades.put(specialUpgradeType, this.languageProperties.getProperty(specialUpgradeType.getDictionaryKey()));
         }
-    
-        for(StandardUpgradeType standardUpgradeType: StandardUpgradeType.getValues())
+        
+        for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
         {
-            if(standardUpgradeType == StandardUpgradeType.ENERGY_ABILITY){break;}
-            String dictionaryKeyPraefix = standardUpgradeType.getDictionaryKey()+ ".";
+            if (standardUpgradeType == StandardUpgradeType.ENERGY_ABILITY)
+            {
+                break;
+            }
+            String dictionaryKeyPraefix = standardUpgradeType.getDictionaryKey() + ".";
             standardUpgradesImprovements.put(standardUpgradeType, getImprovementsStringList(dictionaryKeyPraefix));
         }
         
-        for(HelicopterType type : HelicopterType.getValues())
+        for (HelicopterType type : HelicopterType.getValues())
         {
             helicopterNames.put(type, this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".name"));
             List<String> infos = new ArrayList<>();
-            for(int i = 1; i <= 3; i++)
+            for (int i = 1; i <= 3; i++)
             {
                 infos.add(this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".infos." + i));
             }
             helicopterInfos.put(type, infos);
         }
-    
-        for(BlockMessage blockMessage : BlockMessage.getValues())
+        
+        for (BlockMessage blockMessage : BlockMessage.getValues())
         {
-            String [] message = new String[4];
-            for(int i = 1; i <= 4; i++)
+            String[] message = new String[4];
+            for (int i = 1; i <= 4; i++)
             {
-                message[i-1]  = this.languageProperties.getProperty(blockMessage.getKey() + i);
+                message[i - 1] = this.languageProperties.getProperty(blockMessage.getKey() + i);
             }
             blockMessages.put(blockMessage, message);
         }
-    
-        for(WindowType windowType : WindowType.getNonSettingsStartScreenMenuWindows())
+        
+        for (WindowType windowType : WindowType.getNonSettingsStartScreenMenuWindows())
         {
             List<String> buttonLabels = new ArrayList<>();
-            for(int m = 0; m < Menu.START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
+            for (int m = 0; m < Menu.START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
             {
                 buttonLabels.add(this.languageProperties.getProperty(windowType.getButtonLabelKeyPrefix() + m));
             }
             startScreenMenuButtonName.put(windowType, buttonLabels);
         }
-    
+        
         updateSettingsLabels();
         
         columnNames.clear();
-        for(int i = 1; i <= Menu.NUMBER_OF_COLUMN_NAMES; i++)
+        for (int i = 1; i <= Menu.NUMBER_OF_COLUMN_NAMES; i++)
         {
             columnNames.add(this.languageProperties.getProperty("highscore.columnNames." + i));
         }
-    
+        
         settingOptions.clear();
-        for(int i = 1; i <= Menu.NUMBER_OF_SETTING_OPTIONS; i++)
+        for (int i = 1; i <= Menu.NUMBER_OF_SETTING_OPTIONS; i++)
         {
             settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
         }
@@ -188,21 +193,30 @@ public final class Dictionary
     private void updateSettingsLabels()
     {
         List<String> settingsLabels = new ArrayList<>();
-        settingsLabels.add(displayMode());
+        settingsLabels.add(oppositeDisplayMode());
         settingsLabels.add(antialiasing());
         settingsLabels.add(audioActivation());
         settingsLabels.add(this.languageProperties.getProperty(WindowType.SETTINGS.getButtonLabelKeyPrefix() + 3));
         settingsLabels.add(this.languageProperties.getProperty(WindowType.SETTINGS.getButtonLabelKeyPrefix() + 4));
         settingsLabels.add(changeMusicModeLabel());
+        settingsLabels.add("");
+        settingsLabels.add("");
         startScreenMenuButtonName.put(WindowType.SETTINGS, settingsLabels);
     }
     
     public void updateDisplayMode()
     {
-        startScreenMenuButtonName.get(WindowType.SETTINGS).set(0, displayMode());
+        startScreenMenuButtonName.get(WindowType.SETTINGS)
+                                 .set(0, oppositeDisplayMode());
     }
     
     public String displayMode()
+    {
+        String key = "displayMode." + (Main.isFullScreen ? "fullscreen" : "window");
+        return this.languageProperties.getProperty(key);
+    }
+    
+    public String oppositeDisplayMode()
     {
         String key = "displayMode." + (Main.isFullScreen ? "window" : "fullscreen");
         return this.languageProperties.getProperty(key);
@@ -210,7 +224,8 @@ public final class Dictionary
     
     public void updateAntialiasing()
     {
-        startScreenMenuButtonName.get(WindowType.SETTINGS).set(1, antialiasing());
+        startScreenMenuButtonName.get(WindowType.SETTINGS)
+                                 .set(1, antialiasing());
     }
     
     public String antialiasing()
@@ -221,7 +236,8 @@ public final class Dictionary
     
     public void updateAudioActivation()
     {
-        startScreenMenuButtonName.get(WindowType.SETTINGS).set(2, audioActivation());
+        startScreenMenuButtonName.get(WindowType.SETTINGS)
+                                 .set(2, audioActivation());
     }
     
     public String audioActivation()
@@ -250,7 +266,7 @@ public final class Dictionary
     private List<String> getImprovementsStringList(String dictionaryKeyPraefix)
     {
         List<String> improvements = new ArrayList<>();
-        for(int i = 1; i <= 2; i++)
+        for (int i = 1; i <= 2; i++)
         {
             improvements.add(this.languageProperties.getProperty(dictionaryKeyPraefix + i));
         }
@@ -345,11 +361,6 @@ public final class Dictionary
     public String credit()
     {
         return this.languageProperties.getProperty("credit");
-    }
-    
-    public String mission()
-    {
-        return this.languageProperties.getProperty("mission");
     }
     
     public String state()
@@ -457,8 +468,9 @@ public final class Dictionary
         return standardUpgradesImprovements.get(ENERGY_ABILITY);
     }
     
-    public String genericEnergyAbility(){
-        String dictionaryKey = "upgrades.standard.energyAbility." + (language.getObjectPosition()+1);
+    public String genericEnergyAbility()
+    {
+        String dictionaryKey = "upgrades.standard.energyAbility." + (language.getObjectPosition() + 1);
         return this.languageProperties.getProperty(dictionaryKey);
     }
     
@@ -468,18 +480,19 @@ public final class Dictionary
         {
             return genericEnergyAbility();
         }
-        return standardUpgradesImprovements.get(standardUpgradeType).get(language.getObjectPosition());
+        return standardUpgradesImprovements.get(standardUpgradeType)
+                                           .get(language.getObjectPosition());
     }
     
-    public String [] blockMessage(BlockMessage blockMessage)
+    public String[] blockMessage(BlockMessage blockMessage)
     {
         return blockMessages.get(blockMessage);
     }
     
-    public String [] helicopterNotAvailable(HelicopterType helicopterType)
+    public String[] helicopterNotAvailable(HelicopterType helicopterType)
     {
-        String [] message = {"", "", "", ""};
-        switch(helicopterType)
+        String[] message = {"", "", "", ""};
+        switch (helicopterType)
         {
             case HELIOS:
                 return this.blockMessage(HELIOS_NOT_AVAILABLE);
@@ -487,21 +500,40 @@ public final class Dictionary
             case KAMAITACHI:
             case PEGASUS:
                 message[0] = String.format(
-                                blockMessages.get(HELICOPTER_NOT_AVAILABLE)[0],
-                                this.typeName(helicopterType));
+                    blockMessages.get(HELICOPTER_NOT_AVAILABLE)[0],
+                    this.typeName(helicopterType));
                 message[1] = blockMessages.get(HELICOPTER_NOT_AVAILABLE)[1];
                 message[2] = String.format(
-                                blockMessages.get(HELICOPTER_NOT_AVAILABLE)[2],
-                                this.helicopterName(helicopterType.getUnlockerTypes().get(0)),
-                                this.typeName(helicopterType.getUnlockerTypes().get(1)));
+                    blockMessages.get(HELICOPTER_NOT_AVAILABLE)[2],
+                    this.helicopterName(helicopterType.getUnlockerTypes()
+                                                      .get(0)),
+                    this.typeName(helicopterType.getUnlockerTypes()
+                                                .get(1)));
         }
         return message;
     }
     
     public String startScreenMenuButtonName(int buttonIndex)
     {
-        return Menu.window.isNonSettingsStartScreenMenuWindow()
-                ? startScreenMenuButtonName.get(Menu.window).get(buttonIndex)
-                : "";
+        return Optional.ofNullable(startScreenMenuButtonName.get(Menu.window))
+                       .map(labelList -> labelList.get(buttonIndex))
+                       .orElse("");
+    }
+    
+    public String mission(){
+        String key = "mission." + (Events.timeOfDay == TimeOfDay.DAY ? "daytime" : "overnight");
+        return this.languageProperties.getProperty(key);
+    }
+    
+    // TODO Methode wird an 5 Stellen aufgerufen, diese Stellen sehen ähnlich aus --> Redundanzen auflösen
+    public String sold(){
+        boolean hasSpotlights = Controller.getInstance().getHelicopter().hasSpotlights;
+        String key = "sold." + (hasSpotlights ? "highSalary" : "lowSalary");
+        return this.languageProperties.getProperty(key);
+    }
+    
+    public String startScreenButtonLabel(String dictionaryKey)
+    {
+        return this.languageProperties.getProperty(dictionaryKey);
     }
 }

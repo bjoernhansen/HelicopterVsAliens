@@ -3,8 +3,9 @@ package de.helicopter_vs_aliens.control;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
-import de.helicopter_vs_aliens.gui.Button;
+import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.*;
@@ -27,6 +28,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.*;
 import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.BlockMessage.*;
+import static de.helicopter_vs_aliens.gui.Menu.dictionary;
 import static de.helicopter_vs_aliens.gui.Menu.window;
 import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
 import static de.helicopter_vs_aliens.gui.WindowType.*;
@@ -460,7 +462,7 @@ public class Events
 			{
 				money -= repairFee(helicopter, helicopter.isDamaged);
 				timeOfDay = (!helicopter.hasSpotlights || Calculations.tossUp(0.33f)) ? DAY : NIGHT;
-				Menu.repairShopButton.get("Einsatz").setLabel(Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()]);
+				Menu.repairShopButton.get("Einsatz").setLabel(dictionary.mission());
 												
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
 				{
@@ -522,9 +524,9 @@ public class Events
 				money -= helicopter.getSpotlightCosts();
 				helicopter.hasSpotlights = true;
 				timeOfDay = NIGHT;
-				Menu.repairShopButton.get("Einsatz").setLabel(Button.MISSION[Menu.language.ordinal()][timeOfDay.ordinal()]);
-				Menu.repairShopButton.get("Einsatz").setSecondLabel(Button.SOLD[Menu.language.ordinal()][helicopter.hasSpotlights ? 1 : 0]);
-				Menu.repairShopButton.get("Special" + 0).setCostsToZero();
+				
+				Menu.updateRepairShopButtonsAfterSpotlightPurchase();
+
 				for(Enemy enemy : enemies.get(DESTROYED))
 				{
 					enemy.repaint();
@@ -709,20 +711,20 @@ public class Events
 				Menu.blockHelicopterSelection(nextHelicopterType);
 			}
 		}
-		else if(Menu.startScreenButtons.get("00").getBounds().contains(cursor))
+		else if(Menu.startScreenButtons.get(StartScreenButtonType.INFORMATIONS.getKey()).getBounds().contains(cursor))
 		{			
 			newStartscreenMenuWindow(INFORMATIONS, true);
 			Menu.startScreenMenuButtons.get("2").setMarked(true);
 		}
-		else if(Menu.startScreenButtons.get("01").getBounds().contains(cursor))
+		else if(Menu.startScreenButtons.get(StartScreenButtonType.HIGHSCORE.getKey()).getBounds().contains(cursor))
 		{			
 			newStartscreenMenuWindow(HIGHSCORE, true);
 		}
-		else if(Menu.startScreenButtons.get("02").getBounds().contains(cursor))
+		else if(Menu.startScreenButtons.get(StartScreenButtonType.CONTACT.getKey()).getBounds().contains(cursor))
 		{			
 			newStartscreenMenuWindow(CONTACT, true);
 		}
-		else if(Menu.startScreenButtons.get("10").getBounds().contains(cursor))
+		else if(Menu.startScreenButtons.get(StartScreenButtonType.SETTINGS.getKey()).getBounds().contains(cursor))
 		{			
 			newStartscreenMenuWindow(SETTINGS, true);
 			if(HighscoreEntry.currentPlayerName.equals("John Doe"))
@@ -730,7 +732,7 @@ public class Events
 				Menu.startScreenMenuButtons.get("4").setMarked(true);
 			}
 		}
-		else if(Menu.startScreenButtons.get("11").getBounds().contains(cursor))
+		else if(Menu.startScreenButtons.get(StartScreenButtonType.RESUME_LAST_GAME.getKey()).getBounds().contains(cursor))
 		{
 			if(Controller.savegame.isValid)
 			{
@@ -739,7 +741,7 @@ public class Events
 			}
 			else{Audio.play(Audio.block);}			
 		}		
-		else if(Menu.startScreenButtons.get("12").getBounds().contains(cursor))
+		else if(Menu.startScreenButtons.get(StartScreenButtonType.QUIT.getKey()).getBounds().contains(cursor))
 		{					
 			Controller.shutDown();
 		}		
@@ -1151,8 +1153,10 @@ public class Events
 
 	private static void newStartscreenMenuWindow(WindowType newWindow, boolean hasJustEntered)
 	{
-		if(hasJustEntered){
-			Menu.stopButtonHighlighting(Menu.startScreenButtons);}
+		if (hasJustEntered)
+		{
+			Menu.stopButtonHighlighting(Menu.startScreenButtons);
+		}
 		Audio.play(Audio.choose);		
 		window = newWindow;
 		Menu.adaptToNewWindow(hasJustEntered);
