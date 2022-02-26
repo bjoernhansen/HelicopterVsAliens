@@ -2,11 +2,13 @@ package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.io.Serializable;
 
-public class HighscoreEntry implements Serializable
+public class HighScoreEntry implements Serializable
 {		
 	private static final long 
 		serialVersionUID = 1L;	
@@ -15,7 +17,7 @@ public class HighscoreEntry implements Serializable
 			NUMBER_OF_ENTRIES = 10;
 	
 	public static String
-        currentPlayerName = "John Doe";
+        currentPlayerName = Menu.DEFAULT_PLAYER_NAME;
 	
 	// Variablen eines Highscore-Eintrages
 	public String playerName;
@@ -31,7 +33,7 @@ public class HighscoreEntry implements Serializable
 		helicopterType;
 	
 	
-	HighscoreEntry(Savegame savegame)
+	HighScoreEntry(Savegame savegame)
 	{
 		this.playerName = currentPlayerName;
 		this.helicopterType = savegame.helicopterType;
@@ -43,7 +45,7 @@ public class HighscoreEntry implements Serializable
 	}
 	
 	// TODO use comparator & ggf. Baumstruktur verwenden, ELEMENT einfügen und das kleinste löschen
-	private boolean isBetterThan(HighscoreEntry entry)
+	private boolean isBetterThan(HighScoreEntry entry)
 	{
 			 if(this.maxLevel > entry.maxLevel) return true;
 		else if(this.maxLevel < entry.maxLevel) return false;
@@ -56,9 +58,9 @@ public class HighscoreEntry implements Serializable
 		else return this.bonusIncome > entry.bonusIncome;
 	}
 	
-	static void putEntry(HighscoreEntry[] highscore, HighscoreEntry entry)
+	static void putEntry(HighScoreEntry[] highscore, HighScoreEntry entry)
 	{
-		HighscoreEntry highscoreEntry, currentEntry = entry;
+		HighScoreEntry highscoreEntry, currentEntry = entry;
 		for(int i = 0; i < NUMBER_OF_ENTRIES; i++)
 		{
 			if(highscore[i] == null)
@@ -85,16 +87,9 @@ public class HighscoreEntry implements Serializable
 			}
 			else
 			{
-				if(currentPlayerName.equals("John Doe"))
-				{
-					Menu.startScreenMenuButtons.get("4").setMarked(true);
-					Menu.startScreenButtons.get("10").setMarked(true);
-				}
-				else
-				{
-					Menu.startScreenMenuButtons.get("4").setMarked(false);
-					Menu.startScreenButtons.get("10").setMarked(false);
-				}
+				boolean isDefaultPlayerNameSet = currentPlayerName.equals(Menu.DEFAULT_PLAYER_NAME);
+				Menu.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(isDefaultPlayerNameSet);
+				Menu.buttons.get(StartScreenButtonType.SETTINGS).setMarked(isDefaultPlayerNameSet);
 				savegame.currentPlayerName = currentPlayerName;
 				Events.settingsChanged = true;
 			}

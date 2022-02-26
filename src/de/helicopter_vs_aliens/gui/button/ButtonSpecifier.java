@@ -8,7 +8,5 @@ public interface ButtonSpecifier
     
     int getY();
     
-    String getLabel();
-    
-    String getSecondLabel();
+    String getPrimaryLabel();
 }

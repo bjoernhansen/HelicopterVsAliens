@@ -110,7 +110,7 @@ public class Main
 		isFullScreen = !isFullScreen;
 	
 		Menu.dictionary.updateDisplayMode();
-		Optional.ofNullable(currentButton).ifPresent(button -> button.setLabel(Menu.dictionary.oppositeDisplayMode()));
+		Optional.ofNullable(currentButton).ifPresent(button -> button.setPrimaryLabel(Menu.dictionary.oppositeDisplayMode()));
 				    
         frame.dispose();
         frame.setUndecorated(isFullScreen);

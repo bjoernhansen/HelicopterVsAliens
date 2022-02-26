@@ -375,7 +375,12 @@ public final class Roch extends Helicopter
         }
         missiles.get(INACTIVE).add(missile);
     }
-
+    
+    public boolean isPowerShieldActivated()
+    {
+        return isPowerShieldActivated;
+    }
+    
     @Override
     public int getFifthSpecialCosts()
     {
@@ -389,8 +394,9 @@ public final class Roch extends Helicopter
                 && !this.isPowerShieldActivated;
     }
     
-    public boolean isPowerShieldActivated()
+    @Override
+    public int getLastCannonCost()
     {
-        return isPowerShieldActivated;
+        return Roch.ROCH_SECOND_CANNON_COSTS;
     }
 }

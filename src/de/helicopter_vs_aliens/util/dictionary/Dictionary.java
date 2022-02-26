@@ -6,7 +6,9 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.gui.*;
+import de.helicopter_vs_aliens.gui.button.ButtonCategory;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -458,9 +460,9 @@ public final class Dictionary
         return this.columnNames;
     }
     
-    public List<String> standardUpgradesImprovements(StandardUpgradeType standardUpgradeType)
+    public String standardUpgradesImprovements(StandardUpgradeType standardUpgradeType)
     {
-        return standardUpgradesImprovements.get(standardUpgradeType);
+        return String.join(" ", standardUpgradesImprovements.get(standardUpgradeType));
     }
     
     public List<String> energyAbilityImprovements()
@@ -513,10 +515,10 @@ public final class Dictionary
         return message;
     }
     
-    public String startScreenMenuButtonName(int buttonIndex)
+    public String startScreenMenuButtonName(StartScreenMenuButtonType buttonType)
     {
         return Optional.ofNullable(startScreenMenuButtonName.get(Menu.window))
-                       .map(labelList -> labelList.get(buttonIndex))
+                       .map(labelList -> labelList.get(buttonType.ordinal()))
                        .orElse("");
     }
     

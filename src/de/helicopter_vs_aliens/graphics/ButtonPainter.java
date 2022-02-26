@@ -7,11 +7,16 @@ import de.helicopter_vs_aliens.util.Colorations;
 import java.awt.*;
 
 public class ButtonPainter extends Painter<Button>
-{   
+{
+    private static final int
+        LABEL_OFFSET_X = 7,
+        PRIMARY_LABEL_OFFSET_Y = 20,
+        SECONDARY_LABEL_OFFSET_Y = 40;
+        
     @Override
     public void paint(Graphics2D g2d, Button button)
     {
-        if(!button.isLabelEmpty())
+        if(button.isVisible())
         {
             if((button.isHighlighted() && button.isEnabled()) || !button.isTranslucent())
             {
@@ -33,12 +38,12 @@ public class ButtonPainter extends Painter<Button>
             }
             g2d.setStroke(new BasicStroke(1));
             
-            if(button.hasSecondLabel() || button.isCostButton())
+            if(button.canHaveSecondaryLabel())
             {
                 if(button.getCostColor() == null){g2d.setColor(Colorations.lightOrange);}
                 else{g2d.setColor(button.getCostColor());}
                 g2d.setFont(de.helicopter_vs_aliens.gui.Menu.fontProvider.getBold(14));
-                g2d.drawString(button.getLabel(), (int)button.getBounds().getX() + 7, (int)button.getBounds().getY() + 20);
+                g2d.drawString(button.getPrimaryLabel(), (int)button.getBounds().getX() + LABEL_OFFSET_X, (int)button.getBounds().getY() + PRIMARY_LABEL_OFFSET_Y);
             }
             else
             {
@@ -54,18 +59,16 @@ public class ButtonPainter extends Painter<Button>
                     g2d.setColor(Color.black);
                 }
                 FontMetrics fm = g2d.getFontMetrics();
-                int sw = fm.stringWidth(button.getLabel());
-                g2d.drawString(button.getLabel(), (int)(button.getBounds().getX() + (button.getBounds().getWidth()-sw)/2), (int)(button.getBounds().getY() + button.getBounds().getHeight() - button.getBounds().getHeight()/2+6));
+                int sw = fm.stringWidth(button.getPrimaryLabel());
+                g2d.drawString(button.getPrimaryLabel(), (int)(button.getBounds().getX() + (button.getBounds().getWidth()-sw)/2), (int)(button.getBounds().getY() + button.getBounds().getHeight() - button.getBounds().getHeight()/2+6));
             }
             g2d.setColor(Color.white);
-            if(button.getCosts() != 0)
-            {
-                g2d.drawString(button.getSecondLabel() + button.getCosts() + " €", (int)button.getBounds().getX() + 7, (int)button.getBounds().getY() + 40);
+            if(button.hasSecondaryLabel()){
+                g2d.drawString( button.getSecondaryLabel(),
+                                (int)button.getBounds().getX() + LABEL_OFFSET_X,
+                                (int)button.getBounds().getY() + SECONDARY_LABEL_OFFSET_Y);
             }
-            else if(!button.isCostButton() && button.hasSecondLabel())
-            {
-                g2d.drawString(button.getSecondLabel(), (int)button.getBounds().getX() + 7, (int)button.getBounds().getY() + 40);
-            }
+            
         }
     }
 }

@@ -900,6 +900,9 @@ Versionen:
 			Startscreen-Menü mehrfach zu sehen ist, wurde behoben.
 			Ein Fehler, der nach minimieren des Fenster zu einer fehlerhaften 
 			Hintergrundfarbe geführt hat, wurde behoben.
-  		
-   			   			
-Letzte Änderung: 18.03.2016
+			Ein Fehler, der dazu führte, dass Nachrichten aus dem Werkstatt-Menü
+			auf dem Startscreen zu sehen war, wurde behoben.
+			Ein Fehler, der bei Reparatur mit Hilfe von Cheats zu einer fehlerhaften
+			Bennung der MainMenü-Buttons geführt hatte, wurde behoben.
+
+Letzte Änderung: 26.02.2022

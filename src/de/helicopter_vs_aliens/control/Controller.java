@@ -33,6 +33,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
 									   WindowListener
 {
+	private static final boolean
+		STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW = true;
+	
 	private static final int
 		BACKGROUND_PAINT_DISABLED = -1;
 
@@ -213,12 +216,10 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			
 			if(this.frameSkipStatus == FrameSkipStatusType.ACTIVE)
 			{
-				//skipped_counter++;
 				this.frameSkipStatus = FrameSkipStatusType.INACTIVE;
 			}
 			else
-			{				
-				//unskipped_counter++;
+			{
 				this.offGraphics.setColor(Colorations.bg);
 				this.offGraphics.fill(this.wholeScreenClip);	
 				paintFrame(this.offGraphics);
@@ -244,7 +245,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 				Missile.updateAll(this, this.helicopter);
 				Enemy.updateAllActive(this, this.helicopter);
 				EnemyMissile.updateAll(this.enemyMissiles, this.helicopter);
-				Events.checkForLevelup(this, this.helicopter);
+				Events.checkForLevelUp(this);
 				Enemy.generateNewEnemies(this.enemies, this.helicopter);
 				this.helicopter.update(this.missiles, this.explosions);
 				Explosion.updateAll(this.helicopter, this.explosions);
@@ -332,23 +333,22 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void mouseEntered(MouseEvent e)
 	{		
-		/*if(Events.window == GAME)
+		if(Menu.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
-			this.mouse_in_window = true;
-			Events.time_aktu = System.currentTimeMillis();
-		}*/
+			this.mouseInWindow = true;
+			Events.lastCurrentTime = System.currentTimeMillis();
+		}
 		this.backgroundRepaintTimer = 0;
 	}	
 	
 	@Override
 	public void mouseExited(MouseEvent e)
 	{
-		/*if(Events.window == GAME)
+		if(Menu.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
-			this.mouse_in_window = false;
-			Events.playing_time += System.currentTimeMillis() - Events.time_aktu;			
+			this.mouseInWindow = false;
+			Events.playingTime += System.currentTimeMillis() - Events.lastCurrentTime;
 		}
-		*/
 	}
 	
 	// ungenutzte Listener-Methoden	

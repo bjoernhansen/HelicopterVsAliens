@@ -28,18 +28,15 @@ import java.util.*;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
-import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevel.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
-import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.*;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
-import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
 public abstract class Helicopter extends RectangularGameEntity
@@ -623,7 +620,6 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isCrashing = false;
     	this.restorePlating();
     	this.setRelativePlatingDisplayColor();
-		Menu.repairShopButton.get("RepairButton").setCostsToZero();
     }
 	
 	public void obtainAllUpgrades()
@@ -1467,7 +1463,7 @@ public abstract class Helicopter extends RectangularGameEntity
     
     public boolean isCountingAsFairPlayedHelicopter()
     {
-        return !this.isPlayedWithCheats || Events.IS_SAVEGAME_SAVED_ANYWAY;
+        return !this.isPlayedWithCheats || Events.IS_SAVE_GAME_SAVED_ANYWAY;
     }
 	
 	public Color getPrimaryHullColor()
@@ -1482,5 +1478,10 @@ public abstract class Helicopter extends RectangularGameEntity
 		return this.hasGoliathPlating()
 			? this.getType().getPlatedSecondaryHullColor()
 			: this.getType().getStandardSecondaryHullColor();
+	}
+	
+	public int getLastCannonCost()
+	{
+		return STANDARD_SPECIAL_COSTS;
 	}
 }

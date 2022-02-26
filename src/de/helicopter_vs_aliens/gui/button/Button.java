@@ -2,150 +2,53 @@ package de.helicopter_vs_aliens.gui.button;
 
 import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.model.GameEntity;
-import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 
 public class Button extends GameEntity
 {
-	// TODO viele Konstanten können in die spezifischen ButtonType Elemente ausgelagert werden
-	public static final Point
-		STANDARD_UPGRADE_BUTTON_OFFSET = new Point(559, 95);
-	
-	private static final int
-		UPGRADE_BUTTON_DISTANCE = 60,
-		MAIN_MENU_BUTTON_X = 385,
-		GROUND_BUTTON_Y = 431,
-		LEFT_SIDE_REPAIR_SHOP_BUTTON_X = 23;
-	
-	private static final Point
-		START_SCREEN_MENU_CANCEL_BUTTON_POSITION = new Point(849, 410),
-		START_SCREEN_MENU_BUTTON_OFFSET 		 = new Point( 23, 370),
-        START_SCREEN_MENU_BUTTON_DISTANCE 		 = new Point(160,  40),
-        SPECIAL_UPGRADE_BUTTON_OFFSET 			 = new Point(771, 155);
-    	
-	// Instanz-Variablen
 	private final boolean
-		isCostButton,	// = true: Kaufbutton
-		isTranslucent;	// = true: durchsichtig
+		isPurchaseButton,	// = true: Kaufbutton
+		isTranslucent;		// = true: durchsichtig
 	
 	private boolean
-		isHighlighted,	// = true: animierter Button; wird = true gesetzt, wenn Maus über Button führt
+		isHighlighted,		// = true: animierter Button; wird = true gesetzt, wenn Maus über Button führt
 		isEnabled,
-		isMarked;		// farbliche Hervorhebungen bei besonderer Funktion
+		isMarked;			// farbliche Hervorhebungen bei besonderer Funktion
 	
 	private int
-		costs;			// Preis, falls es ein Kauf-Button in der Werkstatt ist
+		costs;				// Preis, falls es ein Kauf-Button in der Werkstatt ist
 		
 	private String
-		label,			// Beschriftung
-		secondLabel;	// zweite Beschriftung, falls vorhanden
+		primaryLabel,		// Beschriftung
+		secondaryLabel;		// zweite Beschriftung, falls vorhanden
 	
 	private Color
-		costColor;		// Farbe, falls es ein Upgrade-Button in der Werkstatt ist
+		costColor;			// Farbe, falls es ein Upgrade-Button in der Werkstatt ist
 	
 	private final Rectangle2D
-		bounds;		// Maße und Koordinaten des Buttons
+		bounds;				// Maße und Koordinaten des Buttons
 	
 	private final ButtonCategory
 		category;
 	
-	// TODO idealerweise bekommen die statischen Factory-Methoden zukünftig nur noch ein ButtonType Enum-Element, dann reicht auch eine statische Factory-Methode
-	public static Button makeStandardUpradeButton(StandardUpgradeType standardUpgradeType)
-	{
-		List<String> standardUpgradeLabel = Menu.dictionary.standardUpgradesImprovements(standardUpgradeType);
-		return new Button(	ButtonCategory.STANDARD_UPRADE,
-							STANDARD_UPGRADE_BUTTON_OFFSET.x,
-							STANDARD_UPGRADE_BUTTON_OFFSET.y + standardUpgradeType.ordinal() * UPGRADE_BUTTON_DISTANCE,
-							String.join(" ", standardUpgradeLabel),
-							Menu.dictionary.price());
-	}
 	
-	public static Button makeStartScreenMenuCancelButton()
-	{
-		return new Button(	ButtonCategory.START_SCREEN_MENU_CANCEL,
-							START_SCREEN_MENU_CANCEL_BUTTON_POSITION.x,
-                           	START_SCREEN_MENU_CANCEL_BUTTON_POSITION.y,
-                           	Menu.dictionary.cancel(),
-                           	null);
-	}
-	
-	public static Button makeStartScreenMenuButton(int buttonIndex)
-	{
-		int i = buttonIndex/2, j = buttonIndex%2;
-		return new Button(  ButtonCategory.START_SCREEN_MENU,
-							START_SCREEN_MENU_BUTTON_OFFSET.x + i * START_SCREEN_MENU_BUTTON_DISTANCE.x,
-                            START_SCREEN_MENU_BUTTON_OFFSET.y + j * START_SCREEN_MENU_BUTTON_DISTANCE.y,
-                            "",
-                            null);
-	}
-	
-	public static Button makeSpecialUpgradeButton(SpecialUpgradeType specialUpgradeType)
-	{
-		return new Button(	ButtonCategory.SPECIAL_UPGRADE,
-							SPECIAL_UPGRADE_BUTTON_OFFSET.x,
-							SPECIAL_UPGRADE_BUTTON_OFFSET.y + specialUpgradeType.ordinal() * UPGRADE_BUTTON_DISTANCE,
-			                de.helicopter_vs_aliens.gui.Menu.dictionary.specialUpgrade(specialUpgradeType),
-			                de.helicopter_vs_aliens.gui.Menu.dictionary.price());
-	}
-
-	public static Button makeStartScreenButton(ButtonSpecifier buttonType)
+	public static Button makeButton(ButtonSpecifier buttonType)
 	{
 		return new Button(  buttonType.getCategory(),
 							buttonType.getX(),
 							buttonType.getY(),
-							buttonType.getLabel(),
-							buttonType.getSecondLabel());
+							buttonType.getPrimaryLabel());
 	}
-	
-	public static Button makeMainMenuButton(int posY, String label)
-	{
-		return new Button(	ButtonCategory.MAIN_MENU,
-							MAIN_MENU_BUTTON_X,
-							posY,
-							label,
-							null);
-	}
-	
-	public static Button makeGroundButton(int posX, String label)
-	{
-		return new Button(	ButtonCategory.GROUND,
-							posX,
-							GROUND_BUTTON_Y,
-							label,
-							null);
-	}
-	
-	public static Button makeMissionButton(int posY, String label, String priceLabel)
-	{
-		return new Button(	ButtonCategory.MISSION,
-							LEFT_SIDE_REPAIR_SHOP_BUTTON_X,
-							posY,
-							label,
-							priceLabel);
-	}
-	
-	public static  Button makeRepairButton(int posY, String label, String priceLabel)
-	{
-		return new Button(	ButtonCategory.REPAIR,
-							LEFT_SIDE_REPAIR_SHOP_BUTTON_X,
-							posY,
-							label,
-							priceLabel);
-	}
-	
-    private Button(ButtonCategory category, int x, int y, String label, String secondLabel)
+		
+    private Button(ButtonCategory category, int x, int y, String primaryLabel)
 	{
 		this.category = category;
 		this.bounds = new Rectangle2D.Float(x, y, category.getWidth(), category.getHeight());
-		this.label = label;
-		this.secondLabel = secondLabel;
-		this.costs = 0;
-		this.isCostButton = category.isCostButton();
+		this.primaryLabel = primaryLabel;
+		this.isPurchaseButton = category.isPurchaseButton();
 		this.costColor = null;
 		this.isTranslucent = category.isTranslucent();
 		this.isHighlighted = false;
@@ -153,29 +56,25 @@ public class Button extends GameEntity
 		this.isMarked = false;
 	}
 	
-	public boolean isCostButton()
-	{
-		return isCostButton;
-	}
-	
 	public boolean isTranslucent()
 	{
 		return isTranslucent;
 	}
 	
-	public int getCosts()
+	public boolean showsPurchasableOffer()
 	{
-		return costs;
+		return this.isPurchaseButton && costs != 0;
 	}
 	
-	public void setCosts(int costs)
+	public void adjustCostsTo(int costs)
 	{
 		this.costs = costs;
+		this.updateSecondaryLabel();
 	}
 	
-	public void setCostsToZero()
+	public void adjustCostsToZero()
 	{
-		this.costs = 0;
+		adjustCostsTo(0);
 	}
 	
 	public boolean isHighlighted()
@@ -208,29 +107,50 @@ public class Button extends GameEntity
 		isMarked = marked;
 	}
 	
-	public String getLabel()
+	public String getPrimaryLabel()
 	{
-		return label;
+		return primaryLabel;
 	}
 	
-	public boolean isLabelEmpty()
+	public void setPrimaryLabel(String primaryLabel)
 	{
-		return label == null || label.equals("");
+		this.primaryLabel = primaryLabel;
 	}
 	
-	public void setLabel(String label)
+	public boolean isVisible()
 	{
-		this.label = label;
+		return primaryLabel != null && !primaryLabel.isEmpty();
 	}
 	
-	public String getSecondLabel()
+	public String getSecondaryLabel()
 	{
-		return secondLabel;
+		return secondaryLabel;
 	}
 	
-	public void setSecondLabel(String secondLabel)
+	public void updateSecondaryLabel()
 	{
-		this.secondLabel = secondLabel;
+		if(category == ButtonCategory.MISSION)
+		{
+			this.secondaryLabel = Menu.dictionary.sold();
+		}
+		else if(this.showsPurchasableOffer())
+		{
+			this.secondaryLabel = Menu.dictionary.price() + " " + costs + " €";
+		}
+		else
+		{
+			this.secondaryLabel = "";
+		}
+	}
+	
+	public boolean hasSecondaryLabel()
+	{
+		return this.showsPurchasableOffer() || this.getCategory() == ButtonCategory.MISSION;
+	}
+	
+	public boolean canHaveSecondaryLabel()
+	{
+		return this.category.canHaveSecondaryLabel();
 	}
 	
 	public Color getCostColor()
@@ -246,11 +166,6 @@ public class Button extends GameEntity
 	public Rectangle2D getBounds()
 	{
 		return bounds;
-	}
-	
-	public boolean hasSecondLabel()
-	{
-		return secondLabel != null && !secondLabel.isEmpty();
 	}
 	
 	public ButtonCategory getCategory()

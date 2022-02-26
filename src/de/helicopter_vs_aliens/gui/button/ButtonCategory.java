@@ -1,6 +1,9 @@
 package de.helicopter_vs_aliens.gui.button;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 public enum ButtonCategory
 {
@@ -9,14 +12,18 @@ public enum ButtonCategory
     START_SCREEN_MENU_CANCEL(150, 30,ButtonSubcategory.TRANSLUCENT),
     MAIN_MENU(211, 35, ButtonSubcategory.STANDARD),
     GROUND(121, 25,ButtonSubcategory.STANDARD),
-    STANDARD_UPRADE(193, 50, ButtonSubcategory.COST),
-    SPECIAL_UPGRADE (184, 50, ButtonSubcategory.COST),
+    STANDARD_UPRADE(193, 50, ButtonSubcategory.PURCHASE),
+    SPECIAL_UPGRADE (184, 50, ButtonSubcategory.PURCHASE),
     MISSION(205, 50,ButtonSubcategory.TRANSLUCENT),
-    REPAIR(205, 50, ButtonSubcategory.COST);
+    REPAIR(205, 50, ButtonSubcategory.PURCHASE);
+    
+    
+    private static final Set<ButtonCategory>
+        BUTTONS_WITH_SECONDARY_LABEL = Collections.unmodifiableSet(EnumSet.range(STANDARD_UPRADE, REPAIR));
     
  
     private final boolean
-        isCostButton,
+        isPurchaseButton,
         isTranslucent;
     
     private final Dimension
@@ -26,13 +33,13 @@ public enum ButtonCategory
     {
         STANDARD,       // not translucent 
         TRANSLUCENT,    
-        COST            // always translucent
+        PURCHASE            // always translucent
     }
     
     ButtonCategory(int width, int height, ButtonSubcategory subcategory)
     {
         this.dimension = new Dimension(width, height);
-        this.isCostButton = subcategory == ButtonSubcategory.COST;
+        this.isPurchaseButton = subcategory == ButtonSubcategory.PURCHASE;
         this.isTranslucent = subcategory != ButtonSubcategory.STANDARD;
     }
     
@@ -46,13 +53,18 @@ public enum ButtonCategory
         return dimension.height;
     }
     
-    public boolean isCostButton()
+    public boolean isPurchaseButton()
     {
-        return isCostButton;
+        return isPurchaseButton;
     }
     
     public boolean isTranslucent()
     {
         return isTranslucent;
+    }
+    
+    public boolean canHaveSecondaryLabel()
+    {
+        return BUTTONS_WITH_SECONDARY_LABEL.contains(this);
     }
 }

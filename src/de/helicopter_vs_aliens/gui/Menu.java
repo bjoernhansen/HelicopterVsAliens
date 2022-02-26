@@ -1,9 +1,6 @@
 package de.helicopter_vs_aliens.gui;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
 
-import de.helicopter_vs_aliens.*;
+import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
@@ -12,26 +9,27 @@ import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.PowerUpPainter;
 import de.helicopter_vs_aliens.gui.button.Button;
-import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
+import de.helicopter_vs_aliens.gui.button.*;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
-import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.helicopter.*;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
-import de.helicopter_vs_aliens.score.HighscoreEntry;
+import de.helicopter_vs_aliens.score.HighScoreEntry;
 import de.helicopter_vs_aliens.score.Savegame;
-import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
+import java.awt.*;
+import java.util.List;
+import java.util.*;
+
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.*;
 import static de.helicopter_vs_aliens.control.Events.MAXIMUM_LEVEL;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevel.*;
-import static de.helicopter_vs_aliens.gui.PriceLevel.CHEAP;
 import static de.helicopter_vs_aliens.gui.WindowType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.*;
@@ -42,6 +40,10 @@ import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 // TODO mögichst alle längeren Texte innerhalb dieser Klasse ins Dictionary überführen
 // TODO An vielen Stellen im Menü werden Zustände immer wieder neu berechnet anstatt sie einmal zu speichern
 // TODO Klasse ist zu groß --> splitten
+
+// TODO Bug: Werkstatt Meldung erscheint auf StartScreen, wenn schnell spiel verlassen
+// TODO Bug: Hauptmenü Buttons (ingame) sind falsch benannt, falls schnell mit cheats der Spielausgang beeinflusst wird
+
 public class Menu
 {
 	public static final int
@@ -51,6 +53,9 @@ public class Menu
 		VERSION =   "Version 1.3.4",			// Spielversion
 		GAME_NAME = "Helicopter vs. Aliens",
 	    DEVELOPERS_NAME = "Björn Hansen";
+	
+	public static final String
+		DEFAULT_PLAYER_NAME = "John Doe";
 		
 	public static final int
 		NUMBER_OF_COLUMN_NAMES = 8,
@@ -76,14 +81,12 @@ public class Menu
 	    MESSAGE_LINE_COUNT = 4;
 	
 	public static final Point
-		HELICOPTER_START_SCREEN_OFFSET = new Point(66, 262),
-		NUMBER_OF_START_SCREEN_BUTTONS = new Point(2, 3);
+		HELICOPTER_START_SCREEN_OFFSET = new Point(66, 262);
     
     private static final String[]
         emptyMessage = {"", "", "", ""};
 	
 	public static int
-		page, 							// ausgewählte Seite im Startscreen-Menü
 		helicopterSelection,			// Helicopterauswahl im Startscreen-Menü
 		fps,							// Frames Per Second; wird über die FPS-Anzeige ausgegeben
 		specialInfoSelection = 0,		// nur für Debugging: Auswahl der anzuzeigenden Informationen
@@ -96,6 +99,9 @@ public class Menu
 		unlockedTimer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 		effectTimer[] = new int[HelicopterType.size()];	// regulieren die Helikopter-Animationen im Startscreen-Menü
 
+	public static StartScreenMenuButtonType
+		page = StartScreenMenuButtonType.BUTTON_1; // ausgewählte Seite im Startscreen-Menü
+	
 	public static Language
 		language = ENGLISH; 			// Sprache; = 0: English; = 1: German
 
@@ -111,8 +117,11 @@ public class Menu
 	
     // Auf dem Startscreen gezeichnete Polygone
     public static Polygon
-    	cross;                            // das rote Block-Kreuz
-		public static Polygon[] triangle = new Polygon[2];	// die grönen Dreiecke auf dem Startscreen
+    	cross;                      // das rote Block-Kreuz
+	
+	public static Polygon[]
+		triangle = new Polygon[2];	// die grönen Dreiecke auf dem Startscreen
+	
 	
 	// Konstanten
     public static final int
@@ -139,28 +148,37 @@ public class Menu
 	 	
     // Menu Objects
     public static String
-			repairShopTime;
-
-    static String
-		highlightedButton = "",
+		repairShopTime;
+	
+	private static Button
+		highlightedButton = null;
+	
+    private static String
 	    // TODO daraus eine Liste<String> machen
 		message[] = new String [MESSAGE_LINE_COUNT];
-	   
-    public static HashMap<String, Button>
-		inGameButton = new HashMap<>(),
-		startScreenButtons = new HashMap<>(),
-		startScreenMenuButtons = new HashMap<>(),
-		repairShopButton = new HashMap<>();
-    
-    public static Label label;
-	public static PowerUp[] collectedPowerUp = new PowerUp [MAXIMUM_COLLECTED_POWERUPS_COUNT];
-	public static Rectangle[] helicopterFrame = new Rectangle[NUMBER_OF_START_SCREEN_HELICOPTERS];
-    public static FontProvider fontProvider = new FontProvider();
-    public static Dictionary dictionary = Controller.getInstance().getDictionary();
+	
+	public static Map<ButtonSpecifier, Button>
+		buttons = new HashMap<>();
+		
+    public static Label
+		label;
+	
+	public static PowerUp[]
+		collectedPowerUp = new PowerUp [MAXIMUM_COLLECTED_POWERUPS_COUNT];
+	
+	public static Rectangle[]
+		helicopterFrame = new Rectangle[NUMBER_OF_START_SCREEN_HELICOPTERS];
+	
+    public static FontProvider
+		fontProvider = new FontProvider();
+	
+    public static Dictionary
+		dictionary = Controller.getInstance().getDictionary();
 	
 	public static final Timer
 		levelDisplayTimer = new Timer(LEVEL_DISPLAY_TIME);			// reguliert die Anzeigezeit der Levelanzeige nach einem Level-Up
 
+	
     public static void initializeMenu()
     {
     	for(HelicopterType helicopterType : HelicopterType.getValues())
@@ -203,9 +221,8 @@ public class Menu
 		{
 			if(helicopter.isOnTheGround())
 			{
-				inGameButton.get("RepairShop").paint(g2d);
-				inGameButton.get("MainMenu").paint(g2d);
-				
+				buttons.get(GroundButtonType.REPAIR_SHOP).paint(g2d);
+				buttons.get(GroundButtonType.MAIN_MENU).paint(g2d);
 			}
 			if(isMenuVisible){
 				paintIngameMenu(g2d);}
@@ -219,18 +236,15 @@ public class Menu
         g2d.setFont(fontProvider.getPlain(25));
         g2d.drawString(dictionary.mainMenu(), 422 + (language == ENGLISH ? 6 : 0), 106);
 		
-		inGameButton.get("MMNewGame1").paint(g2d);
-        inGameButton.get("MMStopMusic").paint(g2d);
-        inGameButton.get("MMNewGame2").paint(g2d);
-        inGameButton.get("MMCancel").paint(g2d);
+		MainMenuButtonType.getValues().forEach(buttonType -> buttons.get(buttonType).paint(g2d));
     }
     
     /** Update- and Paint-Methoden */
 	
-    static void updateStartscreen(Helicopter helicopter, int counter)
+    static void updateStartScreen(Helicopter helicopter, int counter)
 	{
     	Colorations.calculateVariableGameColors(counter);
-    	identifyHighlightedButtons(helicopter, startScreenButtons);
+    	identifyHighlightedButtons(helicopter, ButtonGroup.START_SCREEN);
         if(crossTimer > CROSS_MAX_DISPLAY_TIME){
 			crossTimer = 0;}
         else if(crossTimer > 0 ){
@@ -366,8 +380,7 @@ public class Menu
         
         // die Buttons
 		StartScreenButtonType.getValues()
-							 .forEach(buttonType -> startScreenButtons.get(buttonType.getKey())
-																	  .paint(g2d));
+							 .forEach(buttonType -> buttons.get(buttonType).paint(g2d));
         
         // die grünen Pfeile
         for(int i = 0; i < 2; i++)
@@ -408,39 +421,37 @@ public class Menu
 				y + h + START_SCREEN_HELICOPTER_OFFSET_Y);
 	}
     
-    static void updateAndPaintStartscreenMenu(Graphics2D g2d, int counter)
+    static void updateAndPaintStartScreenMenu(Graphics2D g2d, int counter)
     {
 		// TODO mindestens auf mehrere Methoden aufteilen
-		
     	g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(29));
         if(window == SETTINGS)
         {
         	g2d.drawString(dictionary.settings(), 40, 55);
         }
-        else{g2d.drawString(startScreenMenuButtons.get(Integer.toString(page)).getLabel(), 40, 55);}
+        else{g2d.drawString(buttons.get(page).getPrimaryLabel(), 40, 55);}
        
         paintFrameLine(g2d, 26, 67, 971);
         paintFrame(g2d, 26, 21, 971, 317);
         
         // die Buttons
-		if (!showOnlyCancelButton())
+		if(!showOnlyCancelButton())
 		{
-			for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
-			{
-				startScreenMenuButtons.get(Integer.toString(m))
-									  .paint(g2d);
-			}
+			StartScreenMenuButtonType.getValues()
+									 .forEach(buttonSpecifier -> buttons.get(buttonSpecifier)
+																		.paint(g2d));
 		}
-        startScreenMenuButtons.get("Cancel").paint(g2d);
+		buttons.get(StartScreenMenuCancelButtonType.CANCEL)
+			   .paint(g2d);
         
         if(window  == HELICOPTER_TYPES)
         {
-        	if(page > 1 && page < 2 + HelicopterType.size())
+        	if(page.ordinal() > 1 && page.ordinal() < 2 + HelicopterType.size())
         	{
                 paintHelicopterInStartScreenMenu(g2d);
             }
-        	else if(page == 1)
+        	else if(page == StartScreenMenuButtonType.BUTTON_2)
         	{
         		String tempString = "";
                 StandardUpgradeType standardUpgradeType = null;
@@ -478,9 +489,10 @@ public class Menu
         }
         else if(window  == HIGHSCORE)
         {
-        	if(page == 0)
+        	if(page == StartScreenMenuButtonType.BUTTON_1)
         	{
         		String tempString = "";
+				// TODO Magic number entfernen
             	for(int i = 0; i < 6; i++)
             	{
             		// TODO über HelicopterTypes iterieren
@@ -519,7 +531,7 @@ public class Menu
         	}
         	else
         	{
-        		if(page > 1 && page < 2 + HelicopterType.size())
+        		if(page.ordinal() > 1 && page.ordinal() < 2 + HelicopterType.size())
             	{
                     paintHelicopterInStartScreenMenu(g2d);
                 }
@@ -542,9 +554,9 @@ public class Menu
 							topLine - lineDistance);
     			}
     			
-        		for(int j = 0; j < HighscoreEntry.NUMBER_OF_ENTRIES; j++)
+        		for(int j = 0; j < HighScoreEntry.NUMBER_OF_ENTRIES; j++)
     			{
-    				HighscoreEntry tempEntry = Events.highscore[page==1?6:page-2][j];
+    				HighScoreEntry tempEntry = Events.highScore[page.ordinal()==1?6:page.ordinal()-2][j];
     				
         			if(tempEntry != null)
     				{
@@ -602,12 +614,12 @@ public class Menu
         	g2d.setColor(Colorations.golden);
         	g2d.drawString(language.getNativeName(), SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 3 * SETTING_LINE_SPACING);
         	
-        	if(page == 4){g2d.setColor(Color.white);}
-        	g2d.drawString(HighscoreEntry.currentPlayerName, SETTING_LEFT + SETTING_COLUMN_SPACING, SETTING_TOP + 4 * SETTING_LINE_SPACING);
+        	if(page == StartScreenMenuButtonType.BUTTON_5){g2d.setColor(Color.white);}
+        	g2d.drawString(HighScoreEntry.currentPlayerName, SETTING_LEFT + SETTING_COLUMN_SPACING, SETTING_TOP + 4 * SETTING_LINE_SPACING);
         	
-        	if(page == 4 && (counter/30)%2 == 0){g2d.drawString("|", SETTING_LEFT + SETTING_COLUMN_SPACING + g2d.getFontMetrics().stringWidth(HighscoreEntry.currentPlayerName), SETTING_TOP + 4 * SETTING_LINE_SPACING);}
+        	if(page == StartScreenMenuButtonType.BUTTON_5 && (counter/30)%2 == 0){g2d.drawString("|", SETTING_LEFT + SETTING_COLUMN_SPACING + g2d.getFontMetrics().stringWidth(HighScoreEntry.currentPlayerName), SETTING_TOP + 4 * SETTING_LINE_SPACING);}
         
-        } else if (window == DESCRIPTION && page == 5)
+        } else if (window == DESCRIPTION && page == StartScreenMenuButtonType.BUTTON_6)
 		{
 			int x = 52, y = 120, yOffset = 35;
 			PowerUpPainter powerUpPainter = GraphicsManager.getInstance()
@@ -626,12 +638,12 @@ public class Menu
 	
 	private static boolean showOnlyCancelButton()
 	{
-		return startScreenMenuButtons.get("1").isLabelEmpty();
+		return !buttons.get(StartScreenMenuButtonType.BUTTON_2).isVisible();
 	}
 	
 	private static void paintHelicopterInStartScreenMenu(Graphics2D g2d)
     {
-        Helicopter startScreenMenuHelicopter = helicopterDummies.get(HelicopterType.getValues().get(page-2));
+        Helicopter startScreenMenuHelicopter = helicopterDummies.get(HelicopterType.getValues().get(page.ordinal()-2));
 		HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(startScreenMenuHelicopter.getClass());
         helicopterPainter.startScreenMenuPaint(g2d, startScreenMenuHelicopter);
     }
@@ -642,6 +654,7 @@ public class Menu
     }
     private static String toStringWithSpace(int value, boolean big)
 	{
+		// TODO String.format oder ähnliches verwenden
 		return (big	? (value >= 100 ? "" : "  ") : "")
 				+ (value >= 10 ? "" : "  ")
 				+ value;
@@ -649,8 +662,8 @@ public class Menu
 
     private static void updateRepairShop(Helicopter helicopter)
 	{
-    	identifyHighlightedButtons(helicopter, repairShopButton);
-		
+    	identifyHighlightedButtons(helicopter, ButtonGroup.REPAIR_SHOP);
+		// TODO Timer Klasse verwenden
 		if(messageTimer != 0)
 		{
 			messageTimer++;
@@ -658,7 +671,6 @@ public class Menu
 		if(messageTimer > 110)
 		{
 			clearMessage();
-			messageTimer = 0;
 		}
 		if(!helicopter.isDamaged){helicopter.rotatePropellerSlow();}
 	}
@@ -681,14 +693,14 @@ public class Menu
         paintHelicopterDisplay(g2d, helicopter, 0, 10); //58
         
         // Reparatur-Button
-        repairShopButton.get("RepairButton").paint(g2d);
+        buttons.get(LeftSideRepairShopButtonType.REPAIR).paint(g2d);
         
         // Die Einsätze
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
         g2d.drawString(String.format("%s:", dictionary.mission()), 27, 382);
    
-        repairShopButton.get("Einsatz").paint(g2d);
+        buttons.get(LeftSideRepairShopButtonType.MISSION).paint(g2d);
         
         // Die Status-Leiste
         paintFrame(g2d, 251, 117, 285, 326);
@@ -781,11 +793,14 @@ public class Menu
         // Standard-Upgrades
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(language == ENGLISH ? "Standard upgrades:" : "Standard-Upgrades:", Button.STANDARD_UPGRADE_BUTTON_OFFSET.x + 4, 82);
+        g2d.drawString(language == ENGLISH ? "Standard upgrades:" : "Standard-Upgrades:", StandardUpgradeButtonType.OFFSET.x + 4, 82);
         g2d.setFont(fontProvider.getPlain(15));
-        for(int i = 0; i < 6; i++){
-			repairShopButton.get("StandardUpgrade" + i).paint(g2d);}
-        
+		// TODO hier muss sich auf die ANzahl der Elemente im Enum StandardUpgradeButtonSize bezogen werden, am besten ein forEach über die Elemente
+	
+		StandardUpgradeButtonType.getValues()
+								 .forEach(buttonSpecifier -> buttons.get(buttonSpecifier)
+																	.paint(g2d));
+		
         // Message Box
         paintMessageFrame(g2d);
         
@@ -794,8 +809,10 @@ public class Menu
         g2d.setFont(fontProvider.getBold(20));
         g2d.drawString(language == ENGLISH ? "Special upgrades:" : "Spezial-Upgrades:", 774, 142);
         g2d.setFont(fontProvider.getPlain(15));
-        for(int i = 0; i < 5; i++){
-			repairShopButton.get("Special" + i).paint(g2d);}
+	
+		SpecialUpgradeButtonType.getValues()
+								.forEach(buttonSpecifier -> buttons.get(buttonSpecifier)
+																   .paint(g2d));
     }
     
     private static void paintMessageFrame(Graphics2D g2d)
@@ -806,7 +823,7 @@ public class Menu
         for(int i = 0; i < MESSAGE_LINE_COUNT; i++){g2d.drawString(message[i], 785, 35 + i * 20); }
     }
     
-	static void paintScorescreen(Graphics2D g2d, Helicopter helicopter)
+	static void paintScoreScreen(Graphics2D g2d, Helicopter helicopter)
 	{
     	// Helikopter-Anzeige
     	paintHelicopterDisplay(g2d, helicopter, 0, 5);
@@ -822,7 +839,7 @@ public class Menu
         paintFrame(g2d, 297, 90, 250, 200);
         
         
-        startScreenMenuButtons.get("Cancel").paint(g2d);
+        buttons.get(StartScreenMenuCancelButtonType.CANCEL).paint(g2d);
 		
 		if(Events.level > MAXIMUM_LEVEL)
 		{
@@ -851,6 +868,7 @@ public class Menu
         g2d.setColor(Color.white);
         g2d.drawString((language == ENGLISH ? "Playing time per boss: " : "Spielzeit pro Boss: "), SCORE_SCREEN_X_POS_1 - 20, SCORE_SCREEN_Y_POS - 9);
         
+		// TODO magic number entfernen
         for(int i = 0; i < 5; i++)
         {
         	if(i < (Events.level-1)/10)
@@ -895,10 +913,12 @@ public class Menu
         g2d.drawString((language == ENGLISH ? "Hit rate: " : "Raketen-Trefferquote: ") + percentage + "%", SCORE_SCREEN_X_POS_2, SCORE_SCREEN_Y_POS + SCORE_SCREEN_SPACE_BETWEEN_ROWS * 8); //Zielsicherheit
 	}
 	
-	public static void updateScorescreen(Helicopter helicopter)
+	public static void updateScoreScreen(Helicopter helicopter)
 	{
     	helicopter.rotatePropellerSlow();
-		startScreenMenuButtons.get("Cancel").setHighlighted(startScreenMenuButtons.get("Cancel").getBounds().contains(helicopter.destination));
+		Button cancelButton = buttons.get(StartScreenMenuCancelButtonType.CANCEL);
+		boolean isHighlighted = cancelButton.getBounds().contains(helicopter.destination);
+		cancelButton.setHighlighted(isHighlighted);
 	}
 	
 	public static String minuten(long spielzeit)
@@ -1172,7 +1192,7 @@ public class Menu
 			{
 				paintTimeDisplay(g2d, Events.playingTime
 											 + System.currentTimeMillis()
-											 - Events.timeAktu);
+											 - Events.lastCurrentTime);
 			}
 			else{paintTimeDisplay(g2d, Events.playingTime);}
 		}
@@ -1421,8 +1441,9 @@ public class Menu
                 g2d.drawString((language == ENGLISH ? ""							: "endgültig stoppen."),			390,232-i);
             }
         }
-		inGameButton.get("MMNewGame2").setLabel(dictionary.messageAfterCrash(gameOver));
-		inGameButton.get("MMNewGame2").paint(g2d);
+		Button newGameButton2 = buttons.get(MainMenuButtonType.NEW_GAME_2);
+		newGameButton2.setPrimaryLabel(dictionary.messageAfterCrash(gameOver));
+		newGameButton2.paint(g2d);
     }
     
 /** Graphical objects **/
@@ -1494,73 +1515,77 @@ public class Menu
 	
 	public static void updateStartScreenMenuButtons()
 	{
-		for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
-		{
-			startScreenMenuButtons.get(Integer.toString(m)).setLabel(dictionary.startScreenMenuButtonName(m));
-		}
-		startScreenMenuButtons.get("Cancel").setLabel(dictionary.cancel());
+		StartScreenMenuButtonType.getValues().forEach(buttonSpecifier -> {
+			StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType) buttonSpecifier; 
+			buttons.get(buttonSpecifier).setPrimaryLabel(dictionary.startScreenMenuButtonName(buttonType));
+		});
+		buttons.get(StartScreenMenuCancelButtonType.CANCEL).setPrimaryLabel(dictionary.cancel());
 	}
 	
 	public static void updateButtonLabels(Helicopter helicopter)
 	{
-		repairShopButton.get("RepairButton").setLabel(dictionary.repair());
-		repairShopButton.get("RepairButton").setSecondLabel(dictionary.price());
-		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
-		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
+		// TODO Buttons sollten einen Supplier haben, mit dem sie selbst aktualisieren können und dann eine Update-Funktion nutzen
 		
-		inGameButton.get("RepairShop").setLabel(dictionary.toTheRepairShop());
-		inGameButton.get("MainMenu").setLabel(dictionary.mainMenu());
-		inGameButton.get("MMNewGame1").setLabel(dictionary.startNewGame());
-		inGameButton.get("MMStopMusic").setLabel(dictionary.audioActivation());
-		inGameButton.get("MMNewGame2").setLabel(dictionary.quit());
-		inGameButton.get("MMCancel").setLabel(dictionary.cancel());
+		buttons.get(LeftSideRepairShopButtonType.REPAIR).setPrimaryLabel(dictionary.repair());
+		buttons.get(LeftSideRepairShopButtonType.REPAIR).updateSecondaryLabel();
+		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
+		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
+		
+		buttons.get(GroundButtonType.REPAIR_SHOP).setPrimaryLabel(dictionary.toTheRepairShop());
+		buttons.get(GroundButtonType.MAIN_MENU).setPrimaryLabel(dictionary.mainMenu());
+		buttons.get(MainMenuButtonType.NEW_GAME_1).setPrimaryLabel(dictionary.startNewGame());
+		buttons.get(MainMenuButtonType.STOP_MUSIC).setPrimaryLabel(dictionary.audioActivation());
+		buttons.get(MainMenuButtonType.NEW_GAME_2).setPrimaryLabel(dictionary.quit());
+		buttons.get(MainMenuButtonType.CANCEL).setPrimaryLabel(dictionary.cancel());
 		
 		StartScreenButtonType.getValues()
-							 .forEach(buttonType -> startScreenButtons.get(buttonType.getKey())
-																	  .setLabel(buttonType.getLabel()));
+							 .forEach(buttonType -> buttons.get(buttonType)
+														   .setPrimaryLabel(buttonType.getPrimaryLabel()));
 		
 		updateStartScreenMenuButtons();
-
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-		{
-			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setLabel(String.join(" ", dictionary.standardUpgradesImprovements(standardUpgradeType)));
-			repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setSecondLabel(dictionary.price());
-		}
+		
+		StandardUpgradeButtonType.getValues().forEach(buttonSpecifier -> {
+			StandardUpgradeButtonType buttonType = (StandardUpgradeButtonType)buttonSpecifier;
+			StandardUpgradeType standardUpgradeType = buttonType.getStandardUpgradeType();
+			buttons.get(buttonSpecifier).setPrimaryLabel(String.join(" ", dictionary.standardUpgradesImprovements(standardUpgradeType)));
+			buttons.get(buttonSpecifier).updateSecondaryLabel();
+		});
+		
+		SpecialUpgradeButtonType.getValues().forEach(buttonSpecifier -> {
+			SpecialUpgradeButtonType buttonType = (SpecialUpgradeButtonType)buttonSpecifier;
+			SpecialUpgradeType specialUpgradeType = buttonType.getSpecialUpgradeType();
+			buttons.get(buttonSpecifier).setPrimaryLabel(dictionary.specialUpgrade(specialUpgradeType));
+			buttons.get(buttonSpecifier).updateSecondaryLabel();
+		});
 	
-		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
-		{
-			int i = specialUpgradeType.ordinal();
-			repairShopButton.get("Special" + i).setLabel(dictionary.specialUpgrade(specialUpgradeType));
-			repairShopButton.get("Special" + i).setSecondLabel(dictionary.price());
-		}
 		if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
 		{
-			repairShopButton.get("Special" + 3).setLabel(dictionary.thirdCannon());
+			buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setPrimaryLabel(dictionary.thirdCannon());
 		}
-		// TODO wieso nochmal? in schleife schon passiert
-		//repairShopButton.get("Special" + 4).setLabel(dictionary.specialUpgrade(FIFTH_SPECIAL));
 	}
  
-	static void identifyHighlightedButtons(Helicopter helicopter, HashMap<String, Button> buttons)
+	static void identifyHighlightedButtons(Helicopter helicopter, ButtonGroup buttonGroup)
 	{
-    	if(	highlightedButton.equals("")
-        	|| !buttons.get(highlightedButton).getBounds().contains(helicopter.destination))
+    	if(isSearchForButtonToBeHighlightedNecessary(helicopter))
         {
-        	if(!highlightedButton.equals(""))
-        	{
-        		buttons.get(highlightedButton).setHighlighted(false);
-        		highlightedButton = "";
-        	}
-			for(Map.Entry<String, Button> buttonEntry : buttons.entrySet())
+			stopButtonHighlighting();
+			for(ButtonSpecifier buttonSpecifier : buttonGroup.getButtonSpecifiers())
 			{
-				if (buttonEntry.getValue().getBounds().contains(helicopter.destination.x, helicopter.destination.y))
+				Button button = buttons.get(buttonSpecifier);
+				if (button.getBounds().contains(helicopter.destination.x, helicopter.destination.y))
 				{
-					buttonEntry.getValue().setHighlighted(true);
-					highlightedButton = buttonEntry.getKey();
+					button.setHighlighted(true);
+					highlightedButton = button;
 					break;
 				}
 			}
         }
+	}
+	
+	private static boolean isSearchForButtonToBeHighlightedNecessary(Helicopter helicopter)
+	{
+		return highlightedButton == null
+			   || !highlightedButton.getBounds().contains(helicopter.destination);
 	}
 	
 	public static Polygon getCrossPolygon()
@@ -1596,6 +1621,7 @@ public class Menu
 	public static void clearMessage()
 	{
 	    message = emptyMessage;
+		messageTimer = 0;
 	}
 	
 	
@@ -1607,7 +1633,7 @@ public class Menu
 		{
 			if(window  == INFORMATIONS)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					// Handlung
 					label.setText(
@@ -1628,7 +1654,7 @@ public class Menu
 			        "</b></font></html>"
 			        );
 				}
-				else if(page == 1)
+				else if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					// Änderungen seit 1.0
 					label.setText(
@@ -1651,7 +1677,7 @@ public class Menu
 					"balance, graphics or the upgrade system were made." +
 		            "</b></font></html>");
 				}
-				else if(page == 3)
+				else if(page == StartScreenMenuButtonType.BUTTON_4)
 				{
 					// Änderungen seit 1.1
 					label.setText(
@@ -1697,7 +1723,7 @@ public class Menu
 					"</b></font></span></html>"
 					);
 				}
-				else if(page == 4)
+				else if(page == StartScreenMenuButtonType.BUTTON_5)
 				{
 					// Credits
 					label.setText(
@@ -1748,7 +1774,7 @@ public class Menu
 					"</font></b></html>"
 					);
 				}
-				else if(page == 5)
+				else if(page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					// Copyright
 					label.setText(
@@ -1765,7 +1791,7 @@ public class Menu
 			}
 			else if(window  == DESCRIPTION)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					// Spielbeschreibung
 					label.setText(
@@ -1790,7 +1816,7 @@ public class Menu
 		            "</font></html>"
 					);
 				}
-				else if(page == 1)
+				else if(page == StartScreenMenuButtonType.BUTTON_2)
 				{
 					// Finanzen/Reparatur
 					label.setText(
@@ -1832,7 +1858,7 @@ public class Menu
 		            "</b></font></html>"
 					);
 				}
-				else if(page == 2)
+				else if(page == StartScreenMenuButtonType.BUTTON_3)
 				{
 					// Upgrades
 					label.setText(
@@ -1881,7 +1907,7 @@ public class Menu
 		            "</b></font></html>"
 					);
 				}
-				else if(page == 3)
+				else if(page == StartScreenMenuButtonType.BUTTON_4)
 				{
 					// Boss-Gegner
 					label.setText(
@@ -1906,7 +1932,7 @@ public class Menu
 					"</font></html>"
 					);
 				}
-				else if(page == 4)
+				else if(page == StartScreenMenuButtonType.BUTTON_5)
 				{
 					// Bedienung
 					label.setText(
@@ -1956,7 +1982,7 @@ public class Menu
 				    "</b></font></html>"
 					);
 				}
-				else if(page == 5)
+				else if(page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					// PowerUps
 					label.setText(
@@ -1987,7 +2013,7 @@ public class Menu
 					"</b></font></html>"
 					);
 				}
-				else if(page == 7)
+				else if(page == StartScreenMenuButtonType.BUTTON_8)
 				{
 					// Spezial-Modus
 					label.setText(
@@ -2016,7 +2042,7 @@ public class Menu
 			}
 			else if(window  == HELICOPTER_TYPES)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					// Allgemein
 					label.setText(
@@ -2050,7 +2076,7 @@ public class Menu
 					"</font></html>"
 		            );
 				}
-				else if(page == 2)
+				else if(page == StartScreenMenuButtonType.BUTTON_3)
 				{
 					// Phönix
 					label.setText(
@@ -2094,7 +2120,7 @@ public class Menu
 					"</b></font></html>"
 					);
 				}
-				else if(page == 3)
+				else if(page == StartScreenMenuButtonType.BUTTON_4)
 				{
 					// Roch
 					label.setText(
@@ -2124,7 +2150,7 @@ public class Menu
 					"</font></html>"
 		            );
 				}
-				else if(page == 4)
+				else if(page == StartScreenMenuButtonType.BUTTON_5)
 				{
 					// Orochi
 					label.setText(
@@ -2159,7 +2185,7 @@ public class Menu
 					"</font></html>"
 					);
 				}
-				else if(page == 5)
+				else if(page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					// Kamaitachi
 					label.setText(
@@ -2193,7 +2219,7 @@ public class Menu
 					"</font></html>"
 		            );
 				}
-				else if(page == 6)
+				else if(page == StartScreenMenuButtonType.BUTTON_7)
 				{
 					// Pegasus
 					label.setText(
@@ -2231,7 +2257,7 @@ public class Menu
 					"</b></font></html>"
 		            );
 				}
-				else if(page == 7)
+				else if(page == StartScreenMenuButtonType.BUTTON_8)
 				{
 					// Helios
 					label.setText(
@@ -2266,7 +2292,7 @@ public class Menu
 			}
 			else if(window  == CONTACT)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					label.setFont(fontProvider.getPlain(18));
 					label.setText(
@@ -2292,7 +2318,7 @@ public class Menu
 		{
 			if(window  == INFORMATIONS)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					// Handlung
 					label.setText(
@@ -2317,7 +2343,7 @@ public class Menu
 			        "</b></font></html>"
 			        );
 				}
-				else if(page == 1)
+				else if(page == StartScreenMenuButtonType.BUTTON_2)
 				{
 					// Änderungen seit 1.0
 					label.setText(
@@ -2344,7 +2370,7 @@ public class Menu
 		            "wurden vorgenommen." +
 		            "</b></font></html>");
 				}
-				else if(page == 3)
+				else if(page == StartScreenMenuButtonType.BUTTON_4)
 				{
 					// Änderungen seit 1.1
 					label.setText(
@@ -2379,7 +2405,7 @@ public class Menu
 					"</b></font></span></html>"
 					);
 				}
-				else if(page == 4)
+				else if(page == StartScreenMenuButtonType.BUTTON_5)
 				{
 					// Credits
 					label.setText(
@@ -2422,7 +2448,7 @@ public class Menu
 					"</font></b></html>"
 					);
 				}
-				else if(page == 5)
+				else if(page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					// Copyright
 					label.setText(
@@ -2438,7 +2464,7 @@ public class Menu
 			}
 			else if(window  == DESCRIPTION)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					// Spielbeschreibung
 					label.setText(
@@ -2468,7 +2494,7 @@ public class Menu
 		            "</font></html>"
 					);
 				}
-				else if(page == 1)
+				else if(page == StartScreenMenuButtonType.BUTTON_2)
 				{
 					// Finanzen/Reparatur
 					label.setText(
@@ -2516,7 +2542,7 @@ public class Menu
 		            "</b></font></html>"
 					);
 				}
-				else if(page == 2)
+				else if(page == StartScreenMenuButtonType.BUTTON_3)
 				{
 					// Upgrades
 					label.setText(
@@ -2564,7 +2590,7 @@ public class Menu
 		            "</b></font></html>"
 					);
 				}
-				else if(page == 3)
+				else if(page == StartScreenMenuButtonType.BUTTON_4)
 				{
 					// Boss-Gegner
 					label.setText(
@@ -2587,7 +2613,7 @@ public class Menu
 					"</font></html>"
 					);
 				}
-				else if(page == 4)
+				else if(page == StartScreenMenuButtonType.BUTTON_5)
 				{
 					// Bedienung
 					label.setText(
@@ -2638,7 +2664,7 @@ public class Menu
 				    "</font></html>"
 					);
 				}
-				else if(page == 5)
+				else if(page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					// PowerUps
 					label.setText(
@@ -2669,7 +2695,7 @@ public class Menu
 					"</b></font></html>"
 					);
 				}
-				else if(page == 7)
+				else if(page == StartScreenMenuButtonType.BUTTON_8)
 				{
 					// Spezial-Modus
 					label.setText(
@@ -2696,7 +2722,7 @@ public class Menu
 			}
 			else if(window  == HELICOPTER_TYPES)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					// Allgemein
 					label.setText(
@@ -2727,7 +2753,7 @@ public class Menu
 					"</font></html>"
 		            );
 				}
-				else if(page == 2)
+				else if(page == StartScreenMenuButtonType.BUTTON_3)
 				{
 					// Phönix
 					label.setText(
@@ -2778,7 +2804,7 @@ public class Menu
 					"</b></font></html>"
 					);
 				}
-				else if(page == 3)
+				else if(page == StartScreenMenuButtonType.BUTTON_4)
 				{
 					// Roch
 					label.setText(
@@ -2817,7 +2843,7 @@ public class Menu
 					"</font></html>"
 		            );
 				}
-				else if(page == 4)
+				else if(page == StartScreenMenuButtonType.BUTTON_5)
 				{
 					// Orochi
 					label.setText(
@@ -2854,7 +2880,7 @@ public class Menu
 					"</font></html>"
 					);
 				}
-				else if(page == 5)
+				else if(page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					// Kamaitachi
 					label.setText(
@@ -2889,7 +2915,7 @@ public class Menu
 					"</font></html>"
 		            );
 				}
-				else if(page == 6)
+				else if(page == StartScreenMenuButtonType.BUTTON_7)
 				{
 					// Pegasus
 					label.setText(
@@ -2934,7 +2960,7 @@ public class Menu
 					"</b></font></html>"
 		            );
 				}
-				else if(page == 7)
+				else if(page == StartScreenMenuButtonType.BUTTON_8)
 				{
 					// Helios
 					label.setText(
@@ -2961,7 +2987,7 @@ public class Menu
 			}
 			else if(window  == CONTACT)
 			{
-				if(page == 0)
+				if(page == StartScreenMenuButtonType.BUTTON_1)
 				{
 					label.setFont(fontProvider.getPlain(18));
 					label.setText(
@@ -2991,23 +3017,24 @@ public class Menu
 	
 	public static void adaptToNewWindow(boolean justEntered)
 	{
-		page = 0;
+		page = StartScreenMenuButtonType.BUTTON_1;
 		if(window  != HIGHSCORE && window  != SETTINGS){
 			label.setVisible(true);}
 		updateLabeltext();
 		crossTimer = 0;
 		messageTimer = 0;
 		if(justEntered){
-			stopButtonHighlighting(startScreenButtons);}
+			stopButtonHighlighting();}
 	}
 	
-	public static void stopButtonHighlighting(HashMap<String, Button> button)
+	public static void stopButtonHighlighting()
 	{
-		if(!highlightedButton.equals(""))
-		{
-			button.get(highlightedButton).setHighlighted(false);
-			highlightedButton = "";
-		}
+		Optional.ofNullable(highlightedButton).ifPresent(
+			button -> {
+				button.setHighlighted(false);
+				highlightedButton = null;
+			}
+		);
 	}
 
 	public static void updateCollectedPowerUps(Helicopter helicopter, PowerUp powerUp)
@@ -3022,52 +3049,60 @@ public class Menu
 
 	public static void updateRepairShopButtons(Helicopter helicopter)
 	{
-		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
-		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
+		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
+		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
+		
 		if(helicopter.hasSpotlights)
 		{
-			repairShopButton.get("Special" + 0).setCostsToZero();
+			buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsToZero();
 		}
+		
 		if(helicopter.hasGoliathPlating())
 		{
-			repairShopButton.get("Special" + 1).setCostsToZero();
+			buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).adjustCostsToZero();
 		}
+		
 		if(helicopter.hasPiercingWarheads)
 		{
-			repairShopButton.get("Special" + 2).setCostsToZero();
+			buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).adjustCostsToZero();
 		}
+		
 		if(helicopter.numberOfCannons != 1)
 		{
 			if(helicopter.hasAllCannons())
 	    	{
-	    		repairShopButton.get("Special" + 3).setCostsToZero();
+	    		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).adjustCostsToZero();
 	    		if(helicopter.numberOfCannons == 3)
 	    		{
-	    			repairShopButton.get("Special" + 3).setLabel(dictionary.thirdCannon());
+	    			buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setPrimaryLabel(dictionary.thirdCannon());
 	    		}
 	    	}
 	    	else
 	    	{
-	    		repairShopButton.get("Special" + 3).setCosts(125000);
-	    		repairShopButton.get("Special" + 3).setLabel(dictionary.thirdCannon());
+	    		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).adjustCostsTo(Helicopter.STANDARD_SPECIAL_COSTS);
+	    		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setPrimaryLabel(dictionary.thirdCannon());
 	    	}
 		}
+		
 		if(helicopter.hasFifthSpecial())
 		{
-			repairShopButton.get("Special" + 4).setCostsToZero();
+			buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).adjustCostsToZero();
 		}
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-		{
+		
+		StandardUpgradeButtonType.getValues().forEach(buttonSpecifier -> {
+			StandardUpgradeButtonType buttonType = (StandardUpgradeButtonType) buttonSpecifier;
+			StandardUpgradeType standardUpgradeType = buttonType.getStandardUpgradeType();
 			if(helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 			{
-				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCostsToZero();
+				buttons.get(buttonSpecifier).adjustCostsToZero();
 			}
 			else
 			{
-				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCosts(helicopter.getUpgradeCostFor(standardUpgradeType));
+				buttons.get(buttonSpecifier).adjustCostsTo(helicopter.getUpgradeCostFor(standardUpgradeType));
 			}
-		}
-		repairShopButton.get("RepairButton").setCostsToZero();
+		});
+		
+		buttons.get(LeftSideRepairShopButtonType.REPAIR).adjustCostsToZero();
 	}
 	
 	public static void unlock(HelicopterType heliType)
@@ -3093,11 +3128,11 @@ public class Menu
 		}
 		else if(window  == SCORESCREEN)
 		{
-			paintScorescreen(g2d, helicopter);
+			paintScoreScreen(g2d, helicopter);
 		}
 		else
 		{
-			updateAndPaintStartscreenMenu(g2d, controller.framesCounter);
+			updateAndPaintStartScreenMenu(g2d, controller.framesCounter);
 		}
 	}
 	
@@ -3120,15 +3155,15 @@ public class Menu
 		}
 		else if(window  == STARTSCREEN)
 		{
-			updateStartscreen(helicopter, controller.framesCounter);
+			updateStartScreen(helicopter, controller.framesCounter);
 		}
 		else if(window  == SCORESCREEN)
 		{
-			updateScorescreen(helicopter);
+			updateScoreScreen(helicopter);
 		}
 		else
 		{
-			identifyHighlightedButtons(helicopter, startScreenMenuButtons);
+			identifyHighlightedButtons(helicopter, ButtonGroup.START_SCREEN_MENU);
 		}
 	}
 
@@ -3141,7 +3176,7 @@ public class Menu
 	
 	public static void reset()
 	{
-		stopButtonHighlighting(startScreenButtons);
+		stopButtonHighlighting();
 		cross = null;
 		crossTimer = 0;
 		messageTimer = 0;
@@ -3150,7 +3185,7 @@ public class Menu
 	public static void conditionalReset()
 	{
 		isMenuVisible = false;
-		inGameButton.get("MMNewGame2").setLabel(dictionary.quit());
+		buttons.get(MainMenuButtonType.NEW_GAME_2).setPrimaryLabel(dictionary.quit());
 		moneyDisplayTimer = DISABLED;
 		levelDisplayTimer.start();
 		unlockedTimer = 0;
@@ -3170,43 +3205,15 @@ public class Menu
 	// TODO mit einen Enum für die Buttons arbeiten --> EnumMap verwe
 	static void initializeButtons()
 	{
-		repairShopButton.put("RepairButton", Button.makeRepairButton(287, dictionary.repair(), dictionary.price()));
-		repairShopButton.put("Einsatz", 	 Button.makeMissionButton(395, dictionary.mission(), dictionary.sold()));
+		ButtonGroup.COMPLETE.getButtonSpecifiers()
+							.forEach(buttonSpecifier -> buttons.put(buttonSpecifier, Button.makeButton(buttonSpecifier)));
+				
+		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setMarked(true);
+		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(Controller.savegame.isValid);
 		
-		inGameButton.put("RepairShop",   Button.makeGroundButton(451, dictionary.toTheRepairShop()));
-		inGameButton.put("MainMenu",     Button.makeGroundButton(897, dictionary.mainMenu()));
-		
-		inGameButton.put("MMNewGame1",   Button.makeMainMenuButton(116, dictionary.startNewGame()));
-		inGameButton.put("MMStopMusic",  Button.makeMainMenuButton(161, dictionary.audioActivation()));
-		inGameButton.put("MMNewGame2",   Button.makeMainMenuButton(206, dictionary.quit()));
-		inGameButton.put("MMCancel",     Button.makeMainMenuButton(251, dictionary.cancel()));
-		
-		StartScreenButtonType.getValues()
-							 .forEach(buttonType -> startScreenButtons.put( buttonType.getKey(),
-								 											Button.makeStartScreenButton(buttonType)));
-		
-		// TODO wie oben machen: key ist den Types bekannt
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		if(HighScoreEntry.currentPlayerName.equals(Menu.DEFAULT_PLAYER_NAME))
 		{
-			repairShopButton.put( "StandardUpgrade" + standardUpgradeType.ordinal(), Button.makeStandardUpradeButton(standardUpgradeType));
-		}
-		for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
-		{
-			repairShopButton.put("Special" + specialUpgradeType.ordinal(), Button.makeSpecialUpgradeButton(specialUpgradeType));
-		}
-		for(int m = 0; m < START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
-		{
-			startScreenMenuButtons.put(Integer.toString(m), Button.makeStartScreenMenuButton(m));
-		}
-		
-		startScreenButtons.get(StartScreenButtonType.RESUME_LAST_GAME.getKey()).setMarked(true);
-		startScreenButtons.get(StartScreenButtonType.RESUME_LAST_GAME.getKey()).setEnabled(Controller.savegame.isValid);
-		
-		startScreenMenuButtons.put("Cancel", Button.makeStartScreenMenuCancelButton());
-		
-		if(HighscoreEntry.currentPlayerName.equals("John Doe"))
-		{
-			startScreenButtons.get(StartScreenButtonType.SETTINGS.getKey()).setMarked(true);
+			buttons.get(StartScreenButtonType.SETTINGS).setMarked(true);
 		}
 	}
 	
@@ -3215,39 +3222,41 @@ public class Menu
 	public static void finalizeRepairShopButtons()
 	{
 		Helicopter helicopter = Controller.getInstance().getHelicopter();
-		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
-		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
+		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
+		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
 		
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-		{
+		StandardUpgradeButtonType.getValues().forEach(buttonSpecifier -> {
+			StandardUpgradeType standardUpgradeType = ((StandardUpgradeButtonType)buttonSpecifier).getStandardUpgradeType();
 			if(!helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 			{
-				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCosts(helicopter.getUpgradeCostFor(standardUpgradeType));
-				repairShopButton.get("StandardUpgrade" + standardUpgradeType.ordinal()).setCostColor(helicopter.getPriceLevelFor(standardUpgradeType).getColor());
+				buttons.get(buttonSpecifier).adjustCostsTo(helicopter.getUpgradeCostFor(standardUpgradeType));
+				buttons.get(buttonSpecifier).setCostColor(helicopter.getPriceLevelFor(standardUpgradeType).getColor());
 			}
-		}
+		});
+		
 		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();
-		repairShopButton.get("StandardUpgrade" + 5).setLabel(String.join(" ", standardUpgradeLabel));
-		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden
-		repairShopButton.get("Special" + SpecialUpgradeType.SPOTLIGHT.ordinal()).setCosts(helicopter.getSpotlightCosts());
-		repairShopButton.get("Special" + SpecialUpgradeType.SPOTLIGHT.ordinal()).setCostColor(CHEAP.getColor());
-		repairShopButton.get("Special" + SpecialUpgradeType.GOLIATH_PLATING.ordinal()).setCosts(helicopter.getGoliathCosts());
-		repairShopButton.get("Special" + SpecialUpgradeType.GOLIATH_PLATING.ordinal()).setCostColor((helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
-		repairShopButton.get("Special" + SpecialUpgradeType.PIERCING_WARHEADS.ordinal()).setCosts((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
-		repairShopButton.get("Special" + SpecialUpgradeType.PIERCING_WARHEADS.ordinal()).setCostColor((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
-		repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).setCosts((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
-		repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).setCostColor((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor());
-		repairShopButton.get("Special" + SpecialUpgradeType.EXTRA_CANNONS.ordinal()).setLabel(dictionary.extraCannons());
-		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setCosts(helicopter.getFifthSpecialCosts());
-		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setCostColor(helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor());
-		repairShopButton.get("Special" + SpecialUpgradeType.FIFTH_SPECIAL.ordinal()).setLabel(dictionary.fifthSpecial());
+		buttons.get(StandardUpgradeButtonType.ENERGY_ABILITY).setPrimaryLabel(String.join(" ", standardUpgradeLabel));
+		
+		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden bzw. weitere notwendige anlegen
+		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsTo(helicopter.getSpotlightCosts());
+		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).setCostColor(CHEAP.getColor());
+		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).adjustCostsTo(helicopter.getGoliathCosts());
+		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).setCostColor((helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).adjustCostsTo((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).setCostColor((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).adjustCostsTo((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setCostColor((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setPrimaryLabel(dictionary.extraCannons());
+		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).adjustCostsTo(helicopter.getFifthSpecialCosts());
+		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).setCostColor(helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor());
+		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).setPrimaryLabel(dictionary.fifthSpecial());
 	}
 	
 	public static void updateRepairShopButtonsAfterSpotlightPurchase()
 	{
 		// TODO Enum für RepairShopButtons anlegen
-		repairShopButton.get("Einsatz").setLabel(dictionary.mission());
-		repairShopButton.get("Einsatz").setSecondLabel(dictionary.sold());
-		repairShopButton.get("Special" + 0).setCostsToZero();
+		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
+		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
+		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsToZero();
 	}
 }
