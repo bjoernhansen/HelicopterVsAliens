@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui.button;
 
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 
 import java.awt.Point;

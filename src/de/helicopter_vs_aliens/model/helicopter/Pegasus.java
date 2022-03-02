@@ -5,20 +5,18 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.control.timer.VariableTimer;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
-import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_RATE;
@@ -188,7 +186,7 @@ public final class Pegasus extends Helicopter
 
     public boolean isInPhase()
     {
-        return this.interphaseGeneratorTimer.isActive() || !this.hasInterphaseGenerator || Menu.window != GAME;
+        return this.interphaseGeneratorTimer.isActive() || !this.hasInterphaseGenerator || MenuManager.window != GAME;
     }
 
     @Override
@@ -231,7 +229,7 @@ public final class Pegasus extends Helicopter
     {
         super.initMenuEffect(position);
         // TODO empWave sollte nach Menu ausgelagert werden, da es nur hier verwendet wird - wirklich? Überprüfen!
-        this.empWave = Explosion.createStartscreenExplosion(position);
+        this.empWave = Explosion.createStartScreenExplosion(position);
     }
     
     @Override

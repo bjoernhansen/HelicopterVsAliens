@@ -1,14 +1,14 @@
 package de.helicopter_vs_aliens.graphics;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
+import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
 
-import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
+import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 
 public class PegasusPainter extends HelicopterPainter
@@ -42,7 +42,7 @@ public class PegasusPainter extends HelicopterPainter
         super.paintComponents(g2d, left, top);
         
         // EMP wave animation in start menu
-        if(de.helicopter_vs_aliens.gui.Menu.window == STARTSCREEN
+        if(MenuManager.window == START_SCREEN
             // TODO vermutlich unnötig
             && Menu.effectTimer[PEGASUS.ordinal()] > 0
             && pegasus.empWave != null)

@@ -2,12 +2,16 @@ package de.helicopter_vs_aliens.control.entities;
 
 import de.helicopter_vs_aliens.model.Paintable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 
 public class GameEntityRecycler
 {
-    private final Map<Class, Queue<? extends Paintable>>
+    private final Map<Class<?>, Queue<? extends Paintable>>
         recyclingQueues = new HashMap<>();
     
     private final GameEntityProvider

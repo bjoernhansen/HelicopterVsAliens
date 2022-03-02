@@ -2,8 +2,6 @@ package de.helicopter_vs_aliens.control.entities;
 
 import de.helicopter_vs_aliens.util.Calculations;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -18,7 +16,7 @@ public final class GameEntityActivation
         STANDARD_PROBABILITY_REDUCTION_FACTOR = 1;
     
     private static final List<Integer>
-        PROBABILITIES = Collections.unmodifiableList(Arrays.asList(100, 50, 34, 25, 20, 17, 15, 13, 12, 10, 10, 9, 8, 8, 7, 6));
+        PROBABILITIES = List.of(100, 50, 34, 25, 20, 17, 15, 13, 12, 10, 10, 9, 8, 8, 7, 6);
     
     
     public static boolean isQuicklyApproved()

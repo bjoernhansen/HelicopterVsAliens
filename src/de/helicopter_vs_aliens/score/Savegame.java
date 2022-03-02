@@ -3,9 +3,8 @@ package de.helicopter_vs_aliens.score;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -103,7 +102,7 @@ public class Savegame implements Serializable
 			
 			HighScoreEntry.currentPlayerName = temp.currentPlayerName;
 			Menu.setLanguage(temp.language);
-			Menu.hasOriginalResulution = temp.originalResulution;
+			Menu.hasOriginalResolution = temp.originalResulution;
 			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
 			Audio.isSoundOn = temp.isSoundOn;
 			Events.recordTime = temp.recordTime.clone();
@@ -162,7 +161,7 @@ public class Savegame implements Serializable
 		this.currentPlayerName = HighScoreEntry.currentPlayerName;
 		this.language = Menu.language;
 		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
-		this.originalResulution = Menu.hasOriginalResulution;
+		this.originalResulution = Menu.hasOriginalResolution;
 		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
 		this.killsAfterLevelup = Events.killsAfterLevelUp;

@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui;
 
-enum MultiKillType
+public enum MultiKillType
 {
     NICE_CATCH("Nice Catch", 41),
     DOUBLE_KILL("Double Kill", 28),
@@ -13,10 +13,10 @@ enum MultiKillType
     private static final MultiKillType[]
         defensiveCopyOfValues = values();
     
-    private int
+    private final int
         textSize;
     
-    private String
+    private final String
         designation;
     
     

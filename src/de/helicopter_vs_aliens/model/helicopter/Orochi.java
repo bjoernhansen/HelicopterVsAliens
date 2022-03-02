@@ -3,15 +3,13 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;

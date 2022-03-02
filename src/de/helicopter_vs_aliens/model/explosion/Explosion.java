@@ -2,13 +2,14 @@ package de.helicopter_vs_aliens.model.explosion;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.EnumMap;
@@ -17,9 +18,15 @@ import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.gui.Menu.*;
-import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
+import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
+import static de.helicopter_vs_aliens.gui.menu.Menu.HELICOPTER_DISTANCE;
+import static de.helicopter_vs_aliens.gui.menu.Menu.START_SCREEN_HELICOPTER_OFFSET_Y;
+import static de.helicopter_vs_aliens.gui.menu.Menu.START_SCREEN_OFFSET_X;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.EMP;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
 
@@ -28,6 +35,7 @@ public class Explosion extends GameEntity
     public int 
     	time,				// vergangene Zeit [frames] seit Starten der Explosion
 		maxTime,			// maximale Dauer einer Explosion / eines EMP
+		// TODO was nur für die Pegasus-Klasse relevant ist, sollte nicht hier sein, eventuell EMP-Klasse, die von Explosion erbt
     	kills,				// nur für Pegasus-Klasse: mit diesem EMP vernichtete Gegner
     	earnedMoney;		// nur für Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
   
@@ -48,7 +56,7 @@ public class Explosion extends GameEntity
     	color;	// Typ- und zeitabhängige (time, s.o.) Farbe der Explosion
     
     private final Point2D
-		center = new Point2D.Float();			// Zentrum der Exploson
+		center = new Point2D.Float();			// Zentrum der Explosion
 
 	private ExplosionTypes
 		type;		// Standard, Plasma, EMP, etc.
@@ -91,7 +99,7 @@ public class Explosion extends GameEntity
 		}		
 	}
 
-    public static Explosion createStartscreenExplosion(int i)
+    public static Explosion createStartScreenExplosion(int i)
     {
 		return new Explosion(
 				149
@@ -171,8 +179,7 @@ public class Explosion extends GameEntity
 		// kann wahrscheinlich in den EMP spezifischen bereich verschoben werden
 		helicopter.becomesCenterOf(exp);
 		exp.type = explosionType;
-		if(source != null){exp.source = source;}
-		else exp.source = null;
+		exp.source = source;
 		if(explosionType != EMP)
 		{
 			exp.maxTime = 35;
@@ -182,7 +189,7 @@ public class Explosion extends GameEntity
 		else
 		{
 			// EMP-Shockwave
-			if(window == STARTSCREEN)
+			if(MenuManager.window == START_SCREEN)
 			{
 				exp.maxTime = 20;
 				exp.maxRadius = 50;

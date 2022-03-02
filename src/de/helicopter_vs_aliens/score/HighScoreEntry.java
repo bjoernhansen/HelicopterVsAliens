@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -14,7 +14,7 @@ public class HighScoreEntry implements Serializable
 		serialVersionUID = 1L;	
 	
 	public static final int
-			NUMBER_OF_ENTRIES = 10;
+		NUMBER_OF_ENTRIES = 10;
 	
 	public static String
         currentPlayerName = Menu.DEFAULT_PLAYER_NAME;

@@ -12,10 +12,10 @@ public final class Calculations
 	public final static Point2D 
 		ZERO_POINT = new Point2D.Float(0,0);
   
-	private static int []
+	private static final int []
 		randomOrder = {0, 1, 2, 3, 4};
 	
-	private static Random
+	private static final Random
         random = new Random();
     
         

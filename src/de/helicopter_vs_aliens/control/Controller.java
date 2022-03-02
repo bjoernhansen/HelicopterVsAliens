@@ -4,9 +4,15 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityRecycler;
 import de.helicopter_vs_aliens.control.timer.Timer;
-import de.helicopter_vs_aliens.graphics.*;
-import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.graphics.EnemyMissilePainter;
+import de.helicopter_vs_aliens.graphics.ExplosionPainter;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.MenuPainter;
+import de.helicopter_vs_aliens.graphics.MissilePainter;
+import de.helicopter_vs_aliens.graphics.PowerUpPainter;
+import de.helicopter_vs_aliens.graphics.SceneryPainter;
+import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -14,20 +20,33 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
+
 
 public final class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
@@ -58,13 +77,14 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public static Savegame
 		savegame;
 		
-	int numberOfFrames;
+	private int
+		numberOfFrames;
 
 	public int
 		framesCounter = 0,
 		backgroundRepaintTimer = 0;
 	
-	long
+	private long
 		fpsStartTime;
 	
 	public boolean
@@ -98,20 +118,14 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	private Image
 		offImage;
 	
-	private Dimension
-		offDimension;
-	
-	private Shape
-		offscreenClip;
-	
 	private Rectangle2D
 		wholeScreenClip;
 	
 	private final Scenery
 		scenery = new Scenery();
-	
-	private final Dictionary
-		dictionary = new Dictionary();
+		
+	private final MenuManager
+		menuManager = new MenuManager();
 	
 	private final GameEntityRecycler
 		gameEntityRecycler = new GameEntityRecycler();
@@ -123,17 +137,18 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	{					
 		Audio.initialize();
 		
-		this.offscreenClip = new Rectangle2D.Double(0, 
-													0, 
-													Main.VIRTUAL_DIMENSION.getWidth(),
-													Main.VIRTUAL_DIMENSION.getHeight());	
-		this.offDimension = getSize();
-		this.wholeScreenClip = new Rectangle2D.Double(0, 0, this.offDimension.getWidth(), this.offDimension.getHeight());				
-		this.offImage = createImage((int)this.offDimension.getWidth(), (int)this.offDimension.getHeight());
+		Dimension offDimension = getSize();
+		this.wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
+		this.offImage = createImage((int) offDimension.getWidth(), (int) offDimension.getHeight());
 		this.offGraphics = (Graphics2D) this.offImage.getGraphics();		
 		this.offGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);		
 		this.offGraphics.fill(this.wholeScreenClip);
-		this.offGraphics.setClip(this.offscreenClip);	
+		
+		Shape offscreenClip = new Rectangle2D.Double(0,
+													 0,
+													 Main.VIRTUAL_DIMENSION.getWidth(),
+													 Main.VIRTUAL_DIMENSION.getHeight());
+		this.offGraphics.setClip(offscreenClip);
 						
 		add(Menu.label);
 		addKeyListener(this);
@@ -198,14 +213,15 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	// Berechnen und Zeichnen des Spiels
 	@Override
 	protected void paintComponent(Graphics g)
-	{		
+	{
+		Graphics2D g2d = (Graphics2D) g;
 		if(this.offGraphics != null)
 		{			
 			if(this.frameSkipStatus == FrameSkipStatusType.INACTIVE){
 				this.frameSkipStatus = FrameSkipStatusType.DISABLED;}
 			else
 			{					
-				if(this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED){Menu.repaintBackground(g, this);}
+				if(this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED){this.repaintBackground(g2d);}
 				g.drawImage(this.offImage, 
 							Main.displayShift.width, // 0
 							Main.displayShift.height, // 0
@@ -227,11 +243,22 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		}
 	}
 	
+	private void repaintBackground(Graphics2D g2d)
+	{
+		if(backgroundRepaintTimer > 1){backgroundRepaintTimer = Timer.DISABLED;}
+		else backgroundRepaintTimer++;
+		g2d.setColor(Color.black);
+		g2d.fillRect(	0,
+			0,
+			Main.currentDisplayMode.getWidth(),
+			Main.currentDisplayMode.getHeight());
+	}
+	
 	private void updateGame()
 	{		
 		this.framesCounter++;
 		Timer.countDownActiveTimers();
-		if(Menu.window == GAME)
+		if(MenuManager.window ==  GAME)
 		{			
 			calculateFps();
 			if(!Menu.isMenuVisible)
@@ -264,11 +291,11 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		Graphics2D g2d = (Graphics2D) g;
 		GraphicsManager.getInstance().setGraphics2D(g2d);
 		
-		if(Menu.window == GAME)
+		if(MenuManager.window ==  GAME)
 		{						
 			// zeichnen aller sichtbaren Objekte						
 			SceneryPainter.paintBackground(g2d, scenery, this.backgroundObjects);
-			Menu.paintBackgroundDisplays( g2d, this, this.helicopter);
+			MenuPainter.paintBackgroundDisplays(g2d);
 			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d);}
 			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
 			MissilePainter.paintAllMissiles( g2d, this);
@@ -279,7 +306,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			PowerUpPainter.paintAll(g2d, this.powerUps);
 			SceneryPainter.paintForeground(g2d, this.backgroundObjects);
 		}
-		Menu.paint(g2d, this, this.helicopter);
+		menuManager.paintMenu(g2d);
 	}
 	
 	private void calculateFps()
@@ -299,7 +326,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	
 	public void switchFpsVisibleState()
 	{
-		if(Menu.window == GAME)
+		if(MenuManager.window ==  GAME)
 		{
 			if(this.showFps)
 			{
@@ -333,7 +360,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void mouseEntered(MouseEvent e)
 	{		
-		if(Menu.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
+		if(MenuManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
 			this.mouseInWindow = true;
 			Events.lastCurrentTime = System.currentTimeMillis();
@@ -344,7 +371,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void mouseExited(MouseEvent e)
 	{
-		if(Menu.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
+		if(MenuManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
 			this.mouseInWindow = false;
 			Events.playingTime += System.currentTimeMillis() - Events.lastCurrentTime;
@@ -390,16 +417,12 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public void setHelicopter(Helicopter helicopter)
 	{
 		this.helicopter = helicopter;
-		this.dictionary.switchHelicopterTypeTo(helicopter.getType());
+		Menu.dictionary.switchHelicopterTypeTo(helicopter.getType());
 	}
 	
 	public static Controller getInstance()
 	{
 		return controller;
-	}
-
-	public Dictionary getDictionary() {
-		return dictionary;
 	}
 	
 	public GameEntityRecycler getGameEntityRecycler()

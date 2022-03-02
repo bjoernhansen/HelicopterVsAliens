@@ -22,7 +22,7 @@ import de.helicopter_vs_aliens.graphics.HelicopterPainter;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -67,7 +67,8 @@ public class Enemy extends RectangularGameEntity
 	
 	// Konstanten
 	public static boolean
-	    SHOW_RED_FRAME = false;
+	    SHOW_RED_FRAME = false,
+		SHOW_BARRIER_TESTING_INFO = false;
 	
 	public static final int
 		SPEED_KILL_BONUS_TIME 	= 15;    // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
@@ -456,19 +457,20 @@ public class Enemy extends RectangularGameEntity
 							null);
 		}
 		
-		//zu Testzwecken:	
-        //g2d.setColor(Color.red);
-        
-        /*if(this.model == BARRIER)
-        	{
-        		g2d.drawString(   "Borrow: " + this.borrowTimer + " ; "
-        	
-        				+ "Stun: "   + this.stunningTimer + " ; "
-        				+ "Snooze: " + this.snooze_timer + " ; ", 
-        				(int)this.bounds.getX(),
-        				(int) this.bounds.getY());
-        	}*/
-        //g2d.draw(TURN_FRAME);
+		//zu Testzwecken:
+		if(SHOW_BARRIER_TESTING_INFO)
+		{
+			g2d.setColor(Color.red);
+			if(this.model == BARRIER)
+			{
+				g2d.drawString(   "Borrow: " + this.borrowTimer + " ; "
+						
+						+ "Stun: "   + this.stunningTimer + " ; "
+						+ "Snooze: " + this.snoozeTimer + " ; ",
+					(int)this.bounds.getX(),
+					(int) this.bounds.getY());
+			}
+		}
 	}
 	
 	private boolean hasGlowingEyes()
@@ -911,11 +913,6 @@ public class Enemy extends RectangularGameEntity
 		this.paintRotorInterior(g2d, mainColorDark, offsetX, offsetY );
 		
 		if(this.isDestroyed){this.paintRotor(g2d, offsetX, offsetY);}
-		
-		//g2d.setPaint(Color.red);	
-		//g2d.drawRoundRect(offset_x, offset_y, this.bounds.getWidth()-1, this.bounds.getHeight()-1, this.bounds.getWidth()/2, this.bounds.getHeight()/2);
-		//g2d.drawRect(offset_x, offset_y, this.bounds.getWidth() - 1, this.bounds.getHeight() - 1);
-		//Menu.paint_frame(g2d, offset_x, offset_y, this.bounds.getWidth() - 4, this.bounds.getHeight() - 4, Color.yellow);
 	}
 	
 	private void paintRotorInterior(Graphics2D g2d, Color mainColorDark,

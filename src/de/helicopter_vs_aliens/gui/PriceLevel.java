@@ -52,7 +52,7 @@ public enum PriceLevel
         this.maxUpgradeLevel = maxUpgradeLevel;
     }
 
-    public static PriceLevel getMaximium()
+    public static PriceLevel getMaximum()
     {
         return EXTORTIONATE;
     }

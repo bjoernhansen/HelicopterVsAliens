@@ -74,19 +74,21 @@ public class BackgroundObject extends RectangularGameEntity
     
     private int 
     	width,	// Gesamtbreite eines Hintergrundobjektes
-    	plane,	// Ebene, in welche das Hintergrundobjekte gezeichnet wird 
-		coordinatesOfComponents[][] = new int[2][4]; 	// definiert Hintergrundobjekt-spezifische Koordinaten und Maße
+    	plane;	// Ebene, in welche das Hintergrundobjekte gezeichnet wird
+	
+	private final int[][]
+		coordinatesOfComponents = new int[2][4]; 	// definiert Hintergrundobjekt-spezifische Koordinaten und Maße
    
 	private float
 		x;		// x-Koordinate
 	
-	private BufferedImage[]
+	private final BufferedImage[]
 		images = new BufferedImage[2];        // Hintergrundobjekt-Bild (für Tag- udn Nachteinsatz)
 	
-	private Color[]
+	private final Color[]
 		colors = new Color[2];            // nur für Palmen: Stammfarbe;
 	
-	private BackgroundObjectPainter
+	private final BackgroundObjectPainter
 		backgroundObjectPainter = GraphicsManager.getInstance().getPainter(BackgroundObject.class);
     
     

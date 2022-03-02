@@ -4,12 +4,11 @@ import java.util.*;
 
 public class EnemySelector
 {
-    private NavigableMap<Integer, RangeTypePair>
+    private final NavigableMap<Integer, RangeTypePair>
         map = new TreeMap<>();
     
     private static final List<Integer>
-        BORDERS = Collections.unmodifiableList(
-            Arrays.asList(0, 3, 10, 25, 35, 75, 135, 310, 485, 660, 835, 2175, 3740, 3960, 9710, 15235, 20760, 26285, 31810));
+        BORDERS = List.of(0, 3, 10, 25, 35, 75, 135, 310, 485, 660, 835, 2175, 3740, 3960, 9710, 15235, 20760, 26285, 31810);
 
     EnemySelector()
     {

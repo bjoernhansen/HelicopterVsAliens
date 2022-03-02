@@ -4,5 +4,5 @@ public enum FrameSkipStatusType
 {
     INACTIVE,
     ACTIVE,
-    DISABLED;
+    DISABLED
 }

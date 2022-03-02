@@ -5,10 +5,12 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
-import de.helicopter_vs_aliens.gui.*;
-import de.helicopter_vs_aliens.gui.button.ButtonCategory;
-import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
+import de.helicopter_vs_aliens.gui.BlockMessage;
+import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.PriceLevel;
+import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -56,11 +58,11 @@ public final class Dictionary
     private final EnumMap<BlockMessage, String[]>
         blockMessages = new EnumMap<>(BlockMessage.class);
     
-    private final EnumMap<WindowType, List<String>>
+    private final Map<WindowType, Map<StartScreenMenuButtonType, String>>
         startScreenMenuButtonName = new EnumMap<>(WindowType.class);
     
     private final List<String>
-        columnNames = new ArrayList<>(),
+        highScoreColumnNames = new ArrayList<>(),
         settingOptions = new ArrayList<>();
     
     
@@ -92,7 +94,8 @@ public final class Dictionary
         {
             String filename = getFilename(language);
             URL url = Dictionary.class.getResource(filename);
-            properties.load(url.openStream());
+            properties.load(Objects.requireNonNull(url)
+                                   .openStream());
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -140,8 +143,8 @@ public final class Dictionary
             {
                 break;
             }
-            String dictionaryKeyPraefix = standardUpgradeType.getDictionaryKey() + ".";
-            standardUpgradesImprovements.put(standardUpgradeType, getImprovementsStringList(dictionaryKeyPraefix));
+            String dictionaryKeyPrefix = standardUpgradeType.getDictionaryKey() + ".";
+            standardUpgradesImprovements.put(standardUpgradeType, getImprovementsStringList(dictionaryKeyPrefix));
         }
         
         for (HelicopterType type : HelicopterType.getValues())
@@ -167,20 +170,21 @@ public final class Dictionary
         
         for (WindowType windowType : WindowType.getNonSettingsStartScreenMenuWindows())
         {
-            List<String> buttonLabels = new ArrayList<>();
-            for (int m = 0; m < Menu.START_SCREEN_MENU_BUTTON_MAX_COUNT; m++)
-            {
-                buttonLabels.add(this.languageProperties.getProperty(windowType.getButtonLabelKeyPrefix() + m));
-            }
+            Map<StartScreenMenuButtonType, String> buttonLabels = new EnumMap<>(StartScreenMenuButtonType.class);            
+            StartScreenMenuButtonType.getValues().forEach(buttonSpecifier -> {
+                StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType)buttonSpecifier;  
+                String buttonLabelKey =  buttonType.getButtonLabelKey(windowType);
+                buttonLabels.put(buttonType, this.languageProperties.getProperty(buttonLabelKey));
+            });
             startScreenMenuButtonName.put(windowType, buttonLabels);
         }
         
         updateSettingsLabels();
         
-        columnNames.clear();
-        for (int i = 1; i <= Menu.NUMBER_OF_COLUMN_NAMES; i++)
+        highScoreColumnNames.clear();
+        for (int i = 1; i <= Menu.NUMBER_OF_HIGH_SCORE_COLUMN_NAMES; i++)
         {
-            columnNames.add(this.languageProperties.getProperty("highscore.columnNames." + i));
+            highScoreColumnNames.add(this.languageProperties.getProperty("highScore.columnNames." + i));
         }
         
         settingOptions.clear();
@@ -194,22 +198,22 @@ public final class Dictionary
     
     private void updateSettingsLabels()
     {
-        List<String> settingsLabels = new ArrayList<>();
-        settingsLabels.add(oppositeDisplayMode());
-        settingsLabels.add(antialiasing());
-        settingsLabels.add(audioActivation());
-        settingsLabels.add(this.languageProperties.getProperty(WindowType.SETTINGS.getButtonLabelKeyPrefix() + 3));
-        settingsLabels.add(this.languageProperties.getProperty(WindowType.SETTINGS.getButtonLabelKeyPrefix() + 4));
-        settingsLabels.add(changeMusicModeLabel());
-        settingsLabels.add("");
-        settingsLabels.add("");
+        Map<StartScreenMenuButtonType, String> settingsLabels = new EnumMap<>(StartScreenMenuButtonType.class);
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, audioActivation());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_4, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_4.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_5, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_5.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_6, changeMusicModeLabel());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_7, "");
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_8, "");
         startScreenMenuButtonName.put(WindowType.SETTINGS, settingsLabels);
     }
     
     public void updateDisplayMode()
     {
         startScreenMenuButtonName.get(WindowType.SETTINGS)
-                                 .set(0, oppositeDisplayMode());
+                                 .put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
     }
     
     public String displayMode()
@@ -227,7 +231,7 @@ public final class Dictionary
     public void updateAntialiasing()
     {
         startScreenMenuButtonName.get(WindowType.SETTINGS)
-                                 .set(1, antialiasing());
+                                 .put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
     }
     
     public String antialiasing()
@@ -239,7 +243,7 @@ public final class Dictionary
     public void updateAudioActivation()
     {
         startScreenMenuButtonName.get(WindowType.SETTINGS)
-                                 .set(2, audioActivation());
+                                 .put(StartScreenMenuButtonType.BUTTON_3, audioActivation());
     }
     
     public String audioActivation()
@@ -400,6 +404,55 @@ public final class Dictionary
         return settingOptions.get(optionNumber);
     }
     
+    public String recordTime()
+    {
+        return this.languageProperties.getProperty("recordTime");
+    }
+    
+    public String specialMode()
+    {
+        return this.languageProperties.getProperty("specialMode");
+    }
+    
+    public String modeSuffix()
+    {
+        return this.languageProperties.getProperty("modeSuffix");
+    }
+    
+    public String statusBar()
+    {
+        return this.languageProperties.getProperty("headline.statusBar");
+    }
+    
+    public String headlineMission()
+    {
+        return this.languageProperties.getProperty("headline.mission");
+    }
+    
+    public String standardUpgrades()
+    {
+        return this.languageProperties.getProperty("headline.standardUpgrades");
+    }
+    
+    public String specialUpgrades()
+    {
+        return this.languageProperties.getProperty("headline.specialUpgrades");
+    }
+    
+    public String gameStatistics()
+    {
+        return this.languageProperties.getProperty("headline.gameStatistics");
+    }
+    
+    public String activationState(boolean on)
+    {
+        String key = on ? "activationState.on" : "activationState.off";
+        return this.languageProperties.getProperty(key);
+    }
+    
+    
+    
+    
     public String changeMusicModeLabel()
     {
         return Audio.MICHAEL_MODE ? this.languageProperties.getProperty("buttonLabel.startScreenMenu.settings.5") : "";
@@ -455,9 +508,9 @@ public final class Dictionary
         return this.languageProperties.getProperty(priceLevel.getDictionaryKey());
     }
     
-    public List<String> columnNames()
+    public List<String> highScoreColumnNames()
     {
-        return this.columnNames;
+        return this.highScoreColumnNames;
     }
     
     public String standardUpgradesImprovements(StandardUpgradeType standardUpgradeType)
@@ -478,7 +531,7 @@ public final class Dictionary
     
     public String standardUpgradeName(StandardUpgradeType standardUpgradeType)
     {
-        if (Menu.window == WindowType.HELICOPTER_TYPES && standardUpgradeType == ENERGY_ABILITY)
+        if (MenuManager.window == WindowType.HELICOPTER_TYPES && standardUpgradeType == ENERGY_ABILITY)
         {
             return genericEnergyAbility();
         }
@@ -517,8 +570,8 @@ public final class Dictionary
     
     public String startScreenMenuButtonName(StartScreenMenuButtonType buttonType)
     {
-        return Optional.ofNullable(startScreenMenuButtonName.get(Menu.window))
-                       .map(labelList -> labelList.get(buttonType.ordinal()))
+        return Optional.ofNullable(startScreenMenuButtonName.get(MenuManager.window))
+                       .map(labelList -> labelList.get(buttonType))
                        .orElse("");
     }
     
@@ -526,8 +579,7 @@ public final class Dictionary
         String key = "mission." + (Events.timeOfDay == TimeOfDay.DAY ? "daytime" : "overnight");
         return this.languageProperties.getProperty(key);
     }
-    
-    // TODO Methode wird an 5 Stellen aufgerufen, diese Stellen sehen ähnlich aus --> Redundanzen auflösen
+
     public String sold(){
         boolean hasSpotlights = Controller.getInstance().getHelicopter().hasSpotlights;
         String key = "sold." + (hasSpotlights ? "highSalary" : "lowSalary");

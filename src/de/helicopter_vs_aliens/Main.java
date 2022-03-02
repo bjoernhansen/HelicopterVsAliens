@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.Label;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.score.Savegame;
 
 import javax.swing.*;
@@ -98,15 +98,14 @@ public class Main
 
 	static void switchResolution(Savegame savegame)
 	{
-		Menu.hasOriginalResulution = !Menu.hasOriginalResulution;
-		savegame.originalResulution = Menu.hasOriginalResulution;
+		Menu.hasOriginalResolution = !Menu.hasOriginalResolution;
+		savegame.originalResulution = Menu.hasOriginalResolution;
 		activateDisplayMode();
 		Events.settingsChanged = true;
 	}
     
     public static void switchDisplayMode(Button currentButton)
     {
-        // TODO jedes Mal zu Beginn ein Wechsel? Ist das so gewünscht?
 		isFullScreen = !isFullScreen;
 	
 		Menu.dictionary.updateDisplayMode();
@@ -136,7 +135,7 @@ public class Main
     
     private static void activateDisplayMode()
 	{
-    	currentDisplayMode = Menu.hasOriginalResulution
+    	currentDisplayMode = Menu.hasOriginalResolution
 				? originalDisplayMode
 				: standardDisplayMode;
     	device.setDisplayMode(currentDisplayMode);
@@ -147,8 +146,10 @@ public class Main
 			Menu.label = new Label();}
 		else
 		{
-			Menu.label.setBounds(displayShift.width  + 42,
-					  				displayShift.height + 83, 940, 240);
+			Menu.label.setBounds(	displayShift.width  + 42,
+					  				displayShift.height + 83,
+									940,
+									240);
 		}
 		Controller.getInstance().backgroundRepaintTimer = 0;
 	}

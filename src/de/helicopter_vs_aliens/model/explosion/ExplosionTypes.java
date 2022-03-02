@@ -7,5 +7,5 @@ public enum ExplosionTypes
 	STUNNING,
 	EMP,
 	JUMBO,
-	PHASE_SHIFT;
+	PHASE_SHIFT
 }

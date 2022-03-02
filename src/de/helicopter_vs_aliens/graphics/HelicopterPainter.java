@@ -1,7 +1,8 @@
 package de.helicopter_vs_aliens.graphics;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -10,18 +11,17 @@ import java.awt.*;
 import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
-import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
+import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.model.helicopter.Helicopter.HELICOPTER_MENU_PAINT_POS;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
-import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 public abstract class HelicopterPainter extends Painter<Helicopter>
 {
     private static final boolean
         SHOW_RED_FRAME = false;			// zu Testzwecken: zeichnet roten Rahmen um die Helicopter Collision-Bounds
     
-    // Grundfarben zur Berechnung der Gradientenfarben
-    // TODO ggf. eigene Klase für Farben einführen
+    // Grundfarben zur Berechnung der Gradienten-Farben
+    // TODO ggf. eigene Klasse für Farben einführen
     Color
         inputColorCannon,
         inputColorHull,
@@ -32,7 +32,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
         inputLightGray,
         inputLamp;
     
-    // Gradientenfarben
+    // Gradienten-Farben
     private GradientPaint
         gradientHull, 					// Hauptfarbe des Helikopters
         gradientCannon1,				// Farbe der ersten Bordkanone
@@ -96,7 +96,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     
     boolean hasLeftMovingAppearance()
     {
-        return helicopter.isMovingLeft && Menu.window == GAME;
+        return helicopter.isMovingLeft && MenuManager.window == GAME;
     }
     
     private void paintSkids(Graphics2D g2d, int left, int top)
@@ -124,7 +124,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     {
         if(helicopter.hasSpotlights)
         {
-            if(Events.timeOfDay == NIGHT && de.helicopter_vs_aliens.gui.Menu.window == GAME)
+            if(Events.timeOfDay == NIGHT && MenuManager.window == GAME)
             {
                 g2d.setColor(Colorations.translucentWhite);
                 g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -135 : -43), top-96, 300, 300, (this.hasLeftMovingAppearance() ? 165 : -15), 30);
@@ -249,19 +249,19 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     public void startScreenPaint(Graphics2D g2d, Helicopter helicopter, int left, int top)
     {
         this.paint(g2d, helicopter, left, top);
-        if(Events.recordTime[helicopter.getType().ordinal()][4] > 0 && de.helicopter_vs_aliens.gui.Menu.window == STARTSCREEN)
+        if(Events.recordTime[helicopter.getType().ordinal()][4] > 0 && MenuManager.window == START_SCREEN)
         {
             g2d.setFont(Menu.fontProvider.getBold(12));
             g2d.setColor(Color.yellow);
-            g2d.drawString(Menu.language == ENGLISH ? "Record time:" : "Bestzeit:", left-27, top+67);
+            g2d.drawString(Menu.dictionary.recordTime(), left-27, top+67);
             g2d.drawString(Menu.minuten(Events.recordTime[helicopter.getType().ordinal()][4]),left-27, top+80);
         }
         
-        if(helicopter.getType() == HELIOS && Menu.window == STARTSCREEN)
+        if(helicopter.getType() == HELIOS && MenuManager.window == START_SCREEN)
         {
             g2d.setFont(Menu.fontProvider.getBold(12));
             g2d.setColor(Colorations.brown);
-            g2d.drawString(Menu.language == ENGLISH ? "Special mode" : "Spezial-Modus:", left-27, top-4);
+            g2d.drawString(Menu.dictionary.specialMode(), left-27, top-4);
         }
     }
     
@@ -285,11 +285,11 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     private static void paintRotor(Graphics2D g2d, Color color,
                            int x, int y, int width, int height,
                            int numberOfBlades, int pos, int bladeWidth,
-                           boolean active, boolean enemiePaint)
+                           boolean active, boolean enemyPaint)
     {
         if(active)
         {
-            g2d.setColor((Events.timeOfDay == DAY || enemiePaint) ? Colorations.translucentGray : Colorations.translucentWhite);
+            g2d.setColor((Events.timeOfDay == DAY || enemyPaint) ? Colorations.translucentGray : Colorations.translucentWhite);
             g2d.fillOval(x, y, width, height);
         }
         g2d.setColor(color);

@@ -1,15 +1,23 @@
 package de.helicopter_vs_aliens.audio;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.score.Savegame;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.score.Savegame;
+
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.net.URL;
 
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
-import static de.helicopter_vs_aliens.gui.WindowType.*;
+import static de.helicopter_vs_aliens.gui.WindowType.GAME;
+import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
+import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BONUS_INCOME;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITRED_ENERGY;
 
 
 public class Audio
@@ -61,12 +69,12 @@ public class Audio
         // Announcer
         applause1,
         applause2,
-        nicecatch,
-        doublekill,
-        tripplekill,
-        multikill,
-        megakill,
-        monsterkill,
+        niceCatch,
+        doubleKill,
+        trippleKill,
+        multiKill,
+        megaKill,
+        monsterKill,
         powerAnnouncer[],
 
         // Hintergrundmusik für den Standard-Modus
@@ -77,7 +85,7 @@ public class Audio
         // Hintergrundmusik für Michael-Modus
         mainMenu,
         repairShop,
-        scorescreen,
+        scoreScreen,
         level_01_09,
         level_11_19,
         level_21_29,
@@ -123,12 +131,12 @@ public class Audio
         emp = getAudioClip("emp.wav");
         stun = getAudioClip("stun.wav");
         applause2 = getAudioClip("applause2.wav");
-        doublekill = getAudioClip("doublekill.wav");
-        tripplekill = getAudioClip("tripplekill.wav");
-        megakill = getAudioClip("megakill.wav");
-        multikill = getAudioClip("multikill.wav");
-        monsterkill = getAudioClip("monsterkill.wav");
-        nicecatch = getAudioClip("nicecatch.wav");
+        doubleKill = getAudioClip("doublekill.wav");
+        trippleKill = getAudioClip("tripplekill.wav");
+        megaKill = getAudioClip("megakill.wav");
+        multiKill = getAudioClip("multikill.wav");
+        monsterKill = getAudioClip("monsterkill.wav");
+        niceCatch = getAudioClip("nicecatch.wav");
         landing = getAudioClip("landing.wav");
         plasmaOn = getAudioClip("plasma_on.wav");
         plasmaOff = getAudioClip("plasma_off.wav");
@@ -148,7 +156,7 @@ public class Audio
         {
             mainMenu = getAudioClip("main_menu.wav");
             repairShop = getAudioClip("repair_shop.wav");
-            scorescreen = getAudioClip("scorescreen.wav");
+            scoreScreen = getAudioClip("scorescreen.wav");
             level_01_09 = getAudioClip("level_01_09.wav");
             level_11_19 = getAudioClip("level_11_19.wav");
             level_21_29 = getAudioClip("level_21_29.wav");
@@ -187,25 +195,25 @@ public class Audio
     {
         if (!standardBackgroundMusic)
         {
-            if (Menu.window == GAME && !Events.isBossLevel())
+            if (MenuManager.window == GAME && !Events.isBossLevel())
             {
                 return bgMusic2;
-            } else if (Menu.window == REPAIR_SHOP || Menu.window == SCORESCREEN)
+            } else if (MenuManager.window == REPAIR_SHOP || MenuManager.window == SCORE_SCREEN)
             {
                 return bgMusic1;
             }
             return bgMusic3;
-        } else if (Menu.window == REPAIR_SHOP)
+        } else if (MenuManager.window == REPAIR_SHOP)
         {
             return repairShop;
-        } else if (Menu.window == SCORESCREEN)
+        } else if (MenuManager.window == SCORE_SCREEN)
         {
             if (Events.level == 51)
             {
                 return victory;
             }
-            return scorescreen;
-        } else if (Menu.window.isMainMenuWindow())
+            return scoreScreen;
+        } else if (MenuManager.window.isMainMenuWindow())
         {
             return mainMenu;
         } else if (Events.level >= 1 && Events.level < 10)
@@ -261,18 +269,18 @@ public class Audio
     {
         if (nr == 1)
         {
-            play(nicecatch);
+            play(niceCatch);
             play(applause2);
         } else if (nr == 2)
         {
-            play(doublekill);
+            play(doubleKill);
         } else if (nr == 3)
         {
-            play(tripplekill);
+            play(trippleKill);
             play(applause2);
         } else if (nr == 4)
         {
-            play(megakill);
+            play(megaKill);
             play(applause2);
         } else
         {
@@ -280,10 +288,10 @@ public class Audio
             play(applause1);
             if (nr == 5)
             {
-                play(multikill);
+                play(multiKill);
             } else if (nr >= 6)
             {
-                play(monsterkill);
+                play(monsterKill);
             }
         }
     }

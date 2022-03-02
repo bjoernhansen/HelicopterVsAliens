@@ -5,8 +5,9 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -213,7 +214,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		return this.hasSpotlights
 				&& Events.timeOfDay == NIGHT
-				&& Menu.window == GAME;
+				&& MenuManager.window == GAME;
 	}
 
 	void updateTimer()

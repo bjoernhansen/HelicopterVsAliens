@@ -3,12 +3,26 @@ package de.helicopter_vs_aliens.control;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
-import de.helicopter_vs_aliens.gui.button.*;
-import de.helicopter_vs_aliens.gui.Menu;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.Button;
+import de.helicopter_vs_aliens.gui.button.ButtonGroup;
+import de.helicopter_vs_aliens.gui.button.ButtonSpecifier;
+import de.helicopter_vs_aliens.gui.button.GroundButtonType;
+import de.helicopter_vs_aliens.gui.button.LeftSideRepairShopButtonType;
+import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
+import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
+import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuCancelButtonType;
+import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.*;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScoreEntry;
@@ -16,7 +30,10 @@ import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -24,16 +41,41 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-// TODO statische Importe ausmisten und ggf. qualifiziert zugreifen
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.*;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.BlockMessage.*;
+import static de.helicopter_vs_aliens.gui.BlockMessage.HELICOPTER_ALREADY_REPAIRED;
+import static de.helicopter_vs_aliens.gui.BlockMessage.NOT_ENOUGH_MONEY_FOR_REPAIRS;
+import static de.helicopter_vs_aliens.gui.BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE;
+import static de.helicopter_vs_aliens.gui.BlockMessage.REACHED_MAXIMUM_LEVEL;
+import static de.helicopter_vs_aliens.gui.BlockMessage.UNREPAIRED_BEFORE_MISSION;
+import static de.helicopter_vs_aliens.gui.BlockMessage.UNREPAIRED_BEFORE_UPGRADE;
+import static de.helicopter_vs_aliens.gui.BlockMessage.UPGRADE_ALREADY_INSTALLED;
 import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
-import static de.helicopter_vs_aliens.gui.WindowType.*;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
+import static de.helicopter_vs_aliens.gui.WindowType.CONTACT;
+import static de.helicopter_vs_aliens.gui.WindowType.DESCRIPTION;
+import static de.helicopter_vs_aliens.gui.WindowType.GAME;
+import static de.helicopter_vs_aliens.gui.WindowType.HELICOPTER_TYPES;
+import static de.helicopter_vs_aliens.gui.WindowType.HIGH_SCORE;
+import static de.helicopter_vs_aliens.gui.WindowType.INFORMATION;
+import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
+import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
+import static de.helicopter_vs_aliens.gui.WindowType.SETTINGS;
+import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_4;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.FINAL_BOSS;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.ROCK;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITRED_ENERGY;
 
 public class Events
 {
@@ -113,16 +155,16 @@ public class Events
 	{	
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE && !helicopter.isDamaged)
 		{
-			if(Menu.window == GAME){changeVisibilityOfInGameMenu(helicopter);}
-			else if(Menu.window == STARTSCREEN){
+			if(MenuManager.window == GAME){changeVisibilityOfInGameMenu(helicopter);}
+			else if(MenuManager.window == START_SCREEN){
 				Controller.shutDown();}
-			else if(Menu.window != REPAIR_SHOP)
+			else if(MenuManager.window != REPAIR_SHOP)
 			{
 				// TODO über Controller beziehen, nicht alles einzeln und getter definieren
 				cancel(controller.getScenery(), controller.backgroundObjects, helicopter, savegame);
 			}
 		}		
-		else if(Menu.window == SETTINGS && Menu.page == StartScreenMenuButtonType.BUTTON_5)
+		else if(MenuManager.window == SETTINGS && Menu.page == StartScreenMenuButtonType.BUTTON_5)
 		{
 			int name_length = HighScoreEntry.currentPlayerName.length();
 			if(e.getKeyCode() == KeyEvent.VK_ENTER)
@@ -153,14 +195,14 @@ public class Events
 		}		
 		else if(e.getKeyChar() =='p')
 		{
-			if(Menu.window == GAME && !helicopter.isDamaged)
+			if(MenuManager.window == GAME && !helicopter.isDamaged)
 			{
 				changeVisibilityOfInGameMenu(helicopter);
 			}
 		}		
 		else if(e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
-			if(	Menu.window == GAME
+			if(	MenuManager.window == GAME
 				&&	helicopter.isActive
 				&& !helicopter.isDamaged
 				&& !Menu.isMenuVisible)
@@ -172,11 +214,11 @@ public class Events
 		{			
 			if(e.getKeyChar() == 'e')
 			{
-				if(Menu.window == GAME || Menu.window == REPAIR_SHOP)
+				if(MenuManager.window == GAME || MenuManager.window == REPAIR_SHOP)
 				{
 					if(money == 0)
 					{
-						if(Menu.window == GAME)
+						if(MenuManager.window == GAME)
 						{
 							lastBonus = MAX_MONEY - money;
 						}
@@ -193,7 +235,7 @@ public class Events
 			}				
 			else if(e.getKeyChar() == 'u')
 			{
-				if(Menu.window == GAME || Menu.window == REPAIR_SHOP)
+				if(MenuManager.window == GAME || MenuManager.window == REPAIR_SHOP)
 				{
 					if(!helicopter.hasAllUpgrades())
 					{
@@ -204,7 +246,7 @@ public class Events
 					else{Audio.play(Audio.block);}
 				}					
 			}
-			else if(Menu.window == GAME)
+			else if(MenuManager.window == GAME)
 			{				
 				if(e.getKeyChar() == 'l')
 				{				
@@ -263,7 +305,7 @@ public class Events
 				else if(e.getKeyChar() == 't'){
 					playingTime += 60000;}
 			}
-			else if(Menu.window == STARTSCREEN)
+			else if(MenuManager.window == START_SCREEN)
 			{
 				// Resetten der Helicopter-Bestzeiten
 				if(e.getKeyChar() == 'x')
@@ -317,7 +359,7 @@ public class Events
 			mousePressedLeft(controller, helicopter);
 		}
 		else if(
-					Menu.window == GAME
+					MenuManager.window == GAME
 					&&	helicopter.isActive
 					&& !helicopter.isDamaged
 					&& !Menu.isMenuVisible)
@@ -333,15 +375,15 @@ public class Events
 	private static void mousePressedLeft(Controller controller, Helicopter helicopter)
 	{		
 		controller.backgroundRepaintTimer = 0;
-		if(Menu.window == GAME)
+		if(MenuManager.window == GAME)
 		{
 			inGameMousePressedLeft(controller, helicopter);
 		}
-		else if(Menu.window == REPAIR_SHOP)
+		else if(MenuManager.window == REPAIR_SHOP)
 		{
 			repairShopMousePressedLeft(helicopter, controller.getScenery(), controller.enemies, controller.backgroundObjects);
 		}
-		else if(Menu.window == STARTSCREEN)
+		else if(MenuManager.window == START_SCREEN)
 		{
 			startScreenMousePressedLeft();
 		}
@@ -428,7 +470,7 @@ public class Events
 					helicopter.scoreScreenTimes[4] = playingTime /60000;
 				}				
 							   
-				changeWindow(SCORESCREEN);	
+				changeWindow(SCORE_SCREEN);
 															
 				helicopter.isDamaged = false;
                 Controller.savegame.becomeValid();
@@ -712,12 +754,12 @@ public class Events
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.INFORMATION).getBounds().contains(cursor))
 		{			
-			newStartScreenMenuWindow(INFORMATIONS, true);
+			newStartScreenMenuWindow(INFORMATION, true);
 			Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.HIGH_SCORE).getBounds().contains(cursor))
 		{			
-			newStartScreenMenuWindow(HIGHSCORE, true);
+			newStartScreenMenuWindow(HIGH_SCORE, true);
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.CONTACT).getBounds().contains(cursor))
 		{			
@@ -750,7 +792,7 @@ public class Events
 							   Helicopter helicopter, Savegame savegame)
 	{
 		Audio.play(Audio.choose);
-		if(Menu.window == SCORESCREEN)
+		if(MenuManager.window == SCORE_SCREEN)
 		{				
 			savegame.saveInHighscore();
 			restartGame(helicopter, scenery, bgObject);
@@ -758,16 +800,16 @@ public class Events
 			savegame.saveToFile(helicopter);
 			Menu.buttons.get(StartScreenMenuCancelButtonType.CANCEL).setHighlighted(false);
 		}
-		else if(Menu.window == DESCRIPTION)
+		else if(MenuManager.window == DESCRIPTION)
 		{
 			if(Menu.page == StartScreenMenuButtonType.BUTTON_6){
 				Menu.label.setBounds(Main.displayShift.width  + 42,
 													   Main.displayShift.height + 83, 940, 240);}
-			newStartScreenMenuWindow(INFORMATIONS, false);
+			newStartScreenMenuWindow(INFORMATION, false);
 			Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
 			Menu.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
 		}
-		else if(Menu.window == HELICOPTER_TYPES)
+		else if(MenuManager.window == HELICOPTER_TYPES)
 		{
 			if(Menu.page == StartScreenMenuButtonType.BUTTON_2){
 				Menu.label.setVisible(true);}
@@ -776,11 +818,11 @@ public class Events
 		}
 		else
 		{
-			if(Menu.window == INFORMATIONS)
+			if(MenuManager.window == INFORMATION)
 			{
 				Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
 			}
-			else if(Menu.window == SETTINGS)
+			else if(MenuManager.window == SETTINGS)
 			{
 				Menu.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(false);
 				HighScoreEntry.checkName(savegame);
@@ -792,7 +834,7 @@ public class Events
 			}
 			Menu.label.setVisible(false);
 			Menu.stopButtonHighlighting();
-			Menu.window = STARTSCREEN;
+			MenuManager.window = START_SCREEN;
 		}
 	}
 	
@@ -806,40 +848,40 @@ public class Events
 			Button currentButton = Menu.buttons.get(buttonSpecifier);
 			if( currentButton.getBounds().contains(cursor) && 
 				currentButton.isVisible() &&
-				(Menu.page != buttonSpecifier || Menu.window == SETTINGS))
+				(Menu.page != buttonSpecifier || MenuManager.window == SETTINGS))
 			{
 				StartScreenMenuButtonType oldPage = Menu.page;
-				if(Menu.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_6)
+				if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					Menu.label.setBounds(Main.displayShift.width  + 42,
 										    Main.displayShift.height + 83, 940, 240);
 				}
-				else if(Menu.window == HELICOPTER_TYPES && Menu.page == StartScreenMenuButtonType.BUTTON_2)
+				else if(MenuManager.window == HELICOPTER_TYPES && Menu.page == StartScreenMenuButtonType.BUTTON_2)
 				{
 					Menu.label.setVisible(true);
 				}
 				Menu.page = (StartScreenMenuButtonType) buttonSpecifier;
-				if(Menu.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_6)
+				if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					Menu.label.setBounds(Main.displayShift.width  + 92,
 											Main.displayShift.height + 83, 890, 240);
 				}
-				else if(Menu.window == HELICOPTER_TYPES && Menu.page == StartScreenMenuButtonType.BUTTON_2)
+				else if(MenuManager.window == HELICOPTER_TYPES && Menu.page == StartScreenMenuButtonType.BUTTON_2)
 				{
 					Menu.label.setVisible(false);
 				}
-				if(Menu.window == INFORMATIONS && Menu.page == StartScreenMenuButtonType.BUTTON_3)
+				if(MenuManager.window == INFORMATION && Menu.page == StartScreenMenuButtonType.BUTTON_3)
 				{							
 					newStartScreenMenuWindow(DESCRIPTION, false);
 					Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
 					Menu.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
 				}
-				else if(Menu.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_7)
+				else if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_7)
 				{
 					newStartScreenMenuWindow(HELICOPTER_TYPES, false);
 					Menu.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
 				}
-				else if(Menu.window == SETTINGS)
+				else if(MenuManager.window == SETTINGS)
 				{					
 					settingsMousePressedLeft(helicopter, 
 											 currentButton,
@@ -850,7 +892,7 @@ public class Events
 				else
 				{
 					Audio.play(Audio.choose);					
-					Menu.updateLabeltext();
+					Menu.updateStartScreenMenuLabelText();
 				}
 				break;
 			}
@@ -889,7 +931,7 @@ public class Events
 				Menu.page = StartScreenMenuButtonType.BUTTON_1;}
 			HighScoreEntry.checkName(savegame);
 		}
-		Menu.updateLabeltext();
+		Menu.updateStartScreenMenuLabelText();
 	}
 	
 	private static void switchAntialiasingActivationState(	Graphics2D offGraphics,
@@ -909,7 +951,7 @@ public class Events
 		{
 			helicopter.isContiniousFireEnabled = false;
 		}
-		else if(Menu.window == GAME && mouseEvent.getButton() == 3 && !helicopter.isDamaged)
+		else if(MenuManager.window == GAME && mouseEvent.getButton() == 3 && !helicopter.isDamaged)
 		{
 			helicopter.rightMouseButtonReleaseAction(mouseEvent);
 		}		
@@ -918,7 +960,7 @@ public class Events
 	// Aktualisierung der Ziel-Koordinaten, auf welche der Helikopter zufliegt
 	static void mouseMovedOrDragged(MouseEvent e, Helicopter helicopter)
 	{		
-		if(!helicopter.isDamaged || Menu.window == REPAIR_SHOP)
+		if(!helicopter.isDamaged || MenuManager.window == REPAIR_SHOP)
 		{
 			if(!helicopter.isSearchingForTeleportDestination)
 			{
@@ -1100,7 +1142,7 @@ public class Events
 	// TODO die bgObject List sollte teil innerhalb von Scenery definiert werden
 	private static void restartGame(Helicopter helicopter, Scenery scenery, EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>> bgObject)
 	{		
-		changeWindow(STARTSCREEN);	
+		changeWindow(START_SCREEN);
 		helicopter.reset();
 		BackgroundObject.reset(bgObject);
 		scenery.reset();
@@ -1145,7 +1187,7 @@ public class Events
 	
 	private static void changeWindow(WindowType newWindow)
 	{		
-		Menu.window = newWindow;
+		MenuManager.window = newWindow;
 		Audio.refreshBackgroundMusic();
 		Colorations.bg = newWindow == GAME && timeOfDay == DAY ? Colorations.sky: Color.black;
 	}
@@ -1157,7 +1199,7 @@ public class Events
 			Menu.stopButtonHighlighting();
 		}
 		Audio.play(Audio.choose);		
-		Menu.window = newWindow;
+		MenuManager.window = newWindow;
 		Menu.adaptToNewWindow(hasJustEntered);
 		Menu.updateStartScreenMenuButtons();
 	}

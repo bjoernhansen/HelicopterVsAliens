@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -205,11 +205,6 @@ public class PowerUp extends RectangularGameEntity
 								PowerUpType type, boolean isIntendedForStatusBar)
 	{
 		PowerUp pu = Controller.getInstance().getGameEntityRecycler().retrieve(PowerUp.class);
-		
-		/*
-		Iterator<PowerUp> i = powerUp.get(INACTIVE).iterator();
-		if(i.hasNext()){pu = i.next(); i.remove();}	
-		else{pu = new PowerUp();}*/
 		
 		if(enemy != null)
 		{

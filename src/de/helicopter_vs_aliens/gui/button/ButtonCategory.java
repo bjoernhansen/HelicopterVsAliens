@@ -33,7 +33,7 @@ public enum ButtonCategory
     {
         STANDARD,       // not translucent 
         TRANSLUCENT,    
-        PURCHASE            // always translucent
+        PURCHASE        // always translucent
     }
     
     ButtonCategory(int width, int height, ButtonSubcategory subcategory)

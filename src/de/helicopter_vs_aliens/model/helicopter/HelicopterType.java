@@ -50,7 +50,7 @@ public enum HelicopterType
         {
             HelicopterType privilegedHelicopter = standardUpgradeType.getPrivilegedHelicopter();
             int bestNonFinalMainBossKill = Events.getBestNonFinalMainBossKillBy(privilegedHelicopter);
-            return PriceLevel.getValues()[PriceLevel.getMaximium().ordinal() - bestNonFinalMainBossKill];
+            return PriceLevel.getValues()[PriceLevel.getMaximum().ordinal() - bestNonFinalMainBossKill];
         }
     };
 
@@ -106,9 +106,9 @@ public enum HelicopterType
     
     private static final List<HelicopterType>
         NO_UNLOCKER = Collections.unmodifiableList(new ArrayList<>()),
-        OROCHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(PHOENIX, PEGASUS)),
-        KAMAITACHI_UNLOCKER = Collections.unmodifiableList(Arrays.asList(ROCH, PEGASUS)),
-        PEGASUS_UNLOCKER = Collections.unmodifiableList(Arrays.asList(OROCHI, KAMAITACHI));
+        OROCHI_UNLOCKER = List.of(PHOENIX, PEGASUS),
+        KAMAITACHI_UNLOCKER = List.of(ROCH, PEGASUS),
+        PEGASUS_UNLOCKER = List.of(OROCHI, KAMAITACHI);
     
     // Die Kosten mancher Upgrades weichen für manche Helicopterklassen vom Standard ab.
     // Die HashMap ADDITIONAL_STANDARD_UPGRADE_COSTS enthält die Modifikationswerte.
@@ -246,7 +246,7 @@ public enum HelicopterType
         additionalCosts.put("444", 37000);
         additionalCosts.put("445", 150000);
         
-        return Collections.unmodifiableMap(new HashMap<>(additionalCosts));
+        return Map.copyOf(additionalCosts);
     }
     
     public int getAdditionalCosts(StandardUpgradeType standardUpgradeType, int upgradeLevel)

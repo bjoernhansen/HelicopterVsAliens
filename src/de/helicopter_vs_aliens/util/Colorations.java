@@ -1,12 +1,16 @@
 package de.helicopter_vs_aliens.util;
+
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 
-import static de.helicopter_vs_aliens.gui.WindowType.*;
+import static de.helicopter_vs_aliens.gui.WindowType.GAME;
+import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
+import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
+import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 
 public final class Colorations
 {
@@ -82,7 +86,7 @@ public final class Colorations
 		lightestGray = new Color (210,210,210), 	
 		translucentWhite = new Color(MAX_VALUE, MAX_VALUE, MAX_VALUE, 35),
 		cloaked = new Color(79, 110, 128),
-		detected = new Color(MAX_VALUE, 0, 0, 35),	
+		detected = new Color(MAX_VALUE, 0, 0, 35),	 // TODO wieso unused?
 		INACTIVE_NOZZLE = new Color(MAX_VALUE, 192, 129),
 		HS_GREEN = new Color(130, MAX_VALUE, 130),
 		HS_RED = new Color(MAX_VALUE, 130, 130),
@@ -193,7 +197,7 @@ public final class Colorations
 			variableRed =   new Color(MAX_VALUE, 192 - 21 * (counter%10), 192 - 21 * (counter%10));
 			variableBlue =  new Color(75 + 60 - 7 * (counter%10), 75 + 60 - 7 * (counter%10), MAX_VALUE);
 		}	
-    	if(Menu.window == GAME)
+    	if(MenuManager.window == GAME)
     	{
     		randomSunlightBlue += lighter ? 1 : -1;
 			if(randomSunlightBlue > 205){lighter = false;}
@@ -214,19 +218,19 @@ public final class Colorations
 		gradientVariableWhite = new GradientPaint(value,  value, variableWhite,
 												  40 + value, 40 + value,
 												  dimColor(variableWhite, 0.55f), true);
-		if(Menu.window != REPAIR_SHOP)
+		if(MenuManager.window != REPAIR_SHOP)
 		{			
 			gradientVariableGray = new GradientPaint( - value,  -value, 
 													  dimColor(variableWhite, 0.5f),
 													  40 - value, 40 - value,
 													  dimColor(variableWhite, 0.2f), true);
-			if(Menu.window == STARTSCREEN)
+			if(MenuManager.window == START_SCREEN)
 			{
 				variableYellow = new Color( 175 + 2 * helligkeit/3, 
 										    175 + 2 * helligkeit/3, 
 										   	 		  helligkeit);
 			}
-			if(Menu.window != SCORESCREEN && Menu.window != GAME)
+			if(MenuManager.window != SCORE_SCREEN && MenuManager.window != GAME)
 			{					
 				variableMarkedButton = new Color( 175 + 2 * helligkeit/3, 
 												  135 +     helligkeit, 

@@ -1,10 +1,10 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.Orochi;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 public class OrochiPainter extends HelicopterPainter
 {

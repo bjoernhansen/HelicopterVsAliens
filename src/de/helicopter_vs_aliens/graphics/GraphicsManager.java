@@ -1,17 +1,23 @@
 package de.helicopter_vs_aliens.graphics;
 
+import de.helicopter_vs_aliens.gui.menu.GameMenu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.button.Button;
+import de.helicopter_vs_aliens.gui.menu.RepairShopMenu;
+import de.helicopter_vs_aliens.gui.menu.ScoreScreenMenu;
+import de.helicopter_vs_aliens.gui.menu.StartScreenMenu;
+import de.helicopter_vs_aliens.gui.menu.StartScreenSubMenu;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.*;
-import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.gui.button.Button;
+import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +44,14 @@ public class GraphicsManager
         
         //GUI Painter
         painters.put(Button.class, new ButtonPainter());
+        MenuPainter menuPainter = new MenuPainter();
+    
+        painters.put(StartScreenMenu.class, menuPainter);
+        painters.put(StartScreenSubMenu.class, menuPainter);
+        painters.put(GameMenu.class, menuPainter);
+        painters.put(RepairShopMenu.class, menuPainter);
+        painters.put(ScoreScreenMenu.class, menuPainter);
+        painters.put(Menu.class, menuPainter);
         
         // sonstige Painter
         painters.put(PowerUp.class, new PowerUpPainter());

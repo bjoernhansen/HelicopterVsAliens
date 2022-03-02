@@ -4,5 +4,5 @@ public enum AbilityStatusType
 {
     ACTIVE,
     READY,
-    DISABLED;
+    DISABLED
 }

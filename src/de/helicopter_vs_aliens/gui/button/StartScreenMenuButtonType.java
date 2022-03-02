@@ -1,5 +1,7 @@
 package de.helicopter_vs_aliens.gui.button;
 
+import de.helicopter_vs_aliens.gui.WindowType;
+
 import java.awt.Point;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
         });
     }
 
+    private final String
+        buttonLabelKeyPostfix;
     
     private Point
         coordinates;
@@ -44,6 +48,7 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
     StartScreenMenuButtonType()
     {
         int index = ordinal();
+        this.buttonLabelKeyPostfix = Integer.toString(index);
         this.indizes = new Point(index/ROW_COUNT, index%ROW_COUNT);
     }
     
@@ -75,5 +80,11 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
     public String getPrimaryLabel()
     {
         return "";
+    }
+    
+    
+    public String getButtonLabelKey(WindowType associatedWindow)
+    {
+        return associatedWindow.getButtonLabelKeyPrefix() + buttonLabelKeyPostfix;
     }
 }

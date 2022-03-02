@@ -1,15 +1,14 @@
 package de.helicopter_vs_aliens.graphics;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.Menu;
-import de.helicopter_vs_aliens.model.helicopter.Phoenix;
+import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.WindowType.STARTSCREEN;
+import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 
 public class RochPainter extends HelicopterPainter
 {
@@ -26,7 +25,7 @@ public class RochPainter extends HelicopterPainter
     
     private void paintPowerShield(Graphics2D g2d, int left, int top)
     {
-        g2d.setColor(Colorations.shieldColor[Menu.window == STARTSCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
+        g2d.setColor(Colorations.shieldColor[MenuManager.window == START_SCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
         g2d.fillOval(left+(this.hasLeftMovingAppearance() ? -9 : 35), top+19, 96, 54);
     }
 }

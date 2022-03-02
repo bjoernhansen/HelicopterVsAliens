@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics;
 
 import de.helicopter_vs_aliens.gui.button.Button;
-import de.helicopter_vs_aliens.gui.Menu;
+import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.*;
@@ -42,14 +42,14 @@ public class ButtonPainter extends Painter<Button>
             {
                 if(button.getCostColor() == null){g2d.setColor(Colorations.lightOrange);}
                 else{g2d.setColor(button.getCostColor());}
-                g2d.setFont(de.helicopter_vs_aliens.gui.Menu.fontProvider.getBold(14));
+                g2d.setFont(Menu.fontProvider.getBold(14));
                 g2d.drawString(button.getPrimaryLabel(), (int)button.getBounds().getX() + LABEL_OFFSET_X, (int)button.getBounds().getY() + PRIMARY_LABEL_OFFSET_Y);
             }
             else
             {
                 if(button.isTranslucent())
                 {
-                    g2d.setFont(de.helicopter_vs_aliens.gui.Menu.fontProvider.getBold(15));
+                    g2d.setFont(Menu.fontProvider.getBold(15));
                     if(button.isEnabled()){g2d.setColor(button.isMarked() ? Colorations.variableMarkedButton : Color.yellow); }
                     else{g2d.setColor(Colorations.lightGray);}
                 }
