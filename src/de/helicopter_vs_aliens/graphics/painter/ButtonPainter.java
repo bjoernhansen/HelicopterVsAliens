@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.menu.Menu;

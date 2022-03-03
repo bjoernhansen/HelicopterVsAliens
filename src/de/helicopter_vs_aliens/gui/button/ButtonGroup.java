@@ -8,8 +8,8 @@ import java.util.List;
 public enum ButtonGroup
 {
     COMPLETE(   StartScreenButtonType.getValues(),
-                StartScreenMenuButtonType.getValues(),
-                StartScreenMenuCancelButtonType.getValues(),
+                StartScreenSubButtonType.getValues(),
+                StartScreenSubCancelButtonType.getValues(),
                 MainMenuButtonType.getValues(),
                 GroundButtonType.getValues(),
                 LeftSideRepairShopButtonType.getValues(),
@@ -18,8 +18,8 @@ public enum ButtonGroup
     
     START_SCREEN(  StartScreenButtonType.getValues()),
     
-    START_SCREEN_MENU(  StartScreenMenuButtonType.getValues(),
-                        StartScreenMenuCancelButtonType.getValues()),
+    START_SCREEN_MENU(  StartScreenSubButtonType.getValues(),
+                        StartScreenSubCancelButtonType.getValues()),
     
     IN_GAME( MainMenuButtonType.getValues(),
              GroundButtonType.getValues()),

@@ -18,7 +18,7 @@ public class MenuManager
     
     public MenuManager()
     {
-        WindowType.getValues().forEach(windowType -> menus.put(windowType, windowType.makeMenuInstance()));
+        WindowType.getValues().forEach(windowType -> menus.put(windowType, windowType.getMenuInstance()));
     }
     
     public void paintMenu(Graphics2D g2D)

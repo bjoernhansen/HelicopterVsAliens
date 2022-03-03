@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
@@ -55,7 +55,7 @@ public class SceneryPainter extends Painter<Scenery>
     }
     
     @Override
-    void paint(Graphics2D g2d, Scenery scenery)
+    public void paint(Graphics2D g2d, Scenery scenery)
     {
         // Sonne bzw. Mond
         int coronaRadiusIncrease = 0;

@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.helicopter.Phoenix;

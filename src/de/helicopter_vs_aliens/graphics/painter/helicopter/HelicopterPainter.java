@@ -1,6 +1,7 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -45,7 +46,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     Helicopter helicopter;
     
     @Override
-    void paint(Graphics2D g2d, Helicopter helicopter)
+    public void paint(Graphics2D g2d, Helicopter helicopter)
     {
         paint(g2d, helicopter, helicopter.getPaintBounds().x, helicopter.getPaintBounds().y);
     }
@@ -239,7 +240,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     
     
     // TODO gehört in einen MenuPainter
-    public void startScreenMenuPaint(Graphics2D g2d, Helicopter helicopter)
+    public void startScreenSubPaint(Graphics2D g2d, Helicopter helicopter)
     {
         helicopter.rotatePropellerSlow();
         this.paint(g2d, helicopter, HELICOPTER_MENU_PAINT_POS.x, HELICOPTER_MENU_PAINT_POS.y);

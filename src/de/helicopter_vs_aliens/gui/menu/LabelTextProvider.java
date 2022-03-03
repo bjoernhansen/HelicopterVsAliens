@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.gui.menu;
 
 import de.helicopter_vs_aliens.gui.WindowType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.util.dictionary.Language;
@@ -10,14 +10,14 @@ import static de.helicopter_vs_aliens.gui.WindowType.CONTACT;
 import static de.helicopter_vs_aliens.gui.WindowType.DESCRIPTION;
 import static de.helicopter_vs_aliens.gui.WindowType.HELICOPTER_TYPES;
 import static de.helicopter_vs_aliens.gui.WindowType.INFORMATION;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_1;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_2;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_3;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_4;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_5;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_6;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_7;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_8;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_1;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_2;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_3;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_4;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_5;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_6;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_7;
+import static de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType.BUTTON_8;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
@@ -28,7 +28,7 @@ class LabelTextProvider
     private static final int
         HTML_SIZE = 5;    // Standard-Schriftgröße der StartScreen-Menü-Texte
     
-    String getLabel(Language language, WindowType window, StartScreenMenuButtonType page)
+    String getLabel(Language language, WindowType window, StartScreenSubButtonType page)
     {
         if(language == ENGLISH)
         {

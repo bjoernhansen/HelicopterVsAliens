@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.score;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.io.Serializable;
@@ -88,7 +88,7 @@ public class HighScoreEntry implements Serializable
 			else
 			{
 				boolean isDefaultPlayerNameSet = currentPlayerName.equals(Menu.DEFAULT_PLAYER_NAME);
-				Menu.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(isDefaultPlayerNameSet);
+				Menu.buttons.get(StartScreenSubButtonType.BUTTON_5).setMarked(isDefaultPlayerNameSet);
 				Menu.buttons.get(StartScreenButtonType.SETTINGS).setMarked(isDefaultPlayerNameSet);
 				savegame.currentPlayerName = currentPlayerName;
 				Events.settingsChanged = true;

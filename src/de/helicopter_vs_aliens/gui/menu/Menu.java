@@ -17,8 +17,8 @@ import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuCancelButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -100,8 +100,8 @@ public class Menu implements Paintable
 		unlockedTimer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 		effectTimer[] = new int[HelicopterType.size()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
 	 
-	public static StartScreenMenuButtonType
-		page = StartScreenMenuButtonType.BUTTON_1; // ausgewählte Seite im StartScreen-Menü
+	public static StartScreenSubButtonType
+		page = StartScreenSubButtonType.BUTTON_1; // ausgewählte Seite im StartScreen-Menü
 	
 	public static Language
 		language = ENGLISH;
@@ -277,7 +277,7 @@ public class Menu implements Paintable
 	public static void updateScoreScreen(Helicopter helicopter)
 	{
     	helicopter.rotatePropellerSlow();
-		Button cancelButton = buttons.get(StartScreenMenuCancelButtonType.CANCEL);
+		Button cancelButton = buttons.get(StartScreenSubCancelButtonType.CANCEL);
 		boolean isHighlighted = cancelButton.getBounds().contains(helicopter.destination);
 		cancelButton.setHighlighted(isHighlighted);
 	}
@@ -363,13 +363,13 @@ public class Menu implements Paintable
 		Menu.dictionary.switchLanguageTo(language);
 	}
 	
-	public static void updateStartScreenMenuButtons()
+	public static void updateStartScreenSubButtons()
 	{
-		StartScreenMenuButtonType.getValues().forEach(buttonSpecifier -> {
-			StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType) buttonSpecifier; 
-			buttons.get(buttonSpecifier).setPrimaryLabel(dictionary.startScreenMenuButtonName(buttonType));
+		StartScreenSubButtonType.getValues().forEach(buttonSpecifier -> {
+			StartScreenSubButtonType buttonType = (StartScreenSubButtonType) buttonSpecifier;
+			buttons.get(buttonSpecifier).setPrimaryLabel(dictionary.startScreenSubButtonName(buttonType));
 		});
-		buttons.get(StartScreenMenuCancelButtonType.CANCEL).setPrimaryLabel(dictionary.cancel());
+		buttons.get(StartScreenSubCancelButtonType.CANCEL).setPrimaryLabel(dictionary.cancel());
 	}
 	
 	public static void updateButtonLabels(Helicopter helicopter)
@@ -392,7 +392,7 @@ public class Menu implements Paintable
 							 .forEach(buttonType -> buttons.get(buttonType)
 														   .setPrimaryLabel(buttonType.getPrimaryLabel()));
 		
-		updateStartScreenMenuButtons();
+		updateStartScreenSubButtons();
 		
 		StandardUpgradeButtonType.getValues().forEach(buttonSpecifier -> {
 			StandardUpgradeButtonType buttonType = (StandardUpgradeButtonType)buttonSpecifier;
@@ -474,17 +474,17 @@ public class Menu implements Paintable
 		messageTimer = 0;
 	}
 	
-	public static void updateStartScreenMenuLabelText()
+	public static void updateStartScreenSubLabelText()
 	{
 		label.setText(labelTextProvider.getLabel(language, MenuManager.window, page));
 	}
 	
 	public static void adaptToNewWindow(boolean justEntered)
 	{
-		page = StartScreenMenuButtonType.BUTTON_1;
+		page = StartScreenSubButtonType.BUTTON_1;
 		if(MenuManager.window  != HIGH_SCORE && MenuManager.window  != SETTINGS){
 			label.setVisible(true);}
-		updateStartScreenMenuLabelText();
+		updateStartScreenSubLabelText();
 		crossTimer = 0;
 		messageTimer = 0;
 		if(justEntered){

@@ -1,19 +1,30 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.painter.Painter;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.HeliosPainter;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.KamaitachiPainter;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.OrochiPainter;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.PegasusPainter;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.PhoenixPainter;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.RochPainter;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 
 public enum HelicopterType
 {
-    PHOENIX(Phoenix::new),
-    ROCH(Roch::new),
-    OROCHI(Orochi::new)
+    PHOENIX(Phoenix.class, Phoenix::new, PhoenixPainter::new),
+    ROCH(Roch.class, Roch::new, RochPainter::new),
+    OROCHI(Orochi.class, Orochi::new, OrochiPainter::new)
     {
         @Override
         public List<HelicopterType> getUnlockerTypes()
@@ -21,7 +32,7 @@ public enum HelicopterType
             return OROCHI_UNLOCKER;
         }
     },
-    KAMAITACHI(Kamaitachi::new)
+    KAMAITACHI(Kamaitachi.class, Kamaitachi::new, KamaitachiPainter::new)
     {
         @Override
         public List<HelicopterType> getUnlockerTypes()
@@ -29,7 +40,7 @@ public enum HelicopterType
             return KAMAITACHI_UNLOCKER;
         }
     },
-    PEGASUS(Pegasus::new)
+    PEGASUS(Pegasus.class, Pegasus::new, PegasusPainter::new)
     {
         @Override
         public List<HelicopterType> getUnlockerTypes()
@@ -37,7 +48,7 @@ public enum HelicopterType
             return PEGASUS_UNLOCKER;
         }
     },
-    HELIOS(Helios::new)
+    HELIOS(Helios.class, Helios::new, HeliosPainter::new )
     {
         @Override
         public boolean isUnlocked()
@@ -53,7 +64,10 @@ public enum HelicopterType
             return PriceLevel.getValues()[PriceLevel.getMaximum().ordinal() - bestNonFinalMainBossKill];
         }
     };
-
+    
+    public static final String
+        FIFTH_SPECIAL_KEY_PREFIX = "upgrades.special.fifth.";
+    
     private static final int[]
         SPELL_COSTS= {50, 30, 20, 200, 75, 250},  // Energiekosten für das Energie-Upgrade
         // TODO integer Max_VALUE anders lösen
@@ -115,17 +129,27 @@ public enum HelicopterType
     private static final Map<String, Integer>
         ADDITIONAL_STANDARD_UPGRADE_COSTS = setAdditionalCosts();
     
+    
     private final String
         fifthSpecialDictionaryKey;
     
     private final Supplier<? extends Helicopter>
         instance;
-       
     
-    HelicopterType(Supplier<? extends Helicopter> instance)
+    private final Supplier<? extends Painter<? extends Helicopter>>
+        painterInstance;
+    
+    private final Class<? extends Helicopter>
+        helicopterClass;
+       
+    HelicopterType(Class<? extends Helicopter> helicopterClass,
+                   Supplier<? extends Helicopter> instance,
+                   Supplier<? extends Painter<? extends Helicopter>> painterInstance)
     {
+        this.helicopterClass = helicopterClass;
         this.instance = instance;
-        this.fifthSpecialDictionaryKey = "upgrades.special.fifth." + this.getDesignation();
+        this.painterInstance = painterInstance;
+        this.fifthSpecialDictionaryKey = FIFTH_SPECIAL_KEY_PREFIX + this.getDesignation();
     }
     
     public static int size()
@@ -258,5 +282,15 @@ public enum HelicopterType
     public Helicopter makeInstance()
     {
         return instance.get();
+    }
+    
+    public Class<? extends Helicopter> getHelicopterClass()
+    {
+        return helicopterClass;
+    }
+    
+    public Painter<? extends Helicopter> makePainterInstance()
+    {
+        return painterInstance.get();
     }
 }

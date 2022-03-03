@@ -13,8 +13,8 @@ import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuCancelButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -164,12 +164,12 @@ public class Events
 				cancel(controller.getScenery(), controller.backgroundObjects, helicopter, savegame);
 			}
 		}		
-		else if(MenuManager.window == SETTINGS && Menu.page == StartScreenMenuButtonType.BUTTON_5)
+		else if(MenuManager.window == SETTINGS && Menu.page == StartScreenSubButtonType.BUTTON_5)
 		{
 			int name_length = HighScoreEntry.currentPlayerName.length();
 			if(e.getKeyCode() == KeyEvent.VK_ENTER)
 			{
-				Menu.page = StartScreenMenuButtonType.BUTTON_1;
+				Menu.page = StartScreenSubButtonType.BUTTON_1;
 				HighScoreEntry.checkName(savegame);
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
@@ -387,14 +387,14 @@ public class Events
 		{
 			startScreenMousePressedLeft();
 		}
-		else if(Menu.buttons.get(StartScreenMenuCancelButtonType.CANCEL).getBounds().contains(cursor))
+		else if(Menu.buttons.get(StartScreenSubCancelButtonType.CANCEL).getBounds().contains(cursor))
 		{
 			// TODO viel mehr über den Controller beziehen, nicht alles einzeln übergeben, getter definieren
 			cancel(controller.getScenery(), controller.backgroundObjects, helicopter, Controller.savegame);
 		}
 		else 
 		{		
-			startScreenMenuButtonClicked(controller.offGraphics,
+			startScreenSubButtonClicked(controller.offGraphics,
 										 helicopter,
 										 Controller.savegame);
 		}
@@ -754,23 +754,23 @@ public class Events
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.INFORMATION).getBounds().contains(cursor))
 		{			
-			newStartScreenMenuWindow(INFORMATION, true);
-			Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
+			newStartScreenSubWindow(INFORMATION, true);
+			Menu.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(true);
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.HIGH_SCORE).getBounds().contains(cursor))
 		{			
-			newStartScreenMenuWindow(HIGH_SCORE, true);
+			newStartScreenSubWindow(HIGH_SCORE, true);
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.CONTACT).getBounds().contains(cursor))
 		{			
-			newStartScreenMenuWindow(CONTACT, true);
+			newStartScreenSubWindow(CONTACT, true);
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.SETTINGS).getBounds().contains(cursor))
 		{			
-			newStartScreenMenuWindow(SETTINGS, true);
+			newStartScreenSubWindow(SETTINGS, true);
 			if(HighScoreEntry.currentPlayerName.equals(Menu.DEFAULT_PLAYER_NAME))
 			{
-				Menu.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(true);
+				Menu.buttons.get(StartScreenSubButtonType.BUTTON_5).setMarked(true);
 			}
 		}
 		else if(Menu.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).getBounds().contains(cursor))
@@ -798,33 +798,33 @@ public class Events
 			restartGame(helicopter, scenery, bgObject);
 			savegame.loseValidity();
 			savegame.saveToFile(helicopter);
-			Menu.buttons.get(StartScreenMenuCancelButtonType.CANCEL).setHighlighted(false);
+			Menu.buttons.get(StartScreenSubCancelButtonType.CANCEL).setHighlighted(false);
 		}
 		else if(MenuManager.window == DESCRIPTION)
 		{
-			if(Menu.page == StartScreenMenuButtonType.BUTTON_6){
+			if(Menu.page == StartScreenSubButtonType.BUTTON_6){
 				Menu.label.setBounds(Main.displayShift.width  + 42,
 													   Main.displayShift.height + 83, 940, 240);}
-			newStartScreenMenuWindow(INFORMATION, false);
-			Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
-			Menu.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
+			newStartScreenSubWindow(INFORMATION, false);
+			Menu.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(true);
+			Menu.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(false);
 		}
 		else if(MenuManager.window == HELICOPTER_TYPES)
 		{
-			if(Menu.page == StartScreenMenuButtonType.BUTTON_2){
+			if(Menu.page == StartScreenSubButtonType.BUTTON_2){
 				Menu.label.setVisible(true);}
-			newStartScreenMenuWindow(DESCRIPTION, false);
-			Menu.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
+			newStartScreenSubWindow(DESCRIPTION, false);
+			Menu.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(true);
 		}
 		else
 		{
 			if(MenuManager.window == INFORMATION)
 			{
-				Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
+				Menu.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(false);
 			}
 			else if(MenuManager.window == SETTINGS)
 			{
-				Menu.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(false);
+				Menu.buttons.get(StartScreenSubButtonType.BUTTON_5).setMarked(false);
 				HighScoreEntry.checkName(savegame);
 				if(settingsChanged)
 				{					
@@ -838,9 +838,9 @@ public class Events
 		}
 	}
 	
-	private static void startScreenMenuButtonClicked(Graphics2D offGraphics,
-													 Helicopter helicopter,
-													 Savegame savegame)
+	private static void startScreenSubButtonClicked(Graphics2D offGraphics,
+													Helicopter helicopter,
+													Savegame savegame)
 	{
 		// TODO for each schleife über die ButtonTypen
 		for(ButtonSpecifier buttonSpecifier : ButtonGroup.START_SCREEN_MENU.getButtonSpecifiers())
@@ -850,36 +850,36 @@ public class Events
 				currentButton.isVisible() &&
 				(Menu.page != buttonSpecifier || MenuManager.window == SETTINGS))
 			{
-				StartScreenMenuButtonType oldPage = Menu.page;
-				if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_6)
+				StartScreenSubButtonType oldPage = Menu.page;
+				if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenSubButtonType.BUTTON_6)
 				{
 					Menu.label.setBounds(Main.displayShift.width  + 42,
 										    Main.displayShift.height + 83, 940, 240);
 				}
-				else if(MenuManager.window == HELICOPTER_TYPES && Menu.page == StartScreenMenuButtonType.BUTTON_2)
+				else if(MenuManager.window == HELICOPTER_TYPES && Menu.page == StartScreenSubButtonType.BUTTON_2)
 				{
 					Menu.label.setVisible(true);
 				}
-				Menu.page = (StartScreenMenuButtonType) buttonSpecifier;
-				if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_6)
+				Menu.page = (StartScreenSubButtonType) buttonSpecifier;
+				if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenSubButtonType.BUTTON_6)
 				{
 					Menu.label.setBounds(Main.displayShift.width  + 92,
 											Main.displayShift.height + 83, 890, 240);
 				}
-				else if(MenuManager.window == HELICOPTER_TYPES && Menu.page == StartScreenMenuButtonType.BUTTON_2)
+				else if(MenuManager.window == HELICOPTER_TYPES && Menu.page == StartScreenSubButtonType.BUTTON_2)
 				{
 					Menu.label.setVisible(false);
 				}
-				if(MenuManager.window == INFORMATION && Menu.page == StartScreenMenuButtonType.BUTTON_3)
+				if(MenuManager.window == INFORMATION && Menu.page == StartScreenSubButtonType.BUTTON_3)
 				{							
-					newStartScreenMenuWindow(DESCRIPTION, false);
-					Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
-					Menu.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
+					newStartScreenSubWindow(DESCRIPTION, false);
+					Menu.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(false);
+					Menu.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(true);
 				}
-				else if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_7)
+				else if(MenuManager.window == DESCRIPTION && Menu.page == StartScreenSubButtonType.BUTTON_7)
 				{
-					newStartScreenMenuWindow(HELICOPTER_TYPES, false);
-					Menu.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
+					newStartScreenSubWindow(HELICOPTER_TYPES, false);
+					Menu.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(false);
 				}
 				else if(MenuManager.window == SETTINGS)
 				{					
@@ -892,7 +892,7 @@ public class Events
 				else
 				{
 					Audio.play(Audio.choose);					
-					Menu.updateStartScreenMenuLabelText();
+					Menu.updateStartScreenSubLabelText();
 				}
 				break;
 			}
@@ -903,35 +903,35 @@ public class Events
 	                                              Button currentButton,
 												  Graphics2D offGraphics, 
 												  Savegame savegame,
-												  StartScreenMenuButtonType oldPage)
+												  StartScreenSubButtonType oldPage)
 	{
-		if(Menu.page == StartScreenMenuButtonType.BUTTON_1)
+		if(Menu.page == StartScreenSubButtonType.BUTTON_1)
 		{	
 			Main.switchDisplayMode(currentButton);
 		}
-		else if(Menu.page == StartScreenMenuButtonType.BUTTON_2)
+		else if(Menu.page == StartScreenSubButtonType.BUTTON_2)
 		{			
 			switchAntialiasingActivationState(offGraphics, currentButton);
 		}						
-		else if(Menu.page == StartScreenMenuButtonType.BUTTON_3)
+		else if(Menu.page == StartScreenSubButtonType.BUTTON_3)
 		{
 			switchAudioActivationState(savegame);
 		}
-		else if(Menu.page == StartScreenMenuButtonType.BUTTON_4)
+		else if(Menu.page == StartScreenSubButtonType.BUTTON_4)
 		{
 			Menu.changeLanguage(helicopter, savegame);
 		}		
-		else if(Menu.page == StartScreenMenuButtonType.BUTTON_7)
+		else if(Menu.page == StartScreenSubButtonType.BUTTON_7)
 		{
 			Audio.changeBgMusicMode(savegame);
 		}
-		if(oldPage == StartScreenMenuButtonType.BUTTON_5)
+		if(oldPage == StartScreenSubButtonType.BUTTON_5)
 		{
-			if(Menu.page == StartScreenMenuButtonType.BUTTON_5){
-				Menu.page = StartScreenMenuButtonType.BUTTON_1;}
+			if(Menu.page == StartScreenSubButtonType.BUTTON_5){
+				Menu.page = StartScreenSubButtonType.BUTTON_1;}
 			HighScoreEntry.checkName(savegame);
 		}
-		Menu.updateStartScreenMenuLabelText();
+		Menu.updateStartScreenSubLabelText();
 	}
 	
 	private static void switchAntialiasingActivationState(	Graphics2D offGraphics,
@@ -1192,7 +1192,7 @@ public class Events
 		Colorations.bg = newWindow == GAME && timeOfDay == DAY ? Colorations.sky: Color.black;
 	}
 
-	private static void newStartScreenMenuWindow(WindowType newWindow, boolean hasJustEntered)
+	private static void newStartScreenSubWindow(WindowType newWindow, boolean hasJustEntered)
 	{
 		if (hasJustEntered)
 		{
@@ -1201,7 +1201,7 @@ public class Events
 		Audio.play(Audio.choose);		
 		MenuManager.window = newWindow;
 		Menu.adaptToNewWindow(hasJustEntered);
-		Menu.updateStartScreenMenuButtons();
+		Menu.updateStartScreenSubButtons();
 	}
 
 	// überprüfen, ob Level-Up Voraussetzungen erfüllt. Wenn ja: Schwierigkeitssteigerung
@@ -1304,7 +1304,7 @@ public class Events
 		Audio.refreshBackgroundMusic();
 		Menu.dictionary.updateAudioActivation();
 		Menu.buttons.get(MainMenuButtonType.STOP_MUSIC).setPrimaryLabel(Menu.dictionary.audioActivation());
-		Menu.buttons.get(StartScreenMenuButtonType.BUTTON_3).setPrimaryLabel(Menu.dictionary.audioActivation());
+		Menu.buttons.get(StartScreenSubButtonType.BUTTON_3).setPrimaryLabel(Menu.dictionary.audioActivation());
 	}
 	
 	public static void determineHighscoreTimes(Helicopter helicopter)

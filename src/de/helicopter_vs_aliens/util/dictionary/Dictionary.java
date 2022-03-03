@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
 import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
@@ -58,8 +58,8 @@ public final class Dictionary
     private final EnumMap<BlockMessage, String[]>
         blockMessages = new EnumMap<>(BlockMessage.class);
     
-    private final Map<WindowType, Map<StartScreenMenuButtonType, String>>
-        startScreenMenuButtonName = new EnumMap<>(WindowType.class);
+    private final Map<WindowType, Map<StartScreenSubButtonType, String>>
+        startScreenSubButtonName = new EnumMap<>(WindowType.class);
     
     private final List<String>
         highScoreColumnNames = new ArrayList<>(),
@@ -168,15 +168,15 @@ public final class Dictionary
             blockMessages.put(blockMessage, message);
         }
         
-        for (WindowType windowType : WindowType.getNonSettingsStartScreenMenuWindows())
+        for (WindowType windowType : WindowType.getNonSettingsStartScreenSubWindows())
         {
-            Map<StartScreenMenuButtonType, String> buttonLabels = new EnumMap<>(StartScreenMenuButtonType.class);            
-            StartScreenMenuButtonType.getValues().forEach(buttonSpecifier -> {
-                StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType)buttonSpecifier;  
+            Map<StartScreenSubButtonType, String> buttonLabels = new EnumMap<>(StartScreenSubButtonType.class);
+            StartScreenSubButtonType.getValues().forEach(buttonSpecifier -> {
+                StartScreenSubButtonType buttonType = (StartScreenSubButtonType)buttonSpecifier;
                 String buttonLabelKey =  buttonType.getButtonLabelKey(windowType);
                 buttonLabels.put(buttonType, this.languageProperties.getProperty(buttonLabelKey));
             });
-            startScreenMenuButtonName.put(windowType, buttonLabels);
+            startScreenSubButtonName.put(windowType, buttonLabels);
         }
         
         updateSettingsLabels();
@@ -198,22 +198,22 @@ public final class Dictionary
     
     private void updateSettingsLabels()
     {
-        Map<StartScreenMenuButtonType, String> settingsLabels = new EnumMap<>(StartScreenMenuButtonType.class);
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, audioActivation());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_4, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_4.getButtonLabelKey(WindowType.SETTINGS)));
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_5, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_5.getButtonLabelKey(WindowType.SETTINGS)));
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_6, changeMusicModeLabel());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_7, "");
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_8, "");
-        startScreenMenuButtonName.put(WindowType.SETTINGS, settingsLabels);
+        Map<StartScreenSubButtonType, String> settingsLabels = new EnumMap<>(StartScreenSubButtonType.class);
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_1, oppositeDisplayMode());
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_2, antialiasing());
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_3, audioActivation());
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_4, this.languageProperties.getProperty(StartScreenSubButtonType.BUTTON_4.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_5, this.languageProperties.getProperty(StartScreenSubButtonType.BUTTON_5.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_6, changeMusicModeLabel());
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_7, "");
+        settingsLabels.put(StartScreenSubButtonType.BUTTON_8, "");
+        startScreenSubButtonName.put(WindowType.SETTINGS, settingsLabels);
     }
     
     public void updateDisplayMode()
     {
-        startScreenMenuButtonName.get(WindowType.SETTINGS)
-                                 .put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
+        startScreenSubButtonName.get(WindowType.SETTINGS)
+                                .put(StartScreenSubButtonType.BUTTON_1, oppositeDisplayMode());
     }
     
     public String displayMode()
@@ -230,8 +230,8 @@ public final class Dictionary
     
     public void updateAntialiasing()
     {
-        startScreenMenuButtonName.get(WindowType.SETTINGS)
-                                 .put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
+        startScreenSubButtonName.get(WindowType.SETTINGS)
+                                .put(StartScreenSubButtonType.BUTTON_2, antialiasing());
     }
     
     public String antialiasing()
@@ -242,8 +242,8 @@ public final class Dictionary
     
     public void updateAudioActivation()
     {
-        startScreenMenuButtonName.get(WindowType.SETTINGS)
-                                 .put(StartScreenMenuButtonType.BUTTON_3, audioActivation());
+        startScreenSubButtonName.get(WindowType.SETTINGS)
+                                .put(StartScreenSubButtonType.BUTTON_3, audioActivation());
     }
     
     public String audioActivation()
@@ -450,12 +450,9 @@ public final class Dictionary
         return this.languageProperties.getProperty(key);
     }
     
-    
-    
-    
     public String changeMusicModeLabel()
     {
-        return Audio.MICHAEL_MODE ? this.languageProperties.getProperty("buttonLabel.startScreenMenu.settings.5") : "";
+        return Audio.MICHAEL_MODE ? this.languageProperties.getProperty("buttonLabel.startScreenSub.settings.5") : "";
     }
     
     public String helicopterSelectionRequest()
@@ -568,9 +565,9 @@ public final class Dictionary
         return message;
     }
     
-    public String startScreenMenuButtonName(StartScreenMenuButtonType buttonType)
+    public String startScreenSubButtonName(StartScreenSubButtonType buttonType)
     {
-        return Optional.ofNullable(startScreenMenuButtonName.get(MenuManager.window))
+        return Optional.ofNullable(startScreenSubButtonName.get(MenuManager.window))
                        .map(labelList -> labelList.get(buttonType))
                        .orElse("");
     }

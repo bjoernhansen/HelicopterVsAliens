@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -19,7 +19,7 @@ public class MissilePainter extends Painter<Missile>
     }
     
     @Override
-    void paint(Graphics2D g2d, Missile missile)
+    public void paint(Graphics2D g2d, Missile missile)
     {
         int x = missile.getPaintBounds().x;
         int y = missile.getPaintBounds().y;

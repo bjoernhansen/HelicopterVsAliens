@@ -1,16 +1,20 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.gui.menu.GameMenu;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.graphics.painter.BackgroundObjectPainter;
+import de.helicopter_vs_aliens.graphics.painter.ButtonPainter;
+import de.helicopter_vs_aliens.graphics.painter.EnemyMissilePainter;
+import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
+import de.helicopter_vs_aliens.graphics.painter.ExplosionPainter;
+import de.helicopter_vs_aliens.graphics.painter.MissilePainter;
+import de.helicopter_vs_aliens.graphics.painter.Painter;
+import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
+import de.helicopter_vs_aliens.graphics.painter.SceneryPainter;
+import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.Button;
-import de.helicopter_vs_aliens.gui.menu.RepairShopMenu;
-import de.helicopter_vs_aliens.gui.menu.ScoreScreenMenu;
-import de.helicopter_vs_aliens.gui.menu.StartScreenMenu;
-import de.helicopter_vs_aliens.gui.menu.StartScreenSubMenu;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.helicopter.*;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
@@ -35,23 +39,16 @@ public class GraphicsManager
     private GraphicsManager()
     {
         // HelicopterPainter
-        painters.put(Phoenix.class, new PhoenixPainter());
-        painters.put(Roch.class, new RochPainter());
-        painters.put(Orochi.class, new OrochiPainter());
-        painters.put(Kamaitachi.class, new KamaitachiPainter());
-        painters.put(Pegasus.class, new PegasusPainter());
-        painters.put(Helios.class, new HeliosPainter());
+        HelicopterType.getValues().forEach(helicopterType -> {
+            painters.put(helicopterType.getHelicopterClass(), helicopterType.makePainterInstance());
+        });
         
         //GUI Painter
         painters.put(Button.class, new ButtonPainter());
-        MenuPainter menuPainter = new MenuPainter();
     
-        painters.put(StartScreenMenu.class, menuPainter);
-        painters.put(StartScreenSubMenu.class, menuPainter);
-        painters.put(GameMenu.class, menuPainter);
-        painters.put(RepairShopMenu.class, menuPainter);
-        painters.put(ScoreScreenMenu.class, menuPainter);
-        painters.put(Menu.class, menuPainter);
+        WindowType.getValues().forEach(windowType -> {
+            painters.put(windowType.getMenuClass(), windowType.makePainterInstance());
+        });
         
         // sonstige Painter
         painters.put(PowerUp.class, new PowerUpPainter());

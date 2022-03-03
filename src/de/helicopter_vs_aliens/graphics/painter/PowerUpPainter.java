@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
@@ -25,7 +25,7 @@ public class PowerUpPainter extends Painter<PowerUp>
     }
     
     @Override
-    void paint(Graphics2D g2d, PowerUp powerUp)
+    public void paint(Graphics2D g2d, PowerUp powerUp)
     {
         paint(g2d, powerUp, powerUp.getPaintBounds().x);
     }

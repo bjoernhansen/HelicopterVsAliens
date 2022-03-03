@@ -1,10 +1,14 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter.menu;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.painter.Painter;
+import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.gui.menu.Menu;
 import de.helicopter_vs_aliens.gui.MultiKillType;
 import de.helicopter_vs_aliens.gui.PriceLevel;
@@ -15,8 +19,8 @@ import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenMenuCancelButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.menu.MenuManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -55,7 +59,7 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.MISSI
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ROTOR_SYSTEM;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
-public class MenuPainter extends Painter<Menu>
+public abstract class MenuPainter extends Painter<Menu>
 {
     private static final String
         VERSION =   "Version 1.3.4",			// Spielversion
@@ -96,7 +100,7 @@ public class MenuPainter extends Painter<Menu>
     }
     
     @Override
-    void paint(Graphics2D g2d, Menu menu)
+    public void paint(Graphics2D g2d, Menu menu)
     {
         updateDependencies();
         if(MenuManager.window  == GAME)
@@ -118,7 +122,7 @@ public class MenuPainter extends Painter<Menu>
         }
         else
         {
-            paintStartScreenMenu(g2d, controller.framesCounter);
+            paintStartScreenSub(g2d, controller.framesCounter);
         }
     }
     
@@ -696,7 +700,7 @@ public class MenuPainter extends Painter<Menu>
         paintFrame(g2d, 297, 90, 250, 200);
         
         
-        Menu.buttons.get(StartScreenMenuCancelButtonType.CANCEL).paint(g2d);
+        Menu.buttons.get(StartScreenSubCancelButtonType.CANCEL).paint(g2d);
         
         if(Events.level > MAXIMUM_LEVEL)
         {
@@ -967,7 +971,7 @@ public class MenuPainter extends Painter<Menu>
         g2d.drawString("Info: " + infoString, 20, 155);
     }
     
-    public static void paintStartScreenMenu(Graphics2D g2d, int counter)
+    public static void paintStartScreenSub(Graphics2D g2d, int counter)
     {
         // TODO mindestens auf mehrere Methoden aufteilen
         g2d.setColor(Color.white);
@@ -984,20 +988,20 @@ public class MenuPainter extends Painter<Menu>
         // die Buttons
         if(!showOnlyCancelButton())
         {
-            StartScreenMenuButtonType.getValues()
-                                     .forEach(buttonSpecifier -> Menu.buttons.get(buttonSpecifier)
+            StartScreenSubButtonType.getValues()
+                                    .forEach(buttonSpecifier -> Menu.buttons.get(buttonSpecifier)
                                                                         .paint(g2d));
         }
-        Menu.buttons.get(StartScreenMenuCancelButtonType.CANCEL)
+        Menu.buttons.get(StartScreenSubCancelButtonType.CANCEL)
                .paint(g2d);
         
         if(MenuManager.window  == HELICOPTER_TYPES)
         {
             if(Menu.page.ordinal() > 1 && Menu.page.ordinal() < 2 + HelicopterType.size())
             {
-                paintHelicopterInStartScreenMenu(g2d);
+                paintHelicopterInStartScreenSub(g2d);
             }
-            else if(Menu.page == StartScreenMenuButtonType.BUTTON_2)
+            else if(Menu.page == StartScreenSubButtonType.BUTTON_2)
             {
                 String tempString = "";
                 StandardUpgradeType standardUpgradeType = null;
@@ -1035,7 +1039,7 @@ public class MenuPainter extends Painter<Menu>
         }
         else if(MenuManager.window == HIGH_SCORE)
         {
-            if(Menu.page == StartScreenMenuButtonType.BUTTON_1)
+            if(Menu.page == StartScreenSubButtonType.BUTTON_1)
             {
                 String tempString = "";
                 // TODO Magic number entfernen
@@ -1079,7 +1083,7 @@ public class MenuPainter extends Painter<Menu>
             {
                 if(Menu.page.ordinal() > 1 && Menu.page.ordinal() < 2 + HelicopterType.size())
                 {
-                    paintHelicopterInStartScreenMenu(g2d);
+                    paintHelicopterInStartScreenSub(g2d);
                 }
                 
                 int columnDistance = 114,
@@ -1160,12 +1164,12 @@ public class MenuPainter extends Painter<Menu>
             g2d.setColor(Colorations.golden);
             g2d.drawString(Menu.language.getNativeName(), SETTING_LEFT + SETTING_COLUMN_SPACING	, SETTING_TOP + 3 * SETTING_LINE_SPACING);
             
-            if(Menu.page == StartScreenMenuButtonType.BUTTON_5){g2d.setColor(Color.white);}
+            if(Menu.page == StartScreenSubButtonType.BUTTON_5){g2d.setColor(Color.white);}
             g2d.drawString(HighScoreEntry.currentPlayerName, SETTING_LEFT + SETTING_COLUMN_SPACING, SETTING_TOP + 4 * SETTING_LINE_SPACING);
             
-            if(Menu.page == StartScreenMenuButtonType.BUTTON_5 && (counter/30)%2 == 0){g2d.drawString("|", SETTING_LEFT + SETTING_COLUMN_SPACING + g2d.getFontMetrics().stringWidth(HighScoreEntry.currentPlayerName), SETTING_TOP + 4 * SETTING_LINE_SPACING);}
+            if(Menu.page == StartScreenSubButtonType.BUTTON_5 && (counter/30)%2 == 0){g2d.drawString("|", SETTING_LEFT + SETTING_COLUMN_SPACING + g2d.getFontMetrics().stringWidth(HighScoreEntry.currentPlayerName), SETTING_TOP + 4 * SETTING_LINE_SPACING);}
             
-        } else if (MenuManager.window == DESCRIPTION && Menu.page == StartScreenMenuButtonType.BUTTON_6)
+        } else if (MenuManager.window == DESCRIPTION && Menu.page == StartScreenSubButtonType.BUTTON_6)
         {
             int x = 52, y = 120, yOffset = 35;
             PowerUpPainter powerUpPainter = GraphicsManager.getInstance()
@@ -1184,14 +1188,14 @@ public class MenuPainter extends Painter<Menu>
     
     private static boolean showOnlyCancelButton()
     {
-        return !Menu.buttons.get(StartScreenMenuButtonType.BUTTON_2).isVisible();
+        return !Menu.buttons.get(StartScreenSubButtonType.BUTTON_2).isVisible();
     }
     
-    private static void paintHelicopterInStartScreenMenu(Graphics2D g2d)
+    private static void paintHelicopterInStartScreenSub(Graphics2D g2d)
     {
-        Helicopter startScreenMenuHelicopter = Menu.helicopterDummies.get(HelicopterType.getValues().get(Menu.page.ordinal()-2));
-        HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(startScreenMenuHelicopter.getClass());
-        helicopterPainter.startScreenMenuPaint(g2d, startScreenMenuHelicopter);
+        Helicopter startScreenSubHelicopter = Menu.helicopterDummies.get(HelicopterType.getValues().get(Menu.page.ordinal()-2));
+        HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(startScreenSubHelicopter.getClass());
+        helicopterPainter.startScreenSubPaint(g2d, startScreenSubHelicopter);
     }
     
     private static String toStringWithSpace(int value)

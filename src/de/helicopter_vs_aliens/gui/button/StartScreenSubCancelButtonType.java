@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.gui.menu.Menu;
 import java.awt.Point;
 import java.util.List;
 
-public enum StartScreenMenuCancelButtonType implements ButtonSpecifier
+public enum StartScreenSubCancelButtonType implements ButtonSpecifier
 {
     CANCEL;
     

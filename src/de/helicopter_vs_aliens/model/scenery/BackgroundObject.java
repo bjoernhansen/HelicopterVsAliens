@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
-import de.helicopter_vs_aliens.graphics.BackgroundObjectPainter;
+import de.helicopter_vs_aliens.graphics.painter.BackgroundObjectPainter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;

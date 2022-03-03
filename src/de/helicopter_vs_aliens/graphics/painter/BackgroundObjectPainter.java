@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
@@ -17,7 +17,7 @@ public class BackgroundObjectPainter extends Painter<BackgroundObject>
         PALM_CROWN_IMG = paintPalmCrownImage();
     
     @Override
-    void paint(Graphics2D g2d, BackgroundObject backgroundObject)
+    public void paint(Graphics2D g2d, BackgroundObject backgroundObject)
     {
         // Kaktus
         if(backgroundObject.type == CACTUS)

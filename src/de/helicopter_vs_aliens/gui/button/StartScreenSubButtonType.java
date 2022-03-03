@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.gui.WindowType;
 import java.awt.Point;
 import java.util.List;
 
-public enum StartScreenMenuButtonType implements ButtonSpecifier
+public enum StartScreenSubButtonType implements ButtonSpecifier
 {
     BUTTON_1,
     BUTTON_2,
@@ -29,7 +29,7 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
     static
     {
         VALUES.forEach(buttonSpecifier -> {
-            StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType)buttonSpecifier;
+            StartScreenSubButtonType buttonType = (StartScreenSubButtonType)buttonSpecifier;
             buttonType.coordinates
                 = new Point(OFFSET.x + buttonType.indizes.x * BUTTON_DISTANCE.x,
                             OFFSET.y + buttonType.indizes.y * BUTTON_DISTANCE.y);
@@ -45,7 +45,7 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
     private final Point
         indizes;
     
-    StartScreenMenuButtonType()
+    StartScreenSubButtonType()
     {
         int index = ordinal();
         this.buttonLabelKeyPostfix = Integer.toString(index);
