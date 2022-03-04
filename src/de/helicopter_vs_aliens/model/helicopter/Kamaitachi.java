@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -65,7 +65,7 @@ public final class Kamaitachi extends Helicopter
     {
         if(!Events.reachedLevelTwenty[OROCHI.ordinal()])
         {
-            Menu.unlock(PEGASUS);
+            Window.unlock(PEGASUS);
         }
     }
 
@@ -151,11 +151,11 @@ public final class Kamaitachi extends Helicopter
     public void updateMenuEffect()
     {
         super.updateMenuEffect();
-        if(Menu.effectTimer[this.getType().ordinal()] == 65)
+        if(Window.effectTimer[this.getType().ordinal()] == 65)
         {
             this.plasmaActivationTimer = POWERUP_DURATION/4;
         }
-        else if(Menu.effectTimer[this.getType().ordinal()] == 30)
+        else if(Window.effectTimer[this.getType().ordinal()] == 30)
         {
             Audio.play(Audio.plasmaOff);
         }

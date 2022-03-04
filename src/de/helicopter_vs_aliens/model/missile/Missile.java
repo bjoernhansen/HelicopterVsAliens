@@ -4,7 +4,8 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
@@ -129,7 +130,7 @@ public class Missile extends RectangularGameEntity
 	{		
 		this.setX(this.bounds.getX()
 					+ this.speed
-					+ (BackgroundObject.backgroundMoves ? - BG_SPEED : 0));
+					+ (Scenery.backgroundMoves ? - BG_SPEED : 0));
 				
 		if(this.bounds.getX() > 1175 || this.bounds.getX() + 20 < 0){this.flying = false;}
 		else{this.checkForHitHelicopter(helicopter);}

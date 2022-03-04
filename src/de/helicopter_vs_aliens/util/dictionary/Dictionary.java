@@ -6,11 +6,11 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.gui.BlockMessage;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -182,13 +182,13 @@ public final class Dictionary
         updateSettingsLabels();
         
         highScoreColumnNames.clear();
-        for (int i = 1; i <= Menu.NUMBER_OF_HIGH_SCORE_COLUMN_NAMES; i++)
+        for (int i = 1; i <= Window.NUMBER_OF_HIGH_SCORE_COLUMN_NAMES; i++)
         {
             highScoreColumnNames.add(this.languageProperties.getProperty("highScore.columnNames." + i));
         }
         
         settingOptions.clear();
-        for (int i = 1; i <= Menu.NUMBER_OF_SETTING_OPTIONS; i++)
+        for (int i = 1; i <= Window.NUMBER_OF_SETTING_OPTIONS; i++)
         {
             settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
         }
@@ -528,7 +528,7 @@ public final class Dictionary
     
     public String standardUpgradeName(StandardUpgradeType standardUpgradeType)
     {
-        if (MenuManager.window == WindowType.HELICOPTER_TYPES && standardUpgradeType == ENERGY_ABILITY)
+        if (WindowManager.window == WindowType.HELICOPTER_TYPES && standardUpgradeType == ENERGY_ABILITY)
         {
             return genericEnergyAbility();
         }
@@ -567,7 +567,7 @@ public final class Dictionary
     
     public String startScreenSubButtonName(StartScreenSubButtonType buttonType)
     {
-        return Optional.ofNullable(startScreenSubButtonName.get(MenuManager.window))
+        return Optional.ofNullable(startScreenSubButtonName.get(WindowManager.window))
                        .map(labelList -> labelList.get(buttonType))
                        .orElse("");
     }

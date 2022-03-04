@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.graphics.painter.BackgroundObjectPainter;
+import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
 import de.helicopter_vs_aliens.graphics.painter.ButtonPainter;
 import de.helicopter_vs_aliens.graphics.painter.EnemyMissilePainter;
 import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
@@ -18,7 +18,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 
 import java.awt.Graphics2D;
@@ -54,7 +54,7 @@ public class GraphicsManager
         painters.put(PowerUp.class, new PowerUpPainter());
         painters.put(Missile.class, new MissilePainter());
         painters.put(EnemyMissile.class, new EnemyMissilePainter());
-        painters.put(BackgroundObject.class, new BackgroundObjectPainter());
+        painters.put(SceneryObject.class, new SceneryObjectPainter());
         painters.put(Scenery.class, new SceneryPainter());
         painters.put(Explosion.class, new ExplosionPainter());
         painters.put(Enemy.class, new EnemyPainter());

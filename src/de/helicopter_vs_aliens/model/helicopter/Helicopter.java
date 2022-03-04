@@ -5,9 +5,9 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -214,7 +214,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		return this.hasSpotlights
 				&& Events.timeOfDay == NIGHT
-				&& MenuManager.window == GAME;
+				&& WindowManager.window == GAME;
 	}
 
 	void updateTimer()
@@ -650,7 +650,7 @@ public abstract class Helicopter extends RectangularGameEntity
         this.restorePlating();
         this.battery.restore();
         this.isDamaged = false;
-        Menu.updateRepairShopButtons(this);
+        Window.updateRepairShopButtons(this);
         this.isPlayedWithCheats = true;
     }
 	
@@ -784,11 +784,11 @@ public abstract class Helicopter extends RectangularGameEntity
 			if(this.powerUpTimer[i] > 0)
 			{
 				this.powerUpTimer[i]--;
-				if(this.powerUpTimer[i] == 0 && Menu.collectedPowerUp[i] != null)
+				if(this.powerUpTimer[i] == 0 && Window.collectedPowerUp[i] != null)
 				{
 					Audio.play(Audio.powerUpFade2);
-					Menu.collectedPowerUp[i].collect();
-					Menu.collectedPowerUp[i] = null;
+					Window.collectedPowerUp[i].collect();
+					Window.collectedPowerUp[i] = null;
 					// TODO magic number
 					if(i == 3){this.adjustFireRate(false);}
 				}
@@ -796,16 +796,16 @@ public abstract class Helicopter extends RectangularGameEntity
 				{
 					Audio.play(Audio.powerUpFade1);
 				}
-				else if(this.powerUpTimer[i] < POWERUP_DURATION/4 && Menu.collectedPowerUp[i] != null)
+				else if(this.powerUpTimer[i] < POWERUP_DURATION/4 && Window.collectedPowerUp[i] != null)
 				{
 					int alphaStepSize = 17 * ((this.powerUpTimer[i])%16);
 				    if(this.powerUpTimer[i]%32 > 15)
 			    	{
-			    		Menu.collectedPowerUp[i].setAlpha(alphaStepSize);
+			    		Window.collectedPowerUp[i].setAlpha(alphaStepSize);
 			    	}
 					else
 					{
-                        Menu.collectedPowerUp[i].setAlpha(Colorations.MAX_VALUE - alphaStepSize);
+                        Window.collectedPowerUp[i].setAlpha(Colorations.MAX_VALUE - alphaStepSize);
 					}
 				}
 			}
@@ -890,8 +890,8 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			if(playSound){Audio.play(Audio.powerUpFade2);}
 			this.powerUpTimer[powerUpType.ordinal()] = 0;
-			Menu.collectedPowerUp[powerUpType.ordinal()].collect();
-			Menu.collectedPowerUp[powerUpType.ordinal()] = null;
+			Window.collectedPowerUp[powerUpType.ordinal()].collect();
+			Window.collectedPowerUp[powerUpType.ordinal()] = null;
 			if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(false);}
 		}
 		else
@@ -902,14 +902,14 @@ public abstract class Helicopter extends RectangularGameEntity
 												: Math.max(
 													this.powerUpTimer[powerUpType.ordinal()],
 													POWERUP_DURATION);
-			if(Menu.collectedPowerUp[powerUpType.ordinal()] == null)
+			if(Window.collectedPowerUp[powerUpType.ordinal()] == null)
 			{
 				PowerUp.activate(this, powerUp, null, powerUpType, true);
 				if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(true);}
 			}
 			else
 			{
-                Menu.collectedPowerUp[powerUpType.ordinal()].setOpaque();
+                Window.collectedPowerUp[powerUpType.ordinal()].setOpaque();
 			}
 		}
 	}
@@ -1180,7 +1180,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	public void updateMenuEffect()
 	{
 		this.rotatePropellerSlow();
-		if(Menu.effectTimer[this.getType().ordinal()] == 1)
+		if(Window.effectTimer[this.getType().ordinal()] == 1)
 		{
 			this.stoptMenuEffect();
 		}
@@ -1241,7 +1241,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		Events.updateFinance(enemy, this);
 		this.typeSpecificRewards(enemy, missile, beamKill);
-		Menu.moneyDisplayTimer = Events.START;
+		Window.moneyDisplayTimer = Events.START;
 	}
 
 	public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill) {}

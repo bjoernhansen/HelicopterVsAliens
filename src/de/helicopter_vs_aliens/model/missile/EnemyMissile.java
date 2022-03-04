@@ -10,13 +10,14 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
@@ -50,7 +51,7 @@ public class EnemyMissile extends GameEntity
     private void update(Helicopter helicopter)
     {    		
     	this.determineColor();
-		this.location.setLocation( this.location.getX() + this.speed.getX() - (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
+		this.location.setLocation( this.location.getX() + this.speed.getX() - (Scenery.backgroundMoves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
 		if(	helicopter.canBeHit()
 			&& helicopter.getBounds().intersectsLine( this.location.getX() + this.diameter/2,

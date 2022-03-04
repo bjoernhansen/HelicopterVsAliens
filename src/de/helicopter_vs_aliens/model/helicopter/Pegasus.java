@@ -5,8 +5,8 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.control.timer.VariableTimer;
-import de.helicopter_vs_aliens.gui.menu.Menu;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.Window;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -81,11 +81,11 @@ public final class Pegasus extends Helicopter
     {
         if(!Events.reachedLevelTwenty[PHOENIX.ordinal()])
         {
-            Menu.unlock(OROCHI);
+            Window.unlock(OROCHI);
         }
         else if(!Events.reachedLevelTwenty[ROCH.ordinal()])
         {
-            Menu.unlock(KAMAITACHI);
+            Window.unlock(KAMAITACHI);
         }
     }
 
@@ -186,7 +186,7 @@ public final class Pegasus extends Helicopter
 
     public boolean isInPhase()
     {
-        return this.interphaseGeneratorTimer.isActive() || !this.hasInterphaseGenerator || MenuManager.window != GAME;
+        return this.interphaseGeneratorTimer.isActive() || !this.hasInterphaseGenerator || WindowManager.window != GAME;
     }
 
     @Override

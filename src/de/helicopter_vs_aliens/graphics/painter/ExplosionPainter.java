@@ -12,16 +12,6 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 
 public class ExplosionPainter extends Painter<Explosion>
 {
-    public static void paintAll(Graphics2D g2d,
-                                EnumMap<CollectionSubgroupType,
-                                LinkedList<Explosion>> explosion)
-    {
-        for(Explosion exp : explosion.get(ACTIVE))
-        {
-            exp.paint(g2d);
-        }
-    }
-    
     @Override
     public void paint(Graphics2D g2d, Explosion explosion)
     {

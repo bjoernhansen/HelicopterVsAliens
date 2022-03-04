@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -57,7 +57,7 @@ public final class Orochi extends Helicopter
     {
         if (!Events.reachedLevelTwenty[KAMAITACHI.ordinal()])
         {
-            Menu.unlock(PEGASUS);
+            Window.unlock(PEGASUS);
         }
     }
     

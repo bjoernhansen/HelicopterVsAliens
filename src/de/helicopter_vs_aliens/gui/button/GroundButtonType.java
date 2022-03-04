@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.gui.button;
 
 
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 
 import java.awt.Point;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.function.Supplier;
 
 public enum GroundButtonType implements ButtonSpecifier
 {
-    REPAIR_SHOP(451, Menu.dictionary::toTheRepairShop),
-    MAIN_MENU(897, Menu.dictionary::mainMenu);
+    REPAIR_SHOP(451, Window.dictionary::toTheRepairShop),
+    MAIN_MENU(897, Window.dictionary::mainMenu);
     
     
     private static final List<ButtonSpecifier>

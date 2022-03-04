@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui.button;
 
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.GameEntity;
 
 import java.awt.Color;
@@ -131,11 +131,11 @@ public class Button extends GameEntity
 	{
 		if(category == ButtonCategory.MISSION)
 		{
-			this.secondaryLabel = Menu.dictionary.sold();
+			this.secondaryLabel = Window.dictionary.sold();
 		}
 		else if(this.showsPurchasableOffer())
 		{
-			this.secondaryLabel = Menu.dictionary.price() + " " + costs + " €";
+			this.secondaryLabel = Window.dictionary.price() + " " + costs + " €";
 		}
 		else
 		{

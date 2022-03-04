@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui.button;
 
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 
 import java.awt.Point;
@@ -24,7 +24,7 @@ public enum StandardUpgradeButtonType implements UpgradeButtonSpecifier
         OFFSET = new Point(559, 95);
     
     private static final Function<StandardUpgradeType, String>
-        LABEL_FUNCTION = Menu.dictionary::standardUpgradesImprovements;
+        LABEL_FUNCTION = Window.dictionary::standardUpgradesImprovements;
     
     static
     {

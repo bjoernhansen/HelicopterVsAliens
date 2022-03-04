@@ -4,9 +4,10 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -18,7 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 
@@ -96,7 +97,7 @@ public class PowerUp extends RectangularGameEntity
 			this.bounds.setRect(
 					this.bounds.getX() 
 						- this.speed.getX()
-						- (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
+						- (Scenery.backgroundMoves ? BG_SPEED : 0),
 					Math.min(this.bounds.getY() - this.speed.getY(), 
 							GROUND_Y - this.bounds.getHeight()),
                     SIZE, SIZE);
@@ -150,12 +151,13 @@ public class PowerUp extends RectangularGameEntity
 		{
 			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel()){
-				Menu.updateCollectedPowerUps(helicopter, this);}
+				Window.updateCollectedPowerUps(helicopter, this);}
 		}
 		else if(this.type == INVINCIBLE)
 		{
 			Audio.play(Audio.teleport1);
-			if(!Events.isBossLevel()){Menu.updateCollectedPowerUps(helicopter, this);}
+			if(!Events.isBossLevel()){
+				Window.updateCollectedPowerUps(helicopter, this);}
 		}
 		else if(this.type == UNLIMITRED_ENERGY)
 		{
@@ -163,7 +165,7 @@ public class PowerUp extends RectangularGameEntity
 			if(!Events.isBossLevel())
 			{
 				helicopter.boostEnergy();
-				Menu.updateCollectedPowerUps(helicopter, this);
+				Window.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
 		else if(this.type == BOOSTED_FIRE_RATE)
@@ -172,7 +174,7 @@ public class PowerUp extends RectangularGameEntity
 			if(!Events.isBossLevel())
 			{				
 				helicopter.adjustFireRate(true);
-				Menu.updateCollectedPowerUps(helicopter, this);
+				Window.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
 		else if(this.type == REPARATION)
@@ -183,7 +185,7 @@ public class PowerUp extends RectangularGameEntity
 		{
 			Audio.play(Audio.cash);
 			Events.lastExtraBonus = 0;
-			Menu.moneyDisplayTimer = Events.START;
+			Window.moneyDisplayTimer = Events.START;
 			Events.lastBonus = helicopter.getBonusFactor() * this.worth;
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;
@@ -193,12 +195,12 @@ public class PowerUp extends RectangularGameEntity
 
 	public void moveToStatusbar()
 	{
-		Menu.collectedPowerUp[this.type.ordinal()] = this;
+		Window.collectedPowerUp[this.type.ordinal()] = this;
 		this.speed.setLocation(0, 0);
 		this.isInStatusBar = true;
 		this.wasCollected = false;
-		this.bounds.setRect(100, 432, Menu.POWER_UP_SIZE, Menu.POWER_UP_SIZE);
-		this.setPaintBounds(Menu.POWER_UP_SIZE, Menu.POWER_UP_SIZE);
+		this.bounds.setRect(100, 432, Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
+		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 
 	public static void activate(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, Enemy enemy,

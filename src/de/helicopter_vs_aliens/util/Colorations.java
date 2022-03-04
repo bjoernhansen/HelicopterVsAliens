@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.util;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 import java.awt.Color;
@@ -197,7 +197,7 @@ public final class Colorations
 			variableRed =   new Color(MAX_VALUE, 192 - 21 * (counter%10), 192 - 21 * (counter%10));
 			variableBlue =  new Color(75 + 60 - 7 * (counter%10), 75 + 60 - 7 * (counter%10), MAX_VALUE);
 		}	
-    	if(MenuManager.window == GAME)
+    	if(WindowManager.window == GAME)
     	{
     		randomSunlightBlue += lighter ? 1 : -1;
 			if(randomSunlightBlue > 205){lighter = false;}
@@ -218,19 +218,19 @@ public final class Colorations
 		gradientVariableWhite = new GradientPaint(value,  value, variableWhite,
 												  40 + value, 40 + value,
 												  dimColor(variableWhite, 0.55f), true);
-		if(MenuManager.window != REPAIR_SHOP)
+		if(WindowManager.window != REPAIR_SHOP)
 		{			
 			gradientVariableGray = new GradientPaint( - value,  -value, 
 													  dimColor(variableWhite, 0.5f),
 													  40 - value, 40 - value,
 													  dimColor(variableWhite, 0.2f), true);
-			if(MenuManager.window == START_SCREEN)
+			if(WindowManager.window == START_SCREEN)
 			{
 				variableYellow = new Color( 175 + 2 * helligkeit/3, 
 										    175 + 2 * helligkeit/3, 
 										   	 		  helligkeit);
 			}
-			if(MenuManager.window != SCORE_SCREEN && MenuManager.window != GAME)
+			if(WindowManager.window != SCORE_SCREEN && WindowManager.window != GAME)
 			{					
 				variableMarkedButton = new Color( 175 + 2 * helligkeit/3, 
 												  135 +     helligkeit, 

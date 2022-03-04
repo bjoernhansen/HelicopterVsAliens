@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.score;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -101,8 +101,8 @@ public class Savegame implements Serializable
 			Savegame temp = lastGame();
 			
 			HighScoreEntry.currentPlayerName = temp.currentPlayerName;
-			Menu.setLanguage(temp.language);
-			Menu.hasOriginalResolution = temp.originalResulution;
+			Window.setLanguage(temp.language);
+			Window.hasOriginalResolution = temp.originalResulution;
 			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
 			Audio.isSoundOn = temp.isSoundOn;
 			Events.recordTime = temp.recordTime.clone();
@@ -140,7 +140,7 @@ public class Savegame implements Serializable
 	public void saveToFile(Helicopter helicopter)
 	{				
 		this.save(helicopter);
-		Menu.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(this.isValid);
+		Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(this.isValid);
 		writeToFile();			
 	}
 	
@@ -159,9 +159,9 @@ public class Savegame implements Serializable
 	private void save(Helicopter helicopter)
 	{
 		this.currentPlayerName = HighScoreEntry.currentPlayerName;
-		this.language = Menu.language;
+		this.language = Window.language;
 		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
-		this.originalResulution = Menu.hasOriginalResolution;
+		this.originalResulution = Window.hasOriginalResolution;
 		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
 		this.killsAfterLevelup = Events.killsAfterLevelUp;
@@ -219,4 +219,12 @@ public class Savegame implements Serializable
     {
         this.isValid = false;
     }
+	
+	public void saveWithoutValidity(Helicopter helicopter)
+	{
+		saveInHighscore();
+		loseValidity();
+		saveToFile(helicopter);
+		Audio.play(Audio.emp);
+	}
 }

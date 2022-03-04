@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
@@ -84,7 +84,7 @@ public final class Roch extends Helicopter
     {
         if(!Events.reachedLevelTwenty[PEGASUS.ordinal()])
         {
-            Menu.unlock(KAMAITACHI);
+            Window.unlock(KAMAITACHI);
         }
     }
 
@@ -236,7 +236,7 @@ public final class Roch extends Helicopter
     public void updateMenuEffect()
     {
         super.updateMenuEffect();
-        if(Menu.effectTimer[this.getType().ordinal()] == 30)
+        if(Window.effectTimer[this.getType().ordinal()] == 30)
         {
             Audio.play(Audio.plasmaOff);
         }

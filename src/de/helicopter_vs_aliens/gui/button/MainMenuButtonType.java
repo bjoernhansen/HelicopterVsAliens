@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui.button;
 
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 
 import java.awt.Point;
 import java.util.List;
@@ -8,10 +8,10 @@ import java.util.function.Supplier;
 
 public enum MainMenuButtonType implements ButtonSpecifier
 {
-    NEW_GAME_1(116, Menu.dictionary::startNewGame),
-    STOP_MUSIC(161, Menu.dictionary::audioActivation ),
-    NEW_GAME_2(206, Menu.dictionary::quit),
-    CANCEL(251, Menu.dictionary::cancel);
+    NEW_GAME_1(116, Window.dictionary::startNewGame),
+    STOP_MUSIC(161, Window.dictionary::audioActivation ),
+    NEW_GAME_2(206, Window.dictionary::quit),
+    CANCEL(251, Window.dictionary::cancel);
     
     
     private static final List<ButtonSpecifier>

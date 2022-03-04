@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -17,7 +17,7 @@ public class HighScoreEntry implements Serializable
 		NUMBER_OF_ENTRIES = 10;
 	
 	public static String
-        currentPlayerName = Menu.DEFAULT_PLAYER_NAME;
+        currentPlayerName = Window.DEFAULT_PLAYER_NAME;
 	
 	// Variablen eines Highscore-Eintrages
 	public String playerName;
@@ -87,9 +87,9 @@ public class HighScoreEntry implements Serializable
 			}
 			else
 			{
-				boolean isDefaultPlayerNameSet = currentPlayerName.equals(Menu.DEFAULT_PLAYER_NAME);
-				Menu.buttons.get(StartScreenSubButtonType.BUTTON_5).setMarked(isDefaultPlayerNameSet);
-				Menu.buttons.get(StartScreenButtonType.SETTINGS).setMarked(isDefaultPlayerNameSet);
+				boolean isDefaultPlayerNameSet = currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME);
+				Window.buttons.get(StartScreenSubButtonType.BUTTON_5).setMarked(isDefaultPlayerNameSet);
+				Window.buttons.get(StartScreenButtonType.SETTINGS).setMarked(isDefaultPlayerNameSet);
 				savegame.currentPlayerName = currentPlayerName;
 				Events.settingsChanged = true;
 			}

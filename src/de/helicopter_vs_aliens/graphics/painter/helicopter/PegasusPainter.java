@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.Menu;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.Window;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -42,9 +42,9 @@ public class PegasusPainter extends HelicopterPainter
         super.paintComponents(g2d, left, top);
         
         // EMP wave animation in start menu
-        if(MenuManager.window == START_SCREEN
+        if(WindowManager.window == START_SCREEN
             // TODO vermutlich unnötig
-            && Menu.effectTimer[PEGASUS.ordinal()] > 0
+            && Window.effectTimer[PEGASUS.ordinal()] > 0
             && pegasus.empWave != null)
         {
             if(pegasus.empWave.time >= pegasus.empWave.maxTime)

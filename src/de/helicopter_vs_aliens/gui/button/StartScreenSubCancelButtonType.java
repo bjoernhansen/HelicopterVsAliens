@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.gui.button;
 
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 
 import java.awt.Point;
 import java.util.List;
@@ -43,6 +43,6 @@ public enum StartScreenSubCancelButtonType implements ButtonSpecifier
     @Override
     public String getPrimaryLabel()
     {
-        return Menu.dictionary.cancel();
+        return Window.dictionary.cancel();
     }
 }

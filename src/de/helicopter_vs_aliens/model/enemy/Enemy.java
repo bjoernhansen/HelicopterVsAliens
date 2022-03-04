@@ -21,8 +21,9 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -38,7 +39,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.model.scenery.BackgroundObject.BG_SPEED;
+import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
 import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.*;
@@ -365,6 +366,13 @@ public class Enemy extends RectangularGameEntity
 	public static void changeMiniBossProb()
 	{
 		miniBossProb = miniBossProb == STANDARD_MINI_BOSS_PROB ? CHEAT_MINI_BOSS_PROB: STANDARD_MINI_BOSS_PROB;
+	}
+	
+	public void dimmedRepaint()
+	{
+		farbe1 = Colorations.dimColor(farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+		farbe2 = Colorations.dimColor(farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+		repaint();
 	}
 	
 	@Override
@@ -1214,7 +1222,7 @@ public class Enemy extends RectangularGameEntity
 			if(	 helicopter.isCountingAsFairPlayedHelicopter()
 				 && !Events.hasAnyBossBeenKilledBefore())
 			{
-				Menu.unlock(HELIOS);
+				Window.unlock(HELIOS);
 			}
 			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
 		}				
@@ -2578,7 +2586,7 @@ public class Enemy extends RectangularGameEntity
 	{
 		if(rockTimer > 0){
 			rockTimer--;}
-		if(BackgroundObject.backgroundMoves && barrierTimer > 0){
+		if(Scenery.backgroundMoves && barrierTimer > 0){
 			barrierTimer--;}
 		countBarriers(controller.enemies);
 		
@@ -2627,24 +2635,9 @@ public class Enemy extends RectangularGameEntity
 	}
 
 
-	public static void paintAllActive(Graphics2D g2d,
-									  Controller controller,
-									  Helicopter helicopter)
-	{
-		for(int i = 0; i < currentNumberOfBarriers; i++)
-		{    			
-			livingBarrier[i].paint(g2d);
-		}
-		for(Enemy enemy : controller.enemies.get(ACTIVE))
-		{
-			if(enemy.isVisableNonBarricadeVessel(helicopter.canDetectCloakedVessels()))
-			{
-				enemy.paint(g2d);
-			}
-		}
-	}
 	
-	private boolean isVisableNonBarricadeVessel(boolean hasRadarDevice)
+	
+	public boolean isVisableNonBarricadeVessel(boolean hasRadarDevice)
 	{
 		return this.type != ROCK
 			&& this.model != BARRIER
@@ -3753,12 +3746,12 @@ public class Enemy extends RectangularGameEntity
 	
 	private void move()
 	{			
-		if(!this.speed.equals(ZERO_SPEED)|| BackgroundObject.backgroundMoves)
+		if(!this.speed.equals(ZERO_SPEED)|| Scenery.backgroundMoves)
 		{
 			this.setLocation(
 					this.bounds.getX() 
 						+ this.direction.x * this.speed.getX() 
-						- (BackgroundObject.backgroundMoves ? BG_SPEED : 0),
+						- (Scenery.backgroundMoves ? BG_SPEED : 0),
 					Math.max( this.model == BARRIER ? 0 : Integer.MIN_VALUE,
 							this.type == ROCK ? this.bounds.getY() :
 								Math.min( this.canBePositionedBelowGround()
@@ -3944,16 +3937,6 @@ public class Enemy extends RectangularGameEntity
 		}		
 	}
 	
-	public static void paintAllDestroyed(Graphics2D g2d,
-										 Controller controller,
-										 Helicopter helicopter)
-	{
-		for(Enemy e : controller.enemies.get(DESTROYED))
-		{
-			e.paint(g2d);
-		}
-	}
-
 	public static void updateAllDestroyed(Controller controller,
 										  Helicopter helicopter)
 	{
@@ -4632,5 +4615,10 @@ public class Enemy extends RectangularGameEntity
 		}
 		if(this.canDropPowerUp()){this.dropPowerUp(helicopter, powerUps);}
 		if(this.isMiniBoss){Audio.play(Audio.applause2);}
+	}
+	
+	public boolean isRock()
+	{
+		return type == ROCK;
 	}
 }

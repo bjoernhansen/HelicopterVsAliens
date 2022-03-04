@@ -4,15 +4,9 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityRecycler;
 import de.helicopter_vs_aliens.control.timer.Timer;
-import de.helicopter_vs_aliens.graphics.painter.EnemyMissilePainter;
-import de.helicopter_vs_aliens.graphics.painter.ExplosionPainter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
-import de.helicopter_vs_aliens.graphics.painter.menu.MenuPainter;
-import de.helicopter_vs_aliens.graphics.painter.MissilePainter;
-import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
-import de.helicopter_vs_aliens.graphics.painter.SceneryPainter;
-import de.helicopter_vs_aliens.gui.menu.Menu;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -20,7 +14,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.scenery.BackgroundObject;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -52,6 +46,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 									   MouseListener, MouseMotionListener, 
 									   WindowListener
 {
+	// TODO variablen sortieren (public - private, statisch ...
+	// TODO und mehr über getter beziehen nicht so viel publik (und nicht so viel statisch)
+	
 	private static final boolean
 		STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW = true;
 	
@@ -74,8 +71,8 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	private static final Controller
 		controller = new Controller();
 		
-	public static Savegame
-		savegame;
+	private Savegame
+		saveGame;
 		
 	private int
 		numberOfFrames;
@@ -104,9 +101,6 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		explosions = new EnumMap<>(CollectionSubgroupType.class);
 	public EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>>
 		enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
-	// TODO --> könnte in die Scenery-Klasse ausgelagert werden
-	public EnumMap<CollectionSubgroupType, LinkedList<BackgroundObject>>
-		backgroundObjects = new EnumMap<>(CollectionSubgroupType.class);
 	public EnumMap<CollectionSubgroupType, LinkedList<PowerUp>>
 		powerUps = new EnumMap<>(CollectionSubgroupType.class);
 
@@ -124,8 +118,8 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	private final Scenery
 		scenery = new Scenery();
 		
-	private final MenuManager
-		menuManager = new MenuManager();
+	private final WindowManager
+		windowManager = new WindowManager();
 	
 	private final GameEntityRecycler
 		gameEntityRecycler = new GameEntityRecycler();
@@ -150,14 +144,14 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 													 Main.VIRTUAL_DIMENSION.getHeight());
 		this.offGraphics.setClip(offscreenClip);
 						
-		add(Menu.label);
+		add(Window.label);
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);		
-		Menu.initializeMenu();
-		Menu.updateButtonLabels(this.helicopter);
-		this.initializeLists();
-		BackgroundObject.initialize(this.backgroundObjects);
+		Window.initialize();
+		Window.updateButtonLabels(helicopter);
+		initializeLists();
+		scenery.createInitialSceneryObjects();
 	}
 	
 	void initializeLists()
@@ -167,7 +161,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		CollectionSubgroupType.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
 			this.missiles.put(	   		standardSubgroupTypes, new LinkedList<>());
 			this.explosions.put(	   	standardSubgroupTypes, new LinkedList<>());
-			this.backgroundObjects.put(	standardSubgroupTypes, new LinkedList<>());
+			this.scenery.getSceneryObjects().put(	standardSubgroupTypes, new LinkedList<>());
 			this.enemyMissiles.put( 	standardSubgroupTypes, new LinkedList<>());
 			this.powerUps.put(	   		standardSubgroupTypes, new LinkedList<>());
 			this.enemies.put(		   	standardSubgroupTypes, new LinkedList<>());
@@ -182,8 +176,10 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		Audio.refreshBackgroundMusic();
 	}
 
-	public static void shutDown(){System.exit(0);}
-	
+	public void shutDown()
+	{
+		System.exit(0);
+	}
 	
 	@Override
 	public void run()
@@ -258,16 +254,16 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	{		
 		this.framesCounter++;
 		Timer.countDownActiveTimers();
-		if(MenuManager.window ==  GAME)
+		if(WindowManager.window ==  GAME)
 		{			
 			calculateFps();
-			if(!Menu.isMenuVisible)
+			if(!Window.isMenuVisible)
 			{				
 		    	Colorations.calculateVariableGameColors(this.framesCounter);
-				BackgroundObject.update(this, this.backgroundObjects);
-				scenery.update();
+				
+				scenery.update(controller);
 				Events.updateTimer();
-				Menu.updateDisplays(this.helicopter);
+				Window.updateDisplays(this.helicopter);
 				Enemy.updateAllDestroyed(this, this.helicopter);
 				Missile.updateAll(this, this.helicopter);
 				Enemy.updateAllActive(this, this.helicopter);
@@ -282,7 +278,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		else
 		{
 			Colorations.calculateVariableMenuColors(this.framesCounter);
-			Menu.update(this, this.helicopter);
+			Window.update(this, this.helicopter);
 		}
 	}
 	
@@ -290,23 +286,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	{
 		Graphics2D g2d = (Graphics2D) g;
 		GraphicsManager.getInstance().setGraphics2D(g2d);
-		
-		if(MenuManager.window ==  GAME)
-		{						
-			// zeichnen aller sichtbaren Objekte						
-			SceneryPainter.paintBackground(g2d, scenery, this.backgroundObjects);
-			MenuPainter.paintBackgroundDisplays(g2d);
-			if(Enemy.currentRock != null){Enemy.currentRock.paint(g2d);}
-			Enemy.paintAllDestroyed(g2d, this, this.helicopter);
-			MissilePainter.paintAllMissiles( g2d, this);
-			Enemy.paintAllActive(g2d, this, this.helicopter);
-			EnemyMissilePainter.paintAll(g2d, this.enemyMissiles);
-			this.helicopter.paint(g2d);
-			ExplosionPainter.paintAll(g2d, this.explosions);
-			PowerUpPainter.paintAll(g2d, this.powerUps);
-			SceneryPainter.paintForeground(g2d, this.backgroundObjects);
-		}
-		menuManager.paintMenu(g2d);
+		windowManager.paintWindow(g2d);
 	}
 	
 	private void calculateFps()
@@ -317,7 +297,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			this.numberOfFrames++;
 			if(timeDiff > 3000)
 			{
-				Menu.fps = Math.round(1000f*this.numberOfFrames /timeDiff);
+				Window.fps = Math.round(1000f*this.numberOfFrames /timeDiff);
 				this.fpsStartTime = System.currentTimeMillis();
 				this.numberOfFrames = 0;
 			}
@@ -326,7 +306,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	
 	public void switchFpsVisibleState()
 	{
-		if(MenuManager.window ==  GAME)
+		if(WindowManager.window ==  GAME)
 		{
 			if(this.showFps)
 			{
@@ -343,24 +323,24 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	
 	// Behandlung von Fenster-, Tastatur- und Mausereignisse
 	@Override
-	public void keyPressed	 (KeyEvent   e){Events.keyTyped(e, this, this.helicopter, savegame);}
+	public void keyPressed	 (KeyEvent   e){Events.keyTyped(e, this);}
 
 	@Override
-	public void mousePressed (MouseEvent e){Events.mousePressed(e, this, this.helicopter);}
+	public void mousePressed (MouseEvent e){Events.mousePressed(e, this);}
 
 	@Override
-	public void mouseReleased(MouseEvent e){Events.mouseReleased(e, this.helicopter);}
+	public void mouseReleased(MouseEvent e){Events.mouseReleased(e, helicopter);}
 
 	@Override
-	public void mouseDragged (MouseEvent e){Events.mouseMovedOrDragged(e, this.helicopter);}	
+	public void mouseDragged (MouseEvent e){Events.mouseMovedOrDragged(e, helicopter);}
 
 	@Override
-	public void mouseMoved   (MouseEvent e){Events.mouseMovedOrDragged(e, this.helicopter);}
+	public void mouseMoved   (MouseEvent e){Events.mouseMovedOrDragged(e, helicopter);}
 		
 	@Override
 	public void mouseEntered(MouseEvent e)
 	{		
-		if(MenuManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
+		if(WindowManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
 			this.mouseInWindow = true;
 			Events.lastCurrentTime = System.currentTimeMillis();
@@ -371,7 +351,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void mouseExited(MouseEvent e)
 	{
-		if(MenuManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
+		if(WindowManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
 			this.mouseInWindow = false;
 			Events.playingTime += System.currentTimeMillis() - Events.lastCurrentTime;
@@ -417,7 +397,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public void setHelicopter(Helicopter helicopter)
 	{
 		this.helicopter = helicopter;
-		Menu.dictionary.switchHelicopterTypeTo(helicopter.getType());
+		Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
 	}
 	
 	public static Controller getInstance()
@@ -433,5 +413,15 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public Scenery getScenery()
 	{
 		return this.scenery;
+	}
+	
+	public Savegame getSaveGame()
+	{
+		return saveGame;
+	}
+	
+	public void setSaveGame(Savegame saveGame)
+	{
+		this.saveGame = saveGame;
 	}
 }

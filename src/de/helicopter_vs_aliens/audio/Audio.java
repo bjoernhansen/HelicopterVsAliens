@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.audio;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.score.Savegame;
 
@@ -195,25 +195,25 @@ public class Audio
     {
         if (!standardBackgroundMusic)
         {
-            if (MenuManager.window == GAME && !Events.isBossLevel())
+            if (WindowManager.window == GAME && !Events.isBossLevel())
             {
                 return bgMusic2;
-            } else if (MenuManager.window == REPAIR_SHOP || MenuManager.window == SCORE_SCREEN)
+            } else if (WindowManager.window == REPAIR_SHOP || WindowManager.window == SCORE_SCREEN)
             {
                 return bgMusic1;
             }
             return bgMusic3;
-        } else if (MenuManager.window == REPAIR_SHOP)
+        } else if (WindowManager.window == REPAIR_SHOP)
         {
             return repairShop;
-        } else if (MenuManager.window == SCORE_SCREEN)
+        } else if (WindowManager.window == SCORE_SCREEN)
         {
             if (Events.level == 51)
             {
                 return victory;
             }
             return scoreScreen;
-        } else if (MenuManager.window.isMainMenuWindow())
+        } else if (WindowManager.window.isMainWindow())
         {
             return mainMenu;
         } else if (Events.level >= 1 && Events.level < 10)

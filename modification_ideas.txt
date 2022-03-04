@@ -179,7 +179,7 @@ Helicopter auch Image malen wie bei Gegnern,
 	 wie ist das bei den Enemies gelöst?
 Kein unverwundbarkeits blinken wenn im shift modus
 
-BgObject für MovingObject Abstract class vorbereiten
+SceneryObject für MovingObject Abstract class vorbereiten
 die Menge an statischen Variablen möglichst weit reduzieren
 Barrier und Enemy trennen mit gemeinsamer Superklasse
 

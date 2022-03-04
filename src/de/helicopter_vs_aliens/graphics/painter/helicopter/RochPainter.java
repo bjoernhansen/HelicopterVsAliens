@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -25,7 +25,7 @@ public class RochPainter extends HelicopterPainter
     
     private void paintPowerShield(Graphics2D g2d, int left, int top)
     {
-        g2d.setColor(Colorations.shieldColor[MenuManager.window == START_SCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
+        g2d.setColor(Colorations.shieldColor[WindowManager.window == START_SCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
         g2d.fillOval(left+(this.hasLeftMovingAppearance() ? -9 : 35), top+19, 96, 54);
     }
 }

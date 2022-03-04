@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter.components;
 
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.util.Calculations;
 
@@ -138,6 +138,6 @@ public class Battery
                 "Battery(%.2f/%.2f) of %s",
                 this.currentCharge,
                 this.capacity,
-                Menu.dictionary.helicopterName());
+                Window.dictionary.helicopterName());
     }
 }

@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -111,7 +111,7 @@ public final class Phoenix extends Helicopter
     {
         if(!Events.reachedLevelTwenty[PEGASUS.ordinal()])
         {
-            Menu.unlock(OROCHI);
+            Window.unlock(OROCHI);
         }
     }
 
@@ -247,7 +247,7 @@ public final class Phoenix extends Helicopter
     {
         return this.hasEnoughEnergyForAbility()
                 && !this.isDamaged
-                && !Menu.isMenuVisible
+                && !Window.isMenuVisible
                 && this.hasValidTeleportDestination(x, y);
     }
     

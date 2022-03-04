@@ -2,8 +2,8 @@ package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
-import de.helicopter_vs_aliens.gui.menu.Menu;
-import de.helicopter_vs_aliens.gui.menu.MenuManager;
+import de.helicopter_vs_aliens.gui.window.Window;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -97,7 +97,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     
     boolean hasLeftMovingAppearance()
     {
-        return helicopter.isMovingLeft && MenuManager.window == GAME;
+        return helicopter.isMovingLeft && WindowManager.window == GAME;
     }
     
     private void paintSkids(Graphics2D g2d, int left, int top)
@@ -125,7 +125,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     {
         if(helicopter.hasSpotlights)
         {
-            if(Events.timeOfDay == NIGHT && MenuManager.window == GAME)
+            if(Events.timeOfDay == NIGHT && WindowManager.window == GAME)
             {
                 g2d.setColor(Colorations.translucentWhite);
                 g2d.fillArc(left+(this.hasLeftMovingAppearance() ? -135 : -43), top-96, 300, 300, (this.hasLeftMovingAppearance() ? 165 : -15), 30);
@@ -250,19 +250,19 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     public void startScreenPaint(Graphics2D g2d, Helicopter helicopter, int left, int top)
     {
         this.paint(g2d, helicopter, left, top);
-        if(Events.recordTime[helicopter.getType().ordinal()][4] > 0 && MenuManager.window == START_SCREEN)
+        if(Events.recordTime[helicopter.getType().ordinal()][4] > 0 && WindowManager.window == START_SCREEN)
         {
-            g2d.setFont(Menu.fontProvider.getBold(12));
+            g2d.setFont(Window.fontProvider.getBold(12));
             g2d.setColor(Color.yellow);
-            g2d.drawString(Menu.dictionary.recordTime(), left-27, top+67);
-            g2d.drawString(Menu.minuten(Events.recordTime[helicopter.getType().ordinal()][4]),left-27, top+80);
+            g2d.drawString(Window.dictionary.recordTime(), left-27, top+67);
+            g2d.drawString(Window.minuten(Events.recordTime[helicopter.getType().ordinal()][4]),left-27, top+80);
         }
         
-        if(helicopter.getType() == HELIOS && MenuManager.window == START_SCREEN)
+        if(helicopter.getType() == HELIOS && WindowManager.window == START_SCREEN)
         {
-            g2d.setFont(Menu.fontProvider.getBold(12));
+            g2d.setFont(Window.fontProvider.getBold(12));
             g2d.setColor(Colorations.brown);
-            g2d.drawString(Menu.dictionary.specialMode(), left-27, top-4);
+            g2d.drawString(Window.dictionary.specialMode(), left-27, top-4);
         }
     }
     

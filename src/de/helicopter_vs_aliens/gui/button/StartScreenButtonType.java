@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.gui.button;
 
 
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 
 import java.awt.Point;
 import java.util.List;
@@ -34,7 +34,7 @@ public enum StartScreenButtonType implements ButtonSpecifier
         VALUES.forEach(buttonSpecifier -> {
             StartScreenButtonType buttonType = (StartScreenButtonType)buttonSpecifier;
             buttonType.coordinates
-                = new Point(OFFSET.x + buttonType.indizes.x * BUTTON_DISTANCE.x + Menu.START_SCREEN_OFFSET_X,
+                = new Point(OFFSET.x + buttonType.indizes.x * BUTTON_DISTANCE.x + Window.START_SCREEN_OFFSET_X,
                 OFFSET.y + buttonType.indizes.y * BUTTON_DISTANCE.y);
             buttonType.dictionaryKey = DICTIONARY_KEY_PREFIX + buttonType.dictionaryKeyPostfix;
         });
@@ -87,6 +87,6 @@ public enum StartScreenButtonType implements ButtonSpecifier
     @Override
     public String getPrimaryLabel()
     {
-        return Menu.dictionary.startScreenButtonLabel(dictionaryKey);
+        return Window.dictionary.startScreenButtonLabel(dictionaryKey);
     }
 }

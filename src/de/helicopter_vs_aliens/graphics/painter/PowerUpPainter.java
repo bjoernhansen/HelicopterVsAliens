@@ -1,29 +1,15 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
-import java.util.EnumMap;
-import java.util.LinkedList;
-
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 
 public class PowerUpPainter extends Painter<PowerUp>
 {
-    public static void paintAll(Graphics2D g2d, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
-    {
-        for(PowerUp pu : powerUp.get(ACTIVE))
-        {
-            if (!pu.isInStatusBar())
-            {
-                pu.paint(g2d);
-            }
-        }
-    }
-    
     @Override
     public void paint(Graphics2D g2d, PowerUp powerUp)
     {

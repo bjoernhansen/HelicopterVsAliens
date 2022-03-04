@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.Label;
-import de.helicopter_vs_aliens.gui.menu.Menu;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.score.Savegame;
 
 import javax.swing.*;
@@ -23,9 +23,9 @@ public class Main
     	TESTMODE = false;
     
     private final static Dimension
-		STANDARD_RESULUTION = new Dimension(1280, 720),
-		WINDOW_SIZE = new Dimension(STANDARD_RESULUTION.width +6,
-									STANDARD_RESULUTION.height+29); // 460 //489//new Dimension(1030, 492);//
+		STANDARD_RESOLUTION = new Dimension(1280, 720),
+		WINDOW_SIZE = new Dimension(STANDARD_RESOLUTION.width +6,
+									STANDARD_RESOLUTION.height+29); // 460 //489//new Dimension(1030, 492);//
 			
     public static boolean
     	isFullScreen = true;
@@ -43,8 +43,8 @@ public class Main
 		originalDisplayMode;
 	
 	private static final DisplayMode
-		standardDisplayMode = new DisplayMode(  STANDARD_RESULUTION.width,
-    									STANDARD_RESULUTION.height,
+		standardDisplayMode = new DisplayMode(  STANDARD_RESOLUTION.width,
+    									STANDARD_RESOLUTION.height,
     								  	32, 60);
 	
 	public static DisplayMode
@@ -71,7 +71,7 @@ public class Main
                 @Override
                 public void windowClosing(WindowEvent e)
                 {
-                    Controller.shutDown();
+					controller.shutDown();
                 }
             });
 
@@ -80,8 +80,8 @@ public class Main
             device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if(!device.isFullScreenSupported()){isFullScreen = false;}
             originalDisplayMode = device.getDisplayMode();
-            
-            Controller.savegame = Savegame.initialize();
+	
+			controller.setSaveGame(Savegame.initialize());
             
             frame.setUndecorated(true);
             device.setFullScreenWindow(frame);
@@ -96,10 +96,11 @@ public class Main
         }
     }
 
+	// TODO wieso erforderlich?
 	static void switchResolution(Savegame savegame)
 	{
-		Menu.hasOriginalResolution = !Menu.hasOriginalResolution;
-		savegame.originalResulution = Menu.hasOriginalResolution;
+		Window.hasOriginalResolution = !Window.hasOriginalResolution;
+		savegame.originalResulution = Window.hasOriginalResolution;
 		activateDisplayMode();
 		Events.settingsChanged = true;
 	}
@@ -108,8 +109,8 @@ public class Main
     {
 		isFullScreen = !isFullScreen;
 	
-		Menu.dictionary.updateDisplayMode();
-		Optional.ofNullable(currentButton).ifPresent(button -> button.setPrimaryLabel(Menu.dictionary.oppositeDisplayMode()));
+		Window.dictionary.updateDisplayMode();
+		Optional.ofNullable(currentButton).ifPresent(button -> button.setPrimaryLabel(Window.dictionary.oppositeDisplayMode()));
 				    
         frame.dispose();
         frame.setUndecorated(isFullScreen);
@@ -123,7 +124,7 @@ public class Main
 		{
 			device.setFullScreenWindow(null);
 			if(currentButton != null){
-				Menu.adaptToWindowMode(displayShift);}
+				Window.adaptToWindowMode(displayShift);}
 	        frame.setSize(WINDOW_SIZE);
 	        frame.setLocation( (int)(( originalDisplayMode.getWidth()
 	        					  -WINDOW_SIZE.getWidth())/2),
@@ -135,18 +136,18 @@ public class Main
     
     private static void activateDisplayMode()
 	{
-    	currentDisplayMode = Menu.hasOriginalResolution
+    	currentDisplayMode = Window.hasOriginalResolution
 				? originalDisplayMode
 				: standardDisplayMode;
     	device.setDisplayMode(currentDisplayMode);
 		
 		displayShift = new Dimension((currentDisplayMode.getWidth()  - VIRTUAL_DIMENSION.width )/2,
 									  (currentDisplayMode.getHeight() - VIRTUAL_DIMENSION.height)/2);
-		if(Menu.label == null){
-			Menu.label = new Label();}
+		if(Window.label == null){
+			Window.label = new Label();}
 		else
 		{
-			Menu.label.setBounds(	displayShift.width  + 42,
+			Window.label.setBounds(	displayShift.width  + 42,
 					  				displayShift.height + 83,
 									940,
 									240);

@@ -10,14 +10,6 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 
 public class MissilePainter extends Painter<Missile>
 {
-    public static void paintAllMissiles(Graphics2D g2d, Controller controller)
-    {
-        for(Missile missile : controller.missiles.get(ACTIVE))
-        {
-            missile.paint(g2d);
-        }
-    }
-    
     @Override
     public void paint(Graphics2D g2d, Missile missile)
     {
