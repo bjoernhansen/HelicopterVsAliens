@@ -5,23 +5,22 @@ import de.helicopter_vs_aliens.graphics.painter.window.GameWindowPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.RepairShopWindowPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.ScoreScreenWindowPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.StartScreenWindowPainter;
-import de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu.ContactWindowPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu.DescriptionWindowPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu.HelicopterTypesWindowPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu.HighScoreWindowPainter;
-import de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu.InformationWindowPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu.SettingsWindowPainter;
+import de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu.StartScreenMenuWindowPainter;
 import de.helicopter_vs_aliens.gui.window.ContactWindow;
 import de.helicopter_vs_aliens.gui.window.DescriptionWindow;
 import de.helicopter_vs_aliens.gui.window.GameWindow;
 import de.helicopter_vs_aliens.gui.window.HelicopterTypesWindow;
 import de.helicopter_vs_aliens.gui.window.HighScoreWindow;
 import de.helicopter_vs_aliens.gui.window.InformationWindow;
-import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.RepairShopWindow;
 import de.helicopter_vs_aliens.gui.window.ScoreScreenWindow;
 import de.helicopter_vs_aliens.gui.window.SettingsWindow;
 import de.helicopter_vs_aliens.gui.window.StartScreenWindow;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.Paintable;
 
 import java.util.Collections;
@@ -34,7 +33,7 @@ public enum WindowType
 {
     INFORMATION(InformationWindow.class,
                 InformationWindow::new,
-                InformationWindowPainter::new,
+                StartScreenMenuWindowPainter::new,
                 "information."),
     
     DESCRIPTION(DescriptionWindow.class,
@@ -49,7 +48,7 @@ public enum WindowType
     
     CONTACT(ContactWindow.class,
             ContactWindow::new,
-            ContactWindowPainter::new,
+            StartScreenMenuWindowPainter::new,
             "contact."),
     
     HELICOPTER_TYPES(HelicopterTypesWindow.class,

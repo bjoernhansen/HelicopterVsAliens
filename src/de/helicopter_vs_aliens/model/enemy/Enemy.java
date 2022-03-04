@@ -377,7 +377,7 @@ public class Enemy extends RectangularGameEntity
 	
 	@Override
 	public void paint(Graphics2D g2d)
-	{				
+	{
 		Helicopter helicopter = Controller.getInstance().getHelicopter();
 		boolean cloaked = (this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME+CLOAKED_TIME);
 		int g2DSel = this.direction.x == -1 ? 0 : 1;
