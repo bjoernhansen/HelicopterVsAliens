@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -38,11 +39,11 @@ public class ScoreScreenWindowPainter extends WindowPainter
         g2d.setFont(fontProvider.getPlain(60));
         String temporaryString = Window.dictionary.gameStatistics();
         g2d.drawString((temporaryString), (981-g2d.getFontMetrics().stringWidth(temporaryString))/2, 65);
-        
-        paintFrame(g2d, 619, 90, 376, 298);
-        paintFrameLine(g2d, 621, 140, 372);
-        paintFrameLine(g2d, 621, 249, 372);
-        paintFrame(g2d, 297, 90, 250, 200);
+    
+        GraphicalEntities.paintFrame(g2d, 619, 90, 376, 298);
+        GraphicalEntities.paintFrameLine(g2d, 621, 140, 372);
+        GraphicalEntities.paintFrameLine(g2d, 621, 249, 372);
+        GraphicalEntities.paintFrame(g2d, 297, 90, 250, 200);
         
         
         Window.buttons.get(StartScreenSubCancelButtonType.CANCEL).paint(g2d);

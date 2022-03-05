@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.WindowPainter;
@@ -30,9 +31,9 @@ public class StartScreenMenuWindowPainter extends WindowPainter
         g2d.setFont(fontProvider.getPlain(29));
     
         g2d.drawString(this.getHeadline(), 40, 55);
-        
-        paintFrameLine(g2d, 26, 67, 971);
-        paintFrame(g2d, 26, 21, 971, 317);
+    
+        GraphicalEntities.paintFrameLine(g2d, 26, 67, 971);
+        GraphicalEntities.paintFrame(g2d, 26, 21, 971, 317);
         
         // die Buttons
         if(!showOnlyCancelButton())

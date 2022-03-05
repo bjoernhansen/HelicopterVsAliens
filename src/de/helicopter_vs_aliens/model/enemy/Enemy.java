@@ -1,9 +1,29 @@
 package de.helicopter_vs_aliens.model.enemy;
 
+import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
+import de.helicopter_vs_aliens.gui.window.Window;
+import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.Pegasus;
+import de.helicopter_vs_aliens.model.missile.EnemyMissile;
+import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
+import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
+
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -11,45 +31,62 @@ import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.util.*;
-
-import de.helicopter_vs_aliens.*;
-import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.helicopter.Pegasus;
-import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
-import de.helicopter_vs_aliens.gui.window.Window;
-import de.helicopter_vs_aliens.model.RectangularGameEntity;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.missile.EnemyMissile;
-import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
-import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.powerup.PowerUpType;
-import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.util.Calculations;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.*;
-import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.*;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
+import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.BOTTOM;
+import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.LEFT;
+import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.NONE;
+import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.RIGHT;
+import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.TOP;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_0;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_1;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_2;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_3;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_4;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_5;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_6;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_7;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BIG_SHIELD_MAKER;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BODYGUARD;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOLT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_1;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_3;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_4;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_4_SERVANT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.FINAL_BOSS;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.HEALER;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.PROTECTOR;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.ROCK;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.SMALL_SHIELD_MAKER;
+import static de.helicopter_vs_aliens.model.enemy.EnemyType.TINY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.EMP;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 
 public class Enemy extends RectangularGameEntity
@@ -67,14 +104,14 @@ public class Enemy extends RectangularGameEntity
     }
 	
 	// Konstanten
-	public static boolean
-	    SHOW_RED_FRAME = false,
-		SHOW_BARRIER_TESTING_INFO = false;
-	
 	public static final int
-		SPEED_KILL_BONUS_TIME 	= 15;    // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
+		SPEED_KILL_BONUS_TIME 	= 15, // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
+		CLOAKING_TIME = 135, // Zeit, die beim Tarn- und Enttarnungsvorgang vergeht
+		CLOAKED_TIME = 135,     // Zeit, die ein Gegner getarnt bleibt
+		SNOOZE_TIME = 100,    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
+		DISABLED = -1; // TODO unnötig machen
 	
-	private static final Point2D 
+	public static final Point2D
 		ZERO_SPEED = new Point2D.Float(0, 0);
     
     private static final Point
@@ -87,8 +124,6 @@ public class Enemy extends RectangularGameEntity
 		RADAR_STRENGTH 				= 0.2f,		// Alpha-Wert: legt fest, wie stark  ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
 		HEIGHT_FACTOR 				= 0.28f,	// legt das Verhältnis von Höhe und Länge für die meisten Gegner fest
 		HEIGHT_FACTOR_SUPERSIZE 	= 0.65f,	// legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
-		BARRIER_BORDER_SIZE 		= 0.23f,
-		BARRIER_EYE_SIZE 			= 0.08f,
 		ROCK_PROB					= 0.05f,
 		KABOOM_PROB				    = 0.02f,	// Rate mit der Kaboom-Gegner erscheinen 
 		POWER_UP_PROB				= 0.02f, 
@@ -96,7 +131,7 @@ public class Enemy extends RectangularGameEntity
 		EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f,
 
 		// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
-		RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampfbestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollsionen  mit dem Helikopter erleidet
+		RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
 		TELEPORT_DAMAGE_FACTOR = 4f,			// Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
 		EMP_DAMAGE_FACTOR_BOSS = 1.5f,			// Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
 		EMP_DAMAGE_FACTOR_ORDINARY = 2.5f,		// Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
@@ -123,13 +158,10 @@ public class Enemy extends RectangularGameEntity
 		PROTECTOR_WIDTH = 90,
 		KABOOM_Y_TURN_LINE = GROUND_Y - (int) (HEIGHT_FACTOR * KABOOM_WIDTH),
 	
-	// Zeit-Konstanten
-		CLOAKING_TIME = 135,    // Zeit, die beim Tarn- und Enttarnvorgang vergeht
-		CLOAKED_TIME = 135,     // Zeit, die ein Gegner getarnt bleibt
+		// Zeit-Konstanten
 		ROCK_FREE_TIME = 250,    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
 		EMP_SLOW_TIME = 175,    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
 		EMP_SLOW_TIME_BOSS = 110,
-		SNOOZE_TIME = 100,    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
 		INACTIVATION_TIME = 150,
 		STUNNING_TIME_BASIS = 45,    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
 		BORROW_TIME = 65,
@@ -157,7 +189,6 @@ public class Enemy extends RectangularGameEntity
 		PRE_READY = 1,
 		READY = 0,
 		ACTIVE_TIMER = 1,
-		DISABLED = -1,
 		
 	    MIN_ABSENT_TIME[] = { 175,  // SMALL_SHIELD_MAKER
 		    				  175,  // BIG_SHIELD_MAKER
@@ -197,16 +228,16 @@ public class Enemy extends RectangularGameEntity
 	
 	private static int 
 		selection,			// bestimmt welche Typen von Gegnern zufällig erscheinen können	
-		selectionBarrier, 	// bestimmt den Typ der Hinernis-Gegner
+		selectionBarrier, 	// bestimmt den Typ der Hindernis-Gegner
 		rockTimer,			// reguliert das Erscheinen von "Rock"-Gegnern
 		barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
 		
 	// für die Tarnung nötige Variablen
-    private static final float[]
+    public static final float[]
     	scales = { 1f, 1f, 1f, RADAR_STRENGTH },
     	offsets = new float[4];	
 	
-    private static final RescaleOp 
+    private static final RescaleOp
 		ROP_CLOAKED = new RescaleOp(scales, offsets, null);
     
 	private static boolean
@@ -229,8 +260,8 @@ public class Enemy extends RectangularGameEntity
 	 */
 
 	public int
-		hitpoints,						// aktuelle Hitpoints
-		startingHitpoints,				// Anfangs-Hitpoints (bei Erstellung des Gegners)
+		hitpoints,						// aktuelle HitPoints
+		startingHitpoints,				// Anfangs-HitPoints (bei Erstellung des Gegners)
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
 		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
@@ -272,7 +303,7 @@ public class Enemy extends RectangularGameEntity
 		
 	private int
 		rewardModifier,			// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
-		lifetime,				// Anzahl der Frames seit Erstellung des Gegners;  und vergangene Zeit seit Erstellung, Zeit	
+		lifetime,				// Anzahl der Frames seit Erstellung des Gegners; und vergangene Zeit seit Erstellung, Zeit
 		yCrashPos,				// Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
 		collisionAudioTimer,
 		turnAudioTimer,
@@ -291,7 +322,7 @@ public class Enemy extends RectangularGameEntity
 		snoozeTimer,
 		staticChargeTimer,
 		
-		// nur für Hindernis-Gegner releavant		
+		// nur für Hindernis-Gegner relevant
 		rotorColor,
 		barrierShootTimer,
 		barrierTeleportTimer,
@@ -314,28 +345,28 @@ public class Enemy extends RectangularGameEntity
     private boolean
 		isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
         canDodge,				// = true: Gegner kann Schüssen ausweichen
-        canKamikaze,			// = true: Gegner geht auf Kollsionskurs, wenn die Distanz zum Helicopter klein ist
+        canKamikaze,			// = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
         canLearnKamikaze,		// = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
         canEarlyTurn,
-        canMoveChaotic, 		// reguliert den zufälligen Richtungswechsel bei Chaosflug-Modus
+        canMoveChaotic, 		// reguliert den zufälligen Richtungswechsel bei Chaos-Flug-Modus
         canSinusMove,			// Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
-        canTurn,				// Gegner ändert bei Beschuss evtl.    seine Flugrichtung in Richtung Helikopter
+        canTurn,				// Gegner ändert bei Beschuss eventuell seine Flugrichtung in Richtung Helikopter
         canInstantTurn,		    // Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
         canFrontalSpeedup,	    // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
         canLoop,				// = true: Gegner fliegt Loopings
-        canChaosSpeedup,		// erhöht die Geschwindigkeit, wenn in Helicopternähe
+        canChaosSpeedup,		// erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
         isSpeedBoosted,
         isDestroyed,			// = true: Gegner wurde vernichtet
-        hasHeightSet,			// = false --> heigt = height_factor * width; = true --> height wurde manuell festgelegt
+        hasHeightSet,			// = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
         hasYPosSet,			    // = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
         hasCrashed, 			// = true: Gegner ist abgestürzt
-        isEmpShocked,			// = true: Gegner steht unter EMP-Schock -> ist verlangsamt
+        isEmpShocked,			// = true: Gegner steht unter EMP-Schock --> ist verlangsamt
         isMarkedForRemoval,	    // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
         isUpperShieldMaker,	    // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
         isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
-        isStunnable,			// = false für Boss 5; bestimmt ob ein Gegner von Stopp-Raketen (Orochi-Klasse) gestunt werden kann
+        isStunnable,			// = false für Boss 5; bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) "gestunt" werden kann
         isCarrier,				// = true
-        isClockwiseBarrier,	    // = true: der Rotor des Hindernis dreht im Uhrzeigersinn
+        isClockwiseBarrier,	    // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
         isRecoveringSpeed;
   
 	private AbilityStatusType
@@ -344,8 +375,6 @@ public class Enemy extends RectangularGameEntity
 	private EnemyMissileType
 		shotType;
 	
-	private GradientPaint 
-		gradientColor;
 	
 	private final Graphics2D []
 		graphics = new Graphics2D [2];
@@ -378,115 +407,15 @@ public class Enemy extends RectangularGameEntity
 	@Override
 	public void paint(Graphics2D g2d)
 	{
-		Helicopter helicopter = Controller.getInstance().getHelicopter();
-		boolean cloaked = (this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME+CLOAKED_TIME);
-		int g2DSel = this.direction.x == -1 ? 0 : 1;
-		
-		if(!cloaked)
-		{
-			if(this.isInvincible())
-			{	
-				this.paintImage(g2d, -this.direction.x, Colorations.variableGreen, false);
-			}
-			else if(this.alpha != 255)
-			{
-				if(this.alpha > 51 || !helicopter.canDetectCloakedVessels())
-				{
-					scales[3] = ((float)this.alpha)/255;			
-					g2d.drawImage(	this.image[g2DSel],
-									new RescaleOp(scales, offsets, null), 
-									this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
-									this.paintBounds.y - this.paintBounds.height/4);
-				}
-				else
-				{
-					g2d.drawImage(	this.image[g2DSel + 2],
-									this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
-									this.paintBounds.y - this.paintBounds.height/4, null);
-				}			
-			}
-			else
-			{
-				g2d.drawImage(	this.image[g2DSel],
-								this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
-								this.paintBounds.y - this.paintBounds.height/4, null);
-			}
-						
-			// Dach
-			if(!this.isDestroyed && (this.tractor == AbilityStatusType.ACTIVE || this.shootTimer > 0 || this.isShielding))
-			{
-				Color inputColorRoof
-					= this.alpha < 255 
-						? Colorations.setAlpha(Colorations.variableGreen, this.alpha)
-						: Colorations.variableGreen;
-				
-				this.paintCannon(g2d, this.paintBounds.x, this.paintBounds.y, -this.direction.x, inputColorRoof);
-			}
-						
-			// blinkende Scheibe von Bossen und Mini-Bossen bzw. Eyes bei Hindernissen
-			if(this.hasGlowingEyes())
-			{				
-				if(this.model != BARRIER){this.paintWindow(g2d);}
-				else{this.paintBarrierEyes(g2d);}
-			}			
-						
-			// Auspuff			
-			if(!(this.isDestroyed || this.stunningTimer > 0))
-			{
-				int temp = 63 - (((int)(2 + 0.1f * Math.abs(this.speedLevel.getX())) * this.lifetime)%32); //d
-				Color colorTemp = new Color(255, 192+temp, 129+temp, this.alpha);
-				this.paintExhaustPipe(g2d, colorTemp);
-			}			
-					
-			// die Schild- und Traktorstrahlen
-			if(this.tractor == AbilityStatusType.ACTIVE){this.paintTractorBeam(g2d, helicopter);}
-			else if(this.type == FINAL_BOSS)
-			{
-				for(int servantType = id(SMALL_SHIELD_MAKER); servantType <= id(BIG_SHIELD_MAKER); servantType++)
-				{
-					if( this.operator.servants[servantType] != null && 
-						this.operator.servants[servantType].isShielding)
-					{
-						this.operator.servants[servantType].paintShieldBeam(g2d);
-					}
-				}
-			}
-			
-			if(this.model == BARRIER && !this.isDestroyed)
-			{
-				this.paintRotor(g2d);
-			}
-		}
-		else if(helicopter.canDetectCloakedVessels())
-		{
-			g2d.drawImage(	this.image[g2DSel + 2],
-							this.paintBounds.x - (this.direction.x == -1 ? this.paintBounds.width/36 : 0),
-							this.paintBounds.y - this.paintBounds.height/4,
-							null);
-		}
-		
-		//zu Testzwecken:
-		if(SHOW_BARRIER_TESTING_INFO)
-		{
-			g2d.setColor(Color.red);
-			if(this.model == BARRIER)
-			{
-				g2d.drawString(   "Borrow: " + this.borrowTimer + " ; "
-						
-						+ "Stun: "   + this.stunningTimer + " ; "
-						+ "Snooze: " + this.snoozeTimer + " ; ",
-					(int)this.bounds.getX(),
-					(int) this.bounds.getY());
-			}
-		}
+		GraphicsManager.getInstance().paint(this);
 	}
 	
-	private boolean hasGlowingEyes()
+	public boolean hasGlowingEyes()
 	{
 		return  !this.isDestroyed
 				&& (this.isBoss()
 					|| this.type == KABOOM
-					|| (this.model == BARRIER 
+					|| (this.model == BARRIER
 						&& this.snoozeTimer <= SNOOZE_TIME + 75));
 	}
 
@@ -508,658 +437,12 @@ public class Enemy extends RectangularGameEntity
 				this.graphics[j].setComposite(AlphaComposite.Src);
 				this.graphics[j].setColor(Colorations.translucentDarkestBlack);
 				this.graphics[j].fillRect(0, 0, this.image[j].getWidth(), this.image[j].getHeight());
-			}			
-			this.paintImage(this.graphics[j], 1-2*j, null, true);
+			}
+			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(this.getClass());
+			enemyPainter.paintImage(this.graphics[j], this, 1-2*j, null, true);
 		}
 	}		
 	
-	private void paintRotor(Graphics2D g2d)
-	{
-		paintRotor(g2d, this.paintBounds.x, this.paintBounds.y);
-	}
-	
-	private void paintRotor(Graphics2D g2d, int x, int y)
-	{
-		HelicopterPainter.paintRotor(	g2d,
-								!this.isDestroyed
-									?(Colorations.setAlpha(Colorations.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], this.alpha))
-									: Colorations.dimColor(Colorations.barrierColor[this.rotorColor][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
-								x, y, this.paintBounds.width, this.paintBounds.height, 5, (this.speedLevel.equals(ZERO_SPEED) ? (this.snoozeTimer <= SNOOZE_TIME ? 3 : 0) : 8) * (this.isClockwiseBarrier ? -1 : 1) * this.lifetime%360,
-								24, BARRIER_BORDER_SIZE, this.snoozeTimer == 0);
-		this.paintBarrierCannon(g2d, x, y);
-	}
-	
-	private void paintBarrierCannon(Graphics2D g2d, int x, int y)
-	{		
-		Color tempColor;
-		int distanceX, distanceY;
-		for(int i = 0; i < 3; i++)
-		{
-			tempColor = (this.barrierShootTimer != DISABLED && this.barrierShootTimer <= this.shotsPerCycle * this.shootingRate && i != 0 && !this.isDestroyed)
-							?  Colorations.variableGreen
-							: !this.isDestroyed
-								? Colorations.barrierColor[i][Events.timeOfDay.ordinal()]
-								: Colorations.dimColor(Colorations.barrierColor[i][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR);
-			if(this.alpha != 255){tempColor = Colorations.setAlpha(tempColor, this.alpha);}
-			g2d.setColor(tempColor);
-			
-			distanceX = (int) ((0.45f + i * 0.01f) * this.paintBounds.width);
-			distanceY = (int) ((0.45f + i * 0.01f) * this.paintBounds.height);
-						
-			g2d.fillOval(x + distanceX,
-				 	  	 y + distanceY,
-				 	  	 this.paintBounds.width  - 2*distanceX,
-				 	  	 this.paintBounds.height - 2*distanceY);
-		}		
-	}	
-
-	private void paintCannon(Graphics2D g2d, int x, int y, int directionX, Color inputColor)
-	{
-		if(this.model == TIT)
-		{
-			paintBar(	g2d,
-						x,	y, 
-						this.paintBounds.width, this.paintBounds.height,
-						0.02f, 0.007f, 0.167f, 0.04f, 0.6f,  
-						directionX, true, inputColor);
-		}
-		else if(this.model == CARGO)
-		{
-			paintBar(	g2d,
-						x, (int) (y + 0.48f * this.paintBounds.height),
-						this.paintBounds.width, this.paintBounds.height,
-						0, 0, 0.1f, 0.04f, 0.6f, 
-						directionX, true, inputColor);
-		}
-	}	
-	
-	private void paintBarFrame(Graphics2D g2d, int x, int y,
-							   float thicknessFactor,
-							   float shift, float centerShift,
-							   float dimFactor,
-							   Color inputColor, Color backgroundColor,
-							   boolean imagePaint)
-	{		
-		if(backgroundColor != null)
-		{
-			g2d.setPaint(new GradientPaint(	0, 
-											y, 
-											backgroundColor,
-											0, 
-											y + 0.3f*thicknessFactor*this.paintBounds.height,
-											Colorations.dimColor(backgroundColor, 0.85f),
-											true));
-			
-			g2d.fillRect(x + (int)(thicknessFactor/2 * this.paintBounds.width),
-				  	     y + (int)(thicknessFactor/2 * this.paintBounds.height),
-				  	     (int)((1f-thicknessFactor)  * this.paintBounds.width),
-				  	     (int)((1f-thicknessFactor)  * this.paintBounds.height));
-		}
-		
-		int xShift = (int) (shift * this.paintBounds.width),
-			yShift = (int) (shift * this.paintBounds.height),
-			xCenterShift = (int) (centerShift * this.paintBounds.width),
-			yCenterShift = (int) (centerShift * this.paintBounds.height);
-		
-		
-		if(imagePaint || (this.speedLevel.getX() != 0 && this.direction.x == 1))
-		{
-			paintBar(	g2d,
-						x + xCenterShift,
-						y + yShift,
-						this.paintBounds.width,
-						this.paintBounds.height - 2 * yShift,
-						thicknessFactor,
-						0.2f,
-						dimFactor,
-						false, 
-						inputColor);
-		}
-		if(imagePaint || (this.speedLevel.getX() != 0 && this.direction.x ==  -1))
-		{
-			paintBar(	g2d,
-						(int)(x + 1 + (1f-thicknessFactor)*this.paintBounds.width)-xCenterShift,
-						y + yShift,
-						this.paintBounds.width,
-						this.paintBounds.height - 2 * yShift,
-						thicknessFactor,
-						0.2f,
-						dimFactor,
-						false, 
-						inputColor);
-		}
-		if(imagePaint || (this.speedLevel.getY() != 0 && this.direction.y ==  1))
-		{
-			paintBar(	g2d,
-						x + xShift,
-						y + yCenterShift,
-						this.paintBounds.width - 2 * xShift,
-						this.paintBounds.height,
-						thicknessFactor,
-						0.2f,
-						dimFactor,
-						true,
-						inputColor);
-		}
-		if(imagePaint || (this.speedLevel.getY() != 0 && this.direction.y == -1))
-		{
-			paintBar(	g2d,
-						x + xShift,
-						(int)(y + 1 + (1f-thicknessFactor)*this.paintBounds.height)-yCenterShift,
-						this.paintBounds.width - 2 * xShift,
-						this.paintBounds.height,
-						thicknessFactor,
-						0.2f,
-						dimFactor,
-						true, 
-						inputColor);
-		}
-	}	
-	
-	private static void paintBar(Graphics2D g2d,
-								 int x, int y,
-								 int width, int height,
-								 float thicknessFactor,
-								 float rounding,
-								 float dimFactor,
-								 boolean horizontal,
-								 Color inputColor)
-	{		
-		paintBar(	g2d,
-					x, y,
-					width, height, 
-					0, 0,
-					thicknessFactor,
-					rounding,
-					dimFactor,
-					1,
-					horizontal,
-					inputColor);
-	}
-	
-	private static void paintBar(Graphics2D g2d,
-								 int x, int y,
-								 int width, int height,
-								 float xShiftLeft, float xShiftRight,
-								 float thicknessFactor, float rounding,
-								 float dimFactor, int directionX,
-								 boolean horizontal, Color inputColor)
-	{		
-		g2d.setPaint( new GradientPaint(	(int) (horizontal ? 0 : x + 0.5f * thicknessFactor * width),
-											(int) (horizontal ?     y + 0.5f * thicknessFactor * height : 0),
-											inputColor,
-											(int) (horizontal ? 0 : x + 1.0f * thicknessFactor * width),
-											(int) (horizontal ?     y + 1.0f * thicknessFactor * height : 0),
-											Colorations.dimColor(inputColor, dimFactor),
-											true));		
-		
-		g2d.fillRoundRect(	(int) (x - (directionX == 1 ? xShiftLeft : xShiftRight) * width),
-							y,  
-							(int) (	horizontal ? (1 + xShiftLeft + xShiftRight) * width : thicknessFactor * width),
-							(int) (	horizontal ? thicknessFactor * height : (1 + xShiftLeft + xShiftRight) * height ),
-							(int) (	horizontal ? rounding * width : thicknessFactor * width),
-							(int) (	horizontal ? thicknessFactor * height : rounding * height) );
-	}	
-	
-	// malen der Seitenflügel mit Antriebsdüse
-	private void paintExhaustPipe(Graphics2D g2d, Color color4)
-	{
-		paintExhaustPipe(g2d,
-					   this.paintBounds.x,
-					   this.paintBounds.y,
-					   -this.direction.x, 
-					   null,
-					   color4);
-	}
-
-	// TODO bessere Namen für Bezeichner color2 , color 4
-	private void paintExhaustPipe(Graphics2D g2d, int x, int y, int directionX, Color color2, Color color4)
-	{			
-		if(this.model == TIT)
-		{			
-			paintEngine(g2d, x, y, 0.45f, 0.27f, 0.5f, 0.4f, directionX, color2, color4);
-		}
-		else if(this.model == CARGO)
-		{	
-			paintEngine(g2d, x, y, 0.45f, 0.17f, 0.45f, 0.22f, directionX, color2, color4);
-			paintEngine(g2d, x, y, 0.45f, 0.17f, 0.25f, 0.70f, directionX, color2, color4);
-		}
-		else if(this.model == BARRIER)
-		{
-			paintBarFrame(g2d, this.paintBounds.x, this.paintBounds.y,
-							0.07f, 0.35f, 0.04f, 0.7f, color4, null, false);
-		}
-	}
-		
-	private void paintEngine(Graphics2D g2d,
-							 int x, int y,
-							 float width, float height,
-							 float xShift, float yShift,
-							 int directionX,
-							 Color color2, Color color4)
-	{			
-		if(color2 != null)
-		{
-			paintPipe(g2d, x, y, width, height, xShift, 				  yShift, directionX, color2, false);
-		}
-			paintPipe(g2d, x, y, 0.05f, height, xShift + width - 0.05f, yShift, directionX, color4, true);
-	}		
-	
-	private void paintPipe(Graphics2D g2d,
-						   int x, int y,
-						   float width, float height,
-						   float xShift, float yShift,
-						   int directionX, Color color, boolean isExhaust)
-	{			
-		g2d.setPaint(new GradientPaint(	0, 
-										y + (yShift + 0.05f)  * this.paintBounds.height,
-										color, 
-										0, 
-										y + (yShift + height) * this.paintBounds.height,
-										Colorations.dimColor(color, 0.5f),
-										true));
-		
-		g2d.fillRoundRect(	(int) (x + (directionX == 1
-										? xShift
-										: 1f - xShift - width)	* this.paintBounds.width),
-							(int) (y + 	yShift 			   	* this.paintBounds.height),
-							(int) (		width  				   	* this.paintBounds.width),
-							(int) (		height  			   	* this.paintBounds.height),
-							(int) ((isExhaust ? 0f : height/2) * this.paintBounds.width),
-							(int) ((isExhaust ? 0f : height  ) * this.paintBounds.height)  );
-	}
-	
-	
-	private void paintImage(Graphics2D g2d, int directionX, Color color, boolean imagePaint)
-	{	
-		int offsetX = (int)(imagePaint
-								? (directionX == 1 ? 0.028f * this.paintBounds.width : 0)
-								: this.paintBounds.x),
-								
-			offsetY = (int)(imagePaint
-								? 0.25f * this.paintBounds.height
-								: this.paintBounds.y);
-		
-		boolean getarnt = 	 this.cloakingTimer > CLOAKING_TIME
-						  && this.cloakingTimer <= CLOAKING_TIME+CLOAKED_TIME;
-						
-		/*
-		 * Festlegen der Farben
-		 */
-		Color mainColorLight, mainColorDark, barColor, inactiveNozzleColor;
-		
-		if(color == null)
-		{
-			if(this.isDestroyed && Events.timeOfDay == NIGHT)
-			{
-				mainColorLight = Colorations.dimColor(this.farbe1, 1.3f * Colorations.NIGHT_DIM_FACTOR);
-				mainColorDark  = Colorations.dimColor(this.farbe2, 1.3f * Colorations.NIGHT_DIM_FACTOR);
-			}
-			else
-			{
-				mainColorLight = this.farbe1;
-				mainColorDark  = this.farbe2;
-			}
-		}
-		else
-		{
-			mainColorLight = color;
-			mainColorDark = Colorations.dimColor(color, 1.5f);
-		}		
-		
-		if(this.model == BARRIER){barColor = Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];}
-		else if(!this.isDestroyed && (this.tractor == AbilityStatusType.ACTIVE || this.shootTimer > 0 || this.isShielding)){barColor = Colorations.variableGreen;}
-		else if(!this.isDestroyed && !imagePaint && this.isInvincible()){barColor = Color.green;}
-		else if(this.isMiniBoss){barColor = this.farbe2;}
-		else{barColor = Colorations.enemyGray;}
-		inactiveNozzleColor = Colorations.INACTIVE_NOZZLE;
-		
-		if(this.model == BARRIER && Events.timeOfDay == NIGHT)
-		{
-			inactiveNozzleColor = Colorations.barrierColor[Colorations.NOZZLE][Events.timeOfDay.ordinal()];
-		}
-		
-		if(this.isDestroyed)
-		{
-			barColor = Colorations.dimColor(barColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
-			inactiveNozzleColor = Colorations.dimColor(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
-		}
-				
-		//Malen des Gegners
-		if(this.model != BARRIER)
-		{
-			paintVessel(	g2d,
-							offsetX, offsetY,
-							directionX,
-							color, 
-							getarnt, imagePaint,
-							mainColorLight, mainColorDark,
-							barColor, inactiveNozzleColor);
-		}
-		else
-		{
-			paintBarrier(	g2d,
-							offsetX, offsetY,
-							imagePaint,
-							mainColorLight, mainColorDark,
-							barColor, inactiveNozzleColor);
-		}
-	}	
-	
-	private void paintVessel(Graphics2D g2d, int offsetX, int offsetY,
-							 int directionX, Color color, boolean getarnt,
-							 boolean imagePaint,
-							 Color mainColorLight,
-							 Color mainColorDark,
-							 Color cannonColor,
-							 Color inactiveNozzleColor)
-	{	
-		if(this.model == CARGO)
-		{
-			this.paintRoof(g2d, cannonColor, offsetX, offsetY, directionX);
-		}
-		this.paintAirframe(g2d, mainColorLight, offsetX, offsetY, directionX);
-		this.paintCannon(g2d, offsetX, offsetY, directionX, cannonColor);
-		if(this.model == TIT)
-		{
-			this.paintVerticalStabilizer(g2d, offsetX, offsetY, directionX);
-		}		
-		this.paintExhaustPipe(	g2d, offsetX, offsetY, directionX,
-							mainColorDark, inactiveNozzleColor);
-		
-		if(Color.red.equals(color) || !this.isLivingBoss())
-		{		
-			this.paintWindow(
-					g2d, 
-					offsetX,
-					(int)(offsetY
-							+ this.paintBounds.height
-							  *(this.model == TIT ? 0.067f : 0.125f)), 
-					Color.red.equals(color) ? Colorations.cloakedBossEye : null,
-					directionX,
-					getarnt && !imagePaint);
-		}		
-		
-		// das rote Kreuz		
-		if(this.type == HEALER)
-		{
-			paintRedCross(
-					g2d,
-					(int)( offsetX + (directionX == 1
-								? 0.7f * this.paintBounds.width
-								: (1 - 0.7f - 0.18f) * this.paintBounds.width)),
-					(int) (offsetY + 0.6f * this.paintBounds.height),
-					(int) (			  0.18f * this.paintBounds.width));
-		}
-		
-		if(SHOW_RED_FRAME){
-			g2d.setColor(Color.red);
-		    g2d.drawRect(offsetX, offsetY, (int)(this.bounds.getWidth() - 1), (int)(this.bounds.getHeight() - 1));
-		}
-	}
-	
-	private void paintBarrier(Graphics2D g2d,
-							  int offsetX, int offsetY,
-							  boolean imagePaint,
-							  Color mainColorLight,
-							  Color mainColorDark,
-							  Color barColor,
-							  Color inactiveNozzleColor)
-	{		
-		// Rahmen & Antriebsbalken
-		paintBarFrame(g2d, offsetX, offsetY, 0.15f, 0f,    0f,    0.5f, barColor, mainColorLight, true);
-		paintBarFrame(g2d, offsetX, offsetY, 0.07f, 0.35f, 0.04f, 0.7f, inactiveNozzleColor, null, true);
-		
-		// "Augen"
-		this.paintBarrierEyes(g2d,
-								offsetX,
-								offsetY,
-								Colorations.barrierColor[Colorations.EYES][Events.timeOfDay.ordinal()],
-								imagePaint);
-		
-		// Turbinen-Innenraum
-		this.paintRotorInterior(g2d, mainColorDark, offsetX, offsetY );
-		
-		if(this.isDestroyed){this.paintRotor(g2d, offsetX, offsetY);}
-	}
-	
-	private void paintRotorInterior(Graphics2D g2d, Color mainColorDark,
-									int offsetX, int offsetY)
-	{
-		int distanceX = (int) (BARRIER_BORDER_SIZE * this.paintBounds.width),
-			distanceY = (int) (BARRIER_BORDER_SIZE * this.paintBounds.height);
-					
-		g2d.setPaint(new GradientPaint(	0, 
-										offsetY,
-										mainColorDark,
-										0, 
-										offsetY + 0.045f*this.paintBounds.height,
-										Colorations.dimColor(mainColorDark, 0.85f),
-										true));	
-		
-		g2d.fillOval(offsetX + distanceX,
-					 offsetY + distanceY,
-					 this.paintBounds.width  - 2 * distanceX,
-					 this.paintBounds.height - 2 * distanceY);
-	}
-
-	private void paintRoof(Graphics2D g2d, Color roofColor, int offsetX,
-						   int offsetY, int directionX)
-	{
-		g2d.setPaint(roofColor);
-		g2d.fillRoundRect(	(int) (offsetX + (directionX == 1 ? 0.05f :  0.35f) * this.paintBounds.width),
-							offsetY,
-							(int) (0.6f   * this.paintBounds.width),
-							(int) (0.125f * this.paintBounds.height),
-							(int) (0.6f   * this.paintBounds.width),
-							(int) (0.125f * this.paintBounds.height));
-	}
-
-	// malen des Schiffrumpfes	
-	private void paintAirframe(Graphics2D g2d, Color mainColorLight,
-							   int offsetX, int offsetY, int directionX)
-	{		
-		this.setAirframeColor(g2d, offsetY, mainColorLight);
-		
-		if(this.model == TIT)
-		{			
-			g2d.fillArc(offsetX,
-						(int) (offsetY - 0.333f * this.paintBounds.height - 2),
-						this.paintBounds.width,
-						this.paintBounds.height, 180, 180);
-			
-			g2d.fillArc((int)(offsetX + (directionX == 1 ? 0.2f * this.paintBounds.width : 0)),
-						(int)(offsetY - 0.667f * this.paintBounds.height),
-						(int)(			 0.8f   * this.paintBounds.width),
-						(int)(			 1.667f * this.paintBounds.height), 180, 180);
-		}
-		else if(this.model == CARGO)
-		{
-			g2d.fillOval(	(int)(offsetX + 0.02f * this.paintBounds.width),
-					(int)(offsetY + 0.1f * this.paintBounds.height),
-					(int)(0.96f * this.paintBounds.width),
-					(int)(0.9f  * this.paintBounds.height));
-			
-			g2d.fillRect(	(int)(offsetX + (directionX == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
-							(int)(offsetY + 0.094f * this.paintBounds.height),
-							(int)(0.6f * this.paintBounds.width),
-							(int)(0.333f * this.paintBounds.height));
-
-			g2d.fillRoundRect(	(int) (offsetX + (directionX == 1 ? 0.05f : 0.35f) * this.paintBounds.width),
-								(int) (offsetY + 0.031 * this.paintBounds.height),
-								(int) (0.6f * this.paintBounds.width),
-								(int) (0.125f * this.paintBounds.height),
-								(int) (0.6f * this.paintBounds.width),
-								(int) (0.125f * this.paintBounds.height));
-		
-			// Rückflügel
-			g2d.fillArc(	(int)(offsetX + (directionX == 1 ? 0.5f * this.paintBounds.width : 0)),
-							(int)(offsetY - 0.3f * this.paintBounds.height),
-							(int)(0.5f * this.paintBounds.width),
-							this.paintBounds.height,
-							directionX == 1 ? -32 : 155,
-							57);
-		}
-	}
-
-	private void paintVerticalStabilizer(Graphics2D g2d,
-										 int offsetX, int offsetY,
-										 int directionX)
-	{
-		g2d.setPaint(this.gradientColor);		
-		g2d.fillArc((int)(offsetX + (directionX == 1 ? 0.4f : 0.1f) * this.paintBounds.width),
-				(int)(offsetY - 						   0.917f * this.paintBounds.height),
-				(int)(0.5f * this.paintBounds.width),
-				 2 * this.paintBounds.height, directionX == 1 ? 0 : 160, 20);
-	}
-	
-	private void setAirframeColor(Graphics2D g2d, int offsetY,
-								  Color mainColorLight)
-	{
-		this.gradientColor = new GradientPaint(	
-				0, 
-				offsetY + (this.model == TIT ? 0.25f : 0.375f) * this.paintBounds.height,
-				mainColorLight,
-				0,
-				offsetY + this.paintBounds.height,
-				Colorations.dimColor(mainColorLight, 0.5f),
-				true);
-			
-		g2d.setPaint(this.gradientColor);		
-	}	
-	
-	private void paintBarrierEyes(Graphics2D g2d)
-	{
-		paintBarrierEyes(	g2d,
-							this.paintBounds.x,
-							this.paintBounds.y,
-							this.alpha != 255 
-								? Colorations.setAlpha(Colorations.variableRed, this.alpha)
-								: Colorations.variableRed,
-							false);
-	}
-	
-	public void paintBarrierEyes(Graphics2D g2d, int x, int y, Color color, boolean imagePaint)
-	{		
-		int borderDistance = (int)(0.85f * BARRIER_BORDER_SIZE * this.paintBounds.width),
-			eyeSize = 		  (int)(	    BARRIER_EYE_SIZE    * this.paintBounds.width);
-				
-		g2d.setPaint(color);
-		
-		g2d.fillOval(x + borderDistance,
-					 y + borderDistance,
-					 eyeSize, eyeSize);
-		
-		g2d.fillOval(x - borderDistance + this.paintBounds.width  - eyeSize,
-					 y - borderDistance + this.paintBounds.height - eyeSize,
-					 eyeSize, eyeSize);
-		
-		if(!imagePaint && !(this.snoozeTimer > SNOOZE_TIME)){g2d.setPaint(Colorations.reversedRandomRed(color));}
-		g2d.fillOval(x + borderDistance,
-					 y - borderDistance + this.paintBounds.height - eyeSize,
-					 eyeSize, eyeSize);
-		
-		g2d.fillOval(x - borderDistance + this.paintBounds.width  - eyeSize,
-					 y + borderDistance,
-					 eyeSize, eyeSize);
-	}
-
-	private static void paintRedCross(Graphics2D g2d, int x, int y, int height)
-	{
-		g2d.setColor(Color.red);				
-		g2d.setStroke(new BasicStroke(height/5, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));				
-		g2d.drawLine(x + height/2, y + height/5, x + height/2, y + (4 * height)/5);
-		g2d.drawLine(x + height/5, y + height/2, x + (4 * height)/5, y + height/2);			
-		g2d.setStroke(new BasicStroke(1));
-		//g2d.drawRect(x, y, height, height);
-	}
-
-	void paintTractorBeam(Graphics2D g2d, Helicopter helicopter)
-	{		
-		paintEnergyBeam(	g2d,
-							this.paintBounds.x,
-							this.paintBounds.y + 1,
-							(int)(helicopter.getBounds().getX() 
-								+ (helicopter.isMovingLeft
-									? Helicopter.FOCAL_PNT_X_LEFT 
-									: Helicopter.FOCAL_PNT_X_RIGHT)),  // 114 
-							(int)(helicopter.getBounds().getY() 
-								+ Helicopter.FOCAL_PNT_Y_EXP));
-	}
-	
-	private void paintShieldBeam(Graphics2D g2d)
-	{				
-		paintEnergyBeam(g2d,	this.paintBounds.x + (this.direction.x + 1)/2 * this.paintBounds.width,
-								this.paintBounds.y,
-								Events.boss.paintBounds.x + Events.boss.paintBounds.width/48,
-								Events.boss.paintBounds.y + Events.boss.paintBounds.width/48);
-	}
-	
-	public static void paintEnergyBeam(Graphics2D g2d, int x1, int y1, int x2, int y2)
-	{
-		g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-		g2d.setColor(Colorations.green);
-		g2d.drawLine(x1, y1, x2, y2);
-		g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-		g2d.setColor(Color.green);
-		g2d.drawLine(x1, y1+1, x2, y2);
-		g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-	}	
-	
-	private void paintWindow(Graphics2D g2d)
-	{
-		paintWindow(g2d,
-					 this.paintBounds.x,
-					 (int) (this.paintBounds.y
-							+ this.paintBounds.height
-							  *(this.model == TIT ? 0.067f : 0.125f)), 
-					 this.alpha != 255 
-						? Colorations.setAlpha(Colorations.variableRed, this.alpha)
-						: Colorations.variableRed,
-					 -this.direction.x, 
-					 false);
-	}
-	
-	public void paintWindow(Graphics2D g2d, int x, int y, Color color, int directionX, boolean getarnt)
-	{
-		this.setWindowColor(g2d, color, getarnt);
-						
-		if(this.model == TIT)
-		{
-			g2d.fillArc(	(int) (x + (directionX == 1 ? 0.25f : 0.55f)
-										* this.paintBounds.width),
-							y, 
-							(int) (0.2f   * this.paintBounds.width),
-							(int) (0.267f * this.paintBounds.height),
-							180, 
-							180);
-		}
-		else if(this.model == CARGO)
-		{
-			g2d.fillArc(	(int) (x + (directionX == 1 ? 0.1 : 0.6)
-										* this.paintBounds.width),
-							y, 
-							(int) (0.3f   * this.paintBounds.width),
-							(int) (0.333f * this.paintBounds.height),
-							directionX == 1 ? 90 : 0,
-							90);
-		}
-	}
-	
-	private void setWindowColor(Graphics2D g2d, Color color, boolean getarnt)
-	{
-		if(color == null && !getarnt)
-		{
-			g2d.setColor(this.isLivingBoss()
-				 	? (this.alpha == 255 
-				 		? Colorations.variableRed
-				 		: Colorations.setAlpha(Colorations.variableRed, this.alpha))
-				 	: (this.alpha == 255 
-				 		? Colorations.windowBlue
-				 		: Colorations.setAlpha(Colorations.windowBlue, this.alpha)));
-		}
-		else{g2d.setColor(color);}		
-	}
 
 	/** 
 	 ** 	Level-Anpassung
@@ -1564,7 +847,9 @@ public class Enemy extends RectangularGameEntity
 			
 			//this.graphics[i].setComposite(AlphaComposite.Src);
 			
-			this.paintImage(this.graphics[i], 1-2*i, null, true);
+			
+			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(this.getClass());
+			enemyPainter.paintImage(this.graphics[i], this,1-2*i, null, true);
 			if(this.cloakingTimer != DISABLED && helicopter.getType() == OROCHI)
 			{
 				BufferedImage 
@@ -1576,7 +861,7 @@ public class Enemy extends RectangularGameEntity
 													(int)(1.250f * this.paintBounds.height),
 													BufferedImage.TYPE_INT_ARGB);
 				
-				this.paintImage(getGraphics(tempImage), 1-2*i, Color.red, true);
+				enemyPainter.paintImage(getGraphics(tempImage), this,1-2*i, Color.red, true);
 				(getGraphics(this.image[2+i])).drawImage(tempImage, ROP_CLOAKED, 0, 0);
 			}
 		}		
@@ -2576,9 +1861,9 @@ public class Enemy extends RectangularGameEntity
 	}
 
 	/* Die folgende Funktion reguliert die Gegner-Bewegung:
-	 * 1.  Unter Berücksichtigung jeglicher Eventualitäten (special_manoever, ausweichen, etc.)
-	 *	   werden die neuen Koordinaten berechnet.
-	 * 2.  Der Gegner wird an Stelle seiner neuen Koordinaten gemalt.
+	 * 1. Unter Berücksichtigung jeglicher Eventualitäten (specialManöver, ausweichen, etc.)
+	 *	  werden die neuen Koordinaten berechnet.
+	 * 2. Der Gegner wird an Stelle seiner neuen Koordinaten gemalt.
 	 */
 		
 	public static void updateAllActive(Controller controller,
@@ -2935,32 +2220,6 @@ public class Enemy extends RectangularGameEntity
 		this.speedLevel.setLocation(0, 1);
 	}
 
-	/*
-	private void kaboom_action()
-	{
-		double speed = Math.max(1, 0.05*Math.abs(GROUND_Y-2*this.bounds.getHeight()-this.bounds.getY()));
-		
-		if( this.bounds.getMaxY() < GROUND_Y - this.bounds.getHeight())
-		{
-			this.direction.y = 1;				
-		}
-		else if( this.bounds.getMaxY() > GROUND_Y - this.bounds.getHeight())
-		{
-			this.direction.y = -1;
-		}			
-		if(	this.direction.y *(   this.bounds.getMaxY() 
-				 			    + this.direction.y * speed/2)  
-				>= this.direction.y *(GROUND_Y - this.bounds.getHeight()))
-		{
-			this.speedLevel.setLocation(this.speedLevel.getX(), 0);
-		}
-		else
-		{
-			this.speedLevel.setLocation(this.speedLevel.getX(), speed);
-		}		
-	}
-	*/
-
 	private void validateTurns()
 	{
 		if(	this.stoppingBarrier != null
@@ -3183,7 +2442,7 @@ public class Enemy extends RectangularGameEntity
 		return id(this.type);
 	}
 	
-	private static int id(EnemyType type)
+	public static int id(EnemyType type)
 	{
 		switch(type)
 		{
@@ -3995,7 +3254,7 @@ public class Enemy extends RectangularGameEntity
 		return this.isMiniBoss || this.type.isMajorBoss();
 	}
 	
-	boolean isLivingBoss()
+	public boolean isLivingBoss()
 	{		
 		return this.isBoss() && !this.isDestroyed;
 	}
@@ -4620,5 +3879,86 @@ public class Enemy extends RectangularGameEntity
 	public boolean isRock()
 	{
 		return type == ROCK;
+	}
+	
+	public int getCloakingTimer()
+	{
+		return cloakingTimer;
+	}
+	
+	public boolean isCloaked()
+	{
+		return 	this.cloakingTimer > Enemy.CLOAKING_TIME
+			&& this.cloakingTimer <= Enemy.CLOAKING_TIME + Enemy.CLOAKED_TIME;
+	}
+	
+	public boolean isDestroyed()
+	{
+		return isDestroyed;
+	}
+	
+	public Enemy getOperatorServant(int servantType)
+	{
+		return operator.servants[servantType];
+	}
+	
+	public Point2D getSpeedLevel()
+	{
+		return speedLevel;
+	}
+	
+	public int getLifetime()
+	{
+		return lifetime;
+	}
+	
+	public AbilityStatusType getTractor()
+	{
+		return tractor;
+	}
+	
+	public BufferedImage[] getImage()
+	{
+		return image;
+	}
+	
+	public int getRotorColor()
+	{
+		return rotorColor;
+	}
+	
+	public int getSnoozeTimer()
+	{
+		return snoozeTimer;
+	}
+	
+	public boolean isShielding()
+	{
+		return isShielding;
+	}
+	
+	public int getShootTimer()
+	{
+		return shootTimer;
+	}
+	
+	public int getBarrierShootTimer()
+	{
+		return barrierShootTimer;
+	}
+	
+	public int getShotsPerCycle()
+	{
+		return shotsPerCycle;
+	}
+	
+	public int getShootingRate()
+	{
+		return shootingRate;
+	}
+	
+	public boolean isClockwiseBarrier()
+	{
+		return isClockwiseBarrier;
 	}
 }

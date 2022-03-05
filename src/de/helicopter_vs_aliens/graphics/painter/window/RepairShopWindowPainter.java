@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.gui.button.LeftSideRepairShopButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
@@ -68,7 +69,7 @@ public class RepairShopWindowPainter extends WindowPainter
         Window.buttons.get(LeftSideRepairShopButtonType.MISSION).paint(g2d);
         
         // Die Status-Leiste
-        paintFrame(g2d, 251, 117, 285, 326);
+        GraphicalEntities.paintFrame(g2d, 251, 117, 285, 326);
         
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
@@ -182,7 +183,7 @@ public class RepairShopWindowPainter extends WindowPainter
     
     private static void paintMessageFrame(Graphics2D g2d)
     {
-        paintFrame(g2d, 773, 11, 181, 98);
+        GraphicalEntities.paintFrame(g2d, 773, 11, 181, 98);
         g2d.setColor(Colorations.golden);
         g2d.setFont(fontProvider.getBold(14));
         for(int i = 0; i < Window.MESSAGE_LINE_COUNT; i++){g2d.drawString(Window.message[i], 785, 35 + i * 20); }

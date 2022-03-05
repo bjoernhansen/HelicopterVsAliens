@@ -1,11 +1,11 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -95,7 +95,7 @@ public class StartScreenWindowPainter extends WindowPainter
             
             if(Window.helicopterFrame[i].contains(helicopter.destination))
             {
-                paintFrame(g2d, Window.helicopterFrame[i], Colorations.darkBlue);
+                GraphicalEntities.paintFrame(g2d, Window.helicopterFrame[i], Colorations.darkBlue);
             }
             
             Helicopter nextStartScreenHelicopter = Window.helicopterDummies.get(HelicopterType.getValues()
@@ -109,7 +109,7 @@ public class StartScreenWindowPainter extends WindowPainter
             // TODO destination darf keine Eigenschaft von Helicopter sein
             if(!Window.helicopterFrame[i].contains(helicopter.destination.x, helicopter.destination.y))
             {
-                paintFrame(g2d, Window.helicopterFrame[i], Colorations.translucentBlack);
+                GraphicalEntities.paintFrame(g2d, Window.helicopterFrame[i], Colorations.translucentBlack);
             }
             if(Events.allPlayable || HelicopterType.getValues().get((Window.helicopterSelection + i)% HelicopterType.size()).isUnlocked())
             {
@@ -148,21 +148,16 @@ public class StartScreenWindowPainter extends WindowPainter
     
     private static void paintTickMark(Graphics2D g2d, int i, int x, int y, int w, int h)
     {
-        Enemy.paintEnergyBeam(g2d,
-            x + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
-            y + h/2 + Window.START_SCREEN_HELICOPTER_OFFSET_Y,
-            x + w/3 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
-            y + h + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
-        
-        Enemy.paintEnergyBeam(g2d,
-            x + w + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
-            y + Window.START_SCREEN_HELICOPTER_OFFSET_Y,
-            x + w/3 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
-            y + h + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
-    }
+        GraphicalEntities.paintGlowingLine( g2d,
+                                            x + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
+                                            y + h/2 + Window.START_SCREEN_HELICOPTER_OFFSET_Y,
+                                            x + w/3 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
+                                            y + h + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
     
-    private static void paintFrame(Graphics2D g2d, Rectangle frame, Color filledColor)
-    {
-        paintFrame(g2d, frame.x, frame.y, frame.width, frame.height, filledColor);
+        GraphicalEntities.paintGlowingLine( g2d,
+                                            x + w + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
+                                            y + Window.START_SCREEN_HELICOPTER_OFFSET_Y,
+                                            x + w/3 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
+                                            y + h + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
     }
 }

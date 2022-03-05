@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.graphics.painter.window;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
 import de.helicopter_vs_aliens.gui.MultiKillType;
@@ -268,16 +269,16 @@ public class GameWindowPainter extends WindowPainter
     {
         if (!gameOver)
         {
-            paintFrame(g2d, 363, 147, 256, 111, Colorations.golden);
+            GraphicalEntities.paintFrame(g2d, 363, 147, 256, 111, Colorations.golden);
         } else if (Events.level < 51 || helicopter.getType() == HELIOS)
         {
-            paintFrame(g2d, 363, 112, 256, 146, Colorations.golden);
+            GraphicalEntities.paintFrame(g2d, 363, 112, 256, 146, Colorations.golden);
         } else if (Window.language == ENGLISH)
         {
-            paintFrame(g2d, 363, 100, 256, 158, Colorations.golden);
+            GraphicalEntities.paintFrame(g2d, 363, 100, 256, 158, Colorations.golden);
         } else
         {
-            paintFrame(g2d, 363, 64, 256, 194, Colorations.golden);
+            GraphicalEntities.paintFrame(g2d, 363, 64, 256, 194, Colorations.golden);
         }
         
         g2d.setFont(fontProvider.getPlain(18));
@@ -320,7 +321,7 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintInGameMenu(Graphics2D g2d)
     {
-        paintFrame(g2d, 363, 77, 256, 231, Colorations.golden);
+        GraphicalEntities.paintFrame(g2d, 363, 77, 256, 231, Colorations.golden);
         g2d.setColor(Colorations.red);
         g2d.setFont(fontProvider.getPlain(25));
         g2d.drawString(Window.dictionary.mainMenu(), 422 + (Window.language == ENGLISH ? 6 : 0), 106);

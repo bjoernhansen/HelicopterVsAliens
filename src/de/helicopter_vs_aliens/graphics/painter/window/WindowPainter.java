@@ -1,22 +1,20 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
-import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.gui.window.Window;
+import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.ArrayList;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
@@ -65,7 +63,7 @@ public abstract class WindowPainter extends Painter<Window>
                                                Helicopter helicopter,
                                                int x, int y)
     {
-        paintFrame(g2d, 26 + x,  85 + y, 200, 173, WindowManager.window  != GAME ? null : Colorations.lightestGray);
+        GraphicalEntities.paintFrame(g2d, 26 + x,  85 + y, 200, 173, WindowManager.window  != GAME ? null : Colorations.lightestGray);
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getBold(20));
         String typeName = Window.dictionary.typeName(helicopter.getType());
@@ -73,9 +71,9 @@ public abstract class WindowPainter extends Painter<Window>
         
         HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(helicopter.getClass());
         helicopterPainter.displayPaint(g2d, helicopter, 59 + x, 141 + y);
-        
-        paintFrameLine(g2d, 28 + x, 126 + y, 196);
-        paintFrameLine(g2d, 28 + x, 226 + y, 196);
+    
+        GraphicalEntities.paintFrameLine(g2d, 28 + x, 126 + y, 196);
+        GraphicalEntities.paintFrameLine(g2d, 28 + x, 226 + y, 196);
         
         if(WindowManager.window  != GAME)
         {
@@ -143,53 +141,5 @@ public abstract class WindowPainter extends Painter<Window>
         g2d.fillRect(x+3, y+14, (int)(length * relativePlating), 8);
         g2d.setColor(helicopter.recentDamageTimer == 0 ? Color.red : Colorations.variableRed);
         g2d.fillRect(x+3 + (int)(length * relativePlating), y+14, length - (int)(length * relativePlating), 8);
-    }
-    
-    
-    
-
-    
-    /** Graphical objects **/
-    // TODO diese sollten in eigene Klassen ausgelagert werden
-    
-    protected static void paintFrame(Graphics2D g2d, int left, int top, int width, int height)
-    {
-        paintFrame(g2d, left, top, width, height, null);
-    }
-    
-    public static void paintFrame(Graphics2D g2d, int left, int top, int width, int height, Color filledColor)
-    {
-        ArrayList<GradientPaint> gradientPaintList = new ArrayList<>(4);
-        
-        gradientPaintList.add(new GradientPaint(0, top-1, Color.white, 0, top+4, Colorations.darkestGray, true));
-        gradientPaintList.add(new GradientPaint(0, top+height-1, Color.white, 0, top+height+4, Colorations.darkestGray, true));
-        gradientPaintList.add(new GradientPaint(left, 0, Color.white, left+5, 0, Colorations.darkestGray, true));
-        gradientPaintList.add(new GradientPaint(left+width, 0, Color.white, left+width+5, 0, Colorations.darkestGray, true));
-        if(filledColor != null)
-        {
-            g2d.setPaint(filledColor);
-            g2d.fillRect(left, top, width, height);
-        }
-        g2d.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2d.setPaint(gradientPaintList.get(0));
-        g2d.drawLine(left+1, top, left+width-2, top);
-        g2d.setPaint(gradientPaintList.get(1));
-        g2d.drawLine(left+1, top+height, left+width-2, top+height);
-        g2d.setPaint(gradientPaintList.get(2));
-        g2d.drawLine(left, top+1, left, top+height-2);
-        g2d.setPaint(gradientPaintList.get(3));
-        g2d.drawLine(left+width, top+1, left+width, top+height-2);
-        g2d.setStroke(new BasicStroke(1));
-    }
-    
-    protected static void paintFrameLine(Graphics2D g2d, int left, int top, int width)
-    {
-        GradientPaint frameLineGradientPaint = new GradientPaint(0, top-1, Color.white, 0, top+4,
-            Colorations.darkestGray,
-            true);
-        g2d.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2d.setPaint(frameLineGradientPaint);
-        g2d.drawLine(left+1, top, left+width-2, top);
-        g2d.setStroke(new BasicStroke(1));
     }
 }
