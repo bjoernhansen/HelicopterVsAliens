@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
 import de.helicopter_vs_aliens.gui.MultiKillType;
@@ -42,78 +43,78 @@ public class GameWindowPainter extends WindowPainter
         ENEMY_HEALTH_BAR_WIDTH = 206;
     
     @Override
-    public void paint(Graphics2D g2d, Window window)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Window window)
     {
-        paintBackground(g2d);
-        paintBackgroundDisplays(g2d);
+        paintBackground(g2d, graphics2DAdapter);
+        paintBackgroundDisplays(g2d, graphics2DAdapter);
         Optional.ofNullable(Enemy.currentRock)
-                .ifPresent(enemy -> enemy.paint(g2d));
-        paintAllDestroyedEnemies(g2d);
-        paintAllMissiles(g2d);
-        paintAllActiveEnemies(g2d);
-        paintAllEnemyMissiles(g2d);
-        helicopter.paint(g2d);
-        paintAllExplosions(g2d);
-        paintAllPowerUps(g2d);
-        paintForeground(g2d);
-        super.paint(g2d, window);
-        paintForegroundDisplays(g2d);
-        paintGui(g2d);
+                .ifPresent(enemy -> enemy.paint(g2d, graphics2DAdapter));
+        paintAllDestroyedEnemies(g2d, graphics2DAdapter);
+        paintAllMissiles(g2d, graphics2DAdapter);
+        paintAllActiveEnemies(g2d, graphics2DAdapter);
+        paintAllEnemyMissiles(g2d, graphics2DAdapter);
+        helicopter.paint(g2d, graphics2DAdapter);
+        paintAllExplosions(g2d, graphics2DAdapter);
+        paintAllPowerUps(g2d, graphics2DAdapter);
+        paintForeground(g2d, graphics2DAdapter);
+        super.paint(g2d, graphics2DAdapter, window);
+        paintForegroundDisplays(g2d, graphics2DAdapter);
+        paintGui(g2d, graphics2DAdapter);
     }
     
-    private void paintBackground(Graphics2D g2d)
+    private void paintBackground(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         controller.getScenery()
-                  .paint(g2d);
+                  .paint(g2d, graphics2DAdapter);
     }
     
-    private void paintAllDestroyedEnemies(Graphics2D g2d)
+    private void paintAllDestroyedEnemies(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         controller.enemies.get(DESTROYED)
-                          .forEach(enemy -> enemy.paint(g2d));
+                          .forEach(enemy -> enemy.paint(g2d, graphics2DAdapter));
     }
     
-    private void paintAllMissiles(Graphics2D g2d)
+    private void paintAllMissiles(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         controller.missiles.get(ACTIVE)
-                           .forEach(missile -> missile.paint(g2d));
+                           .forEach(missile -> missile.paint(g2d, graphics2DAdapter));
     }
     
-    private void paintAllActiveEnemies(Graphics2D g2d)
+    private void paintAllActiveEnemies(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         Helicopter helicopter = controller.getHelicopter();
         for (int i = 0; i < Enemy.currentNumberOfBarriers; i++)
         {
-            Enemy.livingBarrier[i].paint(g2d);
+            Enemy.livingBarrier[i].paint(g2d, graphics2DAdapter);
         }
         for (Enemy enemy : controller.enemies.get(ACTIVE))
         {
             if (enemy.isVisableNonBarricadeVessel(helicopter.canDetectCloakedVessels()))
             {
-                enemy.paint(g2d);
+                enemy.paint(g2d, graphics2DAdapter);
             }
         }
     }
     
-    private void paintAllEnemyMissiles(Graphics2D g2d)
+    private void paintAllEnemyMissiles(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         controller.enemyMissiles.get(ACTIVE)
-                                .forEach(enemyMissile -> enemyMissile.paint(g2d));
+                                .forEach(enemyMissile -> enemyMissile.paint(g2d, graphics2DAdapter));
     }
     
-    private void paintAllExplosions(Graphics2D g2d)
+    private void paintAllExplosions(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         controller.explosions.get(ACTIVE)
-                             .forEach(explosion -> explosion.paint(g2d));
+                             .forEach(explosion -> explosion.paint(g2d, graphics2DAdapter));
     }
     
-    private void paintAllPowerUps(Graphics2D g2d)
+    private void paintAllPowerUps(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         controller.powerUps.get(ACTIVE)
-                           .forEach(powerUp -> powerUp.paint(g2d));
+                           .forEach(powerUp -> powerUp.paint(g2d, graphics2DAdapter));
     }
     
-    private void paintForeground(Graphics2D g2d)
+    private void paintForeground(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         // der Boden
         g2d.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
@@ -126,39 +127,39 @@ public class GameWindowPainter extends WindowPainter
         SceneryLayer.getForegroundLayers()
                     .forEach(layer -> activeSceneryObjects.stream()
                                                           .filter(sceneryObject -> sceneryObject.getLayer() == layer)
-                                                          .forEach(sceneryObject -> sceneryObject.paint(g2d)));
+                                                          .forEach(sceneryObject -> sceneryObject.paint(g2d, graphics2DAdapter)));
     }
     
-    private void paintForegroundDisplays(Graphics2D g2d)
+    private void paintForegroundDisplays(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         if (showBossHealthBar())
         {
-            paintBossHealthBar(g2d);
+            paintBossHealthBar(g2d, graphics2DAdapter);
         }
         paintHealthBar(g2d, helicopter);
-        paintCollectedPowerUps(g2d);
+        paintCollectedPowerUps(g2d, graphics2DAdapter);
         
         if (controller.showFps)
         {
-            paintFpsDisplay(g2d);
+            paintFpsDisplay(g2d, graphics2DAdapter);
         }
         
         if (helicopter.isOnTheGround())
         {
             if (!Window.isMenuVisible && controller.mouseInWindow)
             {
-                paintTimeDisplay(g2d, Events.playingTime
+                paintTimeDisplay(g2d, graphics2DAdapter, Events.playingTime
                     + System.currentTimeMillis()
                     - Events.lastCurrentTime);
             } else
             {
-                paintTimeDisplay(g2d, Events.playingTime);
+                paintTimeDisplay(g2d, graphics2DAdapter, Events.playingTime);
             }
         }
         
         if (Window.unlockedTimer > 0)
         {
-            paintHelicopterDisplay(g2d,
+            paintHelicopterDisplay(g2d, graphics2DAdapter,
                 Window.helicopterDummies.get(Window.unlockedType),
                 unlockedDisplayPosition(Window.unlockedTimer),
                 -50);
@@ -170,20 +171,20 @@ public class GameWindowPainter extends WindowPainter
         return Enemy.currentMiniBoss != null || (Events.boss != null && Events.level < 51);
     }
     
-    private void paintBossHealthBar(Graphics2D g2d)
+    private void paintBossHealthBar(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         if (Enemy.currentMiniBoss != null)
         {
-            paintBossHealthBar(g2d, Enemy.currentMiniBoss);
+            paintBossHealthBar(g2d, graphics2DAdapter, Enemy.currentMiniBoss);
         } else
         {
-            paintBossHealthBar(g2d, Events.boss);
+            paintBossHealthBar(g2d, graphics2DAdapter, Events.boss);
         }
     }
     
-    private void paintBossHealthBar(Graphics2D g2d, Enemy boss)
+    private void paintBossHealthBar(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Enemy boss)
     {
-        g2d.setColor(Colorations.hitpoints);
+        g2d.setColor(Colorations.hitPoints);
         g2d.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints) / boss.startingHitpoints, 10);
         if (Events.timeOfDay == NIGHT)
         {
@@ -208,7 +209,7 @@ public class GameWindowPainter extends WindowPainter
         paintHealthBar(g2d, helicopter, HEALTH_BAR_POSITION.x, HEALTH_BAR_POSITION.y, HEALTH_BAR_LENGTH, true);
     }
     
-    private void paintCollectedPowerUps(Graphics2D g2d)
+    private void paintCollectedPowerUps(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         int j = 0;
         PowerUpPainter powerUpPainter = GraphicsManager.getInstance()
@@ -223,14 +224,14 @@ public class GameWindowPainter extends WindowPainter
         }
     }
     
-    private void paintFpsDisplay(Graphics2D g2d)
+    private void paintFpsDisplay(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(18));
         g2d.drawString("FPS: " + (Window.fps == 0 ? Window.dictionary.pleaseWait() : Window.fps), 292, 449);
     }
     
-    private void paintTimeDisplay(Graphics2D g2d, long time)
+    private void paintTimeDisplay(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, long time)
     {
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(18));
@@ -239,31 +240,31 @@ public class GameWindowPainter extends WindowPainter
         g2d.drawString(outputString, Window.language == ENGLISH ? 646 : 661, 450);
     }
     
-    private void paintGui(Graphics2D g2d)
+    private void paintGui(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         // Werkstatt-Button
         if (Events.isRestartWindowVisible)
         {
             boolean gameOver;
             gameOver = Events.money <= Events.repairFee(helicopter, helicopter.isDamaged) || Events.level >= 51;
-            paintRestartWindow(g2d, helicopter, gameOver);
+            paintRestartWindow(g2d, graphics2DAdapter, helicopter, gameOver);
         } else
         {
             if (helicopter.isOnTheGround())
             {
                 Window.buttons.get(GroundButtonType.REPAIR_SHOP)
-                              .paint(g2d);
+                              .paint(g2d, graphics2DAdapter);
                 Window.buttons.get(GroundButtonType.MAIN_MENU)
-                              .paint(g2d);
+                              .paint(g2d, graphics2DAdapter);
             }
             if (Window.isMenuVisible)
             {
-                paintInGameMenu(g2d);
+                paintInGameMenu(g2d, graphics2DAdapter);
             }
         }
     }
     
-    private void paintRestartWindow(Graphics2D g2d,
+    private void paintRestartWindow(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter,
                                     Helicopter helicopter,
                                     boolean gameOver)
     {
@@ -316,10 +317,10 @@ public class GameWindowPainter extends WindowPainter
         }
         Button newGameButton2 = Window.buttons.get(MainMenuButtonType.NEW_GAME_2);
         newGameButton2.setPrimaryLabel(Window.dictionary.messageAfterCrash(gameOver));
-        newGameButton2.paint(g2d);
+        newGameButton2.paint(g2d, graphics2DAdapter);
     }
     
-    private void paintInGameMenu(Graphics2D g2d)
+    private void paintInGameMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         GraphicalEntities.paintFrame(g2d, 363, 77, 256, 231, Colorations.golden);
         g2d.setColor(Colorations.red);
@@ -328,37 +329,37 @@ public class GameWindowPainter extends WindowPainter
         
         MainMenuButtonType.getValues()
                           .forEach(buttonType -> Window.buttons.get(buttonType)
-                                                               .paint(g2d));
+                                                               .paint(g2d, graphics2DAdapter));
     }
     
     /**
      * Background Display
      **/
-    private void paintBackgroundDisplays(Graphics2D g2d)
+    private void paintBackgroundDisplays(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         updateDependencies();
         if (helicopter.isOnTheGround() || Window.levelDisplayTimer.isActive())
         {
-            paintLevelDisplay(g2d);
+            paintLevelDisplay(g2d, graphics2DAdapter);
         }
         if (Events.commendationTimer > 0)
         {
-            paintPraiseDisplay(g2d);
+            paintPraiseDisplay(g2d, graphics2DAdapter);
         }
         if (Window.moneyDisplayTimer != Timer.DISABLED
             || helicopter.isDamaged
             || (helicopter.isOnTheGround()
             && !Events.isRestartWindowVisible))
         {
-            paintCreditDisplay(g2d);
+            paintCreditDisplay(g2d, graphics2DAdapter);
         }
         if (Window.specialInfoSelection != 0)
         {
-            paintSpecialInfoDisplay(g2d);
+            paintSpecialInfoDisplay(g2d, graphics2DAdapter);
         }
     }
     
-    private static void paintLevelDisplay(Graphics2D g2d)
+    private static void paintLevelDisplay(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         if (Events.timeOfDay == NIGHT)
         {
@@ -384,7 +385,7 @@ public class GameWindowPainter extends WindowPainter
         g2d.drawString(levelString, (981 - sw) / 2, 55);
     }
     
-    private static void paintPraiseDisplay(Graphics2D g2d)
+    private static void paintPraiseDisplay(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         if (Events.timeOfDay == NIGHT)
         {
@@ -402,7 +403,7 @@ public class GameWindowPainter extends WindowPainter
         g2d.drawString(multiKillType.getDesignation(), (981 - sw) / 2, 130);
     }
     
-    private static void paintCreditDisplay(Graphics2D g2d)
+    private static void paintCreditDisplay(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         if (Events.timeOfDay == NIGHT)
         {
@@ -449,7 +450,7 @@ public class GameWindowPainter extends WindowPainter
         }
     }
     
-    private static void paintSpecialInfoDisplay(Graphics2D g2d)
+    private static void paintSpecialInfoDisplay(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         g2d.setColor(Colorations.red);
         g2d.setFont(fontProvider.getPlain(22));

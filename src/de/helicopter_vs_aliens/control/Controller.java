@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityRecycler;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -14,7 +15,6 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -104,7 +104,11 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public EnumMap<CollectionSubgroupType, LinkedList<PowerUp>>
 		powerUps = new EnumMap<>(CollectionSubgroupType.class);
 
-	Graphics2D offGraphics;
+	Graphics2D
+		offGraphics;
+	
+	Graphics2DAdapter
+		graphics2DAdapter;
 
 	private Thread
 		animator;
@@ -134,8 +138,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		Dimension offDimension = getSize();
 		this.wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
 		this.offImage = createImage((int) offDimension.getWidth(), (int) offDimension.getHeight());
-		this.offGraphics = (Graphics2D) this.offImage.getGraphics();		
-		this.offGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);		
+		
+		this.offGraphics = (Graphics2D) this.offImage.getGraphics();
+	    this.offGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		this.offGraphics.fill(this.wholeScreenClip);
 		
 		Shape offscreenClip = new Rectangle2D.Double(0,
@@ -143,7 +148,8 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 													 Main.VIRTUAL_DIMENSION.getWidth(),
 													 Main.VIRTUAL_DIMENSION.getHeight());
 		this.offGraphics.setClip(offscreenClip);
-						
+		this.graphics2DAdapter = new Graphics2DAdapter(this.offGraphics);
+		
 		add(Window.label);
 		addKeyListener(this);
 		addMouseListener(this);
@@ -211,20 +217,29 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	protected void paintComponent(Graphics g)
 	{
 		Graphics2D g2d = (Graphics2D) g;
+		Graphics2DAdapter graphics2DAdapter = new Graphics2DAdapter(g2d);
 		if(this.offGraphics != null)
-		{			
-			if(this.frameSkipStatus == FrameSkipStatusType.INACTIVE){
-				this.frameSkipStatus = FrameSkipStatusType.DISABLED;}
+		{
+			if (this.frameSkipStatus == FrameSkipStatusType.INACTIVE)
+			{
+				this.frameSkipStatus = FrameSkipStatusType.DISABLED;
+			}
 			else
-			{					
-				if(this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED){this.repaintBackground(g2d);}
-				g.drawImage(this.offImage, 
+			{
+				if (this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED)
+				{
+					this.clearBackground(g2d);
+				}
+				g2d.drawImage(this.offImage,
 							Main.displayShift.width, // 0
 							Main.displayShift.height, // 0
 							null);
 			}
 			
-			if(Main.isFullScreen || this.mouseInWindow){updateGame();}
+			if (Main.isFullScreen || this.mouseInWindow)
+			{
+				updateGame();
+			}
 			
 			if(this.frameSkipStatus == FrameSkipStatusType.ACTIVE)
 			{
@@ -234,20 +249,26 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			{
 				this.offGraphics.setColor(Colorations.bg);
 				this.offGraphics.fill(this.wholeScreenClip);	
-				paintFrame(this.offGraphics);
+				paintFrame(this.offGraphics, graphics2DAdapter);
 			}			
 		}
 	}
 	
-	private void repaintBackground(Graphics2D g2d)
+	private void clearBackground(Graphics2D g2d)
 	{
-		if(backgroundRepaintTimer > 1){backgroundRepaintTimer = Timer.DISABLED;}
-		else backgroundRepaintTimer++;
+		if (backgroundRepaintTimer > 1)
+		{
+			backgroundRepaintTimer = Timer.DISABLED;
+		}
+		else
+		{
+			backgroundRepaintTimer++;
+		}
 		g2d.setColor(Color.black);
-		g2d.fillRect(	0,
-			0,
-			Main.currentDisplayMode.getWidth(),
-			Main.currentDisplayMode.getHeight());
+		g2d.fillRect(0,
+					 0,
+					 Main.currentDisplayMode.getWidth(),
+					 Main.currentDisplayMode.getHeight());
 	}
 	
 	private void updateGame()
@@ -282,11 +303,10 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		}
 	}
 	
-	private void paintFrame(Graphics g)
+	private void paintFrame(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
 	{
-		Graphics2D g2d = (Graphics2D) g;
-		GraphicsManager.getInstance().setGraphics2D(g2d);
-		windowManager.paintWindow(g2d);
+		GraphicsManager.getInstance().setGraphics(g2d, graphics2DAdapter);
+		windowManager.paintWindow(g2d, graphics2DAdapter);
 	}
 	
 	private void calculateFps()

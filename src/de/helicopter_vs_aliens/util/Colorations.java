@@ -14,7 +14,7 @@ import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 
 public final class Colorations
 {
-	// alle Farben, die sich nicht ändern, sollten final sein, alle final colors sollten in in Upper-Snake-Case
+	// alle Farben, die sich nicht ändern, sollten final sein, alle final colors sollten in Upper-Snake-Case
 	public static final int 
 		FRAME = 3,
 		NOZZLE = 4,
@@ -32,7 +32,7 @@ public final class Colorations
         randomSunlightBlue = 190;	// Blauanteil der Lichtfarbe
     
 	private static boolean
-		lighter = false;			// bestimmt ob die Lichtfarbe (variableLight) heller oder dunkler wird
+		lighter = false;			// bestimmt, ob die Lichtfarbe (variableLight) heller oder dunkler wird
        	
 	// variable Farben
 	public static Color 
@@ -40,18 +40,18 @@ public final class Colorations
 		variableGreen,			// zur Darstellung von Unzerstörbarkeit (Gegner und Helikopter)
 		variableRed,			// Färbung der Helikopter-Scheiben, wenn Bonus-Feuerkraft oder - Feuerrate-PowerUp aktiv
 		variableBlue,			// nur Orochi-Klasse: Bordkanonenfarbe, wenn Stopp-Rakete aktiviert
-		variableYellow,			// zentrale Schrift auf dem Startscreen
+		variableYellow,			// zentrale Schrift auf dem StartScreen
 		variableMarkedButton,	// Schriftfarbe markierter Buttons (marked = true) 
 		randomLight,			// Farbe der Sonne und der Scheinwerfer bei Nacht
 		variableWhite,			// Rahmenfarbe markierter Buttons (marked = true); 
 		plating;				// Schriftfarbe für Angabe der Panzerung in der Werkstatt
 		
 	public static GradientPaint
-		gradientVariableWhite;    // Schriftfarbe der Überschriften (Startscreen, Scorescreen, Werkstatt)
-    	public static GradientPaint gradientVariableGray;	// Button-Hintergrundfarbe für hervorgehobene (higlighted = true) Buttons
+		gradientVariableWhite;    // Schriftfarbe der Überschriften (StartScreen, ScoreScreen, Werkstatt)
+    	public static GradientPaint gradientVariableGray;	// Button-Hintergrundfarbe für hervorgehobene (highlighted = true) Buttons
 	
 	public static Color[]
-		scorescreen = new Color[4];
+		scoreScreen = new Color[4];
 	
 	// konstante Farben
 	public static final Color
@@ -62,7 +62,7 @@ public final class Colorations
 		cloakedBossEye = new Color(MAX_VALUE, 180, 180),
 		darkBlue = new Color (0, 0, 80),		 
 		green = new Color (65,205,140),
-		hitpoints = new Color (80, 190, 140),	
+		hitPoints = new Color (80, 190, 140),
 		arrowGreen = new Color (0, 170, 0),
 		darkArrowGreen = new Color (0, 100, 0),
 		darkYellow = new Color (120, 120, 0),	
@@ -90,22 +90,21 @@ public final class Colorations
 		INACTIVE_NOZZLE = new Color(MAX_VALUE, 192, 129),
 		HS_GREEN = new Color(130, MAX_VALUE, 130),
 		HS_RED = new Color(MAX_VALUE, 130, 130),
-		MONEY_DISPLAY_NIGHT_RED = new Color (MAX_VALUE, 165, 120),
-		
+		MONEY_DISPLAY_NIGHT_RED = new Color (MAX_VALUE, 165, 120);
 	
-		// Helikopterfarben und tageszeitabhängie Standardfarben
-		cloud[] = {Color.DARK_GRAY, Color.white},
-		radiation[] = 	{ new Color(MAX_VALUE, 200, 200, 60), 
-		              	  new Color(MAX_VALUE, 200, 200, 90)},
-		enhancedRadiation[] = { new Color(MAX_VALUE, 200, 200, 120),
-		                        new Color(MAX_VALUE, 200, 200, 210)},
-		shieldColor[] = { new Color(157, 220, MAX_VALUE, 80), 
-	                      new Color(0, 0, MAX_VALUE, 40)},
-
-	    sand[] =   {dimColor(new Color(200,185,120), NIGHT_DIM_FACTOR), 
-	                     	  	     new Color(200,185,120)},    
-	    stones[] = {dimColor(new Color(155,160,125), NIGHT_DIM_FACTOR),
-	                     			 new Color(155,160,125)};                                    
+	public static final Color[]
+		// Helikopter-Farben und tageszeit-abhängige Standardfarben
+		cloud = {Color.DARK_GRAY, Color.white},
+		radiation = { new Color(MAX_VALUE, 200, 200, 60),
+		              new Color(MAX_VALUE, 200, 200, 90)},
+		enhancedRadiation = { new Color(MAX_VALUE, 200, 200, 120),
+		                      new Color(MAX_VALUE, 200, 200, 210)},
+		shieldColor = { new Color(157, 220, MAX_VALUE, 80),
+	                    new Color(0, 0, MAX_VALUE, 40)},
+	    sand =   {dimColor( new Color(200,185,120), NIGHT_DIM_FACTOR),
+			 			    new Color(200,185,120)},
+	    stones = {dimColor( new Color(155,160,125), NIGHT_DIM_FACTOR),
+			                new Color(155,160,125)};
 	
 	public static final Color [][]
 	    myGreen = {{dimColor(new Color(65,205,140), NIGHT_DIM_FACTOR),
@@ -130,7 +129,7 @@ public final class Colorations
 	public static final GradientPaint
         cannonHoleGreen = new GradientPaint(0, 0, darkArrowGreen, 0, 0, darkArrowGreen);
     
-	// tagezeitabhängige Gradienten-Farben für Hintergrundobjekte
+	// tageszeit-abhängige Gradienten-Farben für Hintergrundobjekte
     public static final GradientPaint []
     	gradientGround = { new GradientPaint( 0,  28, dimColor(ground, NIGHT_DIM_FACTOR), 
     										  0,  42, dimColor(ground, NIGHT_DIM_FACTOR * 0.75f), true),
@@ -245,12 +244,12 @@ public final class Colorations
 		}		
 	}
     
-    public static void updateScorescreenColors(Helicopter helicopter)
+    public static void updateScoreScreenColors(Helicopter helicopter)
     {       
-    	scorescreen[0] = percentColor(Events.bonusIncomePercentage());
-    	scorescreen[1] = percentColor(Calculations.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
-    	scorescreen[2] = percentColor(Calculations.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
-    	scorescreen[3] = percentColor(Calculations.percentage(helicopter.hitCounter, helicopter.missileCounter));
+    	scoreScreen[0] = percentColor(Events.bonusIncomePercentage());
+    	scoreScreen[1] = percentColor(Calculations.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
+    	scoreScreen[2] = percentColor(Calculations.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
+    	scoreScreen[3] = percentColor(Calculations.percentage(helicopter.hitCounter, helicopter.missileCounter));
     }
     
     static Color percentColor(int percentage){return percentColor(((float)percentage)/100);}

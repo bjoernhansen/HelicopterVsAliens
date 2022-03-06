@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -15,9 +16,9 @@ import static de.helicopter_vs_aliens.control.Events.MAXIMUM_LEVEL;
 public class HighScoreWindowPainter extends StartScreenMenuWindowPainter
 {
     @Override
-    void paintStartScreenMenu(Graphics2D g2d)
+    void paintStartScreenMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
-        super.paintStartScreenMenu(g2d);
+        super.paintStartScreenMenu(g2d, graphics2DAdapter);
         
         if(Window.page == StartScreenSubButtonType.BUTTON_1)
         {
@@ -63,7 +64,7 @@ public class HighScoreWindowPainter extends StartScreenMenuWindowPainter
         {
             if(Window.page.ordinal() > 1 && Window.page.ordinal() < 2 + HelicopterType.size())
             {
-                paintHelicopterInStartScreenMenu(g2d);
+                paintHelicopterInStartScreenMenu(g2d, graphics2DAdapter);
             }
         
             int columnDistance = 114,

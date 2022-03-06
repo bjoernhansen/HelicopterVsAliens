@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.WindowPainter;
@@ -19,13 +20,13 @@ import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 public class StartScreenMenuWindowPainter extends WindowPainter
 {
     @Override
-    public void paint(Graphics2D g2d, Window window)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Window window)
     {
-        super.paint(g2d, window);
-        paintStartScreenMenu(g2d);
+        super.paint(g2d, graphics2DAdapter, window);
+        paintStartScreenMenu(g2d, graphics2DAdapter);
     }
     
-    void paintStartScreenMenu(Graphics2D g2d)
+    void paintStartScreenMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         g2d.setColor(Color.white);
         g2d.setFont(fontProvider.getPlain(29));
@@ -40,10 +41,10 @@ public class StartScreenMenuWindowPainter extends WindowPainter
         {
             StartScreenSubButtonType.getValues()
                                     .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)
-                                                                              .paint(g2d));
+                                                                              .paint(g2d, graphics2DAdapter));
         }
         Window.buttons.get(StartScreenSubCancelButtonType.CANCEL)
-                      .paint(g2d);
+                      .paint(g2d, graphics2DAdapter);
     }
     
     String getHeadline()
@@ -56,10 +57,10 @@ public class StartScreenMenuWindowPainter extends WindowPainter
         return !Window.buttons.get(StartScreenSubButtonType.BUTTON_2).isVisible();
     }
     
-    void paintHelicopterInStartScreenMenu(Graphics2D g2d)
+    void paintHelicopterInStartScreenMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         Helicopter startScreenSubHelicopter = Window.helicopterDummies.get(HelicopterType.getValues().get(Window.page.ordinal()-2));
         HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(startScreenSubHelicopter.getClass());
-        helicopterPainter.startScreenSubPaint(g2d, startScreenSubHelicopter);
+        helicopterPainter.startScreenSubPaint(g2d, graphics2DAdapter, startScreenSubHelicopter);
     }
 }

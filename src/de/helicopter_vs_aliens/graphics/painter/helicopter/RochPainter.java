@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -13,10 +14,10 @@ import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 public class RochPainter extends HelicopterPainter
 {
     @Override
-    void paintComponents(Graphics2D g2d, int left, int top)
+    void paintComponents(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         Roch roch = (Roch) helicopter;
-        super.paintComponents(g2d, left, top);
+        super.paintComponents(g2d, graphics2DAdapter, left, top);
         if(roch.isPowerShieldActivated())
         {
             this.paintPowerShield(g2d, left, top);

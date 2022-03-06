@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.graphics.painter;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -41,7 +42,7 @@ public class EnemyPainter extends Painter<Enemy>
     
     
     @Override
-    public void paint(Graphics2D g2d, Enemy enemy)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Enemy enemy)
     {
         setEnemy(enemy);
         Helicopter helicopter = Controller.getInstance().getHelicopter();

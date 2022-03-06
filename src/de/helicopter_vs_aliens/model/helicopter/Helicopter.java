@@ -191,13 +191,7 @@ public abstract class Helicopter extends RectangularGameEntity
     {
     	this.paintBounds.setSize(HELICOPTER_SIZE);
     }
-    
-    @Override
-	public void paint(Graphics2D g2d)
-    {
-		GraphicsManager.getInstance().paint(this);
-    }
-
+	
 	public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
 					   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
@@ -252,10 +246,10 @@ public abstract class Helicopter extends RectangularGameEntity
     			&& !this.isOnTheGround()
     			&&  this.fireRateTimer >= this.timeBetweenTwoShots;
 	}
-
-	// TODO Code Duplizierungen auflösen
+	
 	void shoot(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles)
 	{
+		// TODO Code Duplizierungen auflösen
     	if(this.hasPiercingWarheads){Audio.play(Audio.launch2);}
 		else{Audio.play(Audio.launch1);}
 		this.fireRateTimer = 0;

@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 public class ExplosionPainter extends Painter<Explosion>
 {
     @Override
-    public void paint(Graphics2D g2d, Explosion explosion)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Explosion explosion)
     {
         g2d.setPaint(explosion.getColor());
         g2d.setStroke(new BasicStroke((int)(1+(explosion.getBroadness()-1)*(1-explosion.getProgress()[0]))));

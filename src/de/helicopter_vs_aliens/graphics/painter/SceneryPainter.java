@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -16,7 +17,7 @@ public class SceneryPainter extends Painter<Scenery>
     private Scenery scenery;
     
     @Override
-    public void paint(Graphics2D g2d, Scenery scenery)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Scenery scenery)
     {
         setScenery(scenery);
         paintSunOrMoon(g2d);
@@ -25,7 +26,7 @@ public class SceneryPainter extends Painter<Scenery>
             paintStars(g2d);
         }
         paintCloud(g2d);
-        paintAllBackgroundSceneryObjects(g2d);
+        paintAllBackgroundSceneryObjects(g2d, graphics2DAdapter);
     }
     
     private void setScenery(Scenery scenery)
@@ -67,12 +68,12 @@ public class SceneryPainter extends Painter<Scenery>
         g2d.setStroke(new BasicStroke(1));
     }
     
-    private void paintAllBackgroundSceneryObjects(Graphics2D g2d)
+    private void paintAllBackgroundSceneryObjects(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         scenery.getSceneryObjects()
                .get(ACTIVE)
                .stream()
                .filter(SceneryObject::isInBackground)
-               .forEach(sceneryObject -> sceneryObject.paint(g2d));
+               .forEach(sceneryObject -> sceneryObject.paint(g2d, graphics2DAdapter));
     }
 }

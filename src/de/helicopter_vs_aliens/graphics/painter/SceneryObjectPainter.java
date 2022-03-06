@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -17,7 +18,7 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         PALM_CROWN_IMG = paintPalmCrownImage();
     
     @Override
-    public void paint(Graphics2D g2d, SceneryObject sceneryObject)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, SceneryObject sceneryObject)
     {
         // Kaktus
         if(sceneryObject.type == CACTUS)

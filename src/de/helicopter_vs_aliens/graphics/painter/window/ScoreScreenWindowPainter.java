@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -24,16 +25,16 @@ public class ScoreScreenWindowPainter extends WindowPainter
         Y_POS = 129;
     
     @Override
-    public void paint(Graphics2D g2d, Window window)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Window window)
     {
-        super.paint(g2d, window);
-        paintScoreScreen(g2d, helicopter);
+        super.paint(g2d, graphics2DAdapter, window);
+        paintScoreScreen(g2d, graphics2DAdapter, helicopter);
     }
     
-    private static void paintScoreScreen(Graphics2D g2d, Helicopter helicopter)
+    private static void paintScoreScreen(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter)
     {
         // Helikopter-Anzeige
-        paintHelicopterDisplay(g2d, helicopter, 0, 5);
+        paintHelicopterDisplay(g2d, graphics2DAdapter, helicopter, 0, 5);
         
         g2d.setPaint(Colorations.gradientVariableWhite);
         g2d.setFont(fontProvider.getPlain(60));
@@ -46,7 +47,7 @@ public class ScoreScreenWindowPainter extends WindowPainter
         GraphicalEntities.paintFrame(g2d, 297, 90, 250, 200);
         
         
-        Window.buttons.get(StartScreenSubCancelButtonType.CANCEL).paint(g2d);
+        Window.buttons.get(StartScreenSubCancelButtonType.CANCEL).paint(g2d, graphics2DAdapter);
         
         if(Events.level > MAXIMUM_LEVEL)
         {
@@ -103,19 +104,19 @@ public class ScoreScreenWindowPainter extends WindowPainter
             X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 3 + 11);
         
         int percentage = Events.bonusIncomePercentage();
-        g2d.setColor(Colorations.scorescreen[0]);
+        g2d.setColor(Colorations.scoreScreen[0]);
         g2d.drawString((Window.language == ENGLISH ? "Additional income due to extra boni: " : "Zusätzliche Einnahmen durch Extra-Boni: +") + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 5);
         
         percentage = Calculations.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen);
-        g2d.setColor(Colorations.scorescreen[1]);
+        g2d.setColor(Colorations.scoreScreen[1]);
         g2d.drawString((Window.language == ENGLISH ? "Defeated enemies: " : "Besiegte Gegner: ") + helicopter.numberOfEnemiesKilled + (Window.language == ENGLISH ? " of " : " von ") + helicopter.numberOfEnemiesSeen + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 6);
         
         percentage = Calculations.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen);
-        g2d.setColor(Colorations.scorescreen[2]);
+        g2d.setColor(Colorations.scoreScreen[2]);
         g2d.drawString((Window.language == ENGLISH ? "Defeated mini-bosses: " : "Besiegte Mini-Bosse: ") + helicopter.numberOfMiniBossKilled + (Window.language == ENGLISH ? " of " : " von ") + helicopter.numberOfMiniBossSeen + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 7);
         
         percentage = (Calculations.percentage(helicopter.hitCounter, helicopter.missileCounter));
-        g2d.setColor(Colorations.scorescreen[3]);
+        g2d.setColor(Colorations.scoreScreen[3]);
         g2d.drawString((Window.language == ENGLISH ? "Hit rate: " : "Raketen-Trefferquote: ") + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 8); //Zielsicherheit
     }
 }

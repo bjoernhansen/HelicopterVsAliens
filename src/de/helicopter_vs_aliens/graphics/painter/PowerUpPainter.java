@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -11,7 +12,7 @@ import java.awt.Graphics2D;
 public class PowerUpPainter extends Painter<PowerUp>
 {
     @Override
-    public void paint(Graphics2D g2d, PowerUp powerUp)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, PowerUp powerUp)
     {
         paint(g2d, powerUp, powerUp.getPaintBounds().x);
     }

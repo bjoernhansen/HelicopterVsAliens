@@ -24,7 +24,6 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.score.HighScoreEntry;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -469,7 +468,7 @@ public class Events
 				helicopter.isDamaged = false;
                 savegame.becomeValid();
 				savegame.saveToFile(helicopter);
-				Colorations.updateScorescreenColors(helicopter);
+				Colorations.updateScoreScreenColors(helicopter);
 			}
 			else{enterRepairShop(helicopter);}
 		}

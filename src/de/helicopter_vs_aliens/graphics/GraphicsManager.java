@@ -33,6 +33,9 @@ public class GraphicsManager
     private Graphics2D
         graphics2D;
     
+    private Graphics2DAdapter
+        graphics2DAdapter;
+    
     private static final GraphicsManager
         instance = new GraphicsManager();
     
@@ -68,7 +71,7 @@ public class GraphicsManager
     public <E extends Paintable> void paint(E gameEntity)
     {
         Painter<E> painter = getPainter(gameEntity.getClass());
-        painter.paint(graphics2D, gameEntity);
+        painter.paint(graphics2D, graphics2DAdapter, gameEntity);
     }
     
     public <E extends Painter<? extends Paintable>> E getPainter(Class<? extends Paintable> classOfGameEntity)
@@ -76,8 +79,9 @@ public class GraphicsManager
         return (E) painters.get(classOfGameEntity);
     }
 
-    public void setGraphics2D(Graphics2D graphics2D)
+    public void setGraphics(Graphics2D graphics2D, Graphics2DAdapter graphics2DAdapter)
     {
         this.graphics2D = graphics2D;
+        this.graphics2DAdapter = graphics2DAdapter;
     }
 }

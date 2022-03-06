@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
@@ -14,7 +15,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 
@@ -29,13 +29,13 @@ public class StartScreenWindowPainter extends WindowPainter
         CROSS_MAX_DISPLAY_TIME = 60; // Maximale Anzeigezeit des Block-Kreuzes (StartScreen)
     
     @Override
-    public void paint(Graphics2D g2d, Window window)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Window window)
     {
-        super.paint(g2d, window);
-        paintStartScreen(g2d, helicopter);
+        super.paint(g2d, graphics2DAdapter, window);
+        paintStartScreen(g2d, graphics2DAdapter, helicopter);
     }
     
-    private static void paintStartScreen(Graphics2D g2d, Helicopter helicopter)
+    private static void paintStartScreen(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter)
     {
         g2d.setPaint(Colorations.gradientVariableWhite);
         g2d.setFont(fontProvider.getPlain(80));
@@ -102,7 +102,7 @@ public class StartScreenWindowPainter extends WindowPainter
                                                                                               .get((Window.helicopterSelection + i) % HelicopterType.size()));
             HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(nextStartScreenHelicopter.getClass());
             helicopterPainter.startScreenPaint(
-                g2d,
+                g2d, graphics2DAdapter,
                 nextStartScreenHelicopter,
                 HELICOPTER_START_SCREEN_OFFSET.x + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
                 HELICOPTER_START_SCREEN_OFFSET.y + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
@@ -120,7 +120,7 @@ public class StartScreenWindowPainter extends WindowPainter
         
         // die Buttons
         StartScreenButtonType.getValues()
-                             .forEach(buttonType -> Window.buttons.get(buttonType).paint(g2d));
+                             .forEach(buttonType -> Window.buttons.get(buttonType).paint(g2d, graphics2DAdapter));
         
         // die grünen Pfeile
         for(int i = 0; i < 2; i++)

@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 public class EnemyMissilePainter extends Painter<EnemyMissile>
 {
     @Override
-    public void paint(Graphics2D g2d, EnemyMissile enemyMissile)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, EnemyMissile enemyMissile)
     {
         g2d.setColor(enemyMissile.getVariableColor());
         g2d.fillOval((int)enemyMissile.getLocation().getX(),

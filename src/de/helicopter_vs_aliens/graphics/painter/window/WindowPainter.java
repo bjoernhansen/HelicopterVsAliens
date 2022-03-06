@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
@@ -41,7 +42,7 @@ public abstract class WindowPainter extends Painter<Window>
     }
     
     @Override
-    public void paint(Graphics2D g2d, Window window)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Window window)
     {
         updateDependencies();
     }
@@ -59,7 +60,7 @@ public abstract class WindowPainter extends Painter<Window>
         else return 789;
     }
     
-    protected static void paintHelicopterDisplay(Graphics2D g2d,
+    protected static void paintHelicopterDisplay(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter,
                                                Helicopter helicopter,
                                                int x, int y)
     {
@@ -70,7 +71,7 @@ public abstract class WindowPainter extends Painter<Window>
         g2d.drawString(typeName, 28 + x + (196-g2d.getFontMetrics().stringWidth(typeName))/2, 113 + y);
         
         HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(helicopter.getClass());
-        helicopterPainter.displayPaint(g2d, helicopter, 59 + x, 141 + y);
+        helicopterPainter.displayPaint(g2d, graphics2DAdapter, helicopter, 59 + x, 141 + y);
     
         GraphicalEntities.paintFrameLine(g2d, 28 + x, 126 + y, 196);
         GraphicalEntities.paintFrameLine(g2d, 28 + x, 226 + y, 196);

@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.model.helicopter.Orochi;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -20,9 +21,9 @@ public class OrochiPainter extends HelicopterPainter
     }
     
     @Override
-    void paintCannons(Graphics2D g2d, int left, int top)
+    void paintCannons(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
-        super.paintCannons(g2d, left, top);
+        super.paintCannons(g2d, graphics2DAdapter, left, top);
         if (helicopter.numberOfCannons == 3)
         {
             g2d.setPaint(this.getGradientCannon2and3());

@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
@@ -20,9 +21,9 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
         POSITION = new Point(52, 120);
     
     @Override
-    void paintStartScreenMenu(Graphics2D g2d)
+    void paintStartScreenMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
-        super.paintStartScreenMenu(g2d);
+        super.paintStartScreenMenu(g2d, graphics2DAdapter);
     
         if(Window.page == StartScreenSubButtonType.BUTTON_6)
         {

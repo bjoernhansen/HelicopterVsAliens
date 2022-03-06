@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -14,7 +15,7 @@ public class ButtonPainter extends Painter<Button>
         SECONDARY_LABEL_OFFSET_Y = 40;
         
     @Override
-    public void paint(Graphics2D g2d, Button button)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Button button)
     {
         if(button.isVisible())
         {

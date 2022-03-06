@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
@@ -46,25 +47,25 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     Helicopter helicopter;
     
     @Override
-    public void paint(Graphics2D g2d, Helicopter helicopter)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter)
     {
-        paint(g2d, helicopter, helicopter.getPaintBounds().x, helicopter.getPaintBounds().y);
+        paint(g2d, graphics2DAdapter, helicopter, helicopter.getPaintBounds().x, helicopter.getPaintBounds().y);
     }
     
-    private void paint(Graphics2D g2d, Helicopter helicopter, int left, int top)
+    private void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter, int left, int top)
     {
         this.helicopter = helicopter;
         
         this.determineColors(left, top);
-        this.paintComponents(g2d, left, top);
+        this.paintComponents(g2d, graphics2DAdapter, left, top);
         
         if (SHOW_RED_FRAME)
         {
-            paintRedFrame(g2d);
+            paintRedFrame(g2d, graphics2DAdapter);
         }
     }
     
-    private void paintRedFrame(Graphics2D g2d)
+    private void paintRedFrame(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
     {
         g2d.setColor(Color.red);
         g2d.draw(helicopter.getBounds());
@@ -77,18 +78,18 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
         this.determineGradientColors(left, top);
     }
     
-    void paintComponents(Graphics2D g2d, int left, int top)
+    void paintComponents(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
-        this.paintRotorHead(g2d, left, top);
-        this.paintSkids(g2d, left, top);
-        this.paintHull(g2d, left, top);
-        this.paintCannons(g2d, left, top);
-        this.paintSpotlights(g2d, left, top);
-        this.paintMainRotor(g2d, left, top);
-        this.paintTailRotor(g2d, left, top);
+        this.paintRotorHead(g2d, graphics2DAdapter, left, top);
+        this.paintSkids(g2d, graphics2DAdapter, left, top);
+        this.paintHull(g2d, graphics2DAdapter, left, top);
+        this.paintCannons(g2d, graphics2DAdapter, left, top);
+        this.paintSpotlights(g2d, graphics2DAdapter, left, top);
+        this.paintMainRotor(g2d, graphics2DAdapter, left, top);
+        this.paintTailRotor(g2d, graphics2DAdapter, left, top);
     }
     
-    private void paintRotorHead(Graphics2D g2d, int left, int top)
+    private void paintRotorHead(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         g2d.setColor(this.inputLightGray);
         g2d.setStroke(new BasicStroke(2));
@@ -100,7 +101,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
         return helicopter.isMovingLeft && WindowManager.window == GAME;
     }
     
-    private void paintSkids(Graphics2D g2d, int left, int top)
+    private void paintSkids(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         g2d.setPaint(this.gradientFuss2);
         g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 25 : 54), top+70, 43, 5, 5, 5);
@@ -111,7 +112,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
         g2d.setStroke(new BasicStroke(1));
     }
     
-    private void paintHull(Graphics2D g2d, int left, int top)
+    private void paintHull(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         g2d.setPaint(this.gradientHull);
         g2d.fillOval(left+(this.hasLeftMovingAppearance() ?  2 : 45), top+29, 75, 34);
@@ -121,7 +122,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
         g2d.fillArc (left+(this.hasLeftMovingAppearance() ?  1 : 69), top+33, 52, 22, (this.hasLeftMovingAppearance() ? 75 : -15), 120);
     }
     
-    private void paintSpotlights(Graphics2D g2d, int left, int top)
+    private void paintSpotlights(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         if(helicopter.hasSpotlights)
         {
@@ -137,7 +138,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
         }
     }
     
-    void paintCannons(Graphics2D g2d, int left, int top)
+    void paintCannons(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         g2d.setPaint(this.gradientCannon1);
         g2d.fillRoundRect(left+(this.hasLeftMovingAppearance() ? 26 : 53), top+52, 43, 13, 12, 12);
@@ -206,7 +207,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
             : Colorations.windowBlue;
     }
     
-    private void paintMainRotor(Graphics2D g2d, int left, int top)
+    private void paintMainRotor(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         paintRotor(g2d,
             this.inputGray,
@@ -219,7 +220,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
             false);
     }
     
-    private void paintTailRotor(Graphics2D g2d, int left, int top)
+    private void paintTailRotor(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
     {
         paintRotor(g2d,
             this.inputGray,
@@ -233,23 +234,23 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     }
     
     // TODO gehört in einen MenuPainter
-    public void displayPaint(Graphics2D g2d, Helicopter helicopter, int left, int top)
+    public void displayPaint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter, int left, int top)
     {
-        this.paint(g2d, helicopter, left, top);
+        this.paint(g2d, graphics2DAdapter, helicopter, left, top);
     }
     
     
     // TODO gehört in einen MenuPainter
-    public void startScreenSubPaint(Graphics2D g2d, Helicopter helicopter)
+    public void startScreenSubPaint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter)
     {
         helicopter.rotatePropellerSlow();
-        this.paint(g2d, helicopter, HELICOPTER_MENU_PAINT_POS.x, HELICOPTER_MENU_PAINT_POS.y);
+        this.paint(g2d, graphics2DAdapter, helicopter, HELICOPTER_MENU_PAINT_POS.x, HELICOPTER_MENU_PAINT_POS.y);
     }
     
     // TODO gehört in einen MenuPainter
-    public void startScreenPaint(Graphics2D g2d, Helicopter helicopter, int left, int top)
+    public void startScreenPaint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter, int left, int top)
     {
-        this.paint(g2d, helicopter, left, top);
+        this.paint(g2d, graphics2DAdapter, helicopter, left, top);
         if(Events.recordTime[helicopter.getType().ordinal()][4] > 0 && WindowManager.window == START_SCREEN)
         {
             g2d.setFont(Window.fontProvider.getBold(12));

@@ -404,12 +404,6 @@ public class Enemy extends RectangularGameEntity
 		repaint();
 	}
 	
-	@Override
-	public void paint(Graphics2D g2d)
-	{
-		GraphicsManager.getInstance().paint(this);
-	}
-	
 	public boolean hasGlowingEyes()
 	{
 		return  !this.isDestroyed

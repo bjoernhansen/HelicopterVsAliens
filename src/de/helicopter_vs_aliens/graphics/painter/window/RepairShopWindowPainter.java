@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.gui.button.LeftSideRepairShopButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
@@ -35,13 +36,13 @@ public class RepairShopWindowPainter extends WindowPainter
         SPECIAL_UPGRADE_OFFSET_Y = 328;                 // y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
         
     @Override
-    public void paint(Graphics2D g2d, Window window)
+    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Window window)
     {
-        super.paint(g2d, window);
-        paintRepairShop(g2d, helicopter);
+        super.paint(g2d, graphics2DAdapter, window);
+        paintRepairShop(g2d, graphics2DAdapter, helicopter);
     }
     
-    private static void paintRepairShop(Graphics2D g2d, Helicopter helicopter)
+    private static void paintRepairShop(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter)
     {
         // allgemeine Anzeigen
         g2d.setPaint(Colorations.gradientVariableWhite);
@@ -56,17 +57,17 @@ public class RepairShopWindowPainter extends WindowPainter
         g2d.drawString(String.format("%s: %s", Window.dictionary.playingTime(), Window.repairShopTime), 27, 75);
         
         // Helicopter-Anzeige
-        paintHelicopterDisplay(g2d, helicopter, 0, 10); //58
+        paintHelicopterDisplay(g2d, graphics2DAdapter, helicopter, 0, 10); //58
         
         // Reparatur-Button
-        Window.buttons.get(LeftSideRepairShopButtonType.REPAIR).paint(g2d);
+        Window.buttons.get(LeftSideRepairShopButtonType.REPAIR).paint(g2d, graphics2DAdapter);
         
         // Die Einsätze
         g2d.setColor(Color.yellow);
         g2d.setFont(fontProvider.getBold(20));
         g2d.drawString(Window.dictionary.headlineMission(), 27, 382);
         
-        Window.buttons.get(LeftSideRepairShopButtonType.MISSION).paint(g2d);
+        Window.buttons.get(LeftSideRepairShopButtonType.MISSION).paint(g2d, graphics2DAdapter);
         
         // Die Status-Leiste
         GraphicalEntities.paintFrame(g2d, 251, 117, 285, 326);
@@ -165,7 +166,7 @@ public class RepairShopWindowPainter extends WindowPainter
         
         StandardUpgradeButtonType.getValues()
                                  .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)
-                                                                           .paint(g2d));
+                                                                           .paint(g2d, graphics2DAdapter));
         
         // Message Box
         paintMessageFrame(g2d);
@@ -178,7 +179,7 @@ public class RepairShopWindowPainter extends WindowPainter
         
         SpecialUpgradeButtonType.getValues()
                                 .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)
-                                                                          .paint(g2d));
+                                                                          .paint(g2d, graphics2DAdapter));
     }
     
     private static void paintMessageFrame(Graphics2D g2d)

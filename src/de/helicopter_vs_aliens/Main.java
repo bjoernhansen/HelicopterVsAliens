@@ -87,8 +87,7 @@ public class Main
             device.setFullScreenWindow(frame);
             activateDisplayMode();
             switchDisplayMode(null);
-            
-            
+      
             frame.setVisible(true);
             
             controller.init();

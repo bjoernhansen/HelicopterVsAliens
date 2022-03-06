@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.FontProvider;
@@ -96,8 +97,10 @@ public abstract class Window implements Paintable
 		messageTimer, 					// regulieren die Dauer [frames] der Nachrichtenanzeige im Werkstatt-Menü
 		moneyDisplayTimer,				// regulieren die Dauer [frames] der Geld-Anzeige im Spiel
 		crossTimer,						// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem StartScreen
-		unlockedTimer,					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
-		effectTimer[] = new int[HelicopterType.size()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
+		unlockedTimer;					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
+	
+	public static int[]
+		effectTimer = new int[HelicopterType.size()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
 	 
 	public static StartScreenSubButtonType
 		page = StartScreenSubButtonType.BUTTON_1; // ausgewählte Seite im StartScreen-Menü
@@ -166,7 +169,7 @@ public abstract class Window implements Paintable
 	
 	/** Paint-Methoden **/
 	@Override
-	public void paint(Graphics2D g2d)
+	public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
 	{
 		GraphicsManager.getInstance().paint(this);
 	}
@@ -183,9 +186,9 @@ public abstract class Window implements Paintable
     	helicopterSelection = (3 + Calculations.random(HelicopterType.size()-1))
     						   % HelicopterType.size();
     	
-    	int px1[] = {19 , 19 , 5};
-    	int px2[] = {1004, 1004, 1018};
-	    int py[] = {261 + START_SCREEN_HELICOPTER_OFFSET_Y,
+    	int[] px1 = {19 , 19 , 5};
+    	int[] px2= {1004, 1004, 1018};
+	    int[] py = {261 + START_SCREEN_HELICOPTER_OFFSET_Y,
 	                331 + START_SCREEN_HELICOPTER_OFFSET_Y,
 	                296 + START_SCREEN_HELICOPTER_OFFSET_Y};
 	    triangle[0] = new Polygon(px1, py, 3);
