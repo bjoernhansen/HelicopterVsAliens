@@ -3,10 +3,10 @@ package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
-import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
-import de.helicopter_vs_aliens.score.HighScoreEntry;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
@@ -60,10 +60,10 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
         g2d.setColor(Colorations.golden);
         g2d.drawString(Window.language.getNativeName(), LEFT + COLUMN_SPACING, TOP + 3 * LINE_SPACING);
     
-        if(Window.page == StartScreenSubButtonType.BUTTON_5){g2d.setColor(Color.white);}
-        g2d.drawString(HighScoreEntry.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 4 * LINE_SPACING);
+        if(Window.page == StartScreenMenuButtonType.BUTTON_5){g2d.setColor(Color.white);}
+        g2d.drawString(Events.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 4 * LINE_SPACING);
     
-        if(Window.page == StartScreenSubButtonType.BUTTON_5 && (controller.framesCounter/30)%2 == 0){g2d.drawString("|", LEFT + COLUMN_SPACING + g2d.getFontMetrics().stringWidth(HighScoreEntry.currentPlayerName), TOP + 4 * LINE_SPACING);}
+        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (controller.framesCounter/30)%2 == 0){g2d.drawString("|", LEFT + COLUMN_SPACING + g2d.getFontMetrics().stringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
     }
     
     @Override

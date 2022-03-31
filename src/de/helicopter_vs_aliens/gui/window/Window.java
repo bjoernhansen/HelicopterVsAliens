@@ -18,7 +18,7 @@ import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -27,7 +27,6 @@ import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.score.HighScoreEntry;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
@@ -102,8 +101,8 @@ public abstract class Window implements Paintable
 	public static int[]
 		effectTimer = new int[HelicopterType.size()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
 	 
-	public static StartScreenSubButtonType
-		page = StartScreenSubButtonType.BUTTON_1; // ausgewählte Seite im StartScreen-Menü
+	public static StartScreenMenuButtonType
+		page = StartScreenMenuButtonType.BUTTON_1; // ausgewählte Seite im StartScreen-Menü
 	
 	public static Language
 		language = ENGLISH;
@@ -367,8 +366,8 @@ public abstract class Window implements Paintable
 	
 	public static void updateStartScreenSubButtons()
 	{
-		StartScreenSubButtonType.getValues().forEach(buttonSpecifier -> {
-			StartScreenSubButtonType buttonType = (StartScreenSubButtonType) buttonSpecifier;
+		StartScreenMenuButtonType.getValues().forEach(buttonSpecifier -> {
+			StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType) buttonSpecifier;
 			buttons.get(buttonSpecifier).setPrimaryLabel(dictionary.startScreenSubButtonName(buttonType));
 		});
 		buttons.get(StartScreenSubCancelButtonType.CANCEL).setPrimaryLabel(dictionary.cancel());
@@ -483,7 +482,7 @@ public abstract class Window implements Paintable
 	
 	public static void adaptToNewWindow(boolean justEntered)
 	{
-		page = StartScreenSubButtonType.BUTTON_1;
+		page = StartScreenMenuButtonType.BUTTON_1;
 		if(WindowManager.window  != HIGH_SCORE && WindowManager.window  != SETTINGS){
 			label.setVisible(true);}
 		updateStartScreenSubLabelText();
@@ -641,7 +640,7 @@ public abstract class Window implements Paintable
 		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setMarked(true);
 		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(Controller.getInstance().getSaveGame().isValid);
 		
-		if(HighScoreEntry.currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
+		if(Events.currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
 		{
 			buttons.get(StartScreenButtonType.SETTINGS).setMarked(true);
 		}

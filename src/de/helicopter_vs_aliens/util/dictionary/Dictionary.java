@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
-import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
@@ -58,7 +58,7 @@ public final class Dictionary
     private final EnumMap<BlockMessage, String[]>
         blockMessages = new EnumMap<>(BlockMessage.class);
     
-    private final Map<WindowType, Map<StartScreenSubButtonType, String>>
+    private final Map<WindowType, Map<StartScreenMenuButtonType, String>>
         startScreenSubButtonName = new EnumMap<>(WindowType.class);
     
     private final List<String>
@@ -170,9 +170,9 @@ public final class Dictionary
         
         for (WindowType windowType : WindowType.getNonSettingsStartScreenSubWindows())
         {
-            Map<StartScreenSubButtonType, String> buttonLabels = new EnumMap<>(StartScreenSubButtonType.class);
-            StartScreenSubButtonType.getValues().forEach(buttonSpecifier -> {
-                StartScreenSubButtonType buttonType = (StartScreenSubButtonType)buttonSpecifier;
+            Map<StartScreenMenuButtonType, String> buttonLabels = new EnumMap<>(StartScreenMenuButtonType.class);
+            StartScreenMenuButtonType.getValues().forEach(buttonSpecifier -> {
+                StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType)buttonSpecifier;
                 String buttonLabelKey =  buttonType.getButtonLabelKey(windowType);
                 buttonLabels.put(buttonType, this.languageProperties.getProperty(buttonLabelKey));
             });
@@ -198,22 +198,22 @@ public final class Dictionary
     
     private void updateSettingsLabels()
     {
-        Map<StartScreenSubButtonType, String> settingsLabels = new EnumMap<>(StartScreenSubButtonType.class);
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_1, oppositeDisplayMode());
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_2, antialiasing());
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_3, audioActivation());
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_4, this.languageProperties.getProperty(StartScreenSubButtonType.BUTTON_4.getButtonLabelKey(WindowType.SETTINGS)));
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_5, this.languageProperties.getProperty(StartScreenSubButtonType.BUTTON_5.getButtonLabelKey(WindowType.SETTINGS)));
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_6, changeMusicModeLabel());
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_7, "");
-        settingsLabels.put(StartScreenSubButtonType.BUTTON_8, "");
+        Map<StartScreenMenuButtonType, String> settingsLabels = new EnumMap<>(StartScreenMenuButtonType.class);
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, audioActivation());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_4, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_4.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_5, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_5.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_6, changeMusicModeLabel());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_7, "");
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_8, "");
         startScreenSubButtonName.put(WindowType.SETTINGS, settingsLabels);
     }
     
     public void updateDisplayMode()
     {
         startScreenSubButtonName.get(WindowType.SETTINGS)
-                                .put(StartScreenSubButtonType.BUTTON_1, oppositeDisplayMode());
+                                .put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
     }
     
     public String displayMode()
@@ -231,7 +231,7 @@ public final class Dictionary
     public void updateAntialiasing()
     {
         startScreenSubButtonName.get(WindowType.SETTINGS)
-                                .put(StartScreenSubButtonType.BUTTON_2, antialiasing());
+                                .put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
     }
     
     public String antialiasing()
@@ -243,7 +243,7 @@ public final class Dictionary
     public void updateAudioActivation()
     {
         startScreenSubButtonName.get(WindowType.SETTINGS)
-                                .put(StartScreenSubButtonType.BUTTON_3, audioActivation());
+                                .put(StartScreenMenuButtonType.BUTTON_3, audioActivation());
     }
     
     public String audioActivation()
@@ -565,7 +565,7 @@ public final class Dictionary
         return message;
     }
     
-    public String startScreenSubButtonName(StartScreenSubButtonType buttonType)
+    public String startScreenSubButtonName(StartScreenMenuButtonType buttonType)
     {
         return Optional.ofNullable(startScreenSubButtonName.get(WindowManager.window))
                        .map(labelList -> labelList.get(buttonType))

@@ -32,6 +32,7 @@ public enum PowerUpType
         this.menuPosition = menuPosition;
     }
     
+    // TODO es sollte eine List zurück gegeben werden defensiveCopyOfValues sollte auch bereits eine List sein (immutable)
     public static PowerUpType[] getValues()
     {
         return defensiveCopyOfValues;

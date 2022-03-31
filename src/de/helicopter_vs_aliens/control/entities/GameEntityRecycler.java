@@ -1,66 +1,52 @@
 package de.helicopter_vs_aliens.control.entities;
 
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.Paintable;
 
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 
 
 public class GameEntityRecycler
 {
-    private final Map<Class<?>, Queue<? extends Paintable>>
+    private final Map<Class<? extends GameEntity>, Queue<? extends GameEntity>>
         recyclingQueues = new HashMap<>();
     
     private final GameEntityProvider
         gameEntityProvider = new GameEntityProvider();
     
     
-    public <T extends Paintable> T retrieve(Class<T> classOfGameEntity)
+    public <T extends GameEntity> T retrieve(Class<T> classOfGameEntity)
     {
-        Queue <T> gameEntityQueue = (Queue<T>)recyclingQueues.get(classOfGameEntity);
-        if(gameEntityQueue == null || gameEntityQueue.isEmpty())
+        String test = "";
+        T gameEntity = (T) recyclingQueues.computeIfAbsent(classOfGameEntity, c -> new LinkedList<T>())
+                                          .poll();
+        if(gameEntity == null)
         {
             return gameEntityProvider.makeEntityOf(classOfGameEntity);
         }
-        return gameEntityQueue.poll();
+        return gameEntity;
     }
     
-    public <T extends Paintable> void store(T gameEntity)
+    public <T extends GameEntity> void store(T gameEntity)
     {
-        Queue <T> gameEntityQueue = (Queue<T>)recyclingQueues.get(gameEntity.getClass());
-        if(gameEntityQueue == null)
-        {
-            gameEntityQueue = new LinkedList<>();
-            recyclingQueues.put(gameEntity.getClass(), gameEntityQueue);
-        }
+        Queue<T> gameEntityQueue = (Queue<T>)recyclingQueues.computeIfAbsent(gameEntity.getClass(), c -> new LinkedList<T>());
         gameEntityQueue.add(gameEntity);
     }
     
-    public <T extends Paintable> void storeAll(List<T> gameEntities)
+    public <T extends GameEntity> void storeAll(Queue<T> gameEntities)
     {
-        if(gameEntities.isEmpty())
-        {
-            return;
-        }
-        Queue <T> gameEntityQueue = (Queue<T>)recyclingQueues.get(gameEntities.getClass());
-        if(gameEntityQueue == null)
-        {
-            gameEntityQueue = new LinkedList<>();
-            recyclingQueues.put(gameEntities.getClass(), gameEntityQueue);
-        }
-        gameEntityQueue.addAll(gameEntities);
+        gameEntities.forEach(this::store);
     }
     
-    public <T extends Paintable> int sizeOf(Class<T> classOfGameEntity)
+    public <T extends GameEntity> int sizeOf(Class<T> classOfGameEntity)
     {
-        Queue <T> gameEntityQueue = (Queue<T>)recyclingQueues.get(classOfGameEntity);
-        if(gameEntityQueue == null)
-        {
-            return 0;
-        }
-        return gameEntityQueue.size();
+        return recyclingQueues.putIfAbsent(classOfGameEntity, new LinkedList<T>())
+                              .size();
     }
 }

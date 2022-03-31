@@ -13,7 +13,7 @@ import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
-import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
@@ -25,9 +25,11 @@ import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScoreEntry;
+import de.helicopter_vs_aliens.score.HighScoreType;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.SizeLimitedPriorityQueue;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -38,6 +40,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
@@ -75,6 +78,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITRED_ENERGY;
 
+// TODO Klasse sollte nicht rein statisch sein
 public class Events
 {
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
@@ -89,8 +93,12 @@ public class Events
 		IS_SAVE_GAME_SAVED_ANYWAY = true;
 	
 	public static HighScoreEntry[][]
+		// TODO das sollte eine Map<HighscoreType, TreeSets<HighScoreEntry>> sein
 		highScore = new HighScoreEntry[7][10];
 	
+	public static Map<HighScoreType, SizeLimitedPriorityQueue<HighScoreEntry>>
+		highScoreMap = new EnumMap<>(HighScoreType.class);
+		
 	private static final int
 		COMPARISON_RECORD_TIME = 60,	// angenommene Bestzeit für Besiegen von Boss 5
 		TOTAL_LOSS_REPAIR_BASE_FEE = 875,
@@ -133,7 +141,10 @@ public class Events
 	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
 	private static boolean
 		cheatingMode = false;				// = true: Cheat-Modus aktiviert
-
+	
+	public static String
+		currentPlayerName = Window.DEFAULT_PLAYER_NAME;
+	
 	private static String
 		cheatString = "";
 	
@@ -161,20 +172,19 @@ public class Events
 				cancel(controller);
 			}
 		}		
-		else if(WindowManager.window == SETTINGS && Window.page == StartScreenSubButtonType.BUTTON_5)
+		else if(WindowManager.window == SETTINGS && Window.page == StartScreenMenuButtonType.BUTTON_5)
 		{
-			int name_length = HighScoreEntry.currentPlayerName.length();
+			int name_length = currentPlayerName.length();
 			if(e.getKeyCode() == KeyEvent.VK_ENTER)
 			{
-				Window.page = StartScreenSubButtonType.BUTTON_1;
-				HighScoreEntry.checkName(controller.getSaveGame());
+				Window.page = StartScreenMenuButtonType.BUTTON_1;
+				checkName(controller.getSaveGame());
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
 			{				
 				if(name_length > 0)
 				{
-					HighScoreEntry.currentPlayerName
-					= HighScoreEntry.currentPlayerName.substring(0, name_length-1);
+					currentPlayerName = currentPlayerName.substring(0, name_length-1);
 				}
 			}
 			else if(name_length < 15 
@@ -183,7 +193,7 @@ public class Events
 						|| e.getKeyCode() == 32
 						|| e.getKeyCode() == 45))
 			{
-				HighScoreEntry.currentPlayerName += e.getKeyChar();
+				currentPlayerName += e.getKeyChar();
 			}			
 		}		
 		else if(e.getKeyChar() =='f')
@@ -338,6 +348,26 @@ public class Events
 			if(cheatString.equals(cheatCode)){
 				cheatingMode = true;}
 		}		
+	}
+	
+	private static void checkName(Savegame savegame)
+	{
+		if (!currentPlayerName.equals(savegame.getCurrentPlayerName()))
+		{
+			if (currentPlayerName.equals(""))
+			{
+				currentPlayerName = savegame.getCurrentPlayerName();
+			} else
+			{
+				boolean isDefaultPlayerNameSet = currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME);
+				Window.buttons.get(StartScreenMenuButtonType.BUTTON_5)
+							  .setMarked(isDefaultPlayerNameSet);
+				Window.buttons.get(StartScreenButtonType.SETTINGS)
+							  .setMarked(isDefaultPlayerNameSet);
+				savegame.setCurrentPlayerName(currentPlayerName);
+				settingsChanged = true;
+			}
+		}
 	}
 	
 	static void mousePressed(MouseEvent e,
@@ -742,7 +772,7 @@ public class Events
 		else if(Window.buttons.get(StartScreenButtonType.INFORMATION).getBounds().contains(cursor))
 		{			
 			newStartScreenSubWindow(INFORMATION, true);
-			Window.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(true);
+			Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
 		}
 		else if(Window.buttons.get(StartScreenButtonType.HIGH_SCORE).getBounds().contains(cursor))
 		{			
@@ -755,9 +785,9 @@ public class Events
 		else if(Window.buttons.get(StartScreenButtonType.SETTINGS).getBounds().contains(cursor))
 		{			
 			newStartScreenSubWindow(SETTINGS, true);
-			if(HighScoreEntry.currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
+			if(currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
 			{
-				Window.buttons.get(StartScreenSubButtonType.BUTTON_5).setMarked(true);
+				Window.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(true);
 			}
 		}
 		else if(Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).getBounds().contains(cursor))
@@ -789,30 +819,30 @@ public class Events
 		}
 		else if(WindowManager.window == DESCRIPTION)
 		{
-			if(Window.page == StartScreenSubButtonType.BUTTON_6){
+			if(Window.page == StartScreenMenuButtonType.BUTTON_6){
 				Window.label.setBounds(Main.displayShift.width  + 42,
 													   Main.displayShift.height + 83, 940, 240);}
 			newStartScreenSubWindow(INFORMATION, false);
-			Window.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(true);
-			Window.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(false);
+			Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
+			Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
 		}
 		else if(WindowManager.window == HELICOPTER_TYPES)
 		{
-			if(Window.page == StartScreenSubButtonType.BUTTON_2){
+			if(Window.page == StartScreenMenuButtonType.BUTTON_2){
 				Window.label.setVisible(true);}
 			newStartScreenSubWindow(DESCRIPTION, false);
-			Window.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(true);
+			Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
 		}
 		else
 		{
 			if(WindowManager.window == INFORMATION)
 			{
-				Window.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(false);
+				Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
 			}
 			else if(WindowManager.window == SETTINGS)
 			{
-				Window.buttons.get(StartScreenSubButtonType.BUTTON_5).setMarked(false);
-				HighScoreEntry.checkName(savegame);
+				Window.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(false);
+				checkName(savegame);
 				if(settingsChanged)
 				{					
 					savegame.writeToFile();
@@ -835,36 +865,36 @@ public class Events
 				currentButton.isVisible() &&
 				(Window.page != buttonSpecifier || WindowManager.window == SETTINGS))
 			{
-				StartScreenSubButtonType oldPage = Window.page;
-				if(WindowManager.window == DESCRIPTION && Window.page == StartScreenSubButtonType.BUTTON_6)
+				StartScreenMenuButtonType oldPage = Window.page;
+				if(WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					Window.label.setBounds(Main.displayShift.width  + 42,
 										    Main.displayShift.height + 83, 940, 240);
 				}
-				else if(WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenSubButtonType.BUTTON_2)
+				else if(WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
 				{
 					Window.label.setVisible(true);
 				}
-				Window.page = (StartScreenSubButtonType) buttonSpecifier;
-				if(WindowManager.window == DESCRIPTION && Window.page == StartScreenSubButtonType.BUTTON_6)
+				Window.page = (StartScreenMenuButtonType) buttonSpecifier;
+				if(WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
 				{
 					Window.label.setBounds(Main.displayShift.width  + 92,
 											Main.displayShift.height + 83, 890, 240);
 				}
-				else if(WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenSubButtonType.BUTTON_2)
+				else if(WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
 				{
 					Window.label.setVisible(false);
 				}
-				if(WindowManager.window == INFORMATION && Window.page == StartScreenSubButtonType.BUTTON_3)
+				if(WindowManager.window == INFORMATION && Window.page == StartScreenMenuButtonType.BUTTON_3)
 				{							
 					newStartScreenSubWindow(DESCRIPTION, false);
-					Window.buttons.get(StartScreenSubButtonType.BUTTON_3).setMarked(false);
-					Window.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(true);
+					Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
+					Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
 				}
-				else if(WindowManager.window == DESCRIPTION && Window.page == StartScreenSubButtonType.BUTTON_7)
+				else if(WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_7)
 				{
 					newStartScreenSubWindow(HELICOPTER_TYPES, false);
-					Window.buttons.get(StartScreenSubButtonType.BUTTON_7).setMarked(false);
+					Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
 				}
 				else if(WindowManager.window == SETTINGS)
 				{					
@@ -884,34 +914,34 @@ public class Events
 	
 	private static void settingsMousePressedLeft( Controller controller,
 	                                              Button currentButton,
-												  StartScreenSubButtonType oldPage)
+												  StartScreenMenuButtonType oldPage)
 	{
 		Savegame savegame = controller.getSaveGame();
-		if(Window.page == StartScreenSubButtonType.BUTTON_1)
+		if(Window.page == StartScreenMenuButtonType.BUTTON_1)
 		{	
 			Main.switchDisplayMode(currentButton);
 		}
-		else if(Window.page == StartScreenSubButtonType.BUTTON_2)
+		else if(Window.page == StartScreenMenuButtonType.BUTTON_2)
 		{			
 			switchAntialiasingActivationState(controller, currentButton);
 		}						
-		else if(Window.page == StartScreenSubButtonType.BUTTON_3)
+		else if(Window.page == StartScreenMenuButtonType.BUTTON_3)
 		{
 			switchAudioActivationState(savegame);
 		}
-		else if(Window.page == StartScreenSubButtonType.BUTTON_4)
+		else if(Window.page == StartScreenMenuButtonType.BUTTON_4)
 		{
 			Window.changeLanguage(controller);
 		}		
-		else if(Window.page == StartScreenSubButtonType.BUTTON_7)
+		else if(Window.page == StartScreenMenuButtonType.BUTTON_7)
 		{
 			Audio.changeBgMusicMode(savegame);
 		}
-		if(oldPage == StartScreenSubButtonType.BUTTON_5)
+		if(oldPage == StartScreenMenuButtonType.BUTTON_5)
 		{
-			if(Window.page == StartScreenSubButtonType.BUTTON_5){
-				Window.page = StartScreenSubButtonType.BUTTON_1;}
-			HighScoreEntry.checkName(savegame);
+			if(Window.page == StartScreenMenuButtonType.BUTTON_5){
+				Window.page = StartScreenMenuButtonType.BUTTON_1;}
+			checkName(savegame);
 		}
 		Window.updateStartScreenSubLabelText();
 	}
@@ -1001,7 +1031,7 @@ public class Events
 	private static void restore(Savegame savegame)
 	{
 		money = savegame.money;
-		killsAfterLevelUp = savegame.killsAfterLevelup;
+		killsAfterLevelUp = savegame.killsAfterLevelUp;
 		level = savegame.level;
 		maxLevel = savegame.maxLevel;
 		timeOfDay = savegame.timeOfDay;
@@ -1288,7 +1318,7 @@ public class Events
 		Audio.refreshBackgroundMusic();
 		Window.dictionary.updateAudioActivation();
 		Window.buttons.get(MainMenuButtonType.STOP_MUSIC).setPrimaryLabel(Window.dictionary.audioActivation());
-		Window.buttons.get(StartScreenSubButtonType.BUTTON_3).setPrimaryLabel(Window.dictionary.audioActivation());
+		Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setPrimaryLabel(Window.dictionary.audioActivation());
 	}
 	
 	public static void determineHighscoreTimes(Helicopter helicopter)

@@ -753,7 +753,10 @@ public class Enemy extends RectangularGameEntity
 		wasEnemyCreationPaused = true;
 		bossSelection = BOSS_2_SERVANT;
 		maxNr = 12;
-		for(int m = 0; m < maxNr; m++){creation(helicopter, enemy);}
+		for (int m = 0; m < maxNr; m++)
+		{
+			creation(helicopter, enemy);
+		}
     }
     
     private static void createAllBoss5Servants(Helicopter helicopter,
@@ -792,13 +795,17 @@ public class Enemy extends RectangularGameEntity
 	{
 		Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
 		Enemy e;
-		if(i.hasNext()){e = i.next(); i.remove();}	
-		else{e = new Enemy();}
+		if (i.hasNext())
+		{
+			e = i.next();
+			i.remove();
+		}
+		else{e = EnemyFactory.createEnemy();}
 		enemy.get(ACTIVE).add(e);
 		Events.lastCreationTimer = 0;
 		helicopter.numberOfEnemiesSeen++;
 		e.create(helicopter, enemy.get(ACTIVE).size());
-	}	
+	}
     	
 	private void create(Helicopter helicopter, int nrOfEnemies)
 	{			

@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.WindowPainter;
-import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -39,8 +39,8 @@ public class StartScreenMenuWindowPainter extends WindowPainter
         // die Buttons
         if(!showOnlyCancelButton())
         {
-            StartScreenSubButtonType.getValues()
-                                    .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)
+            StartScreenMenuButtonType.getValues()
+                                     .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)
                                                                               .paint(g2d, graphics2DAdapter));
         }
         Window.buttons.get(StartScreenSubCancelButtonType.CANCEL)
@@ -54,7 +54,7 @@ public class StartScreenMenuWindowPainter extends WindowPainter
     
     private static boolean showOnlyCancelButton()
     {
-        return !Window.buttons.get(StartScreenSubButtonType.BUTTON_2).isVisible();
+        return !Window.buttons.get(StartScreenMenuButtonType.BUTTON_2).isVisible();
     }
     
     void paintHelicopterInStartScreenMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)

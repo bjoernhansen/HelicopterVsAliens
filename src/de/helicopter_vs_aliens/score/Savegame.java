@@ -8,6 +8,7 @@ import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
+import de.helicopter_vs_aliens.util.SizeLimitedPriorityQueue;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import java.io.File;
@@ -19,26 +20,35 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
 
 public class Savegame implements Serializable
 {
-	private static final transient int
-		OVERALL_HIGHSCORE_INDEX = 6;
+	private static final int
+		OVERALL_HIGH_SCORE_INDEX = 6;
 	
-	private static final transient String
+	public static final int
+		NUMBER_OF_ENTRIES = 10;
+	
+	private static final String
 		FILENAME = "savegame";
 	
-	String
+	
+	private String
 		currentPlayerName;
 	
+	// TODO das sollte eine Map<HighscoreType, TreeSets<HighScoreEntry>> sein
 	private HighScoreEntry[][]
-		highscore = new HighScoreEntry[7][10];
+		highScore = new HighScoreEntry[7][10];
+	
+	private Map<HighScoreType, SizeLimitedPriorityQueue<HighScoreEntry>>
+		highScoreMap = new EnumMap<>(HighScoreType.class);
 	
 	public int
 		money,
-        killsAfterLevelup,
+		killsAfterLevelUp,
 		level,
 		maxLevel,
 		bonusCounter,
@@ -90,7 +100,9 @@ public class Savegame implements Serializable
 	private Savegame()
 	{
 		this.isValid = false;
-		this.currentPlayerName = HighScoreEntry.currentPlayerName;
+		this.currentPlayerName = Events.currentPlayerName;
+		HighScoreType.getValues()
+					 .forEach(highScoreType -> highScoreMap.put(highScoreType, new SizeLimitedPriorityQueue<>(NUMBER_OF_ENTRIES)));
 	}
 	
 	public static Savegame initialize()
@@ -100,7 +112,7 @@ public class Savegame implements Serializable
 		{			
 			Savegame temp = lastGame();
 			
-			HighScoreEntry.currentPlayerName = temp.currentPlayerName;
+			Events.currentPlayerName = temp.currentPlayerName;
 			Window.setLanguage(temp.language);
 			Window.hasOriginalResolution = temp.originalResulution;
 			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
@@ -108,10 +120,15 @@ public class Savegame implements Serializable
 			Events.recordTime = temp.recordTime.clone();
 			Events.heliosMaxMoney = Events.getHeliosMaxMoney();
 			Events.reachedLevelTwenty = temp.reachedLevelTwenty.clone();
-			Events.highScore = temp.highscore.clone();
+			Events.highScore = temp.highScore.clone();
+			
 			output = temp;
 		}		
-		else{output = new Savegame();}
+		else
+		{
+			output = new Savegame();
+		}
+		Events.highScoreMap = new EnumMap<>(output.highScoreMap);
 				
 		return output;
 	}
@@ -158,13 +175,13 @@ public class Savegame implements Serializable
 
 	private void save(Helicopter helicopter)
 	{
-		this.currentPlayerName = HighScoreEntry.currentPlayerName;
+		this.currentPlayerName = Events.currentPlayerName;
 		this.language = Window.language;
 		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
 		this.originalResulution = Window.hasOriginalResolution;
 		this.isSoundOn = Audio.isSoundOn;
 		this.money = Events.money;	
-		this.killsAfterLevelup = Events.killsAfterLevelUp;
+		this.killsAfterLevelUp = Events.killsAfterLevelUp;
 		this.level = Events.level;
 		this.maxLevel = Events.maxLevel;
 		this.timeOfDay = Events.timeOfDay;
@@ -174,7 +191,9 @@ public class Savegame implements Serializable
 		this.scorescreenTimes = helicopter.scoreScreenTimes.clone();
 		this.recordTime = Events.recordTime.clone();
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
-		this.highscore = Events.highScore.clone();
+		this.highScore = Events.highScore.clone();
+		this.highScoreMap = new EnumMap<>(Events.highScoreMap);
+		
 		this.helicopterType = helicopter.getType();
 		this.levelsOfStandardUpgrades = helicopter.getLevelsOfStandardUpgrades();
 		this.spotlight = helicopter.hasSpotlights;
@@ -199,9 +218,31 @@ public class Savegame implements Serializable
 	{
 	    if(this.isWorthyForHighscore())
 		{				
-			HighScoreEntry tempEntry = new HighScoreEntry(this);
-			HighScoreEntry.putEntry(Events.highScore[this.helicopterType.ordinal()], tempEntry);
-			HighScoreEntry.putEntry(Events.highScore[OVERALL_HIGHSCORE_INDEX], tempEntry);
+			HighScoreEntry tempEntry = HighScoreEntry.of(this);
+			putEntry(Events.highScore[helicopterType.ordinal()], tempEntry);
+			putEntry(Events.highScore[OVERALL_HIGH_SCORE_INDEX], tempEntry);
+			
+			highScoreMap.get(HighScoreType.of(helicopterType)).add(tempEntry);
+			highScoreMap.get(HighScoreType.OVERALL).add(tempEntry);
+		}
+	}
+	
+	static void putEntry(HighScoreEntry[] highScore, HighScoreEntry entry)
+	{
+		HighScoreEntry highscoreEntry, currentEntry = entry;
+		for(int i = 0; i < NUMBER_OF_ENTRIES; i++)
+		{
+			if(highScore[i] == null)
+			{
+				highScore[i] = currentEntry;
+				break;
+			}
+			else if(currentEntry.isBetterThan(highScore[i]))
+			{
+				highscoreEntry = highScore[i];
+				highScore[i] = currentEntry;
+				currentEntry = highscoreEntry;
+			}
 		}
 	}
     
@@ -226,5 +267,15 @@ public class Savegame implements Serializable
 		loseValidity();
 		saveToFile(helicopter);
 		Audio.play(Audio.emp);
+	}
+	
+	public String getCurrentPlayerName()
+	{
+		return currentPlayerName;
+	}
+	
+	public void setCurrentPlayerName(String currentPlayerName)
+	{
+		this.currentPlayerName = currentPlayerName;
 	}
 }

@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.gui.PriceLevel;
-import de.helicopter_vs_aliens.gui.button.StartScreenSubButtonType;
+import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -21,7 +21,7 @@ public class HelicopterTypesWindowPainter extends StartScreenMenuWindowPainter
         {
             paintHelicopterInStartScreenMenu(g2d, graphics2DAdapter);
         }
-        else if(Window.page == StartScreenSubButtonType.BUTTON_2)
+        else if(Window.page == StartScreenMenuButtonType.BUTTON_2)
         {
             String tempString = "";
             StandardUpgradeType standardUpgradeType = null;
