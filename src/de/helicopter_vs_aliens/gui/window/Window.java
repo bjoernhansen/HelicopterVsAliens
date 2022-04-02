@@ -638,7 +638,7 @@ public abstract class Window implements Paintable
 							.forEach(buttonSpecifier -> buttons.put(buttonSpecifier, Button.makeButton(buttonSpecifier)));
 				
 		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setMarked(true);
-		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(Controller.getInstance().getSaveGame().isValid);
+		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(Controller.getInstance().getSaveGame().isValid());
 		
 		if(Events.currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
 		{

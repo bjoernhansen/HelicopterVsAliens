@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Objects;
 
 public final class HighScoreEntry implements Serializable, Comparable<HighScoreEntry>
 {
@@ -12,11 +13,13 @@ public final class HighScoreEntry implements Serializable, Comparable<HighScoreE
         serialVersionUID = 1L;
     
     private static final Comparator<HighScoreEntry>
-        COMPARATOR = Comparator.comparingInt((HighScoreEntry highScoreEntry) -> highScoreEntry.maxLevel)
-                               .thenComparing(highScoreEntry -> highScoreEntry.playingTime, Comparator.reverseOrder())
-                               .thenComparing(highScoreEntry -> highScoreEntry.crashes, Comparator.reverseOrder())
-                               .thenComparing(highScoreEntry -> highScoreEntry.repairs, Comparator.reverseOrder())
-                               .thenComparing(highScoreEntry -> highScoreEntry.bonusIncome);
+        COMPARATOR = Comparator.comparingInt(HighScoreEntry::getMaxLevel)
+                               .reversed()
+                               .thenComparing(HighScoreEntry::getPlayingTime)
+                               .thenComparing(HighScoreEntry::getCrashes)
+                               .thenComparing(HighScoreEntry::getRepairs)
+                               .thenComparing(HighScoreEntry::getBonusIncome, Comparator.reverseOrder())
+                               .thenComparing(Object::hashCode);
     
     // Variablen eines Highscore-Eintrages
     private final String
@@ -51,7 +54,7 @@ public final class HighScoreEntry implements Serializable, Comparable<HighScoreE
         this.playerName = Events.currentPlayerName;
         this.helicopterType = savegame.helicopterType;
         this.maxLevel = savegame.maxLevel;
-        this.playingTime = (int)savegame.playingTime / 60000;
+        this.playingTime = (int) savegame.playingTime / 60000;
         this.crashes = savegame.numberOfCrashes;
         this.repairs = savegame.numberOfRepairs;
         this.bonusIncome = Events.bonusIncomePercentage();
@@ -82,6 +85,11 @@ public final class HighScoreEntry implements Serializable, Comparable<HighScoreE
         return playerName;
     }
     
+    public HelicopterType getHelicopterType()
+    {
+        return helicopterType;
+    }
+    
     public int getMaxLevel()
     {
         return maxLevel;
@@ -105,10 +113,5 @@ public final class HighScoreEntry implements Serializable, Comparable<HighScoreE
     public int getPlayingTime()
     {
         return playingTime;
-    }
-    
-    public HelicopterType getHelicopterType()
-    {
-        return helicopterType;
     }
 }

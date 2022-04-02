@@ -29,7 +29,7 @@ import de.helicopter_vs_aliens.score.HighScoreType;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.util.SizeLimitedPriorityQueue;
+import de.helicopter_vs_aliens.util.SizeLimitedTreeSet;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -91,12 +91,8 @@ public class Events
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
 		IS_SAVE_GAME_SAVED_ANYWAY = true;
-	
-	public static HighScoreEntry[][]
-		// TODO das sollte eine Map<HighscoreType, TreeSets<HighScoreEntry>> sein
-		highScore = new HighScoreEntry[7][10];
-	
-	public static Map<HighScoreType, SizeLimitedPriorityQueue<HighScoreEntry>>
+		
+	public static Map<HighScoreType, SizeLimitedTreeSet<HighScoreEntry>>
 		highScoreMap = new EnumMap<>(HighScoreType.class);
 		
 	private static final int
@@ -131,10 +127,13 @@ public class Events
     
     public static boolean
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
-    	reachedLevelTwenty[] = new boolean[HelicopterType.size()],
     	settingsChanged = false,
     	allPlayable = false;
-
+	
+	// TODO kein Array verwenden
+	public static boolean[]
+		reachedLevelTwenty = new boolean[HelicopterType.size()];
+	
 	public static TimeOfDay
 		timeOfDay = DAY;		// Tageszeit [NIGHT, DAY]
 
@@ -619,7 +618,7 @@ public class Events
 				Window.buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).adjustCostsToZero();
 			}
 		}
-		// Durchstoßsprengköpfe
+		// Piercing Warheads
 		else if(Window.buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).getBounds().contains(cursor))
 		{
 			if(helicopter.isDamaged){
@@ -792,7 +791,7 @@ public class Events
 		}
 		else if(Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).getBounds().contains(cursor))
 		{
-			if(controller.getSaveGame().isValid)
+			if(controller.getSaveGame().isValid())
 			{
 				Audio.play(Audio.levelUp);
 				startSavedGame(controller);
@@ -949,7 +948,7 @@ public class Events
 	private static void switchAntialiasingActivationState(	Controller controller,
 															Button currentButton)
 	{
-		controller.antialiasing = !Controller.antialiasing;
+		Controller.antialiasing = !Controller.antialiasing;
 		controller.offGraphics.setRenderingHint( 
 				RenderingHints.KEY_ANTIALIASING,
 				Controller.antialiasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);

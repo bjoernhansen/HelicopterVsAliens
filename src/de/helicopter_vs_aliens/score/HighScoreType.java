@@ -10,23 +10,16 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_2;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_3;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_4;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_5;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_6;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_7;
-import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_8;
 
 public enum HighScoreType
 {
-    OVERALL(BUTTON_2),
-    PHOENIX(BUTTON_3),
-    ROCH(BUTTON_4),
-    OROCHI(BUTTON_5),
-    KAMAITACHI(BUTTON_6),
-    PEGASUS(BUTTON_7),
-    HELIOS(BUTTON_8);
+    OVERALL(StartScreenMenuButtonType.BUTTON_2),
+    PHOENIX(StartScreenMenuButtonType.BUTTON_3),
+    ROCH(StartScreenMenuButtonType.BUTTON_4),
+    OROCHI(StartScreenMenuButtonType.BUTTON_5),
+    KAMAITACHI(StartScreenMenuButtonType.BUTTON_6),
+    PEGASUS(StartScreenMenuButtonType.BUTTON_7),
+    HELIOS(StartScreenMenuButtonType.BUTTON_8);
     
         
     private static final List<HighScoreType>
@@ -51,10 +44,6 @@ public enum HighScoreType
     public static List<HighScoreType> getValues()
     {
         return VALUES;
-    }
-    
-    public static int valueCount(){
-        return VALUES.size();
     }
     
     public static HighScoreType of(StartScreenMenuButtonType startScreenMenuButtonType)

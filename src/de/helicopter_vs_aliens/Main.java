@@ -11,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.DecimalFormat;
 import java.util.Optional;
 
 
@@ -19,10 +18,7 @@ public class Main
 {
 	public static final Dimension
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
-	
-	private final static boolean
-    	TESTMODE = false;
-    
+	   
     private final static Dimension
 		STANDARD_RESOLUTION = new Dimension(1280, 720),
 		WINDOW_SIZE = new Dimension(STANDARD_RESOLUTION.width +6,
@@ -51,56 +47,48 @@ public class Main
 	public static DisplayMode
 		currentDisplayMode;
 
-	
-	
+		
     public static void main(final String[] args)
     {
-    	if(TESTMODE)
-        {
+		final Controller controller = Controller.getInstance();
+		frame = new JFrame("Helicopter vs. Aliens");
+		frame.setBackground(Color.black);
+		frame.add("Center", controller);
+		frame.addKeyListener(controller);
+		frame.setResizable(false);
+		frame.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				controller.shutDown();
+			}
+		});
 
-		}
-        else
-        {
-            final Controller controller = Controller.getInstance();
-            frame = new JFrame("Helicopter vs. Aliens");
-            frame.setBackground(Color.black);
-            frame.add("Center", controller);
-            frame.addKeyListener(controller);
-            frame.setResizable(false);
-            frame.addWindowListener(new WindowAdapter()
-            {
-                @Override
-                public void windowClosing(WindowEvent e)
-                {
-					controller.shutDown();
-                }
-            });
+		controller.setLayout(null);
+		
+		device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		if(!device.isFullScreenSupported()){isFullScreen = false;}
+		originalDisplayMode = device.getDisplayMode();
 
-            controller.setLayout(null);
-            
-            device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-            if(!device.isFullScreenSupported()){isFullScreen = false;}
-            originalDisplayMode = device.getDisplayMode();
-	
-			controller.setSaveGame(Savegame.initialize());
-            
-            frame.setUndecorated(true);
-            device.setFullScreenWindow(frame);
-            activateDisplayMode();
-            switchDisplayMode(null);
-      
-            frame.setVisible(true);
-            
-            controller.init();
-            controller.start();
-        }
+		controller.setSaveGame(Savegame.initialize());
+		
+		frame.setUndecorated(true);
+		device.setFullScreenWindow(frame);
+		activateDisplayMode();
+		switchDisplayMode(null);
+  
+		frame.setVisible(true);
+		
+		controller.init();
+		controller.start();
     }
 
 	// TODO wieso erforderlich?
 	static void switchResolution(Savegame savegame)
 	{
 		Window.hasOriginalResolution = !Window.hasOriginalResolution;
-		savegame.originalResulution = Window.hasOriginalResolution;
+		savegame.originalResolution = Window.hasOriginalResolution;
 		activateDisplayMode();
 		Events.settingsChanged = true;
 	}

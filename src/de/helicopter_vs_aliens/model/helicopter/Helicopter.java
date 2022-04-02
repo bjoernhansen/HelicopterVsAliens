@@ -4,7 +4,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
@@ -114,9 +113,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		numberOfEnemiesSeen,				// Anzahl der erschienenen Gegner
 		numberOfEnemiesKilled,				// Anzahl der vernichteten Gegner
 		numberOfMiniBossSeen,				// Anzahl der erschienenen Mini-Bosse
-		numberOfMiniBossKilled,				// Anzahl der vernichteten Mini-Bosse
-
-		powerUpTimer[] = new int [4]; 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
+		numberOfMiniBossKilled;				// Anzahl der vernichteten Mini-Bosse
+	
+	// TODO Magic Number entfernen und kein Array verwenden
+	public int[]
+		powerUpTimer = new int [4]; 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
   
 	private final Map<StandardUpgradeType, Integer>
         levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
@@ -555,7 +556,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.missileCounter = savegame.missileCounter;
 		this.hitCounter = savegame.hitCounter;
 		
-		this.scoreScreenTimes = savegame.scorescreenTimes.clone();
+		this.scoreScreenTimes = savegame.scoreScreenTimes.clone();
 	}
     
     public void reset()

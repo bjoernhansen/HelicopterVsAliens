@@ -14,6 +14,7 @@ import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
+import de.helicopter_vs_aliens.score.HighScoreColumnType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -61,8 +62,11 @@ public final class Dictionary
     private final Map<WindowType, Map<StartScreenMenuButtonType, String>>
         startScreenSubButtonName = new EnumMap<>(WindowType.class);
     
+    
+    private final Map<HighScoreColumnType, String>
+        highScoreColumnNames = new EnumMap<>(HighScoreColumnType.class);
+    
     private final List<String>
-        highScoreColumnNames = new ArrayList<>(),
         settingOptions = new ArrayList<>();
     
     
@@ -182,10 +186,9 @@ public final class Dictionary
         updateSettingsLabels();
         
         highScoreColumnNames.clear();
-        for (int i = 1; i <= Window.NUMBER_OF_HIGH_SCORE_COLUMN_NAMES; i++)
-        {
-            highScoreColumnNames.add(this.languageProperties.getProperty("highScore.columnNames." + i));
-        }
+        HighScoreColumnType.getValues().forEach(highScoreColumnType -> {
+            highScoreColumnNames.put(highScoreColumnType, this.languageProperties.getProperty(highScoreColumnType.getKey()));
+        });
         
         settingOptions.clear();
         for (int i = 1; i <= Window.NUMBER_OF_SETTING_OPTIONS; i++)
@@ -505,9 +508,9 @@ public final class Dictionary
         return this.languageProperties.getProperty(priceLevel.getDictionaryKey());
     }
     
-    public List<String> highScoreColumnNames()
+    public String highScoreColumnName(HighScoreColumnType highScoreColumnType)
     {
-        return this.highScoreColumnNames;
+        return this.highScoreColumnNames.get(highScoreColumnType);
     }
     
     public String standardUpgradesImprovements(StandardUpgradeType standardUpgradeType)

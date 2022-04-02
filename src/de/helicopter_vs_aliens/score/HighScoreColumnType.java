@@ -11,9 +11,9 @@ import java.util.function.Function;
 
 public enum HighScoreColumnType
 {
-    RANK(null, -42),
-    PLAYER(HighScoreColumnType::getPlayerName, -88),
-    TYPE(HighScoreColumnType::getHelicopterName)
+    RANK(1, null, -42),
+    PLAYER(2, HighScoreColumnType::getPlayerName, -88),
+    TYPE(3, HighScoreColumnType::getHelicopterName)
     {
         @Override
         public Color getFontColor(HighScoreEntry highScoreEntry)
@@ -21,7 +21,7 @@ public enum HighScoreColumnType
             return Colorations.brightenUp(highScoreEntry.getHelicopterType().getStandardPrimaryHullColor());
         }
     },
-    MAX_LEVEL(HighScoreColumnType::getMaxLevel)
+    MAX_LEVEL(4, HighScoreColumnType::getMaxLevel)
     {
         @Override
         public Color getFontColor(HighScoreEntry highScoreEntry)
@@ -29,10 +29,10 @@ public enum HighScoreColumnType
             return highScoreEntry.getMaxLevel() > Events.MAXIMUM_LEVEL ? Colorations.HS_GREEN : Colorations.HS_RED;
         }
     },
-    PLAYING_TIME(HighScoreColumnType::getPlayingTime),
-    CRASHES(HighScoreColumnType::getCrashes),
-    REPAIRS(HighScoreColumnType::getRepairs),
-    BONUSES(HighScoreColumnType::getBonusIncome)
+    PLAYING_TIME(5, HighScoreColumnType::getPlayingTime),
+    CRASHES(6, HighScoreColumnType::getCrashes),
+    REPAIRS(7, HighScoreColumnType::getRepairs),
+    BONUSES(8, HighScoreColumnType::getBonusIncome)
     {
         @Override
         public Color getFontColor(HighScoreEntry highScoreEntry)
@@ -46,29 +46,34 @@ public enum HighScoreColumnType
         DISTANCE = 114;
     
     private static final String
-        NUMBER_FORMAT = "% 3d";
+        NUMBER_FORMAT = "%3d",
+        KEY_PREFIX = "highScore.columnNames.";
     
     private static final List<HighScoreColumnType>
         VALUES = List.of(values());
-    
-    
+     
     private final Function<HighScoreEntry, String>
         textFunction;
     
     private final int
         columnShiftX;
-        
+    
+    private final String
+        key;
       
-    HighScoreColumnType(Function<HighScoreEntry, String> textFunction)
+    
+    HighScoreColumnType(int index, Function<HighScoreEntry, String> textFunction)
     {
-        this.columnShiftX = 0;
+        this.key = KEY_PREFIX + index;
         this.textFunction = textFunction;
+        this.columnShiftX = 0;
     }
     
-    HighScoreColumnType(Function<HighScoreEntry, String> textFunction, int columnShiftX)
+    HighScoreColumnType(int index, Function<HighScoreEntry, String> textFunction, int columnShiftX)
     {
-        this.columnShiftX = columnShiftX;
+        this.key = KEY_PREFIX + index;
         this.textFunction = textFunction;
+        this.columnShiftX = columnShiftX;
     }
     
     public static List<HighScoreColumnType> getValues()
@@ -89,27 +94,33 @@ public enum HighScoreColumnType
     private static String getMaxLevel(HighScoreEntry highScoreEntry)
     {
         int maxLevel = Math.min(highScoreEntry.getMaxLevel(), Events.MAXIMUM_LEVEL);
-        return String.format(NUMBER_FORMAT, maxLevel);
+        return formatNumber(maxLevel);
     }
     
     private static String getPlayingTime(HighScoreEntry highScoreEntry)
     {
-        return String.format(NUMBER_FORMAT, highScoreEntry.getPlayingTime()) + " min";
+        return formatNumber(highScoreEntry.getPlayingTime()) + " min";
     }
     
     private static String getCrashes(HighScoreEntry highScoreEntry)
     {
-        return String.format(NUMBER_FORMAT, highScoreEntry.getCrashes());
+        return formatNumber(highScoreEntry.getCrashes());
     }
     
     private static String getRepairs(HighScoreEntry highScoreEntry)
     {
-        return String.format(NUMBER_FORMAT, highScoreEntry.getRepairs());
+        return formatNumber(highScoreEntry.getRepairs());
     }
     
     private static String getBonusIncome(HighScoreEntry highScoreEntry)
     {
-        return String.format(NUMBER_FORMAT, highScoreEntry.getBonusIncome()) + "%";
+        return formatNumber(highScoreEntry.getBonusIncome()) + "%";
+    }
+    
+    private static String formatNumber(int number)
+    {
+        return String.format(NUMBER_FORMAT, number)
+                     .replace(" ", "  ");
     }
     
     public Color getFontColor(HighScoreEntry highScoreEntry)
@@ -125,5 +136,10 @@ public enum HighScoreColumnType
     public int getColumnX()
     {
         return LEFT_X + columnShiftX + ordinal() * DISTANCE;
+    }
+    
+    public String getKey()
+    {
+        return key;
     }
 }
