@@ -2,8 +2,8 @@ package de.helicopter_vs_aliens.util;
 
 import java.io.Serializable;
 import java.util.NavigableSet;
-import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 public class SizeLimitedTreeSet<E extends Comparable<E>> implements Serializable
 {
@@ -27,8 +27,8 @@ public class SizeLimitedTreeSet<E extends Comparable<E>> implements Serializable
         }
     }
     
-    public Set<E> asSet()
+    public void forEach(Consumer<? super E> action)
     {
-        return navigableSet;
+        navigableSet.forEach(action);
     }
 }

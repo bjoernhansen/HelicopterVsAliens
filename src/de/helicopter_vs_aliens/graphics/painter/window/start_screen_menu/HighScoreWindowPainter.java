@@ -95,7 +95,6 @@ public class HighScoreWindowPainter extends StartScreenMenuWindowPainter
     {
         AtomicInteger entryCounter = new AtomicInteger();
         Events.highScoreMap.get(HighScoreType.of(Window.page))
-                           .asSet()
                            .forEach(highScoreEntry -> {
                                int j = entryCounter.incrementAndGet();
                                HighScoreColumnType.getValues().forEach(highScoreColumnType -> {
