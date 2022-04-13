@@ -1,16 +1,15 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
-
 import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
+
 
 public class PegasusPainter extends HelicopterPainter
 {
@@ -37,10 +36,10 @@ public class PegasusPainter extends HelicopterPainter
     }
     
     @Override
-    void paintComponents(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
+    void paintComponents(GraphicsAdapter graphicsAdapter, int left, int top)
     {
         Pegasus pegasus = (Pegasus) helicopter;
-        super.paintComponents(g2d, graphics2DAdapter, left, top);
+        super.paintComponents(graphicsAdapter, left, top);
         
         // EMP wave animation in start menu
         if(WindowManager.window == START_SCREEN
@@ -55,7 +54,7 @@ public class PegasusPainter extends HelicopterPainter
             else
             {
                 pegasus.empWave.update();
-                pegasus.empWave.paint(g2d, graphics2DAdapter);
+                pegasus.empWave.paint(graphicsAdapter);
             }
         }
     }

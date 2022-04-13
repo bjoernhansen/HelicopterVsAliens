@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.button.LeftSideRepairShopButtonType;
 import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
@@ -12,7 +12,6 @@ import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
@@ -36,59 +35,59 @@ public class RepairShopWindowPainter extends WindowPainter
         SPECIAL_UPGRADE_OFFSET_Y = 328;                 // y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
         
     @Override
-    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Window window)
+    public void paint(GraphicsAdapter graphicsAdapter, Window window)
     {
-        super.paint(g2d, graphics2DAdapter, window);
-        paintRepairShop(g2d, graphics2DAdapter, helicopter);
+        super.paint(graphicsAdapter, window);
+        paintRepairShop(graphicsAdapter, helicopter);
     }
     
-    private static void paintRepairShop(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Helicopter helicopter)
+    private static void paintRepairShop(GraphicsAdapter graphicsAdapter, Helicopter helicopter)
     {
         // allgemeine Anzeigen
-        g2d.setPaint(Colorations.gradientVariableWhite);
-        g2d.setFont(fontProvider.getPlain(52));
+        graphicsAdapter.setPaint(Colorations.gradientVariableWhite);
+        graphicsAdapter.setFont(fontProvider.getPlain(52));
         String inputString = Window.dictionary.repairShop();
-        g2d.drawString(inputString, 251 + (285 - g2d.getFontMetrics().stringWidth(inputString))/2, 65);
-        g2d.setColor(Colorations.lightOrange);
-        g2d.setFont(fontProvider.getPlain(22));
-        g2d.drawString(String.format("%s: %d €", Window.dictionary.credit(), Events.money), 27, 35);
-        g2d.drawString(String.format("%s: %d", Window.dictionary.currentLevel(), Events.level), 562, 35);
-        g2d.setFont(fontProvider.getPlain(18));
-        g2d.drawString(String.format("%s: %s", Window.dictionary.playingTime(), Window.repairShopTime), 27, 75);
+        graphicsAdapter.drawString(inputString, 251 + (285 - graphicsAdapter.getFontMetrics().stringWidth(inputString))/2, 65);
+        graphicsAdapter.setColor(Colorations.lightOrange);
+        graphicsAdapter.setFont(fontProvider.getPlain(22));
+        graphicsAdapter.drawString(String.format("%s: %d €", Window.dictionary.credit(), Events.money), 27, 35);
+        graphicsAdapter.drawString(String.format("%s: %d", Window.dictionary.currentLevel(), Events.level), 562, 35);
+        graphicsAdapter.setFont(fontProvider.getPlain(18));
+        graphicsAdapter.drawString(String.format("%s: %s", Window.dictionary.playingTime(), Window.repairShopTime), 27, 75);
         
         // Helicopter-Anzeige
-        paintHelicopterDisplay(g2d, graphics2DAdapter, helicopter, 0, 10); //58
+        paintHelicopterDisplay(graphicsAdapter, helicopter, 0, 10); //58
         
         // Reparatur-Button
-        Window.buttons.get(LeftSideRepairShopButtonType.REPAIR).paint(g2d, graphics2DAdapter);
+        Window.buttons.get(LeftSideRepairShopButtonType.REPAIR).paint(graphicsAdapter);
         
         // Die Einsätze
-        g2d.setColor(Color.yellow);
-        g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(Window.dictionary.headlineMission(), 27, 382);
+        graphicsAdapter.setColor(Color.yellow);
+        graphicsAdapter.setFont(fontProvider.getBold(20));
+        graphicsAdapter.drawString(Window.dictionary.headlineMission(), 27, 382);
         
-        Window.buttons.get(LeftSideRepairShopButtonType.MISSION).paint(g2d, graphics2DAdapter);
+        Window.buttons.get(LeftSideRepairShopButtonType.MISSION).paint(graphicsAdapter);
         
         // Die Status-Leiste
-        GraphicalEntities.paintFrame(g2d, 251, 117, 285, 326);
+        GraphicalEntities.paintFrame(graphicsAdapter, 251, 117, 285, 326);
         
-        g2d.setColor(Color.yellow);
-        g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(Window.dictionary.statusBar(), 255, 102);
+        graphicsAdapter.setColor(Color.yellow);
+        graphicsAdapter.setFont(fontProvider.getBold(20));
+        graphicsAdapter.drawString(Window.dictionary.statusBar(), 255, 102);
         
-        g2d.setColor(Colorations.lightOrange);
-        g2d.setFont(fontProvider.getBold(16));
-        g2d.drawString(Window.dictionary.state(), STATUS_BAR_X1, STANDARD_UPGRADE_OFFSET_Y - 5);
+        graphicsAdapter.setColor(Colorations.lightOrange);
+        graphicsAdapter.setFont(fontProvider.getBold(16));
+        graphicsAdapter.drawString(Window.dictionary.state(), STATUS_BAR_X1, STANDARD_UPGRADE_OFFSET_Y - 5);
         
-        g2d.setColor(helicopter.isDamaged ? Color.red : Color.green);
-        g2d.drawString(Window.dictionary.stateCondition(helicopter.isDamaged), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y - 5);
+        graphicsAdapter.setColor(helicopter.isDamaged ? Color.red : Color.green);
+        graphicsAdapter.drawString(Window.dictionary.stateCondition(helicopter.isDamaged), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y - 5);
         
         // Standard-Upgrades
         for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
         {
-            g2d.setColor(Colorations.lightOrange);
+            graphicsAdapter.setColor(Colorations.lightOrange);
             String tempString = Window.dictionary.standardUpgradeName(standardUpgradeType);
-            g2d.drawString(tempString + ":",
+            graphicsAdapter.drawString(tempString + ":",
                 STATUS_BAR_X1,
                 STANDARD_UPGRADE_OFFSET_Y + 25 + standardUpgradeType.ordinal() * 25);
             
@@ -98,95 +97,95 @@ public class RepairShopWindowPainter extends WindowPainter
                 && !(helicopter.getType() == OROCHI
                 && !helicopter.hasMaximumUpgradeLevelFor(MISSILE_DRIVE)))))
             {
-                g2d.setColor(Colorations.golden);
+                graphicsAdapter.setColor(Colorations.golden);
             }
-            else{g2d.setColor(Color.white);}
+            else{graphicsAdapter.setColor(Color.white);}
             if(standardUpgradeType == ENERGY_ABILITY && helicopter.getType() == OROCHI)
             {
-                g2d.drawString(Window.dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType) + " / " + (helicopter.getUpgradeLevelOf(MISSILE_DRIVE)-1), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y + 150);
+                graphicsAdapter.drawString(Window.dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType) + " / " + (helicopter.getUpgradeLevelOf(MISSILE_DRIVE)-1), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y + 150);
             }
-            else{g2d.drawString(Window.dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y + 25 + standardUpgradeType.ordinal() * 25);}
+            else{graphicsAdapter.drawString(Window.dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y + 25 + standardUpgradeType.ordinal() * 25);}
         }
         
         // Spezial-Upgrades
         // TODO überprüfen, ob iterieren über eine Schliefe möglich ist
         if(helicopter.hasSpotlights)
         {
-            g2d.setColor(Colorations.golden);
-            g2d.drawString(Window.dictionary.specialUpgrade(SPOTLIGHT), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 0);
+            graphicsAdapter.setColor(Colorations.golden);
+            graphicsAdapter.drawString(Window.dictionary.specialUpgrade(SPOTLIGHT), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 0);
         }
         if(helicopter.hasGoliathPlating())
         {
-            g2d.setColor(Colorations.golden);
-            g2d.drawString(Window.dictionary.specialUpgrade(GOLIATH_PLATING), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 25);
+            graphicsAdapter.setColor(Colorations.golden);
+            graphicsAdapter.drawString(Window.dictionary.specialUpgrade(GOLIATH_PLATING), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 25);
         }
         if(helicopter.hasPiercingWarheads)
         {
-            g2d.setColor(Colorations.golden);
-            g2d.drawString(Window.dictionary.specialUpgrade(PIERCING_WARHEADS), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 50);
+            graphicsAdapter.setColor(Colorations.golden);
+            graphicsAdapter.drawString(Window.dictionary.specialUpgrade(PIERCING_WARHEADS), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 50);
         }
         if(helicopter.numberOfCannons >= 2)
         {
             if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
             {
-                g2d.setColor(Color.white);
+                graphicsAdapter.setColor(Color.white);
             }
-            else{g2d.setColor(Colorations.golden);}
+            else{graphicsAdapter.setColor(Colorations.golden);}
             if(helicopter.numberOfCannons == 3)
             {
-                g2d.drawString(Window.dictionary.secondAndThirdCannon(), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 75);
+                graphicsAdapter.drawString(Window.dictionary.secondAndThirdCannon(), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 75);
             }
             else
             {
-                g2d.drawString(Window.dictionary.specialUpgrade(EXTRA_CANNONS), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 75);
+                graphicsAdapter.drawString(Window.dictionary.specialUpgrade(EXTRA_CANNONS), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 75);
             }
         }
         if(helicopter.hasFifthSpecial())
         {
-            // TODO String zusammenbauen und dann einmal g2d.drawString (auch oben)
-            g2d.setColor(Colorations.golden);
+            // TODO String zusammenbauen und dann einmal graphicsAdapter.drawString (auch oben)
+            graphicsAdapter.setColor(Colorations.golden);
             if(helicopter.getType() == PHOENIX || helicopter.getType() == PEGASUS)
             {
-                if(!helicopter.isFifthSpecialOnMaximumStrength()){g2d.setColor(Color.white);}
+                if(!helicopter.isFifthSpecialOnMaximumStrength()){graphicsAdapter.setColor(Color.white);}
                 // TODO diese Fallunterscheidung in Methoden auslagern (überschreiben in PHOENIX und PEGASUS)
-                g2d.drawString(Window.dictionary.specialUpgrade(FIFTH_SPECIAL) + " (" + Window.dictionary.level() + " " + (helicopter.getUpgradeLevelOf(helicopter.getType() == PHOENIX ? FIREPOWER : FIRE_RATE)-1) + ")", STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 100);
+                graphicsAdapter.drawString(Window.dictionary.specialUpgrade(FIFTH_SPECIAL) + " (" + Window.dictionary.level() + " " + (helicopter.getUpgradeLevelOf(helicopter.getType() == PHOENIX ? FIREPOWER : FIRE_RATE)-1) + ")", STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 100);
             }
             else
             {
-                g2d.drawString(Window.dictionary.specialUpgrade(FIFTH_SPECIAL), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 100);
+                graphicsAdapter.drawString(Window.dictionary.specialUpgrade(FIFTH_SPECIAL), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 100);
             }
         }
         
         // Standard-Upgrades
-        g2d.setColor(Color.yellow);
-        g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(Window.dictionary.standardUpgrades(), StandardUpgradeButtonType.OFFSET.x + 4, 82);
-        g2d.setFont(fontProvider.getPlain(15));
+        graphicsAdapter.setColor(Color.yellow);
+        graphicsAdapter.setFont(fontProvider.getBold(20));
+        graphicsAdapter.drawString(Window.dictionary.standardUpgrades(), StandardUpgradeButtonType.OFFSET.x + 4, 82);
+        graphicsAdapter.setFont(fontProvider.getPlain(15));
         // TODO hier muss sich auf die Anzahl der Elemente im Enum StandardUpgradeButtonSize bezogen werden, am besten ein forEach über die Elemente
         
         StandardUpgradeButtonType.getValues()
                                  .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)
-                                                                           .paint(g2d, graphics2DAdapter));
+                                                                           .paint(graphicsAdapter));
         
         // Message Box
-        paintMessageFrame(g2d);
+        paintMessageFrame(graphicsAdapter);
         
         // Spezial-Upgrades
-        g2d.setColor(Color.yellow);
-        g2d.setFont(fontProvider.getBold(20));
-        g2d.drawString(Window.dictionary.specialUpgrades(), 774, 142);
-        g2d.setFont(fontProvider.getPlain(15));
+        graphicsAdapter.setColor(Color.yellow);
+        graphicsAdapter.setFont(fontProvider.getBold(20));
+        graphicsAdapter.drawString(Window.dictionary.specialUpgrades(), 774, 142);
+        graphicsAdapter.setFont(fontProvider.getPlain(15));
         
         SpecialUpgradeButtonType.getValues()
                                 .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)
-                                                                          .paint(g2d, graphics2DAdapter));
+                                                                          .paint(graphicsAdapter));
     }
     
-    private static void paintMessageFrame(Graphics2D g2d)
+    private static void paintMessageFrame(GraphicsAdapter graphicsAdapter)
     {
-        GraphicalEntities.paintFrame(g2d, 773, 11, 181, 98);
-        g2d.setColor(Colorations.golden);
-        g2d.setFont(fontProvider.getBold(14));
-        for(int i = 0; i < Window.MESSAGE_LINE_COUNT; i++){g2d.drawString(Window.message[i], 785, 35 + i * 20); }
+        GraphicalEntities.paintFrame(graphicsAdapter, 773, 11, 181, 98);
+        graphicsAdapter.setColor(Colorations.golden);
+        graphicsAdapter.setFont(fontProvider.getBold(14));
+        for(int i = 0; i < Window.MESSAGE_LINE_COUNT; i++){graphicsAdapter.drawString(Window.message[i], 785, 35 + i * 20); }
     }
 }

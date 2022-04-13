@@ -945,11 +945,10 @@ public class Events
 		Window.updateStartScreenSubLabelText();
 	}
 	
-	private static void switchAntialiasingActivationState(	Controller controller,
-															Button currentButton)
+	private static void switchAntialiasingActivationState(Controller controller, Button currentButton)
 	{
 		Controller.antialiasing = !Controller.antialiasing;
-		controller.offGraphics.setRenderingHint( 
+		controller.graphicsAdapter.setRenderingHint(
 				RenderingHints.KEY_ANTIALIASING,
 				Controller.antialiasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 		Window.dictionary.updateAntialiasing();

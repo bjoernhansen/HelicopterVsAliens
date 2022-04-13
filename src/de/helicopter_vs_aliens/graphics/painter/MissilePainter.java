@@ -1,59 +1,56 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
-import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
-
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import java.awt.Color;
 
 public class MissilePainter extends Painter<Missile>
 {
     @Override
-    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, Missile missile)
+    public void paint(GraphicsAdapter graphicsAdapter, Missile missile)
     {
         int x = missile.getPaintBounds().x;
         int y = missile.getPaintBounds().y;
         int height = missile.getPaintBounds().height;
         int width = missile.getPaintBounds().width;        
         
-        g2d.setColor(Colorations.red);
-        g2d.fillRect(
+        graphicsAdapter.setColor(Colorations.red);
+        graphicsAdapter.fillRect(
                 x + (missile.speed >= 0 ? 0 : width + 3),
                 y - 2,
                 2,
                 height + 4);
         
-        g2d.fillRect(
+        graphicsAdapter.fillRect(
                 x + (missile.speed >= 0 ? 2 : width + 1),
                 y - 1,
                 2,
                 height + 2);
         
-        g2d.fillRect(
+        graphicsAdapter.fillRect(
                 x + (missile.speed >= 0 ? 4 : 1),
                 y,
                 width,
                 height);
         
-        g2d.setColor(Colorations.pink);
-        g2d.fillRect(
+        graphicsAdapter.setColor(Colorations.pink);
+        graphicsAdapter.fillRect(
                 x + (missile.speed >= 0 ? 2 : 0),
                 y + 1,
                 width + 3,
                 height - 2);
         
-        g2d.setColor(Color.yellow);
-        g2d.fillRect(
+        graphicsAdapter.setColor(Color.yellow);
+        graphicsAdapter.fillRect(
                 x + (missile.speed >= 0 ? -3 : width + 5),
                 y,
                 3,
                 height);
         
-        g2d.setColor(Colorations.translucentWhite);
-        g2d.fillRect((int) (x + width
+        graphicsAdapter.setColor(Colorations.translucentWhite);
+        graphicsAdapter.fillRect((int) (x + width
                         * (missile.speed >= 0 ? -missile.speed / 5 : 1)
                         + (missile.speed >= 0 ? -6 : 11)),
                 y,

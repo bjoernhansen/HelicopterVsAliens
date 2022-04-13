@@ -63,6 +63,7 @@ public enum EnemyType
       
     private final int strength; // Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
     
+    // TODO nicht mit Arrays arbeiten, vgl. z.B. WindowType
     private static final EnemyType[]
             defensiveCopyOfValues = values();
     

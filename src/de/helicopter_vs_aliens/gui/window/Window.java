@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.timer.Timer;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.FontProvider;
@@ -33,7 +33,6 @@ import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.Arrays;
@@ -168,7 +167,7 @@ public abstract class Window implements Paintable
 	
 	/** Paint-Methoden **/
 	@Override
-	public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
+	public void paint(GraphicsAdapter graphicsAdapter)
 	{
 		GraphicsManager.getInstance().paint(this);
 	}

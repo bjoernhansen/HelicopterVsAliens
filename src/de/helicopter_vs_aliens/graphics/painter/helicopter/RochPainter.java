@@ -1,32 +1,31 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.Graphics2D;
-
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
+
 
 public class RochPainter extends HelicopterPainter
 {
     @Override
-    void paintComponents(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, int left, int top)
+    void paintComponents(GraphicsAdapter graphicsAdapter, int left, int top)
     {
         Roch roch = (Roch) helicopter;
-        super.paintComponents(g2d, graphics2DAdapter, left, top);
+        super.paintComponents(graphicsAdapter, left, top);
         if(roch.isPowerShieldActivated())
         {
-            this.paintPowerShield(g2d, left, top);
+            this.paintPowerShield(graphicsAdapter, left, top);
         }
     }
     
-    private void paintPowerShield(Graphics2D g2d, int left, int top)
+    private void paintPowerShield(GraphicsAdapter graphicsAdapter, int left, int top)
     {
-        g2d.setColor(Colorations.shieldColor[WindowManager.window == START_SCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
-        g2d.fillOval(left+(this.hasLeftMovingAppearance() ? -9 : 35), top+19, 96, 54);
+        graphicsAdapter.setColor(Colorations.shieldColor[WindowManager.window == START_SCREEN ? NIGHT.ordinal() : Events.timeOfDay.ordinal()]);
+        graphicsAdapter.fillOval(left+(this.hasLeftMovingAppearance() ? -9 : 35), top+19, 96, 54);
     }
 }

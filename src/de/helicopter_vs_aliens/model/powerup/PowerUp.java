@@ -257,9 +257,4 @@ public class PowerUp extends RectangularGameEntity
     {
         return crossColor;
     }
-	
-	public boolean isInStatusBar()
-	{
-		return isInStatusBar;
-	}
 }

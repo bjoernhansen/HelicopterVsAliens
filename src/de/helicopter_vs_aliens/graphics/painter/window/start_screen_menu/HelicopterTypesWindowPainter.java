@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -8,18 +8,16 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.Graphics2D;
-
 public class HelicopterTypesWindowPainter extends StartScreenMenuWindowPainter
 {
     @Override
-    void paintStartScreenMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
+    void paintStartScreenMenu(GraphicsAdapter graphicsAdapter)
     {
-        super.paintStartScreenMenu(g2d, graphics2DAdapter);
+        super.paintStartScreenMenu(graphicsAdapter);
     
         if(Window.page.ordinal() > 1 && Window.page.ordinal() < 2 + HelicopterType.size())
         {
-            paintHelicopterInStartScreenMenu(g2d, graphics2DAdapter);
+            paintHelicopterInStartScreenMenu(graphicsAdapter);
         }
         else if(Window.page == StartScreenMenuButtonType.BUTTON_2)
         {
@@ -37,22 +35,22 @@ public class HelicopterTypesWindowPainter extends StartScreenMenuWindowPainter
                 
                     if(j == 0 && i != 0)
                     {
-                        g2d.setColor(Colorations.golden);
+                        graphicsAdapter.setColor(Colorations.golden);
                         tempString = Window.dictionary.standardUpgradeName(standardUpgradeType);
                     }
                     else if(j != 0 && i == 0)
                     {
-                        g2d.setColor(Colorations.brightenUp(helicopterType.getStandardPrimaryHullColor()));
+                        graphicsAdapter.setColor(Colorations.brightenUp(helicopterType.getStandardPrimaryHullColor()));
                         tempString = Window.dictionary.helicopterName(helicopterType);
                     }
                     else if(i != 0)
                     {
                         PriceLevel upgradeCosts = helicopterType.getPriceLevelFor(standardUpgradeType);
-                        g2d.setColor(upgradeCosts.getColor());
+                        graphicsAdapter.setColor(upgradeCosts.getColor());
                         tempString = Window.dictionary.priceLevel(upgradeCosts);
                     }
                     if(tempString == null) tempString = "Erwischt!";
-                    g2d.drawString(tempString, 200 + (j-1) * 135, 140 + (i == 0 ? 0 : 5) + (i-1) * 32);
+                    graphicsAdapter.drawString(tempString, 200 + (j-1) * 135, 140 + (i == 0 ? 0 : 5) + (i-1) * 32);
                 }
             }
         }

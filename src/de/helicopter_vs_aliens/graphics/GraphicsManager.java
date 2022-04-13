@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
 import de.helicopter_vs_aliens.graphics.painter.ButtonPainter;
 import de.helicopter_vs_aliens.graphics.painter.EnemyMissilePainter;
 import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
@@ -8,6 +7,7 @@ import de.helicopter_vs_aliens.graphics.painter.ExplosionPainter;
 import de.helicopter_vs_aliens.graphics.painter.MissilePainter;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
+import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
 import de.helicopter_vs_aliens.graphics.painter.SceneryPainter;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.Button;
@@ -18,10 +18,9 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
-import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,12 +28,9 @@ public class GraphicsManager
 {
     private final Map<Class<? extends Paintable>, Painter<? extends Paintable>>
         painters = new HashMap<>();
-    
-    private Graphics2D
-        graphics2D;
-    
-    private Graphics2DAdapter
-        graphics2DAdapter;
+        
+    private GraphicsAdapter
+        graphicsAdapter;
     
     private static final GraphicsManager
         instance = new GraphicsManager();
@@ -42,16 +38,14 @@ public class GraphicsManager
     private GraphicsManager()
     {
         // HelicopterPainter
-        HelicopterType.getValues().forEach(helicopterType -> {
-            painters.put(helicopterType.getHelicopterClass(), helicopterType.makePainterInstance());
-        });
+        HelicopterType.getValues().forEach(helicopterType ->
+            painters.put(helicopterType.getHelicopterClass(), helicopterType.makePainterInstance()));
         
         //GUI Painter
         painters.put(Button.class, new ButtonPainter());
     
-        WindowType.getValues().forEach(windowType -> {
-            painters.put(windowType.getMenuClass(), windowType.makePainterInstance());
-        });
+        WindowType.getValues().forEach(windowType ->
+            painters.put(windowType.getMenuClass(), windowType.makePainterInstance()));
         
         // sonstige Painter
         painters.put(PowerUp.class, new PowerUpPainter());
@@ -71,7 +65,7 @@ public class GraphicsManager
     public <E extends Paintable> void paint(E gameEntity)
     {
         Painter<E> painter = getPainter(gameEntity.getClass());
-        painter.paint(graphics2D, graphics2DAdapter, gameEntity);
+        painter.paint(graphicsAdapter, gameEntity);
     }
     
     public <E extends Painter<? extends Paintable>> E getPainter(Class<? extends Paintable> classOfGameEntity)
@@ -79,9 +73,8 @@ public class GraphicsManager
         return (E) painters.get(classOfGameEntity);
     }
 
-    public void setGraphics(Graphics2D graphics2D, Graphics2DAdapter graphics2DAdapter)
+    public void setGraphics(GraphicsAdapter graphicsAdapter)
     {
-        this.graphics2D = graphics2D;
-        this.graphics2DAdapter = graphics2DAdapter;
+        this.graphicsAdapter = graphicsAdapter;
     }
 }

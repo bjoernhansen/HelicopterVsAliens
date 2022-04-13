@@ -12,7 +12,8 @@ import java.util.Map;
 
 class GameEntityProvider
 {
-    private final Map<Class<? extends GameEntity>, AbstractGameEntityFactory<? extends Paintable>> gameEntityFactories = new HashMap<>();
+    private final Map<Class<? extends GameEntity>, AbstractGameEntityFactory<? extends GameEntity>>
+        gameEntityFactories = new HashMap<>();
     
     
     GameEntityProvider()
@@ -20,7 +21,7 @@ class GameEntityProvider
         gameEntityFactories.put(PowerUp.class, new PowerUpFactory());
     }
     
-    public <T extends Paintable> T makeEntityOf(Class<T> classOfGameEntity)
+    public <T extends GameEntity> T makeEntityOf(Class<T> classOfGameEntity)
     {
         return (T)gameEntityFactories.get(classOfGameEntity).make();
     }

@@ -1,9 +1,8 @@
 package de.helicopter_vs_aliens.gui.window;
 
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.WindowType;
 
-import java.awt.Graphics2D;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -22,10 +21,8 @@ public class WindowManager
         WindowType.getValues().forEach(windowType -> windows.put(windowType, windowType.getMenuInstance()));
     }
     
-    public void paintWindow(Graphics2D g2D, Graphics2DAdapter graphics2DAdapter)
+    public void paintWindow(GraphicsAdapter graphicsAdapter)
     {
-        windows.get(window).paint(g2D, graphics2DAdapter);
+        windows.get(window).paint(graphicsAdapter);
     }
-    
-    
 }

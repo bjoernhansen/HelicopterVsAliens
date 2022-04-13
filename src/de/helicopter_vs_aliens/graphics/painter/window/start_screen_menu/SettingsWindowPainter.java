@@ -4,13 +4,12 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 
@@ -23,20 +22,20 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
         TOP = 130;
     
     @Override
-    void paintStartScreenMenu(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter)
+    void paintStartScreenMenu(GraphicsAdapter graphicsAdapter)
     {
-        super.paintStartScreenMenu(g2d, graphics2DAdapter);
+        super.paintStartScreenMenu(graphicsAdapter);
     
-        g2d.setFont(fontProvider.getPlain(18));
-        g2d.setColor(Colorations.lightestGray);
+        graphicsAdapter.setFont(fontProvider.getPlain(18));
+        graphicsAdapter.setColor(Colorations.lightestGray);
     
         for(int i = 0; i < Window.NUMBER_OF_SETTING_OPTIONS; i++)
         {
-            g2d.drawString(Window.dictionary.settingOption(i), LEFT, TOP + i * LINE_SPACING);
+            graphicsAdapter.drawString(Window.dictionary.settingOption(i), LEFT, TOP + i * LINE_SPACING);
         }
     
-        g2d.setColor(Colorations.golden);
-        g2d.drawString( Window.dictionary.displayMode()
+        graphicsAdapter.setColor(Colorations.golden);
+        graphicsAdapter.drawString( Window.dictionary.displayMode()
                 + (!Main.isFullScreen ? "" : " ("
                 + (Window.hasOriginalResolution
                 ? Main.currentDisplayMode.getWidth()
@@ -46,24 +45,24 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
             LEFT + COLUMN_SPACING,
             TOP);
     
-        g2d.setColor(Audio.isSoundOn ? Color.green : Color.red);
-        g2d.drawString( Window.dictionary.activationState(Audio.isSoundOn)						, LEFT + COLUMN_SPACING, TOP + LINE_SPACING);
+        graphicsAdapter.setColor(Audio.isSoundOn ? Color.green : Color.red);
+        graphicsAdapter.drawString( Window.dictionary.activationState(Audio.isSoundOn)						, LEFT + COLUMN_SPACING, TOP + LINE_SPACING);
         if(Audio.MICHAEL_MODE && Audio.isSoundOn)
         {
-            g2d.setColor(Colorations.golden);
-            g2d.drawString("(" + (Audio.standardBackgroundMusic ? "Classic" : "Michael" + Window.dictionary.modeSuffix()) + ")", LEFT + COLUMN_SPACING + 25, TOP + LINE_SPACING);
+            graphicsAdapter.setColor(Colorations.golden);
+            graphicsAdapter.drawString("(" + (Audio.standardBackgroundMusic ? "Classic" : "Michael" + Window.dictionary.modeSuffix()) + ")", LEFT + COLUMN_SPACING + 25, TOP + LINE_SPACING);
         }
     
-        g2d.setColor(Controller.antialiasing ? Color.green : Color.red);
-        g2d.drawString(Window.dictionary.activationState(Controller.antialiasing)			, LEFT + COLUMN_SPACING, TOP + 2 * LINE_SPACING);
+        graphicsAdapter.setColor(Controller.antialiasing ? Color.green : Color.red);
+        graphicsAdapter.drawString(Window.dictionary.activationState(Controller.antialiasing)			, LEFT + COLUMN_SPACING, TOP + 2 * LINE_SPACING);
     
-        g2d.setColor(Colorations.golden);
-        g2d.drawString(Window.language.getNativeName(), LEFT + COLUMN_SPACING, TOP + 3 * LINE_SPACING);
+        graphicsAdapter.setColor(Colorations.golden);
+        graphicsAdapter.drawString(Window.language.getNativeName(), LEFT + COLUMN_SPACING, TOP + 3 * LINE_SPACING);
     
-        if(Window.page == StartScreenMenuButtonType.BUTTON_5){g2d.setColor(Color.white);}
-        g2d.drawString(Events.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 4 * LINE_SPACING);
+        if(Window.page == StartScreenMenuButtonType.BUTTON_5){graphicsAdapter.setColor(Color.white);}
+        graphicsAdapter.drawString(Events.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 4 * LINE_SPACING);
     
-        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (controller.framesCounter/30)%2 == 0){g2d.drawString("|", LEFT + COLUMN_SPACING + g2d.getFontMetrics().stringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
+        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (controller.framesCounter/30)%2 == 0){graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getFontMetrics().stringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
     }
     
     @Override

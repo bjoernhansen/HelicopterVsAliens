@@ -1,45 +1,34 @@
 Primäre Reihenfolge:
 
 Design Idee:
-1. Interface Paintable
-3. GraphicalRepresentation implementiert auch Paintable
-2. GameEntity (implementiert Paintable) und hat private Referenz auf GraphicalRepresentation, paint ruft paint vonGraphicalRepresetation auf
 5. verschiedene MissileTypen (Code in HelicopterSubklassen teilweise hierher überführen)
 4. Generischen ObjectRecycler (zum Beispiel für Missiles verschiedener Subklassen)
 Abstract Facotory HelicopterEquipmentFacotry, für Helicopter selbst, und Raketen, evtl. ObjectREcycler und ähnliches
-http://www.java2s.com/Tutorials/Java/java.util.function/Supplier/index.htm
 
-1. Dictionary und Helicopter Class Inheritance abschließen --> Merge in Master-Branch
-2. neuer Branch --> JavaFX und zu Malendes auslagern
-   --> Interface Paintable
-   --> Abstrakte Klasse Appearance erbt von Paintable
-   --> hat Referenz auf MovingObject (wird intern auf das richtige Objekt gecastet)
-   --> Moving Object erbt auch von Paintable und ruft paintrable von Appearance, auf welches es eine Referenz gibt
-   --> eventuell mit "leichten" Klasse beginnen PowerUps, Backgrpund, etc.
-3. zum Beispiel Timer oder Inheritance für Enemy und andere Klassen (zum Beispiel PowerUps)
+1. Dictionary abschließen
+Helicopter Class Inheritance abschließen
+3. Timer Klasse konsequent verwenden (ggf. mit Bindung/Listeners arbeiten)
+Inheritance für Enemy
 
 
 Generics: http://www.angelikalanger.com/Articles/EffectiveJava/30.GenericsIntro/30.GenericsIntro.html
 
 
-Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kerhwerte unterbinden innerhalb gewisser Zeit
-wenn gedreht an Barrier
+Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kertwende unterbinden innerhalb gewisser Zeit,
+wenn gedreht an Barrier.
 
-Ausweichenden Lilanen sollten immer vom Helicopter weg ausweichen
-
-
-Vererbung auch für andere Klassen wie zum Beispiel PowerUps einführen
+Ausweichende Gegner (in lila) sollten immer vom Helicopter weg ausweichen
 
 UnitTests (JUnit5) einführen, zunächst für kleine Klassen
 
-zuerst: die JavaFX-Sachen ausprobieren (zuerst evtl. in einem Testprojekt)
+
 
 Wenn Savegame nicht mehr kompatibel ist automatisch löschen / neuen File erstellen
-Helicopter Vererbung einführen und eigenes Package, an vielen stellen müssten dann abfragen des Types wegfallen
+
 Ggf. auch manche Konstanten in Enum (oder besser über Vererbung?)
 
-eigene Klasse(n) für Timern schreiben, ggf. mit Bindung/Listeners arbeiten
 
+zuerst: die JavaFX-Sachen ausprobieren (zuerst evtl. in einem Testprojekt)
 JavaFX Canvas verwenden
 	Buttons auf Canvas
 	Java3D für JavaFX testen
@@ -77,14 +66,11 @@ http://interactivemesh.org/testspace/j3dmeetsjfx.html
 
 
 
-Aktuelle geplante Änderungen nach Weiterbildung
--	StrategyFactory verwenden
+Aktuelle geplante Änderungen
 -	JavaFX verwenden für Grafiken, vorher alle Zeichenanweisungen von eigenen Methoden aufrufen lassen, um die Portierung für JavaFX und Android (wie funktioniert es da?) zu erleichtern
 -	Version ohne Michael-Sounds für compaktere Version
 -	Refactoring: viel kleinere Klassen, viel in einzelne Pakete auslagern, mehr Vererbung und Interfaces verwenden
 -	Kollision verbessern ggf. Shape, Area, JavaFX verwenden
-
-
 
 
 HeliDefence
@@ -96,9 +82,7 @@ HeliDefence
 
 
 
-Fehler, unverwunbar + energy schild roch  an, absturz, weenn energie weg
-
-
+Bug: unverwundbar + energy schild roch  an, absturz, wenn energie weg
 
 
 Kamikaze
@@ -117,7 +101,7 @@ Heli nimmt manchmal schaden, wenn er unten Barrier berührt
 
 
 nanos + größere Bild-Frequenz testen,
-Spiel soll wieder laufen auch wenn Maus verschwindet .
+Spiel soll wieder laufen, auch wenn Maus verschwindet.
 
 .. Dekoratet mal probieren, vielleicht besser, wenn Fenster maximierbar
 
@@ -158,7 +142,7 @@ EMP zu starker Stun bei Endgegnern … gewollt, früher auch so? evtl abschwäch
 Timer vereinheitlichen, gegebenenfalls unterscheiden zwischen stun und nicht stun gestoppten timern
 
 
-Enemy- anouver noch besser gestalten (Methoden sortieren und spalten)
+Enemy- manouver noch besser gestalten (Methoden sortieren und spalten)
 Alle richtungsänderungen aus Manöver in validate_turns einarbeiten
 Alle Geschwindigkeitsänderungen aus Manäver in calculate speed einarbeiten
 Zeitmessung was kostet am meisten

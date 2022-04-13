@@ -26,10 +26,8 @@ public class Label extends JTextPane
     protected void paintComponent(final Graphics g)
     {
         final Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-            Controller.antialiasing ?
-                RenderingHints.VALUE_ANTIALIAS_ON :
-                RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
+                              Controller.getAntialiasingRenderingHint());
         super.paintComponent(g2d);
     }
 }

@@ -5,6 +5,8 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -24,7 +26,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -92,7 +93,7 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 public class Enemy extends RectangularGameEntity
 {
 	private static class FinalEnemysOperator
-    {	
+    {
 		Enemy[] servants;
     	int [] timeSinceDeath;
     	
@@ -135,16 +136,16 @@ public class Enemy extends RectangularGameEntity
 		TELEPORT_DAMAGE_FACTOR = 4f,			// Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
 		EMP_DAMAGE_FACTOR_BOSS = 1.5f,			// Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
 		EMP_DAMAGE_FACTOR_ORDINARY = 2.5f,		// Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
-
-		RETURN_PROB[]	= { 0.013f,	 	// SMALL_SHIELD_MAKER
-             			    0.013f,  	// BIG_SHIELD_MAKER
-             			    0.007f,  	// BODYGUARD
-             			    0.01f,  	// HEALER
-             			    0.04f}, 	// PROTECTOR
-	
 		STANDARD_MINI_BOSS_PROB = 0.05f,
 		CHEAT_MINI_BOSS_PROB = 1.0f;
-		
+	
+	private static final float[]
+		RETURN_PROB	= { 0.013f,	 	// SMALL_SHIELD_MAKER
+		0.013f,  	// BIG_SHIELD_MAKER
+		0.007f,  	// BODYGUARD
+		0.01f,  	// HEALER
+		0.04f}; 	// PROTECTOR
+	
 	private static final int 				
 		// Raum-Konstanten
 		SAVE_ZONE_WIDTH = 116,
@@ -188,13 +189,14 @@ public class Enemy extends RectangularGameEntity
 	    // TODO die 4 austauschen / anders lösen
 		PRE_READY = 1,
 		READY = 0,
-		ACTIVE_TIMER = 1,
-		
-	    MIN_ABSENT_TIME[] = { 175,  // SMALL_SHIELD_MAKER
-		    				  175,  // BIG_SHIELD_MAKER
-							  900,  // BODYGUARD
-							  250,  // HEALER
-							   90}; // PROTECTOR
+		ACTIVE_TIMER = 1;
+	
+	private static final int[]
+		MIN_ABSENT_TIME = { 175,  // SMALL_SHIELD_MAKER
+		    				175,  // BIG_SHIELD_MAKER
+							900,  // BODYGUARD
+							250,  // HEALER
+							 90}; // PROTECTOR
 	
 	private static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
@@ -220,8 +222,10 @@ public class Enemy extends RectangularGameEntity
 	public static Enemy
 		currentMiniBoss,	// Referenz auf den aktuellen Boss-Gegner
 		currentRock,
-		lastCarrier,  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
-		livingBarrier[] = new Enemy [MAX_BARRIER_NUMBER];
+		lastCarrier;  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
+	
+	public static Enemy[]
+		livingBarrier = new Enemy [MAX_BARRIER_NUMBER];
 	
 	public static EnemyType
 		bossSelection;		 	// bestimmt, welche Boss-Typ erstellt wird
@@ -244,9 +248,10 @@ public class Enemy extends RectangularGameEntity
 		wasEnemyCreationPaused =  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
 		makeBossTwoServants =  false,	// make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
 		makeBoss4Servant =  false,
-	    makeAllBoss5Servants =  false,
-	    
-	    makeBoss5Servant[]	= 	  {false,	// SMALL_SHIELD_MAKER
+	    makeAllBoss5Servants =  false;
+	
+	private static final boolean[]
+	    makeBoss5Servant	= 	  {false,	// SMALL_SHIELD_MAKER
 	                        	   false,	// BIG_SHIELD_MAKER
 	                        	   false,	// BODYGUARD
 	                        	   false,	// HEALER
@@ -376,8 +381,8 @@ public class Enemy extends RectangularGameEntity
 		shotType;
 	
 	
-	private final Graphics2D []
-		graphics = new Graphics2D [2];
+	private final GraphicsAdapter []
+		graphicsAdapters = new GraphicsAdapter[2];
 	
 	private FinalEnemysOperator
 		operator;
@@ -418,7 +423,7 @@ public class Enemy extends RectangularGameEntity
     	for(int i = 0; i < this.image.length; i++)
     	{
     		this.image[i] = null; 
-    		if(i < 2){this.graphics[i] = null;}
+    		if(i < 2){this.graphicsAdapters[i] = null;}
     	}
     }
     
@@ -428,12 +433,12 @@ public class Enemy extends RectangularGameEntity
 		{		
 			if(this.model != BARRIER)
 			{				
-				this.graphics[j].setComposite(AlphaComposite.Src);
-				this.graphics[j].setColor(Colorations.translucentDarkestBlack);
-				this.graphics[j].fillRect(0, 0, this.image[j].getWidth(), this.image[j].getHeight());
+				this.graphicsAdapters[j].setComposite(AlphaComposite.Src);
+				this.graphicsAdapters[j].setColor(Colorations.translucentDarkestBlack);
+				this.graphicsAdapters[j].fillRect(0, 0, this.image[j].getWidth(), this.image[j].getHeight());
 			}
 			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(this.getClass());
-			enemyPainter.paintImage(this.graphics[j], this, 1-2*j, null, true);
+			enemyPainter.paintImage(this.graphicsAdapters[j], this, 1-2*j, null, true);
 		}
 	}		
 	
@@ -844,13 +849,11 @@ public class Enemy extends RectangularGameEntity
 			this.image[i] = new BufferedImage((int)(1.028f * this.paintBounds.width),
 											  (int)(1.250f * this.paintBounds.height),
 											  BufferedImage.TYPE_INT_ARGB);
-			this.graphics[i] = getGraphics(this.image[i]);			
-			
+			this.graphicsAdapters[i] = getGraphicAdapter(this.image[i]);
 			//this.graphics[i].setComposite(AlphaComposite.Src);
 			
-			
 			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(this.getClass());
-			enemyPainter.paintImage(this.graphics[i], this,1-2*i, null, true);
+			enemyPainter.paintImage(this.graphicsAdapters[i], this,1-2*i, null, true);
 			if(this.cloakingTimer != DISABLED && helicopter.getType() == OROCHI)
 			{
 				BufferedImage 
@@ -862,8 +865,8 @@ public class Enemy extends RectangularGameEntity
 													(int)(1.250f * this.paintBounds.height),
 													BufferedImage.TYPE_INT_ARGB);
 				
-				enemyPainter.paintImage(getGraphics(tempImage), this,1-2*i, Color.red, true);
-				(getGraphics(this.image[2+i])).drawImage(tempImage, ROP_CLOAKED, 0, 0);
+				enemyPainter.paintImage(getGraphicAdapter(tempImage), this,1-2*i, Color.red, true);
+				(getGraphicAdapter(this.image[2+i])).drawImage(tempImage, ROP_CLOAKED, 0, 0);
 			}
 		}		
 	}
@@ -1152,6 +1155,7 @@ public class Enemy extends RectangularGameEntity
 	
 	private void createStandardEnemy()
 	{
+		// TODO Switch sollte entfallen,
 		this.type = enemySelector.getType(Calculations.random(selection));
 		//this.type = CARRIER;
 
@@ -1853,12 +1857,12 @@ public class Enemy extends RectangularGameEntity
 		}		
 	}
 
-	private static Graphics2D getGraphics(BufferedImage bufferedImage)
+	private static GraphicsAdapter getGraphicAdapter(BufferedImage bufferedImage)
 	{
-		Graphics2D g2d = (Graphics2D)bufferedImage.getGraphics();
-		g2d.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-								RenderingHints.VALUE_ANTIALIAS_ON);	
-		return g2d;
+		GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(bufferedImage);
+		graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+										 RenderingHints.VALUE_ANTIALIAS_ON);
+		return graphicsAdapter;
 	}
 
 	/* Die folgende Funktion reguliert die Gegner-Bewegung:
@@ -1866,7 +1870,6 @@ public class Enemy extends RectangularGameEntity
 	 *	  werden die neuen Koordinaten berechnet.
 	 * 2. Der Gegner wird an Stelle seiner neuen Koordinaten gemalt.
 	 */
-		
 	public static void updateAllActive(Controller controller,
 									   Helicopter helicopter)
 	{
@@ -1919,11 +1922,8 @@ public class Enemy extends RectangularGameEntity
 		return 	   dir ==  1 && enemyCenter < barrierCenter
 				|| dir == -1 && enemyCenter > barrierCenter;
 	}
-
-
 	
-	
-	public boolean isVisableNonBarricadeVessel(boolean hasRadarDevice)
+	public boolean isVisibleNonBarricadeVessel(boolean hasRadarDevice)
 	{
 		return this.type != ROCK
 			&& this.model != BARRIER

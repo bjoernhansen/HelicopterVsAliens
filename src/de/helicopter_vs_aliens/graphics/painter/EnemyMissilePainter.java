@@ -1,30 +1,26 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 
-import java.awt.*;
-import java.util.EnumMap;
-import java.util.LinkedList;
+import java.awt.Color;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 
 public class EnemyMissilePainter extends Painter<EnemyMissile>
 {
     @Override
-    public void paint(Graphics2D g2d, Graphics2DAdapter graphics2DAdapter, EnemyMissile enemyMissile)
+    public void paint(GraphicsAdapter graphicsAdapter, EnemyMissile enemyMissile)
     {
-        g2d.setColor(enemyMissile.getVariableColor());
-        g2d.fillOval((int)enemyMissile.getLocation().getX(),
-                (int)enemyMissile.getLocation().getY(),
-                enemyMissile.getDiameter(),
-                enemyMissile.getDiameter());
-        g2d.setColor(enemyMissile.getType() == BUSTER ? Color.orange : Color.white);
-        g2d.drawOval((int)enemyMissile.getLocation().getX(),
-                (int)enemyMissile.getLocation().getY(),
-                enemyMissile.getDiameter(),
-                enemyMissile.getDiameter());
+        graphicsAdapter.setColor(enemyMissile.getVariableColor());
+        graphicsAdapter.fillOval( (int)enemyMissile.getLocation().getX(),
+                                  (int)enemyMissile.getLocation().getY(),
+                                  enemyMissile.getDiameter(),
+                                  enemyMissile.getDiameter());
+        graphicsAdapter.setColor(enemyMissile.getType() == BUSTER ? Color.orange : Color.white);
+        graphicsAdapter.drawOval( (int)enemyMissile.getLocation().getX(),
+                                  (int)enemyMissile.getLocation().getY(),
+                                  enemyMissile.getDiameter(),
+                                  enemyMissile.getDiameter());
     }
 }
