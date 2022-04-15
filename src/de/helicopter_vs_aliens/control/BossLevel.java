@@ -51,11 +51,6 @@ public enum BossLevel
         return BOSS_LEVEL_MAP.get(Events.level);
     }
     
-    public static int count()
-    {
-        return VALUES.size();
-    }
-    
     private int getNextLevel(){
         return nextLevel;
     }

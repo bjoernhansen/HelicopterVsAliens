@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 
 
 public abstract class RectangularGameEntity extends GameEntity
-// TODO möglichst so vereinheitlichen, dass alle von GameEnitiy erben können
 {
 	public static final  int
         // TODO diese Kontante sollte nicht in GameEntity sein

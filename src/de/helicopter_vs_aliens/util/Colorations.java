@@ -113,6 +113,7 @@ public final class Colorations
 							 new Color(80,230,160)},
 				   {dimColor(new Color(80,190,140), NIGHT_DIM_FACTOR),
 							 new Color(80,190,140)}},
+		// TODO enum einführen, der FRAME, NOZZLE, EYES ersetzt und hier entsprechende EnumMap verwenden
 	    barrierColor = {{dimColor(new Color(140,140,140), BARRIER_NIGHT_DIM_FACTOR),
 								  new Color(140,140,140)},
 					    {dimColor(new Color(165,165,165), BARRIER_NIGHT_DIM_FACTOR),
