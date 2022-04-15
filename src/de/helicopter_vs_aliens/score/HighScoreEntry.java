@@ -5,7 +5,6 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.Objects;
 
 public final class HighScoreEntry implements Serializable, Comparable<HighScoreEntry>
 {
@@ -58,20 +57,6 @@ public final class HighScoreEntry implements Serializable, Comparable<HighScoreE
         this.crashes = savegame.numberOfCrashes;
         this.repairs = savegame.numberOfRepairs;
         this.bonusIncome = Events.bonusIncomePercentage();
-    }
-    
-    // TODO use comparator & ggf. Baumstruktur verwenden, ELEMENT einfügen und das kleinste löschen
-    boolean isBetterThan(HighScoreEntry entry)
-    {
-        if (this.maxLevel > entry.maxLevel) return true;
-        else if (this.maxLevel < entry.maxLevel) return false;
-        else if (this.playingTime < entry.playingTime) return true;
-        else if (this.playingTime > entry.playingTime) return false;
-        else if (this.crashes < entry.crashes) return true;
-        else if (this.crashes > entry.crashes) return false;
-        else if (this.repairs < entry.repairs) return true;
-        else if (this.repairs > entry.repairs) return false;
-        else return this.bonusIncome > entry.bonusIncome;
     }
     
     @Override

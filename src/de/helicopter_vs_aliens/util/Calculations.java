@@ -102,4 +102,9 @@ public final class Calculations
 	{
 		return Math.max(min, Math.min(value, max));
 	}
+	
+	public static int square(int i)
+	{
+		return i * i;
+	}
 }

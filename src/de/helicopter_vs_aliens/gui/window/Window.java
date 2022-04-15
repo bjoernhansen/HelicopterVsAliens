@@ -98,7 +98,7 @@ public abstract class Window implements Paintable
 		unlockedTimer;					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 	
 	public static int[]
-		effectTimer = new int[HelicopterType.size()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
+		effectTimer = new int[HelicopterType.count()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
 	 
 	public static StartScreenMenuButtonType
 		page = StartScreenMenuButtonType.BUTTON_1; // ausgewählte Seite im StartScreen-Menü
@@ -181,8 +181,8 @@ public abstract class Window implements Paintable
 			helicopterDummies.put(helicopterType, helicopterType.makeInstance());
 		}
     	
-    	helicopterSelection = (3 + Calculations.random(HelicopterType.size()-1))
-    						   % HelicopterType.size();
+    	helicopterSelection = (3 + Calculations.random(HelicopterType.count()-1))
+    						   % HelicopterType.count();
     	
     	int[] px1 = {19 , 19 , 5};
     	int[] px2= {1004, 1004, 1018};
@@ -220,7 +220,7 @@ public abstract class Window implements Paintable
 
 		// TODO eventuell ist hier kein array effectTimer, sondern ein einzelner Wert erforderlich, da die effekte scheinbar
 		// nicht gleichzeitig erfolgen können (reset bei wechsel des selektierten Helikopters
-        for(int i = 0; i < HelicopterType.size(); i++)
+        for(int i = 0; i < HelicopterType.count(); i++)
         {
         	if(effectTimer[i] > 0){
 				effectTimer[i]--;}
@@ -232,7 +232,7 @@ public abstract class Window implements Paintable
 			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{
-				Events.nextHelicopterType = HelicopterType.getValues().get((i + helicopterSelection)% HelicopterType.size());
+				Events.nextHelicopterType = HelicopterType.getValues().get((i + helicopterSelection)% HelicopterType.count());
 				Helicopter helicopterDummy = helicopterDummies.get(Events.nextHelicopterType);
 				if(Events.hasSelectedHelicopterChanged())
 				{
@@ -282,7 +282,7 @@ public abstract class Window implements Paintable
 		cancelButton.setHighlighted(isHighlighted);
 	}
 	
-	public static String minuten(long spielzeit)
+	public static String minutes(long spielzeit)
 	{
 		if(spielzeit == 1) return Window.language == ENGLISH ? "1 minute" : "1 Minute";
 		return spielzeit + (Window.language == ENGLISH ? " minutes" : " Minuten");
@@ -422,6 +422,10 @@ public abstract class Window implements Paintable
 			for(ButtonSpecifier buttonSpecifier : buttonGroup.getButtonSpecifiers())
 			{
 				Button button = buttons.get(buttonSpecifier);
+				if(button == null || helicopter == null)
+				{
+					String.format("Button: %s; Helicopter: %s", button, helicopter);
+				}
 				if (button.getBounds().contains(helicopter.destination.x, helicopter.destination.y))
 				{
 					button.setHighlighted(true);
@@ -623,7 +627,7 @@ public abstract class Window implements Paintable
 	public static void blockHelicopterSelection(HelicopterType nextHelicopterType)
 	{
 		Audio.play(Audio.block);
-		crossPosition = (Events.nextHelicopterType.ordinal() - helicopterSelection + HelicopterType.size())% HelicopterType.size();
+		crossPosition = (Events.nextHelicopterType.ordinal() - helicopterSelection + HelicopterType.count())% HelicopterType.count();
 		cross = getCrossPolygon();
 		crossTimer = 1;
 		messageTimer = 1;
@@ -669,11 +673,11 @@ public abstract class Window implements Paintable
 		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsTo(helicopter.getSpotlightCosts());
 		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).setCostColor(CHEAP.getColor());
 		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).adjustCostsTo(helicopter.getGoliathCosts());
-		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).setCostColor((helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && Events.recordTime[PHOENIX.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
-		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).adjustCostsTo((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
-		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).setCostColor((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && Events.recordTime[ROCH.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : REGULAR.getColor());
-		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).adjustCostsTo((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
-		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setCostColor((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && Events.recordTime[OROCHI.ordinal()][4] != 0)) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).setCostColor((helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && PHOENIX.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).adjustCostsTo((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && ROCH.hasDefeatedFinalBoss())) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).setCostColor((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && ROCH.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).adjustCostsTo((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setCostColor((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor());
 		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setPrimaryLabel(dictionary.extraCannons());
 		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).adjustCostsTo(helicopter.getFifthSpecialCosts());
 		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).setCostColor(helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor());

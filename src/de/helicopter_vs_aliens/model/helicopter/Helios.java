@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -22,9 +23,12 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
 
 public final class Helios extends Helicopter
 {
-    public static final float
-        HELIOS_MAX_MONEY_DIVISOR = 110250;        // Summe der ersten 49 natürlichen Zahlen (0.5 * 49 * 50) * NIGHT_BONUS_FACTOR
-    public static final float END_OF_POWERUP_GENERATION_PROBABILITY = 0.7f;
+    private static final int
+        COMPARISON_RECORD_TIME = 60;	// angenommene Bestzeit für Besiegen von Boss 5
+    
+    private static final float
+        HELIOS_MAX_MONEY_DIVISOR = 110250,        // Summe der ersten 49 natürlichen Zahlen (0.5 * 49 * 50) * NIGHT_BONUS_FACTOR
+        END_OF_POWERUP_GENERATION_PROBABILITY = 0.7f;
     
     private int
         powerUpGeneratorTimer;
@@ -55,13 +59,18 @@ public final class Helios extends Helicopter
     @Override
     public int getGoliathCosts()
     {
-        return Events.recordTime[PHOENIX.ordinal()][4] != 0 ? Phoenix.GOLIATH_COSTS : STANDARD_GOLIATH_COSTS;
+        return
+            HelicopterType.PHOENIX.hasDefeatedFinalBoss()
+            ? Phoenix.GOLIATH_COSTS
+            : STANDARD_GOLIATH_COSTS;
     }
 
     @Override
     public int getPiercingWarheadsCosts()
     {
-        return Events.recordTime[ROCH.ordinal()][4] != 0 ? CHEAP_SPECIAL_COSTS : STANDARD_GOLIATH_COSTS;
+        return  ROCH.hasDefeatedFinalBoss()
+                ? CHEAP_SPECIAL_COSTS
+                : STANDARD_GOLIATH_COSTS;
     }
 
     @Override
@@ -164,5 +173,30 @@ public final class Helios extends Helicopter
     public boolean hasPowerUpsDisallowedAtBossLevel()
     {
         return false;
+    }
+    
+    public static int getMaxMoney()
+    {
+        return HelicopterType.getNormalModeHelicopters()
+                             .stream()
+                             .map(Helios::getHighestRecordMoney)
+                             .reduce(0, Integer::sum);
+    }
+    
+    private static int getHighestRecordMoney(HelicopterType helicopterType)
+    {
+        return BossLevel.getValues()
+                        .stream()
+                        .filter(helicopterType::hasPassed)
+                        .map(bossLevel -> recordEntryMoney(helicopterType, bossLevel))
+                        .reduce(Integer::max)
+                        .orElse(0);
+    }
+    
+    private static int recordEntryMoney(HelicopterType helicopterType, BossLevel bossLevel)
+    {
+        long recordTime = helicopterType.getRecordTime(bossLevel);
+        return (int) ((Events.MAX_MONEY * COMPARISON_RECORD_TIME * bossLevel.getBossNr())
+                        / (37.5f * recordTime * Calculations.square(6 - bossLevel.getBossNr())));
     }
 }

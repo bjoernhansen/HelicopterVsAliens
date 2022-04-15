@@ -26,6 +26,7 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -92,12 +93,12 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 public class Enemy extends RectangularGameEntity
 {
-	private static class FinalEnemysOperator
+	private static class FinalEnemyOperator
     {
 		Enemy[] servants;
     	int [] timeSinceDeath;
     	
-    	FinalEnemysOperator()
+    	FinalEnemyOperator()
     	{
     		this.servants = new Enemy [NR_OF_BOSS_5_SERVANTS];
     		this.timeSinceDeath = new int [NR_OF_BOSS_5_SERVANTS];
@@ -114,25 +115,19 @@ public class Enemy extends RectangularGameEntity
 	
 	public static final Point2D
 		ZERO_SPEED = new Point2D.Float(0, 0);
-    
-    private static final Point
-		TURN_DISTANCE = new Point(50, 10),
-		TARGET_DISTANCE_VARIANCE = new Point(10, 3),
-		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10),
-		SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3);
-
-	private static final float 	
+	
+	private static final float
 		RADAR_STRENGTH 				= 0.2f,		// Alpha-Wert: legt fest, wie stark  ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
 		HEIGHT_FACTOR 				= 0.28f,	// legt das Verhältnis von Höhe und Länge für die meisten Gegner fest
 		HEIGHT_FACTOR_SUPERSIZE 	= 0.65f,	// legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
 		ROCK_PROB					= 0.05f,
-		KABOOM_PROB				    = 0.02f,	// Rate mit der Kaboom-Gegner erscheinen 
-		POWER_UP_PROB				= 0.02f, 
+		KABOOM_PROB				    = 0.02f,	// Rate mit der Kaboom-Gegner erscheinen
+		POWER_UP_PROB				= 0.02f,
 		SPIN_SHOOTER_RATE 		   	= 0.55f,
 		EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f,
-
-		// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
-		RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
+	
+	// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
+	RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
 		TELEPORT_DAMAGE_FACTOR = 4f,			// Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
 		EMP_DAMAGE_FACTOR_BOSS = 1.5f,			// Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
 		EMP_DAMAGE_FACTOR_ORDINARY = 2.5f,		// Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
@@ -146,7 +141,7 @@ public class Enemy extends RectangularGameEntity
 		0.01f,  	// HEALER
 		0.04f}; 	// PROTECTOR
 	
-	private static final int 				
+	private static final int
 		// Raum-Konstanten
 		SAVE_ZONE_WIDTH = 116,
 		APPEARANCE_DISTANCE = 10,
@@ -155,6 +150,7 @@ public class Enemy extends RectangularGameEntity
 		BARRIER_DISTANCE = 100,
 		ROCK_WIDTH = 300,
 		KABOOM_WIDTH = 120,
+		FINAL_BOSS_STARTING_POSITION_Y = 98,
 		FINAL_BOSS_WIDTH = 450,
 		PROTECTOR_WIDTH = 90,
 		KABOOM_Y_TURN_LINE = GROUND_Y - (int) (HEIGHT_FACTOR * KABOOM_WIDTH),
@@ -171,7 +167,7 @@ public class Enemy extends RectangularGameEntity
 		STATIC_CHARGE_TIME = 110,
 		MAX_BARRIER_NUMBER = 3,
 	
-	    // Level-Voraussetzungen
+		// Level-Voraussetzungen
 		MIN_BARRIER_LEVEL = 2,
 		MIN_POWER_UP_LEVEL = 3,
 		MIN_FUTURE_LEVEL = 8,
@@ -180,23 +176,32 @@ public class Enemy extends RectangularGameEntity
 		MIN_ROCK_LEVEL = 27,
 		MIN_BUSTER_LEVEL = 29,
 	
-	    // für Boss-Gegner
+		// für Boss-Gegner
 		NR_OF_BOSS_5_SERVANTS = 5,
 		BOSS_5_HEAL_RATE = 11,
 		STANDARD_REWARD_FACTOR = 1,
 		MINI_BOSS_REWARD_FACTOR = 4,
 	
-	    // TODO die 4 austauschen / anders lösen
+		// TODO die 4 austauschen / anders lösen
 		PRE_READY = 1,
 		READY = 0,
 		ACTIVE_TIMER = 1;
 	
 	private static final int[]
 		MIN_ABSENT_TIME = { 175,  // SMALL_SHIELD_MAKER
-		    				175,  // BIG_SHIELD_MAKER
+							175,  // BIG_SHIELD_MAKER
 							900,  // BODYGUARD
 							250,  // HEALER
-							 90}; // PROTECTOR
+							90}; // PROTECTOR
+	
+	private static final Point
+		TURN_DISTANCE = new Point(50, 10),
+		TARGET_DISTANCE_VARIANCE = new Point(10, 3),
+		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10),
+		SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3);
+	
+	private static final Dimension
+		FINAL_BOSS_DIMENSION = new Dimension(FINAL_BOSS_WIDTH, (int)HEIGHT_FACTOR * FINAL_BOSS_WIDTH );
 	
 	private static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
@@ -208,7 +213,7 @@ public class Enemy extends RectangularGameEntity
 									- 2*TURN_DISTANCE.y);
 
 	private static final EnemySelector
-		enemySelector = new EnemySelector();
+		ENEMY_SELECTOR = new EnemySelector();
 
 	// statische Variablen (keine Konstanten)
 	public static int
@@ -384,7 +389,7 @@ public class Enemy extends RectangularGameEntity
 	private final GraphicsAdapter []
 		graphicsAdapters = new GraphicsAdapter[2];
 	
-	private FinalEnemysOperator
+	private FinalEnemyOperator
 		operator;
 	
 	private final BufferedImage []
@@ -502,7 +507,7 @@ public class Enemy extends RectangularGameEntity
 			selectionBarrier = 2;
 			
 			if(	 helicopter.isCountingAsFairPlayedHelicopter()
-				 && !Events.hasAnyBossBeenKilledBefore())
+				 && !Events.recordTimeManager.hasAnyBossBeenKilledBefore())
 			{
 				Window.unlock(HELIOS);
 			}
@@ -1156,7 +1161,7 @@ public class Enemy extends RectangularGameEntity
 	private void createStandardEnemy()
 	{
 		// TODO Switch sollte entfallen,
-		this.type = enemySelector.getType(Calculations.random(selection));
+		this.type = ENEMY_SELECTOR.getType(Calculations.random(selection));
 		//this.type = CARRIER;
 
 		switch(this.type)
@@ -1547,18 +1552,20 @@ public class Enemy extends RectangularGameEntity
 		}	
 		// Level 50
 		else if(this.type == FINAL_BOSS)
-		{			
-			this.setInitialBounds(this.bounds.getX(),
-								    98,
-								    FINAL_BOSS_WIDTH,
-								    FINAL_BOSS_WIDTH * HEIGHT_FACTOR);
-						
+		{
+			this.bounds.setRect(this.bounds.getX(),
+								FINAL_BOSS_STARTING_POSITION_Y,
+								FINAL_BOSS_DIMENSION.width,
+								FINAL_BOSS_DIMENSION.height);
+			this.hasYPosSet = true;
+			this.hasHeightSet = true;
+			
 			this.farbe1 = Colorations.brown;
 			this.hitpoints = 25000;	
 			this.targetSpeedLevel.setLocation(23.5, 0); //d
 
 			maxNr = 5;
-			this.operator = new FinalEnemysOperator();
+			this.operator = new FinalEnemyOperator();
 			this.isStunnable = false;
 			this.dimFactor = 1.3f;
 			

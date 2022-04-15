@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -60,6 +61,18 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     public void drawLine(int x1, int y1, int x2, int y2)
     {
         graphics.drawLine(x1, y1, x2, y2);
+    }
+    
+    @Override
+    public void drawPoint(int x, int y)
+    {
+        graphics.drawLine(x, y, x, y);
+    }
+    
+    @Override
+    public void drawPoint(Point point)
+    {
+        drawPoint(point.x, point.y);
     }
     
     @Override

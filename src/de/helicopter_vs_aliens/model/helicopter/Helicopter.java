@@ -122,6 +122,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	private final Map<StandardUpgradeType, Integer>
         levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
 	
+	// TODO EnumMap von BossLevel hier erzeugen
 	public long []
 		scoreScreenTimes = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
 		

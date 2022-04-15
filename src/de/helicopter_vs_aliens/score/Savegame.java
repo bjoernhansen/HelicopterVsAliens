@@ -2,11 +2,13 @@ package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.RecordTimeManager;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.util.SizeLimitedTreeSet;
 import de.helicopter_vs_aliens.util.dictionary.Language;
@@ -15,13 +17,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
-
-import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
+import java.util.Optional;
 
 // TODO getter und setter einführen. Es sollte nicht alles public sein
 public class Savegame implements Serializable
@@ -40,7 +42,7 @@ public class Savegame implements Serializable
 	
 	// TODO es sollte kein Array verwendet werden
 	public boolean[]
-		reachedLevelTwenty = new boolean [HelicopterType.size()];
+		reachedLevelTwenty = new boolean [HelicopterType.count()];
 	
 	public int
 		money,
@@ -65,11 +67,10 @@ public class Savegame implements Serializable
 	
 	// TODO es sollte kein Array verwendet werden
 	public long[]
-		scoreScreenTimes = new long [HelicopterType.size()];
-	
-	// TODO es sollte kein Array verwendet werden
-	public long[][]
-		recordTime = new long [HelicopterType.size()][NUMBER_OF_BOSS_LEVEL];
+		scoreScreenTimes = new long [HelicopterType.count()];
+		
+	RecordTimeManager
+		recordTimeManager;
 	
 	public float
 		currentPlating,
@@ -96,7 +97,6 @@ public class Savegame implements Serializable
 	private Map<HighScoreType, SizeLimitedTreeSet<HighScoreEntry>>
 		highScoreMap = new EnumMap<>(HighScoreType.class);
 	
-	
 	private Savegame()
 	{
 		this.isValid = false;
@@ -110,18 +110,18 @@ public class Savegame implements Serializable
 		Savegame output;
 		if((new File(FILENAME)).exists())
 		{			
-			Savegame temp = lastGame();
-			
-			Events.currentPlayerName = temp.currentPlayerName;
-			Window.setLanguage(temp.language);
-			Window.hasOriginalResolution = temp.originalResolution;
-			Audio.standardBackgroundMusic = temp.standardBackgroundMusic && Audio.MICHAEL_MODE;
-			Audio.isSoundOn = temp.isSoundOn;
-			Events.recordTime = temp.recordTime.clone();
-			Events.heliosMaxMoney = Events.getHeliosMaxMoney();
-			Events.reachedLevelTwenty = temp.reachedLevelTwenty.clone();
-			
-			output = temp;
+			Optional<Savegame> loadedSavegame = lastGame();
+			loadedSavegame.ifPresent(savegame -> {
+				Events.currentPlayerName = savegame.currentPlayerName;
+				Window.setLanguage(savegame.language);
+				Window.hasOriginalResolution = savegame.originalResolution;
+				Audio.standardBackgroundMusic = savegame.standardBackgroundMusic && Audio.MICHAEL_MODE;
+				Audio.isSoundOn = savegame.isSoundOn;
+				Events.recordTimeManager = savegame.recordTimeManager;
+				Events.heliosMaxMoney = Helios.getMaxMoney();
+				Events.reachedLevelTwenty = savegame.reachedLevelTwenty.clone();
+			});
+			output = loadedSavegame.orElseGet(Savegame::new);
 		}		
 		else
 		{
@@ -132,7 +132,7 @@ public class Savegame implements Serializable
 		return output;
 	}
 	
-	private static Savegame lastGame()
+	private static Optional<Savegame> lastGame()
 	{		
 		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILENAME)))
 		{			
@@ -141,16 +141,26 @@ public class Savegame implements Serializable
 				Object obj = ois.readObject();				
 				if(obj instanceof Savegame)
 				{
-					return (Savegame)obj;
+					return Optional.of((Savegame)obj);
 				}	
+			}
+			catch(InvalidClassException e)
+			{
+				File savegameFile = new File(FILENAME);
+				savegameFile.delete();
+				System.out.println("The savegame was recreated due to incompatibility.");
+				return Optional.empty();
 			}
 			catch(ClassNotFoundException e)
 			{
-				e.printStackTrace();
+				return Optional.empty();
 			}
 		}
-		catch ( IOException e ) {e.printStackTrace();}
-		return new Savegame();
+		catch ( IOException e )
+		{
+			e.printStackTrace();
+		}
+		return Optional.empty();
 	}
 	
 	public void writeToFile()
@@ -231,7 +241,7 @@ public class Savegame implements Serializable
 		this.extraBonusCounter = Events.extraBonusCounter;
 		this.playingTime = Events.playingTime;
 		this.scoreScreenTimes = helicopter.scoreScreenTimes.clone();
-		this.recordTime = Events.recordTime.clone();
+		this.recordTimeManager = Events.recordTimeManager;
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
 		this.highScoreMap = new EnumMap<>(Events.highScoreMap);
 		

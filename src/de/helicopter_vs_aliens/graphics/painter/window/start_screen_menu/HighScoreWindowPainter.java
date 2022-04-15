@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
+import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
@@ -10,6 +11,7 @@ import de.helicopter_vs_aliens.score.HighScoreType;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -31,43 +33,7 @@ public class HighScoreWindowPainter extends StartScreenMenuWindowPainter
         
         if(Window.page == StartScreenMenuButtonType.BUTTON_1)
         {
-            String tempString = "";
-            // TODO Magic number entfernen
-            for(int i = 0; i < 6; i++)
-            {
-                // TODO über HelicopterTypes iterieren
-                for(int j = 0; j < HelicopterType.size() + 1; j++)
-                {
-                    if(j == 0 && i!=0)
-                    {
-                        graphicsAdapter.setColor(Colorations.golden);
-                        tempString = "Boss " + i;
-                    }
-                    else if(j != 0 && i==0)
-                    {
-                        graphicsAdapter.setColor(Colorations.brightenUp(HelicopterType.getValues().get(j-1).getStandardPrimaryHullColor()));
-                        tempString = Window.dictionary.helicopterName(HelicopterType.getValues().get(j-1));
-                    }
-                    else if(i != 0)
-                    {
-                        graphicsAdapter.setColor(Color.white);
-                        if(i==1)
-                        {
-                            tempString = Events.recordTime[j-1][i-1] == 0
-                                ? ""
-                                : Events.recordTime[j - 1][i - 1] + " min";
-                        }
-                        else
-                        {
-                            tempString = Events.recordTime[j-1][i-1] == 0
-                                ? ""
-                                : Events.recordTime[j - 1][i - 1] - Events.recordTime[j - 1][i - 2] + " min";
-                        }
-                    
-                    }
-                    graphicsAdapter.drawString(tempString, 200 + (j-1) * 135, 150 + (i-1) * 35);
-                }
-            }
+            paintRecordTimeTable(graphicsAdapter);
         }
         else
         {
@@ -75,12 +41,63 @@ public class HighScoreWindowPainter extends StartScreenMenuWindowPainter
             {
                 paintHelicopterInStartScreenMenu(graphicsAdapter);
             }
-            paintColumnHeadings(graphicsAdapter);
+            paintHighScoreColumnHeadings(graphicsAdapter);
             paintHighScoreEntryRows(graphicsAdapter);
         }
     }
     
-    private void paintColumnHeadings(GraphicsAdapter graphicsAdapter)
+    private void paintRecordTimeTable(GraphicsAdapter graphicsAdapter)
+    {
+        paintRecordTimeTableColumnLabels(graphicsAdapter);
+        paintRecordTimeTableRowLabels(graphicsAdapter);
+        paintRecordTimeTableInnerEntries(graphicsAdapter);
+    }
+    
+    private void paintRecordTimeTableRowLabels(GraphicsAdapter graphicsAdapter)
+    {
+        graphicsAdapter.setColor(Colorations.golden);
+        BossLevel.getValues().forEach(bossLevel -> {
+            String text =  "Boss " + bossLevel.getBossNr();
+            drawRecordTimeTableEntry(graphicsAdapter, text, 0, bossLevel.getBossNr());
+        });
+    }
+    
+    private void paintRecordTimeTableColumnLabels(GraphicsAdapter graphicsAdapter)
+    {
+        HelicopterType.getValues().forEach(helicopterType -> {
+            Color typeSpecificColor = Colorations.brightenUp(helicopterType.getStandardPrimaryHullColor());
+            graphicsAdapter.setColor(typeSpecificColor);
+            String text = Window.dictionary.helicopterName(helicopterType);
+            drawRecordTimeTableEntry(graphicsAdapter, text, helicopterType.getNumber(), 0);
+        });
+    }
+    
+    private void paintRecordTimeTableInnerEntries(GraphicsAdapter graphicsAdapter)
+    {
+        graphicsAdapter.setColor(Color.white);
+        HelicopterType.getValues().forEach(helicopterType ->
+            BossLevel.getValues().forEach(bossLevel -> {
+                String text = getRecordTimeText(helicopterType, bossLevel);
+                drawRecordTimeTableEntry(graphicsAdapter, text, helicopterType.getNumber(), bossLevel.getBossNr());
+            }));
+    }
+    
+    private String getRecordTimeText(HelicopterType helicopterType, BossLevel bossLevel)
+    {
+        return Optional.ofNullable(bossLevel)
+                       .filter(helicopterType::hasPassed)
+                       .map(helicopterType::getRecordTime)
+                       .map(recordTime -> recordTime + " min")
+                       .orElse("");
+    }
+    
+    private void drawRecordTimeTableEntry(GraphicsAdapter graphicsAdapter, String text, int indexX, int indexY)
+    {
+        // TODO Magic numbers
+        graphicsAdapter.drawString(text, 200 + (indexX-1) * 135, 150 + (indexY-1) * 35);
+    }
+    
+    private void paintHighScoreColumnHeadings(GraphicsAdapter graphicsAdapter)
     {
         graphicsAdapter.setColor(Color.lightGray);
         HighScoreColumnType.getValues().forEach(highScoreColumnType ->
@@ -111,7 +128,7 @@ public class HighScoreWindowPainter extends StartScreenMenuWindowPainter
         return TOP_ROW_Y + rowIndex * ROW_DISTANCE;
     }
     
-    private static String formatNumber(int number)
+    private String formatNumber(int number)
     {
         return String.format(NUMBER_FORMAT, number)
                      .replace(" ", "  ");

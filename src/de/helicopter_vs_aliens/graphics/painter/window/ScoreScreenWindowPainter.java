@@ -53,11 +53,11 @@ public class ScoreScreenWindowPainter extends WindowPainter
             graphicsAdapter.setColor(Color.green);
             if(Window.language == ENGLISH)
             {
-                graphicsAdapter.drawString("Mission completed in " + Window.minuten(helicopter.scoreScreenTimes[4]) + "!", X_POS_2, Y_POS -9);
+                graphicsAdapter.drawString("Mission completed in " + Window.minutes(helicopter.scoreScreenTimes[4]) + "!", X_POS_2, Y_POS -9);
             }
             else
             {
-                graphicsAdapter.drawString("Mission in " + Window.minuten(helicopter.scoreScreenTimes[4]) + " erfüllt!", X_POS_2, Y_POS -9);
+                graphicsAdapter.drawString("Mission in " + Window.minutes(helicopter.scoreScreenTimes[4]) + " erfüllt!", X_POS_2, Y_POS -9);
             }
         }
         else
@@ -65,11 +65,11 @@ public class ScoreScreenWindowPainter extends WindowPainter
             graphicsAdapter.setColor(Color.red);
             if(Window.language == ENGLISH)
             {
-                graphicsAdapter.drawString("Mission failed after " + Window.minuten(helicopter.scoreScreenTimes[4]) + " in level " + Events.level + "!", X_POS_2, Y_POS - 9);
+                graphicsAdapter.drawString("Mission failed after " + Window.minutes(helicopter.scoreScreenTimes[4]) + " in level " + Events.level + "!", X_POS_2, Y_POS - 9);
             }
             else
             {
-                graphicsAdapter.drawString("Mission nach " + Window.minuten(helicopter.scoreScreenTimes[4]) + " in Level " + Events.level + " gescheitert!", X_POS_2, Y_POS - 9);
+                graphicsAdapter.drawString("Mission nach " + Window.minutes(helicopter.scoreScreenTimes[4]) + " in Level " + Events.level + " gescheitert!", X_POS_2, Y_POS - 9);
             }
         }
         graphicsAdapter.setColor(Color.white);
@@ -81,7 +81,7 @@ public class ScoreScreenWindowPainter extends WindowPainter
             if(i < (Events.level-1)/10)
             {
                 graphicsAdapter.setColor(Color.green);
-                graphicsAdapter.drawString(Window.minuten(i == 0 ? helicopter.scoreScreenTimes[0] : helicopter.scoreScreenTimes[i] - helicopter.scoreScreenTimes[i-1]) + " (Boss " + (i+1) + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * (i+1));
+                graphicsAdapter.drawString(Window.minutes(i == 0 ? helicopter.scoreScreenTimes[0] : helicopter.scoreScreenTimes[i] - helicopter.scoreScreenTimes[i-1]) + " (Boss " + (i+1) + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * (i+1));
             }
             else
             {

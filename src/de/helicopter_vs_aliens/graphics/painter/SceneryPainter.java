@@ -38,10 +38,8 @@ public class SceneryPainter extends Painter<Scenery>
     private void paintStars(GraphicsAdapter graphicsAdapter)
     {
         graphicsAdapter.setColor(Color.white);
-        
-        // TODO in eine drawPoint-Methode auslagern, sobald es den Graphics2DAdapter gibt
         scenery.getStars()
-               .forEach(star -> graphicsAdapter.drawLine(star.x, star.y, star.x, star.y));
+               .forEach(graphicsAdapter::drawPoint);
     }
     
     private void paintCloud(GraphicsAdapter graphicsAdapter)

@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Paint;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -21,6 +22,8 @@ public interface GraphicsAdapter
     void fillOval(int x, int y, int width, int height);
     void setStroke(Stroke s);
     void drawLine(int x1, int y1, int x2, int y2);
+    void drawPoint(int x, int y);
+    void drawPoint(Point point);
     void setPaint( Paint paint );
     void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight);
     void fillRect(int x, int y, int width, int height);

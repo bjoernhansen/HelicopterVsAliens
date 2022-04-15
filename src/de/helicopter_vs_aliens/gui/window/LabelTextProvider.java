@@ -194,7 +194,7 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + HTML_SIZE +
                             "\" face=\"Dialog\" color=\"#D2D2D2\">" +
-                            "Before the game starts, you can select from " + HelicopterType.size() + " " +
+                            "Before the game starts, you can select from " + HelicopterType.count() + " " +
                             "<font color=\"#FFFFD2\">helicopter types" +
                             "<font color=\"#D2D2D2\"> which differ in their starting " +
                             "attributes and their available upgrades. With the " +
@@ -438,7 +438,7 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
-                            "You can choose from " + HelicopterType.size() + " different " +
+                            "You can choose from " + HelicopterType.count() + " different " +
                             "<font color=\"#FFFFD2\">helicopter types" +
                             "<font color=\"#D2D2D2\">. Each " +
                             "of these helicopters has a unique, energy-consuming " +
@@ -847,7 +847,7 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
-                            "Zu Beginn des Spiels stehen Ihnen " + HelicopterType.size() + " verschiedene " +
+                            "Zu Beginn des Spiels stehen Ihnen " + HelicopterType.count() + " verschiedene " +
                             "<font color=\"#FFFFD2\">Helikopter-Klassen" +
                             "<font color=\"#D2D2D2\"> mit unterschiedlichen " +
                             "Startwerten zur " +
@@ -1098,7 +1098,7 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
-                            "Der Spieler hat die Wahl zwischen " + HelicopterType.size() + " verschiedenen " +
+                            "Der Spieler hat die Wahl zwischen " + HelicopterType.count() + " verschiedenen " +
                             "Helikopter-Klassen. " +
                             "Jede dieser 5 Klassen verfügt über eine einzigartige, " +
                             "energieverbrauchende Fertigkeit " +

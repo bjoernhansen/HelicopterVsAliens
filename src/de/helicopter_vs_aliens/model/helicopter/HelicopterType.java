@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HeliosPainter;
@@ -11,12 +12,13 @@ import de.helicopter_vs_aliens.graphics.painter.helicopter.RochPainter;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 
@@ -53,14 +55,14 @@ public enum HelicopterType
         @Override
         public boolean isUnlocked()
         {
-            return Events.hasAnyBossBeenKilledBefore();
+            return Events.recordTimeManager.hasAnyBossBeenKilledBefore();
         }
 
         @Override
         public PriceLevel getPriceLevelFor(StandardUpgradeType standardUpgradeType)
         {
             HelicopterType privilegedHelicopter = standardUpgradeType.getPrivilegedHelicopter();
-            int bestNonFinalMainBossKill = Events.getBestNonFinalMainBossKillBy(privilegedHelicopter);
+            int bestNonFinalMainBossKill = Events.getNonFinalMainBossKillCountOf(privilegedHelicopter);
             return PriceLevel.getValues()[PriceLevel.getMaximum().ordinal() - bestNonFinalMainBossKill];
         }
     };
@@ -116,19 +118,25 @@ public enum HelicopterType
                     new Color(110, 110, 110)}};
     
     private static final List<HelicopterType>
-        listOfValues = List.of(values());
+        VALUES = List.of(values());
     
+    // TODO ggf. hier EnumSet verwenden
     private static final List<HelicopterType>
-        NO_UNLOCKER = Collections.unmodifiableList(new ArrayList<>()),
+        NO_UNLOCKER = Collections.emptyList(),
         OROCHI_UNLOCKER = List.of(PHOENIX, PEGASUS),
         KAMAITACHI_UNLOCKER = List.of(ROCH, PEGASUS),
         PEGASUS_UNLOCKER = List.of(OROCHI, KAMAITACHI);
     
-    // Die Kosten mancher Upgrades weichen für manche Helicopterklassen vom Standard ab.
-    // Die HashMap ADDITIONAL_STANDARD_UPGRADE_COSTS enthält die Modifikationswerte.
+    private static final Set<HelicopterType>
+        NORMAL_MODE_HELICOPTERS = Set.copyOf(EnumSet.range(PHOENIX, PEGASUS));
+    
+    // Die Kosten mancher Upgrades weichen für manche Helikopter-Klassen vom Standard ab.
+    // Die HashMap ADDITIONAL_STANDARD_UPGRADE_COSTS enthält die Differenzen zu den vom Standard abweichenden Werten.
     private static final Map<String, Integer>
         ADDITIONAL_STANDARD_UPGRADE_COSTS = setAdditionalCosts();
     
+    private final int
+        number;
     
     private final String
         fifthSpecialDictionaryKey;
@@ -146,25 +154,30 @@ public enum HelicopterType
                    Supplier<? extends Helicopter> instance,
                    Supplier<? extends Painter<? extends Helicopter>> painterInstance)
     {
+        this.number = ordinal()+1;
         this.helicopterClass = helicopterClass;
         this.instance = instance;
         this.painterInstance = painterInstance;
         this.fifthSpecialDictionaryKey = FIFTH_SPECIAL_KEY_PREFIX + this.getDesignation();
     }
     
-    public static int size()
+    public static int count()
     {
-        return getValues().size();
+        return VALUES.size();
     }
     
     public static List<HelicopterType> getValues()
     {
-        return listOfValues;
+        return VALUES;
     }
 
     public List<HelicopterType> getUnlockerTypes()
     {
         return NO_UNLOCKER;
+    }
+    
+    public static Set<HelicopterType> getNormalModeHelicopters(){
+        return NORMAL_MODE_HELICOPTERS;
     }
     
     public static HelicopterType getDefault()
@@ -234,6 +247,7 @@ public enum HelicopterType
         return fifthSpecialDictionaryKey;
     }
     
+    // TODO in eigene Klasse auslagern: AdditionalCostsProvider
     private static Map<String, Integer> setAdditionalCosts()
     {
         HashMap<String, Integer> additionalCosts = new HashMap<> ();
@@ -292,5 +306,29 @@ public enum HelicopterType
     public Painter<? extends Helicopter> makePainterInstance()
     {
         return painterInstance.get();
+    }
+    
+    public boolean hasDefeatedFinalBoss()
+    {
+        return hasPassed(BossLevel.FINAL_BOSS);
+    }
+    
+    public boolean hasDefeatedFirstBoss()
+    {
+        return hasPassed(BossLevel.BOSS_1);
+    }
+    
+    public boolean hasPassed(BossLevel bossLevel)
+    {
+        return !this.getRecordTime(bossLevel).equals(0L);
+    }
+    
+    public Long getRecordTime(BossLevel bossLevel)
+    {
+        return Events.recordTimeManager.getRecordTime(this, bossLevel);
+    }
+    
+    public int getNumber(){
+        return this.number;
     }
 }

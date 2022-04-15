@@ -68,14 +68,14 @@ public class StartScreenWindowPainter extends WindowPainter
         for(int i = 0; i < Window.NUMBER_OF_START_SCREEN_HELICOPTERS; i++)
         {
             if(    Events.nextHelicopterType != null
-                && Events.nextHelicopterType.ordinal() == (Window.helicopterSelection +i)% HelicopterType.size())
+                && Events.nextHelicopterType.ordinal() == (Window.helicopterSelection +i)% HelicopterType.count())
             {
                 graphicsAdapter.setColor(Color.white);
             }
             else{graphicsAdapter.setColor(Colorations.lightGray);}
             graphicsAdapter.setFont(fontProvider.getBold(20));
             
-            String className = Window.dictionary.typeName(HelicopterType.getValues().get((Window.helicopterSelection +i)% HelicopterType.size()));
+            String className = Window.dictionary.typeName(HelicopterType.getValues().get((Window.helicopterSelection +i)% HelicopterType.count()));
             int sw = graphicsAdapter.getFontMetrics().stringWidth(className);
             graphicsAdapter.drawString(
                 className,
@@ -84,7 +84,7 @@ public class StartScreenWindowPainter extends WindowPainter
             
             graphicsAdapter.setFont(new Font("Dialog", Font.BOLD, 15));
             
-            HelicopterType type = HelicopterType.getValues().get((Window.helicopterSelection +i)% HelicopterType.size());
+            HelicopterType type = HelicopterType.getValues().get((Window.helicopterSelection +i)% HelicopterType.count());
             for(int j = 0; j < 3; j++)
             {
                 graphicsAdapter.drawString(
@@ -99,7 +99,7 @@ public class StartScreenWindowPainter extends WindowPainter
             }
             
             Helicopter nextStartScreenHelicopter = Window.helicopterDummies.get(HelicopterType.getValues()
-                                                                                              .get((Window.helicopterSelection + i) % HelicopterType.size()));
+                                                                                              .get((Window.helicopterSelection + i) % HelicopterType.count()));
             HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(nextStartScreenHelicopter.getClass());
             helicopterPainter.startScreenPaint(
                 graphicsAdapter,
@@ -111,7 +111,7 @@ public class StartScreenWindowPainter extends WindowPainter
             {
                 GraphicalEntities.paintFrame(graphicsAdapter, Window.helicopterFrame[i], Colorations.translucentBlack);
             }
-            if(Events.allPlayable || HelicopterType.getValues().get((Window.helicopterSelection + i)% HelicopterType.size()).isUnlocked())
+            if(Events.allPlayable || HelicopterType.getValues().get((Window.helicopterSelection + i)% HelicopterType.count()).isUnlocked())
             {
                 // TODO diese boundaries als Konstante festlegen
                 paintTickMark(graphicsAdapter, i, 210, 323, 15, 20);

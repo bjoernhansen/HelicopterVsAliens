@@ -15,7 +15,7 @@ public class HelicopterTypesWindowPainter extends StartScreenMenuWindowPainter
     {
         super.paintStartScreenMenu(graphicsAdapter);
     
-        if(Window.page.ordinal() > 1 && Window.page.ordinal() < 2 + HelicopterType.size())
+        if(Window.page.ordinal() > 1 && Window.page.ordinal() < 2 + HelicopterType.count())
         {
             paintHelicopterInStartScreenMenu(graphicsAdapter);
         }
@@ -28,7 +28,7 @@ public class HelicopterTypesWindowPainter extends StartScreenMenuWindowPainter
             for(int i = 0; i < StandardUpgradeType.size() + 1; i++)
             {
                 // TODO über HelicopterTypes iterieren
-                for(int j = 0; j < HelicopterType.size() + 1; j++)
+                for(int j = 0; j < HelicopterType.count() + 1; j++)
                 {
                     if(i > 0){standardUpgradeType = StandardUpgradeType.getValues()[i-1];}
                     if(j > 0){helicopterType = HelicopterType.getValues().get(j-1);}

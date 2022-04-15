@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.helicopter;
 
+import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
@@ -22,7 +23,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
 public abstract class HelicopterPainter extends Painter<Helicopter>
 {
     private static final boolean
-        SHOW_RED_FRAME = true;			// zu Testzwecken: zeichnet roten Rahmen um die Helicopter Collision-Bounds
+        SHOW_RED_FRAME = false;			// zu Testzwecken: zeichnet roten Rahmen um die Helicopter Collision-Bounds
     
     // Grundfarben zur Berechnung der Gradienten-Farben
     // TODO ggf. eigene Klasse für Farben einführen
@@ -253,12 +254,12 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     public void startScreenPaint(GraphicsAdapter graphicsAdapter, Helicopter helicopter, int left, int top)
     {
         this.paint(graphicsAdapter, helicopter, left, top);
-        if(Events.recordTime[helicopter.getType().ordinal()][4] > 0 && WindowManager.window == START_SCREEN)
+        if(helicopter.getType().hasDefeatedFinalBoss() && WindowManager.window == START_SCREEN)
         {
             graphicsAdapter.setFont(Window.fontProvider.getBold(12));
             graphicsAdapter.setColor(Color.yellow);
             graphicsAdapter.drawString(Window.dictionary.recordTime(), left-27, top+67);
-            graphicsAdapter.drawString(Window.minuten(Events.recordTime[helicopter.getType().ordinal()][4]),left-27, top+80);
+            graphicsAdapter.drawString(Window.minutes(helicopter.getType().getRecordTime(BossLevel.FINAL_BOSS)),left-27, top+80);
         }
         
         if(helicopter.getType() == HELIOS && WindowManager.window == START_SCREEN)

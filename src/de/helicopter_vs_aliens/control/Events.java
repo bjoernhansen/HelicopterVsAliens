@@ -21,6 +21,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
@@ -36,7 +37,6 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -96,9 +96,10 @@ public class Events
 		highScoreMap = new EnumMap<>(HighScoreType.class);
 		
 	private static final int
-		COMPARISON_RECORD_TIME = 60,	// angenommene Bestzeit für Besiegen von Boss 5
 		TOTAL_LOSS_REPAIR_BASE_FEE = 875,
-		DEFAULT_REPAIR_BASE_FEE = 350,
+		DEFAULT_REPAIR_BASE_FEE = 350;
+	
+	public static final int
 		MAX_MONEY = 5540500;			// für Komplettausbau erforderliche Geldmenge
 	
 	static Point 
@@ -121,18 +122,19 @@ public class Events
 	public static long
 		playingTime,            // bisher vergangene Spielzeit
     	lastCurrentTime;		// Zeitpunkt der letzten Aktualisierung von playing_time
+		
+	public static RecordTimeManager
+		recordTimeManager = new RecordTimeManager();
 	
-	public static long [][]
-		recordTime = new long [HelicopterType.size()][NUMBER_OF_BOSS_LEVEL];	// für jede Helikopter-Klasse die jeweils beste Zeit bis zum Besiegen eines der 5 Boss-Gegner
-    
     public static boolean
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
     	settingsChanged = false,
     	allPlayable = false;
 	
 	// TODO kein Array verwenden
+	// TODO aufnehmen in RecordTimeManager
 	public static boolean[]
-		reachedLevelTwenty = new boolean[HelicopterType.size()];
+		reachedLevelTwenty = new boolean[HelicopterType.count()];
 	
 	public static TimeOfDay
 		timeOfDay = DAY;		// Tageszeit [NIGHT, DAY]
@@ -321,14 +323,14 @@ public class Events
 				}
 				else if(e.getKeyChar() == '-')
 				{					
-					if(!Calculations.isEmpty(recordTime))
+					if(!recordTimeManager.isEmpty())
 					{
-						for(int i = 0; i < HelicopterType.size(); i++)
+						recordTimeManager.eraseRecordTimes();
+						for(int i = 0; i < HelicopterType.count(); i++)
 						{
-							Arrays.fill(recordTime[i], 0);
 							reachedLevelTwenty[i] = false;
 						}
-						heliosMaxMoney = getHeliosMaxMoney();
+						heliosMaxMoney = Helios.getMaxMoney();
 						savegame.saveWithoutValidity(helicopter);
 					}
 				}
@@ -649,7 +651,7 @@ public class Events
 			// TODO if Bedingung auslagern in Methode
 			// TODO neue Helicopter Methoden: getNextCannonCost, getMaximumNumberOfCannons, ... je nach Bedarf
 			else if(	(money < helicopter.getLastCannonCost()) &&
-						!((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && recordTime[OROCHI.ordinal()][4]!=0)) && money >= Helicopter.CHEAP_SPECIAL_COSTS && helicopter.numberOfCannons == 1))
+						!((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) && money >= Helicopter.CHEAP_SPECIAL_COSTS && helicopter.numberOfCannons == 1))
 			{
 				Window.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
 			}
@@ -657,7 +659,7 @@ public class Events
 			{
 				Audio.play(Audio.cash);
 				Button extraCannonButton = Window.buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS);
-				if((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && recordTime[OROCHI.ordinal()][4]!=0)) && helicopter.numberOfCannons == 1)
+				if((helicopter.getType() == OROCHI ||(helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) && helicopter.numberOfCannons == 1)
 				{
 					money -= Helicopter.CHEAP_SPECIAL_COSTS;
 					if(helicopter.getType() == OROCHI)
@@ -742,16 +744,16 @@ public class Events
 		// TODO eventuell nach Menu auslagern
 		if(Window.triangle[0].contains(cursor))
 		{
-			Window.crossPosition = (Window.crossPosition + 1)% HelicopterType.size();
+			Window.crossPosition = (Window.crossPosition + 1)% HelicopterType.count();
 			Window.cross = Window.getCrossPolygon();
-			Window.helicopterSelection = (Window.helicopterSelection + HelicopterType.size() - 1)% HelicopterType.size();
+			Window.helicopterSelection = (Window.helicopterSelection + HelicopterType.count() - 1)% HelicopterType.count();
 			Audio.play(Audio.choose);
 		}
 		else if(Window.triangle[1].contains(cursor))
 		{
-			Window.crossPosition = (Window.crossPosition + HelicopterType.size() - 1)% HelicopterType.size();
+			Window.crossPosition = (Window.crossPosition + HelicopterType.count() - 1)% HelicopterType.count();
 			Window.cross = Window.getCrossPolygon();
-			Window.helicopterSelection = (Window.helicopterSelection + 1)% HelicopterType.size();
+			Window.helicopterSelection = (Window.helicopterSelection + 1)% HelicopterType.count();
 			Audio.play(Audio.choose);
 		}
 		else if(Window.helicopterFrame[0].contains(cursor)||
@@ -1321,75 +1323,17 @@ public class Events
 	
 	public static void determineHighscoreTimes(Helicopter helicopter)
 	{
-		int bossNr = getBossNr();
-		long highScoreTime = (playingTime + System.currentTimeMillis() - lastCurrentTime)/60000;
-		helicopter.scoreScreenTimes[bossNr] = highScoreTime;
+		BossLevel bossLevel = BossLevel.getCurrentBossLevel();
+		long newHighScoreTime = (playingTime + System.currentTimeMillis() - lastCurrentTime)/60000;
+		helicopter.scoreScreenTimes[bossLevel.ordinal()] = newHighScoreTime;
 				
 		if(helicopter.isCountingAsFairPlayedHelicopter())
-		{			
-			recordTime[helicopter.getType().ordinal()][bossNr]
-				= recordTime[helicopter.getType().ordinal()][bossNr] == 0
-				  ? highScoreTime
-				  : Math.min(recordTime[helicopter.getType().ordinal()][bossNr], highScoreTime);
-			heliosMaxMoney = getHeliosMaxMoney();
+		{
+			recordTimeManager.saveRecordTime(helicopter.getType(), bossLevel, newHighScoreTime);
+			heliosMaxMoney = Helios.getMaxMoney();
 		}			
 	}
 	
-	static int getBossNr()
-	{
-		if(level%10 != 1) return -1;
-		return level/10-1;
-	}
-	
-	public static boolean hasAnyBossBeenKilledBefore()
-	{
-		for(int i = 0; i < HelicopterType.size(); i++)
-		{
-			if(recordTime[i][0] != 0) return true;
-		}
-		return false;
-	}
-	
-	public static int getHeliosMaxMoney()
-	{
-		int maxHeliosMoney = 0;
-		for(int i = 0; i < HelicopterType.size() - 1; i++)
-		{
-			maxHeliosMoney += getHighestRecordMoney(recordTime[i]);
-		}	
-		return maxHeliosMoney;
-	}
-	
-	public static int getHighestRecordMoney(long[] recordTime)
-	{	
-		// TODO Code überarbeiten - unverständlich
-		if(recordTime[0] == 0){return 0;}
-		int bossLevelIndex = 0;
-		boolean indexSet = false;
-		int maxMoney = heliosRecordEntryMoney((int)(recordTime[bossLevelIndex]), bossLevelIndex);
-		for(int i = 1; i < recordTime.length; i++)
-		{			
-			if(recordTime[i] == 0)
-			{
-				// TODO check method function why unused assignment
-				bossLevelIndex = i-1;
-				indexSet = true;
-				break;
-			}
-			maxMoney = Math.max(maxMoney, heliosRecordEntryMoney((int)(recordTime[i]), i));
-		}	
-		if(!indexSet)
-		{
-			maxMoney = Math.max(maxMoney, heliosRecordEntryMoney((int)(recordTime[recordTime.length-1]), recordTime.length-1));
-		}
-		return maxMoney;
-	}
-	
-	public static int heliosRecordEntryMoney(int arrayElement, int index)
-	{
-		return (int)(( MAX_MONEY * COMPARISON_RECORD_TIME * (index + 1)) / (37.5f * arrayElement*(5-index)*(5-index)));
-	}
-
 	public static boolean isBossLevel(){return isBossLevel(level);}
 	public static boolean isBossLevel(int game_level){return game_level%10 == 0;}
 
@@ -1409,13 +1353,14 @@ public class Events
 		return previousHelicopterType != nextHelicopterType;
 	}
 
-	public static int getBestNonFinalMainBossKillBy(HelicopterType privilegedHelicopter)
+	public static int getNonFinalMainBossKillCountOf(HelicopterType helicopterType)
 	{
-		for(int i = 0; i < 4; i++)
-		{
-			if(Events.recordTime[privilegedHelicopter.ordinal()][i] == 0) return i;
-		}
-		return 4;
+		return BossLevel.getNonFinalBossLevel()
+						.stream()
+						.filter(helicopterType::hasPassed)
+						.map(BossLevel::getBossNr)
+						.max(java.util.Comparator.naturalOrder())
+						.orElse(0);
 	}
 
 	public static void updateFinance(Enemy enemy, Helicopter helicopter) {
