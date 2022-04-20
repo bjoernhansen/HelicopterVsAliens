@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 // TODO getter und setter einführen. Es sollte nicht alles public sein
 public class Savegame implements Serializable
@@ -63,12 +64,11 @@ public class Savegame implements Serializable
 		highScore;
 	
 	// TODO es sollte kein Array verwendet werden
-	public long[]
-		scoreScreenTimes = new long [HelicopterType.count()];
+	public ScoreScreenTimes
+		scoreScreenTimes;
 
-	// TODO es sollte kein Array verwendet werden
-	public boolean[]
-		reachedLevelTwenty = new boolean [HelicopterType.count()];
+	public Set<HelicopterType>
+		helicoptersThatReachedLevel20;
 	
 	RecordTimeManager
 		recordTimeManager;
@@ -115,7 +115,7 @@ public class Savegame implements Serializable
 				Audio.isSoundOn = savegame.isSoundOn;
 				Events.highScore = savegame.highScore;
 				Events.recordTimeManager = savegame.recordTimeManager;
-				Events.reachedLevelTwenty = savegame.reachedLevelTwenty.clone();
+				Events.helicoptersThatReachedLevel20 = savegame.helicoptersThatReachedLevel20;
 				Events.heliosMaxMoney = Helios.getMaxMoney();
 			});
 			return loadedSavegame.orElseGet(Savegame::new);
@@ -226,9 +226,9 @@ public class Savegame implements Serializable
 		this.bonusCounter = Events.overallEarnings;
 		this.extraBonusCounter = Events.extraBonusCounter;
 		this.playingTime = Events.playingTime;
-		this.scoreScreenTimes = helicopter.scoreScreenTimes.clone();
+		this.scoreScreenTimes = helicopter.scoreScreenTimes;
 		this.recordTimeManager = Events.recordTimeManager;
-		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
+		this.helicoptersThatReachedLevel20 = Events.helicoptersThatReachedLevel20;
 		this.highScore = Events.highScore;
 		this.helicopterType = helicopter.getType();
 		this.levelsOfStandardUpgrades = helicopter.getLevelsOfStandardUpgrades();

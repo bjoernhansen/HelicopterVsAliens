@@ -540,9 +540,9 @@ public class Enemy extends RectangularGameEntity
 			bossSelection = BOSS_2;
 			selection = 0;
 			helicopter.powerUpDecay();
-			if(helicopter.isCountingAsFairPlayedHelicopter() && !Events.reachedLevelTwenty[helicopter.getType().ordinal()])
+			if(helicopter.isCountingAsFairPlayedHelicopter() && !helicopter.getType().hasReachedLevel20())
 			{
-				Events.reachedLevelTwenty[helicopter.getType().ordinal()] = true;
+				Events.helicoptersThatReachedLevel20.add(helicopter.getType());
 				helicopter.updateUnlockedHelicopters();
 			}
 		}

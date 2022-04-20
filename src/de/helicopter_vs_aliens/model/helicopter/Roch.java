@@ -82,7 +82,7 @@ public final class Roch extends Helicopter
     @Override
     public void updateUnlockedHelicopters()
     {
-        if(!Events.reachedLevelTwenty[PEGASUS.ordinal()])
+        if(!PEGASUS.hasReachedLevel20())
         {
             Window.unlock(KAMAITACHI);
         }

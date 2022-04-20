@@ -37,8 +37,10 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
@@ -89,17 +91,7 @@ public class Events
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
 		IS_SAVE_GAME_SAVED_ANYWAY = true;
-
-	public static HighScore
-		highScore = new HighScore();
-	
-	public static boolean[]
-		reachedLevelTwenty = new boolean[HelicopterType.count()];
-	
-	public static RecordTimeManager
-		recordTimeManager = new RecordTimeManager();
-	
-	
+		
 	private static final int
 		TOTAL_LOSS_REPAIR_BASE_FEE = 875,
 		DEFAULT_REPAIR_BASE_FEE = 350;
@@ -132,10 +124,7 @@ public class Events
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
     	settingsChanged = false,
     	allPlayable = false;
-	
-	// TODO kein Array verwenden
-	// TODO aufnehmen in RecordTimeManager
-	
+		
 	public static TimeOfDay
 		timeOfDay = DAY;		// Tageszeit [NIGHT, DAY]
 
@@ -158,6 +147,15 @@ public class Events
 	public static HelicopterType
 		nextHelicopterType,				// aktuell im Startmenü ausgewählte Helikopter
 		previousHelicopterType;			// zuletzt im Startmenü ausgewählte Helikopter
+	
+	public static HighScore
+		highScore = new HighScore();
+	
+	public static Set<HelicopterType>
+		helicoptersThatReachedLevel20 = EnumSet.noneOf(HelicopterType.class);
+	
+	public static RecordTimeManager
+		recordTimeManager = new RecordTimeManager();
 	
 
 	static void keyTyped( KeyEvent e, Controller controller)
@@ -326,10 +324,7 @@ public class Events
 					if(!recordTimeManager.isEmpty())
 					{
 						recordTimeManager.eraseRecordTimes();
-						for(int i = 0; i < HelicopterType.count(); i++)
-						{
-							reachedLevelTwenty[i] = false;
-						}
+						helicoptersThatReachedLevel20.clear();
 						heliosMaxMoney = Helios.getMaxMoney();
 						savegame.saveWithoutValidity(helicopter);
 					}
@@ -484,15 +479,15 @@ public class Events
 			{
 				if(level > 50)
 				{
-					playingTime = 60000 * helicopter.scoreScreenTimes[4];
+					playingTime = 60000 * helicopter.scoreScreenTimes.getTotalPlayingTime();
 				}
 				else
 				{
 					playingTime = playingTime
 						     	   + System.currentTimeMillis() 
 						           - lastCurrentTime;
-					helicopter.scoreScreenTimes[4] = playingTime /60000;
-				}				
+					helicopter.scoreScreenTimes.setTotalPlayingTime(playingTime/60000);
+				}
 							   
 				changeWindow(SCORE_SCREEN);
 															
@@ -1191,6 +1186,7 @@ public class Events
 		Window.clearMessage();
 	}
 
+	// TODO Booleschen Parameter entfernen, dafür zwei Methoden totalLossRepairFee  defaultRepairFee (formel in Methode auslagern)
 	public static int repairFee(Helicopter helicopter, boolean totalLoss)
 	{		
 		return (totalLoss
@@ -1325,7 +1321,7 @@ public class Events
 	{
 		BossLevel bossLevel = BossLevel.getCurrentBossLevel();
 		long newHighScoreTime = (playingTime + System.currentTimeMillis() - lastCurrentTime)/60000;
-		helicopter.scoreScreenTimes[bossLevel.ordinal()] = newHighScoreTime;
+		helicopter.scoreScreenTimes.put(bossLevel, newHighScoreTime);
 				
 		if(helicopter.isCountingAsFairPlayedHelicopter())
 		{

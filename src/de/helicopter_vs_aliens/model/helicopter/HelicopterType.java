@@ -218,8 +218,8 @@ public enum HelicopterType
     public boolean isUnlocked()
     {
         return getUnlockerTypes().isEmpty()
-            || Events.reachedLevelTwenty[getUnlockerTypes().get(0).ordinal()]
-            || Events.reachedLevelTwenty[getUnlockerTypes().get(1).ordinal()];
+               || getUnlockerTypes().get(0).hasReachedLevel20()
+               || getUnlockerTypes().get(1).hasReachedLevel20();
     }
 
     public Color getStandardPrimaryHullColor()
@@ -330,5 +330,10 @@ public enum HelicopterType
     
     public int getNumber(){
         return this.number;
+    }
+    
+    public boolean hasReachedLevel20()
+    {
+        return Events.helicoptersThatReachedLevel20.contains(this);
     }
 }

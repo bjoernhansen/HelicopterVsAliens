@@ -55,7 +55,7 @@ public final class Orochi extends Helicopter
     @Override
     public void updateUnlockedHelicopters()
     {
-        if (!Events.reachedLevelTwenty[KAMAITACHI.ordinal()])
+        if (!KAMAITACHI.hasReachedLevel20())
         {
             Window.unlock(PEGASUS);
         }

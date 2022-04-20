@@ -1,11 +1,12 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.PriceLevel;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -16,28 +17,42 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
+import de.helicopter_vs_aliens.score.ScoreScreenTimes;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.applet.AudioClip;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.control.Events.NUMBER_OF_BOSS_LEVEL;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevel.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
-import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.*;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIREPOWER;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_RATE;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.MISSILE_DRIVE;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.PLATING;
+import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ROTOR_SYSTEM;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITRED_ENERGY;
 
 
 public abstract class Helicopter extends RectangularGameEntity
@@ -123,10 +138,9 @@ public abstract class Helicopter extends RectangularGameEntity
 	private final Map<StandardUpgradeType, Integer>
         levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
 	
-	// TODO EnumMap von BossLevel hier erzeugen
-	public long []
-		scoreScreenTimes = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Boss-Gegner vergangen ist
-		
+	public ScoreScreenTimes
+		scoreScreenTimes = new ScoreScreenTimes();	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Boss-Gegner vergangen ist
+	
     public float
 		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
 
@@ -556,8 +570,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isPlayedWithCheats = savegame.wasCreatedThroughCheating;
 		this.missileCounter = savegame.missileCounter;
 		this.hitCounter = savegame.hitCounter;
-		
-		this.scoreScreenTimes = savegame.scoreScreenTimes.clone();
+		this.scoreScreenTimes = savegame.scoreScreenTimes;
 	}
     
     public void reset()
@@ -569,7 +582,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isPlayedWithCheats = false;
 		this.resetCounterForHighscore();
 		this.resetSpecialUpgrades();
-        Arrays.fill(this.scoreScreenTimes, 0);
+		this.scoreScreenTimes.clear();
     }
 	
 	

@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
+import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -53,11 +54,11 @@ public class ScoreScreenWindowPainter extends WindowPainter
             graphicsAdapter.setColor(Color.green);
             if(Window.language == ENGLISH)
             {
-                graphicsAdapter.drawString("Mission completed in " + Window.minutes(helicopter.scoreScreenTimes[4]) + "!", X_POS_2, Y_POS -9);
+                graphicsAdapter.drawString("Mission completed in " + Window.minutes(helicopter.scoreScreenTimes.getTotalPlayingTime()) + "!", X_POS_2, Y_POS -9);
             }
             else
             {
-                graphicsAdapter.drawString("Mission in " + Window.minutes(helicopter.scoreScreenTimes[4]) + " erfüllt!", X_POS_2, Y_POS -9);
+                graphicsAdapter.drawString("Mission in " + Window.minutes(helicopter.scoreScreenTimes.getTotalPlayingTime()) + " erfüllt!", X_POS_2, Y_POS -9);
             }
         }
         else
@@ -65,30 +66,29 @@ public class ScoreScreenWindowPainter extends WindowPainter
             graphicsAdapter.setColor(Color.red);
             if(Window.language == ENGLISH)
             {
-                graphicsAdapter.drawString("Mission failed after " + Window.minutes(helicopter.scoreScreenTimes[4]) + " in level " + Events.level + "!", X_POS_2, Y_POS - 9);
+                graphicsAdapter.drawString("Mission failed after " + Window.minutes(helicopter.scoreScreenTimes.getTotalPlayingTime()) + " in level " + Events.level + "!", X_POS_2, Y_POS - 9);
             }
             else
             {
-                graphicsAdapter.drawString("Mission nach " + Window.minutes(helicopter.scoreScreenTimes[4]) + " in Level " + Events.level + " gescheitert!", X_POS_2, Y_POS - 9);
+                graphicsAdapter.drawString("Mission nach " + Window.minutes(helicopter.scoreScreenTimes.getTotalPlayingTime()) + " in Level " + Events.level + " gescheitert!", X_POS_2, Y_POS - 9);
             }
         }
         graphicsAdapter.setColor(Color.white);
         graphicsAdapter.drawString((Window.language == ENGLISH ? "Playing time per boss: " : "Spielzeit pro Boss: "), X_POS_1 - 20, Y_POS - 9);
-        
-        // TODO magic number entfernen
-        for(int i = 0; i < 5; i++)
-        {
-            if(i < (Events.level-1)/10)
-            {
-                graphicsAdapter.setColor(Color.green);
-                graphicsAdapter.drawString(Window.minutes(i == 0 ? helicopter.scoreScreenTimes[0] : helicopter.scoreScreenTimes[i] - helicopter.scoreScreenTimes[i-1]) + " (Boss " + (i+1) + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * (i+1));
-            }
-            else
-            {
-                graphicsAdapter.setColor(Color.red);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "undefeated" : "nicht besiegt") + " (Boss " + (i+1) + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * (i+1));
-            }
-        }
+    
+        BossLevel.getValues()
+                 .forEach(bossLevel -> {
+                     if(bossLevel.completed())
+                     {
+                         graphicsAdapter.setColor(Color.green);
+                         graphicsAdapter.drawString(Window.minutes(helicopter.scoreScreenTimes.get(bossLevel)) + " (Boss " + bossLevel.getBossNr() + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * bossLevel.getBossNr());
+                     }
+                     else
+                     {
+                         graphicsAdapter.setColor(Color.red);
+                         graphicsAdapter.drawString((Window.language == ENGLISH ? "undefeated" : "nicht besiegt") + " (Boss " + bossLevel.getBossNr() + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * bossLevel.getBossNr());
+                     }
+                 });
         
         graphicsAdapter.setColor(Color.white);
         // TODO hier dictionary einsetzen und loop erzeugen

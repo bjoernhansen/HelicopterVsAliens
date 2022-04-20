@@ -64,4 +64,9 @@ public enum BossLevel
     {
         return bossNr;
     }
+    
+    public boolean completed()
+    {
+        return bossNr < 1 + (Events.level - 1)/10;
+    }
 }

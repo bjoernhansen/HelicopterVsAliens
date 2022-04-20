@@ -109,7 +109,7 @@ public final class Phoenix extends Helicopter
     @Override
     public void updateUnlockedHelicopters()
     {
-        if(!Events.reachedLevelTwenty[PEGASUS.ordinal()])
+        if(!PEGASUS.hasReachedLevel20())
         {
             Window.unlock(OROCHI);
         }
