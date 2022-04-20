@@ -28,6 +28,10 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
 Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kehrtwende unterbinden innerhalb gewisser Zeit,
 wenn gedreht an Barrier.
 
+Bug: unverwundbar + energy schild roch  an, absturz, wenn energie weg
+
+
+
 Ausweichende Gegner (in lila) sollten immer vom Helicopter weg ausweichen
 
 UnitTests (JUnit5) einführen, zunächst für kleine Klassen
@@ -91,9 +95,6 @@ HeliDefence
 
 
 
-
-
-Bug: unverwundbar + energy schild roch  an, absturz, wenn energie weg
 
 
 Kamikaze

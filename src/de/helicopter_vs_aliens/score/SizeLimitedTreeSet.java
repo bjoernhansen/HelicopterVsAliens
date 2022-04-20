@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.util;
+package de.helicopter_vs_aliens.score;
 
 import java.io.Serializable;
 import java.util.NavigableSet;
@@ -18,7 +18,7 @@ public class SizeLimitedTreeSet<E extends Comparable<E>> implements Serializable
         this.maxSize = maxSize;
     }
     
-    public void add(E element)
+    void add(E element)
     {
         navigableSet.add(element);
         if(navigableSet.size() > maxSize)

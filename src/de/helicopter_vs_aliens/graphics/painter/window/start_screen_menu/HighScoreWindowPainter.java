@@ -110,17 +110,19 @@ public class HighScoreWindowPainter extends StartScreenMenuWindowPainter
     private void paintHighScoreEntryRows(GraphicsAdapter graphicsAdapter)
     {
         AtomicInteger entryCounter = new AtomicInteger();
-        Events.highScoreMap.get(HighScoreType.of(Window.page))
-                           .forEach(highScoreEntry -> {
-                               int j = entryCounter.incrementAndGet();
-                               HighScoreColumnType.getValues().forEach(highScoreColumnType -> {
-                                   String text = highScoreColumnType == HighScoreColumnType.RANK
-                                                    ? formatNumber(j)
-                                                    : highScoreColumnType.getText(highScoreEntry);
-                                   graphicsAdapter.setColor(highScoreColumnType.getFontColor(highScoreEntry));
-                                   graphicsAdapter.drawString(text, highScoreColumnType.getColumnX(), getRowY(j));
-                               });
-                           });
+        HighScoreType highScoreType = HighScoreType.of(Window.page);
+        Events.highScore.getEntrySetFor(highScoreType)
+                        .forEach(highScoreEntry -> {
+                            int j = entryCounter.incrementAndGet();
+                            HighScoreColumnType.getValues()
+                                               .forEach(highScoreColumnType -> {
+                                                   String text = highScoreColumnType == HighScoreColumnType.RANK
+                                                       ? formatNumber(j)
+                                                       : highScoreColumnType.getText(highScoreEntry);
+                                                   graphicsAdapter.setColor(highScoreColumnType.getFontColor(highScoreEntry));
+                                                   graphicsAdapter.drawString(text, highScoreColumnType.getColumnX(), getRowY(j));
+                                               });
+                        });
     }
 
     private int getRowY(int rowIndex)

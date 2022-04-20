@@ -1,7 +1,5 @@
 package de.helicopter_vs_aliens.score;
 
-import de.helicopter_vs_aliens.util.SizeLimitedTreeSet;
-
 public class HighScoreEntrySet extends SizeLimitedTreeSet<HighScoreEntry>
 {
     private static final int

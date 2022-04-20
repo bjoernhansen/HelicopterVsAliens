@@ -25,12 +25,14 @@ import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.score.HighScore;
 import de.helicopter_vs_aliens.score.HighScoreEntry;
 import de.helicopter_vs_aliens.score.HighScoreType;
+import de.helicopter_vs_aliens.score.RecordTimeManager;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.util.SizeLimitedTreeSet;
+import de.helicopter_vs_aliens.score.SizeLimitedTreeSet;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -91,10 +93,17 @@ public class Events
 	public static final boolean
 		CHEATS_ACTIVATABLE = true,
 		IS_SAVE_GAME_SAVED_ANYWAY = true;
-		
-	public static Map<HighScoreType, SizeLimitedTreeSet<HighScoreEntry>>
-		highScoreMap = new EnumMap<>(HighScoreType.class);
-		
+
+	public static HighScore
+		highScore = new HighScore();
+	
+	public static boolean[]
+		reachedLevelTwenty = new boolean[HelicopterType.count()];
+	
+	public static RecordTimeManager
+		recordTimeManager = new RecordTimeManager();
+	
+	
 	private static final int
 		TOTAL_LOSS_REPAIR_BASE_FEE = 875,
 		DEFAULT_REPAIR_BASE_FEE = 350;
@@ -122,9 +131,6 @@ public class Events
 	public static long
 		playingTime,            // bisher vergangene Spielzeit
     	lastCurrentTime;		// Zeitpunkt der letzten Aktualisierung von playing_time
-		
-	public static RecordTimeManager
-		recordTimeManager = new RecordTimeManager();
 	
     public static boolean
 		isRestartWindowVisible,				// = true: Neustart-Fenster wird angezeigt
@@ -133,8 +139,6 @@ public class Events
 	
 	// TODO kein Array verwenden
 	// TODO aufnehmen in RecordTimeManager
-	public static boolean[]
-		reachedLevelTwenty = new boolean[HelicopterType.count()];
 	
 	public static TimeOfDay
 		timeOfDay = DAY;		// Tageszeit [NIGHT, DAY]

@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.RecordTimeManager;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -10,7 +9,6 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.util.SizeLimitedTreeSet;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import java.io.File;
@@ -40,10 +38,6 @@ public class Savegame implements Serializable
 		hasFifthSpecial,
 		wasCreatedThroughCheating;
 	
-	// TODO es sollte kein Array verwendet werden
-	public boolean[]
-		reachedLevelTwenty = new boolean [HelicopterType.count()];
-	
 	public int
 		money,
 		killsAfterLevelUp,
@@ -65,10 +59,17 @@ public class Savegame implements Serializable
 	public long
 		playingTime;
 	
+	private HighScore
+		highScore;
+	
 	// TODO es sollte kein Array verwendet werden
 	public long[]
 		scoreScreenTimes = new long [HelicopterType.count()];
-		
+
+	// TODO es sollte kein Array verwendet werden
+	public boolean[]
+		reachedLevelTwenty = new boolean [HelicopterType.count()];
+	
 	RecordTimeManager
 		recordTimeManager;
 	
@@ -94,20 +95,15 @@ public class Savegame implements Serializable
 	private String
 		currentPlayerName;
 	
-	private Map<HighScoreType, SizeLimitedTreeSet<HighScoreEntry>>
-		highScoreMap = new EnumMap<>(HighScoreType.class);
-	
+
 	private Savegame()
 	{
 		this.isValid = false;
 		this.currentPlayerName = Events.currentPlayerName;
-		HighScoreType.getValues()
-					 .forEach(highScoreType -> highScoreMap.put(highScoreType, new HighScoreEntrySet()));
 	}
 	
 	public static Savegame initialize()
 	{
-		Savegame output;
 		if((new File(FILENAME)).exists())
 		{			
 			Optional<Savegame> loadedSavegame = lastGame();
@@ -117,19 +113,14 @@ public class Savegame implements Serializable
 				Window.hasOriginalResolution = savegame.originalResolution;
 				Audio.standardBackgroundMusic = savegame.standardBackgroundMusic && Audio.MICHAEL_MODE;
 				Audio.isSoundOn = savegame.isSoundOn;
+				Events.highScore = savegame.highScore;
 				Events.recordTimeManager = savegame.recordTimeManager;
-				Events.heliosMaxMoney = Helios.getMaxMoney();
 				Events.reachedLevelTwenty = savegame.reachedLevelTwenty.clone();
+				Events.heliosMaxMoney = Helios.getMaxMoney();
 			});
-			output = loadedSavegame.orElseGet(Savegame::new);
-		}		
-		else
-		{
-			output = new Savegame();
+			return loadedSavegame.orElseGet(Savegame::new);
 		}
-		Events.highScoreMap = new EnumMap<>(output.highScoreMap);
-				
-		return output;
+		return new Savegame();
 	}
 	
 	private static Optional<Savegame> lastGame()
@@ -185,12 +176,7 @@ public class Savegame implements Serializable
 	
 	public void saveInHighscore()
 	{
-		if(this.isWorthyForHighscore())
-		{
-			HighScoreEntry tempEntry = HighScoreEntry.of(this);
-			highScoreMap.get(HighScoreType.of(helicopterType)).add(tempEntry);
-			highScoreMap.get(HighScoreType.OVERALL).add(tempEntry);
-		}
+		Events.highScore.saveEntryFor(this);
 	}
 	
 	public void saveToFile(Helicopter helicopter)
@@ -243,8 +229,7 @@ public class Savegame implements Serializable
 		this.scoreScreenTimes = helicopter.scoreScreenTimes.clone();
 		this.recordTimeManager = Events.recordTimeManager;
 		this.reachedLevelTwenty = Events.reachedLevelTwenty.clone();
-		this.highScoreMap = new EnumMap<>(Events.highScoreMap);
-		
+		this.highScore = Events.highScore;
 		this.helicopterType = helicopter.getType();
 		this.levelsOfStandardUpgrades = helicopter.getLevelsOfStandardUpgrades();
 		this.spotlight = helicopter.hasSpotlights;
@@ -265,7 +250,7 @@ public class Savegame implements Serializable
 		this.hitCounter = helicopter.hitCounter;
 	}
 		
-    private boolean isWorthyForHighscore()
+    boolean isWorthyForHighscore()
     {
         return this.isValid && (!this.wasCreatedThroughCheating || Events.IS_SAVE_GAME_SAVED_ANYWAY);
     }

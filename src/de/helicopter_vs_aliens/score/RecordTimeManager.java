@@ -1,5 +1,6 @@
-package de.helicopter_vs_aliens.control;
+package de.helicopter_vs_aliens.score;
 
+import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.io.Serializable;
