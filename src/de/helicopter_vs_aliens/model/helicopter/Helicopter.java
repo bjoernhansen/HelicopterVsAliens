@@ -23,6 +23,7 @@ import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
@@ -1125,11 +1126,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	}
 
 	public boolean canBeStoppedByTractorBeam() {
-		return this.tractor == null
-				&& this.bounds.getX() - this.bounds.getX() > -750
-				&& this.bounds.getX() - this.bounds.getX() < -50
-				&& (this.bounds.getY() + 56 > this.bounds.getY() + 0.2 * this.bounds.getHeight()
-				&& this.bounds.getY() + 60 < this.bounds.getY() + 0.8 * this.bounds.getHeight());
+		return this.tractor == null;
 	}
 	
 	public float getMissileDamageFactor()

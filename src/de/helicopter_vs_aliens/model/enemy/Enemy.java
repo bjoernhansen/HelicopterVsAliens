@@ -2165,7 +2165,7 @@ public class Enemy extends RectangularGameEntity
 		}
 		
 		// Tractor					
-		if(canTractor(helicopter)){
+		if(canStopByTractorBeam(helicopter)){
 			startTractor(helicopter);}
 				
 		//Chaos-SpeedUp
@@ -2805,11 +2805,21 @@ public class Enemy extends RectangularGameEntity
 		else {this.alpha = 255;}
     }
 	
-	private boolean canTractor(Helicopter helicopter)
+	private boolean canStopByTractorBeam(Helicopter helicopter)
 	{		
-		return isTractorReady() && helicopter.canBeStoppedByTractorBeam();
+		return isTractorReady()
+				&& isInRangeOf(helicopter)
+				&& helicopter.canBeStoppedByTractorBeam();
 	}
-
+	
+	private boolean isInRangeOf(Helicopter helicopter)
+	{
+		return    helicopter.getBounds().getX() - this.bounds.getX() > -750
+			   && helicopter.getBounds().getX() - this.bounds.getX() < -50
+			   && helicopter.getBounds().getY() + 56 > this.bounds.getY() + 0.2 * this.bounds.getHeight()
+			   && helicopter.getBounds().getY() + 60 < this.bounds.getY() + 0.8 * this.bounds.getHeight();
+	}
+	
 	private boolean isTractorReady() {
 		return this.tractor == AbilityStatusType.READY
 				&& !this.isEmpSlowed()

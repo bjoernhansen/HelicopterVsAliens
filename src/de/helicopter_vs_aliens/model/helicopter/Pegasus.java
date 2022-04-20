@@ -17,8 +17,13 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.*;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.EMP;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PHOENIX;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_RATE;
 
 
@@ -128,7 +133,7 @@ public final class Pegasus extends Helicopter
     public boolean canBeStoppedByTractorBeam()
     {
         return this.isInPhase()
-                && super.canBeStoppedByTractorBeam();
+               && super.canBeStoppedByTractorBeam();
     }
 
     @Override
