@@ -162,7 +162,7 @@ public final class Kamaitachi extends Helicopter
     }
     
     @Override
-    public void stoptMenuEffect()
+    public void stopMenuEffect()
     {
         this.plasmaActivationTimer = 0;
     }

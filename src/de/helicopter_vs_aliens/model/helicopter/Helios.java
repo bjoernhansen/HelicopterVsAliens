@@ -136,7 +136,7 @@ public final class Helios extends Helicopter
     }
     
     @Override
-    public void stoptMenuEffect()
+    public void stopMenuEffect()
     {
         this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] = 0;
     }

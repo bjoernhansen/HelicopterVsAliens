@@ -41,12 +41,12 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 public abstract class Helicopter extends RectangularGameEntity
 {
-	// TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit settern arbeiten, sonst private
+	// TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit Setter-Methoden arbeiten, sonst private
     public static final int
 		// TODO einstellen auf 60 Frames per Second
 		POWERUP_DURATION = 930,         		// Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
 		NO_COLLISION_DAMAGE_TIME = 20,   		// Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
-    	INVULNERABILITY_DAMAGE_REDUCTION = 80,	// %-Wert der Schadensreduzierung bei Unverwundbarleit
+    	INVULNERABILITY_DAMAGE_REDUCTION = 80,	// %-Wert der Schadensreduzierung bei Unverwundbarkeit
 		STANDARD_SPECIAL_COSTS = 125000,
 		CHEAP_SPECIAL_COSTS = 10000;
     
@@ -100,10 +100,10 @@ public abstract class Helicopter extends RectangularGameEntity
        
     public int
 		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
-		currentBaseFirepower,				// akuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des evtl. erforschten Jumbo-Raketen-Spezial-Upgrades
+		currentBaseFirepower,				// aktuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des eventuell erforschten Jumbo-Raketen-Spezial-Upgrades
 		platingDurabilityFactor = STANDARD_PLATING_STRENGTH,    // SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
 		numberOfCannons = 1,				// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
-		recentDamageTimer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der Hitpoint-Leiste
+		recentDamageTimer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
 		
 		// für die Spielstatistik
 		numberOfCrashes,					// Anzahl der Abstürze
@@ -124,26 +124,25 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	// TODO EnumMap von BossLevel hier erzeugen
 	public long []
-		scoreScreenTimes = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Bossgegner vergangen ist
+		scoreScreenTimes = new long [NUMBER_OF_BOSS_LEVEL];	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Boss-Gegner vergangen ist
 		
     public float
 		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
 
     public int
-    	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die Startscreen-Animation
+    	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die StartScreen-Animation
     
     float
         spellCosts;							// Energiekosten für die Nutzung des Energie-Upgrades
     
     public boolean
 		hasSpotlights,						// = true: Helikopter hat Scheinwerfer
-		hasPiercingWarheads,				// = true: Helikopterraketen werden mit Durchstoß-Sprengköpfen bestückt
+		hasPiercingWarheads,				// = true: Helikopter-Raketen werden mit Durchstoß-Sprengköpfen bestückt
 		isActive,							// = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
         isDamaged,    						// = true: Helikopter hat einen Totalschaden erlitten
-		// TODO kann evtl. genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
+		// TODO kann eventuell genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
 		isRotorSystemActive,				// = true: Propeller dreht sich / Helikopter fliegt
-		isContiniousFireEnabled,			// = true: Dauerfeuer aktiv
-		
+	    isContinuousFireEnabled,			// = true: Dauerfeuer aktiv
 		isMovingLeft,
 		isPlayedWithCheats = true;			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
     
@@ -155,14 +154,14 @@ public abstract class Helicopter extends RectangularGameEntity
     	priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
 
 	public boolean
-        isSearchingForTeleportDestination;	    // = true: es wird gerade ein Zielort für den Teleportationvorgang ausgewählt
+        isSearchingForTeleportDestination;	    // = true: es wird gerade der Zielort der Teleportation ausgewählt
     
 	public int
 		// nur für Phönix- und Kamaitachi-Klasse
 		// TODO auslagern in Phönix- und Kamaitachi-Klasse
-		bonusKills,							// Anzahl der Kills, für den aktuelken Mulikill-Award
-		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen Multikill-Awards ohne Bonus
-		bonusKillsTimer;					// reguliert die Zeit, innerhalb welcher Kills für den Multikill-Award berücksichtigt werden
+		bonusKills,							// Anzahl der Kills, für den aktuellen MultiKill-Award
+		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen MultiKill-Awards ohne Bonus
+		bonusKillsTimer;					// reguliert die Zeit, innerhalb welcher Kills für den MultiKill-Award berücksichtigt werden
     
     Battery
         battery = Battery.createFor(this.getType());
@@ -243,7 +242,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	private boolean isReadyForShooting()
 	{
-		return   	this.isContiniousFireEnabled
+		return   	this.isContinuousFireEnabled
     			&& !this.isDamaged
     			&& !this.isOnTheGround()
     			&&  this.fireRateTimer >= this.timeBetweenTwoShots;
@@ -575,7 +574,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	public void resetStateGeneral(boolean resetStartPos)
 	{
-		// TODO boolscher Parameter - anders lösen
+		// TODO boolescher Parameter - anders lösen
         this.setActivationState(false);
 		this.isCrashing = false;
 		this.slowedTimer = 0;
@@ -1125,7 +1124,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.hasPiercingWarheads = true;
 	}
 
-	public boolean canBeTractored() {
+	public boolean canBeStoppedByTractorBeam() {
 		return this.tractor == null
 				&& this.bounds.getX() - this.bounds.getX() > -750
 				&& this.bounds.getX() - this.bounds.getX() < -50
@@ -1178,11 +1177,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.rotatePropellerSlow();
 		if(Window.effectTimer[this.getType().ordinal()] == 1)
 		{
-			this.stoptMenuEffect();
+			this.stopMenuEffect();
 		}
 	}
 	
-	abstract public void stoptMenuEffect();
+	abstract public void stopMenuEffect();
     
     public boolean isTakingKaboomDamageFrom(Enemy enemy)
     {
@@ -1211,7 +1210,7 @@ public abstract class Helicopter extends RectangularGameEntity
         this.rotorPosition = 0;
     }
     
-    public float getBaseProtectionFactor(boolean isExplodable)
+    public float getBaseProtectionFactor(boolean canExplode)
     {
         return STANDARD_BASE_PROTECTION_FACTOR;
     }

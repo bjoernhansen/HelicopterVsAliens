@@ -243,7 +243,7 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void stoptMenuEffect()
+    public void stopMenuEffect()
     {
         this.isPowerShieldActivated = false;
     }
@@ -290,11 +290,11 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public float getBaseProtectionFactor(boolean isExplodable)
+    public float getBaseProtectionFactor(boolean canExplode)
     {
-        return this.isPowerShieldActivated && isExplodable
+        return this.isPowerShieldActivated && canExplode
                 ? REDUCED_BASE_PROTECTION_FACTOR
-                : super.getBaseProtectionFactor(isExplodable);
+                : super.getBaseProtectionFactor(canExplode);
     }
     
     @Override

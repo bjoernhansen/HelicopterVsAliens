@@ -26,13 +26,10 @@ import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScore;
-import de.helicopter_vs_aliens.score.HighScoreEntry;
-import de.helicopter_vs_aliens.score.HighScoreType;
 import de.helicopter_vs_aliens.score.RecordTimeManager;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.score.SizeLimitedTreeSet;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -42,7 +39,6 @@ import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
@@ -385,8 +381,8 @@ public class Events
 							   e.getY()-Main.displayShift.height);
 			mousePressedLeft(controller);
 		}
-		else if(
-					WindowManager.window == GAME
+		// TODO in Methode auslagern
+		else if(	WindowManager.window == GAME
 					&&	helicopter.isActive
 					&& !helicopter.isDamaged
 					&& !Window.isMenuVisible)
@@ -477,7 +473,7 @@ public class Events
 					helicopter.setActivationState(true);
 				}
 			}
-			else if(helicopter.isActive){helicopter.isContiniousFireEnabled = true;}
+			else if(helicopter.isActive){helicopter.isContinuousFireEnabled = true;}
 		}
 		else if(	Window.buttons.get(MainMenuButtonType.NEW_GAME_2).getBounds().contains(cursor)
 				 	&& isRestartWindowVisible)
@@ -965,7 +961,7 @@ public class Events
 	{
 		if(mouseEvent.getButton() == 1)
 		{
-			helicopter.isContiniousFireEnabled = false;
+			helicopter.isContinuousFireEnabled = false;
 		}
 		else if(WindowManager.window == GAME && mouseEvent.getButton() == 3 && !helicopter.isDamaged)
 		{

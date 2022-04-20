@@ -125,10 +125,10 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public boolean canBeTractored()
+    public boolean canBeStoppedByTractorBeam()
     {
         return this.isInPhase()
-                && super.canBeTractored();
+                && super.canBeStoppedByTractorBeam();
     }
 
     @Override
@@ -233,7 +233,7 @@ public final class Pegasus extends Helicopter
     }
     
     @Override
-    public void stoptMenuEffect()
+    public void stopMenuEffect()
     {
         this.empWave = null;
     }

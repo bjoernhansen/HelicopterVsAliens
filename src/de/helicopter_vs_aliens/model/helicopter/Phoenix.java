@@ -192,7 +192,7 @@ public final class Phoenix extends Helicopter
     }
     
     @Override
-    public void stoptMenuEffect()
+    public void stopMenuEffect()
     {
         this.powerUpTimer[INVINCIBLE.ordinal()] = 0;
     }

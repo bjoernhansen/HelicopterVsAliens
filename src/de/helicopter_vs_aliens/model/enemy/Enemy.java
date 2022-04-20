@@ -353,7 +353,7 @@ public class Enemy extends RectangularGameEntity
 		dimFactor;
     
     private boolean
-		isExplodable,			// = true: explodiert bei Kollisionen mit dem Helikopter
+		canExplode,			// = true: explodiert bei Kollisionen mit dem Helikopter
         canDodge,				// = true: Gegner kann Schüssen ausweichen
         canKamikaze,			// = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
         canLearnKamikaze,		// = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
@@ -901,7 +901,7 @@ public class Enemy extends RectangularGameEntity
 		this.isLasting = false;
 		this.isTouchingHelicopter = false;
 		this.isSpeedBoosted = false;
-		this.isExplodable = false;
+		this.canExplode = false;
 		this.canLearnKamikaze = false;
 		this.canFrontalSpeedup = false;
 		this.canSinusMove = false;
@@ -1154,7 +1154,7 @@ public class Enemy extends RectangularGameEntity
 		this.setVarWidth(KABOOM_WIDTH);
 		helicopter.numberOfEnemiesSeen--;
 		this.targetSpeedLevel.setLocation(0.5 + 0.5*Math.random(), 0); //d
-		this.isExplodable = true;
+		this.canExplode = true;
 		this.setInitialY(GROUND_Y - 2*this.bounds.getWidth()*HEIGHT_FACTOR);
 	}
 	
@@ -1175,7 +1175,7 @@ public class Enemy extends RectangularGameEntity
 				this.setVarWidth(110);
 				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
 						0.5 * Math.random());	//d
-				this.isExplodable = true;
+				this.canExplode = true;
 				this.dimFactor = 1.2f;
 				
 				break;
@@ -1189,7 +1189,7 @@ public class Enemy extends RectangularGameEntity
 				this.setVarWidth(125);
 				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(), //d
 						0.5*Math.random());	//d
-				this.isExplodable = true;
+				this.canExplode = true;
 				
 				break;
 
@@ -1202,7 +1202,7 @@ public class Enemy extends RectangularGameEntity
 				this.setVarWidth(100);
 				this.targetSpeedLevel.setLocation(2 + 2*Math.random(), //d
 						2.5 + 1.5*Math.random());		//d
-				this.isExplodable = true;
+				this.canExplode = true;
 				
 				break;
 
@@ -1245,7 +1245,7 @@ public class Enemy extends RectangularGameEntity
 
 				this.setInitialY(TURN_FRAME.getCenterY());
 				this.canSinusMove = true;
-				this.isExplodable = true;
+				this.canExplode = true;
 				
 				break;
 
@@ -1272,7 +1272,7 @@ public class Enemy extends RectangularGameEntity
 				this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(), //d
 						6.5 + 2*Math.random());	//d
 				this.canMoveChaotic = true;
-				this.isExplodable = true;
+				this.canExplode = true;
 				
 				break;
 
@@ -1285,7 +1285,7 @@ public class Enemy extends RectangularGameEntity
 				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(), //d
 						5 + 2*Math.random());		//d
-				this.isExplodable = true;
+				this.canExplode = true;
 				this.callBack = 1;
 				
 				break;
@@ -1321,7 +1321,7 @@ public class Enemy extends RectangularGameEntity
 				this.cloakingTimer = CLOAKING_TIME + CLOAKED_TIME;
 				this.uncloakingSpeed = 2;
 				this.canEarlyTurn = true;
-				this.isExplodable = true;
+				this.canExplode = true;
 				
 				break;
 
@@ -1355,7 +1355,7 @@ public class Enemy extends RectangularGameEntity
 				this.setVarWidth(115);
 				this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(), //d
 						0.5 + Math.random());		//d
-				this.isExplodable = true;
+				this.canExplode = true;
 				this.canChaosSpeedup = true;
 				this.canDodge = true;
 				
@@ -1370,7 +1370,7 @@ public class Enemy extends RectangularGameEntity
 				this.setVarWidth(95);
 				this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0); //d
 
-				this.isExplodable = true;
+				this.canExplode = true;
 				this.speedup = READY;
 				
 				break;
@@ -1399,7 +1399,7 @@ public class Enemy extends RectangularGameEntity
 				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(), //d
 						4.5 + 1.5*Math.random());//d
 				this.tractor = AbilityStatusType.READY;
-				this.isExplodable = true;
+				this.canExplode = true;
 				
 				break;
 
@@ -1437,7 +1437,7 @@ public class Enemy extends RectangularGameEntity
 							  lastCarrier.bounds.getCenterY());
 			this.hasYPosSet = true;
 		}
-		this.isExplodable = true;
+		this.canExplode = true;
 		if(explosionCreation)
 		{
 			this.targetSpeedLevel.setLocation( 10 + 7.5*Math.random(), //d
@@ -1548,7 +1548,7 @@ public class Enemy extends RectangularGameEntity
 			this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(), //d
 												  6 + 2.5*Math.random()); //d
 			this.direction.x = Calculations.randomDirection();
-			this.isExplodable = true;
+			this.canExplode = true;
 		}	
 		// Level 50
 		else if(this.type == FINAL_BOSS)
@@ -1692,7 +1692,7 @@ public class Enemy extends RectangularGameEntity
 							1.44 * this.bounds.getWidth(), 
 							1.44 * this.bounds.getHeight());		
 		this.isMiniBoss = true;
-		this.isExplodable = false;
+		this.canExplode = false;
 		this.callBack += 2;
 		this.canTurn = true;
 		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && Calculations.tossUp(0.2f)) ||
@@ -2807,7 +2807,7 @@ public class Enemy extends RectangularGameEntity
 	
 	private boolean canTractor(Helicopter helicopter)
 	{		
-		return isTractorReady() && helicopter.canBeTractored();
+		return isTractorReady() && helicopter.canBeStoppedByTractorBeam();
 	}
 
 	private boolean isTractorReady() {
@@ -3278,7 +3278,7 @@ public class Enemy extends RectangularGameEntity
 		}		
 		this.collisionDamageTimer = Helicopter.NO_COLLISION_DAMAGE_TIME;
 			
-		if(	this.isExplodable
+		if(	this.canExplode
 			&& !this.isInvincible()
 			&& !this.isDestroyed)
 		{
@@ -3351,7 +3351,7 @@ public class Enemy extends RectangularGameEntity
 	private boolean canTakeCollisionDamage()
 	{		
 		return 	   !this.isDestroyed
-				&& !this.isExplodable
+				&& !this.canExplode
 				&& !this.isInvincible()
 				&& !(this.barrierTeleportTimer != DISABLED && this.barrierShootTimer == DISABLED)
 				&& this.collisionAudioTimer == READY;
@@ -3361,10 +3361,10 @@ public class Enemy extends RectangularGameEntity
 	{		
 		return helicopter.getProtectionFactor()
 				// TODO 0.65 und 1.0 in Konstanten auslagern
-			   *helicopter.getBaseProtectionFactor(this.isExplodable)
+			   *helicopter.getBaseProtectionFactor(this.canExplode)
 			   *(helicopter.isTakingKaboomDamageFrom(this)
 			     ? helicopter.kaboomDamage()
-			     : (this.isExplodable && !this.isInvincible() && !this.isDestroyed)
+			     : (this.canExplode && !this.isInvincible() && !this.isDestroyed)
 					? 1.0f 
 					: this.collisionDamageTimer > 0
 						? 0.0325f 

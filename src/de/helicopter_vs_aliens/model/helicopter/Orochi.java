@@ -157,7 +157,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void stoptMenuEffect()
+    public void stopMenuEffect()
     {
         this.isNextMissileStunner = false;
     }

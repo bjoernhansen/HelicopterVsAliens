@@ -250,7 +250,7 @@ public abstract class Window implements Paintable
 		}
 		if(Events.hasSelectedHelicopterChanged() && Events.previousHelicopterType != null)
 		{
-			helicopterDummies.get(Events.previousHelicopterType).stoptMenuEffect();
+			helicopterDummies.get(Events.previousHelicopterType).stopMenuEffect();
 		}
 	}
 
