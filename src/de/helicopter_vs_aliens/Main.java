@@ -140,6 +140,6 @@ public class Main
 									940,
 									240);
 		}
-		Controller.getInstance().backgroundRepaintTimer = 0;
+		Controller.getInstance().resetBackgroundRepaintTimer();
 	}
 }

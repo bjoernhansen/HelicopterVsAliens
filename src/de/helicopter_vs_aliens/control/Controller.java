@@ -7,6 +7,7 @@ import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -37,18 +38,15 @@ import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
 import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
-public final class Controller extends JPanel implements Runnable, KeyListener,
-									   MouseListener, MouseMotionListener, 
-									   WindowListener
+public final class Controller extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener,
+									   					WindowListener
 {
-	// TODO variablen sortieren (public - private, statisch ...
-	// TODO und mehr über getter beziehen nicht so viel publik (und nicht so viel statisch)
-	
 	private static final boolean
 		STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW = true;
 	
@@ -56,55 +54,52 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		BACKGROUND_PAINT_DISABLED = -1;
 
 	private static final long
-		serialVersionUID = 5775063502338544548L, 
 		DELAY = 16;
-
-	private FrameSkipStatusType
-		frameSkipStatus = FrameSkipStatusType.DISABLED;
-		
-	static long	
-		tm;
 	
-	public static boolean
-		antialiasing = true;
-		
-	private static final Controller
-		controller = new Controller();
-		
-	private Savegame
-		saveGame;
-		
+	private static Controller
+		instance;
+	
+	private boolean
+		isAntialiasingActivated = true,
+		isMouseCursorInWindow = true,
+		isFpsDisplayVisible = false;
+	
+	// TODO Wieso gibt es framesCounter und numberOfFrames?
 	private int
-		numberOfFrames;
-
-	public int
+		numberOfFrames,
 		framesCounter = 0,
 		backgroundRepaintTimer = 0;
 	
 	private long
+		timeMillis,
 		fpsStartTime;
 	
-	public boolean
-		showFps = false;
-
-	public boolean
-		mouseInWindow = true;
+	private FrameSkipStatusType
+		frameSkipStatus = FrameSkipStatusType.DISABLED;
+		
+	private Savegame
+		saveGame;
 		
 	private Helicopter
 		helicopter = HelicopterType.getDefault().makeInstance();
 
+	// TODO Verwaltung anders lösen, vermutlich mit den erstellten Klassen im Packet control/entities
 	public EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupType.class);
+	
 	public EnumMap<CollectionSubgroupType, LinkedList<Missile>>
 		missiles = new EnumMap<>(CollectionSubgroupType.class);
+	
 	public EnumMap<CollectionSubgroupType, LinkedList<Explosion>>
 		explosions = new EnumMap<>(CollectionSubgroupType.class);
+	
 	public EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>>
 		enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
+	
 	public EnumMap<CollectionSubgroupType, LinkedList<PowerUp>>
 		powerUps = new EnumMap<>(CollectionSubgroupType.class);
 	
-	GraphicsAdapter
+	private GraphicsAdapter
 		graphicsAdapter;
 
 	private Thread
@@ -130,7 +125,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	
 	public static Object getAntialiasingRenderingHint()
 	{
-		return Controller.antialiasing
+		return getInstance().isAntialiasingActivated
 					? RenderingHints.VALUE_ANTIALIAS_ON
 					: RenderingHints.VALUE_ANTIALIAS_OFF;
 	}
@@ -140,20 +135,18 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 		Audio.initialize();
 		
 		Dimension offDimension = getSize();
-		this.wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
-		this.offImage = createImage((int) offDimension.getWidth(), (int) offDimension.getHeight());
+		wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
+		offImage = createImage((int) offDimension.getWidth(), (int) offDimension.getHeight());
 		
-		this.graphicsAdapter = Graphics2DAdapter.of(this.offImage);
-		
-	    this.graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		this.graphicsAdapter.fill(this.wholeScreenClip);
+		graphicsAdapter = Graphics2DAdapter.of(offImage);
+	    graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		graphicsAdapter.fill(wholeScreenClip);
 		
 		Shape offscreenClip = new Rectangle2D.Double(0,
 													 0,
 													 Main.VIRTUAL_DIMENSION.getWidth(),
 													 Main.VIRTUAL_DIMENSION.getHeight());
-		this.graphicsAdapter.setClip(offscreenClip);
-		
+		graphicsAdapter.setClip(offscreenClip);
 		
 		add(Window.label);
 		addKeyListener(this);
@@ -167,7 +160,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	
 	void initializeLists()
 	{
-		// TODO alle Listen von inaktivierten überführen in GameEntityRecycler
+		// TODO alle Listen von inaktivierten überführen in GameEntityRecycler, auch die BackgroundObjects berücksichtigen
 		// TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
 		CollectionSubgroupType.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
 			this.missiles.put(	   		standardSubgroupTypes, new LinkedList<>());
@@ -195,14 +188,15 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void run()
 	{
-		if(this.frameSkipStatus != FrameSkipStatusType.ACTIVE){tm = System.currentTimeMillis();}
+		if(this.frameSkipStatus != FrameSkipStatusType.ACTIVE){
+			timeMillis = System.currentTimeMillis();}
 		while(Thread.currentThread() == this.animator)
 		{			
 			repaint();
 			try				
 			{
-				tm += DELAY;
-				long pauseTime = tm - System.currentTimeMillis();
+				timeMillis += DELAY;
+				long pauseTime = timeMillis - System.currentTimeMillis();
 				if(pauseTime < 1)
 				{
 					this.frameSkipStatus = FrameSkipStatusType.ACTIVE;
@@ -240,7 +234,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 											null);
 			}
 			
-			if (Main.isFullScreen || this.mouseInWindow)
+			if (Main.isFullScreen || this.isMouseCursorInWindow)
 			{
 				updateGame();
 			}
@@ -286,7 +280,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 			{				
 		    	Colorations.calculateVariableGameColors(this.framesCounter);
 				
-				scenery.update(controller);
+				scenery.update(getInstance());
 				Events.updateTimer();
 				Window.updateDisplays(this.helicopter);
 				Enemy.updateAllDestroyed(this, this.helicopter);
@@ -315,15 +309,15 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	
 	private void calculateFps()
 	{
-		if(this.showFps)
+		if(isFpsDisplayVisible)
 		{
-			long timeDiff = System.currentTimeMillis() - this.fpsStartTime;
-			this.numberOfFrames++;
+			long timeDiff = System.currentTimeMillis() - fpsStartTime;
+			numberOfFrames++;
 			if(timeDiff > 3000)
 			{
-				Window.fps = Math.round(1000f*this.numberOfFrames /timeDiff);
-				this.fpsStartTime = System.currentTimeMillis();
-				this.numberOfFrames = 0;
+				Window.fps = Math.round(1000f*numberOfFrames/timeDiff);
+				fpsStartTime = System.currentTimeMillis();
+				numberOfFrames = 0;
 			}
 		}
 	}	
@@ -332,15 +326,11 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	{
 		if(WindowManager.window ==  GAME)
 		{
-			if(this.showFps)
+			isFpsDisplayVisible = !isFpsDisplayVisible;
+			if(isFpsDisplayVisible)
 			{
-				this.showFps = false;
-			}
-			else
-			{					
-				this.showFps = true;
-				this.fpsStartTime = System.currentTimeMillis();
-				this.numberOfFrames = 0;
+				fpsStartTime = System.currentTimeMillis();
+				numberOfFrames = 0;
 			}
 		}		 
 	}
@@ -366,7 +356,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	{		
 		if(WindowManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
-			this.mouseInWindow = true;
+			this.isMouseCursorInWindow = true;
 			Events.lastCurrentTime = System.currentTimeMillis();
 		}
 		this.backgroundRepaintTimer = 0;
@@ -377,7 +367,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	{
 		if(WindowManager.window ==  GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
 		{
-			this.mouseInWindow = false;
+			this.isMouseCursorInWindow = false;
 			Events.playingTime += System.currentTimeMillis() - Events.lastCurrentTime;
 		}
 	}
@@ -426,7 +416,11 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	
 	public static Controller getInstance()
 	{
-		return controller;
+		if(Optional.ofNullable(instance).isEmpty())
+		{
+			instance = new Controller();
+		}
+		return instance;
 	}
 	
 	public GameEntityRecycler getGameEntityRecycler()
@@ -447,5 +441,38 @@ public final class Controller extends JPanel implements Runnable, KeyListener,
 	public void setSaveGame(Savegame saveGame)
 	{
 		this.saveGame = saveGame;
+	}
+	
+	public boolean isAntialiasingActivated()
+	{
+		return isAntialiasingActivated;
+	}
+	
+	public void switchAntialiasingActivationState(Button currentButton)
+	{
+		isAntialiasingActivated = !isAntialiasingActivated;
+		graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, getAntialiasingRenderingHint());
+		Window.dictionary.updateAntialiasing();
+		currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
+	}
+	
+	public int getFramesCounter()
+	{
+		return framesCounter;
+	}
+	
+	public boolean isMouseCursorInWindow()
+	{
+		return isMouseCursorInWindow;
+	}
+	
+	public boolean isFpsDisplayVisible()
+	{
+		return isFpsDisplayVisible;
+	}
+	
+	public void resetBackgroundRepaintTimer()
+	{
+		backgroundRepaintTimer = 0;
 	}
 }

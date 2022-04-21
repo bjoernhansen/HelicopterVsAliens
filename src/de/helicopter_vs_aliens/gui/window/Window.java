@@ -68,7 +68,6 @@ public abstract class Window implements Paintable
 		DEFAULT_PLAYER_NAME = "John Doe";
 		
 	public static final int
-		NUMBER_OF_HIGH_SCORE_COLUMN_NAMES = 8, // TODO in ein Enum überführen HighScoreColumns
         NUMBER_OF_SETTING_OPTIONS = 5,	    
 		POWER_UP_SIZE = 23,
 		MAXIMUM_COLLECTED_POWERUPS_COUNT = 4,
@@ -424,7 +423,8 @@ public abstract class Window implements Paintable
 				Button button = buttons.get(buttonSpecifier);
 				if(button == null || helicopter == null)
 				{
-					String.format("Button: %s; Helicopter: %s", button, helicopter);
+					System.out.format("Button: %s; Helicopter: %s", button, helicopter);
+					throw new RuntimeException();
 				}
 				if (button.getBounds().contains(helicopter.destination.x, helicopter.destination.y))
 				{
@@ -587,7 +587,7 @@ public abstract class Window implements Paintable
 		}
 		else if(WindowManager.window  == START_SCREEN)
 		{
-			updateStartScreen(helicopter, controller.framesCounter);
+			updateStartScreen(helicopter, controller.getFramesCounter());
 		}
 		else if(WindowManager.window  == SCORE_SCREEN)
 		{

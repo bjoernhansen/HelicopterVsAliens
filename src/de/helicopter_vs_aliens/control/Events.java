@@ -392,7 +392,7 @@ public class Events
 	
 	private static void mousePressedLeft(Controller controller)
 	{		
-		controller.backgroundRepaintTimer = 0;
+		controller.resetBackgroundRepaintTimer();
 		if(WindowManager.window == GAME)
 		{
 			inGameMousePressedLeft(controller);
@@ -919,7 +919,7 @@ public class Events
 		}
 		else if(Window.page == StartScreenMenuButtonType.BUTTON_2)
 		{			
-			switchAntialiasingActivationState(controller, currentButton);
+			controller.switchAntialiasingActivationState(currentButton);
 		}						
 		else if(Window.page == StartScreenMenuButtonType.BUTTON_3)
 		{
@@ -942,16 +942,6 @@ public class Events
 		Window.updateStartScreenSubLabelText();
 	}
 	
-	private static void switchAntialiasingActivationState(Controller controller, Button currentButton)
-	{
-		Controller.antialiasing = !Controller.antialiasing;
-		controller.graphicsAdapter.setRenderingHint(
-				RenderingHints.KEY_ANTIALIASING,
-				Controller.antialiasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
-		Window.dictionary.updateAntialiasing();
-		currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
-	}
-
 	static void mouseReleased(MouseEvent mouseEvent, Helicopter helicopter)
 	{
 		if(mouseEvent.getButton() == 1)

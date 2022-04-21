@@ -53,8 +53,8 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
             graphicsAdapter.drawString("(" + (Audio.standardBackgroundMusic ? "Classic" : "Michael" + Window.dictionary.modeSuffix()) + ")", LEFT + COLUMN_SPACING + 25, TOP + LINE_SPACING);
         }
     
-        graphicsAdapter.setColor(Controller.antialiasing ? Color.green : Color.red);
-        graphicsAdapter.drawString(Window.dictionary.activationState(Controller.antialiasing)			, LEFT + COLUMN_SPACING, TOP + 2 * LINE_SPACING);
+        graphicsAdapter.setColor(controller.isAntialiasingActivated() ? Color.green : Color.red);
+        graphicsAdapter.drawString(Window.dictionary.activationState(controller.isAntialiasingActivated()), LEFT + COLUMN_SPACING, TOP + 2 * LINE_SPACING);
     
         graphicsAdapter.setColor(Colorations.golden);
         graphicsAdapter.drawString(Window.language.getNativeName(), LEFT + COLUMN_SPACING, TOP + 3 * LINE_SPACING);
@@ -62,7 +62,7 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
         if(Window.page == StartScreenMenuButtonType.BUTTON_5){graphicsAdapter.setColor(Color.white);}
         graphicsAdapter.drawString(Events.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 4 * LINE_SPACING);
     
-        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (controller.framesCounter/30)%2 == 0){graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getFontMetrics().stringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
+        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (controller.getFramesCounter()/30)%2 == 0){graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getFontMetrics().stringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
     }
     
     @Override

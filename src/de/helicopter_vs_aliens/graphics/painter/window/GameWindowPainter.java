@@ -138,14 +138,14 @@ public class GameWindowPainter extends WindowPainter
         paintHealthBar(graphicsAdapter, helicopter);
         paintCollectedPowerUps(graphicsAdapter);
         
-        if (controller.showFps)
+        if (controller.isFpsDisplayVisible())
         {
             paintFpsDisplay(graphicsAdapter);
         }
         
         if (helicopter.isOnTheGround())
         {
-            if (!Window.isMenuVisible && controller.mouseInWindow)
+            if (!Window.isMenuVisible && controller.isMouseCursorInWindow())
             {
                 paintTimeDisplay(graphicsAdapter, Events.playingTime
                     + System.currentTimeMillis()
