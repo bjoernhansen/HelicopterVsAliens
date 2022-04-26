@@ -126,8 +126,8 @@ public class Enemy extends RectangularGameEntity
 		SPIN_SHOOTER_RATE 		   	= 0.55f,
 		EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f,
 	
-	// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
-	RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
+		// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
+		RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
 		TELEPORT_DAMAGE_FACTOR = 4f,			// Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
 		EMP_DAMAGE_FACTOR_BOSS = 1.5f,			// Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
 		EMP_DAMAGE_FACTOR_ORDINARY = 2.5f,		// Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
@@ -136,10 +136,10 @@ public class Enemy extends RectangularGameEntity
 	
 	private static final float[]
 		RETURN_PROB	= { 0.013f,	 	// SMALL_SHIELD_MAKER
-		0.013f,  	// BIG_SHIELD_MAKER
-		0.007f,  	// BODYGUARD
-		0.01f,  	// HEALER
-		0.04f}; 	// PROTECTOR
+						0.013f,  	// BIG_SHIELD_MAKER
+						0.007f,  	// BODYGUARD
+						0.01f,  	// HEALER
+						0.04f}; 	// PROTECTOR
 	
 	private static final int
 		// Raum-Konstanten
@@ -803,14 +803,15 @@ public class Enemy extends RectangularGameEntity
 	private static void creation(Helicopter helicopter,
 								 EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
-		Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
+		/*Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
 		Enemy e;
 		if (i.hasNext())
 		{
 			e = i.next();
 			i.remove();
 		}
-		else{e = EnemyFactory.createEnemy();}
+		else{e = EnemyFactory.createEnemy();}*/
+		Enemy e = EnemyFactory.createEnemy();
 		enemy.get(ACTIVE).add(e);
 		Events.lastCreationTimer = 0;
 		helicopter.numberOfEnemiesSeen++;
@@ -1902,7 +1903,7 @@ public class Enemy extends RectangularGameEntity
 			{
 				enemy.clearImage();
 				i.remove(); 
-				controller.enemies.get(INACTIVE).add(enemy);
+				// controller.enemies.get(INACTIVE).add(enemy);
 			}			
 		}
 	}	
@@ -3231,7 +3232,7 @@ public class Enemy extends RectangularGameEntity
 			{
 				e.clearImage();
 				i.remove(); 
-				controller.enemies.get(INACTIVE).add(e);
+				// controller.enemies.get(INACTIVE).add(e);
 			}				
 		}		// this.slowed_timer
 	}

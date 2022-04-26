@@ -30,7 +30,7 @@ wenn gedreht an Barrier.
 
 Bug: unverwundbar + energy schild roch  an, absturz, wenn energie weg
 
-
+Bug: Helicopter nimmt gelegentlich Schaden, wenn er von unten eine Barrier berührt
 
 Ausweichende Gegner (in lila) sollten immer vom Helicopter weg ausweichen
 

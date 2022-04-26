@@ -523,8 +523,8 @@ public class Events
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
 				{
 					// TODO diese EntitiyManagment gehört in eine eigene Klasse
-					controller.enemies.get(INACTIVE)
-									  .addAll(controller.enemies.get(ACTIVE));
+					/* controller.enemies.get(INACTIVE)
+									  .addAll(controller.enemies.get(ACTIVE)); */
 					controller.enemies.get(ACTIVE)
 									  .clear();
 					level = level - ((level - 1) % 5);
@@ -535,8 +535,8 @@ public class Events
 								  .reset();
 					}
 					killsAfterLevelUp = 0;
-					controller.enemies.get(INACTIVE)
-									  .addAll(controller.enemies.get(DESTROYED));
+					/*controller.enemies.get(INACTIVE)
+									  .addAll(controller.enemies.get(DESTROYED));*/
 					controller.enemies.get(DESTROYED)
 									  .clear();
 					Window.buttons.get(LeftSideRepairShopButtonType.REPAIR)
@@ -1064,7 +1064,7 @@ public class Events
 			}			
 			if(totalReset)
 			{
-				controller.enemies.get(INACTIVE).addAll(controller.enemies.get(ACTIVE));
+				// controller.enemies.get(INACTIVE).addAll(controller.enemies.get(ACTIVE));
 				controller.enemies.get(ACTIVE).clear();
 				Enemy.currentRock = null;
 			}
@@ -1075,7 +1075,7 @@ public class Events
 					Enemy e = i.next();					
 					if(!e.isLasting)
 					{
-						controller.enemies.get(INACTIVE).add(e);
+						// controller.enemies.get(INACTIVE).add(e);
 						i.remove();
 					}
 				}
@@ -1085,7 +1085,7 @@ public class Events
 		if(totalReset)
 		{
 			killsAfterLevelUp = 0;
-			controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
+			// controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
 			controller.enemies.get(DESTROYED).clear();
 			if(level < 6)
 			{

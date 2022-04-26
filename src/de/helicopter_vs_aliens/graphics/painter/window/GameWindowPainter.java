@@ -487,8 +487,8 @@ public class GameWindowPainter extends WindowPainter
                 + ";   Hindernisse: "
                 + Enemy.currentNumberOfBarriers + " / " + Enemy.maxBarrierNr
                 + ";   Inaktive Gegner: "
-                + controller.enemies.get(INACTIVE)
-                                    .size();
+                /*+ controller.enemies.get(INACTIVE)
+                                    .size()*/;
         } else if (Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
