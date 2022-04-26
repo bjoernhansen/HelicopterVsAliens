@@ -1,19 +1,27 @@
 package de.helicopter_vs_aliens.model.enemy;
 
-import de.helicopter_vs_aliens.model.AbstractGameEntityFactory;
 
-public class EnemyFactory extends AbstractGameEntityFactory<Enemy>
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
+
+public class EnemyFactory implements GameEntityFactory<Enemy>
 {
     private static final EnemyFactory
         factory = new EnemyFactory();
     
     public static Enemy createEnemy(){
-        return factory.make();
+        return factory.makeInstance();
     }
     
     @Override
-    public Enemy make()
+    public Enemy makeInstance()
     {
         return new Enemy();
+    }
+    
+    @Override
+    public Class<Enemy> getCorrespondingClass()
+    {
+        // TODO implementation
+        return null;
     }
 }

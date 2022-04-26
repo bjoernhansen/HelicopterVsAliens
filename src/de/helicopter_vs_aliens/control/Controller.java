@@ -162,13 +162,14 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	{
 		// TODO alle Listen von inaktivierten überführen in GameEntityRecycler, auch die BackgroundObjects berücksichtigen
 		// TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
+		// TODO keine LinkedList verwenden, lieber ArrayDeque
 		CollectionSubgroupType.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
-			this.missiles.put(	   		standardSubgroupTypes, new LinkedList<>());
-			this.explosions.put(	   	standardSubgroupTypes, new LinkedList<>());
+			this.missiles.put(	   					standardSubgroupTypes, new LinkedList<>());
+			this.explosions.put(	   				standardSubgroupTypes, new LinkedList<>());
 			this.scenery.getSceneryObjects().put(	standardSubgroupTypes, new LinkedList<>());
-			this.enemyMissiles.put( 	standardSubgroupTypes, new LinkedList<>());
-			this.powerUps.put(	   		standardSubgroupTypes, new LinkedList<>());
-			this.enemies.put(		   	standardSubgroupTypes, new LinkedList<>());
+			this.enemyMissiles.put( 				standardSubgroupTypes, new LinkedList<>());
+			this.powerUps.put(	   					standardSubgroupTypes, new LinkedList<>());
+			this.enemies.put(		   				standardSubgroupTypes, new LinkedList<>());
 		});
 		this.enemies.put(DESTROYED, new LinkedList<>());
 	}

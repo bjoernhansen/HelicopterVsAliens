@@ -130,7 +130,7 @@ public class Scenery extends GameEntity
     private boolean isMajorBossActive(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
         return !enemy.get(ACTIVE).isEmpty()
-            && enemy.get(ACTIVE).getFirst().type.isMajorBoss();
+                && enemy.get(ACTIVE).getFirst().type.isMajorBoss();
     }
     
     private boolean arePrerequisitesForSceneryObjectsCreationMet()

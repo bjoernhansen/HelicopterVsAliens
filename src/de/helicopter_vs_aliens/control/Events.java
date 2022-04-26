@@ -522,19 +522,25 @@ public class Events
 												
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
 				{
-					EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies = controller.enemies;
-					enemies.get(INACTIVE).addAll(enemies.get(ACTIVE));
-					enemies.get(ACTIVE).clear();
-					level = level - ((level - 1) % 5);						
+					// TODO diese EntitiyManagment gehört in eine eigene Klasse
+					controller.enemies.get(INACTIVE)
+									  .addAll(controller.enemies.get(ACTIVE));
+					controller.enemies.get(ACTIVE)
+									  .clear();
+					level = level - ((level - 1) % 5);
 					Enemy.adaptToLevel(helicopter, level, false);
-					if(level < 6)
+					if (level < 6)
 					{
-						controller.getScenery().reset();
+						controller.getScenery()
+								  .reset();
 					}
 					killsAfterLevelUp = 0;
-					enemies.get(INACTIVE).addAll(enemies.get(DESTROYED));
-					enemies.get(DESTROYED).clear();
-					Window.buttons.get(LeftSideRepairShopButtonType.REPAIR).adjustCostsToZero();
+					controller.enemies.get(INACTIVE)
+									  .addAll(controller.enemies.get(DESTROYED));
+					controller.enemies.get(DESTROYED)
+									  .clear();
+					Window.buttons.get(LeftSideRepairShopButtonType.REPAIR)
+								  .adjustCostsToZero();
 					Enemy.currentRock = null;
 				}
 				else
@@ -584,16 +590,13 @@ public class Events
 				
 				Window.updateRepairShopButtonsAfterSpotlightPurchase();
 				
-				EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
-					enemies = controller.enemies;
+				controller.enemies.get(DESTROYED)
+								  .forEach(Enemy::repaint);
 				
-				enemies.get(DESTROYED)
-					   .forEach(Enemy::repaint);
-				
-				enemies.get(ACTIVE)
-					   .stream()
-					   .filter(Predicate.not(Enemy::isRock))
-					   .forEach(Enemy::dimmedRepaint);
+				controller.enemies.get(ACTIVE)
+								  .stream()
+								  .filter(Predicate.not(Enemy::isRock))
+								  .forEach(Enemy::dimmedRepaint);
 			}
 		}
 		// Goliath-Panzerung

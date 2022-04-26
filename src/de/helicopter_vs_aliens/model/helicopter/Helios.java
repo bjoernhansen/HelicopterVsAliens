@@ -36,7 +36,6 @@ public final class Helios extends Helicopter
     private boolean
         hasPowerUpImmobilizer;  // = true: Helikopter verfügt über einen Interphasen-Generator
     
-    
     @Override
     public HelicopterType getType()
     {
