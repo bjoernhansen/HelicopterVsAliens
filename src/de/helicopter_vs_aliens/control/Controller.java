@@ -84,19 +84,19 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		helicopter = HelicopterType.getDefault().makeInstance();
 
 	// TODO Verwaltung anders lösen, vermutlich mit den erstellten Klassen im Packet control/entities
-	public EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
+	public final EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public EnumMap<CollectionSubgroupType, LinkedList<Missile>>
+	public final EnumMap<CollectionSubgroupType, LinkedList<Missile>>
 		missiles = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public EnumMap<CollectionSubgroupType, LinkedList<Explosion>>
+	public final EnumMap<CollectionSubgroupType, LinkedList<Explosion>>
 		explosions = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>>
+	public final EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>>
 		enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public EnumMap<CollectionSubgroupType, LinkedList<PowerUp>>
+	public final EnumMap<CollectionSubgroupType, LinkedList<PowerUp>>
 		powerUps = new EnumMap<>(CollectionSubgroupType.class);
 	
 	private GraphicsAdapter

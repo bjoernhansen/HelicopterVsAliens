@@ -13,6 +13,9 @@ import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.barrier.Barrier;
+import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
+import de.helicopter_vs_aliens.model.enemy.defaultEnemy.DefaultEnemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
@@ -47,6 +50,12 @@ public class GraphicsManager
         WindowType.getValues().forEach(windowType ->
             painters.put(windowType.getMenuClass(), windowType.makePainterInstance()));
         
+        // Painter für Gegner
+        EnemyPainter enemyPainter = new EnemyPainter();
+        painters.put(Barrier.class, enemyPainter);
+        painters.put(BossEnemy.class, enemyPainter);
+        painters.put(DefaultEnemy.class, enemyPainter);
+    
         // sonstige Painter
         painters.put(PowerUp.class, new PowerUpPainter());
         painters.put(Missile.class, new MissilePainter());
@@ -54,7 +63,6 @@ public class GraphicsManager
         painters.put(SceneryObject.class, new SceneryObjectPainter());
         painters.put(Scenery.class, new SceneryPainter());
         painters.put(Explosion.class, new ExplosionPainter());
-        painters.put(Enemy.class, new EnemyPainter());
     }
     
     public static GraphicsManager getInstance()

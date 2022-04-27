@@ -6,9 +6,13 @@ public enum Language
     ENGLISH("English", "en", 1),
     GERMAN( "Deutsch", "de", 0);
     
-    private String nativeName;
-    private int objectPosition;
-    private String code;
+    
+    private final int
+        objectPosition;
+    
+    private final String
+        nativeName,
+        code;
 
     
     public static Language getDefault()

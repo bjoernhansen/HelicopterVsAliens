@@ -50,7 +50,7 @@ public final class Colorations
 		gradientVariableWhite;    // Schriftfarbe der Überschriften (StartScreen, ScoreScreen, Werkstatt)
     	public static GradientPaint gradientVariableGray;	// Button-Hintergrundfarbe für hervorgehobene (highlighted = true) Buttons
 	
-	public static Color[]
+	public static final Color[]
 		scoreScreen = new Color[4];
 	
 	// konstante Farben

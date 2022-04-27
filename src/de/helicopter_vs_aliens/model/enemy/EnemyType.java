@@ -1,10 +1,17 @@
 package de.helicopter_vs_aliens.model.enemy;
 
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
+import de.helicopter_vs_aliens.model.enemy.barrier.Barrier;
+import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
+import de.helicopter_vs_aliens.model.enemy.defaultEnemy.DefaultEnemy;
+
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
-public enum EnemyType
+public enum EnemyType implements GameEntityFactory<Enemy>
 {
     // Standard-Gegner
     TINY(1),
@@ -18,7 +25,7 @@ public enum EnemyType
     CALLBACK(10),
     SHOOTER(12),
     CLOAK(16),
-    BOLT(14),
+    LONELY_BOLT(14),
     CARRIER(19),
     YELLOW(22),
     AMBUSH(30),
@@ -40,8 +47,10 @@ public enum EnemyType
     HEALER(65),
     PROTECTOR(25),
     
-    // Hindernisse
+    // Hindernis (Rock-Enemy)
     ROCK(0),
+    
+    // Hindernisse (Barrier)
     BARRIER_0(4),
     BARRIER_1(4),
     BARRIER_2(5),
@@ -51,23 +60,38 @@ public enum EnemyType
     BARRIER_6(4),
     BARRIER_7(15), // TODO überarbeiten, wie oft soll er wiederkommen? manchmal schießt er nicht,
     
-    KABOOM(0);
+    // sonstige Gegner
+    KABOOM(0),
     
+    ESCAPED_BOLT(14);
+    
+    
+    private static final List<EnemyType>
+        VALUES = List.of(values());
     
     private final static Set<EnemyType>
         BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOSS_1, PROTECTOR)),
         STANDARD_TYPES = Collections.unmodifiableSet(EnumSet.range(TINY, TELEPORTER)),
         FINAL_BOSS_SERVANT_TYPES = Collections.unmodifiableSet(EnumSet.range(SMALL_SHIELD_MAKER, PROTECTOR)),
         BARRIERS = Collections.unmodifiableSet(EnumSet.range(BARRIER_0, BARRIER_7)),
-        CLOAKABLE_AS_MINI_BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOLT, TELEPORTER));
-      
-    private final int strength; // Stärke des Gegner, bestimmmt die Höhe der Belohnung bei Abschuss
+        CLOAKABLE_AS_MINI_BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(LONELY_BOLT, TELEPORTER));
     
-    // TODO nicht mit Arrays arbeiten, vgl. z.B. WindowType
-    private static final EnemyType[]
-            defensiveCopyOfValues = values();
     
-       
+    static{
+        STANDARD_TYPES.forEach(enemyType -> enemyType.instanceSupplier = DefaultEnemy::new);
+        BARRIERS.forEach(enemyType -> enemyType.instanceSupplier = Barrier::new);
+        BOSS_TYPES.forEach(enemyType -> enemyType.instanceSupplier = BossEnemy::new);
+        ROCK.instanceSupplier = DefaultEnemy::new;
+        KABOOM.instanceSupplier = DefaultEnemy::new;
+    }
+    
+    private final int
+        strength; // Stärke des Gegners; bestimmt die Höhe der Belohnung bei Abschuss
+    
+    private Supplier<? extends Enemy>
+        instanceSupplier;
+    
+    
     EnemyType(int strength)
     {
         this.strength = strength;
@@ -81,6 +105,11 @@ public enum EnemyType
     static Set<EnemyType> getBarrierTypes()
     {
         return BARRIERS;
+    }
+    
+    static Set<EnemyType> getBossTypes()
+    {
+        return BOSS_TYPES;
     }
     
     public boolean isMajorBoss()
@@ -128,8 +157,23 @@ public enum EnemyType
         return this.strength;
     }
     
-    public static EnemyType[] getValues()
+    public static List<EnemyType> getValues()
     {
-        return defensiveCopyOfValues;
+        return VALUES;
+    }
+    
+    @Override
+    public Enemy makeInstance()
+    {
+        Enemy enemy = instanceSupplier.get();
+        enemy.type = this;
+        return enemy;
+    }
+    
+    @Override
+    public Class<Enemy> getCorrespondingClass()
+    {
+        // TODO implementation
+        return null;
     }
 }

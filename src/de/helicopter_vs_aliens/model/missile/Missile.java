@@ -42,10 +42,10 @@ public class Missile extends RectangularGameEntity
 		dangerous,		// = true: kann den Helicopter beschädigen
 		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
-	public Missile [] 
+	public final Missile []
 		sister = new Missile [2];	// nur für Roch- und Orochi Klasse: Schwesterraketen (werden gleichzeitig abgefeuert)
 	
-	public HashMap<Integer, Enemy> 
+	public final HashMap<Integer, Enemy>
 		hits = new HashMap<> ();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
 
 	public ExplosionTypes

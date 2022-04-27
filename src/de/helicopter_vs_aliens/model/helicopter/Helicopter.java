@@ -132,7 +132,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		numberOfMiniBossKilled;				// Anzahl der vernichteten Mini-Bosse
 	
 	// TODO Magic Number entfernen und kein Array verwenden
-	public int[]
+	public final int[]
 		powerUpTimer = new int [4]; 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
   
 	private final Map<StandardUpgradeType, Integer>
@@ -161,11 +161,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		isMovingLeft,
 		isPlayedWithCheats = true;			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
     
-    public Point
+    public final Point
     	destination = new Point(); 				// dorthin fliegt der Helikopter
 
     // TODO noch Phoenix auslagern
-    public Point
+    public final Point
     	priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
 
 	public boolean
@@ -178,13 +178,13 @@ public abstract class Helicopter extends RectangularGameEntity
 		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen MultiKill-Awards ohne Bonus
 		bonusKillsTimer;					// reguliert die Zeit, innerhalb welcher Kills für den MultiKill-Award berücksichtigt werden
     
-    Battery
+    final Battery
         battery = Battery.createFor(this.getType());
     
-	public Point2D
+	public final Point2D
   		location = new Point2D.Float();	        // exakter Aufenthaltsort
     
-    Point2D
+    final Point2D
         nextLocation = new Point2D.Float();
     
   	public Enemy

@@ -28,7 +28,7 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyType.SMALL_SHIELD_MAKER;
 public class EnemyPainter extends Painter<Enemy>
 {
     // Konstanten
-    public static boolean
+    public static final boolean
         SHOW_BARRIER_TESTING_INFO = false,
         SHOW_RED_FRAME = false;
     

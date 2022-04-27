@@ -26,7 +26,7 @@ public class Battery
         capacity,
         regenerationRate;  // Energiezuwachs pro Simulationsschritt
 
-    HelicopterType
+    private final HelicopterType
         helicopterType;
 
 

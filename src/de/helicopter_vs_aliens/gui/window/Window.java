@@ -96,7 +96,7 @@ public abstract class Window implements Paintable
 		crossTimer,						// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem StartScreen
 		unlockedTimer;					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 	
-	public static int[]
+	public static final int[]
 		effectTimer = new int[HelicopterType.count()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
 	 
 	public static StartScreenMenuButtonType
@@ -118,7 +118,7 @@ public abstract class Window implements Paintable
     public static Polygon
     	cross;                      // das rote Block-Kreuz
 	
-	public static Polygon[]
+	public static final Polygon[]
 		triangle = new Polygon[2];	// die grünen Dreiecke auf dem StartScreen
 	 
 	public static final EnumMap<HelicopterType, Helicopter>
@@ -132,22 +132,22 @@ public abstract class Window implements Paintable
 	    // TODO daraus eine Liste<String> machen
 		message = new String [MESSAGE_LINE_COUNT];
 	
-	public static Map<ButtonSpecifier, Button>
+	public static final Map<ButtonSpecifier, Button>
 		buttons = new HashMap<>();
 		
     public static Label
 		label;
 	
-	public static PowerUp[]
+	public static final PowerUp[]
 		collectedPowerUp = new PowerUp [MAXIMUM_COLLECTED_POWERUPS_COUNT];
 	
-	public static Rectangle[]
+	public static final Rectangle[]
 		helicopterFrame = new Rectangle[NUMBER_OF_START_SCREEN_HELICOPTERS];
 	
-    public static FontProvider
+    public static final FontProvider
 		fontProvider = new FontProvider();
 	
-	public static LabelTextProvider
+	public static final LabelTextProvider
 		labelTextProvider = new LabelTextProvider();
 	
     public final static Dictionary

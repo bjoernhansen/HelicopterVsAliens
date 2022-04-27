@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public abstract class AbstractGraphicsAdapter<E> implements GraphicsAdapter
 {
-    protected E graphics;
+    protected final E graphics;
     
     protected AbstractGraphicsAdapter(E graphics)
     {

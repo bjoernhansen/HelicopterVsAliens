@@ -39,7 +39,7 @@ public class Explosion extends GameEntity
     	kills,				// nur für Pegasus-Klasse: mit diesem EMP vernichtete Gegner
     	earnedMoney;		// nur für Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
   
-	public Ellipse2D 
+	public final Ellipse2D
 		ellipse = new Ellipse2D.Float();	// Einflussbereich der Explosion
 	
 	private Enemy

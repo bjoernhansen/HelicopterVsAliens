@@ -50,30 +50,6 @@ import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.TOP;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_0;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_1;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_2;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_3;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_4;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_5;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_6;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BARRIER_7;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BIG_SHIELD_MAKER;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BODYGUARD;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOLT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_1;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_3;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_4;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_4_SERVANT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.FINAL_BOSS;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.HEALER;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.PROTECTOR;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.ROCK;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.SMALL_SHIELD_MAKER;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.TINY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.EMP;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
@@ -91,12 +67,12 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 
-public class Enemy extends RectangularGameEntity
+public abstract class Enemy extends RectangularGameEntity
 {
 	private static class FinalEnemyOperator
     {
-		Enemy[] servants;
-    	int [] timeSinceDeath;
+		final Enemy[] servants;
+    	final int [] timeSinceDeath;
     	
     	FinalEnemyOperator()
     	{
@@ -227,15 +203,16 @@ public class Enemy extends RectangularGameEntity
 	public static Enemy
 		currentMiniBoss,	// Referenz auf den aktuellen Boss-Gegner
 		currentRock,
-		lastCarrier;  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
+		carrierDestroyedJustNow;  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
 	
-	public static Enemy[]
+	public static final Enemy[]
 		livingBarrier = new Enemy [MAX_BARRIER_NUMBER];
 	
 	public static EnemyType
-		bossSelection;		 	// bestimmt, welche Boss-Typ erstellt wird
+		nextBossEnemyType;		 	// bestimmt, welche Boss-Typ erstellt wird
 	
 	private static int 
+		// TODO selection ist kein guter Bezeichner
 		selection,			// bestimmt welche Typen von Gegnern zufällig erscheinen können	
 		selectionBarrier, 	// bestimmt den Typ der Hindernis-Gegner
 		rockTimer,			// reguliert das Erscheinen von "Rock"-Gegnern
@@ -262,7 +239,7 @@ public class Enemy extends RectangularGameEntity
 	                        	   false,	// HEALER
 	                        	   false};	// PROTECTOR
 			
-	public static 
+	public static final
 		Point2D boss = new Point2D.Float();	// Koordinaten vom aktuellen Boss; wichtig für Gegner-produzierende Boss-Gegner	
 		
 	/*
@@ -304,7 +281,7 @@ public class Enemy extends RectangularGameEntity
     public EnemyModelType
 		model;				// legt das Aussehen (Model) des Gegners fest
 
-    public Point 
+    public final Point
     	direction = new Point();		// Flugrichtung
     	
 	Enemy
@@ -418,7 +395,7 @@ public class Enemy extends RectangularGameEntity
 	{
 		return  !this.isDestroyed
 				&& (this.isBoss()
-					|| this.type == KABOOM
+					|| this.type == EnemyType.KABOOM
 					|| (this.model == BARRIER
 						&& this.snoozeTimer <= SNOOZE_TIME + 75));
 	}
@@ -456,7 +433,7 @@ public class Enemy extends RectangularGameEntity
 	public static void adaptToFirstLevel()
 	{
 		maxNr = 2;
-		bossSelection = null;
+		nextBossEnemyType = null;
 		selection = 3;
 		maxBarrierNr = 0;
 		selectionBarrier = 1;
@@ -476,7 +453,7 @@ public class Enemy extends RectangularGameEntity
 		{			
 			wasEnemyCreationPaused = false;
 			maxNr = 3;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 25;
 			maxBarrierNr = 1;
 			selectionBarrier = 2;
@@ -494,14 +471,14 @@ public class Enemy extends RectangularGameEntity
 		else if(level == 10)
 		{
 			wasEnemyCreationPaused = true;
-			bossSelection = BOSS_1;
+			nextBossEnemyType = EnemyType.BOSS_1;
 			selection = 0;
 			helicopter.powerUpDecay();
 		}	  
 		else if(level == 11)
 		{
 			maxNr = 3;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 75;
 			maxBarrierNr = 1;
 			selectionBarrier = 2;
@@ -524,7 +501,7 @@ public class Enemy extends RectangularGameEntity
 		{			
 			wasEnemyCreationPaused = false;
 			maxNr = 4;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 155;	
 			maxBarrierNr = 2;
 			selectionBarrier = 4;
@@ -537,7 +514,7 @@ public class Enemy extends RectangularGameEntity
 		else if(level == 20)
 		{
 			wasEnemyCreationPaused = true;
-			bossSelection = BOSS_2;
+			nextBossEnemyType = EnemyType.BOSS_2;
 			selection = 0;
 			helicopter.powerUpDecay();
 			if(helicopter.isCountingAsFairPlayedHelicopter() && !helicopter.getType().hasReachedLevel20())
@@ -549,7 +526,7 @@ public class Enemy extends RectangularGameEntity
 		else if(level == 21)
 		{
 			maxNr = 3;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 400;
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
@@ -565,7 +542,7 @@ public class Enemy extends RectangularGameEntity
 		{
 			wasEnemyCreationPaused = false;
 			maxNr = 4;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 735;	
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
@@ -578,14 +555,14 @@ public class Enemy extends RectangularGameEntity
 		else if(level == 30)
 		{
 			wasEnemyCreationPaused = true;
-			bossSelection = BOSS_3;
+			nextBossEnemyType = EnemyType.BOSS_3;
 			selection = 0;	
 			helicopter.powerUpDecay();
 		}
 		else if(level == 31)
 		{
 			maxNr = 3;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 1670;
 			maxBarrierNr = 2;
 			selectionBarrier = 5;
@@ -602,7 +579,7 @@ public class Enemy extends RectangularGameEntity
 		{
 			wasEnemyCreationPaused = false;
 			maxNr = 4;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 4185;
 			maxBarrierNr = 2;
 			selectionBarrier = 6;
@@ -615,14 +592,14 @@ public class Enemy extends RectangularGameEntity
 		else if(level == 40)
 		{
 			wasEnemyCreationPaused = true;
-			bossSelection = BOSS_4;
+			nextBossEnemyType = EnemyType.BOSS_4;
 			selection = 0;
 			helicopter.powerUpDecay();
 		}			  
 		else if(level == 41)
 		{
 			maxNr = 3;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 15235;	
 			maxBarrierNr = 2;
 			selectionBarrier = 6;
@@ -639,7 +616,7 @@ public class Enemy extends RectangularGameEntity
 		{
 			wasEnemyCreationPaused = false;
 			maxNr = 5;
-			bossSelection = null;
+			nextBossEnemyType = null;
 			selection = 31810;
 			maxBarrierNr = 2 ;
 			selectionBarrier = 8;
@@ -653,7 +630,7 @@ public class Enemy extends RectangularGameEntity
 		else if(level == Events.MAXIMUM_LEVEL)
 		{
 			wasEnemyCreationPaused = true;
-			bossSelection = FINAL_BOSS;
+			nextBossEnemyType = EnemyType.FINAL_BOSS;
 			selection = 0;
 			helicopter.powerUpDecay();
 		}
@@ -666,37 +643,43 @@ public class Enemy extends RectangularGameEntity
 	public static void generateNewEnemies(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy, Helicopter helicopter)
 	{
 		Events.lastCreationTimer++;
-		if(lastCarrier != null){
+		if(wasCarrierDestroyedJustNow()){
 			createCarrierServants(helicopter, enemy);}
 		else if(wasEnemyCreationPaused){
 			verifyCreationStop(enemy, helicopter);}
-		if(bossServantCreationApproved()){
+		if(isBossServantCreationApproved()){
 			createBossServant(helicopter, enemy);}
-		else if(enemyCreationApproved(enemy))
+		else if(isEnemyCreationApproved(enemy))
 		{
 			creation(helicopter, enemy);
 		}
 	}
 	
+	private static boolean wasCarrierDestroyedJustNow()
+	{
+		return carrierDestroyedJustNow != null;
+	}
+	
+	// TODO könnte diese Methode nicht direkt aufgerufen werden, wenn der Carrier zerstört wurde. Die Variable "carrierKilledJustNow" könnte dann entfallen.
 	private static void createCarrierServants(Helicopter helicopter,
 											  EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
 		for(int m = 0; 
-				m < (lastCarrier.isMiniBoss
+				m < (carrierDestroyedJustNow.isMiniBoss
 						? 5 + Calculations.random(3)
 						: 2 + Calculations.random(2));
 				m++)
 			{
 				creation(helicopter, enemy);
 			}			
-			lastCarrier = null;
+			carrierDestroyedJustNow = null;
 	}
 
 	private static void verifyCreationStop(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
 										   Helicopter helicopter)
 	{
 		if(	enemy.get(ACTIVE).isEmpty()
-			&& lastCarrier == null
+			&& carrierDestroyedJustNow == null
 			&& !(helicopter.hasPowerUpsDisallowedAtBossLevel()
 				 && Events.isBossLevel()) )
 		{
@@ -710,7 +693,7 @@ public class Enemy extends RectangularGameEntity
 		}
 	}	
 		
-	private static boolean bossServantCreationApproved()
+	private static boolean isBossServantCreationApproved()
 	{
 		return     makeBossTwoServants
 				|| makeBoss4Servant
@@ -730,6 +713,7 @@ public class Enemy extends RectangularGameEntity
 	private static void createBossServant(Helicopter helicopter,
 										  EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
+		// TODO Wir haben hier 3 boolesche Variablen, nur um Festzulegen, welche Servants zu erzeugen sind. Ein Enum wäre hier besser.
 		if(makeBossTwoServants)
 		{
 			createBoss2Servants(helicopter, enemy);
@@ -749,7 +733,7 @@ public class Enemy extends RectangularGameEntity
 				if(makeBoss5Servant[id(type)])
 				{
 					makeBoss5Servant[id(type)] = false;
-					bossSelection = type;
+					nextBossEnemyType = type;
 					creation(helicopter, enemy);
 				}
 			});
@@ -761,7 +745,7 @@ public class Enemy extends RectangularGameEntity
     {
     	makeBossTwoServants = false;
 		wasEnemyCreationPaused = true;
-		bossSelection = BOSS_2_SERVANT;
+		nextBossEnemyType = EnemyType.BOSS_2_SERVANT;
 		maxNr = 12;
 		for (int m = 0; m < maxNr; m++)
 		{
@@ -774,12 +758,12 @@ public class Enemy extends RectangularGameEntity
     {
     	makeAllBoss5Servants = false;
     	EnemyType.getFinalBossServantTypes().forEach(type -> {
-			bossSelection = type;
+			nextBossEnemyType = type;
 			creation(helicopter, enemy);
 		});
     }	
 
-    private static boolean enemyCreationApproved(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
+    private static boolean isEnemyCreationApproved(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
 	{		
 		int numberOfEnemies = enemies.get(ACTIVE).size();
 		return     !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
@@ -800,8 +784,7 @@ public class Enemy extends RectangularGameEntity
 		return numberOfEnemies >= maxNr + maxBarrierNr;
 	}
 	
-	private static void creation(Helicopter helicopter,
-								 EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+	private static void creation(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
 	{
 		/*Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
 		Enemy e;
@@ -811,22 +794,46 @@ public class Enemy extends RectangularGameEntity
 			i.remove();
 		}
 		else{e = EnemyFactory.createEnemy();}*/
-		Enemy e = EnemyFactory.createEnemy();
-		enemy.get(ACTIVE).add(e);
+		
+		LinkedList<Enemy> activeEnemies = enemies.get(ACTIVE);
+		int activeEnemyCount = activeEnemies.size();
+		EnemyType enemyType = getNextEnemyType(activeEnemyCount);
+		Enemy enemy = enemyType.makeInstance();
+		activeEnemies.add(enemy);
 		Events.lastCreationTimer = 0;
 		helicopter.numberOfEnemiesSeen++;
-		e.create(helicopter, enemy.get(ACTIVE).size());
+		enemy.create(helicopter);
 	}
-    	
-	private void create(Helicopter helicopter, int nrOfEnemies)
+	
+	private static EnemyType getNextEnemyType(int nrOfEnemies)
+	{
+		if(wasCarrierDestroyedJustNow()){return EnemyType.ESCAPED_BOLT;}
+		if(barrierCreationApproved(nrOfEnemies)){return getNextBarrierType();}
+		if(rockCreationApproved()){return EnemyType.ROCK;}
+		if(kaboomCreationApproved()){return EnemyType.KABOOM;}
+		if(isBossEnemyToBeCreated()){return nextBossEnemyType;}
+		return getNextDefaultEnemyType();
+	}
+	
+	private static boolean isBossEnemyToBeCreated()
+	{
+		return nextBossEnemyType != null;
+	}
+	
+	private static EnemyType getNextDefaultEnemyType()
+	{
+		return ENEMY_SELECTOR.getType(Calculations.random(selection));
+	}
+	
+	private void create(Helicopter helicopter)
 	{			
 		this.reset();		
-		if(lastCarrier != null){this.createScamperingVessel(true);}
-		else if(barrierCreationApproved(nrOfEnemies)){this.createBarrier(helicopter);}
-		else if(rockCreationApproved()){this.createRock(helicopter);}
-		else if(kaboomCreationApproved()){this.createKaboom(helicopter);}
-		else if(bossSelection == null){this.createStandardEnemy();}
-		else{this.createBoss(helicopter);}
+		if(this.type == EnemyType.ESCAPED_BOLT){this.initializeEscapedBolt();}
+		else if(EnemyType.getBarrierTypes().contains(this.type)){this.createBarrier(helicopter);}
+		else if(this.type == EnemyType.ROCK){this.createRock(helicopter);}
+		else if(this.type == EnemyType.KABOOM){this.createKaboom(helicopter);}
+		else if(EnemyType.getBossTypes().contains(this.type)){this.createBoss(helicopter);}
+		else{this.createStandardEnemy();}
 		
 		if(this.model != BARRIER)
 		{
@@ -880,7 +887,6 @@ public class Enemy extends RectangularGameEntity
 	private void reset()
 	{
 		this.lifetime = 0;
-		this.type = TINY;
 		this.model = TIT;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
 		this.setX(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
@@ -983,30 +989,29 @@ public class Enemy extends RectangularGameEntity
 	private void createBarrier(Helicopter helicopter)
 	{
         this.model = BARRIER;
-		this.assignRandomBarrierType();
 		
 		helicopter.numberOfEnemiesSeen--;
 		this.hitpoints = Integer.MAX_VALUE;
 		this.rotorColor = 1;
 		this.isClockwiseBarrier = Calculations.tossUp();
 				
-		if(this.type == BARRIER_0 || this.type == BARRIER_1)
+		if(this.type == EnemyType.BARRIER_0 || this.type == EnemyType.BARRIER_1)
 		{
 			this.farbe1 = Colorations.bleach(Color.green, 0.6f);
 			this.isLasting = true;
 			
 			// Level 2
-			if(this.type == BARRIER_0){this.setVarWidth(65);}
+			if(this.type == EnemyType.BARRIER_0){this.setVarWidth(65);}
 			
 			// Level 6
-			else if(this.type == BARRIER_1)
+			else if(this.type == EnemyType.BARRIER_1)
 			{
 				this.setVarWidth(150);
 				this.setInitialY(GROUND_Y - this.bounds.getWidth());
 			}
 		}	
 		// Level 12
-		else if(this.type == BARRIER_2)
+		else if(this.type == EnemyType.BARRIER_2)
 		{
 			this.farbe1 = Colorations.bleach(Color.yellow, 0.6f);
 			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
@@ -1017,7 +1022,7 @@ public class Enemy extends RectangularGameEntity
 			this.isLasting = true;
 		}
 		// Level 15
-		else if(this.type == BARRIER_3)
+		else if(this.type == EnemyType.BARRIER_3)
 		{
 			this.farbe1 = Colorations.bleach(new Color(255, 192, 0), 0.0f);
 			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
@@ -1031,7 +1036,7 @@ public class Enemy extends RectangularGameEntity
 			this.hasYPosSet = true;
 		}
 		// Level 18
-		else if(this.type == BARRIER_4)
+		else if(this.type == EnemyType.BARRIER_4)
 		{
 			this.setVarWidth(85);
 			this.hasYPosSet = true;
@@ -1045,7 +1050,7 @@ public class Enemy extends RectangularGameEntity
 			this.isLasting = true;
 		}
 		// Level 32
-		else if(this.type == BARRIER_5)
+		else if(this.type == EnemyType.BARRIER_5)
 		{
 			this.setVarWidth(80);
 			this.setInitialY(GROUND_Y - this.bounds.getWidth()/8);
@@ -1056,7 +1061,7 @@ public class Enemy extends RectangularGameEntity
 			this.isLasting = true;
 		}
 		// Level 42
-		else if(this.type == BARRIER_6)
+		else if(this.type == EnemyType.BARRIER_6)
 		{
 			this.farbe1 = Colorations.bleach(Color.green, 0.6f);
 			this.setVarWidth(80);
@@ -1064,7 +1069,7 @@ public class Enemy extends RectangularGameEntity
 			this.isLasting = true;
 		}
 		// Level 44
-		else if(this.type == BARRIER_7)
+		else if(this.type == EnemyType.BARRIER_7)
 		{
 			this.farbe1 = Colorations.bleach(Colorations.cloaked, 0.6f);
 			this.setVarWidth(100);
@@ -1087,17 +1092,17 @@ public class Enemy extends RectangularGameEntity
 		}		
 		barrierTimer = (int)((helicopter.getBounds().getWidth() + this.bounds.getWidth())/2);
 	}
+ 
+	private static EnemyType getNextBarrierType()
+	{
+		int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
+			? Calculations.random(3)
+			: 0;
+		int selectedBarrierIndex = Calculations.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyType.getBarrierTypes().size()));
+		return (EnemyType) EnemyType.getBarrierTypes().toArray()[selectedBarrierIndex];
+	}
     
-    private void assignRandomBarrierType()
-    {
-        int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
-            ? Calculations.random(3)
-            : 0;
-        int selectedBarrierIndex = Calculations.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyType.getBarrierTypes().size()));
-        this.type = (EnemyType) EnemyType.getBarrierTypes().toArray()[selectedBarrierIndex];
-    }
-    
-    private boolean isBarrierFromFutureCreationApproved()
+    private static boolean isBarrierFromFutureCreationApproved()
     {
         return Calculations.tossUp(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
     }
@@ -1122,7 +1127,6 @@ public class Enemy extends RectangularGameEntity
 	private void createRock(Helicopter helicopter)
 	{
 		currentRock = this;
-		this.type = ROCK;
 		this.model = CARGO;	
 		helicopter.numberOfEnemiesSeen--;
 		this.farbe1 = new Color((180 + Calculations.random(30)),
@@ -1149,7 +1153,6 @@ public class Enemy extends RectangularGameEntity
 	
 	private void createKaboom(Helicopter helicopter)
 	{
-		this.type = KABOOM;
 		this.farbe1 = Color.white;
 		this.hitpoints = Integer.MAX_VALUE;	
 		this.setVarWidth(KABOOM_WIDTH);
@@ -1161,10 +1164,7 @@ public class Enemy extends RectangularGameEntity
 	
 	private void createStandardEnemy()
 	{
-		// TODO Switch sollte entfallen,
-		this.type = ENEMY_SELECTOR.getType(Calculations.random(selection));
-		//this.type = CARRIER;
-
+		// TODO Switch sollte entfallen
 		switch(this.type)
 		{
 			// Level 1
@@ -1327,8 +1327,8 @@ public class Enemy extends RectangularGameEntity
 				break;
 
 			// Level 35
-			case BOLT:
-				this.createScamperingVessel(lastCarrier != null);
+			case LONELY_BOLT:
+				this.initializeLonelyBolt();
 				break;
 
 			case CARRIER:
@@ -1422,45 +1422,42 @@ public class Enemy extends RectangularGameEntity
 		}
 	}
 	
-	private void createScamperingVessel(boolean explosionCreation)
+	private void initializeEscapedBolt()
 	{
-		if(explosionCreation){this.type = BOLT;}
-		
+		initializeBolt();
+		this.setLocation(carrierDestroyedJustNow.bounds.getCenterX(),
+						 carrierDestroyedJustNow.bounds.getCenterY());
+		this.hasYPosSet = true;
+		this.targetSpeedLevel.setLocation(	10  + 7.5 * Math.random(),
+											0.5 + 3   * Math.random());
+		this.callBack = 1 + Calculations.random(3);
+		this.direction.x = Calculations.randomDirection();
+		this.invincibleTimer = 67;
+	}
+	
+	private void initializeLonelyBolt()
+	{
+		initializeBolt();
+		this.targetSpeedLevel.setLocation(  12  + 3.5 * Math.random(),
+											0.5 + 3   * Math.random());
+		if(Calculations.tossUp()){this.callBack = 1;}
+	}
+	
+	private void initializeBolt()
+	{
 		this.farbe1 = new Color(75 + Calculations.random(30),
 								75 + Calculations.random(30),
 								75 + Calculations.random(30) );
 		this.setHitpoints(26);
 		this.setVarWidth(70);
 		
-		if(explosionCreation)
-		{
-			this.setLocation(lastCarrier.bounds.getCenterX(),
-							  lastCarrier.bounds.getCenterY());
-			this.hasYPosSet = true;
-		}
 		this.canExplode = true;
-		if(explosionCreation)
-		{
-			this.targetSpeedLevel.setLocation( 10 + 7.5*Math.random(), //d
-													0.5 + 3*Math.random());			//d	
-			this.callBack = 1 + Calculations.random(3);
-			this.direction.x = Calculations.randomDirection();
-			this.invincibleTimer = 67;
-		}
-		else 
-		{
-			this.targetSpeedLevel.setLocation( 12 + 3.5*Math.random(), //d
-													0.5 + 3*Math.random());		//d			
-			if(Calculations.tossUp()){this.callBack = 1;}
-		}
 	}
 	
 	private void createBoss(Helicopter helicopter)
 	{
-		this.type = bossSelection;
-		
 		// Level 10	
-		if( this.type == BOSS_1)
+		if( this.type == EnemyType.BOSS_1)
 		{
 			this.farbe1 = new Color(115, 70, 100);
 			this.hitpoints = 225;			
@@ -1472,7 +1469,7 @@ public class Enemy extends RectangularGameEntity
 			Events.boss = this;
 		}		
 		// Level 20
-		else if( this.type == BOSS_2)
+		else if( this.type == EnemyType.BOSS_2)
 		{						
 			this.model = CARGO;			
 			this.farbe1 = new Color(85, 85, 85);
@@ -1488,7 +1485,7 @@ public class Enemy extends RectangularGameEntity
 			
 			Events.boss = this;
 		}		
-		else if( this.type == BOSS_2_SERVANT)
+		else if( this.type == EnemyType.BOSS_2_SERVANT)
 		{	
 			this.bounds.setRect(boss.getX(),
 								boss.getY(),
@@ -1504,7 +1501,7 @@ public class Enemy extends RectangularGameEntity
 			this.invincibleTimer = 67;
 		}
 		// Level 30
-		else if( this.type == BOSS_3)
+		else if( this.type == EnemyType.BOSS_3)
 		{			
 			this.setWidth(250);
 			this.farbe1 = Colorations.cloaked;
@@ -1523,7 +1520,7 @@ public class Enemy extends RectangularGameEntity
 			Events.boss = this;
 		}
 		// Level 40
-		else if(this.type == BOSS_4)
+		else if(this.type == EnemyType.BOSS_4)
 		{						
 			this.setWidth(250);
 			this.farbe1 = Color.red;
@@ -1531,13 +1528,13 @@ public class Enemy extends RectangularGameEntity
 			this.targetSpeedLevel.setLocation(10, 10); //d
 
 			this.spawningHornetTimer = 30;
-			bossSelection = BOSS_4_SERVANT;
+			nextBossEnemyType = EnemyType.BOSS_4_SERVANT;
 			maxNr = 15;
 			this.canTurn = true;
 			
 			Events.boss = this;
 		}		
-		else if(this.type == BOSS_4_SERVANT)
+		else if(this.type == EnemyType.BOSS_4_SERVANT)
 		{	
 			this.bounds.setRect(boss.getX(),
 								boss.getY(),
@@ -1552,7 +1549,7 @@ public class Enemy extends RectangularGameEntity
 			this.canExplode = true;
 		}	
 		// Level 50
-		else if(this.type == FINAL_BOSS)
+		else if(this.type == EnemyType.FINAL_BOSS)
 		{
 			this.bounds.setRect(this.bounds.getX(),
 								FINAL_BOSS_STARTING_POSITION_Y,
@@ -1581,14 +1578,14 @@ public class Enemy extends RectangularGameEntity
 			{			
 				this.bounds.setRect(boss.getX(),
 									boss.getY(),
-									this.type == SMALL_SHIELD_MAKER ? 125 : 145,
+									this.type == EnemyType.SMALL_SHIELD_MAKER ? 125 : 145,
 								    this.bounds.getHeight());			
 				this.direction.x = Calculations.randomDirection();
 				
 				this.shieldMakerTimer = READY;
 				this.setShieldingPosition();
 								
-				if(this.type == SMALL_SHIELD_MAKER)
+				if(this.type == EnemyType.SMALL_SHIELD_MAKER)
 				{				
 					this.targetSpeedLevel.setLocation(7, 6.5); //d
 					this.farbe1 = new Color(25, 125, 105);				
@@ -1605,7 +1602,7 @@ public class Enemy extends RectangularGameEntity
 					this.shotSpeed = 1;
 				}
 			}			  
-			else if( this.type == BODYGUARD)
+			else if( this.type == EnemyType.BODYGUARD)
 			{			
 				this.bounds.setRect(boss.getX(),
 									boss.getY(),
@@ -1620,7 +1617,7 @@ public class Enemy extends RectangularGameEntity
 				
 				Events.boss.operator.servants[this.id()] = this;
 			}		
-			else if(this.type == HEALER)
+			else if(this.type == EnemyType.HEALER)
 			{				
 				this.model = CARGO;
 				
@@ -1636,7 +1633,7 @@ public class Enemy extends RectangularGameEntity
 				
 				Events.boss.operator.servants[this.id()] = this;
 			}
-			else if(this.type == PROTECTOR)
+			else if(this.type == EnemyType.PROTECTOR)
 			{
 				this.model = BARRIER;
 				
@@ -1677,8 +1674,8 @@ public class Enemy extends RectangularGameEntity
 		return 	currentMiniBoss == null
 				&& Events.level > 4 
 				&& this.model != BARRIER
-				&& !(this.type == ROCK)
-				&& !(this.type == KABOOM)
+				&& !(this.type == EnemyType.ROCK)
+				&& !(this.type == EnemyType.KABOOM)
 				&& Calculations.tossUp(miniBossProb)
 				&& this.type.isSuitableMiniBoss();
 	}
@@ -1933,7 +1930,7 @@ public class Enemy extends RectangularGameEntity
 	
 	public boolean isVisibleNonBarricadeVessel(boolean hasRadarDevice)
 	{
-		return this.type != ROCK
+		return this.type != EnemyType.ROCK
 			&& this.model != BARRIER
 			&& !(this.cloakingTimer > CLOAKING_TIME
 				&& this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME
@@ -1945,7 +1942,7 @@ public class Enemy extends RectangularGameEntity
 		this.lifetime++;		
 		this.updateTimer();
 		if(this.callBack > 0 && Events.isBossLevel()){this.callBack = 0;}
-		if(this.type != ROCK){
+		if(this.type != EnemyType.ROCK){
 			checkForBarrierCollision();}
 		if(this.stunningTimer == READY)
 		{
@@ -1974,16 +1971,16 @@ public class Enemy extends RectangularGameEntity
 		return this.bounds.getMaxY() > GROUND_Y
 			   && this.model != BARRIER 
 			   && !this.isDestroyed
-			   && this.type != ROCK;
+			   && this.type != EnemyType.ROCK;
 	}
 
 	private void calculateBossManeuver(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
 	{
-		     if(this.type == BOSS_4)    {this.boss4Action(enemy);}
-		else if(this.type == FINAL_BOSS){this.finalBossAction();}
+		     if(this.type == EnemyType.BOSS_4)    {this.boss4Action(enemy);}
+		else if(this.type == EnemyType.FINAL_BOSS){this.finalBossAction();}
 		else if(this.shieldMakerTimer != DISABLED){this.shieldMakerAction();}
-		else if(this.type == BODYGUARD) {this.bodyguardAction();}
-		else if(this.type == HEALER 
+		else if(this.type == EnemyType.BODYGUARD) {this.bodyguardAction();}
+		else if(this.type == EnemyType.HEALER
 				&& this.dodgeTimer == READY){this.healerAction();}
 	}
 
@@ -2257,7 +2254,7 @@ public class Enemy extends RectangularGameEntity
     {
     	this.takeDamage((int)this.getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
 		this.isEmpShocked = true;
-		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
+		if(this.type == EnemyType.BOSS_4){this.spawningHornetTimer = READY;}
 		this.disableSiteEffects(pegasus);
 				
 		if(this.hasHPsLeft())
@@ -2300,11 +2297,11 @@ public class Enemy extends RectangularGameEntity
 			   && this.turnTimer == READY
 			   &&(	(this.direction.x == -1 
 			   			&&(((this.callBack > 0 || this.type.isMajorBoss()) && this.bounds.getMinX() < TURN_FRAME.getMinX())
-			   					|| (this.type == HEALER && this.bounds.getX() < 563)))
+			   					|| (this.type == EnemyType.HEALER && this.bounds.getX() < 563)))
 			   		||
 			   		(this.direction.x == 1 
 			   			&&(((this.callBack > 0 || this.type.isMajorBoss()) && this.bounds.getMaxX() > TURN_FRAME.getMaxX() && !this.canLearnKamikaze)
-			   					|| (this.type == BODYGUARD && (this.bounds.getX() + this.bounds.getWidth() > 660)))));
+			   					|| (this.type == EnemyType.BODYGUARD && (this.bounds.getX() + this.bounds.getWidth() > 660)))));
 	}
 
 	private void changeXDirection()
@@ -2338,7 +2335,7 @@ public class Enemy extends RectangularGameEntity
 
 	private boolean isToBeRemoved()
 	{		
-		return this.type != BOSS_2_SERVANT
+		return this.type != EnemyType.BOSS_2_SERVANT
 			   && this.barrierTeleportTimer == DISABLED
 			   && !this.isDodging()
 			   && (this.callBack == 0 || !this.speed.equals(ZERO_SPEED))
@@ -2361,7 +2358,7 @@ public class Enemy extends RectangularGameEntity
 	private void prepareRemoval()
 	{
 		this.isMarkedForRemoval = true;
-		if(this.type == ROCK)
+		if(this.type == EnemyType.ROCK)
 		{
 			currentRock = null;
 			rockTimer = ROCK_FREE_TIME;
@@ -2529,7 +2526,7 @@ public class Enemy extends RectangularGameEntity
 		{			
 			if(!this.canLearnKamikaze)
 			{
-				this.speedLevel.setLocation((this.type == BOSS_4 || this.type == BOSS_3) ? 12 : 8, //d
+				this.speedLevel.setLocation((this.type == EnemyType.BOSS_4 || this.type == EnemyType.BOSS_3) ? 12 : 8,
 											 this.speedLevel.getY());
 			}						
 			if(this.direction.y == 1 
@@ -2553,7 +2550,7 @@ public class Enemy extends RectangularGameEntity
 		}
 		else if(!this.canFrontalSpeedup && this.dodgeTimer == READY)
 		{			
-			if(this.type == BODYGUARD && Events.boss.shield < 1)
+			if(this.type == EnemyType.BODYGUARD && Events.boss.shield < 1)
 			{
 				this.speedLevel.setLocation(7.5, this.targetSpeedLevel.getY());
 			}
@@ -2583,10 +2580,10 @@ public class Enemy extends RectangularGameEntity
 			this.speedLevel.setLocation(ZERO_SPEED);
 		}
 		else if(this.borrowTimer == READY
-				&&( (this.type != PROTECTOR 
+				&&( (this.type != EnemyType.PROTECTOR
 				     && Calculations.tossUp(0.004f))
 				    || 
-				    (this.type == PROTECTOR 
+				    (this.type == EnemyType.PROTECTOR
 				     && (helicopter.getBounds().getX() > boss.getX() - 225) ))) 
 		{			
 			this.borrowTimer = 2 * BORROW_TIME
@@ -2632,9 +2629,9 @@ public class Enemy extends RectangularGameEntity
 	
 	private boolean hasDeadlyShots()
 	{		
-		return this.type == BOSS_3 
+		return this.type == EnemyType.BOSS_3
 				|| this.isMiniBoss
-				|| (this.type == BIG_SHIELD_MAKER && Calculations.tossUp());
+				|| (this.type == EnemyType.BIG_SHIELD_MAKER && Calculations.tossUp());
 	}
 
 	private void evaluateBarrierShooting(Controller controller,
@@ -3031,7 +3028,7 @@ public class Enemy extends RectangularGameEntity
 						+ this.direction.x * this.speed.getX() 
 						- (Scenery.backgroundMoves ? BG_SPEED : 0),
 					Math.max( this.model == BARRIER ? 0 : Integer.MIN_VALUE,
-							this.type == ROCK ? this.bounds.getY() :
+							this.type == EnemyType.ROCK ? this.bounds.getY() :
 								Math.min( this.canBePositionedBelowGround()
 											? Integer.MAX_VALUE
 											: GROUND_Y - this.bounds.getHeight(),
@@ -3046,7 +3043,7 @@ public class Enemy extends RectangularGameEntity
 		return !(this.model == BARRIER
 			     && this.borrowTimer == DISABLED)
 			   || this.isDestroyed
-			   || this.type == ROCK;
+			   || this.type == EnemyType.ROCK;
 	}
 
 	private void calculateSpeedDead()
@@ -3091,7 +3088,7 @@ public class Enemy extends RectangularGameEntity
 				
 		if(	this.stoppingBarrier != null
 			&& this.borrowTimer == DISABLED
-			&& !(this.model == BARRIER && this.type == BARRIER_1))
+			&& !(this.model == BARRIER && this.type == EnemyType.BARRIER_1))
 		{
 			this.adjustSpeedToBarrier(helicopter);
 		}
@@ -3121,7 +3118,7 @@ public class Enemy extends RectangularGameEntity
 	
 	private void evaluateSpeedBoost()
 	{		
-		int bottomTurnLine = this.type == KABOOM
+		int bottomTurnLine = this.type == EnemyType.KABOOM
 								  ? KABOOM_Y_TURN_LINE 
 								  : (int)TURN_FRAME.getMaxY();
 									
@@ -3259,13 +3256,13 @@ public class Enemy extends RectangularGameEntity
 		this.speedLevel.setLocation(ZERO_SPEED);
 		this.setY(this.yCrashPos - this.bounds.getHeight());
 		if(this.type.isServant()){this.isMarkedForRemoval = true;}
-		Audio.play(this.type == KABOOM ? Audio.explosion4 : Audio.explosion3);
+		Audio.play(this.type == EnemyType.KABOOM ? Audio.explosion4 : Audio.explosion3);
 		Explosion.start(explosion, 
 						helicopter, 
 						this.bounds.getCenterX(),
 						this.bounds.getCenterY(),
-						this.type == KABOOM ? JUMBO : ORDINARY,
-						this.type == KABOOM);
+						this.type == EnemyType.KABOOM ? JUMBO : ORDINARY,
+						this.type == EnemyType.KABOOM);
 	}
 	
 	private boolean isBoss()
@@ -3296,13 +3293,13 @@ public class Enemy extends RectangularGameEntity
 			this.explode( controller.explosions,
 						  helicopter, 
 						  0, 
-						  this.type == KABOOM
+						  this.type == EnemyType.KABOOM
 						  	? JUMBO 
 						  	: ORDINARY,
-						  this.type == KABOOM);
+						  this.type == EnemyType.KABOOM);
 			
 			if(	helicopter.canObtainCollisionReward()
-				&& !(this.type == KABOOM))
+				&& !(this.type == EnemyType.KABOOM))
 			{
 				this.grantRewards(helicopter, null, helicopter.hasPerformedTeleportKill(), controller.powerUps);
 			}
@@ -3452,7 +3449,7 @@ public class Enemy extends RectangularGameEntity
 		if(helicopter.tractor == this){helicopter.stopTractor();}
 		if(!this.canLearnKamikaze
 		   && this.cloakingTimer > 0
-		   && this.type != BOSS_3)
+		   && this.type != EnemyType.BOSS_3)
 		{
 			this.uncloak(READY);
 		}		
@@ -3468,7 +3465,7 @@ public class Enemy extends RectangularGameEntity
 			     if(this.bounds.getMinX() > helicopter.getBounds().getMinX()){this.direction.x = -1;}
 			else if(this.bounds.getMaxX() < helicopter.getBounds().getMaxX()){this.direction.x = 1;}				
 		}
-		if(this.type == BOSS_4){this.spawningHornetTimer = READY;}
+		if(this.type == EnemyType.BOSS_4){this.spawningHornetTimer = READY;}
 		
 		if(this.cloakingTimer == READY && !(this.tractor == AbilityStatusType.ACTIVE))
 		{
@@ -3592,7 +3589,7 @@ public class Enemy extends RectangularGameEntity
 											  controller.enemies,
 											  controller.explosions);
 		if(this.isCarrier){
-			lastCarrier = this;}
+			carrierDestroyedJustNow = this;}
 		if(missile != null){missile.hits.remove(this.hashCode());}
 	}	
 
@@ -3605,7 +3602,7 @@ public class Enemy extends RectangularGameEntity
 
     public boolean canCountForKillsAfterLevelUp()
     {
-        return this.type != BOSS_4_SERVANT && !this.type.isFinalBossServant();
+        return this.type != EnemyType.BOSS_4_SERVANT && !this.type.isFinalBossServant();
     }
     
     public boolean canDropPowerUp()
@@ -3615,9 +3612,9 @@ public class Enemy extends RectangularGameEntity
 				    &&( ( Calculations.tossUp(POWER_UP_PROB)
 						  && Events.level >= MIN_POWER_UP_LEVEL) 
 						|| this.isMiniBoss))
-				|| this.type == BOSS_1
-				|| this.type == BOSS_3
-				|| this.type == BOSS_4 );
+				|| this.type == EnemyType.BOSS_1
+				|| this.type == EnemyType.BOSS_3
+				|| this.type == EnemyType.BOSS_4 );
 	}
 	
 	public void dropPowerUp(Helicopter helicopter,
@@ -3657,29 +3654,29 @@ public class Enemy extends RectangularGameEntity
 		{
 			currentMiniBoss = null;
 		}			
-		else if(this.type == BOSS_2)
+		else if(this.type == EnemyType.BOSS_2)
 		{								
 			boss.setLocation(this.bounds.getCenterX(), 
 							 this.bounds.getCenterY());
 			makeBossTwoServants = true;
 		}					
-		else if(this.type == BOSS_4)
+		else if(this.type == EnemyType.BOSS_4)
 		{
 			for(Enemy e : enemy.get(ACTIVE))
 			{
 				e.explode(explosion, helicopter);
-				if (e.type != BOSS_4)
+				if (e.type != EnemyType.BOSS_4)
 				{
 					e.destroy(helicopter);
 				}
 			}
 		}
-		else if(this.type == FINAL_BOSS)
+		else if(this.type == EnemyType.FINAL_BOSS)
 		{
 			for(Enemy e : enemy.get(ACTIVE))
 			{
 				e.explode(explosion, helicopter);
-				if (e.type != FINAL_BOSS)
+				if (e.type != EnemyType.FINAL_BOSS)
 				{
 					e.destroy(helicopter);
 				}
@@ -3697,12 +3694,12 @@ public class Enemy extends RectangularGameEntity
 			Events.boss.operator.servants[this.id()] = null;
 			Events.boss.operator.timeSinceDeath[this.id()] = 0;
 		}
-		if(this.type.isMainBoss() && this.type != FINAL_BOSS){Events.boss = null;}
+		if(this.type.isMainBoss() && this.type != EnemyType.FINAL_BOSS){Events.boss = null;}
 	}
 
 	public void dodge()
 	{
-		if(this.type == BOSS_3)
+		if(this.type == EnemyType.BOSS_3)
 		{			
 			this.speedLevel.setLocation(this.speedLevel.getX(), 9);	//d
 			this.dodgeTimer = 16;
@@ -3723,7 +3720,7 @@ public class Enemy extends RectangularGameEntity
 		else{this.direction.y = 1;}
 		
 		if(this.type.isShieldMaker()){this.stampedeShieldMaker();}
-		else if(this.type == HEALER){this.canDodge = false;}
+		else if(this.type == EnemyType.HEALER){this.canDodge = false;}
 	}
 	
 	private void stampedeShieldMaker()
@@ -3752,9 +3749,9 @@ public class Enemy extends RectangularGameEntity
 
 	private int shieldingBrotherId()
 	{		
-		return this.type == SMALL_SHIELD_MAKER
-				 ? id(BIG_SHIELD_MAKER)
-				 : id(SMALL_SHIELD_MAKER);
+		return this.type == EnemyType.SMALL_SHIELD_MAKER
+				 ? id(EnemyType.BIG_SHIELD_MAKER)
+				 : id(EnemyType.SMALL_SHIELD_MAKER);
 	}
 
 	public void teleport()
@@ -3796,7 +3793,7 @@ public class Enemy extends RectangularGameEntity
 				&&  this.dodgeTimer == READY
 				&& !this.isEmpSlowed()
 				&& !this.isDestroyed
-				&& !(this.type == HEALER 
+				&& !(this.type == EnemyType.HEALER
 					 && Events.boss.shield > 0 
 					 && this.bounds.getMinX() > Events.boss.bounds.getMinX() 
 				     && this.bounds.getMaxX() < Events.boss.bounds.getMaxX())
@@ -3882,7 +3879,7 @@ public class Enemy extends RectangularGameEntity
 	
 	public boolean isKaboomDamageDealer()
 	{
-		return this.type == KABOOM && !this.isDestroyed;
+		return this.type == EnemyType.KABOOM && !this.isDestroyed;
 	}
 
 	public void grantGeneralRewards(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
@@ -3897,7 +3894,7 @@ public class Enemy extends RectangularGameEntity
 	
 	public boolean isRock()
 	{
-		return type == ROCK;
+		return type == EnemyType.ROCK;
 	}
 	
 	public int getCloakingTimer()

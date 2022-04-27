@@ -33,13 +33,10 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -99,7 +96,7 @@ public class Events
 	public static final int
 		MAX_MONEY = 5540500;			// für Komplettausbau erforderliche Geldmenge
 	
-	static Point 
+	static final Point
 		cursor = new Point();	// die letzten Maus-Koordinaten
 	
 	public static int 
@@ -545,7 +542,7 @@ public class Events
 				}
 				else
 				{
-					Enemy.bossSelection = FINAL_BOSS;
+					Enemy.nextBossEnemyType = FINAL_BOSS;
 					Enemy.maxNr = 1;
 					Enemy.maxBarrierNr = 0;
 				}
@@ -1058,7 +1055,7 @@ public class Events
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
 			{
-				Enemy.bossSelection = level == 40 ? BOSS_4 : FINAL_BOSS;
+				Enemy.nextBossEnemyType = level == 40 ? BOSS_4 : FINAL_BOSS;
 				Enemy.maxNr = 1;
 				Enemy.maxBarrierNr = 0;
 			}			

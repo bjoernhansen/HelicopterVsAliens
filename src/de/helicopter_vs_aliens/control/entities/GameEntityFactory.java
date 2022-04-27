@@ -7,4 +7,6 @@ public interface GameEntityFactory<T extends GameEntity>
     T makeInstance();
     
     Class<T> getCorrespondingClass();
+    
+  
 }
