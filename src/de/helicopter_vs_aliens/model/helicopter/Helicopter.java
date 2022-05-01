@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
@@ -435,7 +434,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		return enemy.getBounds().intersects(this.bounds)
 				&& enemy.alpha == 255
-				&& enemy.borrowTimer != 0;
+				&& enemy.burrowTimer != 0;
 	}
 
 	void adaptPosTo(Enemy enemy)
@@ -1046,7 +1045,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		return this.basicCollisionRequirementsSatisfied(e)
 			   && !(e.model == BARRIER
 						&& (    e.alpha != 255
-							||  e.borrowTimer == 0
+							||  e.burrowTimer == 0
 							|| !e.hasUnresolvedIntersection));
 	}
 

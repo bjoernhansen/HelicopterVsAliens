@@ -5,12 +5,14 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -42,11 +44,11 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.BOTTOM;
-import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.LEFT;
-import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.NONE;
-import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.RIGHT;
-import static de.helicopter_vs_aliens.model.enemy.BarrierPositionType.TOP;
+import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.BOTTOM;
+import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.LEFT;
+import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.NONE;
+import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.RIGHT;
+import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.TOP;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
@@ -69,12 +71,12 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 public abstract class Enemy extends RectangularGameEntity
 {
-	private static class FinalEnemyOperator
+	public static class FinalEnemyOperator
     {
-		final Enemy[] servants;
+		public final Enemy[] servants;
     	final int [] timeSinceDeath;
     	
-    	FinalEnemyOperator()
+    	public FinalEnemyOperator()
     	{
     		this.servants = new Enemy [NR_OF_BOSS_5_SERVANTS];
     		this.timeSinceDeath = new int [NR_OF_BOSS_5_SERVANTS];
@@ -93,22 +95,22 @@ public abstract class Enemy extends RectangularGameEntity
 		ZERO_SPEED = new Point2D.Float(0, 0);
 	
 	private static final float
-		RADAR_STRENGTH 				= 0.2f,		// Alpha-Wert: legt fest, wie stark  ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
-		HEIGHT_FACTOR 				= 0.28f,	// legt das Verhältnis von Höhe und Länge für die meisten Gegner fest
-		HEIGHT_FACTOR_SUPERSIZE 	= 0.65f,	// legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
-		ROCK_PROB					= 0.05f,
-		KABOOM_PROB				    = 0.02f,	// Rate mit der Kaboom-Gegner erscheinen
-		POWER_UP_PROB				= 0.02f,
-		SPIN_SHOOTER_RATE 		   	= 0.55f,
-		EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f,
+		RADAR_STRENGTH 				= 0.2f;        // Alpha-Wert: legt fest, wie stark  ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
+		protected static final float HEIGHT_FACTOR 				= 0.28f;    // legt das Verhältnis von Höhe und Länge für die meisten Gegner fest
+		protected static final float HEIGHT_FACTOR_SUPERSIZE 	= 0.65f;    // legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
+		private static final float ROCK_PROB					= 0.05f;
+	private static final float KABOOM_PROB				    = 0.02f;    // Rate mit der Kaboom-Gegner erscheinen
+		private static final float POWER_UP_PROB				= 0.02f;
+	protected static final float SPIN_SHOOTER_RATE 		   	= 0.55f;
+	private static final float EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f;
 	
-		// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
-		RADIATION_DAMAGE_FACTOR = 1.5f,			// Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
-		TELEPORT_DAMAGE_FACTOR = 4f,			// Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
-		EMP_DAMAGE_FACTOR_BOSS = 1.5f,			// Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
-		EMP_DAMAGE_FACTOR_ORDINARY = 2.5f,		// Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
-		STANDARD_MINI_BOSS_PROB = 0.05f,
-		CHEAT_MINI_BOSS_PROB = 1.0f;
+	private static final float// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
+		RADIATION_DAMAGE_FACTOR = 1.5f;            // Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
+		private static final float TELEPORT_DAMAGE_FACTOR = 4f;            // Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
+		private static final float EMP_DAMAGE_FACTOR_BOSS = 1.5f;            // Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
+		private static final float EMP_DAMAGE_FACTOR_ORDINARY = 2.5f;        // Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
+		private static final float STANDARD_MINI_BOSS_PROB = 0.05f;
+	private static final float CHEAT_MINI_BOSS_PROB = 1.0f;
 	
 	private static final float[]
 		RETURN_PROB	= { 0.013f,	 	// SMALL_SHIELD_MAKER
@@ -119,49 +121,48 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private static final int
 		// Raum-Konstanten
-		SAVE_ZONE_WIDTH = 116,
-		APPEARANCE_DISTANCE = 10,
-		SHIELD_TARGET_DISTANCE = 20,
-		DISAPPEARANCE_DISTANCE = 100,
-		BARRIER_DISTANCE = 100,
-		ROCK_WIDTH = 300,
-		KABOOM_WIDTH = 120,
-		FINAL_BOSS_STARTING_POSITION_Y = 98,
-		FINAL_BOSS_WIDTH = 450,
-		PROTECTOR_WIDTH = 90,
-		KABOOM_Y_TURN_LINE = GROUND_Y - (int) (HEIGHT_FACTOR * KABOOM_WIDTH),
+		SAVE_ZONE_WIDTH = 116;
+	protected static final int APPEARANCE_DISTANCE = 10;
+	private static final int SHIELD_TARGET_DISTANCE = 20;
+	private static final int DISAPPEARANCE_DISTANCE = 100;
+	private static final int BARRIER_DISTANCE = 100;
+
+	protected static final int KABOOM_WIDTH = 120;
 	
-		// Zeit-Konstanten
-		ROCK_FREE_TIME = 250,    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
-		EMP_SLOW_TIME = 175,    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
-		EMP_SLOW_TIME_BOSS = 110,
-		INACTIVATION_TIME = 150,
-		STUNNING_TIME_BASIS = 45,    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
-		BORROW_TIME = 65,
-		MIN_TURN_TIME = 31,
-		MIN_TURN_NOISELESS_TIME = 15,
-		STATIC_CHARGE_TIME = 110,
-		MAX_BARRIER_NUMBER = 3,
+	protected static final int PROTECTOR_WIDTH = 90;
+	private static final int KABOOM_Y_TURN_LINE = GROUND_Y - (int) (HEIGHT_FACTOR * KABOOM_WIDTH);
 	
-		// Level-Voraussetzungen
-		MIN_BARRIER_LEVEL = 2,
-		MIN_POWER_UP_LEVEL = 3,
-		MIN_FUTURE_LEVEL = 8,
-		MIN_KABOOM_LEVEL = 12,
-		MIN_SPIN_SHOOTER_LEVEL = 23,
-		MIN_ROCK_LEVEL = 27,
-		MIN_BUSTER_LEVEL = 29,
+	private static final int// Zeit-Konstanten
+		ROCK_FREE_TIME = 250;    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
+		private static final int EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
+		private static final int EMP_SLOW_TIME_BOSS = 110;
+	private static final int INACTIVATION_TIME = 150;
+	private static final int STUNNING_TIME_BASIS = 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
+		private static final int BORROW_TIME = 65;
+	private static final int MIN_TURN_TIME = 31;
+	private static final int MIN_TURN_NOISELESS_TIME = 15;
+	private static final int STATIC_CHARGE_TIME = 110;
+	private static final int MAX_BARRIER_NUMBER = 3;
 	
-		// für Boss-Gegner
-		NR_OF_BOSS_5_SERVANTS = 5,
-		BOSS_5_HEAL_RATE = 11,
-		STANDARD_REWARD_FACTOR = 1,
-		MINI_BOSS_REWARD_FACTOR = 4,
+	private static final int// Level-Voraussetzungen
+		MIN_BARRIER_LEVEL = 2;
+	private static final int MIN_POWER_UP_LEVEL = 3;
+	private static final int MIN_FUTURE_LEVEL = 8;
+	private static final int MIN_KABOOM_LEVEL = 12;
+	protected static final int MIN_SPIN_SHOOTER_LEVEL = 23;
+	private static final int MIN_ROCK_LEVEL = 27;
+	private static final int MIN_BUSTER_LEVEL = 29;
 	
-		// TODO die 4 austauschen / anders lösen
-		PRE_READY = 1,
-		READY = 0,
-		ACTIVE_TIMER = 1;
+	private static final int// für Boss-Gegner
+		NR_OF_BOSS_5_SERVANTS = 5;
+	private static final int BOSS_5_HEAL_RATE = 11;
+	private static final int STANDARD_REWARD_FACTOR = 1;
+	private static final int MINI_BOSS_REWARD_FACTOR = 4;
+	
+	private static final int// TODO die 4 austauschen / anders lösen
+		PRE_READY = 1;
+	protected static final int READY = 0;
+	private static final int ACTIVE_TIMER = 1;
 	
 	private static final int[]
 		MIN_ABSENT_TIME = { 175,  // SMALL_SHIELD_MAKER
@@ -175,10 +176,7 @@ public abstract class Enemy extends RectangularGameEntity
 		TARGET_DISTANCE_VARIANCE = new Point(10, 3),
 		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10),
 		SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3);
-	
-	private static final Dimension
-		FINAL_BOSS_DIMENSION = new Dimension(FINAL_BOSS_WIDTH, (int)HEIGHT_FACTOR * FINAL_BOSS_WIDTH );
-	
+		
 	private static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
 								   TURN_DISTANCE.y,
@@ -213,10 +211,10 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private static int 
 		// TODO selection ist kein guter Bezeichner
-		selection,			// bestimmt welche Typen von Gegnern zufällig erscheinen können	
-		selectionBarrier, 	// bestimmt den Typ der Hindernis-Gegner
-		rockTimer,			// reguliert das Erscheinen von "Rock"-Gegnern
-		barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
+		selection;            // bestimmt welche Typen von Gegnern zufällig erscheinen können
+		private static int selectionBarrier;    // bestimmt den Typ der Hindernis-Gegner
+		private static int rockTimer;            // reguliert das Erscheinen von "Rock"-Gegnern
+		protected static int barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
 		
 	// für die Tarnung nötige Variablen
     public static final float[]
@@ -253,7 +251,7 @@ public abstract class Enemy extends RectangularGameEntity
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
 		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
 		alpha,
-		borrowTimer,
+		burrowTimer,
 		untouchedCounter,
 		stunningTimer,
 		empSlowedTimer,			// reguliert die Länge der Verlangsamung nach EMP-Treffer (Pegasus-Klasse)
@@ -289,94 +287,186 @@ public abstract class Enemy extends RectangularGameEntity
 		isPreviousStoppingBarrier;
 		
 	private int
-		rewardModifier,			// für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
-		lifetime,				// Anzahl der Frames seit Erstellung des Gegners; und vergangene Zeit seit Erstellung, Zeit
-		yCrashPos,				// Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
-		collisionAudioTimer,
-		turnAudioTimer,
-		explodingTimer,			// Timer zur überwachung der Zeit zwischen Abschuss und Absturz
-		cloakingTimer,			// reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
-		uncloakingSpeed,
-		shieldMakerTimer,
-		callBack,
-		chaosTimer,
-		speedup,
-		batchWiseMove,
-		shootTimer,
-		spawningHornetTimer,
-		turnTimer,
-		dodgeTimer,			// Zeit [frames], bis ein Gegner erneut ausweichen kann
-		snoozeTimer,
-		staticChargeTimer,
+		rewardModifier;            // für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
+		private int lifetime;                // Anzahl der Frames seit Erstellung des Gegners; und vergangene Zeit seit Erstellung, Zeit
+		private int yCrashPos;                // Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
+		private int collisionAudioTimer;
+	private int turnAudioTimer;
+	private int explodingTimer;            // Timer zur überwachung der Zeit zwischen Abschuss und Absturz
+		protected int cloakingTimer;            // reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
+		private int uncloakingSpeed;
+	protected int shieldMakerTimer;
+	protected int callBack;
+	private int chaosTimer;
+	private int speedup;
+	private int batchWiseMove;
+	protected int shootTimer;
+	protected int spawningHornetTimer;
+	private int turnTimer;
+	private int dodgeTimer;            // Zeit [frames], bis ein Gegner erneut ausweichen kann
+		private int snoozeTimer;
+	protected int staticChargeTimer;
+	
+	protected int// nur für Hindernis-Gegner relevant
+		rotorColor;
+	protected int barrierShootTimer;
+	protected int barrierTeleportTimer;
+	protected int shootPause;
+	protected int shootingRate;
+	protected int shotsPerCycle;
+	protected int shootingCycleLength;
+	protected int shotSpeed;
+	protected int shotRotationSpeed;
+	
+	private int// Regulation des Stun-Effektes nach Treffer durch Stopp-Rakete der Orochi-Klasse
+		nonStunableTimer;
+	private int totalStunningTime;
+	private int knockBackDirection;
 		
-		// nur für Hindernis-Gegner relevant
-		rotorColor,
-		barrierShootTimer,
-		barrierTeleportTimer,
-		shootPause,
-		shootingRate,
-		shotsPerCycle,
-		shootingCycleLength,
-		shotSpeed,
-		shotRotationSpeed,
-		
-		// Regulation des Stun-Effektes nach Treffer durch Stopp-Rakete der Orochi-Klasse
-		nonStunableTimer,
-		totalStunningTime,
-		knockBackDirection;
-		
-	private float
-		deactivationProb,
-		dimFactor;
+	protected float
+		deactivationProb;
+	protected float dimFactor;
     
-    private boolean
-		canExplode,			// = true: explodiert bei Kollisionen mit dem Helikopter
-        canDodge,				// = true: Gegner kann Schüssen ausweichen
-        canKamikaze,			// = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
-        canLearnKamikaze,		// = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
-        canEarlyTurn,
-        canMoveChaotic, 		// reguliert den zufälligen Richtungswechsel bei Chaos-Flug-Modus
-        canSinusMove,			// Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
-        canTurn,				// Gegner ändert bei Beschuss eventuell seine Flugrichtung in Richtung Helikopter
-        canInstantTurn,		    // Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
-        canFrontalSpeedup,	    // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
-        canLoop,				// = true: Gegner fliegt Loopings
-        canChaosSpeedup,		// erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
-        isSpeedBoosted,
-        isDestroyed,			// = true: Gegner wurde vernichtet
-        hasHeightSet,			// = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
-        hasYPosSet,			    // = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
-        hasCrashed, 			// = true: Gegner ist abgestürzt
-        isEmpShocked,			// = true: Gegner steht unter EMP-Schock --> ist verlangsamt
-        isMarkedForRemoval,	    // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
-        isUpperShieldMaker,	    // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
-        isShielding,			// = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
-        isStunnable,			// = false für Boss 5; bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) "gestunt" werden kann
-        isCarrier,				// = true
-        isClockwiseBarrier,	    // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
-        isRecoveringSpeed;
+    protected boolean
+		canExplode;            // = true: explodiert bei Kollisionen mit dem Helikopter
+        protected boolean canDodge;                // = true: Gegner kann Schüssen ausweichen
+        protected boolean canKamikaze;            // = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
+        private boolean canLearnKamikaze;        // = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
+        private boolean canEarlyTurn;
+	protected boolean canMoveChaotic;        // reguliert den zufälligen Richtungswechsel bei Chaos-Flug-Modus
+        private boolean canSinusMove;            // Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
+        protected boolean canTurn;                // Gegner ändert bei Beschuss eventuell seine Flugrichtung in Richtung Helikopter
+        protected boolean canInstantTurn;            // Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
+        private boolean canFrontalSpeedup;        // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
+        private boolean canLoop;                // = true: Gegner fliegt Loopings
+        private boolean canChaosSpeedup;        // erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
+        private boolean isSpeedBoosted;
+	private boolean isDestroyed;            // = true: Gegner wurde vernichtet
+        protected boolean hasHeightSet;            // = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
+        protected boolean hasYPosSet;                // = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
+        private boolean hasCrashed;            // = true: Gegner ist abgestürzt
+        private boolean isEmpShocked;            // = true: Gegner steht unter EMP-Schock --> ist verlangsamt
+        private boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
+        private boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
+        private boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
+        protected boolean isStunnable;            // = false für Boss 5; bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) "gestunt" werden kann
+        private boolean isCarrier;                // = true
+        protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
+        private boolean isRecoveringSpeed;
   
 	private AbilityStatusType
 		tractor;				// = DISABLED (Gegner ohne Traktor); = READY (Traktor nicht aktiv); = 1 (Traktor aktiv)
 	
-	private EnemyMissileType
+	protected EnemyMissileType
 		shotType;
 	
 	
 	private final GraphicsAdapter []
 		graphicsAdapters = new GraphicsAdapter[2];
 	
-	private FinalEnemyOperator
+	public FinalEnemyOperator
 		operator;
 	
 	private final BufferedImage []
 		image = new BufferedImage[4];
 		
-	private final Point2D
-		targetSpeedLevel = new Point2D.Float(),		// Anfangsgeschwindigkeit
-		speedLevel = new Point2D.Float(),			// auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
-		speed = new Point2D.Float(),				// tatsächliche Geschwindigkeit
-		shootingDirection = new Point2D.Float();   	// Schussrichtugn von schießenden Barrier-Gegnern
+	protected final Point2D
+		targetSpeedLevel = new Point2D.Float();        // Anfangsgeschwindigkeit
+		private final Point2D speedLevel = new Point2D.Float();            // auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
+		private final Point2D speed = new Point2D.Float();                // tatsächliche Geschwindigkeit
+		private final Point2D shootingDirection = new Point2D.Float();   	// Schussrichtugn von schießenden Barrier-Gegnern
+	
+	public Enemy()
+	{
+		this.lifetime = 0;
+		this.model = TIT;
+		this.targetSpeedLevel.setLocation(ZERO_SPEED);
+		this.setX(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
+		this.direction.setLocation(-1, Calculations.randomDirection());
+		this.callBack = 0;
+		this.shield = 0;
+		this.dimFactor = 1.5f;
+		this.operator = null;
+		this.alpha = 255;
+		
+		this.isDestroyed = false;
+		this.isMarkedForRemoval = false;
+		this.hasUnresolvedIntersection = false;
+		this.canMoveChaotic = false;
+		this.canDodge = false;
+		this.canChaosSpeedup = false;
+		this.canKamikaze = false;
+		this.canEarlyTurn = false;
+		this.isLasting = false;
+		this.isTouchingHelicopter = false;
+		this.isSpeedBoosted = false;
+		this.canExplode = false;
+		this.canLearnKamikaze = false;
+		this.canFrontalSpeedup = false;
+		this.canSinusMove = false;
+		this.isShielding = false;
+		this.canTurn = false;
+		this.canLoop = false;
+		this.isClockwiseBarrier = true;
+		this.stoppingBarrier = null;
+		this.isPreviousStoppingBarrier = null;
+		this.isStunnable = true;
+		this.isMiniBoss = false;
+		this.hasCrashed = false;
+		this.canInstantTurn = false;
+		this.isCarrier = false;
+		this.isRecoveringSpeed = false;
+		this.hasHeightSet = false;
+		this.hasYPosSet = false;
+		this.isEmpShocked = false;
+		
+		this.collisionDamageTimer = READY;
+		this.collisionAudioTimer = READY;
+		this.turnAudioTimer = READY;
+		this.dodgeTimer = READY;
+		this.turnTimer = READY;
+		this.explodingTimer = READY;
+		this.empSlowedTimer = READY;
+		this.invincibleTimer = READY;
+		this.chaosTimer = READY;
+		this.snoozeTimer = READY;
+		this.nonStunableTimer = READY;
+		
+		this.spawningHornetTimer = DISABLED;
+		this.cloakingTimer = DISABLED;
+		this.teleportTimer = DISABLED;
+		this.shieldMakerTimer = DISABLED;
+		this.shootTimer = DISABLED;
+		this.barrierShootTimer = DISABLED;
+		this.barrierTeleportTimer = DISABLED;
+		this.burrowTimer = DISABLED;
+		this.staticChargeTimer = DISABLED;
+		this.speedup = DISABLED;
+		
+		this.uncloakingSpeed = 1;
+		this.tractor = AbilityStatusType.DISABLED;
+		this.batchWiseMove = 0;
+		
+		this.shootingDirection.setLocation(0, 0);
+		this.shootPause = 0;
+		this.shootingRate = 0;
+		this.shotsPerCycle = 0;
+		this.shootingCycleLength = 0;
+		this.shotSpeed = 0;
+		this.shotRotationSpeed = 0;
+		this.shotType = DISCHARGER;
+		
+		this.touchedSite = NONE;
+		this.lastTouchedSite = NONE;
+		
+		this.untouchedCounter = 0;
+		this.rotorColor = 0;
+		this.deactivationProb = 0f;
+		this.stunningTimer = 0;
+		
+		this.totalStunningTime = 0;
+		this.knockBackDirection = 0;
+	}
 	
 	
 	public static void changeMiniBossProb()
@@ -797,18 +887,24 @@ public abstract class Enemy extends RectangularGameEntity
 		
 		LinkedList<Enemy> activeEnemies = enemies.get(ACTIVE);
 		int activeEnemyCount = activeEnemies.size();
-		EnemyType enemyType = getNextEnemyType(activeEnemyCount);
-		Enemy enemy = enemyType.makeInstance();
+		GameEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
+		Enemy enemy = enemyFactory.makeInstance();
 		activeEnemies.add(enemy);
+		if(enemy.countsForTotalAmountOfEnemiesSeen()){helicopter.numberOfEnemiesSeen++;}
 		Events.lastCreationTimer = 0;
-		helicopter.numberOfEnemiesSeen++;
 		enemy.create(helicopter);
 	}
 	
-	private static EnemyType getNextEnemyType(int nrOfEnemies)
+	private boolean countsForTotalAmountOfEnemiesSeen()
 	{
-		if(wasCarrierDestroyedJustNow()){return EnemyType.ESCAPED_BOLT;}
-		if(barrierCreationApproved(nrOfEnemies)){return getNextBarrierType();}
+		// TODO countsForTotalAmountOfEnemiesSeen implementieren, an anderen Stellen die -- aufrufe streichen; finale instanzvariable anlegen
+		return true;
+	}
+	
+	private static GameEntityFactory<Enemy> getEnemyFactory(int activeEnemyCount)
+	{
+		if(wasCarrierDestroyedJustNow()){return EnemyType.ESCAPED_SPEEDER;}
+		if(barrierCreationApproved(activeEnemyCount)){return getNextBarrierType();}
 		if(rockCreationApproved()){return EnemyType.ROCK;}
 		if(kaboomCreationApproved()){return EnemyType.KABOOM;}
 		if(isBossEnemyToBeCreated()){return nextBossEnemyType;}
@@ -825,15 +921,12 @@ public abstract class Enemy extends RectangularGameEntity
 		return ENEMY_SELECTOR.getType(Calculations.random(selection));
 	}
 	
-	private void create(Helicopter helicopter)
-	{			
-		this.reset();		
-		if(this.type == EnemyType.ESCAPED_BOLT){this.initializeEscapedBolt();}
-		else if(EnemyType.getBarrierTypes().contains(this.type)){this.createBarrier(helicopter);}
-		else if(this.type == EnemyType.ROCK){this.createRock(helicopter);}
-		else if(this.type == EnemyType.KABOOM){this.createKaboom(helicopter);}
-		else if(EnemyType.getBossTypes().contains(this.type)){this.createBoss(helicopter);}
-		else{this.createStandardEnemy();}
+	protected void create(Helicopter helicopter)
+	{
+		if(EnemyType.getDefaultTypes().contains(this.type))
+		{
+			this.createDefaultEnemy();
+		}
 		
 		if(this.model != BARRIER)
 		{
@@ -847,11 +940,19 @@ public abstract class Enemy extends RectangularGameEntity
 		// Festlegen der Höhe und der y-Position des Gegners
 		if(!this.hasHeightSet){this.setHeight();}
 		if(!this.hasYPosSet){this.setInitialY();}
-				
-		this.initializeShootDirection();
+		
+		if(isShootingDefaultEnemy())
+		{
+			this.initializeShootDirectionOfDefaultEnemies();
+		}
+		else if(isShootingBarrier())
+		{
+			this.initializeShootDirectionOfBarriers();
+		}
+		
 		this.speedLevel.setLocation(this.targetSpeedLevel);
 		this.setPaintBounds((int)this.bounds.getWidth(),
-							  (int)this.bounds.getHeight());
+							(int)this.bounds.getHeight());
 		this.assignImage(helicopter);
 	}
 
@@ -884,98 +985,6 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 	}
 
-	private void reset()
-	{
-		this.lifetime = 0;
-		this.model = TIT;
-		this.targetSpeedLevel.setLocation(ZERO_SPEED);
-		this.setX(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
-		this.direction.setLocation(-1, Calculations.randomDirection());
-		this.callBack = 0;
-		this.shield = 0;
-		this.dimFactor = 1.5f;
-		this.operator = null;	
-		this.alpha = 255;
-		
-		this.isDestroyed = false;
-		this.isMarkedForRemoval = false;
-		this.hasUnresolvedIntersection = false;
-		this.canMoveChaotic = false;
-		this.canDodge = false;
-		this.canChaosSpeedup = false;
-		this.canKamikaze = false;
-		this.canEarlyTurn = false;
-		this.isLasting = false;
-		this.isTouchingHelicopter = false;
-		this.isSpeedBoosted = false;
-		this.canExplode = false;
-		this.canLearnKamikaze = false;
-		this.canFrontalSpeedup = false;
-		this.canSinusMove = false;
-		this.isShielding = false;
-		this.canTurn = false;
-		this.canLoop = false;
-		this.isClockwiseBarrier = true;
-		this.stoppingBarrier = null;
-		this.isPreviousStoppingBarrier = null;
-		this.isStunnable = true;
-		this.isMiniBoss = false;
-		this.hasCrashed = false;
-		this.canInstantTurn = false;
-		this.isCarrier = false;
-		this.isRecoveringSpeed = false;
-		this.hasHeightSet = false;
-		this.hasYPosSet = false;
-		this.isEmpShocked = false;
-		
-		this.collisionDamageTimer = READY;
-		this.collisionAudioTimer = READY;
-		this.turnAudioTimer = READY;
-		this.dodgeTimer = READY;
-		this.turnTimer = READY;
-		this.explodingTimer = READY;
-		this.empSlowedTimer = READY;
-		this.invincibleTimer = READY;
-		this.chaosTimer = READY;
-		this.snoozeTimer = READY;
-		this.nonStunableTimer = READY;
-		
-		this.spawningHornetTimer = DISABLED;
-		this.cloakingTimer = DISABLED;
-		this.teleportTimer = DISABLED;
-		this.shieldMakerTimer = DISABLED;
-		this.shootTimer = DISABLED;
-		this.barrierShootTimer = DISABLED;
-		this.barrierTeleportTimer = DISABLED;
-		this.borrowTimer = DISABLED;
-		this.staticChargeTimer = DISABLED;
-		this.speedup = DISABLED;
-		
-		this.uncloakingSpeed = 1;
-		this.tractor = AbilityStatusType.DISABLED;
-		this.batchWiseMove = 0;
-		
-		this.shootingDirection.setLocation(0, 0);
-		this.shootPause = 0;
-		this.shootingRate = 0;
-		this.shotsPerCycle = 0;
-		this.shootingCycleLength = 0;
-		this.shotSpeed = 0;
-		this.shotRotationSpeed = 0;
-		this.shotType = DISCHARGER;
-		
-		this.touchedSite = NONE;
-		this.lastTouchedSite = NONE;
-		
-		this.untouchedCounter = 0;
-		this.rotorColor = 0;
-		this.deactivationProb = 0f;
-		this.stunningTimer = 0;
-		
-		this.totalStunningTime = 0;
-		this.knockBackDirection = 0;
-	}
-
 	private static boolean barrierCreationApproved(int numberOfEnemies)
 	{		
 		return Events.level >= MIN_BARRIER_LEVEL 
@@ -986,112 +995,7 @@ public abstract class Enemy extends RectangularGameEntity
 				&& currentNumberOfBarriers < maxBarrierNr;
 	}
 	
-	private void createBarrier(Helicopter helicopter)
-	{
-        this.model = BARRIER;
-		
-		helicopter.numberOfEnemiesSeen--;
-		this.hitpoints = Integer.MAX_VALUE;
-		this.rotorColor = 1;
-		this.isClockwiseBarrier = Calculations.tossUp();
-				
-		if(this.type == EnemyType.BARRIER_0 || this.type == EnemyType.BARRIER_1)
-		{
-			this.farbe1 = Colorations.bleach(Color.green, 0.6f);
-			this.isLasting = true;
-			
-			// Level 2
-			if(this.type == EnemyType.BARRIER_0){this.setVarWidth(65);}
-			
-			// Level 6
-			else if(this.type == EnemyType.BARRIER_1)
-			{
-				this.setVarWidth(150);
-				this.setInitialY(GROUND_Y - this.bounds.getWidth());
-			}
-		}	
-		// Level 12
-		else if(this.type == EnemyType.BARRIER_2)
-		{
-			this.farbe1 = Colorations.bleach(Color.yellow, 0.6f);
-			this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
-			this.setVarWidth(65);
-			
-			this.rotorColor = 2;
-			this.staticChargeTimer = READY;
-			this.isLasting = true;
-		}
-		// Level 15
-		else if(this.type == EnemyType.BARRIER_3)
-		{
-			this.farbe1 = Colorations.bleach(new Color(255, 192, 0), 0.0f);
-			this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
-			this.setVarWidth(105);
-			if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
-
-			this.setLocation(this.targetSpeedLevel.getX() >= 5
-									? -this.bounds.getWidth()-APPEARANCE_DISTANCE
-									: this.bounds.getX(),
-							  GROUND_Y - this.bounds.getWidth() - (5 + Calculations.random(11)));
-			this.hasYPosSet = true;
-		}
-		// Level 18
-		else if(this.type == EnemyType.BARRIER_4)
-		{
-			this.setVarWidth(85);
-			this.hasYPosSet = true;
-			this.barrierShootTimer = READY;
-			this.setBarrierShootingProperties();
-			this.shotRotationSpeed
-				= Calculations.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL
-					? Calculations.randomDirection()*(this.shootingRate /3 + Calculations.random(10))
-					: 0;	
-			
-			this.isLasting = true;
-		}
-		// Level 32
-		else if(this.type == EnemyType.BARRIER_5)
-		{
-			this.setVarWidth(80);
-			this.setInitialY(GROUND_Y - this.bounds.getWidth()/8);
-			
-			this.borrowTimer = READY;
-			this.setBarrierShootingProperties();
-									
-			this.isLasting = true;
-		}
-		// Level 42
-		else if(this.type == EnemyType.BARRIER_6)
-		{
-			this.farbe1 = Colorations.bleach(Color.green, 0.6f);
-			this.setVarWidth(80);
-			
-			this.isLasting = true;
-		}
-		// Level 44
-		else if(this.type == EnemyType.BARRIER_7)
-		{
-			this.farbe1 = Colorations.bleach(Colorations.cloaked, 0.6f);
-			this.setVarWidth(100);
-						
-			this.barrierTeleportTimer = READY;
-			this.setBarrierShootingProperties();
-			this.startBarrierUncloaking(helicopter);
-						
-			this.hasYPosSet = true;
-			this.callBack = 1 + Calculations.random(4);
-		}
-		
-		this.farbe2 = Colorations.dimColor(this.farbe1, 0.75f);
-		this.deactivationProb = 1.0f / this.type.getStrength();
-				
-		if(Events.timeOfDay == NIGHT)
-		{
-			this.farbe1 = Colorations.dimColor(this.farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-			this.farbe2 = Colorations.dimColor(this.farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-		}		
-		barrierTimer = (int)((helicopter.getBounds().getWidth() + this.bounds.getWidth())/2);
-	}
+	
  
 	private static EnemyType getNextBarrierType()
 	{
@@ -1124,26 +1028,6 @@ public abstract class Enemy extends RectangularGameEntity
 				&& Calculations.tossUp(ROCK_PROB);
 	}
 	
-	private void createRock(Helicopter helicopter)
-	{
-		currentRock = this;
-		this.model = CARGO;	
-		helicopter.numberOfEnemiesSeen--;
-		this.farbe1 = new Color((180 + Calculations.random(30)),
-								(120 + Calculations.random(30)),
-								(  0 + Calculations.random(15)));
-		this.hitpoints = 1;
-		this.invincibleTimer = Integer.MAX_VALUE;
-			
-		this.bounds.setRect(this.bounds.getX(), 
-							GROUND_Y - ROCK_WIDTH * (HEIGHT_FACTOR_SUPERSIZE - 0.05f), // 0.05
-							ROCK_WIDTH, 
-							ROCK_WIDTH * HEIGHT_FACTOR_SUPERSIZE);
-		this.hasHeightSet = true;
-		this.hasYPosSet = true;
-		this.isLasting = true;
-	}
-	
 	private static boolean kaboomCreationApproved()
 	{		
 		return Events.level >= MIN_KABOOM_LEVEL 
@@ -1151,18 +1035,9 @@ public abstract class Enemy extends RectangularGameEntity
 				&& Calculations.tossUp(KABOOM_PROB);
 	}
 	
-	private void createKaboom(Helicopter helicopter)
-	{
-		this.farbe1 = Color.white;
-		this.hitpoints = Integer.MAX_VALUE;	
-		this.setVarWidth(KABOOM_WIDTH);
-		helicopter.numberOfEnemiesSeen--;
-		this.targetSpeedLevel.setLocation(0.5 + 0.5*Math.random(), 0); //d
-		this.canExplode = true;
-		this.setInitialY(GROUND_Y - 2*this.bounds.getWidth()*HEIGHT_FACTOR);
-	}
+
 	
-	private void createStandardEnemy()
+	private void createDefaultEnemy()
 	{
 		// TODO Switch sollte entfallen
 		switch(this.type)
@@ -1174,8 +1049,8 @@ public abstract class Enemy extends RectangularGameEntity
 										(  0 + Calculations.random(15)));
 				this.hitpoints = 2;
 				this.setVarWidth(110);
-				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
-						0.5 * Math.random());	//d
+				this.targetSpeedLevel.setLocation(0.5 + Math.random(),
+						0.5 * Math.random());
 				this.canExplode = true;
 				this.dimFactor = 1.2f;
 				
@@ -1188,8 +1063,8 @@ public abstract class Enemy extends RectangularGameEntity
 										(  0 + Calculations.random(25)));
 				this.hitpoints = 3 + Calculations.random(3);
 				this.setVarWidth(125);
-				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(), //d
-						0.5*Math.random());	//d
+				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(),
+						0.5*Math.random());
 				this.canExplode = true;
 				
 				break;
@@ -1201,8 +1076,8 @@ public abstract class Enemy extends RectangularGameEntity
 						(40 + Calculations.random(25)));
 				this.hitpoints = 2 + Calculations.random(2);
 				this.setVarWidth(100);
-				this.targetSpeedLevel.setLocation(2 + 2*Math.random(), //d
-						2.5 + 1.5*Math.random());		//d
+				this.targetSpeedLevel.setLocation(2 + 2*Math.random(),
+						2.5 + 1.5*Math.random());
 				this.canExplode = true;
 				
 				break;
@@ -1215,8 +1090,8 @@ public abstract class Enemy extends RectangularGameEntity
 						(45 + Calculations.random(20)));
 				this.setHitpoints(25);
 				this.setVarWidth(145);
-				this.targetSpeedLevel.setLocation(0.5 + Math.random(), //d
-						0.5*Math.random());	//d
+				this.targetSpeedLevel.setLocation(0.5 + Math.random(),
+						0.5*Math.random());
 				this.canEarlyTurn = true;
 				this.canTurn = true;
 				
@@ -1229,8 +1104,8 @@ public abstract class Enemy extends RectangularGameEntity
 						(85 + Calculations.random(30)));
 				this.setHitpoints(16);
 				this.setVarWidth(130);
-				this.targetSpeedLevel.setLocation(7 + 4*Math.random(), //d
-						1 + 0.5*Math.random()); //d
+				this.targetSpeedLevel.setLocation(	7 + 4*Math.random(),
+													1 + 0.5*Math.random());
 				this.batchWiseMove = 1;
 				
 				break;
@@ -1242,7 +1117,7 @@ public abstract class Enemy extends RectangularGameEntity
 						(135 + Calculations.random(40)));
 				this.setHitpoints(6);
 				this.setVarWidth(110);
-				this.targetSpeedLevel.setLocation(2.5 + 2.5*Math.random(), 11); //d
+				this.targetSpeedLevel.setLocation(2.5 + 2.5*Math.random(), 11);
 
 				this.setInitialY(TURN_FRAME.getCenterY());
 				this.canSinusMove = true;
@@ -1257,21 +1132,21 @@ public abstract class Enemy extends RectangularGameEntity
 						(95 + Calculations.random(30)));
 				this.setHitpoints(24);
 				this.setVarWidth(170);
-				this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(), //d
-						0.5*Math.random());	//d
+				this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(),
+						0.5*Math.random());
 				this.canDodge = true;
 				
 				break;
 
 			// Level 21
-			case CHAOS:
+			case CHAOTIC:
 				this.farbe1 = new Color((150 + Calculations.random(20)),
 						(130 + Calculations.random(25)),
 						( 75 + Calculations.random(30)));
 				this.setHitpoints(22);
 				this.setVarWidth(125);
-				this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(), //d
-						6.5 + 2*Math.random());	//d
+				this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(),
+						6.5 + 2*Math.random());
 				this.canMoveChaotic = true;
 				this.canExplode = true;
 				
@@ -1284,8 +1159,8 @@ public abstract class Enemy extends RectangularGameEntity
 						(30 + Calculations.random(45)));
 				this.setHitpoints(30);
 				this.setVarWidth(95);
-				this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(), //d
-						5 + 2*Math.random());		//d
+				this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(),
+						5 + 2*Math.random());
 				this.canExplode = true;
 				this.callBack = 1;
 				
@@ -1300,8 +1175,8 @@ public abstract class Enemy extends RectangularGameEntity
 						80 + Calculations.random(25));
 				this.setHitpoints(60);
 				this.setVarWidth(80);
-				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
-						0.5 * Math.random());	//d
+				this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
+						0.5 * Math.random());
 				this.canDodge = true;
 				this.shootTimer = 0;
 				this.shootingRate = 35;
@@ -1315,8 +1190,8 @@ public abstract class Enemy extends RectangularGameEntity
 				this.farbe1 = Colorations.cloaked;
 				this.setHitpoints(100);
 				this.setVarWidth(85);
-				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
-						1 + 0.5*Math.random());	//d
+				this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
+						1 + 0.5*Math.random());
 				this.canLearnKamikaze = true;
 				this.canInstantTurn = true;
 				this.cloakingTimer = CLOAKING_TIME + CLOAKED_TIME;
@@ -1327,7 +1202,7 @@ public abstract class Enemy extends RectangularGameEntity
 				break;
 
 			// Level 35
-			case LONELY_BOLT:
+			case LONELY_SPEEDER:
 				this.initializeLonelyBolt();
 				break;
 
@@ -1339,8 +1214,8 @@ public abstract class Enemy extends RectangularGameEntity
 						45 + Calculations.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
 				this.setHitpoints(450);
 				this.setVarWidth(165);
-				this.targetSpeedLevel.setLocation( 0.5 + Math.random(), //d
-						0.5 * Math.random());	//d
+				this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
+						0.5 * Math.random());
 				this.canEarlyTurn = true;
 				this.isCarrier = true;
 				this.canTurn = true;
@@ -1348,14 +1223,14 @@ public abstract class Enemy extends RectangularGameEntity
 				break;
 
 			// Level 37
-			case YELLOW:
+			case CRAZY:
 				this.farbe1 = new Color((180 + Calculations.random(50)),
 						(230 + Calculations.random(20)),
 						(20 + Calculations.random(60)));
 				this.setHitpoints(140);
 				this.setVarWidth(115);
-				this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(), //d
-						0.5 + Math.random());		//d
+				this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(),
+						0.5 + Math.random());
 				this.canExplode = true;
 				this.canChaosSpeedup = true;
 				this.canDodge = true;
@@ -1369,7 +1244,7 @@ public abstract class Enemy extends RectangularGameEntity
 						120 + Calculations.random(40));
 				this.setHitpoints(150);
 				this.setVarWidth(95);
-				this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0); //d
+				this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0);
 
 				this.canExplode = true;
 				this.speedup = READY;
@@ -1381,7 +1256,7 @@ public abstract class Enemy extends RectangularGameEntity
 				this.farbe1 = Colorations.cloaked;
 				this.setHitpoints(330);
 				this.setVarWidth(105);
-				this.targetSpeedLevel.setLocation(9, 11);	//d
+				this.targetSpeedLevel.setLocation(9, 11);
 
 				this.direction.y = -1;
 				this.setInitialY(TURN_FRAME.getCenterY());
@@ -1391,21 +1266,21 @@ public abstract class Enemy extends RectangularGameEntity
 				break;
 
 			// Level 45
-			case CAPTURER:
+			case CAPTURING:
 				this.farbe1 = new Color(  5 + Calculations.random(55),
 						105 + Calculations.random(40),
 						90 + Calculations.random(30));
 				this.setHitpoints(520);
 				this.setVarWidth(115);
-				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(), //d
-						4.5 + 1.5*Math.random());//d
+				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(),
+						4.5 + 1.5*Math.random());
 				this.tractor = AbilityStatusType.READY;
 				this.canExplode = true;
 				
 				break;
 
 			// Level 46
-			case TELEPORTER:
+			case TELEPORTING:
 				this.model = CARGO;
 
 				this.farbe1 = new Color(190 + Calculations.random(40),
@@ -1413,26 +1288,13 @@ public abstract class Enemy extends RectangularGameEntity
 						15 + Calculations.random(60));
 				this.setHitpoints(500);
 				this.setVarWidth(130);
-				this.targetSpeedLevel.setLocation( 1 + Math.random(), //d
-						0.5*Math.random());//d
+				this.targetSpeedLevel.setLocation( 1 + Math.random(),
+						0.5*Math.random());
 				this.teleportTimer = READY;
 				this.canKamikaze = true;
 				
 				break;
 		}
-	}
-	
-	private void initializeEscapedBolt()
-	{
-		initializeBolt();
-		this.setLocation(carrierDestroyedJustNow.bounds.getCenterX(),
-						 carrierDestroyedJustNow.bounds.getCenterY());
-		this.hasYPosSet = true;
-		this.targetSpeedLevel.setLocation(	10  + 7.5 * Math.random(),
-											0.5 + 3   * Math.random());
-		this.callBack = 1 + Calculations.random(3);
-		this.direction.x = Calculations.randomDirection();
-		this.invincibleTimer = 67;
 	}
 	
 	private void initializeLonelyBolt()
@@ -1443,230 +1305,15 @@ public abstract class Enemy extends RectangularGameEntity
 		if(Calculations.tossUp()){this.callBack = 1;}
 	}
 	
-	private void initializeBolt()
+	protected void initializeBolt()
 	{
 		this.farbe1 = new Color(75 + Calculations.random(30),
-								75 + Calculations.random(30),
-								75 + Calculations.random(30) );
+			75 + Calculations.random(30),
+			75 + Calculations.random(30) );
 		this.setHitpoints(26);
 		this.setVarWidth(70);
 		
 		this.canExplode = true;
-	}
-	
-	private void createBoss(Helicopter helicopter)
-	{
-		// Level 10	
-		if( this.type == EnemyType.BOSS_1)
-		{
-			this.farbe1 = new Color(115, 70, 100);
-			this.hitpoints = 225;			
-			this.setWidth(275);
-			this.targetSpeedLevel.setLocation(2, 0.5); //d
-			
-			this.canKamikaze = true;
-			
-			Events.boss = this;
-		}		
-		// Level 20
-		else if( this.type == EnemyType.BOSS_2)
-		{						
-			this.model = CARGO;			
-			this.farbe1 = new Color(85, 85, 85);
-			this.hitpoints = 500;
-			this.setWidth(250);
-			this.targetSpeedLevel.setLocation(7, 8); //d
-		
-			this.canMoveChaotic = true;
-			this.shootTimer = 0;
-			this.shootingRate = 5;
-			this.shotSpeed = 3;
-			this.canInstantTurn = true;
-			
-			Events.boss = this;
-		}		
-		else if( this.type == EnemyType.BOSS_2_SERVANT)
-		{	
-			this.bounds.setRect(boss.getX(),
-								boss.getY(),
-								65,
-								this.bounds.getHeight());
-			this.hasYPosSet = true;
-			this.farbe1 = new Color(80 + Calculations.random(25), 80 + Calculations.random(25), 80 + Calculations.random(25));
-			this.hitpoints = 15;					
-			this.targetSpeedLevel.setLocation(3 + 10.5*Math.random(), //d
-												  3 + 10.5*Math.random()); //d
-		
-			this.direction.x = Calculations.randomDirection();
-			this.invincibleTimer = 67;
-		}
-		// Level 30
-		else if( this.type == EnemyType.BOSS_3)
-		{			
-			this.setWidth(250);
-			this.farbe1 = Colorations.cloaked;
-			this.hitpoints = 1750;
-			this.targetSpeedLevel.setLocation(5, 4); //d
-
-			this.canMoveChaotic = true;
-			this.canKamikaze = true;
-			this.cloakingTimer = READY;
-			this.canDodge = true;
-			this.shootTimer = 0;
-			this.shootingRate = 10;
-			this.shotSpeed = 10;
-			this.canInstantTurn = true;
-			
-			Events.boss = this;
-		}
-		// Level 40
-		else if(this.type == EnemyType.BOSS_4)
-		{						
-			this.setWidth(250);
-			this.farbe1 = Color.red;
-			this.hitpoints = 10000;	
-			this.targetSpeedLevel.setLocation(10, 10); //d
-
-			this.spawningHornetTimer = 30;
-			nextBossEnemyType = EnemyType.BOSS_4_SERVANT;
-			maxNr = 15;
-			this.canTurn = true;
-			
-			Events.boss = this;
-		}		
-		else if(this.type == EnemyType.BOSS_4_SERVANT)
-		{	
-			this.bounds.setRect(boss.getX(),
-								boss.getY(),
-								85 + Calculations.random(15),
-							    this.bounds.getHeight());
-			this.hasYPosSet = true;
-			this.farbe1 = new Color(80 + Calculations.random(20), 80 + Calculations.random(20), 80 + Calculations.random(20));
-			this.hitpoints = 100 + Calculations.random(50);
-			this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(), //d
-												  6 + 2.5*Math.random()); //d
-			this.direction.x = Calculations.randomDirection();
-			this.canExplode = true;
-		}	
-		// Level 50
-		else if(this.type == EnemyType.FINAL_BOSS)
-		{
-			this.bounds.setRect(this.bounds.getX(),
-								FINAL_BOSS_STARTING_POSITION_Y,
-								FINAL_BOSS_DIMENSION.width,
-								FINAL_BOSS_DIMENSION.height);
-			this.hasYPosSet = true;
-			this.hasHeightSet = true;
-			
-			this.farbe1 = Colorations.brown;
-			this.hitpoints = 25000;	
-			this.targetSpeedLevel.setLocation(23.5, 0); //d
-
-			maxNr = 5;
-			this.operator = new FinalEnemyOperator();
-			this.isStunnable = false;
-			this.dimFactor = 1.3f;
-			
-			Events.boss = this;
-		}		
-		else if(this.type.isFinalBossServant())
-		{
-			Events.boss.operator.servants[this.id()] = this;
-			this.hasYPosSet = true;
-			
-			if(this.type.isShieldMaker())
-			{			
-				this.bounds.setRect(boss.getX(),
-									boss.getY(),
-									this.type == EnemyType.SMALL_SHIELD_MAKER ? 125 : 145,
-								    this.bounds.getHeight());			
-				this.direction.x = Calculations.randomDirection();
-				
-				this.shieldMakerTimer = READY;
-				this.setShieldingPosition();
-								
-				if(this.type == EnemyType.SMALL_SHIELD_MAKER)
-				{				
-					this.targetSpeedLevel.setLocation(7, 6.5); //d
-					this.farbe1 = new Color(25, 125, 105);				
-					this.hitpoints = 3000;
-				}			
-				else
-				{				
-					this.targetSpeedLevel.setLocation(6.5, 7); //d
-					this.farbe1 = new Color(105, 135, 65);				
-					this.hitpoints = 4250;
-					
-					this.shootTimer = 0;
-					this.shootingRate = 25;
-					this.shotSpeed = 1;
-				}
-			}			  
-			else if( this.type == EnemyType.BODYGUARD)
-			{			
-				this.bounds.setRect(boss.getX(),
-									boss.getY(),
-									225,
-								    this.bounds.getHeight());					
-				this.farbe1 = Colorations.cloaked;
-				this.hitpoints = 7500;					
-				this.targetSpeedLevel.setLocation(1, 2); //d
-
-				this.cloakingTimer = 0;
-				this.canInstantTurn = true;
-				
-				Events.boss.operator.servants[this.id()] = this;
-			}		
-			else if(this.type == EnemyType.HEALER)
-			{				
-				this.model = CARGO;
-				
-				this.bounds.setRect(boss.getX(),
-									boss.getY(),
-									115,
-								    this.bounds.getHeight());				
-				this.farbe1 = Color.white;
-				this.hitpoints = 3500;
-				this.targetSpeedLevel.setLocation(2.5, 3); //d
-				
-				this.canDodge = true;
-				
-				Events.boss.operator.servants[this.id()] = this;
-			}
-			else if(this.type == EnemyType.PROTECTOR)
-			{
-				this.model = BARRIER;
-				
-				this.bounds.setRect(boss.getX() + 200, 
-									GROUND_Y, 
-									PROTECTOR_WIDTH, 
-									this.bounds.getHeight());
-				
-				helicopter.numberOfEnemiesSeen--;
-				this.hitpoints = Integer.MAX_VALUE;
-				this.isClockwiseBarrier = Calculations.tossUp();
-				this.farbe1 = Colorations.bleach(new Color(170, 0, 255), 0.6f);
-				this.targetSpeedLevel.setLocation(ZERO_SPEED);
-				
-				this.deactivationProb = 0.04f;
-				this.borrowTimer = READY;
-				this.shootingRate = 25;
-				this.shotsPerCycle = 5;
-				this.shootingCycleLength = this.shootPause
-											 + this.shootingRate
-											   * this.shotsPerCycle;
-				this.shotSpeed = 10;
-				this.shotType = BUSTER;
-				this.isStunnable = false;
-				this.farbe2 = Colorations.dimColor(this.farbe1, 0.75f);
-				if(Events.timeOfDay == NIGHT)
-				{
-					this.farbe1 = Colorations.dimColor(this.farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-					this.farbe2 = Colorations.dimColor(this.farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-				}
-				Events.boss.operator.servants[this.id()] = this;
-			}			
-		}	
 	}
 
 	private boolean canBecomeMiniBoss()
@@ -1726,9 +1373,9 @@ public abstract class Enemy extends RectangularGameEntity
 						  Math.max(0, Math.min(y, GROUND_Y-this.bounds.getWidth())));
 	}
 	
-	private void setBarrierShootingProperties()
+	protected void setBarrierShootingProperties()
 	{
-		if(this.barrierTeleportTimer != DISABLED || this.borrowTimer != DISABLED)
+		if(this.barrierTeleportTimer != DISABLED || this.burrowTimer != DISABLED)
 		{
 			this.shootingRate = 35 + Calculations.random(15);
 		}
@@ -1753,7 +1400,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 	}
 
-	private void setHitpoints(int hitpoints)
+	protected void setHitpoints(int hitpoints)
 	{
 		this.hitpoints = hitpoints + Calculations.random(hitpoints/2);
 	}
@@ -1774,7 +1421,7 @@ public abstract class Enemy extends RectangularGameEntity
 							this.bounds.getHeight());
 	}
 	
-	private void setLocation(double x, double y)
+	protected void setLocation(double x, double y)
 	{
 		this.bounds.setRect(x, 
 							y, 
@@ -1782,7 +1429,7 @@ public abstract class Enemy extends RectangularGameEntity
 							this.bounds.getHeight());
 	}
 			
-	private void setWidth(double width)
+	protected void setWidth(double width)
 	{
 		this.bounds.setRect(this.bounds.getX(), 
 							this.bounds.getY(),
@@ -1790,7 +1437,7 @@ public abstract class Enemy extends RectangularGameEntity
 							this.bounds.getHeight());
 	}
 	
-	private void setVarWidth(int width)
+	protected void setVarWidth(int width)
 	{
 		setWidth(width + Calculations.random(width/(this.model == BARRIER ? 5 : 10)));
 	}
@@ -1826,7 +1473,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 	}	
 	
-	private void setInitialY(double y)
+	protected void setInitialY(double y)
 	{
 		this.setY(y);
 		this.hasYPosSet = true;
@@ -1840,28 +1487,38 @@ public abstract class Enemy extends RectangularGameEntity
 		this.hasHeightSet = true;
 	}
 	
-	private void initializeShootDirection()
+	
+	
+	private void initializeShootDirectionOfDefaultEnemies()
 	{
-		if(this.shootTimer == READY)
-		{
-			this.shootingDirection.setLocation( this.direction.x == -1
-													? -1f 
-													:  1f, 0f);
-		}
-		else if(this.barrierShootTimer == READY )
-		{
-			double tempRandom
-				= Math.PI * (1 + Math.random()/2) 
-					+ (this.bounds.getY() + this.bounds.getHeight()/2 < GROUND_Y/2 
-						? Math.PI/2 
-						: 0);
-		
-			this.shootingDirection.setLocation(
-				Math.sin(tempRandom),
-				Math.cos(tempRandom) );
-		}		
+		float shootingDirectionX = (float) this.direction.x;
+		this.shootingDirection.setLocation( shootingDirectionX, 0f);
 	}
-
+	
+	private boolean isShootingDefaultEnemy()
+	{
+		return this.shootTimer == READY;
+	}
+	
+	private void initializeShootDirectionOfBarriers()
+	{
+		double randomAngle
+				= Math.PI * (1 + Math.random()/2)
+					+ (this.bounds.getY() + this.bounds.getHeight()/2 < GROUND_Y/2f
+						? Math.PI/2
+						: 0);
+			
+		this.shootingDirection.setLocation(
+			Math.sin(randomAngle),
+			Math.cos(randomAngle) );
+	}
+	
+	private boolean isShootingBarrier()
+	{
+		return this.barrierShootTimer == READY;
+	}
+	
+	
 	private static GraphicsAdapter getGraphicAdapter(BufferedImage bufferedImage)
 	{
 		GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(bufferedImage);
@@ -2130,7 +1787,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(	this.canKamikaze && !(this.teleportTimer > 0)){this.kamikaze(helicopter);}
 			
 		// Vergraben			
-		if(this.borrowTimer != DISABLED && !(this.snoozeTimer > 0))
+		if(this.burrowTimer != DISABLED && !(this.snoozeTimer > 0))
 		{				
 			evaluateBorrowProcedure(helicopter);
 		}
@@ -2171,7 +1828,7 @@ public abstract class Enemy extends RectangularGameEntity
 			&& this.speedLevel.getX() == this.targetSpeedLevel.getX()
 			&& helicopter.getBounds().getX() - this.bounds.getX() > -350	)
 		{				
-			this.speedLevel.setLocation(6 + this.targetSpeedLevel.getX(), //d
+			this.speedLevel.setLocation(6 + this.targetSpeedLevel.getX(),
 										 this.speedLevel.getY());
 		}
 		if(this.canChaosSpeedup
@@ -2179,7 +1836,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{			
 			this.canMoveChaotic = true;
 			this.speedLevel.setLocation(this.speedLevel.getX(),
-										 9 + 4.5*Math.random()); //d
+										 9 + 4.5*Math.random());
 		}
 				
 		// Ausweichen
@@ -2199,7 +1856,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void endSnooze()
 	{
-		if(	this.borrowTimer == DISABLED)
+		if(	this.burrowTimer == DISABLED)
 		{
 			this.speedLevel.setLocation(this.targetSpeedLevel);
 		}
@@ -2214,13 +1871,13 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void endInterruptedBorrowProcedure()
 	{
-		if(this.borrowTimer > BORROW_TIME + this.shootingRate * this.shotsPerCycle)
+		if(this.burrowTimer > BORROW_TIME + this.shootingRate * this.shotsPerCycle)
 		{
-			this.borrowTimer = 2 * BORROW_TIME + this.shootingRate * this.shotsPerCycle - this.borrowTimer;
+			this.burrowTimer = 2 * BORROW_TIME + this.shootingRate * this.shotsPerCycle - this.burrowTimer;
 		}
-		else if(this.borrowTimer > BORROW_TIME)
+		else if(this.burrowTimer > BORROW_TIME)
 		{
-			this.borrowTimer = BORROW_TIME;
+			this.burrowTimer = BORROW_TIME;
 		}
 		this.direction.y = 1;
 		this.speedLevel.setLocation(0, 1);
@@ -2229,7 +1886,7 @@ public abstract class Enemy extends RectangularGameEntity
 	private void validateTurns()
 	{
 		if(	this.stoppingBarrier != null
-			&& this.borrowTimer == DISABLED)
+			&& this.burrowTimer == DISABLED)
 		{
 			this.tryToTurnAtBarrier();
 		}
@@ -2313,7 +1970,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private boolean hasToTurnAtYBorder()
 	{		
-		return 	this.borrowTimer == DISABLED
+		return 	this.burrowTimer == DISABLED
 				&&( (this.bounds.getMinY() <= (this.model == BARRIER ? 0 : TURN_FRAME.getMinY()) 
 			   	  	 && this.direction.y < 0) 
 			        ||
@@ -2325,7 +1982,7 @@ public abstract class Enemy extends RectangularGameEntity
 	private void changeYDirection()
 	{
 		this.direction.y = -this.direction.y;
-		if(this.canSinusMove){this.speedLevel.setLocation(this.speedLevel.getX(), 1);} //d
+		if(this.canSinusMove){this.speedLevel.setLocation(this.speedLevel.getX(), 1);}
 		if(this.model == BARRIER)
 		{
 			if(this.direction.y == -1){Audio.play(Audio.landing);}
@@ -2380,10 +2037,10 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void evaluateSpeedup(Helicopter helicopter)
 	{
-		if(  this.speedLevel.getX() < (this.speedup == DISABLED ? 12 : 19)  //d
+		if(  this.speedLevel.getX() < (this.speedup == DISABLED ? 12 : 19) 
 			 && (this.speedup  > 0 || this.canFrontalSpeedup) )
 		{
-			this.speedLevel.setLocation(this.speedLevel.getX()+0.5, //d
+			this.speedLevel.setLocation(this.speedLevel.getX()+0.5,
 					 					 this.speedLevel.getY());
 		}			
 		if(	this.speedup == 0 && this.atEyeLevel(helicopter))
@@ -2399,7 +2056,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			this.speedup = 3;
 			this.canSinusMove = false;
-			this.speedLevel.setLocation(this.speedLevel.getX(), 1.5); //d
+			this.speedLevel.setLocation(this.speedLevel.getX(), 1.5);
 			if(this.bounds.getY() < helicopter.getBounds().getY()){this.direction.y = 1;}
 			else{this.direction.y = -1;}	
 		}		
@@ -2417,7 +2074,7 @@ public abstract class Enemy extends RectangularGameEntity
     {
 		if(this.speedLevel.getX() > 0)
 		{
-			if(this.speedLevel.getX() - 0.5 <= 0) //d
+			if(this.speedLevel.getX() - 0.5 <= 0)
 			{
 				this.speedLevel.setLocation(ZERO_SPEED);
 				boss.setLocation(this.bounds.getCenterX(), 
@@ -2426,7 +2083,7 @@ public abstract class Enemy extends RectangularGameEntity
 			}
 			else
 			{
-				this.speedLevel.setLocation(this.speedLevel.getX()-0.5,	0); //d
+				this.speedLevel.setLocation(this.speedLevel.getX()-0.5,	0);
 			}
 		}
 		else for(int serantType = 0; serantType < NR_OF_BOSS_5_SERVANTS; serantType++)
@@ -2443,7 +2100,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 	}
 	
-	private int id()
+	protected int id()
 	{
 		return id(this.type);
 	}
@@ -2471,12 +2128,12 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		if(this.batchWiseMove == 1)
 		{
-			this.speedLevel.setLocation(this.speedLevel.getX()+0.5, //d
+			this.speedLevel.setLocation(this.speedLevel.getX()+0.5,
 					 					 this.speedLevel.getY());
 		}
 		else if(this.batchWiseMove == -1)
 		{
-			this.speedLevel.setLocation(this.speedLevel.getX()-0.5, //d
+			this.speedLevel.setLocation(this.speedLevel.getX()-0.5,
 					 					 this.speedLevel.getY());
 		}
 		if(this.speedLevel.getX() <= 0){this.batchWiseMove = 1;}
@@ -2488,7 +2145,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(Events.boss.shield < 1)
 		{
 			this.canKamikaze = true;
-			this.speedLevel.setLocation(7.5, this.speedLevel.getY());//d
+			this.speedLevel.setLocation(7.5, this.speedLevel.getY());
 		}
 		else
 		{
@@ -2542,10 +2199,10 @@ public abstract class Enemy extends RectangularGameEntity
 				this.speedLevel.setLocation(this.speedLevel.getX(), 0);
 			}
 			
-			if(this.speedLevel.getY() < 8) //d
+			if(this.speedLevel.getY() < 8)
 			{
 				this.speedLevel.setLocation(this.speedLevel.getX(),
-											 this.speedLevel.getY()+0.5); //d
+											 this.speedLevel.getY()+0.5);
 			}
 		}
 		else if(!this.canFrontalSpeedup && this.dodgeTimer == READY)
@@ -2563,36 +2220,36 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void evaluateBorrowProcedure(Helicopter helicopter)
 	{		
-		if(this.borrowTimer > 0){this.borrowTimer--;}
-		if(this.borrowTimer == BORROW_TIME + this.shootingRate * this.shotsPerCycle)
+		if(this.burrowTimer > 0){this.burrowTimer--;}
+		if(this.burrowTimer == BORROW_TIME + this.shootingRate * this.shotsPerCycle)
 		{					
 			this.barrierShootTimer = this.shootingRate * this.shotsPerCycle;
 			this.speedLevel.setLocation(ZERO_SPEED);
 		}
-		else if(this.borrowTimer == BORROW_TIME)
+		else if(this.burrowTimer == BORROW_TIME)
 		{
 			this.barrierShootTimer = DISABLED;
-			this.speedLevel.setLocation(0, 1); //d
+			this.speedLevel.setLocation(0, 1);
 			this.direction.y = 1;
 		}
-		else if(this.borrowTimer == 1)
+		else if(this.burrowTimer == 1)
 		{
 			this.speedLevel.setLocation(ZERO_SPEED);
 		}
-		else if(this.borrowTimer == READY
+		else if(this.burrowTimer == READY
 				&&( (this.type != EnemyType.PROTECTOR
 				     && Calculations.tossUp(0.004f))
 				    || 
 				    (this.type == EnemyType.PROTECTOR
 				     && (helicopter.getBounds().getX() > boss.getX() - 225) ))) 
 		{			
-			this.borrowTimer = 2 * BORROW_TIME
+			this.burrowTimer = 2 * BORROW_TIME
 								+ this.shootingRate * this.shotsPerCycle
 								+ (this.bounds.getY() == GROUND_Y 
 									? PROTECTOR_WIDTH/8
 									: 0)
 								- 1;
-			this.speedLevel.setLocation(0, 1);  //d
+			this.speedLevel.setLocation(0, 1); 
 			this.direction.y = -1;
 		}	
 	}
@@ -2606,16 +2263,16 @@ public abstract class Enemy extends RectangularGameEntity
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
 			&& ((this.direction.x == -1 
 				 && helicopter.getBounds().intersects(	
-						 				this.bounds.getX() + Integer.MIN_VALUE/2, 
+						 				this.bounds.getX() + Integer.MIN_VALUE/2f,
 						 				this.bounds.getY() + (this.model == TIT ? 0 : this.bounds.getWidth()/2) - 15,
-						 				Integer.MAX_VALUE/2, 
+						 				Integer.MAX_VALUE/2f,
 						 				EnemyMissile.DIAMETER+30))
 				||
 				((this.direction.x == 1 
 				  && helicopter.getBounds().intersects(
 						  				this.bounds.getX(), 
 						  				this.bounds.getY() + (this.model == TIT ? 0 : this.bounds.getWidth()/2) - 15,
-								 		Integer.MAX_VALUE/2, 
+								 		Integer.MAX_VALUE/2f,
 								 		EnemyMissile.DIAMETER+30))))) 
 		{
 			this.shoot(	controller.enemyMissiles,
@@ -2658,7 +2315,7 @@ public abstract class Enemy extends RectangularGameEntity
 						Math.sin(tempValue),
 						Math.cos(tempValue) );
 			}
-			if(this.borrowTimer != DISABLED || this.barrierTeleportTimer != DISABLED)
+			if(this.burrowTimer != DISABLED || this.barrierTeleportTimer != DISABLED)
 			{
 				// Schussrichtung wird auf Helicopter ausgerichtet
 				this.shootingDirection.setLocation(
@@ -2718,7 +2375,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 	}
 	
-	private void startBarrierUncloaking(Helicopter helicopter)
+	protected void startBarrierUncloaking(Helicopter helicopter)
 	{
 		this.barrierTeleportTimer = 2 * CLOAKING_TIME + this.shootingRate * this.shotsPerCycle;
 		this.cloakingTimer = CLOAKED_TIME + CLOAKING_TIME;
@@ -2734,7 +2391,7 @@ public abstract class Enemy extends RectangularGameEntity
     	}
 		if(this.spawningHornetTimer == 1)
 		{
-			this.speedLevel.setLocation(11, 11); //d
+			this.speedLevel.setLocation(11, 11);
 			this.canMoveChaotic = true;
 			this.canKamikaze = true;
 		}
@@ -2742,7 +2399,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			if(this.spawningHornetTimer == 50)
 			{
-				this.speedLevel.setLocation(3, 3); //d
+				this.speedLevel.setLocation(3, 3);
 				this.canMoveChaotic = false;
 				this.canKamikaze = false;
 			}
@@ -2766,19 +2423,19 @@ public abstract class Enemy extends RectangularGameEntity
     {
 		this.speedLevel.setLocation(
 				this.speedLevel.getX(),
-				Math.max(4.0, 0.15f*(145-Math.abs(this.bounds.getY()-155))));   //d
+				Math.max(4.0, 0.15f*(145-Math.abs(this.bounds.getY()-155))));  
 		
     	if(this.canLoop)
     	{
     		if(this.direction.x == -1 && this.bounds.getY()-155>0)
     		{
     			this.direction.x = 1;
-    			this.speedLevel.setLocation(11, this.speedLevel.getY()); //d
+    			this.speedLevel.setLocation(11, this.speedLevel.getY());
     		}
     		else if(this.direction.x == 1 && this.bounds.getY()-155<0)
     		{
     			this.direction.x = -1;
-    			this.speedLevel.setLocation(7.5, this.speedLevel.getY()); //d
+    			this.speedLevel.setLocation(7.5, this.speedLevel.getY());
     		}
     	}
     }	
@@ -2853,7 +2510,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void calmDown()
 	{
-		this.speedLevel.setLocation(SHIELD_MAKER_CALM_DOWN_SPEED);	 //d
+		this.speedLevel.setLocation(SHIELD_MAKER_CALM_DOWN_SPEED);	
 		this.targetSpeedLevel.setLocation(SHIELD_MAKER_CALM_DOWN_SPEED);
 		this.canMoveChaotic = false;
 	}
@@ -3004,7 +2661,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			this.setY(GROUND_Y - this.bounds.getHeight());
 		}		
-		if(this.borrowTimer != DISABLED)
+		if(this.burrowTimer != DISABLED)
 		{						
 			this.barrierShootTimer = DISABLED;
 		}		
@@ -3041,7 +2698,7 @@ public abstract class Enemy extends RectangularGameEntity
 	private boolean canBePositionedBelowGround()
 	{		
 		return !(this.model == BARRIER
-			     && this.borrowTimer == DISABLED)
+			     && this.burrowTimer == DISABLED)
 			   || this.isDestroyed
 			   || this.type == EnemyType.ROCK;
 	}
@@ -3050,7 +2707,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{		
 		if(this.explodingTimer <= 0)
 		{
-			this.speed.setLocation(this.speedLevel); //d
+			this.speed.setLocation(this.speedLevel);
 		}
 		else
 		{
@@ -3087,8 +2744,8 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 				
 		if(	this.stoppingBarrier != null
-			&& this.borrowTimer == DISABLED
-			&& !(this.model == BARRIER && this.type == EnemyType.BARRIER_1))
+			&& this.burrowTimer == DISABLED
+			&& !(this.model == BARRIER && this.type == EnemyType.BIG_BARRIER))
 		{
 			this.adjustSpeedToBarrier(helicopter);
 		}
@@ -3138,9 +2795,9 @@ public abstract class Enemy extends RectangularGameEntity
 			this.isSpeedBoosted = true;
 			this.speedLevel.setLocation(Math.max(
 											this.speedLevel.getX(),
-											this.targetSpeedLevel.getX() //d
+											this.targetSpeedLevel.getX()
 												+ 7.5), 
-										 Math.max(this.speedLevel.getY(), 5.5)); //d
+										 Math.max(this.speedLevel.getY(), 5.5));
 			
 			// Wenn Gegner droht am Boden durch Barrier zerdrückt zu werden, dann nimmt Gegner den kürzesten Weg.
 			if(this.mustAvoidGroundCollision(bottomTurnLine))
@@ -3161,10 +2818,10 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void recoverSpeed()
 	{
-		if(	this.borrowTimer != DISABLED || this.hasReachedTargetSpeed())
+		if(	this.burrowTimer != DISABLED || this.hasReachedTargetSpeed())
 		{
 			this.isRecoveringSpeed = false;
-			if(this.borrowTimer != DISABLED)
+			if(this.burrowTimer != DISABLED)
 			{
 				this.speedLevel.setLocation(0, 1);
 			}
@@ -3172,13 +2829,13 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 		else if(this.speedLevel.getX() < this.targetSpeedLevel.getX())
 		{					
-			this.speedLevel.setLocation(this.speedLevel.getX()+0.025, //d
+			this.speedLevel.setLocation(this.speedLevel.getX()+0.025,
 					 					 this.speedLevel.getY());
 		}
 		if(this.speedLevel.getY() < this.targetSpeedLevel.getY())
 		{
 			this.speedLevel.setLocation(this.speedLevel.getX(),
-					 					 this.speedLevel.getY()+0.025); //d
+					 					 this.speedLevel.getY()+0.025);
 		}		
 	}
 
@@ -3205,7 +2862,7 @@ public abstract class Enemy extends RectangularGameEntity
 				 && this.stoppingBarrier.bounds.getCenterY()*this.direction.y
 				 		           < this.bounds.getCenterY()*this.direction.y
 				 && this.stoppingBarrier.speed.getY() > this.speed.getY()
-				 && this.borrowTimer == DISABLED)
+				 && this.burrowTimer == DISABLED)
 		{
 			this.speed.setLocation(this.speed.getX(), this.stoppingBarrier.speed.getY());
 			if(helicopter.tractor == this){helicopter.stopTractor();}
@@ -3542,7 +3199,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			helicopter.stopTractor();
 		}		
-		this.speedLevel.setLocation(0, 12); //d
+		this.speedLevel.setLocation(0, 12);
 		this.direction.y = 1;
 		
 		this.empSlowedTimer = READY;
@@ -3701,17 +3358,17 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		if(this.type == EnemyType.BOSS_3)
 		{			
-			this.speedLevel.setLocation(this.speedLevel.getX(), 9);	//d
+			this.speedLevel.setLocation(this.speedLevel.getX(), 9);
 			this.dodgeTimer = 16;
 		}
 		else if(this.shootTimer != DISABLED || this.canChaosSpeedup)
 		{			
-			this.speedLevel.setLocation(this.speedLevel.getX(), 8.5);	//d
+			this.speedLevel.setLocation(this.speedLevel.getX(), 8.5);
 			this.dodgeTimer = 13;
 		}
 		else
 		{
-			this.speedLevel.setLocation(6, 6);	//d
+			this.speedLevel.setLocation(6, 6);
 			if(this.bounds.getMaxX() < 934){this.direction.x = 1;}
 			this.dodgeTimer = 16;
 		}															   
@@ -3726,7 +3383,7 @@ public abstract class Enemy extends RectangularGameEntity
 	private void stampedeShieldMaker()
 	{
 		this.shieldMakerTimer = READY;
-		this.speedLevel.setLocation(SHIELD_MAKER_STAMPEDE_SPEED); //d
+		this.speedLevel.setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
 		this.targetSpeedLevel.setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
 		this.canMoveChaotic = true;
 		this.canDodge = false;
@@ -3734,7 +3391,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(this.isShielding){this.stopShielding();}
 	}
 
-	private void setShieldingPosition()
+	protected void setShieldingPosition()
 	{
 		if(Events.boss.operator.servants[this.shieldingBrotherId()] == null)
 		{

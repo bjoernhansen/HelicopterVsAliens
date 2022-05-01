@@ -102,7 +102,7 @@ public class EnemyPainter extends Painter<Enemy>
             // Auspuff
             if(!(enemy.isDestroyed() || enemy.stunningTimer > 0))
             {
-                int temp = 63 - (((int)(2 + 0.1f * Math.abs(enemy.getSpeedLevel().getX())) * enemy.getLifetime())%32); //d
+                int temp = 63 - (((int)(2 + 0.1f * Math.abs(enemy.getSpeedLevel().getX())) * enemy.getLifetime())%32);
                 Color colorTemp = new Color(255, 192+temp, 129+temp, enemy.alpha);
                 this.paintExhaustPipe(graphicsAdapter, colorTemp);
             }
@@ -138,7 +138,7 @@ public class EnemyPainter extends Painter<Enemy>
             graphicsAdapter.setColor(Color.red);
             if(enemy.model == BARRIER)
             {
-                graphicsAdapter.drawString(   "Borrow: " + enemy.borrowTimer + " ; "
+                graphicsAdapter.drawString(   "Borrow: " + enemy.burrowTimer + " ; "
                         
                         + "Stun: "   + enemy.stunningTimer + " ; "
                         + "Snooze: " + enemy.getSnoozeTimer() + " ; ",

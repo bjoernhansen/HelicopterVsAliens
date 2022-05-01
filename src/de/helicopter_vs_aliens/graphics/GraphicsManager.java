@@ -13,6 +13,7 @@ import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.barrier.Barrier;
 import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
 import de.helicopter_vs_aliens.model.enemy.defaultEnemy.DefaultEnemy;
@@ -52,9 +53,8 @@ public class GraphicsManager
         
         // Painter für Gegner
         EnemyPainter enemyPainter = new EnemyPainter();
-        painters.put(Barrier.class, enemyPainter);
-        painters.put(BossEnemy.class, enemyPainter);
-        painters.put(DefaultEnemy.class, enemyPainter);
+        EnemyType.getValues().forEach(enemyType ->
+            painters.put(enemyType.getCorrespondingClass(), enemyPainter));
     
         // sonstige Painter
         painters.put(PowerUp.class, new PowerUpPainter());
