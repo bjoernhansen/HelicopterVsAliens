@@ -77,7 +77,7 @@ public enum HelicopterType
     
     private static final int[][]
         // Upgrade-Kosten-Level (0 - sehr günstig bis 4 - sehr teuer) für die Standard-Upgrades
-        COSTS = {   {4, 2, 0, 1, 2, 3},	// Phoenix
+        COSTS = {       {4, 2, 0, 1, 2, 3},	// Phoenix
                         {1, 3, 4, 0, 4, 2},	// Roch
                         {0, 0, 1, 2, 3, 4}, // Orochi
                         {2, 1, 3, 4, 0, 1}, // Kamaitachi

@@ -81,12 +81,12 @@ public class Events
 	// Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
 	public static final int
 		START = 0,					// Timer Start
-		NUMBER_OF_BOSS_LEVEL = 5,
 		NUMBER_OF_DEBUGGING_INFOS = 16,
 		MAXIMUM_LEVEL = 50;
 	
 	public static final boolean
-		CHEATS_ACTIVATABLE = true,
+		IS_CHEATING_MODE_ALWAYS_ACTIVE = true,
+		IS_CHEATING_MODE_ACTIVATABLE = true,
 		IS_SAVE_GAME_SAVED_ANYWAY = true;
 		
 	private static final int
@@ -127,7 +127,7 @@ public class Events
 
 	// Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
 	private static boolean
-		cheatingMode = false;				// = true: Cheat-Modus aktiviert
+		cheatingMode = IS_CHEATING_MODE_ALWAYS_ACTIVE;				// = true: Cheat-Modus aktiviert
 	
 	public static String
 		currentPlayerName = Window.DEFAULT_PLAYER_NAME;
@@ -332,7 +332,7 @@ public class Events
 				}
 			}
 		}
-		else if(CHEATS_ACTIVATABLE)
+		else if(IS_CHEATING_MODE_ACTIVATABLE)
 		{
 			if(e.getKeyChar() == cheatCode.charAt(cheatString.length())){
 				cheatString += e.getKeyChar();}
@@ -692,8 +692,6 @@ public class Events
 				Audio.play(Audio.cash);
 				money -= helicopter.getFifthSpecialCosts();
 				helicopter.obtainFifthSpecial();
-				// TODO adjustFireRate in obtainFifthSpecial integrieren, PowerUp fireRate berücksichtigen
-				if(helicopter.getType() == KAMAITACHI || helicopter.getType() == PEGASUS){helicopter.adjustFireRate(false);}
 				Window.buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).adjustCostsToZero();
 			}
 		}
@@ -1127,8 +1125,8 @@ public class Events
 		Helicopter savedHelicopter = HelicopterFactory.createFromSavegame(controller.getSaveGame());
 		Controller.getInstance().setHelicopter(savedHelicopter);
 		initializeFromSaveGame(controller);
-		Window.updateRepairShopButtons(savedHelicopter);
 		performGeneralActionsBeforeGameStart();
+		Window.updateRepairShopButtons(savedHelicopter);
 	}
 
 	private static void performGeneralActionsBeforeGameStart()

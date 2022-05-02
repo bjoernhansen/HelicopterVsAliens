@@ -52,7 +52,7 @@ public enum StandardUpgradeType
         this.privilegedHelicopter = privilegedHelicopter;
     }
     
-    // TODO sollte Liste zurück geben
+    // TODO sollte Liste zurück geben, dann an den aufrufenden Stellen forEach verwenden
     public static StandardUpgradeType[] getValues()
     {
         return defensiveCopyOfValues;

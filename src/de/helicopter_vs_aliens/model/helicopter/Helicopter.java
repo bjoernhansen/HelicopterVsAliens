@@ -795,7 +795,7 @@ public abstract class Helicopter extends RectangularGameEntity
 				if(this.powerUpTimer[i] == 0 && Window.collectedPowerUp[i] != null)
 				{
 					Audio.play(Audio.powerUpFade2);
-					Window.collectedPowerUp[i].collect();
+					Window.collectedPowerUp[i].setCollected();
 					Window.collectedPowerUp[i] = null;
 					// TODO magic number
 					if(i == 3){this.adjustFireRate(false);}
@@ -898,7 +898,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			if(playSound){Audio.play(Audio.powerUpFade2);}
 			this.powerUpTimer[powerUpType.ordinal()] = 0;
-			Window.collectedPowerUp[powerUpType.ordinal()].collect();
+			Window.collectedPowerUp[powerUpType.ordinal()].setCollected();
 			Window.collectedPowerUp[powerUpType.ordinal()] = null;
 			if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(false);}
 		}

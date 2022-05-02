@@ -904,5 +904,9 @@ Versionen:
 			auf dem Startscreen zu sehen war, wurde behoben.
 			Ein Fehler, der bei Reparatur mit Hilfe von Cheats zu einer fehlerhaften
 			Bennung der MainMenü-Buttons geführt hatte, wurde behoben.
+			Beim Laden von Speicherständen der Klasse Pegasus mit Phasenshiftgenerator
+			wird die Phasenshift-Zeit nun korrekt berechnet.
+			Eine Fehler im Zusammenhang mit den Werkstatt-Buttons bzgl. Preisanzeige
+			und Farbe wurden behoben.
 
 Letzte Änderung: 26.02.2022

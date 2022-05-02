@@ -58,6 +58,7 @@ public final class Kamaitachi extends Helicopter
     public void obtainFifthSpecial()
     {
         this.hasRapidFire = true;
+        this.adjustFireRate(this.hasBoostedFireRate());
     }
 
     @Override

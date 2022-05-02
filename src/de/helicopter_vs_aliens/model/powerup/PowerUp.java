@@ -7,7 +7,6 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -105,7 +104,7 @@ public class PowerUp extends RectangularGameEntity
 			if(   (this.speed.getX() == 0 && this.bounds.getMaxX() < 0) 
 			    ||(this.speed.getX() != 0 && this.bounds.getMaxY() < 0))
 			{
-				this.collect();
+				this.setCollected();
 			}
 			this.setPaintBounds();
 		}		
@@ -134,14 +133,14 @@ public class PowerUp extends RectangularGameEntity
 		}
 	}
     
-    public void collect()
+    public void setCollected()
     {
         this.wasCollected = true;
     }
 	
 	private void collect(Helicopter helicopter)
 	{
-		collect();
+		setCollected();
 		if(this.type.ordinal() > 3 || helicopter.powerUpTimer[this.type.ordinal()] ==  0)
 		{
 			Audio.play(Audio.powerAnnouncer[this.type.ordinal()]);

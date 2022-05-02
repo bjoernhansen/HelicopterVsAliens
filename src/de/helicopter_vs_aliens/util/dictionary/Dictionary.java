@@ -518,9 +518,9 @@ public final class Dictionary
         return String.join(" ", standardUpgradesImprovements.get(standardUpgradeType));
     }
     
-    public List<String> energyAbilityImprovements()
+    public String energyAbilityImprovement()
     {
-        return standardUpgradesImprovements.get(ENERGY_ABILITY);
+        return String.join(" ", standardUpgradesImprovements.get(ENERGY_ABILITY));
     }
     
     public String genericEnergyAbility()

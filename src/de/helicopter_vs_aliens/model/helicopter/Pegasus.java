@@ -79,6 +79,7 @@ public final class Pegasus extends Helicopter
     public void obtainFifthSpecial()
     {
         this.hasInterphaseGenerator = true;
+        this.adjustFireRate(this.hasBoostedFireRate());
     }
 
     @Override

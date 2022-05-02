@@ -38,7 +38,6 @@ import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -517,6 +516,8 @@ public abstract class Window implements Paintable
 
 	public static void updateRepairShopButtons(Helicopter helicopter)
 	{
+		buttons.get(LeftSideRepairShopButtonType.REPAIR).adjustCostsToZero();
+		
 		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
 		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
 		
@@ -569,8 +570,6 @@ public abstract class Window implements Paintable
 				buttons.get(buttonSpecifier).adjustCostsTo(helicopter.getUpgradeCostFor(standardUpgradeType));
 			}
 		});
-		
-		buttons.get(LeftSideRepairShopButtonType.REPAIR).adjustCostsToZero();
 	}
 	
 	public static void unlock(HelicopterType heliType)
@@ -653,21 +652,22 @@ public abstract class Window implements Paintable
 	// TODO vielleicht können die spezifischen Beschriftungen unnötig gemacht werden, wenn gleich die richtigen Werte verwendet werden
 	public static void finalizeRepairShopButtons()
 	{
-		Helicopter helicopter = Controller.getInstance().getHelicopter();
 		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
 		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
+		
+		Helicopter helicopter = Controller.getInstance().getHelicopter();
 		
 		StandardUpgradeButtonType.getValues().forEach(buttonSpecifier -> {
 			StandardUpgradeType standardUpgradeType = ((StandardUpgradeButtonType)buttonSpecifier).getStandardUpgradeType();
 			if(!helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
 			{
 				buttons.get(buttonSpecifier).adjustCostsTo(helicopter.getUpgradeCostFor(standardUpgradeType));
-				buttons.get(buttonSpecifier).setCostColor(helicopter.getPriceLevelFor(standardUpgradeType).getColor());
 			}
+			buttons.get(buttonSpecifier).setCostColor(helicopter.getPriceLevelFor(standardUpgradeType).getColor());
 		});
 		
-		List<String> standardUpgradeLabel = dictionary.energyAbilityImprovements();
-		buttons.get(StandardUpgradeButtonType.ENERGY_ABILITY).setPrimaryLabel(String.join(" ", standardUpgradeLabel));
+		String energyAbilityLabel = dictionary.energyAbilityImprovement();
+		buttons.get(StandardUpgradeButtonType.ENERGY_ABILITY).setPrimaryLabel(energyAbilityLabel);
 		
 		// TODO hier die eingeführten Methoden mit Rückgabe der Preise verwenden bzw. weitere notwendige anlegen
 		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsTo(helicopter.getSpotlightCosts());
@@ -686,7 +686,6 @@ public abstract class Window implements Paintable
 	
 	public static void updateRepairShopButtonsAfterSpotlightPurchase()
 	{
-		// TODO Enum für RepairShopButtons anlegen
 		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
 		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
 		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsToZero();
