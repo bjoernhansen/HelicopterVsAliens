@@ -53,24 +53,24 @@ import java.util.function.Supplier;
 public enum EnemyType implements GameEntityFactory<Enemy>
 {
     // Standard-Gegner
-    TINY(1, TinyVessel::new, TinyVessel.class),
-    SMALL(2, SmallCruiser::new, SmallCruiser.class),
-    RUNABOUT(2, Runabout::new, Runabout.class),
-    FREIGHTER(4, Freighter::new, Freighter.class),
-    BATCHWISE(6, BatchwiseFlyingEnemy::new, BatchwiseFlyingEnemy.class),
-    SINUS(6, SinusoidallyFlyingEnemy::new, SinusoidallyFlyingEnemy.class),
-    DODGER(9, Dodger::new, Dodger.class),
-    CHAOTIC(11, ChaoticallyFlyingEnemy::new, ChaoticallyFlyingEnemy.class),
-    CALLBACK(10, CallbackEnemy::new, CallbackEnemy.class),
-    SHOOTER(12, Shooter::new, Shooter.class),
-    CLOAK(16, CloakedEnemy::new, CloakedEnemy.class),
-    LONELY_SPEEDER(14, LonelySpeeder::new, LonelySpeeder.class),
-    CARRIER(19, Carrier::new, Carrier.class),
-    CRAZY(22, CrazyEnemy::new, CrazyEnemy.class),
-    AMBUSH(30, AmbushingEnemy::new, AmbushingEnemy.class),
-    LOOPING(30, LoopingEnemy::new, LoopingEnemy.class),
-    CAPTURING(30, CapturingEnemy::new, CapturingEnemy.class),
-    TELEPORTING(35, TeleportingEnemy::new, TeleportingEnemy.class),
+    TINY(1, TinyVessel::new, TinyVessel.class), //Level 1
+    SMALL(2, SmallCruiser::new, SmallCruiser.class), // Level 3
+    RUNABOUT(2, Runabout::new, Runabout.class), // level 5
+    FREIGHTER(4, Freighter::new, Freighter.class), // Level 7
+    BATCHWISE(6, BatchwiseFlyingEnemy::new, BatchwiseFlyingEnemy.class), // Level 11
+    SINUS(6, SinusoidallyFlyingEnemy::new, SinusoidallyFlyingEnemy.class), // Level 13
+    DODGER(9, Dodger::new, Dodger.class), // Level 16
+    CHAOTIC(11, ChaoticallyFlyingEnemy::new, ChaoticallyFlyingEnemy.class), // Level 21
+    CALLBACK(10, CallbackEnemy::new, CallbackEnemy.class), // Level 24
+    SHOOTER(12, Shooter::new, Shooter.class), // Level 26
+    CLOAK(16, CloakedEnemy::new, CloakedEnemy.class), // Level 31
+    LONELY_SPEEDER(14, LonelySpeeder::new, LonelySpeeder.class), // Level 35
+    CARRIER(19, Carrier::new, Carrier.class), // Level 36
+    CRAZY(22, CrazyEnemy::new, CrazyEnemy.class), // Level 37
+    AMBUSH(30, AmbushingEnemy::new, AmbushingEnemy.class), // Level 41
+    LOOPING(30, LoopingEnemy::new, LoopingEnemy.class), // Level 43
+    CAPTURING(30, CapturingEnemy::new, CapturingEnemy.class), // Level 45
+    TELEPORTING(35, TeleportingEnemy::new, TeleportingEnemy.class), // Level 46
     
     // Boss-Gegner
     BOSS_1(75, FirstBoss::new, FirstBoss.class),
@@ -90,14 +90,15 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     ROCK(0, Rock::new, Rock.class),
     
     // Hindernisse (Barrier)
-    SMALL_BARRIER(4, SmallBarrier::new, SmallBarrier.class),
-    BIG_BARRIER(4, BigBarrier::new, BigBarrier.class),
-    STUNNING_BARRIER(5, StunningBarrier::new, StunningBarrier.class),
-    PUSHING_BARRIER(6, PushingBarrier::new, PushingBarrier.class),
-    SHOOTING_BARRIER(7, ShootingBarrier::new, ShootingBarrier.class),
-    BURROWING_BARRIER(9, BurrowingBarrier::new, BurrowingBarrier.class),
-    SHIELDING_BARRIER(4, ShieldingBarrier::new, ShieldingBarrier.class),
-    CLOAKED_BARRIER(15, CloakedBarrier::new, CloakedBarrier.class), // TODO überarbeiten, wie oft soll er wiederkommen? manchmal schießt er nicht,
+    SMALL_BARRIER(4, SmallBarrier::new, SmallBarrier.class), // Level 2
+    BIG_BARRIER(4, BigBarrier::new, BigBarrier.class), // Level 6
+    STUNNING_BARRIER(5, StunningBarrier::new, StunningBarrier.class), // Level 12
+    PUSHING_BARRIER(6, PushingBarrier::new, PushingBarrier.class), // Level 15
+    SHOOTING_BARRIER(7, ShootingBarrier::new, ShootingBarrier.class), // Level 18
+    BURROWING_BARRIER(9, BurrowingBarrier::new, BurrowingBarrier.class), // Level 32
+    SHIELDING_BARRIER(4, ShieldingBarrier::new, ShieldingBarrier.class), // Level 42
+    // TODO CLOAKED_BARRIER  überarbeiten, wie oft soll er wiederkommen? manchmal schießt er nicht,
+    CLOAKED_BARRIER(15, CloakedBarrier::new, CloakedBarrier.class), // Level 44
     
     // sonstige Gegner
     KABOOM(0, Kaboom::new, Kaboom.class),
@@ -140,16 +141,6 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     static Set<EnemyType> getBarrierTypes()
     {
         return BARRIERS;
-    }
-    
-    static Set<EnemyType> getBossTypes()
-    {
-        return BOSS_TYPES;
-    }
-    
-    public static Set<EnemyType> getDefaultTypes()
-    {
-        return DEFAULT_TYPES;
     }
     
     public boolean isMajorBoss()

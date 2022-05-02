@@ -1,5 +1,38 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
-public class CloakedBarrier extends Barrier
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
+import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
+
+import java.awt.Color;
+
+public class CloakedBarrier extends ArmedBarrier
 {
+    @Override
+    protected void create(Helicopter helicopter)
+    {
+        this.setVarWidth(100);
+    
+        this.barrierTeleportTimer = READY;
+        this.setBarrierShootingProperties();
+        this.startBarrierUncloaking(helicopter);
+    
+        this.hasYPosSet = true;
+        this.callBack = 1 + Calculations.random(4);
+        
+        super.create(helicopter);
+    }
+    
+    @Override
+    protected EnemyMissileType getMissileType()
+    {
+        return EnemyMissileType.BUSTER;
+    }
+    
+    @Override
+    protected Color getArmedBarrierColor()
+    {
+        return Colorations.bleachedCloaked;
+    }
 }

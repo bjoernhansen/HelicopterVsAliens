@@ -7,7 +7,7 @@ import java.awt.Color;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 
-public class Rock extends DefaultEnemy
+public class Rock extends StandardEnemy
 {
     private static final int
         ROCK_WIDTH = 300;
@@ -15,28 +15,25 @@ public class Rock extends DefaultEnemy
     @Override
     protected void create(Helicopter helicopter)
     {
-        this.createRock();
-        helicopter.numberOfEnemiesSeen--;
-        super.create(helicopter);
-    }
-    
-    private void createRock()
-    {
         currentRock = this;
         this.model = CARGO;
-        
-        this.farbe1 = new Color((180 + Calculations.random(30)),
-                                (120 + Calculations.random(30)),
-                                (      Calculations.random(15)));
+    
+        this.primaryColor = new Color((180 + Calculations.random(30)),
+            (120 + Calculations.random(30)),
+            (      Calculations.random(15)));
         this.hitpoints = 1;
         this.invincibleTimer = Integer.MAX_VALUE;
-        
+    
         this.bounds.setRect(this.bounds.getX(),
-                            GROUND_Y - ROCK_WIDTH * (HEIGHT_FACTOR_SUPERSIZE - 0.05f),
-                            ROCK_WIDTH,
-                            ROCK_WIDTH * HEIGHT_FACTOR_SUPERSIZE);
+            GROUND_Y - ROCK_WIDTH * (HEIGHT_FACTOR_SUPERSIZE - 0.05f),
+            ROCK_WIDTH,
+            ROCK_WIDTH * HEIGHT_FACTOR_SUPERSIZE);
         this.hasHeightSet = true;
         this.hasYPosSet = true;
         this.isLasting = true;
+        
+        helicopter.numberOfEnemiesSeen--;
+        
+        super.create(helicopter);
     }
 }

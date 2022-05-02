@@ -28,7 +28,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -43,7 +42,6 @@ import java.util.LinkedList;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.BOTTOM;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.LEFT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.NONE;
@@ -151,7 +149,6 @@ public abstract class Enemy extends RectangularGameEntity
 	private static final int MIN_KABOOM_LEVEL = 12;
 	protected static final int MIN_SPIN_SHOOTER_LEVEL = 23;
 	private static final int MIN_ROCK_LEVEL = 27;
-	private static final int MIN_BUSTER_LEVEL = 29;
 	
 	private static final int// für Boss-Gegner
 		NR_OF_BOSS_5_SERVANTS = 5;
@@ -177,7 +174,7 @@ public abstract class Enemy extends RectangularGameEntity
 		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10),
 		SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3);
 		
-	private static final Rectangle
+	protected static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
 								   TURN_DISTANCE.y,
 								   Main.VIRTUAL_DIMENSION.width 
@@ -272,9 +269,9 @@ public abstract class Enemy extends RectangularGameEntity
 		lastTouchedSite;
 	
 	// Farben
-    public Color 
-    	farbe1,
-    	farbe2; 
+    public Color
+		primaryColor,
+    	secondaryColor;
 
     public EnemyModelType
 		model;				// legt das Aussehen (Model) des Gegners fest
@@ -294,12 +291,12 @@ public abstract class Enemy extends RectangularGameEntity
 	private int turnAudioTimer;
 	private int explodingTimer;            // Timer zur überwachung der Zeit zwischen Abschuss und Absturz
 		protected int cloakingTimer;            // reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
-		private int uncloakingSpeed;
+		protected int uncloakingSpeed;
 	protected int shieldMakerTimer;
 	protected int callBack;
 	private int chaosTimer;
-	private int speedup;
-	private int batchWiseMove;
+	protected int speedup;
+	protected int batchWiseMove;
 	protected int shootTimer;
 	protected int spawningHornetTimer;
 	private int turnTimer;
@@ -331,15 +328,15 @@ public abstract class Enemy extends RectangularGameEntity
 		canExplode;            // = true: explodiert bei Kollisionen mit dem Helikopter
         protected boolean canDodge;                // = true: Gegner kann Schüssen ausweichen
         protected boolean canKamikaze;            // = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
-        private boolean canLearnKamikaze;        // = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
-        private boolean canEarlyTurn;
+        protected boolean canLearnKamikaze;        // = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
+        protected boolean canEarlyTurn;
 	protected boolean canMoveChaotic;        // reguliert den zufälligen Richtungswechsel bei Chaos-Flug-Modus
-        private boolean canSinusMove;            // Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
+        protected boolean canSinusMove;            // Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
         protected boolean canTurn;                // Gegner ändert bei Beschuss eventuell seine Flugrichtung in Richtung Helikopter
         protected boolean canInstantTurn;            // Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
         private boolean canFrontalSpeedup;        // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
-        private boolean canLoop;                // = true: Gegner fliegt Loopings
-        private boolean canChaosSpeedup;        // erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
+        protected boolean canLoop;                // = true: Gegner fliegt Loopings
+        protected boolean canChaosSpeedup;        // erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
         private boolean isSpeedBoosted;
 	private boolean isDestroyed;            // = true: Gegner wurde vernichtet
         protected boolean hasHeightSet;            // = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
@@ -350,11 +347,11 @@ public abstract class Enemy extends RectangularGameEntity
         private boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
         private boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
         protected boolean isStunnable;            // = false für Boss 5; bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) "gestunt" werden kann
-        private boolean isCarrier;                // = true
+        protected boolean isCarrier;                // = true
         protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
         private boolean isRecoveringSpeed;
   
-	private AbilityStatusType
+	protected AbilityStatusType
 		tractor;				// = DISABLED (Gegner ohne Traktor); = READY (Traktor nicht aktiv); = 1 (Traktor aktiv)
 	
 	protected EnemyMissileType
@@ -476,8 +473,8 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public void dimmedRepaint()
 	{
-		farbe1 = Colorations.dimColor(farbe1, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-		farbe2 = Colorations.dimColor(farbe2, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+		primaryColor = Colorations.dimColor(primaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+		secondaryColor = Colorations.dimColor(secondaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
 		repaint();
 	}
 	
@@ -923,16 +920,6 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	protected void create(Helicopter helicopter)
 	{
-		if(EnemyType.getDefaultTypes().contains(this.type))
-		{
-			this.createDefaultEnemy();
-		}
-		
-		if(this.model != BARRIER)
-		{
-			this.farbe1 = Colorations.dimColor(this.farbe1, 1.3f);
-			this.farbe2 = Colorations.dimColor(this.farbe1, this.dimFactor);
-		}		
 		if(this.canBecomeMiniBoss()){this.turnIntoMiniBoss(helicopter);}
 		this.rewardModifier = this.isBoss() ? 0 : 5 - Calculations.random(11);
 		this.startingHitpoints = this.hitpoints;
@@ -1036,286 +1023,6 @@ public abstract class Enemy extends RectangularGameEntity
 	}
 	
 
-	
-	private void createDefaultEnemy()
-	{
-		// TODO Switch sollte entfallen
-		switch(this.type)
-		{
-			// Level 1
-			case TINY:
-				this.farbe1 = new Color((180 + Calculations.random(30)),
-										(120 + Calculations.random(30)),
-										(  0 + Calculations.random(15)));
-				this.hitpoints = 2;
-				this.setVarWidth(110);
-				this.targetSpeedLevel.setLocation(0.5 + Math.random(),
-						0.5 * Math.random());
-				this.canExplode = true;
-				this.dimFactor = 1.2f;
-				
-				break;
-
-			// Level 3
-			case SMALL:
-				this.farbe1 = new Color((140 + Calculations.random(25)),
-										( 65 + Calculations.random(35)),
-										(  0 + Calculations.random(25)));
-				this.hitpoints = 3 + Calculations.random(3);
-				this.setVarWidth(125);
-				this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(),
-						0.5*Math.random());
-				this.canExplode = true;
-				
-				break;
-
-			// level 5
-			case RUNABOUT:
-				this.farbe1 = new Color((100 + Calculations.random(30)),
-						(100 + Calculations.random(30)),
-						(40 + Calculations.random(25)));
-				this.hitpoints = 2 + Calculations.random(2);
-				this.setVarWidth(100);
-				this.targetSpeedLevel.setLocation(2 + 2*Math.random(),
-						2.5 + 1.5*Math.random());
-				this.canExplode = true;
-				
-				break;
-
-			// Level 7
-			case FREIGHTER:
-				this.model = CARGO;
-				this.farbe1 = new Color((100 + Calculations.random(30)),
-						(50 + Calculations.random(30)),
-						(45 + Calculations.random(20)));
-				this.setHitpoints(25);
-				this.setVarWidth(145);
-				this.targetSpeedLevel.setLocation(0.5 + Math.random(),
-						0.5*Math.random());
-				this.canEarlyTurn = true;
-				this.canTurn = true;
-				
-				break;
-
-			// Level 11
-			case BATCHWISE:
-				this.farbe1 = new Color((135 + Calculations.random(30)),
-						(80+ Calculations.random(20)),
-						(85 + Calculations.random(30)));
-				this.setHitpoints(16);
-				this.setVarWidth(130);
-				this.targetSpeedLevel.setLocation(	7 + 4*Math.random(),
-													1 + 0.5*Math.random());
-				this.batchWiseMove = 1;
-				
-				break;
-
-			// Level 13
-			case SINUS:
-				this.farbe1 = new Color((185 + Calculations.random(40)),
-						( 70 + Calculations.random(30)),
-						(135 + Calculations.random(40)));
-				this.setHitpoints(6);
-				this.setVarWidth(110);
-				this.targetSpeedLevel.setLocation(2.5 + 2.5*Math.random(), 11);
-
-				this.setInitialY(TURN_FRAME.getCenterY());
-				this.canSinusMove = true;
-				this.canExplode = true;
-				
-				break;
-
-			// Level 16
-			case DODGER:
-				this.farbe1 = new Color((85 + Calculations.random(20)),
-						(35 + Calculations.random(30)),
-						(95 + Calculations.random(30)));
-				this.setHitpoints(24);
-				this.setVarWidth(170);
-				this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(),
-						0.5*Math.random());
-				this.canDodge = true;
-				
-				break;
-
-			// Level 21
-			case CHAOTIC:
-				this.farbe1 = new Color((150 + Calculations.random(20)),
-						(130 + Calculations.random(25)),
-						( 75 + Calculations.random(30)));
-				this.setHitpoints(22);
-				this.setVarWidth(125);
-				this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(),
-						6.5 + 2*Math.random());
-				this.canMoveChaotic = true;
-				this.canExplode = true;
-				
-				break;
-
-			// Level 24
-			case CALLBACK:
-				this.farbe1 = new Color((70 + Calculations.random(40)),
-						(130 + Calculations.random(50)),
-						(30 + Calculations.random(45)));
-				this.setHitpoints(30);
-				this.setVarWidth(95);
-				this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(),
-						5 + 2*Math.random());
-				this.canExplode = true;
-				this.callBack = 1;
-				
-				break;
-
-			// Level 26
-			case SHOOTER:
-				this.model = CARGO;
-
-				this.farbe1 = new Color(80 + Calculations.random(25),
-						80 + Calculations.random(25),
-						80 + Calculations.random(25));
-				this.setHitpoints(60);
-				this.setVarWidth(80);
-				this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
-						0.5 * Math.random());
-				this.canDodge = true;
-				this.shootTimer = 0;
-				this.shootingRate = 35;
-				
-				break;
-
-			// Level 31
-			case CLOAK:
-				this.model = CARGO;
-
-				this.farbe1 = Colorations.cloaked;
-				this.setHitpoints(100);
-				this.setVarWidth(85);
-				this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
-						1 + 0.5*Math.random());
-				this.canLearnKamikaze = true;
-				this.canInstantTurn = true;
-				this.cloakingTimer = CLOAKING_TIME + CLOAKED_TIME;
-				this.uncloakingSpeed = 2;
-				this.canEarlyTurn = true;
-				this.canExplode = true;
-				
-				break;
-
-			// Level 35
-			case LONELY_SPEEDER:
-				this.initializeLonelyBolt();
-				break;
-
-			case CARRIER:
-				this.model = CARGO;
-
-				this.farbe1 = new Color(70 + Calculations.random(15),
-						60 + Calculations.random(10),
-						45 + Calculations.random(10)); // new Color(25 + MyMath.random(35), 70 + MyMath.random(45), 25 + MyMath.random(35));
-				this.setHitpoints(450);
-				this.setVarWidth(165);
-				this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
-						0.5 * Math.random());
-				this.canEarlyTurn = true;
-				this.isCarrier = true;
-				this.canTurn = true;
-				
-				break;
-
-			// Level 37
-			case CRAZY:
-				this.farbe1 = new Color((180 + Calculations.random(50)),
-						(230 + Calculations.random(20)),
-						(20 + Calculations.random(60)));
-				this.setHitpoints(140);
-				this.setVarWidth(115);
-				this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(),
-						0.5 + Math.random());
-				this.canExplode = true;
-				this.canChaosSpeedup = true;
-				this.canDodge = true;
-				
-				break;
-
-			// Level 41
-			case AMBUSH:
-				this.farbe1 = new Color( 30 + Calculations.random(40),
-						60 + Calculations.random(40),
-						120 + Calculations.random(40));
-				this.setHitpoints(150);
-				this.setVarWidth(95);
-				this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0);
-
-				this.canExplode = true;
-				this.speedup = READY;
-				
-				break;
-
-			 // Level 43
-			case LOOPING:
-				this.farbe1 = Colorations.cloaked;
-				this.setHitpoints(330);
-				this.setVarWidth(105);
-				this.targetSpeedLevel.setLocation(9, 11);
-
-				this.direction.y = -1;
-				this.setInitialY(TURN_FRAME.getCenterY());
-				this.cloakingTimer = 0;
-				this.canLoop = true;
-				
-				break;
-
-			// Level 45
-			case CAPTURING:
-				this.farbe1 = new Color(  5 + Calculations.random(55),
-						105 + Calculations.random(40),
-						90 + Calculations.random(30));
-				this.setHitpoints(520);
-				this.setVarWidth(115);
-				this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(),
-						4.5 + 1.5*Math.random());
-				this.tractor = AbilityStatusType.READY;
-				this.canExplode = true;
-				
-				break;
-
-			// Level 46
-			case TELEPORTING:
-				this.model = CARGO;
-
-				this.farbe1 = new Color(190 + Calculations.random(40),
-						10 + Calculations.random(60),
-						15 + Calculations.random(60));
-				this.setHitpoints(500);
-				this.setVarWidth(130);
-				this.targetSpeedLevel.setLocation( 1 + Math.random(),
-						0.5*Math.random());
-				this.teleportTimer = READY;
-				this.canKamikaze = true;
-				
-				break;
-		}
-	}
-	
-	private void initializeLonelyBolt()
-	{
-		initializeBolt();
-		this.targetSpeedLevel.setLocation(  12  + 3.5 * Math.random(),
-											0.5 + 3   * Math.random());
-		if(Calculations.tossUp()){this.callBack = 1;}
-	}
-	
-	protected void initializeBolt()
-	{
-		this.farbe1 = new Color(75 + Calculations.random(30),
-			75 + Calculations.random(30),
-			75 + Calculations.random(30) );
-		this.setHitpoints(26);
-		this.setVarWidth(70);
-		
-		this.canExplode = true;
-	}
-
 	private boolean canBecomeMiniBoss()
 	{		
 		return 	currentMiniBoss == null
@@ -1373,36 +1080,11 @@ public abstract class Enemy extends RectangularGameEntity
 						  Math.max(0, Math.min(y, GROUND_Y-this.bounds.getWidth())));
 	}
 	
-	protected void setBarrierShootingProperties()
-	{
-		if(this.barrierTeleportTimer != DISABLED || this.burrowTimer != DISABLED)
-		{
-			this.shootingRate = 35 + Calculations.random(15);
-		}
-		else
-		{
-			this.shootingRate = 25 + Calculations.random(25);
-		}
-			
-		if(this.barrierTeleportTimer == DISABLED){this.shootPause = 2 * this.shootingRate + 20 + Calculations.random(40);}
-		this.shotsPerCycle = 2 + Calculations.random(9);
-		this.shootingCycleLength = this.shootPause + this.shootingRate * this.shotsPerCycle;
-		this.shotSpeed = 5 + Calculations.random(6);
-		if(this.barrierTeleportTimer != DISABLED || (Calculations.tossUp(0.35f) && Events.level >= MIN_BUSTER_LEVEL))
-		{
-			if(this.barrierTeleportTimer == DISABLED){this.farbe1 = Colorations.bleach(new Color(170, 0, 255), 0.6f);}
-			this.shotType = BUSTER;
-		}
-		else
-		{
-			this.farbe1 = Colorations.bleach(Color.red, 0.6f);
-			this.shotType = DISCHARGER;
-		}
-	}
+	
 
-	protected void setHitpoints(int hitpoints)
+	protected void setHitPoints(int hitPoints)
 	{
-		this.hitpoints = hitpoints + Calculations.random(hitpoints/2);
+		this.hitpoints = hitPoints + Calculations.random(hitPoints/2);
 	}
 	
 	private void setX(double x)
@@ -3190,8 +2872,8 @@ public abstract class Enemy extends RectangularGameEntity
 		this.isDestroyed = true;
 		if(this.cloakingTimer > 0){this.uncloak(DISABLED);}
 		this.teleportTimer = DISABLED;
-		this.farbe1 = Colorations.dimColor(this.farbe1, Colorations.DESTRUCTION_DIM_FACTOR);
-		this.farbe2 = Colorations.dimColor(this.farbe2, Colorations.DESTRUCTION_DIM_FACTOR);
+		this.primaryColor = Colorations.dimColor(this.primaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
+		this.secondaryColor = Colorations.dimColor(this.secondaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
 		
 		this.repaint();
 	
@@ -3214,8 +2896,8 @@ public abstract class Enemy extends RectangularGameEntity
 	private void uncloak(int nextCloakingState)
 	{
 		this.alpha = 255;
-		this.farbe1 = Colorations.setAlpha(this.farbe1, 255);
-		this.farbe2 = Colorations.setAlpha(this.farbe2, 255);
+		this.primaryColor = Colorations.setAlpha(this.primaryColor, 255);
+		this.secondaryColor = Colorations.setAlpha(this.secondaryColor, 255);
 		this.cloakingTimer = nextCloakingState;
 	}
 

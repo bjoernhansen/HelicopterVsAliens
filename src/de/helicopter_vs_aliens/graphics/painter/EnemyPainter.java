@@ -424,13 +424,13 @@ public class EnemyPainter extends Painter<Enemy>
         {
             if(enemy.isDestroyed() && Events.timeOfDay == NIGHT)
             {
-                mainColorLight = Colorations.dimColor(enemy.farbe1, 1.3f * Colorations.NIGHT_DIM_FACTOR);
-                mainColorDark  = Colorations.dimColor(enemy.farbe2, 1.3f * Colorations.NIGHT_DIM_FACTOR);
+                mainColorLight = Colorations.dimColor(enemy.primaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
+                mainColorDark  = Colorations.dimColor(enemy.secondaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
             }
             else
             {
-                mainColorLight = enemy.farbe1;
-                mainColorDark  = enemy.farbe2;
+                mainColorLight = enemy.primaryColor;
+                mainColorDark  = enemy.secondaryColor;
             }
         }
         else
@@ -442,7 +442,7 @@ public class EnemyPainter extends Painter<Enemy>
         if(enemy.model == BARRIER){barColor = Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];}
         else if(!enemy.isDestroyed() && (enemy.getTractor() == AbilityStatusType.ACTIVE || enemy.getShootTimer() > 0 || enemy.isShielding())){barColor = Colorations.variableGreen;}
         else if(!enemy.isDestroyed() && !imagePaint && enemy.isInvincible()){barColor = Color.green;}
-        else if(enemy.isMiniBoss){barColor = enemy.farbe2;}
+        else if(enemy.isMiniBoss){barColor = enemy.secondaryColor;}
         else{barColor = Colorations.enemyGray;}
         inactiveNozzleColor = Colorations.INACTIVE_NOZZLE;
         

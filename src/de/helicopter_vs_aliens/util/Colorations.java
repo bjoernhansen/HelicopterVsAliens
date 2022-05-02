@@ -25,7 +25,8 @@ public final class Colorations
 	public static final float 
 		NIGHT_DIM_FACTOR = 0.5f,		// Dimm-Faktor für Objekte bei Nacht
 		BARRIER_NIGHT_DIM_FACTOR = 0.7f,
-		DESTRUCTION_DIM_FACTOR = 0.65f;	// Dimm-Faktor für die Farbe zerstörter Gegner
+		DESTRUCTION_DIM_FACTOR = 0.65f, // Dimm-Faktor für die Farbe zerstörter Gegner
+		BLEACH_FACTOR = 0.6f;
 		
 	// Variablen für die Sonnenanimation
 	public static int
@@ -58,11 +59,15 @@ public final class Colorations
 		sky  = new Color (157,220,MAX_VALUE),
 		pink = new Color (MAX_VALUE, 91,185),
 		endlessEnergyViolet = new Color(170, 0, MAX_VALUE),
+		
 		windowBlue = new Color (30,40,95),
 		cloakedBossEye = new Color(MAX_VALUE, 180, 180),
 		darkBlue = new Color (0, 0, 80),		 
 		green = new Color (65,205,140),
+		
 		hitPoints = new Color (80, 190, 140),
+		shieldingBarrierTurquoise = new Color(122 ,177 ,171),
+		cloaked = new Color(79, 110, 128),
 		arrowGreen = new Color (0, 170, 0),
 		darkArrowGreen = new Color (0, 100, 0),
 		darkYellow = new Color (120, 120, 0),	
@@ -70,6 +75,9 @@ public final class Colorations
 		lighterYellow = new Color (MAX_VALUE, MAX_VALUE, 225),
 		translucentSun = new Color(MAX_VALUE, MAX_VALUE, 0, 20),
 		lightOrange = new Color (MAX_VALUE, 210, 0),
+	
+		orange = new Color(MAX_VALUE, MAX_VALUE/2, 0),
+		bleachedOrange = bleach(orange, BLEACH_FACTOR),
 		darkerOrange = new Color(200, 120, 0),
 		red = new Color(160, 40, 60),	
 		brown = new Color (180,150,100),
@@ -85,7 +93,11 @@ public final class Colorations
 		lighterGray = new Color (180,180,180),
 		lightestGray = new Color (210,210,210), 	
 		translucentWhite = new Color(MAX_VALUE, MAX_VALUE, MAX_VALUE, 35),
-		cloaked = new Color(79, 110, 128),
+		bleachedRed = bleach(Color.red, BLEACH_FACTOR),
+		bleachedGreen = Colorations.bleach(Color.green, BLEACH_FACTOR),
+		bleachedYellow = Colorations.bleach(Color.yellow, BLEACH_FACTOR),
+		bleachedViolet = bleach(Colorations.endlessEnergyViolet, BLEACH_FACTOR),
+		bleachedCloaked = Colorations.bleach(Colorations.cloaked, BLEACH_FACTOR),
 		detected = new Color(MAX_VALUE, 0, 0, 35),	 // TODO wieso unused?
 		INACTIVE_NOZZLE = new Color(MAX_VALUE, 192, 129),
 		HS_GREEN = new Color(130, MAX_VALUE, 130),
