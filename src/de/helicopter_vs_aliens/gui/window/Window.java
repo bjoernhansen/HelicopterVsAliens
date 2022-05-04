@@ -27,6 +27,7 @@ import de.helicopter_vs_aliens.model.helicopter.Roch;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
@@ -95,6 +96,7 @@ public abstract class Window implements Paintable
 		crossTimer,						// regulieren die Dauer [frames] der Block-Kreuz-Anzeige auf dem StartScreen
 		unlockedTimer;					// regulieren die Dauer [frames] der Anzeige des freigeschalteten Helicopters
 	
+	// in EnumMap überführen
 	public static final int[]
 		effectTimer = new int[HelicopterType.count()];	// regulieren die Helikopter-Animationen im StartScreen-Menü
 	 
@@ -136,9 +138,9 @@ public abstract class Window implements Paintable
 		
     public static Label
 		label;
-	
-	public static final PowerUp[]
-		collectedPowerUp = new PowerUp [MAXIMUM_COLLECTED_POWERUPS_COUNT];
+		
+	public static final Map<PowerUpType, PowerUp>
+		collectedPowerUps = new EnumMap<>(PowerUpType.class);
 	
 	public static final Rectangle[]
 		helicopterFrame = new Rectangle[NUMBER_OF_START_SCREEN_HELICOPTERS];
@@ -161,6 +163,26 @@ public abstract class Window implements Paintable
 	
 	private static Button
 		highlightedButton = null;
+	
+	public static void removeCollectedPowerUp(PowerUpType powerUpType)
+	{
+		collectedPowerUps.get(powerUpType).setCollected();
+		collectedPowerUps.remove(powerUpType);
+	}
+	
+	public static void changeCollectedPowerUpColorationForFading(PowerUpType powerUpType, int remainingTimeBoosted)
+	{
+		int alphaStepSize = 17 * (remainingTimeBoosted % 16);
+		if(remainingTimeBoosted % 32 > 15)
+		{
+			collectedPowerUps.get(powerUpType)
+							 .setAlpha(alphaStepSize);
+		} else
+		{
+			collectedPowerUps.get(powerUpType)
+							 .setAlpha(Colorations.MAX_VALUE - alphaStepSize);
+		}
+	}
 	
 	
 	/** Paint-Methoden **/
@@ -506,11 +528,15 @@ public abstract class Window implements Paintable
 
 	public static void updateCollectedPowerUps(Helicopter helicopter, PowerUp powerUp)
 	{
-		helicopter.powerUpTimer[powerUp.getType().ordinal()] = Math.max(helicopter.powerUpTimer[powerUp.getType().ordinal()], Helicopter.POWERUP_DURATION);
-		if(collectedPowerUp[powerUp.getType().ordinal()] == null){powerUp.moveToStatusbar();}
+		PowerUpType powerUpType = powerUp.getType();
+		helicopter.restartPowerUpTimer(powerUpType);
+		if(collectedPowerUps.containsKey(powerUpType))
+		{
+			collectedPowerUps.get(powerUpType).setOpaque();
+		}
 		else
 		{
-			collectedPowerUp[powerUp.getType().ordinal()].setOpaque();
+			powerUp.moveToStatusbar();
 		}
 	}
 

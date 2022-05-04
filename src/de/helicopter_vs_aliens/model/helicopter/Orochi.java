@@ -113,6 +113,9 @@ public final class Orochi extends Helicopter
     }
     
     @Override
+    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion){}
+    
+    @Override
     boolean canRegenerateEnergy()
     {
         return super.canRegenerateEnergy()

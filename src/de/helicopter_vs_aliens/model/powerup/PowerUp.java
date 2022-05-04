@@ -28,9 +28,6 @@ public class PowerUp extends RectangularGameEntity
         SIZE = 30,
 		POWERUP_STOP_POSITION = 1004;
 		
-	private static final double
-		POWER_UP_WORTH_MULTIPLIER = 7.5;
-		
 	private int
 		direction,
         worth;		    // nur für PowerUps vom Typ BONUS_INCOME; bestimmt, wie viel Geld der Spieler für das Einsammeln erhält
@@ -115,7 +112,20 @@ public class PowerUp extends RectangularGameEntity
 		return POWERUP_STOP_POSITION < (this.bounds.getX() - this.speed.getX() + 20);
 	}
 	
-	private void make(double x, double y, PowerUpType powerUpType, int powerUpWorth, int powerUpDirection)
+	private void initialize()
+	{
+		this.initialize(0, 0, 0, 0);
+	}
+	
+	private void initialize(Enemy enemy, int powerUpDirection)
+	{
+		this.initialize( enemy.getBounds().getX(),
+					     enemy.getBounds().getY(),
+					     enemy.getBounty(),
+					     powerUpDirection );
+	}
+	
+	private void initialize(double x, double y, int powerUpWorth, int powerUpDirection)
 	{
 		this.bounds.setRect(x, y, SIZE, SIZE);
 		this.setPaintBounds(SIZE, SIZE);
@@ -124,7 +134,6 @@ public class PowerUp extends RectangularGameEntity
 		this.isInStatusBar = false;
 		this.speed.setLocation(0, 0);
 		this.direction = powerUpDirection;
-		this.type = powerUpType;
         this.surfaceColor = this.type.getSurfaceColor();
         this.crossColor = this.type.getCrossColor();
 		if(this.type == BONUS_INCOME)
@@ -141,7 +150,7 @@ public class PowerUp extends RectangularGameEntity
 	private void collect(Helicopter helicopter)
 	{
 		setCollected();
-		if(this.type.ordinal() > 3 || helicopter.powerUpTimer[this.type.ordinal()] ==  0)
+		if(!PowerUpType.getStatusBarPowerUpTypes().contains(this.type) || !helicopter.isBoosted(this.type))
 		{
 			Audio.play(Audio.powerAnnouncer[this.type.ordinal()]);
 		}
@@ -158,7 +167,7 @@ public class PowerUp extends RectangularGameEntity
 			if(!Events.isBossLevel()){
 				Window.updateCollectedPowerUps(helicopter, this);}
 		}
-		else if(this.type == UNLIMITRED_ENERGY)
+		else if(this.type == UNLIMITED_ENERGY)
 		{
 			Audio.play(Audio.shieldUp);
 			if(!Events.isBossLevel())
@@ -194,34 +203,48 @@ public class PowerUp extends RectangularGameEntity
 
 	public void moveToStatusbar()
 	{
-		Window.collectedPowerUp[this.type.ordinal()] = this;
+		Window.collectedPowerUps.put(this.type, this);
 		this.speed.setLocation(0, 0);
 		this.isInStatusBar = true;
 		this.wasCollected = false;
 		this.bounds.setRect(100, 432, Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
-
-	public static void activate(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, Enemy enemy,
-								PowerUpType type, boolean isIntendedForStatusBar)
+	
+	public void activateAndMoveToStatusBar(	EnumMap<CollectionSubgroupType,	LinkedList<PowerUp>> powerUps)
 	{
-		PowerUp pu = Controller.getInstance().getGameEntityRecycler().retrieve(PowerUp.class);
-		
-		if(enemy != null)
-		{
-			pu.make(enemy.getBounds().getX(),
-					enemy.getBounds().getY(),
-					type,
-					(int)(POWER_UP_WORTH_MULTIPLIER * enemy.type.getStrength()),
-					helicopter.getBounds().getX() > enemy.getBounds().getX()
-					|| helicopter.canImmobilizePowerUp() ? -1 : 1 );
-		}
-		else
-		{
-		    pu.make(0, 0, type, 0, 0);
-		}
-		powerUp.get(ACTIVE).add(pu);
-		if(isIntendedForStatusBar){pu.moveToStatusbar();}
+		this.initialize();
+		this.moveToStatusbar();
+		powerUps.get(ACTIVE).add(this);
+	}
+
+	public static void activateInstance(Helicopter helicopter,
+										EnumMap<CollectionSubgroupType,
+								 		LinkedList<PowerUp>> powerUps,
+										Enemy enemy)
+	{
+		PowerUpType powerUpType = enemy.getTypeOfRandomlyDroppedPowerUp();
+		int powerUpDirection = PowerUp.getPowerUpDirection(helicopter, enemy);
+		PowerUp powerUp = PowerUp.getInstance(powerUpType);
+		powerUp.initialize(enemy, powerUpDirection);
+		powerUps.get(ACTIVE).add(powerUp);
+	}
+	
+	public static PowerUp getInstance(PowerUpType powerUpType)
+	{
+		PowerUp powerUp = Controller.getInstance().getGameEntityRecycler().retrieve(PowerUp.class);
+		powerUp.setType(powerUpType);
+		return powerUp;
+	}
+	
+	public void setType(PowerUpType type)
+	{
+		this.type = type;
+	}
+	
+	private static int getPowerUpDirection(Helicopter helicopter, Enemy enemy)
+	{
+		return helicopter.isRightOf(enemy) || helicopter.canImmobilizePowerUp() ? -1 : 1;
 	}
 	
 	private void stop()

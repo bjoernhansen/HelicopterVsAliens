@@ -43,7 +43,6 @@ import de.helicopter_vs_aliens.model.enemy.defaultEnemy.SmallCruiser;
 import de.helicopter_vs_aliens.model.enemy.defaultEnemy.TeleportingEnemy;
 import de.helicopter_vs_aliens.model.enemy.defaultEnemy.TinyVessel;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -116,7 +115,10 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         BARRIERS = Collections.unmodifiableSet(EnumSet.range(SMALL_BARRIER, CLOAKED_BARRIER)),
         CLOAKABLE_AS_MINI_BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(LONELY_SPEEDER, TELEPORTING));
     
-        
+    
+    private static final float
+        BOUNTY_MULTIPLIER = 7.5f;
+    
     private final int
         strength; // Stärke des Gegners; bestimmt die Höhe der Belohnung bei Abschuss
     
@@ -205,5 +207,10 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     public Class<? extends Enemy> getCorrespondingClass()
     {
         return enemyClass;
+    }
+    
+    public int getBounty()
+    {
+        return (int)(BOUNTY_MULTIPLIER * this.getStrength());
     }
 }

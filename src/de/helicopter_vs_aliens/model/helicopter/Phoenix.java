@@ -188,13 +188,13 @@ public final class Phoenix extends Helicopter
     public void initMenuEffect(int i)
     {
         super.initMenuEffect(i);
-        this.powerUpTimer[INVINCIBLE.ordinal()] = Integer.MAX_VALUE;
+        this.becomeBoosteredPermanently(INVINCIBLE);
     }
     
     @Override
     public void stopMenuEffect()
     {
-        this.powerUpTimer[INVINCIBLE.ordinal()] = 0;
+        this.turnOfBooster(INVINCIBLE);
     }
     
     @Override
@@ -233,14 +233,22 @@ public final class Phoenix extends Helicopter
             this.nextLocation.setLocation(x, y);
             this.correctAndSetCoordinates();
             
-            if(!this.isActive || !this.isRotorSystemActive){this.setActivationState(true);}
+            if(!this.isActive || !this.isRotorSystemActive){this.activate();}
             if(this.tractor != null){this.stopTractor();}
-            this.powerUpTimer[INVINCIBLE.ordinal()] = Math.max(this.powerUpTimer[INVINCIBLE.ordinal()], TELEPORT_INVULNERABILITY_TIME);
+            
+            this.gainTeleportInvincibility();
+            
+            
             this.bonusKills = 0;
             this.enhancedRadiationTimer = TELEPORT_INVULNERABILITY_TIME;
             this.bonusKillsTimer = NICE_CATCH_TIME;
             this.bonusKillsMoney = 0;
         }
+    }
+    
+    private void gainTeleportInvincibility()
+    {
+        this.becomeBoostered(INVINCIBLE, TELEPORT_INVULNERABILITY_TIME);
     }
     
     private boolean canTeleportTo(int x, int y)

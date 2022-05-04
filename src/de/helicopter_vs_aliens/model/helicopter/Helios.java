@@ -99,23 +99,31 @@ public final class Helios extends Helicopter
         this.activatePowerUpGenerator(powerUp);
     }
 
-    private void activatePowerUpGenerator(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
+    private void activatePowerUpGenerator(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
     {
-        this.powerUpGeneratorTimer = (int)(0.4f * POWERUP_DURATION);
+        this.powerUpGeneratorTimer = (int)(0.4f * POWER_UP_DURATION);
         this.consumeSpellCosts();
         Calculations.randomize();
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < 3; i++) // TODO 3 is magic number
         {
+            // TODO Implementation verbessern
             if(Calculations.getRandomOrderValue(i) == REPARATION.ordinal())
             {
-                if(i == 0){
-                    Audio.play(Audio.powerAnnouncer[REPARATION.ordinal()]);}
+                if(i == 0)
+                {
+                    Audio.play(Audio.powerAnnouncer[REPARATION.ordinal()]);
+                }
                 this.useReparationPowerUp();
             }
             else
             {
-                this.getPowerUp( powerUp, PowerUpType.getValues()[Calculations.getRandomOrderValue(i)],
-                        false, i == 0);
+                PowerUpType powerUpType = PowerUpType.getValues().get(Calculations.getRandomOrderValue(i));
+                if(i == 0)
+                {
+                    Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);
+                }
+                this.restartPowerUpTimer(powerUpType);
+                activatePowerUp(powerUps, powerUpType);
             }
             if(Calculations.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}
         }
@@ -131,13 +139,14 @@ public final class Helios extends Helicopter
     public void initMenuEffect(int i)
     {
         super.initMenuEffect(i);
-        this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] = Integer.MAX_VALUE;
+        // TODO analysieren, ob man nicht direkt die richtige Zeit für den Effekt wählen kann
+        this.becomeBoosteredPermanently(TRIPLE_DAMAGE);
     }
     
     @Override
     public void stopMenuEffect()
     {
-        this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] = 0;
+        this.turnOfBooster(TRIPLE_DAMAGE);
     }
     
     @Override

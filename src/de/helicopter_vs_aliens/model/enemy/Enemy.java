@@ -102,6 +102,9 @@ public abstract class Enemy extends RectangularGameEntity
 	protected static final float SPIN_SHOOTER_RATE 		   	= 0.55f;
 	private static final float EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f;
 	
+	public static final float
+		REPARATION_POWER_UP_DROP_RATE = 0.14f;
+	
 	private static final float// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
 		RADIATION_DAMAGE_FACTOR = 1.5f;            // Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
 		private static final float TELEPORT_DAMAGE_FACTOR = 4f;            // Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
@@ -560,7 +563,7 @@ public abstract class Enemy extends RectangularGameEntity
 			wasEnemyCreationPaused = true;
 			nextBossEnemyType = EnemyType.BOSS_1;
 			selection = 0;
-			helicopter.powerUpDecay();
+			helicopter.startDecayOfAllCurrentBooster();
 		}	  
 		else if(level == 11)
 		{
@@ -603,7 +606,7 @@ public abstract class Enemy extends RectangularGameEntity
 			wasEnemyCreationPaused = true;
 			nextBossEnemyType = EnemyType.BOSS_2;
 			selection = 0;
-			helicopter.powerUpDecay();
+			helicopter.startDecayOfAllCurrentBooster();
 			if(helicopter.isCountingAsFairPlayedHelicopter() && !helicopter.getType().hasReachedLevel20())
 			{
 				Events.helicoptersThatReachedLevel20.add(helicopter.getType());
@@ -644,7 +647,7 @@ public abstract class Enemy extends RectangularGameEntity
 			wasEnemyCreationPaused = true;
 			nextBossEnemyType = EnemyType.BOSS_3;
 			selection = 0;	
-			helicopter.powerUpDecay();
+			helicopter.startDecayOfAllCurrentBooster();
 		}
 		else if(level == 31)
 		{
@@ -681,7 +684,7 @@ public abstract class Enemy extends RectangularGameEntity
 			wasEnemyCreationPaused = true;
 			nextBossEnemyType = EnemyType.BOSS_4;
 			selection = 0;
-			helicopter.powerUpDecay();
+			helicopter.startDecayOfAllCurrentBooster();
 		}			  
 		else if(level == 41)
 		{
@@ -719,7 +722,7 @@ public abstract class Enemy extends RectangularGameEntity
 			wasEnemyCreationPaused = true;
 			nextBossEnemyType = EnemyType.FINAL_BOSS;
 			selection = 0;
-			helicopter.powerUpDecay();
+			helicopter.startDecayOfAllCurrentBooster();
 		}
 	}
 	
@@ -2867,7 +2870,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}	
 		else
 		{
-			if(this.canDropPowerUp()){this.dropPowerUp(helicopter, powerUp);}
+			if(this.canDropPowerUp()){this.dropRandomPowerUp(helicopter, powerUp);}
 		}
 		this.isDestroyed = true;
 		if(this.cloakingTimer > 0){this.uncloak(DISABLED);}
@@ -2956,16 +2959,30 @@ public abstract class Enemy extends RectangularGameEntity
 				|| this.type == EnemyType.BOSS_4 );
 	}
 	
-	public void dropPowerUp(Helicopter helicopter,
-							EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp)
+	public void dropRandomPowerUp(Helicopter helicopter,
+								  EnumMap<CollectionSubgroupType,
+								  LinkedList<PowerUp>> powerUps)
 	{
-		PowerUp.activate(helicopter, 
-				 powerUp, 
-				 this, 
-				 Calculations.tossUp(0.14f)
-					? REPARATION
-					: PowerUpType.getValues()[Calculations.random(this.type.isMajorBoss() ? PowerUpType.size() - 1 : PowerUpType.size())], false);
-		
+		PowerUp.activateInstance(helicopter, powerUps, this);
+	}
+	
+	public PowerUpType getTypeOfRandomlyDroppedPowerUp()
+	{
+		return Calculations.tossUp(REPARATION_POWER_UP_DROP_RATE)
+				? REPARATION
+				: PowerUpType.getValues().get(this.getRandomIndexOfDroppablePowerUp());
+	}
+	
+	private int getRandomIndexOfDroppablePowerUp()
+	{
+		return Calculations.random(this.getMaximumDroppablePowerUpIndex());
+	}
+	
+	private int getMaximumDroppablePowerUpIndex()
+	{
+		// major bosses are not supposed to drop bonus income powerUps
+		int indexReductionValue = this.type.isMajorBoss() ? - 1 : 0;
+		return PowerUpType.valueCount() - indexReductionValue;
 	}
 	
 	public int calculateReward(Helicopter helicopter)
@@ -3227,7 +3244,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			Events.killsAfterLevelUp++;
 		}
-		if(this.canDropPowerUp()){this.dropPowerUp(helicopter, powerUps);}
+		if(this.canDropPowerUp()){this.dropRandomPowerUp(helicopter, powerUps);}
 		if(this.isMiniBoss){Audio.play(Audio.applause2);}
 	}
 	
@@ -3245,6 +3262,11 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		return 	this.cloakingTimer > Enemy.CLOAKING_TIME
 			&& this.cloakingTimer <= Enemy.CLOAKING_TIME + Enemy.CLOAKED_TIME;
+	}
+	
+	public int getBounty()
+	{
+		return type.getBounty();
 	}
 	
 	public boolean isDestroyed()

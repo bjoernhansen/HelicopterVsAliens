@@ -1,60 +1,70 @@
 package de.helicopter_vs_aliens.model.powerup;
 
-import java.awt.*;
+import de.helicopter_vs_aliens.util.Colorations;
 
-import static de.helicopter_vs_aliens.util.Colorations.golden;
-import static java.awt.Color.*;
+import java.awt.Color;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 
 public enum PowerUpType
 {
-    TRIPLE_DAMAGE(4),
-    INVINCIBLE(3),
-    UNLIMITRED_ENERGY(1),
-    BOOSTED_FIRE_RATE(5),
-    REPARATION(2),
-    BONUS_INCOME(0);
+    TRIPLE_DAMAGE(4, Color.magenta, Color.black),
+    INVINCIBLE(3, Color.green, Color.yellow),
+    UNLIMITED_ENERGY(1, Color.blue, Color.cyan),
+    BOOSTED_FIRE_RATE(5, Color.red, Color.orange),
+    REPARATION(2, Color.white, Color.red),
+    BONUS_INCOME(0, Color.orange, Colorations.golden);
     
     
-    private static final PowerUpType[]
-        defensiveCopyOfValues = values();
+    private static final List<PowerUpType>
+        VALUES = List.of(values());
         
-    private static final Color[]
-        surfaceColors = {magenta, green,  blue, red,    white, orange},
-        crossColors =   {black,   yellow, cyan, orange, red,   golden};
-    
+    private static final Set<PowerUpType>
+        STATUS_BAR_POWER_UP_TYPES = Set.copyOf(EnumSet.range(TRIPLE_DAMAGE, BOOSTED_FIRE_RATE));
+        
     private final int
         menuPosition;
     
+    private final Color
+        surfaceColor,
+        crossColor;
     
-    PowerUpType(int menuPosition)
+    PowerUpType(int menuPosition, Color surfaceColor, Color crossColor)
     {
         this.menuPosition = menuPosition;
+        this.surfaceColor = surfaceColor;
+        this.crossColor = crossColor;
     }
-    
-    // TODO es sollte eine List zurück gegeben werden defensiveCopyOfValues sollte auch bereits eine List sein (immutable)
-    public static PowerUpType[] getValues()
+
+    public static List<PowerUpType> getValues()
     {
-        return defensiveCopyOfValues;
+        return VALUES;
     }
     
     public Color getSurfaceColor()
     {
-        return surfaceColors[this.ordinal()];
+        return surfaceColor;
     }
     
     public Color getCrossColor()
     {
-        return crossColors[this.ordinal()];
+        return crossColor;
     }
     
-    public static int size()
+    public static int valueCount()
     {
-        return getValues().length;
+        return getValues().size();
     }
     
     public int getMenuPosition()
     {
         return menuPosition;
+    }
+    
+    public static Set<PowerUpType> getStatusBarPowerUpTypes()
+    {
+        return STATUS_BAR_POWER_UP_TYPES;
     }
 }

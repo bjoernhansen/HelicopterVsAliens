@@ -415,6 +415,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
 	}
 	
+	// TODO Aufrufe kontrollieren und ggf. ersetzen durch intern genutzte Variable plus "Dependency Injection"
 	public static Controller getInstance()
 	{
 		if(Optional.ofNullable(instance).isEmpty())

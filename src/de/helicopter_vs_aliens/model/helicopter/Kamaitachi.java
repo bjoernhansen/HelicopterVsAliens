@@ -80,7 +80,7 @@ public final class Kamaitachi extends Helicopter
     {
         Audio.play(Audio.plasmaOn);
         this.consumeSpellCosts();
-        this.plasmaActivationTimer = POWERUP_DURATION;
+        this.plasmaActivationTimer = POWER_UP_DURATION;
     }
 
     @Override
@@ -154,7 +154,7 @@ public final class Kamaitachi extends Helicopter
         super.updateMenuEffect();
         if(Window.effectTimer[this.getType().ordinal()] == 65)
         {
-            this.plasmaActivationTimer = POWERUP_DURATION/4;
+            this.plasmaActivationTimer = POWER_UP_FADE_TIME;
         }
         else if(Window.effectTimer[this.getType().ordinal()] == 30)
         {

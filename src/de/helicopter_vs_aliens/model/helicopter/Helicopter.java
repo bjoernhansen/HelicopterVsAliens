@@ -48,172 +48,173 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.MISSILE_DRIVE;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.PLATING;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ROTOR_SYSTEM;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITRED_ENERGY;
 
 
 public abstract class Helicopter extends RectangularGameEntity
 {
 	// TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit Setter-Methoden arbeiten, sonst private
-    public static final int
+	public static final int
 		// TODO einstellen auf 60 Frames per Second
-		POWERUP_DURATION = 930,         		// Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
-		NO_COLLISION_DAMAGE_TIME = 20,   		// Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
-    	INVULNERABILITY_DAMAGE_REDUCTION = 80,	// %-Wert der Schadensreduzierung bei Unverwundbarkeit
+		POWER_UP_DURATION = 930,                // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
+		NO_COLLISION_DAMAGE_TIME = 20,        // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
+		INVULNERABILITY_DAMAGE_REDUCTION = 80,    // %-Wert der Schadensreduzierung bei Unverwundbarkeit
 		STANDARD_SPECIAL_COSTS = 125000,
 		CHEAP_SPECIAL_COSTS = 10000;
-    
-    public static final double
-        FOCAL_PNT_X_LEFT		= 39,
-        FOCAL_PNT_X_RIGHT		= 83,
-        FOCAL_PNT_Y_EXP			= 44,
-        FOCAL_PNT_Y_POS	 		= 56;
+	
+	public static final int
+		POWER_UP_FADE_TIME = POWER_UP_DURATION / 4;
+	
+	public static final double
+		FOCAL_PNT_X_LEFT = 39,
+		FOCAL_PNT_X_RIGHT = 83,
+		FOCAL_PNT_Y_EXP = 44,
+		FOCAL_PNT_Y_POS = 56;
 	
 	static final int
-        GOLIATH_PLATING_STRENGTH = 2,
-        STANDARD_GOLIATH_COSTS = 75000,
-        NO_COLLISION_HEIGHT	= 6;
-    
-    static final float
-        ENEMY_MISSILE_DAMAGE_FACTOR =  0.5f,
-        STANDARD_MISSILE_DAMAGE_FACTOR =  1.0f;
+		GOLIATH_PLATING_STRENGTH = 2,
+		STANDARD_GOLIATH_COSTS = 75000,
+		NO_COLLISION_HEIGHT = 6;
 	
-    private static final int
-        RECENT_DAMAGE_TIME = 50,        // Zeitrate in der die Lebenspunktleiste nach Kollisionen blinkt
-        SLOW_TIME = 100,
-        FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
-        STATIC_CHARGE_ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
-        STANDARD_PLATING_STRENGTH = 1,
-        SLOW_ROTATIONAL_SPEED	= 7,
-        FAST_ROTATIONAL_SPEED	= 12,
-        DAY_BONUS_FACTOR = 60,
-        NIGHT_BONUS_FACTOR = 90,
+	static final float
+		ENEMY_MISSILE_DAMAGE_FACTOR = 0.5f,
+		STANDARD_MISSILE_DAMAGE_FACTOR = 1.0f;
+	
+	private static final int
+		RECENT_DAMAGE_TIME = 50,        // Zeitrate in der die Lebenspunktleiste nach Kollisionen blinkt
+		SLOW_TIME = 100,
+		FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
+		STATIC_CHARGE_ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
+		STANDARD_PLATING_STRENGTH = 1,
+		SLOW_ROTATIONAL_SPEED = 7,
+		FAST_ROTATIONAL_SPEED = 12,
+		DAY_BONUS_FACTOR = 60,
+		NIGHT_BONUS_FACTOR = 90,
 		SPOTLIGHT_COSTS = 35000;
-    
-    private static final float
-        NOSEDIVE_SPEED = 12f,	        // Geschwindigkeit des Helikopters bei Absturz
-        INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION/100.0f,
-        STANDARD_PROTECTION_FACTOR = 1.0f,
-        STANDARD_BASE_PROTECTION_FACTOR = 1.0f,
-        PLATING_MULTIPLIER = 1.3f;
-    
-    public static final Point
+	
+	private static final float
+		NOSEDIVE_SPEED = 12f,            // Geschwindigkeit des Helikopters bei Absturz
+		INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION / 100.0f,
+		STANDARD_PROTECTION_FACTOR = 1.0f,
+		STANDARD_BASE_PROTECTION_FACTOR = 1.0f,
+		PLATING_MULTIPLIER = 1.3f;
+	
+	public static final Point
 		HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
-    
-    private static final Dimension
+	
+	private static final Dimension
 		HELICOPTER_SIZE = new Dimension(122, 69);
-    
-    private static final Rectangle
-    	INITIAL_BOUNDS = new Rectangle(	150,
-		    							GROUND_Y
-		    							- HELICOPTER_SIZE.height
-		    							- NO_COLLISION_HEIGHT,
-		    							HELICOPTER_SIZE.width,
-		    							HELICOPTER_SIZE.height);
-       
-    public int
-		missileDrive,						// Geschwindigkeit [Pixel pro Frame] der Raketen
-		currentBaseFirepower,				// aktuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des eventuell erforschten Jumbo-Raketen-Spezial-Upgrades
+	
+	private static final Rectangle
+		INITIAL_BOUNDS = new Rectangle(150,
+		GROUND_Y
+			- HELICOPTER_SIZE.height
+			- NO_COLLISION_HEIGHT,
+		HELICOPTER_SIZE.width,
+		HELICOPTER_SIZE.height);
+	
+	public int
+		missileDrive,                        // Geschwindigkeit [Pixel pro Frame] der Raketen
+		currentBaseFirepower,                // aktuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des eventuell erforschten Jumbo-Raketen-Spezial-Upgrades
 		platingDurabilityFactor = STANDARD_PLATING_STRENGTH,    // SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
-		numberOfCannons = 1,				// Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
-		recentDamageTimer,					// aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
-		
-		// für die Spielstatistik
-		numberOfCrashes,					// Anzahl der Abstürze
-		numberOfRepairs,					// Anzahl der Reparaturen
-		missileCounter,						// Anzahl der abgeschossenen Raketen
-		hitCounter,							// Anzahl der getroffenen Gegner
-		numberOfEnemiesSeen,				// Anzahl der erschienenen Gegner
-		numberOfEnemiesKilled,				// Anzahl der vernichteten Gegner
-		numberOfMiniBossSeen,				// Anzahl der erschienenen Mini-Bosse
-		numberOfMiniBossKilled;				// Anzahl der vernichteten Mini-Bosse
+		numberOfCannons = 1,                // Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
+		recentDamageTimer,                    // aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
+	
+	// für die Spielstatistik
+	numberOfCrashes,                    // Anzahl der Abstürze
+		numberOfRepairs,                    // Anzahl der Reparaturen
+		missileCounter,                        // Anzahl der abgeschossenen Raketen
+		hitCounter,                            // Anzahl der getroffenen Gegner
+		numberOfEnemiesSeen,                // Anzahl der erschienenen Gegner
+		numberOfEnemiesKilled,                // Anzahl der vernichteten Gegner
+		numberOfMiniBossSeen,                // Anzahl der erschienenen Mini-Bosse
+		numberOfMiniBossKilled;                // Anzahl der vernichteten Mini-Bosse
 	
 	// TODO Magic Number entfernen und kein Array verwenden
-	public final int[]
-		powerUpTimer = new int [4]; 		// Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
-  
+	private final Map<PowerUpType, Integer>
+		powerUpTimers = new EnumMap<>(PowerUpType.class); // Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
+	
 	private final Map<StandardUpgradeType, Integer>
-        levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
+		levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
 	
 	public ScoreScreenTimes
-		scoreScreenTimes = new ScoreScreenTimes();	// Zeit, die bis zum Besiegen jedes einzelnen der 5 Boss-Gegner vergangen ist
+		scoreScreenTimes = new ScoreScreenTimes();    // Zeit, die bis zum Besiegen jedes einzelnen der 5 Boss-Gegner vergangen ist
 	
-    public float
-		rotorSystem;						// legt die aktuelle Geschwindigkeit des Helikopters fest
-
-    public int
-    	rotorPosition;						// Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die StartScreen-Animation
-    
-    float
-        spellCosts;							// Energiekosten für die Nutzung des Energie-Upgrades
-    
-    public boolean
-		hasSpotlights,						// = true: Helikopter hat Scheinwerfer
-		hasPiercingWarheads,				// = true: Helikopter-Raketen werden mit Durchstoß-Sprengköpfen bestückt
-		isActive,							// = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
-        isDamaged,    						// = true: Helikopter hat einen Totalschaden erlitten
-		// TODO kann eventuell genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
-		isRotorSystemActive,				// = true: Propeller dreht sich / Helikopter fliegt
-	    isContinuousFireEnabled,			// = true: Dauerfeuer aktiv
-		isMovingLeft,
-		isPlayedWithCheats = true;			// = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
-    
-    public final Point
-    	destination = new Point(); 				// dorthin fliegt der Helikopter
-
-    // TODO noch Phoenix auslagern
-    public final Point
-    	priorTeleportLocation = new Point(); 	// nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
-
+	public float
+		rotorSystem;                        // legt die aktuelle Geschwindigkeit des Helikopters fest
+	
+	public int
+		rotorPosition;                        // Stellung des Helikopter-Hauptrotors für alle Klassen; genutzt für die StartScreen-Animation
+	
+	float
+		spellCosts;                            // Energiekosten für die Nutzung des Energie-Upgrades
+	
 	public boolean
-        isSearchingForTeleportDestination;	    // = true: es wird gerade der Zielort der Teleportation ausgewählt
-    
+		hasSpotlights,                        // = true: Helikopter hat Scheinwerfer
+		hasPiercingWarheads,                // = true: Helikopter-Raketen werden mit Durchstoß-Sprengköpfen bestückt
+		isActive,                            // = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
+		isDamaged,                            // = true: Helikopter hat einen Totalschaden erlitten
+	// TODO kann eventuell genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
+	isRotorSystemActive,                // = true: Propeller dreht sich / Helikopter fliegt
+		isContinuousFireEnabled,            // = true: Dauerfeuer aktiv
+		isMovingLeft,
+		isPlayedWithCheats = true;            // = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
+	
+	public final Point
+		destination = new Point();                // dorthin fliegt der Helikopter
+	
+	// TODO noch Phoenix auslagern
+	public final Point
+		priorTeleportLocation = new Point();    // nur für Phönix-Klasse: Aufenthaltsort vor Teleportation
+	
+	public boolean
+		isSearchingForTeleportDestination;        // = true: es wird gerade der Zielort der Teleportation ausgewählt
+	
 	public int
 		// nur für Phönix- und Kamaitachi-Klasse
 		// TODO auslagern in Phönix- und Kamaitachi-Klasse
-		bonusKills,							// Anzahl der Kills, für den aktuellen MultiKill-Award
-		bonusKillsMoney,					// Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen MultiKill-Awards ohne Bonus
-		bonusKillsTimer;					// reguliert die Zeit, innerhalb welcher Kills für den MultiKill-Award berücksichtigt werden
-    
-    final Battery
-        battery = Battery.createFor(this.getType());
-    
+		bonusKills,                            // Anzahl der Kills, für den aktuellen MultiKill-Award
+		bonusKillsMoney,                    // Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen MultiKill-Awards ohne Bonus
+		bonusKillsTimer;                    // reguliert die Zeit, innerhalb welcher Kills für den MultiKill-Award berücksichtigt werden
+	
+	final Battery
+		battery = Battery.createFor(this.getType());
+	
 	public final Point2D
-  		location = new Point2D.Float();	        // exakter Aufenthaltsort
-    
-    final Point2D
-        nextLocation = new Point2D.Float();
-    
-  	public Enemy
-  		tractor;			// Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
-		
+		location = new Point2D.Float();            // exakter Aufenthaltsort
+	
+	final Point2D
+		nextLocation = new Point2D.Float();
+	
+	public Enemy
+		tractor;            // Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
+	
 	private int
-		fireRateTimer,  	// reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
-        timeBetweenTwoShots,// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
-        slowedTimer;		// reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
-    
-    private float
-    	speed,     			// aktuelle Geschwindigkeit des Helikopters
-        currentPlating;		// aktuelle Panzerung (immer <= maximale Panzerung)
-    
-    private boolean
-		isCrashing;			// Helikopter befindet sich im Sturzflug
-    
-    
-    public Helicopter()
-    {
-    	this.paintBounds.setSize(HELICOPTER_SIZE);
-    }
+		fireRateTimer,    // reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
+		timeBetweenTwoShots,// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
+		slowedTimer;        // reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
+	
+	private float
+		speed,                // aktuelle Geschwindigkeit des Helikopters
+		currentPlating;        // aktuelle Panzerung (immer <= maximale Panzerung)
+	
+	private boolean
+		isCrashing;            // Helikopter befindet sich im Sturzflug
+	
+	
+	public Helicopter()
+	{
+		this.paintBounds.setSize(HELICOPTER_SIZE);
+		this.turnOfAllBoosters();
+	}
 	
 	public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
 					   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		this.updateTimer();
-		if(this.canRegenerateEnergy())
+		if (this.canRegenerateEnergy())
 		{
-		    this.battery.recharge();
+			this.battery.recharge();
 		}
 		this.evaluateFire(missile);
 		this.move(explosion);
@@ -222,318 +223,351 @@ public abstract class Helicopter extends RectangularGameEntity
 	public boolean hasSpotlightsTurnedOn()
 	{
 		return this.hasSpotlights
-				&& Events.timeOfDay == NIGHT
-				&& WindowManager.window == GAME;
+			&& Events.timeOfDay == NIGHT
+			&& WindowManager.window == GAME;
 	}
-
+	
 	void updateTimer()
 	{
-		if(this.recentDamageTimer > 0)		{this.recentDamageTimer--;}
-		if(this.slowedTimer > 0)			{this.slowedTimer--;}
+		if (this.recentDamageTimer > 0)
+		{
+			this.recentDamageTimer--;
+		}
+		if (this.slowedTimer > 0)
+		{
+			this.slowedTimer--;
+		}
 		this.evaluatePowerUpActivationStates();
 	}
 	
 	private void evaluateFire(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile)
 	{
-    	if(this.isReadyForShooting()){this.shoot(missile);}
-    	this.fireRateTimer++;
-	}
-	
-	public boolean hasTripleDmg()
-	{
-		return this.powerUpTimer[TRIPLE_DAMAGE.ordinal()] > 0;
-	}
-	
-	public boolean isInvincible()
-	{
-		return this.powerUpTimer[INVINCIBLE.ordinal()] > 0;
-	}
-	
-	public boolean hasBoostedFireRate()
-	{
-		return this.powerUpTimer[BOOSTED_FIRE_RATE.ordinal()] > 0;
+		if (this.isReadyForShooting())
+		{
+			this.shoot(missile);
+		}
+		this.fireRateTimer++;
 	}
 	
 	private boolean isReadyForShooting()
 	{
-		return   	this.isContinuousFireEnabled
-    			&& !this.isDamaged
-    			&& !this.isOnTheGround()
-    			&&  this.fireRateTimer >= this.timeBetweenTwoShots;
+		return this.isContinuousFireEnabled
+			&& !this.isDamaged
+			&& !this.isOnTheGround()
+			&& this.fireRateTimer >= this.timeBetweenTwoShots;
 	}
 	
 	void shoot(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles)
 	{
 		// TODO Code Duplizierungen auflösen
-    	if(this.hasPiercingWarheads){Audio.play(Audio.launch2);}
-		else{Audio.play(Audio.launch1);}
+		if (this.hasPiercingWarheads)
+		{
+			Audio.play(Audio.launch2);
+		} else
+		{
+			Audio.play(Audio.launch1);
+		}
 		this.fireRateTimer = 0;
 		this.missileCounter += this.numberOfCannons;
-
+		
 		boolean stunningMissile = isShootingStunningMissile();
 		Missile sister = null;
-
-		if(this.numberOfCannons >= 1)
+		
+		if (this.numberOfCannons >= 1)
 		{
-			Iterator<Missile> i = missiles.get(INACTIVE).iterator();
+			Iterator<Missile> i = missiles.get(INACTIVE)
+										  .iterator();
 			Missile missile;
-			if(i.hasNext()){missile = i.next(); i.remove();}
-			else{missile = new Missile();}
-			if(this.getType() == ROCH || this.getType() == OROCHI)
+			if (i.hasNext())
+			{
+				missile = i.next();
+				i.remove();
+			} else
+			{
+				missile = new Missile();
+			}
+			if (this.getType() == ROCH || this.getType() == OROCHI)
 			{
 				missile.sister[0] = null;
 				missile.sister[1] = null;
 				sister = missile;
 			}
-			missiles.get(ACTIVE).add(missile);
+			missiles.get(ACTIVE)
+					.add(missile);
 			missile.launch(this, stunningMissile, 56);
 		}
-		if(this.numberOfCannons >= 2)
+		if (this.numberOfCannons >= 2)
 		{
-			Iterator<Missile> i = missiles.get(INACTIVE).iterator();
+			Iterator<Missile> i = missiles.get(INACTIVE)
+										  .iterator();
 			Missile missile;
-			if(i.hasNext()){missile = i.next(); i.remove();}
-			else{missile = new Missile();}
-			if(  sister != null && sister.sister != null &&
-			    (this.getType() == ROCH || this.getType() == OROCHI))
+			if (i.hasNext())
+			{
+				missile = i.next();
+				i.remove();
+			} else
+			{
+				missile = new Missile();
+			}
+			if (sister != null && sister.sister != null &&
+				(this.getType() == ROCH || this.getType() == OROCHI))
 			{
 				missile.sister[0] = sister;
 				missile.sister[1] = null;
 				sister.sister[0] = missile;
 				sister = missile;
 			}
-			missiles.get(ACTIVE).add(missile);
+			missiles.get(ACTIVE)
+					.add(missile);
 			missile.launch(this, stunningMissile, 28);
 		}
-		if(this.numberOfCannons >= 3)
+		if (this.numberOfCannons >= 3)
 		{
-			Iterator<Missile> i = missiles.get(INACTIVE).iterator();
+			Iterator<Missile> i = missiles.get(INACTIVE)
+										  .iterator();
 			Missile missile;
-			if(i.hasNext()){missile = i.next(); i.remove();}
-			else{missile = new Missile();}
-			if(  sister != null && sister.sister != null &&
-			    (this.getType() == ROCH || this.getType() == OROCHI))
+			if (i.hasNext())
+			{
+				missile = i.next();
+				i.remove();
+			} else
+			{
+				missile = new Missile();
+			}
+			if (sister != null && sister.sister != null &&
+				(this.getType() == ROCH || this.getType() == OROCHI))
 			{
 				missile.sister[0] = sister.sister[0];
 				missile.sister[1] = sister;
 				sister.sister[0].sister[1] = missile;
 				sister.sister[1] = missile;
 			}
-			missiles.get(ACTIVE).add(missile);
+			missiles.get(ACTIVE)
+					.add(missile);
 			missile.launch(this, stunningMissile, 42);
 		}
 	}
 	
 	private void move(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
-    {
-		if(this.isOnTheGround())
+	{
+		if (this.isOnTheGround())
 		{
 			this.isRotorSystemActive = false;
 		}
-
+		
 		float
-    		nextX = (float) this.location.getX(),
-    		nextY = (float) this.location.getY();
-
-    	if(this.isCrashing)
-    	{
-    		nextY += NOSEDIVE_SPEED;
-    	}
-    	else if(this.isActive && this.tractor == null)
-    	{
-    		this.speed = (this.slowedTimer > 0 ) ? 1.5f : this.rotorSystem;
-    		float fraction = (float) (this.speed/this.location.distance(this.destination.x, this.destination.y));
-
-    		if(fraction < 1)
-        	{
-        		if(!(   this.bounds.getMaxY() + NO_COLLISION_HEIGHT  >= GROUND_Y
-        			 && this.destination.y >= GROUND_Y))
-        		{
-        			nextX += (float)(fraction*(this.destination.x - this.location.getX()) - 1);
-        		}
-        		    nextY += (float)(fraction*(this.destination.y - this.location.getY()));
-        	}
-    		else
-        	{
-    			nextX = this.destination.x;
-        		nextY = this.destination.y;
-        	}
-    	}
-
-    	boolean isInTheAir = this.location.getY() != 407d;
-    	float lastX = (float)this.location.getX();
-
-    	this.nextLocation.setLocation(nextX, nextY);
-    	this.correctAndSetCoordinates();
-
-    	if(Enemy.currentNumberOfBarriers > 0 && !this.isDamaged)
-    	{
-    		for(int i = 0; i < Enemy.currentNumberOfBarriers; i++)
-    		{
-    			Enemy enemy = Enemy.livingBarrier[i];
-    			enemy.lastTouchedSite = enemy.touchedSite;
-    			if(this.isLocationAdaptionApproved(enemy))
-    			{
-    				this.adaptPosTo(enemy);
-    	   	 		this.correctAndSetCoordinates();
-    	   	 		if(enemy.isStaticallyCharged())
-    	   	 		{
-    	   	 			enemy.startStaticDischarge(explosion, this);
-    	   	 		}
-    			}
-    			else
-    			{
-    				enemy.setUntouched();
-    			}
-    			if(enemy.isUntouched())
-    			{
-    				enemy.untouchedCounter++;
-    				if(enemy.untouchedCounter > 2)
-    				{
-    					enemy.untouchedCounter = 0;
-    					enemy.isTouchingHelicopter = false;
-    				}
-    			}
-    			else
-    			{
-    				enemy.untouchedCounter = 0;
-    			}
-    		}
-    		for(int i = 0; i < Enemy.currentNumberOfBarriers; i++)
-    		{
-    			Enemy.livingBarrier[i].evaluatePosAdaption(this);
-    		}
-    	}
-
-    	if(this.isActive && this.tractor == null)
-    	{
-    		if(!this.isCrashing)
-        	{
-        		if(this.bounds.getMaxY() + NO_COLLISION_HEIGHT != GROUND_Y
-        			|| lastX != (float)this.location.getX())
-        		{
-        			this.isRotorSystemActive = true;
-        		}
-        		if(isInTheAir && !(this.location.getY() != 407d)){Audio.play(Audio.landing);}
-        	}
-        	else if(isInTheAir && this.location.getY() == 407d)
-        	{
-        		this.crashed(explosion);
-        	}
-    	}
-    	if(this.isRotorSystemActive){this.rotatePropellerFast();}
-    	this.setPaintBounds();
-    }
-
+			nextX = (float) this.location.getX(),
+			nextY = (float) this.location.getY();
+		
+		if (this.isCrashing)
+		{
+			nextY += NOSEDIVE_SPEED;
+		} else if (this.isActive && this.tractor == null)
+		{
+			this.speed = (this.slowedTimer > 0) ? 1.5f : this.rotorSystem;
+			float fraction = (float) (this.speed / this.location.distance(this.destination.x, this.destination.y));
+			
+			if (fraction < 1)
+			{
+				if (!(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
+					&& this.destination.y >= GROUND_Y))
+				{
+					nextX += (float) (fraction * (this.destination.x - this.location.getX()) - 1);
+				}
+				nextY += (float) (fraction * (this.destination.y - this.location.getY()));
+			} else
+			{
+				nextX = this.destination.x;
+				nextY = this.destination.y;
+			}
+		}
+		
+		boolean isInTheAir = this.location.getY() != 407d;
+		float lastX = (float) this.location.getX();
+		
+		this.nextLocation.setLocation(nextX, nextY);
+		this.correctAndSetCoordinates();
+		
+		if (Enemy.currentNumberOfBarriers > 0 && !this.isDamaged)
+		{
+			for (int i = 0; i < Enemy.currentNumberOfBarriers; i++)
+			{
+				Enemy enemy = Enemy.livingBarrier[i];
+				enemy.lastTouchedSite = enemy.touchedSite;
+				if (this.isLocationAdaptionApproved(enemy))
+				{
+					this.adaptPosTo(enemy);
+					this.correctAndSetCoordinates();
+					if (enemy.isStaticallyCharged())
+					{
+						enemy.startStaticDischarge(explosion, this);
+					}
+				} else
+				{
+					enemy.setUntouched();
+				}
+				if (enemy.isUntouched())
+				{
+					enemy.untouchedCounter++;
+					if (enemy.untouchedCounter > 2)
+					{
+						enemy.untouchedCounter = 0;
+						enemy.isTouchingHelicopter = false;
+					}
+				} else
+				{
+					enemy.untouchedCounter = 0;
+				}
+			}
+			for (int i = 0; i < Enemy.currentNumberOfBarriers; i++)
+			{
+				Enemy.livingBarrier[i].evaluatePosAdaption(this);
+			}
+		}
+		
+		if (this.isActive && this.tractor == null)
+		{
+			if (!this.isCrashing)
+			{
+				if (this.bounds.getMaxY() + NO_COLLISION_HEIGHT != GROUND_Y
+					|| lastX != (float) this.location.getX())
+				{
+					this.isRotorSystemActive = true;
+				}
+				if (isInTheAir && !(this.location.getY() != 407d))
+				{
+					Audio.play(Audio.landing);
+				}
+			} else if (isInTheAir && this.location.getY() == 407d)
+			{
+				this.crashed(explosion);
+			}
+		}
+		if (this.isRotorSystemActive)
+		{
+			this.rotatePropellerFast();
+		}
+		this.setPaintBounds();
+	}
+	
 	boolean isShootingStunningMissile()
 	{
 		return false;
 	}
-
+	
 	public boolean isLocationAdaptionApproved(Enemy enemy)
 	{
-		return enemy.getBounds().intersects(this.bounds)
-				&& enemy.alpha == 255
-				&& enemy.burrowTimer != 0;
+		return enemy.getBounds()
+					.intersects(this.bounds)
+			&& enemy.alpha == 255
+			&& enemy.burrowTimer != 0;
 	}
-
+	
 	void adaptPosTo(Enemy enemy)
 	{
 		double
-			x = this.bounds.getCenterX() - enemy.getBounds().getCenterX(),
-		 	y = this.bounds.getCenterY() - enemy.getBounds().getCenterY(),
-			pseudoAngle = (x/ Calculations.ZERO_POINT.distance(x, y)),
+			x = this.bounds.getCenterX() - enemy.getBounds()
+												.getCenterX(),
+			y = this.bounds.getCenterY() - enemy.getBounds()
+												.getCenterY(),
+			pseudoAngle = (x / Calculations.ZERO_POINT.distance(x, y)),
 			distance,
 			localSpeed = enemy.hasUnresolvedIntersection ? this.speed : Double.MAX_VALUE;
-			
-		if(pseudoAngle > Calculations.ROOT05)
+		
+		if (pseudoAngle > Calculations.ROOT05)
 		{
 			// Right
 			// new pos x: enemy.getMaxX() + (this.moves_left ? 39 : 83)
-			distance = enemy.getBounds().getMaxX() + (this.isMovingLeft ? 39 : 83) - this.location.getX();
+			distance = enemy.getBounds()
+							.getMaxX() + (this.isMovingLeft ? 39 : 83) - this.location.getX();
 			this.nextLocation.setLocation(
 				this.location.getX() + Math.min(distance, localSpeed),
 				this.location.getY());
 			enemy.setTouchedSiteToRight();
-		}
-		else if(pseudoAngle < -Calculations.ROOT05)
+		} else if (pseudoAngle < -Calculations.ROOT05)
 		{
 			// Left
 			// new pos x: enemy.bounds.x - this.bounds.getWidth() + (this.moves_left ? 39 : 83)
-			distance = this.location.getX() - enemy.getBounds().getX() + this.bounds.getWidth() - (this.isMovingLeft ? 39 : 83);
+			distance = this.location.getX() - enemy.getBounds()
+												   .getX() + this.bounds.getWidth() - (this.isMovingLeft ? 39 : 83);
 			this.nextLocation.setLocation(
 				this.location.getX() - Math.min(distance, localSpeed),
 				this.location.getY());
 			enemy.setTouchedSiteToLeft();
-		}
-		else
+		} else
 		{
-			if(this.bounds.getCenterY() > enemy.getBounds().getCenterY())
+			if (this.bounds.getCenterY() > enemy.getBounds()
+												.getCenterY())
 			{
 				// Bottom
 				// new pos y: enemy.bounds.getMaxY() + 56
-				distance = enemy.getBounds().getMaxY() + 56 - this.location.getY();
+				distance = enemy.getBounds()
+								.getMaxY() + 56 - this.location.getY();
 				this.nextLocation.setLocation(
 					this.location.getX(),
 					this.location.getY() + Math.min(distance, localSpeed));
 				enemy.setTouchedSiteToBottom();
-			}
-			else
+			} else
 			{
 				// Top
 				// new pos y: enemy.bounds.y - this.bounds.getHeight() + 56
-				distance = this.location.getY() - enemy.getBounds().getY() + this.bounds.getHeight() - 56;
+				distance = this.location.getY() - enemy.getBounds()
+													   .getY() + this.bounds.getHeight() - 56;
 				this.nextLocation.setLocation(
 					this.location.getX(),
 					this.location.getY() - Math.min(distance, localSpeed));
 				enemy.setTouchedSiteToTop();
 			}
-			if(this.tractor != null){this.stopTractor();}
+			if (this.tractor != null)
+			{
+				this.stopTractor();
+			}
 		}
 	}
 	
 	void correctAndSetCoordinates()
 	{
-    	this.location.setLocation
-		(
-			Math.max(40, Math.min(1024, this.nextLocation.getX())),
-			Math.max(32, Math.min(407, this.nextLocation.getY()))
-		);
-   	 	this.setBounds();
+		this.location.setLocation
+						 (
+							 Math.max(40, Math.min(1024, this.nextLocation.getX())),
+							 Math.max(32, Math.min(407, this.nextLocation.getY()))
+						 );
+		this.setBounds();
 	}
-
+	
 	void setBounds()
 	{
 		this.bounds.setRect(
-	   	 	this.location.getX()
-	   	 		- (this.isMovingLeft
-	   	 			? FOCAL_PNT_X_LEFT
-	   	 			: FOCAL_PNT_X_RIGHT),
-	   	 	this.location.getY() - FOCAL_PNT_Y_POS,
-	   	 	this.bounds.getWidth(),
-	   	 	this.bounds.getHeight());
+			this.location.getX()
+				- (this.isMovingLeft
+				? FOCAL_PNT_X_LEFT
+				: FOCAL_PNT_X_RIGHT),
+			this.location.getY() - FOCAL_PNT_Y_POS,
+			this.bounds.getWidth(),
+			this.bounds.getHeight());
 	}
-
+	
 	public void initializeForNewGame()
 	{
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
-			this.setUpgradeLevelOf(standardUpgradeType, this.getType().getInitialUpgradeLevelFor(standardUpgradeType));
+			this.setUpgradeLevelOf(standardUpgradeType, this.getType()
+															.getInitialUpgradeLevelFor(standardUpgradeType));
 		}
 		restorePlating();
-        this.battery.restore();
+		this.battery.restore();
 		generalInitialization();
 	}
-
+	
 	public void initializeFromSavegame(Savegame savegame)
 	{
 		this.restoreLastGameState(savegame);
 		generalInitialization();
 	}
-
+	
 	void generalInitialization()
 	{
-        this.setSpellCosts();
+		this.setSpellCosts();
 		this.fireRateTimer = this.timeBetweenTwoShots;
 		this.placeAtStartpos();
 		this.prepareForMission();
@@ -541,7 +575,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	private void restoreLastGameState(Savegame savegame)
 	{
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
 		{
 			Integer upgradeLevel = savegame.levelsOfStandardUpgrades.get(standardUpgradeType);
 			this.setUpgradeLevelOf(standardUpgradeType, upgradeLevel);
@@ -551,11 +585,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.hasPiercingWarheads = savegame.hasPiercingWarheads;
 		this.numberOfCannons = savegame.numberOfCannons;
 		this.currentPlating = savegame.currentPlating;
-
+		
 		this.battery.upgradeTo(this.getUpgradeLevelOf(ENERGY_ABILITY));
 		this.battery.setCurrentCharge(savegame.currentEnergy);
 		
-		if(savegame.hasFifthSpecial)
+		if (savegame.hasFifthSpecial)
 		{
 			this.obtainFifthSpecial();
 		}
@@ -571,31 +605,33 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.hitCounter = savegame.hitCounter;
 		this.scoreScreenTimes = savegame.scoreScreenTimes;
 	}
-    
-    public void reset()
-    {
-        // TODO ggf. muss einiges nicht mehr resettet werden, da immer ein neuer Helicopter erzeugt wird
+	
+	public void reset()
+	{
+		// TODO ggf. muss einiges nicht mehr resettet werden, da immer ein neuer Helicopter erzeugt wird
 		this.resetStateGeneral(true);
-        this.resetStateTypeSpecific();
-        this.isDamaged = false;
+		this.resetStateTypeSpecific();
+		this.isDamaged = false;
 		this.isPlayedWithCheats = false;
 		this.resetCounterForHighscore();
 		this.resetSpecialUpgrades();
 		this.scoreScreenTimes.clear();
-    }
+	}
 	
 	
 	public void resetStateGeneral(boolean resetStartPos)
 	{
-		// TODO boolescher Parameter - anders lösen
-        this.setActivationState(false);
+		this.inactivate();
 		this.isCrashing = false;
 		this.slowedTimer = 0;
 		this.recentDamageTimer = 0;
-		for(int i = 0; i < 4; i++){this.powerUpTimer[i] = 0;}
-        this.resetRotorPosition();
+		this.resetPowerUpTimers();
+		this.resetRotorPosition();
 		this.fireRateTimer = this.timeBetweenTwoShots;
-		if(resetStartPos){this.placeAtStartpos();}
+		if (resetStartPos)
+		{
+			this.placeAtStartpos();
+		}
 	}
 	
 	private void resetCounterForHighscore()
@@ -620,111 +656,117 @@ public abstract class Helicopter extends RectangularGameEntity
 	}
 	
 	abstract void resetFifthSpecial();
-		
-    public void repair()
-    {
-    	Audio.play(Audio.cash);
-    	this.numberOfRepairs++;
+	
+	public void repair()
+	{
+		Audio.play(Audio.cash);
+		this.numberOfRepairs++;
 		this.isDamaged = false;
 		this.isCrashing = false;
-    	this.restorePlating();
-    	this.setRelativePlatingDisplayColor();
-    }
+		this.restorePlating();
+		this.setRelativePlatingDisplayColor();
+	}
 	
 	public void obtainAllUpgrades()
-    {
-    	for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-    	{
-    		this.maximizeUpgrade(standardUpgradeType);
-    	}
-    	this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
-    	this.hasPiercingWarheads = true;
-    	this.getMaximumNumberOfCannons();
-        makeAdjustmentsForCheatedUpgrades();
-    }
-
-    private void maximizeUpgrade(StandardUpgradeType standardUpgradeType)
-    {
-        this.setUpgradeLevelOf(standardUpgradeType, this.getType().getMaximumUpgradeLevelFor(standardUpgradeType));
-    }
-    
-    void getMaximumNumberOfCannons()
+	{
+		for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		{
+			this.maximizeUpgrade(standardUpgradeType);
+		}
+		this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
+		this.hasPiercingWarheads = true;
+		this.getMaximumNumberOfCannons();
+		makeAdjustmentsForCheatedUpgrades();
+	}
+	
+	private void maximizeUpgrade(StandardUpgradeType standardUpgradeType)
+	{
+		this.setUpgradeLevelOf(standardUpgradeType, this.getType()
+														.getMaximumUpgradeLevelFor(standardUpgradeType));
+	}
+	
+	void getMaximumNumberOfCannons()
 	{
 		this.numberOfCannons = 2;
 	}
-    
-    private void makeAdjustmentsForCheatedUpgrades()
-    {
-        this.restorePlating();
-        this.battery.restore();
-        this.isDamaged = false;
-        Window.updateRepairShopButtons(this);
-        this.isPlayedWithCheats = true;
-    }
+	
+	private void makeAdjustmentsForCheatedUpgrades()
+	{
+		this.restorePlating();
+		this.battery.restore();
+		this.isDamaged = false;
+		Window.updateRepairShopButtons(this);
+		this.isPlayedWithCheats = true;
+	}
 	
 	public void obtainSomeUpgrades()
-    {
+	{
 		this.hasSpotlights = true;
-    	this.obtainFifthSpecial();
-		for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-    	{
-    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaximumUpgradeLevel())
-    		{
-    			this.setUpgradeLevelOf(standardUpgradeType, EXTORTIONATE.getMaximumUpgradeLevel());
-    		}
-    	}
-        makeAdjustmentsForCheatedUpgrades();
-    }
+		this.obtainFifthSpecial();
+		for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		{
+			if (this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaximumUpgradeLevel())
+			{
+				this.setUpgradeLevelOf(standardUpgradeType, EXTORTIONATE.getMaximumUpgradeLevel());
+			}
+		}
+		makeAdjustmentsForCheatedUpgrades();
+	}
 	
 	public boolean hasSomeUpgrades()
-    {
-    	for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-    	{
-    		if(this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaximumUpgradeLevel()){return false;}
-    	}
-    	if(!this.hasSpotlights){return false;}
-    	else return this.hasFifthSpecial();
-    }
+	{
+		for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		{
+			if (this.getUpgradeLevelOf(standardUpgradeType) < EXTORTIONATE.getMaximumUpgradeLevel())
+			{
+				return false;
+			}
+		}
+		if (!this.hasSpotlights)
+		{
+			return false;
+		} else return this.hasFifthSpecial();
+	}
 	
 	abstract public boolean hasFifthSpecial();
-
+	
 	abstract public void obtainFifthSpecial();
-    
-    private boolean hasAllSpecialUpgrades()
-    {
+	
+	private boolean hasAllSpecialUpgrades()
+	{
 		return this.hasSpotlights
 			&& this.hasGoliathPlating()
 			&& this.hasPiercingWarheads
 			&& this.hasAllCannons()
 			&& hasFifthSpecial();
 	}
-    
-    public boolean hasGoliathPlating()
+	
+	public boolean hasGoliathPlating()
 	{
 		return this.platingDurabilityFactor == GOLIATH_PLATING_STRENGTH;
 	}
-    
-    public boolean hasAllCannons()
+	
+	public boolean hasAllCannons()
 	{
 		return this.numberOfCannons == 2;
 	}
 	
 	public boolean hasAllUpgrades()
-    {
-        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
-        {
-        	if(!this.hasMaximumUpgradeLevelFor(standardUpgradeType))
-        	{
-        	    return false;
-        	}
-        }
+	{
+		for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+		{
+			if (!this.hasMaximumUpgradeLevelFor(standardUpgradeType))
+			{
+				return false;
+			}
+		}
 		return hasAllSpecialUpgrades();
 	}
-
+	
 	public void rotatePropellerSlow()
-    {
-    	this.rotatePropeller(SLOW_ROTATIONAL_SPEED);
-    }
+	{
+		this.rotatePropeller(SLOW_ROTATIONAL_SPEED);
+	}
 	
 	public void rotatePropellerFast()
 	{
@@ -733,148 +775,101 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	private void rotatePropeller(int rotationalSpeed)
 	{
-		this.rotorPosition = (this.rotorPosition + rotationalSpeed)%360;
+		this.rotorPosition = (this.rotorPosition + rotationalSpeed) % 360;
 	}
 	
-    public void placeAtStartpos()
-    {
-    	this.isMovingLeft = false;
-    	this.bounds.setRect(INITIAL_BOUNDS);
-    	this.location.setLocation(this.bounds.getX() + FOCAL_PNT_X_RIGHT,
-    							  INITIAL_BOUNDS.y + FOCAL_PNT_Y_POS);
-    	this.setPaintBounds();
-    }
-    
-    public void stopTractor()
+	public void placeAtStartpos()
+	{
+		this.isMovingLeft = false;
+		this.bounds.setRect(INITIAL_BOUNDS);
+		this.location.setLocation(this.bounds.getX() + FOCAL_PNT_X_RIGHT,
+			INITIAL_BOUNDS.y + FOCAL_PNT_Y_POS);
+		this.setPaintBounds();
+	}
+	
+	public void stopTractor()
 	{
 		Audio.tractorBeam.stop();
 		this.tractor.stopTractor();
 		this.tractor = null;
 	}
-    
-    public void crash()
-    {
-    	this.isDamaged = true;
+	
+	public void crash()
+	{
+		this.isDamaged = true;
 		this.isRotorSystemActive = false;
 		this.battery.discharge();
 		this.destination.setLocation(this.bounds.getX() + 40, 520);
-		if(this.tractor != null){this.stopTractor();}
-		this.numberOfCrashes++;
-		if(this.location.getY() == 407d){this.crashed(Controller.getInstance().explosions);}
-		else{this.isCrashing = true;}
-    }
-    
-    private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
-    {
-    	this.isActive = false;
-    	this.powerUpDecay();
-		if(Events.level < 51 && explosion != null)
+		if (this.tractor != null)
 		{
-			Audio.play(Audio.explosion3);
-			Explosion.start(explosion,
-							this,
-							(int)(this.bounds.getX()
-								+ (this.isMovingLeft
-									? FOCAL_PNT_X_LEFT
-									: FOCAL_PNT_X_RIGHT)),
-							(int)(this.bounds.getY() + FOCAL_PNT_Y_EXP),
-                    ORDINARY,
-							false);
+			this.stopTractor();
 		}
-		Events.isRestartWindowVisible = true;
-		this.isCrashing = false;
-    }
-
-	private void evaluatePowerUpActivationStates()
-	{
-    	for(int i = 0; i < 4; i++)
+		this.numberOfCrashes++;
+		if (this.location.getY() == 407d)
 		{
-			if(this.powerUpTimer[i] > 0)
-			{
-				this.powerUpTimer[i]--;
-				if(this.powerUpTimer[i] == 0 && Window.collectedPowerUp[i] != null)
-				{
-					Audio.play(Audio.powerUpFade2);
-					Window.collectedPowerUp[i].setCollected();
-					Window.collectedPowerUp[i] = null;
-					// TODO magic number
-					if(i == 3){this.adjustFireRate(false);}
-				}
-				else if(this.powerUpTimer[i] == POWERUP_DURATION/4)
-				{
-					Audio.play(Audio.powerUpFade1);
-				}
-				else if(this.powerUpTimer[i] < POWERUP_DURATION/4 && Window.collectedPowerUp[i] != null)
-				{
-					int alphaStepSize = 17 * ((this.powerUpTimer[i])%16);
-				    if(this.powerUpTimer[i]%32 > 15)
-			    	{
-			    		Window.collectedPowerUp[i].setAlpha(alphaStepSize);
-			    	}
-					else
-					{
-                        Window.collectedPowerUp[i].setAlpha(Colorations.MAX_VALUE - alphaStepSize);
-					}
-				}
-			}
+			this.crashed(Controller.getInstance().explosions);
+		} else
+		{
+			this.isCrashing = true;
 		}
 	}
 	
+	private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	{
+		this.isActive = false;
+		this.startDecayOfAllCurrentBooster();
+		if (Events.level < 51 && explosion != null)
+		{
+			Audio.play(Audio.explosion3);
+			Explosion.start(explosion,
+				this,
+				(int) (this.bounds.getX()
+					+ (this.isMovingLeft
+					? FOCAL_PNT_X_LEFT
+					: FOCAL_PNT_X_RIGHT)),
+				(int) (this.bounds.getY() + FOCAL_PNT_Y_EXP),
+				ORDINARY,
+				false);
+		}
+		Events.isRestartWindowVisible = true;
+		this.isCrashing = false;
+	}
+	
 	public void takeMissileDamage()
-    {
-        this.currentPlating = Math.max(this.currentPlating - this.getProtectionFactor() * ENEMY_MISSILE_DAMAGE_FACTOR, 0f);
-        this.startRecentDamageTimer();
-		if(this.isDestinedToCrash())
+	{
+		this.currentPlating = Math.max(this.currentPlating - this.getProtectionFactor() * ENEMY_MISSILE_DAMAGE_FACTOR, 0f);
+		this.startRecentDamageTimer();
+		if (this.isDestinedToCrash())
 		{
 			this.crash();
 		}
-    }
-    
-    public boolean hasDestroyedPlating()
-    {
-        return this.currentPlating <= 0;
-    }
-    
-    void startRecentDamageTimer()
-    {
-        this.recentDamageTimer = RECENT_DAMAGE_TIME;
-    }
-   
+	}
+	
+	public boolean hasDestroyedPlating()
+	{
+		return this.currentPlating <= 0;
+	}
+	
+	void startRecentDamageTimer()
+	{
+		this.recentDamageTimer = RECENT_DAMAGE_TIME;
+	}
+	
 	private void updateRotorSystem()
 	{
 		rotorSystem = this.getSpeed();
 	}
-
-    private void updateMissileDrive()
-    {
-        this.missileDrive = this.getMissileDrive();
-    }
+	
+	private void updateMissileDrive()
+	{
+		this.missileDrive = this.getMissileDrive();
+	}
 	
 	void setSpellCosts()
 	{
 		// TODO sollte für die Battery gesetzt werden, hier und automatisch, Helicopter braucht spellCost evtl. nicht mehr
-		this.spellCosts = this.getType().getSpellCosts();
-	}
-
-	public boolean hasPowerUpsDisallowedAtBossLevel()
-	{
-		for(int i = 0; i < 4; i++)
-		{
-			if(this.powerUpTimer[i] != 0
-				&& this.powerUpTimer[i] < Integer.MAX_VALUE/2)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public void powerUpDecay()
-	{
-		for(int i = 0; i < 4; i++){if(this.powerUpTimer[i] < Integer.MAX_VALUE/2)
-		{
-			this.powerUpTimer[i] = Math.min(POWERUP_DURATION/4 + 1, this.powerUpTimer[i]);}
-		}
+		this.spellCosts = this.getType()
+							  .getSpellCosts();
 	}
 
 	public void setRelativePlatingDisplayColor()
@@ -882,50 +877,82 @@ public abstract class Helicopter extends RectangularGameEntity
 		Colorations.plating = Colorations.percentColor(this.getRelativePlating());
 	}
 	
-	public void getPowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
-	                PowerUpType powerUpType,
-	                boolean lastingEffect)
+	public void switchPowerUpActivationState(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps,
+											 PowerUpType powerUpType)
 	{
-		getPowerUp(powerUp, powerUpType, lastingEffect, true);
-	}
-	
-	void getPowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
-	                PowerUpType powerUpType,
-	                boolean lastingEffect,
-	                boolean playSound)
-	{
-		if(lastingEffect && this.powerUpTimer[powerUpType.ordinal()] > 0)
+		if(this.isBoosted(powerUpType))
 		{
-			if(playSound){Audio.play(Audio.powerUpFade2);}
-			this.powerUpTimer[powerUpType.ordinal()] = 0;
-			Window.collectedPowerUp[powerUpType.ordinal()].setCollected();
-			Window.collectedPowerUp[powerUpType.ordinal()] = null;
-			if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(false);}
+			Audio.play(Audio.powerUpFade2);
+			this.turnOfBooster(powerUpType);
+			Window.removeCollectedPowerUp(powerUpType);
+			if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
+			{
+				this.adjustFireRate(false);
+			}
 		}
 		else
 		{
-			if(playSound){Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);}
-			this.powerUpTimer[powerUpType.ordinal()] = lastingEffect
-												? Integer.MAX_VALUE
-												: Math.max(
-													this.powerUpTimer[powerUpType.ordinal()],
-													POWERUP_DURATION);
-			if(Window.collectedPowerUp[powerUpType.ordinal()] == null)
-			{
-				PowerUp.activate(this, powerUp, null, powerUpType, true);
-				if(powerUpType == BOOSTED_FIRE_RATE){this.adjustFireRate(true);}
-			}
-			else
-			{
-                Window.collectedPowerUp[powerUpType.ordinal()].setOpaque();
-			}
+			Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);
+			this.becomeBoosteredPermanently(powerUpType);
+			activatePowerUp(powerUps, powerUpType);
 		}
 	}
 	
-	public void setActivationState(boolean activationState)
+	private void turnOfAllBoosters()
 	{
-		this.isActive = activationState;
-		this.isRotorSystemActive = activationState;
+		PowerUpType.getStatusBarPowerUpTypes()
+				   .forEach(this::turnOfBooster);
+	}
+	
+	protected void turnOfBooster(PowerUpType powerUpType)
+	{
+		this.powerUpTimers.put(powerUpType, 0);
+	}
+	
+	protected void becomeBoosteredPermanently(PowerUpType powerUpType)
+	{
+		this.powerUpTimers.put(powerUpType, Integer.MAX_VALUE);
+	}
+	
+	protected void becomeBoostered(PowerUpType powerUpType, int minimumDuration)
+	{
+		int duration = Math.max(this.getRemainingTimeBoosted(powerUpType), minimumDuration);
+		this.powerUpTimers.put(powerUpType, duration);
+	}
+	
+	private void startPowerUpDecay(PowerUpType powerUpType)
+	{
+		int duration = Math.min(POWER_UP_FADE_TIME + 1, this.getRemainingTimeBoosted(powerUpType));
+		this.powerUpTimers.put(powerUpType, duration);
+	}
+	
+	protected void activatePowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
+	{
+		if(!Window.collectedPowerUps.containsKey(powerUpType))
+		{
+			PowerUp powerUp = PowerUp.getInstance(powerUpType);
+			powerUp.activateAndMoveToStatusBar(powerUps);
+			if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
+			{
+				this.adjustFireRate(true);
+			}
+		}
+		else
+		{
+			Window.collectedPowerUps.get(powerUpType).setOpaque();
+		}
+	}
+	
+	public void activate()
+	{
+		this.isActive = true;
+		this.isRotorSystemActive = true;
+	}
+	
+	public void inactivate()
+	{
+		this.isActive = false;
+		this.isRotorSystemActive = false;
 	}
 	
 	public void adjustFireRate()
@@ -1321,12 +1348,7 @@ public abstract class Helicopter extends RectangularGameEntity
     {
         return this.hasUnlimitedEnergy() ? 0.0f : this.spellCosts;
     }
-    
-    public boolean hasUnlimitedEnergy()
-    {
-        return this.powerUpTimer[UNLIMITRED_ENERGY.ordinal()] > 0;
-    }
-    
+	   
     public boolean isEnergyAbilityActivatable()
     {
         return this.hasEnoughEnergyForAbility();
@@ -1356,7 +1378,7 @@ public abstract class Helicopter extends RectangularGameEntity
         }
     }
     
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion){}
+    public abstract void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion);
     
     public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
@@ -1485,8 +1507,122 @@ public abstract class Helicopter extends RectangularGameEntity
 			: this.getType().getStandardSecondaryHullColor();
 	}
 	
+	private void evaluatePowerUpActivationStates()
+	{
+		PowerUpType.getStatusBarPowerUpTypes()
+				   .forEach(powerUpType -> {
+					   if(this.isBoosted(powerUpType))
+					   {
+						   this.countDownPowerUpTimer(powerUpType);
+						   if(!this.isBoosted(powerUpType) && Window.collectedPowerUps.containsKey(powerUpType))
+						   {
+							   Audio.play(Audio.powerUpFade2);
+							   Window.collectedPowerUps.get(powerUpType)
+													   .setCollected();
+							   Window.collectedPowerUps.remove(powerUpType);
+							   if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
+							   {
+								   this.adjustFireRate(false);
+							   }
+						   }
+						   else if(this.isBoosterStartingToFadeRightNow(powerUpType))
+						   {
+							   Audio.play(Audio.powerUpFade1);
+						   }
+						   else if(this.isBoosterFading(powerUpType) && Window.collectedPowerUps.containsKey(powerUpType))
+						   {
+							   int remainingTimeBoosted = this.getRemainingTimeBoosted(powerUpType);
+							   Window.changeCollectedPowerUpColorationForFading(powerUpType, remainingTimeBoosted);
+						   }
+					   }
+				   });
+	}
+	
 	public int getLastCannonCost()
 	{
 		return STANDARD_SPECIAL_COSTS;
+	}
+	
+	public void restartPowerUpTimer(PowerUpType powerUpType)
+	{
+		this.becomeBoostered(powerUpType, Helicopter.POWER_UP_DURATION);
+	}
+	
+	public boolean isBoosted(PowerUpType powerUpType)
+	{
+		return this.getRemainingTimeBoosted(powerUpType) > 0;
+	}
+	
+	public boolean hasTripleDmg()
+	{
+		return this.isBoosted(PowerUpType.TRIPLE_DAMAGE);
+	}
+	
+	public boolean isInvincible()
+	{
+		return this.isBoosted(PowerUpType.INVINCIBLE);
+	}
+	
+	public boolean hasUnlimitedEnergy()
+	{
+		return this.isBoosted(PowerUpType.UNLIMITED_ENERGY);
+	}
+	
+	public boolean hasBoostedFireRate()
+	{
+		return this.isBoosted(PowerUpType.BOOSTED_FIRE_RATE);
+	}
+	
+	private void resetPowerUpTimers()
+	{
+		PowerUpType.getStatusBarPowerUpTypes()
+				   .forEach(this::turnOfBooster);
+	}
+	
+	public boolean hasPowerUpsDisallowedAtBossLevel()
+	{
+		// PowerUps acquired by cheats do not fade
+		return PowerUpType.getStatusBarPowerUpTypes()
+						  .stream()
+						  .anyMatch(this::isPoweredUpWithoutCheats);
+	}
+	
+	private boolean isPoweredUpWithoutCheats(PowerUpType powerUpType)
+	{
+		return this.isBoosted(powerUpType) && !this.isPoweredUpWithCheats(powerUpType);
+	}
+	
+	private boolean isPoweredUpWithCheats(PowerUpType powerUpType)
+	{
+		return this.getRemainingTimeBoosted(powerUpType) > Integer.MAX_VALUE/2;
+	}
+	
+	public void startDecayOfAllCurrentBooster()
+	{
+		PowerUpType.getStatusBarPowerUpTypes()
+				   .stream()
+				   .filter(this::isPoweredUpWithoutCheats)
+				   .forEach(this::startPowerUpDecay);
+	}
+	
+	private boolean isBoosterStartingToFadeRightNow(PowerUpType powerUpType)
+	{
+		return this.powerUpTimers.get(powerUpType) == POWER_UP_FADE_TIME;
+	}
+	
+	private boolean isBoosterFading(PowerUpType powerUpType)
+	{
+		return this.getRemainingTimeBoosted(powerUpType) < POWER_UP_FADE_TIME;
+	}
+	
+	private void countDownPowerUpTimer(PowerUpType powerUpType)
+	{
+		int nextTimerValue = this.getRemainingTimeBoosted(powerUpType) - 1;
+		this.powerUpTimers.put(powerUpType, nextTimerValue);
+	}
+	
+	private int getRemainingTimeBoosted(PowerUpType powerUpType)
+	{
+		return this.powerUpTimers.get(powerUpType);
 	}
 }

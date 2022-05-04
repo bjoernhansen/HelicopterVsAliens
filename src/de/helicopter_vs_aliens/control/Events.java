@@ -24,6 +24,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScore;
 import de.helicopter_vs_aliens.score.RecordTimeManager;
@@ -69,11 +70,10 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyType.FINAL_BOSS;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITRED_ENERGY;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITED_ENERGY;
 
 // TODO Klasse sollte nicht rein statisch sein
 public class Events
@@ -279,10 +279,11 @@ public class Events
 				{
 					Window.specialInfoSelection = (Window.specialInfoSelection +1)% NUMBER_OF_DEBUGGING_INFOS;
 				}
-				else if(e.getKeyChar() == 'd'){helicopter.getPowerUp(controller.powerUps, TRIPLE_DAMAGE, 	   true);}
-				else if(e.getKeyChar() == 'i'){helicopter.getPowerUp(controller.powerUps, INVINCIBLE, 	   true);}
-				else if(e.getKeyChar() == 'c'){helicopter.getPowerUp(controller.powerUps, UNLIMITRED_ENERGY, true);}
-				else if(e.getKeyChar() == 'y'){helicopter.getPowerUp(controller.powerUps, BOOSTED_FIRE_RATE, true);}
+				// TODO übergabe von powerUps anders regeln
+				else if(e.getKeyChar() == 'd'){helicopter.switchPowerUpActivationState(controller.powerUps, TRIPLE_DAMAGE);}
+				else if(e.getKeyChar() == 'i'){helicopter.switchPowerUpActivationState(controller.powerUps, INVINCIBLE);}
+				else if(e.getKeyChar() == 'c'){helicopter.switchPowerUpActivationState(controller.powerUps, UNLIMITED_ENERGY);}
+				else if(e.getKeyChar() == 'y'){helicopter.switchPowerUpActivationState(controller.powerUps, BOOSTED_FIRE_RATE);}
 				else if(e.getKeyChar() == 'a')
 				{
 					if(level < 51)
@@ -462,7 +463,7 @@ public class Events
 				}				
 				else if(!helicopter.isActive && cursor.y < 426)
 				{
-					helicopter.setActivationState(true);
+					helicopter.activate();
 				}
 			}
 			else if(helicopter.isActive){helicopter.isContinuousFireEnabled = true;}
@@ -1097,14 +1098,12 @@ public class Events
 		//controller.powerUps.get(INACTIVE).addAll(controller.powerUps.get(ACTIVE));
 		controller.getGameEntityRecycler().storeAll(controller.powerUps.get(ACTIVE));
 		controller.powerUps.get(ACTIVE).clear();
-		if(Window.collectedPowerUp[3] != null)
+		// TODO
+		if(Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))
 		{
 			helicopter.adjustFireRate(false);
 		}
-		for(int i = 0; i < 4; i++)
-		{
-			Window.collectedPowerUp[i] = null;
-		}
+		Window.collectedPowerUps.clear();
 	}
 
 	static private void startNewGame(HelicopterType helicopterType, Controller controller)
@@ -1289,7 +1288,7 @@ public class Events
 			lastCurrentTime = System.currentTimeMillis();
 			if(helicopter.isOnTheGround())
 			{
-				helicopter.setActivationState(false);
+				helicopter.inactivate();
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.SceneryLayer;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -24,6 +25,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -210,17 +212,17 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintCollectedPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        int j = 0;
         PowerUpPainter powerUpPainter = GraphicsManager.getInstance()
                                                        .getPainter(PowerUp.class);
-        for (int i = 0; i < Window.MAXIMUM_COLLECTED_POWERUPS_COUNT; i++)
-        {
-            if (Window.collectedPowerUp[i] != null)
-            {
-                powerUpPainter.paint(graphicsAdapter, Window.collectedPowerUp[i], 166 + j * 28);
-                j++;
-            }
-        }
+        AtomicInteger statusBarPositionIndex = new AtomicInteger();
+        PowerUpType.getStatusBarPowerUpTypes()
+                   .stream()
+                   .filter(Window.collectedPowerUps::containsKey)
+                   .forEach(powerUpType -> {
+                       int x = 166 + statusBarPositionIndex.get() * 28;
+                       powerUpPainter.paint(graphicsAdapter, Window.collectedPowerUps.get(powerUpType), x);
+                       statusBarPositionIndex.incrementAndGet();
+                   });
     }
     
     private void paintFpsDisplay(GraphicsAdapter graphicsAdapter)

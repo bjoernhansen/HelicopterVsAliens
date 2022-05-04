@@ -13,7 +13,7 @@ public class KamaitachiPainter extends HelicopterPainter
     Color getInputColorCannon()
     {
         Kamaitachi kamaitachi = (Kamaitachi) helicopter;
-        if(kamaitachi.getPlasmaActivationTimer() > Helicopter.POWERUP_DURATION/4)
+        if(kamaitachi.getPlasmaActivationTimer() > Helicopter.POWER_UP_FADE_TIME)
         {
             return Color.green;
         }

@@ -41,4 +41,9 @@ public abstract class RectangularGameEntity extends GameEntity
 	{
 		return bounds;
 	}
+	
+	public boolean isRightOf(RectangularGameEntity gameEntity)
+	{
+		return this.getBounds().getX() > gameEntity.getBounds().getX();
+	}
 }

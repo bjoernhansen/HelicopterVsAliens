@@ -17,7 +17,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RAT
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITRED_ENERGY;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITED_ENERGY;
 
 
 public class Audio
@@ -147,7 +147,7 @@ public class Audio
         powerAnnouncer = new AudioClip[NUMBER_OF_ANNOUNCERS];
         powerAnnouncer[TRIPLE_DAMAGE.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
         powerAnnouncer[INVINCIBLE.ordinal()] = getAudioClip("announcer_invincible.wav");
-        powerAnnouncer[UNLIMITRED_ENERGY.ordinal()] = getAudioClip("announcer_unlimited_energy.wav");
+        powerAnnouncer[UNLIMITED_ENERGY.ordinal()] = getAudioClip("announcer_unlimited_energy.wav");
         powerAnnouncer[BOOSTED_FIRE_RATE.ordinal()] = getAudioClip("announcer_fire_rate_boosted.wav");
         powerAnnouncer[REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
         powerAnnouncer[BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");

@@ -24,7 +24,6 @@ public class GameEntityRecycler
     
     public <T extends GameEntity> T retrieve(Class<T> classOfGameEntity)
     {
-        String test = "";
         T gameEntity = (T) recyclingQueues.computeIfAbsent(classOfGameEntity, c -> new LinkedList<T>())
                                           .poll();
         if(gameEntity == null)
