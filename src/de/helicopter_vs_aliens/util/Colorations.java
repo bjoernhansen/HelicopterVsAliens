@@ -14,7 +14,7 @@ import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 
 public final class Colorations
 {
-	// alle Farben, die sich nicht ändern, sollten final sein, alle final colors sollten in Upper-Snake-Case
+	// TODO alle Farben, die sich nicht ändern, sollten final sein, alle final colors sollten in Upper-Snake-Case
 	public static final int 
 		FRAME = 3,
 		NOZZLE = 4,
@@ -75,9 +75,7 @@ public final class Colorations
 		lighterYellow = new Color (MAX_VALUE, MAX_VALUE, 225),
 		translucentSun = new Color(MAX_VALUE, MAX_VALUE, 0, 20),
 		lightOrange = new Color (MAX_VALUE, 210, 0),
-	
-		orange = new Color(MAX_VALUE, MAX_VALUE/2, 0),
-		bleachedOrange = bleach(orange, BLEACH_FACTOR),
+		bleachedOrange = new Color(MAX_VALUE, 192, 0),
 		darkerOrange = new Color(200, 120, 0),
 		red = new Color(160, 40, 60),	
 		brown = new Color (180,150,100),
