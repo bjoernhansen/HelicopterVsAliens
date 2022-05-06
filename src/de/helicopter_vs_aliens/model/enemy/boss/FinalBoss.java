@@ -28,12 +28,12 @@ public class FinalBoss extends BossEnemy
         this.hasHeightSet = true;
     
         this.primaryColor = Colorations.brown;
-        this.hitpoints = 25000;
+        this.hitPoints = 25000;
         this.targetSpeedLevel.setLocation(23.5, 0);
     
         maxNr = 5;
         this.operator = new Enemy.FinalEnemyOperator();
-        this.isStunnable = false;
+        this.isStunable = false;
         this.dimFactor = 1.3f;
     
         Events.boss = this;

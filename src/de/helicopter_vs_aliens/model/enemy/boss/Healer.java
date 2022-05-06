@@ -18,7 +18,7 @@ public class Healer extends FinalBossServant
             115,
             this.bounds.getHeight());
         this.primaryColor = Color.white;
-        this.hitpoints = 3500;
+        this.hitPoints = 3500;
         this.targetSpeedLevel.setLocation(2.5, 3);
         this.canDodge = true;
         

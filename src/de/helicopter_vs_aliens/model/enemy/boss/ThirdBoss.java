@@ -11,7 +11,7 @@ public class ThirdBoss extends BossEnemy
     {
         this.setWidth(250);
         this.primaryColor = Colorations.cloaked;
-        this.hitpoints = 1750;
+        this.hitPoints = 1750;
         this.targetSpeedLevel.setLocation(5, 4);
     
         this.canMoveChaotic = true;

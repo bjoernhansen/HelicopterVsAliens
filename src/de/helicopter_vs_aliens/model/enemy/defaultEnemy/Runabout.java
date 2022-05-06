@@ -13,7 +13,7 @@ public class Runabout extends StandardEnemy
         this.primaryColor = new Color((100 + Calculations.random(30)),
             (100 + Calculations.random(30)),
             (40 + Calculations.random(25)));
-        this.hitpoints = 2 + Calculations.random(2);
+        this.hitPoints = 2 + Calculations.random(2);
         this.setVarWidth(100);
         this.targetSpeedLevel.setLocation(2 + 2*Math.random(),
             2.5 + 1.5*Math.random());

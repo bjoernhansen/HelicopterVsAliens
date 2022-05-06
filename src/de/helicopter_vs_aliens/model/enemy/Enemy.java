@@ -16,6 +16,7 @@ import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
@@ -56,9 +57,6 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
@@ -71,8 +69,10 @@ public abstract class Enemy extends RectangularGameEntity
 {
 	public static class FinalEnemyOperator
     {
+		// TODO EnumMap verwenden
 		public final Enemy[] servants;
-    	final int [] timeSinceDeath;
+    	// TODO EnumMap verwenden
+		final int [] timeSinceDeath;
     	
     	public FinalEnemyOperator()
     	{
@@ -84,7 +84,7 @@ public abstract class Enemy extends RectangularGameEntity
 	// Konstanten
 	public static final int
 		SPEED_KILL_BONUS_TIME 	= 15, // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
-		CLOAKING_TIME = 135, // Zeit, die beim Tarn- und Enttarnungsvorgang vergeht
+		CLOAKING_TIME = 135, // Zeit, die beim Vorgang der Tarnung und Enttarnung vergeht
 		CLOAKED_TIME = 135,     // Zeit, die ein Gegner getarnt bleibt
 		SNOOZE_TIME = 100,    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
 		DISABLED = -1; // TODO unnötig machen
@@ -93,7 +93,7 @@ public abstract class Enemy extends RectangularGameEntity
 		ZERO_SPEED = new Point2D.Float(0, 0);
 	
 	private static final float
-		RADAR_STRENGTH 				= 0.2f;        // Alpha-Wert: legt fest, wie stark  ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
+		RADAR_STRENGTH 				= 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
 		protected static final float HEIGHT_FACTOR 				= 0.28f;    // legt das Verhältnis von Höhe und Länge für die meisten Gegner fest
 		protected static final float HEIGHT_FACTOR_SUPERSIZE 	= 0.65f;    // legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
 		private static final float ROCK_PROB					= 0.05f;
@@ -245,8 +245,8 @@ public abstract class Enemy extends RectangularGameEntity
 	 */
 
 	public int
-		hitpoints,						// aktuelle HitPoints
-		startingHitpoints,				// Anfangs-HitPoints (bei Erstellung des Gegners)
+		hitPoints,						// aktuelle HitPoints
+		startingHitPoints,				// Anfangs-HitPoints (bei Erstellung des Gegners)
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
 		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
@@ -349,7 +349,7 @@ public abstract class Enemy extends RectangularGameEntity
         private boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
         private boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
         private boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
-        protected boolean isStunnable;            // = false für Boss 5; bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) "gestunt" werden kann
+        protected boolean isStunable;            // = false für Boss 5; bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) "betäubt" werden kann
         protected boolean isCarrier;                // = true
         protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
         private boolean isRecoveringSpeed;
@@ -374,7 +374,7 @@ public abstract class Enemy extends RectangularGameEntity
 		targetSpeedLevel = new Point2D.Float();        // Anfangsgeschwindigkeit
 		private final Point2D speedLevel = new Point2D.Float();            // auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
 		private final Point2D speed = new Point2D.Float();                // tatsächliche Geschwindigkeit
-		private final Point2D shootingDirection = new Point2D.Float();   	// Schussrichtugn von schießenden Barrier-Gegnern
+		private final Point2D shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
 	
 	public Enemy()
 	{
@@ -410,7 +410,7 @@ public abstract class Enemy extends RectangularGameEntity
 		this.isClockwiseBarrier = true;
 		this.stoppingBarrier = null;
 		this.isPreviousStoppingBarrier = null;
-		this.isStunnable = true;
+		this.isStunable = true;
 		this.isMiniBoss = false;
 		this.hasCrashed = false;
 		this.canInstantTurn = false;
@@ -576,7 +576,7 @@ public abstract class Enemy extends RectangularGameEntity
 			if(	 helicopter.isCountingAsFairPlayedHelicopter()
 				 && !Events.recordTimeManager.hasAnyBossBeenKilledBefore())
 			{
-				Window.unlock(HELIOS);
+				Window.unlock(HelicopterType.HELIOS);
 			}
 			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
 		}				
@@ -925,7 +925,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		if(this.canBecomeMiniBoss()){this.turnIntoMiniBoss(helicopter);}
 		this.rewardModifier = this.isBoss() ? 0 : 5 - Calculations.random(11);
-		this.startingHitpoints = this.hitpoints;
+		this.startingHitPoints = this.hitPoints;
 		
 		// Festlegen der Höhe und der y-Position des Gegners
 		if(!this.hasHeightSet){this.setHeight();}
@@ -958,7 +958,7 @@ public abstract class Enemy extends RectangularGameEntity
 			
 			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(this.getClass());
 			enemyPainter.paintImage(this.graphicsAdapters[i], this,1-2*i, null, true);
-			if(this.cloakingTimer != DISABLED && helicopter.getType() == OROCHI)
+			if(this.cloakingTimer != DISABLED && helicopter.getType() == HelicopterType.OROCHI)
 			{
 				BufferedImage 
 					 tempImage = new BufferedImage((int)(1.028f * this.paintBounds.width),
@@ -970,7 +970,7 @@ public abstract class Enemy extends RectangularGameEntity
 													BufferedImage.TYPE_INT_ARGB);
 				
 				enemyPainter.paintImage(getGraphicAdapter(tempImage), this,1-2*i, Color.red, true);
-				(getGraphicAdapter(this.image[2+i])).drawImage(tempImage, ROP_CLOAKED, 0, 0);
+				getGraphicAdapter(this.image[2+i]).drawImage(tempImage, ROP_CLOAKED, 0, 0);
 			}
 		}		
 	}
@@ -1041,7 +1041,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		helicopter.numberOfMiniBossSeen++;
 		currentMiniBoss = this;
-		this.hitpoints = 1+5*this.hitpoints;		
+		this.hitPoints = 1+5*this.hitPoints;
 		this.bounds.setRect(this.bounds.getX(),
 							this.bounds.getY(), 
 							1.44 * this.bounds.getWidth(), 
@@ -1087,7 +1087,7 @@ public abstract class Enemy extends RectangularGameEntity
 
 	protected void setHitPoints(int hitPoints)
 	{
-		this.hitpoints = hitPoints + Calculations.random(hitPoints/2);
+		this.hitPoints = hitPoints + Calculations.random(hitPoints/2);
 	}
 	
 	private void setX(double x)
@@ -1163,16 +1163,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.setY(y);
 		this.hasYPosSet = true;
 	}	
-	
-	private void setInitialBounds(double x, double y,
-								  double width, double height)
-	{
-		this.bounds.setRect(x, y, width, height);
-		this.hasYPosSet = true;
-		this.hasHeightSet = true;
-	}
-	
-	
 	
 	private void initializeShootDirectionOfDefaultEnemies()
 	{
@@ -1263,8 +1253,8 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 	}
 
-	private static boolean tournaroundIsTurnAway(double dir, double enemyCenter,
-												 double barrierCenter)
+	private static boolean turnaroundIsTurnAway(double dir, double enemyCenter,
+												double barrierCenter)
 	{
 		return 	   dir ==  1 && enemyCenter < barrierCenter
 				|| dir == -1 && enemyCenter > barrierCenter;
@@ -1297,7 +1287,7 @@ public abstract class Enemy extends RectangularGameEntity
 		this.move();
 		
 		if(helicopter.canCollideWith(this)){this.collision(controller, helicopter);}
-		if(helicopter.getType() == PEGASUS){this.checkForEmpStrike(controller, (Pegasus)helicopter);}
+		if(helicopter.getType() == HelicopterType.PEGASUS){this.checkForEmpStrike(controller, (Pegasus)helicopter);}
 		if(this.hasDeadlyGroundContact()){this.destroy(helicopter, controller.powerUps, false);}
 		if(this.isToBeRemoved()){this.prepareRemoval();}
 		this.setPaintBounds();
@@ -1359,7 +1349,7 @@ public abstract class Enemy extends RectangularGameEntity
 				
 		if(this.hasLateralFaceTouchWith(this.stoppingBarrier))
 		{
-			if(	tournaroundIsTurnAway(this.direction.x,
+			if(	turnaroundIsTurnAway(this.direction.x,
 			   							 this.bounds.getCenterX(), 
 			   							 this.stoppingBarrier.bounds.getCenterX())
 			   	// Gegner sollen nicht an Barriers abdrehen, bevor sie im Bild waren.					
@@ -1370,7 +1360,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 		else
 		{
-			if(tournaroundIsTurnAway(this.direction.y,
+			if(turnaroundIsTurnAway(this.direction.y,
 										this.bounds.getCenterY(), 
 										this.stoppingBarrier.bounds.getCenterY()))
 			{	
@@ -1495,7 +1485,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}				
 				
 		// Sinus- und Loop-Flug
-		if(this.canSinusMove || this.canLoop){this.sinusloop();}
+		if(this.canSinusMove || this.canLoop){this.sinusLoop();}
 		
 		// tarnen
 		if(this.cloakingTimer > 0
@@ -1528,7 +1518,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(this.dodgeTimer > 0){
 			evaluateDodge();}
 		
-		// Beamen
+		// Teleportieren
 		if(this.teleportTimer > 0)
 		{	
 			this.teleportTimer--;
@@ -1604,7 +1594,7 @@ public abstract class Enemy extends RectangularGameEntity
 			Audio.play(Audio.stun);
 			if(this.model == BARRIER){this.snooze(true);}
 			else if(this.teleportTimer == READY ){this.teleport();}
-			else if(this.isStunnable && !this.isShielding)
+			else if(this.isStunable && !this.isShielding)
 			{
 				this.empSlowedTimer = this.type.isMainBoss()
 											? EMP_SLOW_TIME_BOSS 
@@ -1749,7 +1739,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private boolean atEyeLevel(Helicopter helicopter)
 	{
-		return this.bounds.intersects(Integer.MIN_VALUE/2, 
+		return this.bounds.intersects(Integer.MIN_VALUE/2f,
 									  helicopter.getBounds().getY(),
 									  Integer.MAX_VALUE,
 									  helicopter.getBounds().getHeight());
@@ -1771,16 +1761,16 @@ public abstract class Enemy extends RectangularGameEntity
 				this.speedLevel.setLocation(this.speedLevel.getX()-0.5,	0);
 			}
 		}
-		else for(int serantType = 0; serantType < NR_OF_BOSS_5_SERVANTS; serantType++)
+		else for(int servantType = 0; servantType < NR_OF_BOSS_5_SERVANTS; servantType++)
 		{
-			if(this.operator.servants[serantType] == null)
+			if(this.operator.servants[servantType] == null)
 			{	
-				if(Calculations.tossUp(RETURN_PROB[serantType])
-					&& this.operator.timeSinceDeath[serantType] > MIN_ABSENT_TIME[serantType])
+				if(Calculations.tossUp(RETURN_PROB[servantType])
+					&& this.operator.timeSinceDeath[servantType] > MIN_ABSENT_TIME[servantType])
 				{
-					makeBoss5Servant[serantType] = true;
+					makeBoss5Servant[servantType] = true;
 				}
-				else{this.operator.timeSinceDeath[serantType]++;}
+				else{this.operator.timeSinceDeath[servantType]++;}
 			}
 		}		
 	}
@@ -2104,7 +2094,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}
     }
 	
-	private void sinusloop()
+	private void sinusLoop()
     {
 		this.speedLevel.setLocation(
 				this.speedLevel.getX(),
@@ -2270,7 +2260,7 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void healerAction()
     {    	
-		if(Events.boss.hitpoints < Events.boss.startingHitpoints)
+		if(Events.boss.hitPoints < Events.boss.startingHitPoints)
 		{						
 			if(this.speedLevel.getX() != 0)
 			{
@@ -2310,9 +2300,9 @@ public abstract class Enemy extends RectangularGameEntity
 			}
 			else
 			{
-				Events.boss.hitpoints 
-					= Math.min(Events.boss.hitpoints + BOSS_5_HEAL_RATE, 
-							   Events.boss.startingHitpoints);
+				Events.boss.hitPoints
+					= Math.min(Events.boss.hitPoints + BOSS_5_HEAL_RATE,
+							   Events.boss.startingHitPoints);
 			}						 
 		}
 		else
@@ -2423,9 +2413,9 @@ public abstract class Enemy extends RectangularGameEntity
 			// relevant, wenn mit der PEGASUS-Klasse gespielt wird
 			this.speed.setLocation(	
 				this.speed.getX()
-					*((EMP_SLOW_TIME-this.empSlowedTimer)/EMP_SLOW_TIME),
+					*((double)(EMP_SLOW_TIME-this.empSlowedTimer)/EMP_SLOW_TIME),
 				this.speed.getY()
-					*((EMP_SLOW_TIME-this.empSlowedTimer)/EMP_SLOW_TIME));
+					*((double)(EMP_SLOW_TIME-this.empSlowedTimer)/EMP_SLOW_TIME));
 		}
 				
 		if(	this.stoppingBarrier != null
@@ -2448,11 +2438,11 @@ public abstract class Enemy extends RectangularGameEntity
 			( this.totalStunningTime - 13 == this.stunningTimer
 			  || this.bounds.getMaxX() 
 			  	 + 18 
-			  	 + missileDrive/2 > Main.VIRTUAL_DIMENSION.width
+			  	 + missileDrive/2f > Main.VIRTUAL_DIMENSION.width
 			  	 								+ 2 * this.bounds.getWidth()/3  
 			  || this.bounds.getMinX() 
 			  	 - 18 
-			  	 - missileDrive/2 < - 2 * this.bounds.getWidth()/3))
+			  	 - missileDrive/2f < - 2 * this.bounds.getWidth()/3))
 		{
 			this.speedLevel.setLocation(ZERO_SPEED);
 		}
@@ -2679,7 +2669,7 @@ public abstract class Enemy extends RectangularGameEntity
 								> NICE_CATCH_TIME
 								  - TELEPORT_KILL_TIME ? 2 : 1)))
 				{
-					this.hitpoints = 0;
+					this.hitPoints = 0;
 				}
 				else if(Calculations.tossUp(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
 				{
@@ -2723,8 +2713,8 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	void takeDamage(int dmg)
 	{
-		this.hitpoints -= dmg;
-		if(!this.hasHPsLeft()){this.hitpoints = 0;}
+		this.hitPoints -= dmg;
+		if(!this.hasHPsLeft()){this.hitPoints = 0;}
 	}
 	
 	public void hitByMissile(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
@@ -2748,7 +2738,7 @@ public abstract class Enemy extends RectangularGameEntity
 											|| missile.typeOfExplosion == PHASE_SHIFT)
 										  && missile.extraDamage) ? 2 : 1)))
 			{
-				this.hitpoints = 0;
+				this.hitPoints = 0;
 			}
 			else if(Calculations.tossUp(this.deactivationProb *(missile.typeOfExplosion == PLASMA ? 2 : 1)))
 			{
@@ -2756,7 +2746,7 @@ public abstract class Enemy extends RectangularGameEntity
 			}
 		}		
 		if(missile.typeOfExplosion == STUNNING
-		   && this.isStunnable
+		   && this.isStunable
 		   && this.nonStunableTimer == READY)
 		{			
 			this.stun(helicopter, missile, explosion);
@@ -2775,7 +2765,7 @@ public abstract class Enemy extends RectangularGameEntity
 		this.speedLevel.setLocation(
 				(this.knockBackDirection == this.direction.x ? 1 : -1)
 				  *(this.type.isMainBoss() || this.type.isFinalBossServant()
-				    ? (10f + helicopter.missileDrive)/(Events.level/10)
+				    ? (10f + helicopter.missileDrive)/(Events.level/10f)
 					:  10f + helicopter.missileDrive),
 				0);
 						
@@ -3135,7 +3125,7 @@ public abstract class Enemy extends RectangularGameEntity
 		Explosion.start(explosion, helicopter, (int)this.bounds.getCenterX(), (int)this.bounds.getCenterY(), STUNNING, false, this);
 	}
 
-	public boolean isHitable(Missile missile)
+	public boolean isHittable(Missile missile)
 	{		
 		return !this.isDestroyed
 			   && !(this.barrierTeleportTimer != DISABLED && this.alpha != 255)
@@ -3202,7 +3192,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public boolean hasHPsLeft()
 	{
-		return this.hitpoints >= 1;
+		return this.hitPoints >= 1;
 	}
 
 	public void setTouchedSiteToRight() {

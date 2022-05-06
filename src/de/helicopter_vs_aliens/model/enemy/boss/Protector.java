@@ -22,7 +22,7 @@ public class Protector extends FinalBossServant
             this.bounds.getHeight());
     
         helicopter.numberOfEnemiesSeen--;
-        this.hitpoints = Integer.MAX_VALUE;
+        this.hitPoints = Integer.MAX_VALUE;
         this.isClockwiseBarrier = Calculations.tossUp();
         this.primaryColor = Colorations.bleachedViolet;
         this.targetSpeedLevel.setLocation(ZERO_SPEED);
@@ -36,7 +36,7 @@ public class Protector extends FinalBossServant
             * this.shotsPerCycle;
         this.shotSpeed = 10;
         this.shotType = EnemyMissileType.BUSTER;
-        this.isStunnable = false;
+        this.isStunable = false;
         this.secondaryColor = Colorations.dimColor(this.primaryColor, 0.75f);
         if(Events.timeOfDay == TimeOfDay.NIGHT)
         {

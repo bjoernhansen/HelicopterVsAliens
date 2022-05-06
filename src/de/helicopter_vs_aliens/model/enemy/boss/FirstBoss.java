@@ -11,7 +11,7 @@ public class FirstBoss extends BossEnemy
     protected void create(Helicopter helicopter)
     {
         this.primaryColor = new Color(115, 70, 100);
-        this.hitpoints = 225;
+        this.hitPoints = 225;
         this.setWidth(275);
         this.targetSpeedLevel.setLocation(2, 0.5);
     

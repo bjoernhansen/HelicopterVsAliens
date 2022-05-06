@@ -5,7 +5,6 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -163,7 +162,7 @@ public class Missile extends RectangularGameEntity
 	{
 		for(Enemy enemy : controller.enemies.get(ACTIVE))
 		{
-			if (enemy.isHitable(this))
+			if (enemy.isHittable(this))
 			{
 				if (enemy.teleportTimer == 0
 					&& enemy.stunningTimer == 0

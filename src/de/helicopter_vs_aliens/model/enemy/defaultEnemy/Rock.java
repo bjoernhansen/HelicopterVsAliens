@@ -21,7 +21,7 @@ public class Rock extends StandardEnemy
         this.primaryColor = new Color((180 + Calculations.random(30)),
             (120 + Calculations.random(30)),
             (      Calculations.random(15)));
-        this.hitpoints = 1;
+        this.hitPoints = 1;
         this.invincibleTimer = Integer.MAX_VALUE;
     
         this.bounds.setRect(this.bounds.getX(),

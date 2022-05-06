@@ -16,7 +16,7 @@ public class FourthBossServant extends BossEnemy
             this.bounds.getHeight());
         this.hasYPosSet = true;
         this.primaryColor = new Color(80 + Calculations.random(20), 80 + Calculations.random(20), 80 + Calculations.random(20));
-        this.hitpoints = 100 + Calculations.random(50);
+        this.hitPoints = 100 + Calculations.random(50);
         this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(),
             6 + 2.5*Math.random());
         this.direction.x = Calculations.randomDirection();

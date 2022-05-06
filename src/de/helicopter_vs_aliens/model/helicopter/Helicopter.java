@@ -12,6 +12,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.components.Battery;
+import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -179,6 +180,9 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	final Battery
 		battery = Battery.createFor(this.getType());
+	
+	final PowerUpController
+		powerUpController = new PowerUpController();
 	
 	public final Point2D
 		location = new Point2D.Float();            // exakter Aufenthaltsort

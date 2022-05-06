@@ -13,7 +13,7 @@ public class TinyVessel extends StandardEnemy
         this.primaryColor = new Color((180 + Calculations.random(30)),
                                 (120 + Calculations.random(30)),
                                 (      Calculations.random(15)));
-        this.hitpoints = 2;
+        this.hitPoints = 2;
         this.setVarWidth(110);
         this.targetSpeedLevel.setLocation(0.5 + Math.random(),
                                           0.5 * Math.random());

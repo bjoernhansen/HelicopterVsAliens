@@ -10,7 +10,7 @@ public class Kaboom extends StandardEnemy
     protected void create(Helicopter helicopter)
     {
         this.primaryColor = Color.white;
-        this.hitpoints = Integer.MAX_VALUE;
+        this.hitPoints = Integer.MAX_VALUE;
         this.setVarWidth(KABOOM_WIDTH);
         this.targetSpeedLevel.setLocation(0.5 + 0.5*Math.random(), 0);
         this.canExplode = true;

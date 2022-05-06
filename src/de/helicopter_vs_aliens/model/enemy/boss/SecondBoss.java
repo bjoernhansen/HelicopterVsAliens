@@ -14,7 +14,7 @@ public class SecondBoss extends BossEnemy
     {
         this.model = CARGO;
         this.primaryColor = new Color(85, 85, 85);
-        this.hitpoints = 500;
+        this.hitPoints = 500;
         this.setWidth(250);
         this.targetSpeedLevel.setLocation(7, 8);
     

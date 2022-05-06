@@ -186,7 +186,7 @@ public class GameWindowPainter extends WindowPainter
     private void paintBossHealthBar(GraphicsAdapter graphicsAdapter, Enemy boss)
     {
         graphicsAdapter.setColor(Colorations.hitPoints);
-        graphicsAdapter.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints) / boss.startingHitpoints, 10);
+        graphicsAdapter.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.hitPoints) / boss.startingHitPoints, 10);
         if (Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.red);
@@ -194,7 +194,7 @@ public class GameWindowPainter extends WindowPainter
         {
             graphicsAdapter.setColor(Colorations.red);
         }
-        graphicsAdapter.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints) / boss.startingHitpoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.hitpoints) / boss.startingHitpoints, 10);
+        graphicsAdapter.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.hitPoints) / boss.startingHitPoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.hitPoints) / boss.startingHitPoints, 10);
         if (Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.white);

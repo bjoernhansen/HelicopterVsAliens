@@ -20,7 +20,7 @@ abstract class Barrier extends Enemy
         this.model = BARRIER;
     
         helicopter.numberOfEnemiesSeen--;
-        this.hitpoints = Integer.MAX_VALUE;
+        this.hitPoints = Integer.MAX_VALUE;
         this.rotorColor = 1;
         this.isClockwiseBarrier = Calculations.tossUp();
         this.secondaryColor = Colorations.dimColor(this.primaryColor, DIM_FACTOR);
