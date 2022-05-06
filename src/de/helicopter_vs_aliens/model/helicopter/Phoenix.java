@@ -21,7 +21,6 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIREPOWER;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
 
 
 public final class Phoenix extends Helicopter
@@ -188,13 +187,13 @@ public final class Phoenix extends Helicopter
     public void initMenuEffect(int i)
     {
         super.initMenuEffect(i);
-        this.becomeBoosteredPermanently(INVINCIBLE);
+        this.gainInvincibilityPermanently();
     }
     
     @Override
     public void stopMenuEffect()
     {
-        this.turnOfBooster(INVINCIBLE);
+        this.turnOfInvincibility();
     }
     
     @Override
@@ -235,20 +234,14 @@ public final class Phoenix extends Helicopter
             
             if(!this.isActive || !this.isRotorSystemActive){this.activate();}
             if(this.tractor != null){this.stopTractor();}
-            
-            this.gainTeleportInvincibility();
-            
+    
+            this.powerUpController.activateInvinciblePowerUpBriefly();
             
             this.bonusKills = 0;
             this.enhancedRadiationTimer = TELEPORT_INVULNERABILITY_TIME;
             this.bonusKillsTimer = NICE_CATCH_TIME;
             this.bonusKillsMoney = 0;
         }
-    }
-    
-    private void gainTeleportInvincibility()
-    {
-        this.becomeBoostered(INVINCIBLE, TELEPORT_INVULNERABILITY_TIME);
     }
     
     private boolean canTeleportTo(int x, int y)

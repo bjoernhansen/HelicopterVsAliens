@@ -205,7 +205,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     
     private Color getInputColorWindow()
     {
-        return helicopter.hasTripleDmg() || helicopter.hasBoostedFireRate()
+        return helicopter.hasTripleDamage() || helicopter.hasBoostedFireRate()
             ? Colorations.variableRed
             : Colorations.windowBlue;
     }

@@ -49,7 +49,6 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.MISSILE_DRIVE;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.PLATING;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ROTOR_SYSTEM;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
 
 
 public abstract class Helicopter extends RectangularGameEntity
@@ -107,12 +106,12 @@ public abstract class Helicopter extends RectangularGameEntity
 		HELICOPTER_SIZE = new Dimension(122, 69);
 	
 	private static final Rectangle
-		INITIAL_BOUNDS = new Rectangle(150,
-		GROUND_Y
-			- HELICOPTER_SIZE.height
-			- NO_COLLISION_HEIGHT,
-		HELICOPTER_SIZE.width,
-		HELICOPTER_SIZE.height);
+		INITIAL_BOUNDS = new Rectangle(	150,
+										GROUND_Y
+											- HELICOPTER_SIZE.height
+											- NO_COLLISION_HEIGHT,
+										HELICOPTER_SIZE.width,
+										HELICOPTER_SIZE.height);
 	
 	public int
 		missileDrive,                        // Geschwindigkeit [Pixel pro Frame] der Raketen
@@ -121,8 +120,8 @@ public abstract class Helicopter extends RectangularGameEntity
 		numberOfCannons = 1,                // Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
 		recentDamageTimer,                    // aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
 	
-	// für die Spielstatistik
-	numberOfCrashes,                    // Anzahl der Abstürze
+		// für die Spielstatistik
+		numberOfCrashes,                    // Anzahl der Abstürze
 		numberOfRepairs,                    // Anzahl der Reparaturen
 		missileCounter,                        // Anzahl der abgeschossenen Raketen
 		hitCounter,                            // Anzahl der getroffenen Gegner
@@ -130,11 +129,6 @@ public abstract class Helicopter extends RectangularGameEntity
 		numberOfEnemiesKilled,                // Anzahl der vernichteten Gegner
 		numberOfMiniBossSeen,                // Anzahl der erschienenen Mini-Bosse
 		numberOfMiniBossKilled;                // Anzahl der vernichteten Mini-Bosse
-	
-	// TODO Magic Number entfernen und kein Array verwenden
-	private final Map<PowerUpType, Integer>
-		powerUpTimers = new EnumMap<>(PowerUpType.class); // Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
-	
 	private final Map<StandardUpgradeType, Integer>
 		levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
 	
@@ -182,7 +176,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		battery = Battery.createFor(this.getType());
 	
 	final PowerUpController
-		powerUpController = new PowerUpController();
+		powerUpController = new PowerUpController(this);
 	
 	public final Point2D
 		location = new Point2D.Float();            // exakter Aufenthaltsort
@@ -209,7 +203,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	public Helicopter()
 	{
 		this.paintBounds.setSize(HELICOPTER_SIZE);
-		this.turnOfAllBoosters();
+		this.powerUpController.turnOfAllBoosters();
 	}
 	
 	public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
@@ -241,7 +235,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			this.slowedTimer--;
 		}
-		this.evaluatePowerUpActivationStates();
+		this.powerUpController.evaluatePowerUpActivationStates();
 	}
 	
 	private void evaluateFire(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile)
@@ -629,7 +623,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isCrashing = false;
 		this.slowedTimer = 0;
 		this.recentDamageTimer = 0;
-		this.resetPowerUpTimers();
+		this.powerUpController.reset();
 		this.resetRotorPosition();
 		this.fireRateTimer = this.timeBetweenTwoShots;
 		if (resetStartPos)
@@ -821,7 +815,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		this.isActive = false;
-		this.startDecayOfAllCurrentBooster();
+		this.powerUpController.startDecayOfAllActivePowerUps();
 		if (Events.level < 51 && explosion != null)
 		{
 			Audio.play(Audio.explosion3);
@@ -881,71 +875,9 @@ public abstract class Helicopter extends RectangularGameEntity
 		Colorations.plating = Colorations.percentColor(this.getRelativePlating());
 	}
 	
-	public void switchPowerUpActivationState(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps,
-											 PowerUpType powerUpType)
-	{
-		if(this.isBoosted(powerUpType))
-		{
-			Audio.play(Audio.powerUpFade2);
-			this.turnOfBooster(powerUpType);
-			Window.removeCollectedPowerUp(powerUpType);
-			if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
-			{
-				this.adjustFireRate(false);
-			}
-		}
-		else
-		{
-			Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);
-			this.becomeBoosteredPermanently(powerUpType);
-			activatePowerUp(powerUps, powerUpType);
-		}
-	}
+
 	
-	private void turnOfAllBoosters()
-	{
-		PowerUpType.getStatusBarPowerUpTypes()
-				   .forEach(this::turnOfBooster);
-	}
-	
-	protected void turnOfBooster(PowerUpType powerUpType)
-	{
-		this.powerUpTimers.put(powerUpType, 0);
-	}
-	
-	protected void becomeBoosteredPermanently(PowerUpType powerUpType)
-	{
-		this.powerUpTimers.put(powerUpType, Integer.MAX_VALUE);
-	}
-	
-	protected void becomeBoostered(PowerUpType powerUpType, int minimumDuration)
-	{
-		int duration = Math.max(this.getRemainingTimeBoosted(powerUpType), minimumDuration);
-		this.powerUpTimers.put(powerUpType, duration);
-	}
-	
-	private void startPowerUpDecay(PowerUpType powerUpType)
-	{
-		int duration = Math.min(POWER_UP_FADE_TIME + 1, this.getRemainingTimeBoosted(powerUpType));
-		this.powerUpTimers.put(powerUpType, duration);
-	}
-	
-	protected void activatePowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
-	{
-		if(!Window.collectedPowerUps.containsKey(powerUpType))
-		{
-			PowerUp powerUp = PowerUp.getInstance(powerUpType);
-			powerUp.activateAndMoveToStatusBar(powerUps);
-			if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
-			{
-				this.adjustFireRate(true);
-			}
-		}
-		else
-		{
-			Window.collectedPowerUps.get(powerUpType).setOpaque();
-		}
-	}
+
 	
 	public void activate()
 	{
@@ -1511,122 +1443,70 @@ public abstract class Helicopter extends RectangularGameEntity
 			: this.getType().getStandardSecondaryHullColor();
 	}
 	
-	private void evaluatePowerUpActivationStates()
-	{
-		PowerUpType.getStatusBarPowerUpTypes()
-				   .forEach(powerUpType -> {
-					   if(this.isBoosted(powerUpType))
-					   {
-						   this.countDownPowerUpTimer(powerUpType);
-						   if(!this.isBoosted(powerUpType) && Window.collectedPowerUps.containsKey(powerUpType))
-						   {
-							   Audio.play(Audio.powerUpFade2);
-							   Window.collectedPowerUps.get(powerUpType)
-													   .setCollected();
-							   Window.collectedPowerUps.remove(powerUpType);
-							   if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
-							   {
-								   this.adjustFireRate(false);
-							   }
-						   }
-						   else if(this.isBoosterStartingToFadeRightNow(powerUpType))
-						   {
-							   Audio.play(Audio.powerUpFade1);
-						   }
-						   else if(this.isBoosterFading(powerUpType) && Window.collectedPowerUps.containsKey(powerUpType))
-						   {
-							   int remainingTimeBoosted = this.getRemainingTimeBoosted(powerUpType);
-							   Window.changeCollectedPowerUpColorationForFading(powerUpType, remainingTimeBoosted);
-						   }
-					   }
-				   });
-	}
-	
 	public int getLastCannonCost()
 	{
 		return STANDARD_SPECIAL_COSTS;
 	}
 	
-	public void restartPowerUpTimer(PowerUpType powerUpType)
+	
+	// Method for interacting with PowerUpController class
+	public void startDecayOfAllCurrentBooster()
 	{
-		this.becomeBoostered(powerUpType, Helicopter.POWER_UP_DURATION);
+		powerUpController.startDecayOfAllActivePowerUps();
+	}
+	
+	public boolean isUnacceptablyBoostedForBossLevel()
+	{
+		return powerUpController.isAnyPowerUpForbiddenAtBossLevelActive();
 	}
 	
 	public boolean isBoosted(PowerUpType powerUpType)
 	{
-		return this.getRemainingTimeBoosted(powerUpType) > 0;
+		return powerUpController.isPowerUpActive(powerUpType);
 	}
 	
-	public boolean hasTripleDmg()
+	public boolean hasTripleDamage()
 	{
-		return this.isBoosted(PowerUpType.TRIPLE_DAMAGE);
+		return isBoosted(PowerUpType.TRIPLE_DAMAGE);
 	}
 	
 	public boolean isInvincible()
 	{
-		return this.isBoosted(PowerUpType.INVINCIBLE);
+		return isBoosted(PowerUpType.INVINCIBLE);
 	}
 	
 	public boolean hasUnlimitedEnergy()
 	{
-		return this.isBoosted(PowerUpType.UNLIMITED_ENERGY);
+		return isBoosted(PowerUpType.UNLIMITED_ENERGY);
 	}
 	
 	public boolean hasBoostedFireRate()
 	{
-		return this.isBoosted(PowerUpType.BOOSTED_FIRE_RATE);
+		return isBoosted(PowerUpType.BOOSTED_FIRE_RATE);
 	}
 	
-	private void resetPowerUpTimers()
+	public void turnOfInvincibility()
 	{
-		PowerUpType.getStatusBarPowerUpTypes()
-				   .forEach(this::turnOfBooster);
+		powerUpController.turnOfInvinciblePowerUp();
 	}
 	
-	public boolean hasPowerUpsDisallowedAtBossLevel()
+	public void gainTripleDamagePermanently()
 	{
-		// PowerUps acquired by cheats do not fade
-		return PowerUpType.getStatusBarPowerUpTypes()
-						  .stream()
-						  .anyMatch(this::isPoweredUpWithoutCheats);
+		powerUpController.activateTripleDamagePowerUpPermanently();
 	}
 	
-	private boolean isPoweredUpWithoutCheats(PowerUpType powerUpType)
+	public void gainInvincibilityPermanently()
 	{
-		return this.isBoosted(powerUpType) && !this.isPoweredUpWithCheats(powerUpType);
+		powerUpController.activateInvinciblePowerUpPermanently();
 	}
 	
-	private boolean isPoweredUpWithCheats(PowerUpType powerUpType)
+	public void restartPowerUpTimer(PowerUpType powerUpType)
 	{
-		return this.getRemainingTimeBoosted(powerUpType) > Integer.MAX_VALUE/2;
+		powerUpController.restartPowerUpTimer(powerUpType);
 	}
 	
-	public void startDecayOfAllCurrentBooster()
+	public void switchPowerUpActivationState(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
 	{
-		PowerUpType.getStatusBarPowerUpTypes()
-				   .stream()
-				   .filter(this::isPoweredUpWithoutCheats)
-				   .forEach(this::startPowerUpDecay);
-	}
-	
-	private boolean isBoosterStartingToFadeRightNow(PowerUpType powerUpType)
-	{
-		return this.powerUpTimers.get(powerUpType) == POWER_UP_FADE_TIME;
-	}
-	
-	private boolean isBoosterFading(PowerUpType powerUpType)
-	{
-		return this.getRemainingTimeBoosted(powerUpType) < POWER_UP_FADE_TIME;
-	}
-	
-	private void countDownPowerUpTimer(PowerUpType powerUpType)
-	{
-		int nextTimerValue = this.getRemainingTimeBoosted(powerUpType) - 1;
-		this.powerUpTimers.put(powerUpType, nextTimerValue);
-	}
-	
-	private int getRemainingTimeBoosted(PowerUpType powerUpType)
-	{
-		return this.powerUpTimers.get(powerUpType);
+		powerUpController.switchPowerUpActivationState(powerUps, powerUpType);
 	}
 }

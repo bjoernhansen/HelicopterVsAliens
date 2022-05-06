@@ -770,7 +770,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		if(	enemy.get(ACTIVE).isEmpty()
 			&& carrierDestroyedJustNow == null
-			&& !(helicopter.hasPowerUpsDisallowedAtBossLevel()
+			&& !(helicopter.isUnacceptablyBoostedForBossLevel()
 				 && Events.isBossLevel()) )
 		{
 			wasEnemyCreationPaused = false;
@@ -2662,7 +2662,7 @@ public abstract class Enemy extends RectangularGameEntity
 							
 			if(this.model == BARRIER)
 			{
-				if(	helicopter.hasTripleDmg()
+				if(	helicopter.hasTripleDamage()
 					&&  Calculations.tossUp(
 							this.deactivationProb
 							*(helicopter.bonusKillsTimer
@@ -2965,13 +2965,13 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private int getRandomIndexOfDroppablePowerUp()
 	{
-		return Calculations.random(this.getMaximumDroppablePowerUpIndex());
+		return Calculations.random(this.getMaximumNumberOfDifferentDroppablePowerUps());
 	}
 	
-	private int getMaximumDroppablePowerUpIndex()
+	private int getMaximumNumberOfDifferentDroppablePowerUps()
 	{
 		// major bosses are not supposed to drop bonus income powerUps
-		int indexReductionValue = this.type.isMajorBoss() ? - 1 : 0;
+		int indexReductionValue = this.type.isMajorBoss() ? 1 : 0;
 		return PowerUpType.valueCount() - indexReductionValue;
 	}
 	

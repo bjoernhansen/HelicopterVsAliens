@@ -122,8 +122,8 @@ public final class Helios extends Helicopter
                 {
                     Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);
                 }
-                this.restartPowerUpTimer(powerUpType);
-                activatePowerUp(powerUps, powerUpType);
+                powerUpController.restartPowerUpTimer(powerUpType);
+                powerUpController.activatePowerUp(powerUps, powerUpType);
             }
             if(Calculations.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}
         }
@@ -140,13 +140,18 @@ public final class Helios extends Helicopter
     {
         super.initMenuEffect(i);
         // TODO analysieren, ob man nicht direkt die richtige Zeit für den Effekt wählen kann
-        this.becomeBoosteredPermanently(TRIPLE_DAMAGE);
+        this.gainTripleDamagePermanently();
     }
     
     @Override
     public void stopMenuEffect()
     {
-        this.turnOfBooster(TRIPLE_DAMAGE);
+        this.turnOfTripleDamage();
+    }
+    
+    private void turnOfTripleDamage()
+    {
+        powerUpController.turnOfTripeDamagePowerUp();
     }
     
     @Override
@@ -178,7 +183,7 @@ public final class Helios extends Helicopter
     }
 
     @Override
-    public boolean hasPowerUpsDisallowedAtBossLevel()
+    public boolean isUnacceptablyBoostedForBossLevel()
     {
         return false;
     }

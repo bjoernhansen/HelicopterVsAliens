@@ -67,7 +67,7 @@ public class Missile extends RectangularGameEntity
 		this.dangerous = false;
 		this.bounced = false;
 		this.flying = true;	
-		this.extraDamage = helicopter.hasTripleDmg();
+		this.extraDamage = helicopter.hasTripleDamage();
 
 		this.typeOfExplosion = helicopter.getCurrentExplosionTypeOfMissiles(stunningMissile);
 
