@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
+import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
@@ -16,12 +17,17 @@ public class FourthBossServant extends BossEnemy
             this.bounds.getHeight());
         this.hasYPosSet = true;
         this.primaryColor = new Color(80 + Calculations.random(20), 80 + Calculations.random(20), 80 + Calculations.random(20));
-        this.hitPoints = 100 + Calculations.random(50);
         this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(),
             6 + 2.5*Math.random());
         this.direction.x = Calculations.randomDirection();
         this.canExplode = true;
         
         super.create(helicopter);
+    }
+    
+    @Override
+    protected int hitPointVariance()
+    {
+        return Calculations.random(type.getHitPoints()/2);
     }
 }

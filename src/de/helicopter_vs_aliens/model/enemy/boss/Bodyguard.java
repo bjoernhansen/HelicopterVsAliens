@@ -13,7 +13,6 @@ public class Bodyguard extends FinalBossServant
             225,
             this.bounds.getHeight());
         this.primaryColor = Colorations.cloaked;
-        this.hitPoints = 7500;
         this.targetSpeedLevel.setLocation(1, 2);
     
         this.cloakingTimer = 0;

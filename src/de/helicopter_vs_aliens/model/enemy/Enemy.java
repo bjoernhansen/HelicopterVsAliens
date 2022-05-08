@@ -13,6 +13,7 @@ import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
+import de.helicopter_vs_aliens.model.enemy.basicEnemy.BasicEnemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -93,7 +94,7 @@ public abstract class Enemy extends RectangularGameEntity
 		ZERO_SPEED = new Point2D.Float(0, 0);
 	
 	private static final float
-		RADAR_STRENGTH 				= 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
+		RADAR_DETECTABILITY = 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
 		protected static final float HEIGHT_FACTOR 				= 0.28f;    // legt das Verhältnis von Höhe und Länge für die meisten Gegner fest
 		protected static final float HEIGHT_FACTOR_SUPERSIZE 	= 0.65f;    // legt das Verhältnis von Höhe und Länge für besonders hohe Gegner fest
 		private static final float ROCK_PROB					= 0.05f;
@@ -110,8 +111,7 @@ public abstract class Enemy extends RectangularGameEntity
 		private static final float TELEPORT_DAMAGE_FACTOR = 4f;            // Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
 		private static final float EMP_DAMAGE_FACTOR_BOSS = 1.5f;            // Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
 		private static final float EMP_DAMAGE_FACTOR_ORDINARY = 2.5f;        // Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
-		private static final float STANDARD_MINI_BOSS_PROB = 0.05f;
-	private static final float CHEAT_MINI_BOSS_PROB = 1.0f;
+
 	
 	private static final float[]
 		RETURN_PROB	= { 0.013f,	 	// SMALL_SHIELD_MAKER
@@ -155,7 +155,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private static final int// für Boss-Gegner
 		NR_OF_BOSS_5_SERVANTS = 5;
-	private static final int BOSS_5_HEAL_RATE = 11;
+	private static final int HEALED_HIT_POINTS = 11;
 	private static final int STANDARD_REWARD_FACTOR = 1;
 	private static final int MINI_BOSS_REWARD_FACTOR = 4;
 	
@@ -195,13 +195,8 @@ public abstract class Enemy extends RectangularGameEntity
 		maxBarrierNr,			// bestimmt wie viele Hindernis-Gegner gleichzeitig erscheinen können
 		currentNumberOfBarriers; // aktuelle Anzahl von "lebenden" Hindernis-Gegnern
 	
-	public static float
-		miniBossProb = 0.05f;// bestimmt die Häufigkeit, mit der Mini-Bosse erscheinen
-		
-	public static Enemy
-		currentMiniBoss,	// Referenz auf den aktuellen Boss-Gegner
-		currentRock,
-		carrierDestroyedJustNow;  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
+	public static Enemy currentRock;
+	public static Enemy carrierDestroyedJustNow;  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
 	
 	public static final Enemy[]
 		livingBarrier = new Enemy [MAX_BARRIER_NUMBER];
@@ -218,7 +213,7 @@ public abstract class Enemy extends RectangularGameEntity
 		
 	// für die Tarnung nötige Variablen
     public static final float[]
-    	scales = { 1f, 1f, 1f, RADAR_STRENGTH },
+    	scales = { 1f, 1f, 1f, RADAR_DETECTABILITY},
     	offsets = new float[4];	
 	
     private static final RescaleOp
@@ -245,7 +240,6 @@ public abstract class Enemy extends RectangularGameEntity
 	 */
 
 	public int
-		hitPoints,						// aktuelle HitPoints
 		startingHitPoints,				// Anfangs-HitPoints (bei Erstellung des Gegners)
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
@@ -259,7 +253,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public boolean
 		isMiniBoss,					// = true: Gegner ist ein Mini-Boss
-		isLasting,
+		isLasting,					// = true: Gegner bleibt nach Betreten der Werkstatt noch aktiv
 		isTouchingHelicopter,
 		hasUnresolvedIntersection;
 		
@@ -285,27 +279,46 @@ public abstract class Enemy extends RectangularGameEntity
 	Enemy
 		stoppingBarrier,		// Hindernis-Gegner, der diesen Gegner aufgehalten hat
 		isPreviousStoppingBarrier;
-		
+	
 	private int
-		rewardModifier;            // für normale Gegner wird eine Zufallszahl zwischen -5 und 5 auf die Belohnung bei Abschuss addiert
-		private int lifetime;                // Anzahl der Frames seit Erstellung des Gegners; und vergangene Zeit seit Erstellung, Zeit
-		private int yCrashPos;                // Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
-		private int collisionAudioTimer;
-	private int turnAudioTimer;
-	private int explodingTimer;            // Timer zur überwachung der Zeit zwischen Abschuss und Absturz
-		protected int cloakingTimer;            // reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
-		protected int uncloakingSpeed;
-	protected int shieldMakerTimer;
-	protected int callBack;
-	private int chaosTimer;
-	protected int speedup;
-	protected int batchWiseMove;
-	protected int shootTimer;
-	protected int spawningHornetTimer;
-	private int turnTimer;
-	private int dodgeTimer;            // Zeit [frames], bis ein Gegner erneut ausweichen kann
-		private int snoozeTimer;
-	protected int staticChargeTimer;
+		hitPoints;						// aktuelle HitPoints
+	
+	private int
+		lifetime;                // Anzahl der Frames seit Erstellung des Gegners; und vergangene Zeit seit Erstellung, Zeit
+	private int
+		yCrashPos;                // Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
+	private int
+		collisionAudioTimer;
+	private int
+		turnAudioTimer;
+	private int
+		explodingTimer;            // Timer zur überwachung der Zeit zwischen Abschuss und Absturz
+	protected int
+		cloakingTimer;            // reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
+	protected int
+		uncloakingSpeed;
+	protected int
+		shieldMakerTimer;
+	protected int
+		callBack;
+	private int
+		chaosTimer;
+	protected int
+		speedup;
+	protected int
+		batchWiseMove;
+	protected int
+		shootTimer;
+	protected int
+		spawningHornetTimer;
+	private int
+		turnTimer;
+	private int
+		dodgeTimer;            // Zeit [frames], bis ein Gegner erneut ausweichen kann
+	protected int
+		snoozeTimer;
+	protected int
+		staticChargeTimer;
 	
 	protected int// nur für Hindernis-Gegner relevant
 		rotorColor;
@@ -374,7 +387,7 @@ public abstract class Enemy extends RectangularGameEntity
 		targetSpeedLevel = new Point2D.Float();        // Anfangsgeschwindigkeit
 		private final Point2D speedLevel = new Point2D.Float();            // auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
 		private final Point2D speed = new Point2D.Float();                // tatsächliche Geschwindigkeit
-		private final Point2D shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
+		protected final Point2D shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
 	
 	public Enemy()
 	{
@@ -468,12 +481,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.knockBackDirection = 0;
 	}
 	
-	
-	public static void changeMiniBossProb()
-	{
-		miniBossProb = miniBossProb == STANDARD_MINI_BOSS_PROB ? CHEAT_MINI_BOSS_PROB: STANDARD_MINI_BOSS_PROB;
-	}
-	
 	public void dimmedRepaint()
 	{
 		primaryColor = Colorations.dimColor(primaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
@@ -483,13 +490,11 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public boolean hasGlowingEyes()
 	{
-		return  !this.isDestroyed
-				&& (this.isBoss()
-					|| this.type == EnemyType.KABOOM
-					|| (this.model == BARRIER
-						&& this.snoozeTimer <= SNOOZE_TIME + 75));
+		return !isDestroyed && isMeetingRequirementsForGlowingEyes();
 	}
-
+	
+	protected abstract boolean isMeetingRequirementsForGlowingEyes();
+	
 	private void clearImage()
     {
     	for(int i = 0; i < this.image.length; i++)
@@ -499,12 +504,14 @@ public abstract class Enemy extends RectangularGameEntity
     	}
     }
     
-    public void repaint()
+    // TODO gehört diese Methode nicht eher in die Painter-Klasse?
+	public void repaint()
 	{
 		for(int j = 0; j < 2; j++)
 		{		
 			if(this.model != BARRIER)
-			{				
+			{
+				// TODO hier taucht null pointer exception auf. Warum?
 				this.graphicsAdapters[j].setComposite(AlphaComposite.Src);
 				this.graphicsAdapters[j].setColor(Colorations.translucentDarkestBlack);
 				this.graphicsAdapters[j].fillRect(0, 0, this.image[j].getWidth(), this.image[j].getHeight());
@@ -923,27 +930,23 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	protected void create(Helicopter helicopter)
 	{
-		if(this.canBecomeMiniBoss()){this.turnIntoMiniBoss(helicopter);}
-		this.rewardModifier = this.isBoss() ? 0 : 5 - Calculations.random(11);
-		this.startingHitPoints = this.hitPoints;
+		hitPoints = calculateHitPoints();
+		startingHitPoints = hitPoints;
 		
 		// Festlegen der Höhe und der y-Position des Gegners
-		if(!this.hasHeightSet){this.setHeight();}
-		if(!this.hasYPosSet){this.setInitialY();}
+		if(!hasHeightSet){setHeight();}
+		if(!hasYPosSet){setInitialY();}
 		
-		if(isShootingDefaultEnemy())
-		{
-			this.initializeShootDirectionOfDefaultEnemies();
-		}
-		else if(isShootingBarrier())
-		{
-			this.initializeShootDirectionOfBarriers();
-		}
 		
 		this.speedLevel.setLocation(this.targetSpeedLevel);
 		this.setPaintBounds((int)this.bounds.getWidth(),
-							(int)this.bounds.getHeight());
+			(int)this.bounds.getHeight());
 		this.assignImage(helicopter);
+		
+		if(isShootingStandardEnemy())
+		{
+			this.initializeShootDirectionOfDefaultEnemies();
+		}
 	}
 
 	private void assignImage(Helicopter helicopter)
@@ -1024,38 +1027,6 @@ public abstract class Enemy extends RectangularGameEntity
 				&& !Events.isBossLevel()
 				&& Calculations.tossUp(KABOOM_PROB);
 	}
-	
-
-	private boolean canBecomeMiniBoss()
-	{		
-		return 	currentMiniBoss == null
-				&& Events.level > 4 
-				&& this.model != BARRIER
-				&& !(this.type == EnemyType.ROCK)
-				&& !(this.type == EnemyType.KABOOM)
-				&& Calculations.tossUp(miniBossProb)
-				&& this.type.isSuitableMiniBoss();
-	}
-
-	private void turnIntoMiniBoss(Helicopter helicopter)
-	{
-		helicopter.numberOfMiniBossSeen++;
-		currentMiniBoss = this;
-		this.hitPoints = 1+5*this.hitPoints;
-		this.bounds.setRect(this.bounds.getX(),
-							this.bounds.getY(), 
-							1.44 * this.bounds.getWidth(), 
-							1.44 * this.bounds.getHeight());		
-		this.isMiniBoss = true;
-		this.canExplode = false;
-		this.callBack += 2;
-		this.canTurn = true;
-		if(  (this.type.isCloakableAsMiniBoss() && !this.canLearnKamikaze && Calculations.tossUp(0.2f)) ||
-		      this.shootTimer == 0 )
-		{
-			this.cloakingTimer = 0;
-		}		
-	}
 
 	private void placeNearHelicopter(Helicopter helicopter)
 	{		
@@ -1083,11 +1054,14 @@ public abstract class Enemy extends RectangularGameEntity
 						  Math.max(0, Math.min(y, GROUND_Y-this.bounds.getWidth())));
 	}
 	
+	public int getHitPoints()
+	{
+		return hitPoints;
+	}
 	
-
 	protected void setHitPoints(int hitPoints)
 	{
-		this.hitPoints = hitPoints + Calculations.random(hitPoints/2);
+		this.hitPoints = hitPoints;
 	}
 	
 	private void setX(double x)
@@ -1170,28 +1144,11 @@ public abstract class Enemy extends RectangularGameEntity
 		this.shootingDirection.setLocation( shootingDirectionX, 0f);
 	}
 	
-	private boolean isShootingDefaultEnemy()
+	private boolean isShootingStandardEnemy()
 	{
 		return this.shootTimer == READY;
 	}
 	
-	private void initializeShootDirectionOfBarriers()
-	{
-		double randomAngle
-				= Math.PI * (1 + Math.random()/2)
-					+ (this.bounds.getY() + this.bounds.getHeight()/2 < GROUND_Y/2f
-						? Math.PI/2
-						: 0);
-			
-		this.shootingDirection.setLocation(
-			Math.sin(randomAngle),
-			Math.cos(randomAngle) );
-	}
-	
-	private boolean isShootingBarrier()
-	{
-		return this.barrierShootTimer == READY;
-	}
 	
 	
 	private static GraphicsAdapter getGraphicAdapter(BufferedImage bufferedImage)
@@ -1697,7 +1654,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 		else if(this.isMiniBoss)
 		{
-			currentMiniBoss = null;
+			BasicEnemy.currentMiniBoss = null;
 		}		
 	}	
 	
@@ -2260,7 +2217,7 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void healerAction()
     {    	
-		if(Events.boss.hitPoints < Events.boss.startingHitPoints)
+		if(Events.boss.getHitPoints() < Events.boss.startingHitPoints)
 		{						
 			if(this.speedLevel.getX() != 0)
 			{
@@ -2300,9 +2257,7 @@ public abstract class Enemy extends RectangularGameEntity
 			}
 			else
 			{
-				Events.boss.hitPoints
-					= Math.min(Events.boss.hitPoints + BOSS_5_HEAL_RATE,
-							   Events.boss.startingHitPoints);
+				Events.boss.healHitPoints();
 			}						 
 		}
 		else
@@ -2310,7 +2265,14 @@ public abstract class Enemy extends RectangularGameEntity
 			this.speedLevel.setLocation(this.targetSpeedLevel);
 		}
     }
-		
+	
+	private void healHitPoints()
+	{
+		int newHitPoints = Math.min(Events.boss.hitPoints + HEALED_HIT_POINTS,
+									Events.boss.startingHitPoints);
+		this.setHitPoints(newHitPoints);
+	}
+	
 	private void evaluateDodge()
 	{
 		this.dodgeTimer--;
@@ -2713,8 +2675,8 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	void takeDamage(int dmg)
 	{
-		this.hitPoints -= dmg;
-		if(!this.hasHPsLeft()){this.hitPoints = 0;}
+		hitPoints -= dmg;
+		if(!hasHPsLeft()){hitPoints = 0;}
 	}
 	
 	public void hitByMissile(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
@@ -2977,12 +2939,15 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public int calculateReward(Helicopter helicopter)
 	{		
-		return this.getEffectiveStrength()
-		        * helicopter.getBonusFactor()
-			    + this.rewardModifier;
+		return helicopter.getBonusFactor() * getEffectiveStrength() + getRewardModifier();
 	}
 	
-    public int getEffectiveStrength()
+	protected int getRewardModifier()
+	{
+		return 5 - Calculations.random(11);
+	}
+	
+	public int getEffectiveStrength()
     {
         return this.type.getStrength() * this.getRewardFactor();
     }
@@ -2998,7 +2963,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		if(this.isMiniBoss)
 		{
-			currentMiniBoss = null;
+			BasicEnemy.currentMiniBoss = null;
 		}			
 		else if(this.type == EnemyType.BOSS_2)
 		{								
@@ -3327,5 +3292,15 @@ public abstract class Enemy extends RectangularGameEntity
 	public boolean isClockwiseBarrier()
 	{
 		return isClockwiseBarrier;
+	}
+	
+	protected int calculateHitPoints()
+	{
+		return type.getHitPoints() + hitPointVariance();
+	}
+	
+	protected int hitPointVariance()
+	{
+		return 0;
 	}
 }

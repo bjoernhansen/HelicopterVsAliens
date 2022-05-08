@@ -11,7 +11,6 @@ public class SmallShieldMaker extends ShieldMaker
     {
         this.targetSpeedLevel.setLocation(7, 6.5);
         this.primaryColor = new Color(25, 125, 105);
-        this.hitPoints = 3000;
         
         super.create(helicopter);
     }

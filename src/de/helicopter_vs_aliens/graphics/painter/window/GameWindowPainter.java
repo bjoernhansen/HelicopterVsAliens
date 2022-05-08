@@ -13,6 +13,7 @@ import de.helicopter_vs_aliens.gui.button.GroundButtonType;
 import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.basicEnemy.BasicEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -169,14 +170,14 @@ public class GameWindowPainter extends WindowPainter
     
     private boolean showBossHealthBar()
     {
-        return Enemy.currentMiniBoss != null || (Events.boss != null && Events.level < 51);
+        return BasicEnemy.currentMiniBoss != null || (Events.boss != null && Events.level < 51);
     }
     
     private void paintBossHealthBar(GraphicsAdapter graphicsAdapter)
     {
-        if (Enemy.currentMiniBoss != null)
+        if (BasicEnemy.currentMiniBoss != null)
         {
-            paintBossHealthBar(graphicsAdapter, Enemy.currentMiniBoss);
+            paintBossHealthBar(graphicsAdapter, BasicEnemy.currentMiniBoss);
         } else
         {
             paintBossHealthBar(graphicsAdapter, Events.boss);
@@ -186,7 +187,7 @@ public class GameWindowPainter extends WindowPainter
     private void paintBossHealthBar(GraphicsAdapter graphicsAdapter, Enemy boss)
     {
         graphicsAdapter.setColor(Colorations.hitPoints);
-        graphicsAdapter.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.hitPoints) / boss.startingHitPoints, 10);
+        graphicsAdapter.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints, 10);
         if (Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.red);
@@ -194,7 +195,7 @@ public class GameWindowPainter extends WindowPainter
         {
             graphicsAdapter.setColor(Colorations.red);
         }
-        graphicsAdapter.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.hitPoints) / boss.startingHitPoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.hitPoints) / boss.startingHitPoints, 10);
+        graphicsAdapter.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints, 10);
         if (Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.white);

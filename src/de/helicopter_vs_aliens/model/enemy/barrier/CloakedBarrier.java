@@ -9,6 +9,7 @@ import java.awt.Color;
 
 public class CloakedBarrier extends ArmedBarrier
 {
+    // TODO CLOAKED_BARRIER  überarbeiten, wie oft soll er wiederkommen? manchmal schießt er nicht,
     @Override
     protected void create(Helicopter helicopter)
     {

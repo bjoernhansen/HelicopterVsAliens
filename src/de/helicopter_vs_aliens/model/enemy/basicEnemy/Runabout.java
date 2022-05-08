@@ -1,11 +1,11 @@
-package de.helicopter_vs_aliens.model.enemy.defaultEnemy;
+package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Color;
 
-public class Runabout extends StandardEnemy
+public class Runabout extends BasicEnemy
 {
     @Override
     protected void create(Helicopter helicopter)
@@ -13,12 +13,17 @@ public class Runabout extends StandardEnemy
         this.primaryColor = new Color((100 + Calculations.random(30)),
             (100 + Calculations.random(30)),
             (40 + Calculations.random(25)));
-        this.hitPoints = 2 + Calculations.random(2);
         this.setVarWidth(100);
         this.targetSpeedLevel.setLocation(2 + 2*Math.random(),
             2.5 + 1.5*Math.random());
         this.canExplode = true;
         
         super.create(helicopter);
+    }
+    
+    @Override
+    protected int hitPointVariance()
+    {
+        return Calculations.random(type.getHitPoints());
     }
 }

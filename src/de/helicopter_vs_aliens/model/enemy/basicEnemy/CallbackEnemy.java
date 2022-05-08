@@ -1,11 +1,11 @@
-package de.helicopter_vs_aliens.model.enemy.defaultEnemy;
+package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Color;
 
-public class CallbackEnemy extends StandardEnemy
+public class CallbackEnemy extends BasicEnemy
 {
     @Override
     protected void create(Helicopter helicopter)
@@ -13,7 +13,6 @@ public class CallbackEnemy extends StandardEnemy
         this.primaryColor = new Color((70 + Calculations.random(40)),
             (130 + Calculations.random(50)),
             (30 + Calculations.random(45)));
-        this.setHitPoints(30);
         this.setVarWidth(95);
         this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(),
             5 + 2*Math.random());

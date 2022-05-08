@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.model.enemy.defaultEnemy;
+package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -7,7 +7,7 @@ import java.awt.Color;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 
-public class Rock extends StandardEnemy
+public class Rock extends BasicEnemy
 {
     private static final int
         ROCK_WIDTH = 300;
@@ -21,7 +21,6 @@ public class Rock extends StandardEnemy
         this.primaryColor = new Color((180 + Calculations.random(30)),
             (120 + Calculations.random(30)),
             (      Calculations.random(15)));
-        this.hitPoints = 1;
         this.invincibleTimer = Integer.MAX_VALUE;
     
         this.bounds.setRect(this.bounds.getX(),
@@ -35,5 +34,11 @@ public class Rock extends StandardEnemy
         helicopter.numberOfEnemiesSeen--;
         
         super.create(helicopter);
+    }
+    
+    @Override
+    protected boolean canBecomeMiniBoss()
+    {
+        return false;
     }
 }

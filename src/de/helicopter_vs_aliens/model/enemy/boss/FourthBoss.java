@@ -13,7 +13,6 @@ public class FourthBoss extends BossEnemy
     {
         this.setWidth(250);
         this.primaryColor = Color.red;
-        this.hitPoints = 10000;
         this.targetSpeedLevel.setLocation(10, 10);
     
         this.spawningHornetTimer = 30;

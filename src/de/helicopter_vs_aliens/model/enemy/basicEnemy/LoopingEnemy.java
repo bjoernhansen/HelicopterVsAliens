@@ -1,15 +1,14 @@
-package de.helicopter_vs_aliens.model.enemy.defaultEnemy;
+package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
-public class LoopingEnemy extends StandardEnemy
+public class LoopingEnemy extends BasicEnemy
 {
     @Override
     protected void create(Helicopter helicopter)
     {
         this.primaryColor = Colorations.cloaked;
-        this.setHitPoints(330);
         this.setVarWidth(105);
         this.targetSpeedLevel.setLocation(9, 11);
     

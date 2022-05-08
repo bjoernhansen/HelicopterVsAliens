@@ -11,7 +11,6 @@ public class BigShieldMaker extends ShieldMaker
     {
         this.targetSpeedLevel.setLocation(6.5, 7);
         this.primaryColor = new Color(105, 135, 65);
-        this.hitPoints = 4250;
     
         this.shootTimer = 0;
         this.shootingRate = 25;

@@ -18,13 +18,13 @@ import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.basicEnemy.BasicEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScore;
 import de.helicopter_vs_aliens.score.RecordTimeManager;
@@ -298,7 +298,7 @@ public class Events
 				}
 				else if(e.getKeyChar() == 'm')
 				{
-					Enemy.changeMiniBossProb();
+					BasicEnemy.changeMiniBossProb();
 					helicopter.isPlayedWithCheats = true;
 				}
 				else if(e.getKeyChar() == 'n')
@@ -1076,7 +1076,7 @@ public class Events
 					}
 				}
 			}
-			Enemy.currentMiniBoss = null;
+			BasicEnemy.currentMiniBoss = null;
 		}
 		if(totalReset)
 		{

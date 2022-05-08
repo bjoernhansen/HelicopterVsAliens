@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.model.enemy.defaultEnemy;
+package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
 import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Color;
 
-public class CapturingEnemy extends StandardEnemy
+public class CapturingEnemy extends BasicEnemy
 {
     @Override
     protected void create(Helicopter helicopter)
@@ -14,7 +14,6 @@ public class CapturingEnemy extends StandardEnemy
         this.primaryColor = new Color(  5 + Calculations.random(55),
             105 + Calculations.random(40),
             90 + Calculations.random(30));
-        this.setHitPoints(520);
         this.setVarWidth(115);
         this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(),
             4.5 + 1.5*Math.random());
