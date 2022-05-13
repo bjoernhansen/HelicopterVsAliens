@@ -9,11 +9,11 @@ public class LoopingEnemy extends BasicEnemy
     protected void create(Helicopter helicopter)
     {
         this.primaryColor = Colorations.cloaked;
-        this.setVarWidth(105);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation(9, 11);
     
         this.direction.y = -1;
-        this.setInitialY(TURN_FRAME.getCenterY());
+        this.setFixedY(TURN_FRAME.getCenterY());
         this.cloakingTimer = 0;
         this.canLoop = true;
         

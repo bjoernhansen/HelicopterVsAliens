@@ -11,7 +11,7 @@ public class PushingBarrier extends Barrier
     {
         this.primaryColor = Colorations.bleachedOrange;
         this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
-        this.setVarWidth(105);
+        this.setInitialWidth();
         if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
     
         this.setLocation(this.targetSpeedLevel.getX() >= 5

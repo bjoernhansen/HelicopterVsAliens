@@ -13,7 +13,7 @@ public class CrazyEnemy extends BasicEnemy
         this.primaryColor = new Color((180 + Calculations.random(50)),
             (230 + Calculations.random(20)),
             (20 + Calculations.random(60)));
-        this.setVarWidth(115);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(),
             0.5 + Math.random());
         this.canExplode = true;

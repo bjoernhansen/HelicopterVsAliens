@@ -13,7 +13,7 @@ public class SmallCruiser extends BasicEnemy
         this.primaryColor = new Color((140 + Calculations.random(25)),
                                       ( 65 + Calculations.random(35)),
                                       (  0 + Calculations.random(25)));
-        this.setVarWidth(125);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation(1 + 1.5*Math.random(),
             0.5*Math.random());
         this.canExplode = true;

@@ -13,10 +13,10 @@ public class SinusoidallyFlyingEnemy extends BasicEnemy
         this.primaryColor = new Color((185 + Calculations.random(40)),
             ( 70 + Calculations.random(30)),
             (135 + Calculations.random(40)));
-        this.setVarWidth(110);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation(2.5 + 2.5*Math.random(), 11);
     
-        this.setInitialY(TURN_FRAME.getCenterY());
+        this.setFixedY(TURN_FRAME.getCenterY());
         this.canSinusMove = true;
         this.canExplode = true;
         

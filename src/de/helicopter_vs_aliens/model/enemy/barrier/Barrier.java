@@ -12,8 +12,12 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 abstract class Barrier extends Enemy
 {
+    private static final int
+        WIDTH_VARIANCE_DIVISOR = 5;
+    
     private static final float
         DIM_FACTOR = 0.75f;
+    
     
     @Override
     protected void create(Helicopter helicopter)
@@ -63,5 +67,17 @@ abstract class Barrier extends Enemy
     protected boolean isMeetingRequirementsForGlowingEyes()
     {
         return this.snoozeTimer <= SNOOZE_TIME + 75;
+    }
+    
+    @Override
+    protected void setRandomY()
+    {
+        setFixedY(Math.random()*(GROUND_Y - this.bounds.getHeight()));
+    }
+    
+    @Override
+    protected int getWidthVarianceDivisor()
+    {
+        return WIDTH_VARIANCE_DIVISOR;
     }
 }

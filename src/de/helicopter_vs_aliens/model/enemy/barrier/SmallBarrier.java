@@ -10,7 +10,7 @@ public class SmallBarrier extends Barrier
     {
         this.primaryColor = Colorations.bleachedGreen;
         this.isLasting = true;
-        this.setVarWidth(65);
+        this.setInitialWidth();
         
         super.create(helicopter);
     }

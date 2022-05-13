@@ -2,9 +2,9 @@ package de.helicopter_vs_aliens.model.enemy;
 
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.model.enemy.barrier.BigBarrier;
-import de.helicopter_vs_aliens.model.enemy.barrier.BurrowingBarrier;
+import de.helicopter_vs_aliens.model.enemy.barrier.DiggerBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.CloakedBarrier;
-import de.helicopter_vs_aliens.model.enemy.boss.Protector;
+import de.helicopter_vs_aliens.model.enemy.barrier.Protector;
 import de.helicopter_vs_aliens.model.enemy.barrier.PushingBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.ShieldingBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.ShootingBarrier;
@@ -52,56 +52,56 @@ import java.util.function.Supplier;
 public enum EnemyType implements GameEntityFactory<Enemy>
 {
     // Standard-Gegner
-    TINY(TinyVessel::new, TinyVessel.class, 1, 2), //Level 1
-    SMALL(SmallCruiser::new, SmallCruiser.class, 2, 3), // Level 3
-    RUNABOUT(Runabout::new, Runabout.class, 2, 2), // level 5
-    FREIGHTER(Freighter::new, Freighter.class, 4, 25), // Level 7
-    BATCHWISE(BatchwiseFlyingEnemy::new, BatchwiseFlyingEnemy.class, 6, 16), // Level 11
-    SINUS(SinusoidallyFlyingEnemy::new, SinusoidallyFlyingEnemy.class, 6, 6), // Level 13
-    DODGER(Dodger::new, Dodger.class, 9, 24), // Level 16
-    CHAOTIC(ChaoticallyFlyingEnemy::new, ChaoticallyFlyingEnemy.class, 11, 22), // Level 21
-    CALLBACK(CallbackEnemy::new, CallbackEnemy.class, 10, 30), // Level 24
-    SHOOTER(Shooter::new, Shooter.class, 12, 60), // Level 26
-    CLOAK(CloakedEnemy::new, CloakedEnemy.class, 16, 100), // Level 31
-    LONELY_SPEEDER(LonelySpeeder::new, LonelySpeeder.class, 14, 26), // Level 35
-    CARRIER(Carrier::new, Carrier.class, 19, 450), // Level 36
-    CRAZY(CrazyEnemy::new, CrazyEnemy.class, 22, 140), // Level 37
-    AMBUSH(AmbushingEnemy::new, AmbushingEnemy.class, 30, 150), // Level 41
-    LOOPING(LoopingEnemy::new, LoopingEnemy.class, 30, 330), // Level 43
-    CAPTURING(CapturingEnemy::new, CapturingEnemy.class, 30, 520), // Level 45
-    TELEPORTING(TeleportingEnemy::new, TeleportingEnemy.class, 35, 500), // Level 46
+    TINY(TinyVessel::new, TinyVessel.class, 1, 2, 110), //Level 1
+    SMALL(SmallCruiser::new, SmallCruiser.class, 2, 3, 125), // Level 3
+    RUNABOUT(Runabout::new, Runabout.class, 2, 2, 100), // level 5
+    FREIGHTER(Freighter::new, Freighter.class, 4, 25, 145), // Level 7
+    BATCHWISE(BatchwiseFlyingEnemy::new, BatchwiseFlyingEnemy.class, 6, 16, 130), // Level 11
+    SINUS(SinusoidallyFlyingEnemy::new, SinusoidallyFlyingEnemy.class, 6, 6, 110), // Level 13
+    DODGER(Dodger::new, Dodger.class, 9, 24, 170), // Level 16
+    CHAOTIC(ChaoticallyFlyingEnemy::new, ChaoticallyFlyingEnemy.class, 11, 22, 125), // Level 21
+    CALLBACK(CallbackEnemy::new, CallbackEnemy.class, 10, 30, 95), // Level 24
+    SHOOTER(Shooter::new, Shooter.class, 12, 60, 80), // Level 26
+    CLOAK(CloakedEnemy::new, CloakedEnemy.class, 16, 100, 85), // Level 31
+    LONELY_SPEEDER(LonelySpeeder::new, LonelySpeeder.class, 14, 26, 70), // Level 35
+    CARRIER(Carrier::new, Carrier.class, 19, 450, 165), // Level 36
+    CRAZY(CrazyEnemy::new, CrazyEnemy.class, 22, 140, 115), // Level 37
+    AMBUSH(AmbushingEnemy::new, AmbushingEnemy.class, 30, 150, 95), // Level 41
+    LOOPING(LoopingEnemy::new, LoopingEnemy.class, 30, 330, 105), // Level 43
+    CAPTURING(CapturingEnemy::new, CapturingEnemy.class, 30, 520, 115), // Level 45
+    TELEPORTING(TeleportingEnemy::new, TeleportingEnemy.class, 35, 500, 130), // Level 46
     
     // Boss-Gegner
-    BOSS_1(FirstBoss::new, FirstBoss.class, 75, 225),
-    BOSS_2(SecondBoss::new, SecondBoss.class, 100, 500),
-    BOSS_2_SERVANT(SecondBossServant::new, SecondBossServant.class, 5, 15),
-    BOSS_3(ThirdBoss::new, ThirdBoss.class, 500, 1750),
-    BOSS_4_SERVANT(FourthBossServant::new, FourthBossServant.class, 1, 100),
-    BOSS_4(FourthBoss::new, FourthBoss.class, 1250, 10000),
-    FINAL_BOSS(FinalBoss::new, FinalBoss.class, 5000, 25000),
-    SMALL_SHIELD_MAKER(SmallShieldMaker::new, SmallShieldMaker.class, 55, 3000),
-    BIG_SHIELD_MAKER(BigShieldMaker::new, BigShieldMaker.class, 80, 4250),
-    BODYGUARD(Bodyguard::new, Bodyguard.class, 150, 7500),
-    HEALER(Healer::new, Healer.class, 65, 3500),
-    PROTECTOR(Protector::new, Protector.class, 25, Integer.MAX_VALUE),
+    BOSS_1(FirstBoss::new, FirstBoss.class, 75, 225, 275),
+    BOSS_2(SecondBoss::new, SecondBoss.class, 100, 500, 250),
+    BOSS_2_SERVANT(SecondBossServant::new, SecondBossServant.class, 5, 15, 65),
+    BOSS_3(ThirdBoss::new, ThirdBoss.class, 500, 1750, 250),
+    BOSS_4(FourthBoss::new, FourthBoss.class, 1250, 10000, 250),
+    BOSS_4_SERVANT(FourthBossServant::new, FourthBossServant.class, 1, 100, 85),
+    FINAL_BOSS(FinalBoss::new, FinalBoss.class, 5000, 25000, 450),
+    SMALL_SHIELD_MAKER(SmallShieldMaker::new, SmallShieldMaker.class, 55, 3000, 125),
+    BIG_SHIELD_MAKER(BigShieldMaker::new, BigShieldMaker.class, 80, 4250, 145),
+    BODYGUARD(Bodyguard::new, Bodyguard.class, 150, 7500, 225),
+    HEALER(Healer::new, Healer.class, 65, 3500, 115),
+    PROTECTOR(Protector::new, Protector.class, 25, Integer.MAX_VALUE, 90),
     
     // Hindernisse (Barrier)
-    SMALL_BARRIER(SmallBarrier::new, SmallBarrier.class, 4, Integer.MAX_VALUE), // Level 2
-    BIG_BARRIER(BigBarrier::new, BigBarrier.class, 4, Integer.MAX_VALUE), // Level 6
-    STUNNING_BARRIER(StunningBarrier::new, StunningBarrier.class, 5, Integer.MAX_VALUE), // Level 12
-    PUSHING_BARRIER(PushingBarrier::new, PushingBarrier.class, 6, Integer.MAX_VALUE), // Level 15
-    SHOOTING_BARRIER(ShootingBarrier::new, ShootingBarrier.class, 7, Integer.MAX_VALUE), // Level 18
-    BURROWING_BARRIER(BurrowingBarrier::new, BurrowingBarrier.class, 9, Integer.MAX_VALUE), // Level 32
-    SHIELDING_BARRIER(ShieldingBarrier::new, ShieldingBarrier.class, 4, Integer.MAX_VALUE), // Level 42
-    CLOAKED_BARRIER(CloakedBarrier::new, CloakedBarrier.class, 15, Integer.MAX_VALUE), // Level 44
+    SMALL_BARRIER(SmallBarrier::new, SmallBarrier.class, 4, Integer.MAX_VALUE, 65), // Level 2
+    BIG_BARRIER(BigBarrier::new, BigBarrier.class, 4, Integer.MAX_VALUE, 150), // Level 6
+    STUNNING_BARRIER(StunningBarrier::new, StunningBarrier.class, 5, Integer.MAX_VALUE, 65), // Level 12
+    PUSHING_BARRIER(PushingBarrier::new, PushingBarrier.class, 6, Integer.MAX_VALUE, 105), // Level 15
+    SHOOTING_BARRIER(ShootingBarrier::new, ShootingBarrier.class, 7, Integer.MAX_VALUE, 85), // Level 18
+    BURROWING_BARRIER(DiggerBarrier::new, DiggerBarrier.class, 9, Integer.MAX_VALUE, 80), // Level 32
+    SHIELDING_BARRIER(ShieldingBarrier::new, ShieldingBarrier.class, 4, Integer.MAX_VALUE, 80), // Level 42
+    CLOAKED_BARRIER(CloakedBarrier::new, CloakedBarrier.class, 15, Integer.MAX_VALUE, 100), // Level 44
     
     // Hindernis (Rock-Enemy)
-    ROCK(Rock::new, Rock.class, 0, 2),
+    ROCK(Rock::new, Rock.class, 0, 2, 300),
     
     // sonstige Gegner
-    KABOOM(Kaboom::new, Kaboom.class, 0, Integer.MAX_VALUE),
+    KABOOM(Kaboom::new, Kaboom.class, 0, Short.MAX_VALUE, 120),
     
-    ESCAPED_SPEEDER(EscapedSpeeder::new, EscapedSpeeder.class, 14, 26);
+    ESCAPED_SPEEDER(EscapedSpeeder::new, EscapedSpeeder.class, 14, 26, 70);
     
     
     private static final List<EnemyType>
@@ -130,12 +130,16 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     private final int
         hitPoints;
     
-    EnemyType(Supplier<? extends Enemy> instanceSupplier, Class<? extends Enemy> enemyClass, int strength, int hitPoints)
+    private final int
+        width;
+    
+    EnemyType(Supplier<? extends Enemy> instanceSupplier, Class<? extends Enemy> enemyClass, int strength, int hitPoints, int width)
     {
         this.instanceSupplier = instanceSupplier;
         this.enemyClass = enemyClass;
         this.strength = strength;
         this.hitPoints = hitPoints;
+        this.width = width;
     }
     
     static Set<EnemyType> getFinalBossServantTypes()
@@ -220,5 +224,10 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     public int getHitPoints()
     {
         return hitPoints;
+    }
+    
+    public int getWidth()
+    {
+        return width;
     }
 }

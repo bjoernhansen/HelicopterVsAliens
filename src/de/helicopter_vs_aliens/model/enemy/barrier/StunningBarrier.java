@@ -10,7 +10,7 @@ public class StunningBarrier extends Barrier
     {
         this.primaryColor = Colorations.bleachedYellow;
         this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
-        this.setVarWidth(65);
+        this.setInitialWidth();
     
         this.rotorColor = 2;
         this.staticChargeTimer = READY;

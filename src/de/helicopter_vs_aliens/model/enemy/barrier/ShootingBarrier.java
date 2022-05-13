@@ -9,16 +9,30 @@ public class ShootingBarrier extends ArmedBarrier
     @Override
     protected void create(Helicopter helicopter)
     {
-        this.setVarWidth(85);
+        this.setInitialWidth();
         this.hasYPosSet = true;
         this.barrierShootTimer = READY;
-        this.setBarrierShootingProperties();
-        this.shotRotationSpeed
-            = Calculations.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL
-            ? Calculations.randomDirection()*(this.shootingRate/3 + Calculations.random(10))
-            : 0;
+        
         this.isLasting = true;
         
         super.create(helicopter);
+    }
+    
+    @Override
+    protected int calculateRotationSpeed()
+    {
+        return isRotatingShotDirectionAloud()
+                ? getRandomShootingRate()
+                : 0;
+    }
+    
+    private boolean isRotatingShotDirectionAloud()
+    {
+        return Calculations.tossUp(SPIN_SHOOTER_RATE) && Events.level >= MIN_SPIN_SHOOTER_LEVEL;
+    }
+    
+    private int getRandomShootingRate()
+    {
+        return Calculations.randomDirection()*(this.shootingRate/3 + Calculations.random(10));
     }
 }

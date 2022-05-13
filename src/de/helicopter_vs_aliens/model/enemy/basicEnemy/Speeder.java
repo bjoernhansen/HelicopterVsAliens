@@ -11,7 +11,7 @@ public abstract class Speeder extends BasicEnemy
         this.primaryColor = new Color(75 + Calculations.random(30),
             75 + Calculations.random(30),
             75 + Calculations.random(30) );
-        this.setVarWidth(70);
+        this.setInitialWidth();
         
         this.canExplode = true;
     }

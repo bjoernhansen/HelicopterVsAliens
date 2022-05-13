@@ -15,9 +15,9 @@ public class Shooter extends BasicEnemy
         this.model = CARGO;
     
         this.primaryColor = new Color(80 + Calculations.random(25),
-            80 + Calculations.random(25),
-            80 + Calculations.random(25));
-        this.setVarWidth(80);
+                                      80 + Calculations.random(25),
+                                      80 + Calculations.random(25));
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
             0.5 * Math.random());
         this.canDodge = true;

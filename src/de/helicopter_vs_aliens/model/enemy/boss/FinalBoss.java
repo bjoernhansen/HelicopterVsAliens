@@ -14,16 +14,16 @@ public class FinalBoss extends BossEnemy
         FINAL_BOSS_WIDTH = 450;
     
     private static final Dimension
-        FINAL_BOSS_DIMENSION = new Dimension(FINAL_BOSS_WIDTH, (int)HEIGHT_FACTOR * FINAL_BOSS_WIDTH );
+        FINAL_BOSS_DIMENSION = new Dimension(FINAL_BOSS_WIDTH, (int)(HEIGHT_FACTOR * FINAL_BOSS_WIDTH));
     
     
     @Override
     protected void create(Helicopter helicopter)
     {
         this.bounds.setRect(this.bounds.getX(),
-            FINAL_BOSS_STARTING_POSITION_Y,
-            FINAL_BOSS_DIMENSION.width,
-            FINAL_BOSS_DIMENSION.height);
+                            FINAL_BOSS_STARTING_POSITION_Y,
+                            FINAL_BOSS_DIMENSION.width,
+                            FINAL_BOSS_DIMENSION.height);
         this.hasYPosSet = true;
         this.hasHeightSet = true;
     

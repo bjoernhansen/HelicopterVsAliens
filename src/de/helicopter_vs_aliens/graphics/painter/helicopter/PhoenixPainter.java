@@ -13,7 +13,7 @@ public class PhoenixPainter extends HelicopterPainter
     {
         // Nahkampf-Bestrahlung
         Phoenix phoenix = (Phoenix) helicopter;
-        if (phoenix.hasShortrangeRadiation())
+        if (phoenix.hasShortRangeRadiation())
         {
             graphicsAdapter.setColor(phoenix.getEnhancedRadiationTimer() == 0
                 ? Colorations.radiation[Events.timeOfDay.ordinal()]

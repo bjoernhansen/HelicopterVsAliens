@@ -27,7 +27,7 @@ public final class Phoenix extends Helicopter
 {
     public static final int
         TELEPORT_KILL_TIME = 15,		// in dieser Zeit [frames] nach einer Teleportation vernichtete Gegner werden für den Extra-Bonus gewertet
-        NICE_CATCH_TIME = 22,			// nur wenn die Zeit [frames] zwischen Teleportation und Gegner-Abschuss kleiner ist, gibt es den "NiceCath-Bonus"
+        NICE_CATCH_TIME = 22,			// nur wenn die Zeit [frames] zwischen Teleportation und Gegner-Abschuss kleiner ist, gibt es den "NiceCatch-Bonus"
         TELEPORT_INVULNERABILITY_TIME = 45,
         GOLIATH_COSTS = 6000;
 
@@ -41,7 +41,7 @@ public final class Phoenix extends Helicopter
             pastTeleportTime;			// Zeitpunkt der letzten Nutzung des Teleporters
     
     private boolean
-        hasShortrangeRadiation;     	// = true: Helikopter verfügt über Nahkampfbestrahlng
+        hasShortRangeRadiation;     	// = true: Helikopter verfügt über Nahkampfbestrahlung
     
     
     @Override
@@ -77,7 +77,7 @@ public final class Phoenix extends Helicopter
     @Override
     void resetFifthSpecial()
     {
-        this.hasShortrangeRadiation = false;
+        this.hasShortRangeRadiation = false;
     }
     
     @Override
@@ -96,13 +96,13 @@ public final class Phoenix extends Helicopter
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasShortrangeRadiation;
+        return this.hasShortRangeRadiation;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.hasShortrangeRadiation = true;
+        this.hasShortRangeRadiation = true;
     }
 
     @Override
@@ -145,7 +145,7 @@ public final class Phoenix extends Helicopter
                                           boolean playCollisionSound)
     {
         super.beAffectedByCollisionWith(enemy, controller, playCollisionSound);
-        if(this.hasShortrangeRadiation)
+        if(this.hasShortRangeRadiation)
         {
             enemy.reactToRadiation(controller, this);
         }
@@ -162,7 +162,7 @@ public final class Phoenix extends Helicopter
 
     private boolean enhancedRadiationApproved(Enemy enemy)
     {
-        return this.hasShortrangeRadiation
+        return this.hasShortRangeRadiation
                 && enemy.collisionDamageTimer == 0
                 && !(enemy.type == KABOOM)
                 && this.enhancedRadiationTimer == 0
@@ -199,7 +199,7 @@ public final class Phoenix extends Helicopter
     @Override
     public boolean isTakingKaboomDamageFrom(Enemy enemy)
     {
-        return super.isTakingKaboomDamageFrom(enemy) && !this.hasShortrangeRadiation;
+        return super.isTakingKaboomDamageFrom(enemy) && !this.hasShortRangeRadiation;
     }
     
     @Override
@@ -264,7 +264,7 @@ public final class Phoenix extends Helicopter
     @Override
     public boolean canObtainCollisionReward()
     {
-        return this.hasShortrangeRadiation;
+        return this.hasShortRangeRadiation;
     }
     
     @Override
@@ -312,8 +312,8 @@ public final class Phoenix extends Helicopter
         return enhancedRadiationTimer;
     }
     
-    public boolean hasShortrangeRadiation()
+    public boolean hasShortRangeRadiation()
     {
-        return hasShortrangeRadiation;
+        return hasShortRangeRadiation;
     }
 }

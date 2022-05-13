@@ -14,7 +14,7 @@ public class CapturingEnemy extends BasicEnemy
         this.primaryColor = new Color(  5 + Calculations.random(55),
             105 + Calculations.random(40),
             90 + Calculations.random(30));
-        this.setVarWidth(115);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(),
             4.5 + 1.5*Math.random());
         this.tractor = AbilityStatusType.READY;

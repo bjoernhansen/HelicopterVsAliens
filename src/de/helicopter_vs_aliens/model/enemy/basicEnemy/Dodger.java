@@ -13,7 +13,7 @@ public class Dodger extends BasicEnemy
         this.primaryColor = new Color((85 + Calculations.random(20)),
             (35 + Calculations.random(30)),
             (95 + Calculations.random(30)));
-        this.setVarWidth(170);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(),
             0.5*Math.random());
         this.canDodge = true;

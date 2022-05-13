@@ -13,7 +13,7 @@ public class Runabout extends BasicEnemy
         this.primaryColor = new Color((100 + Calculations.random(30)),
             (100 + Calculations.random(30)),
             (40 + Calculations.random(25)));
-        this.setVarWidth(100);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation(2 + 2*Math.random(),
             2.5 + 1.5*Math.random());
         this.canExplode = true;

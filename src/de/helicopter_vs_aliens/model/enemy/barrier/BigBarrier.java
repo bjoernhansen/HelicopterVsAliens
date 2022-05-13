@@ -10,8 +10,8 @@ public class BigBarrier extends Barrier
     {
         this.primaryColor = Colorations.bleachedGreen;
         this.isLasting = true;
-        this.setVarWidth(150);
-        this.setInitialY(GROUND_Y - this.bounds.getWidth());
+        this.setInitialWidth();
+        this.setFixedY(GROUND_Y - this.bounds.getWidth());
         
         super.create(helicopter);
     }

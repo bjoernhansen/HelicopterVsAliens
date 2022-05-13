@@ -13,7 +13,7 @@ public class CloakedEnemy extends BasicEnemy
         this.model = CARGO;
     
         this.primaryColor = Colorations.cloaked;
-        this.setVarWidth(85);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
             1 + 0.5*Math.random());
         this.canLearnKamikaze = true;

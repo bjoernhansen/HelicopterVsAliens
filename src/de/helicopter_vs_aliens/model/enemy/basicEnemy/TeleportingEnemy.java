@@ -17,7 +17,7 @@ public class TeleportingEnemy extends BasicEnemy
         this.primaryColor = new Color(190 + Calculations.random(40),
             10 + Calculations.random(60),
             15 + Calculations.random(60));
-        this.setVarWidth(130);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation( 1 + Math.random(),
             0.5*Math.random());
         this.teleportTimer = READY;

@@ -13,7 +13,7 @@ public class ChaoticallyFlyingEnemy extends BasicEnemy
         this.primaryColor = new Color((150 + Calculations.random(20)),
             (130 + Calculations.random(25)),
             ( 75 + Calculations.random(30)));
-        this.setVarWidth(125);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation( 3.5 + 1.5*Math.random(),
             6.5 + 2*Math.random());
         this.canMoveChaotic = true;

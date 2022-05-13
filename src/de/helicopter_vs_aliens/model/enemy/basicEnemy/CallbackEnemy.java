@@ -13,7 +13,7 @@ public class CallbackEnemy extends BasicEnemy
         this.primaryColor = new Color((70 + Calculations.random(40)),
             (130 + Calculations.random(50)),
             (30 + Calculations.random(45)));
-        this.setVarWidth(95);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(),
             5 + 2*Math.random());
         this.canExplode = true;

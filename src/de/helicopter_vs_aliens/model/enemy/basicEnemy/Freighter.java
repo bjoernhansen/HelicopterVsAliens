@@ -16,7 +16,7 @@ public class Freighter extends BasicEnemy
         this.primaryColor = new Color((100 + Calculations.random(30)),
                                 (50 + Calculations.random(30)),
                                 (45 + Calculations.random(20)));
-        this.setVarWidth(145);
+        this.setInitialWidth();
         this.targetSpeedLevel.setLocation(0.5 + Math.random(),
             0.5*Math.random());
         this.canEarlyTurn = true;
