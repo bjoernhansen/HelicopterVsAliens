@@ -133,10 +133,10 @@ public final class Phoenix extends Helicopter
     {
         this.isSearchingForTeleportDestination = true;
         this.priorTeleportLocation.setLocation(
-                this.bounds.getX() + (this.isMovingLeft
+                this.getX() + (this.isMovingLeft
                         ? FOCAL_PNT_X_LEFT
                         : FOCAL_PNT_X_RIGHT),
-                this.bounds.getY() + FOCAL_PNT_Y_POS);
+                this.getY() + FOCAL_PNT_Y_POS);
     }
 
     @Override
@@ -254,11 +254,11 @@ public final class Phoenix extends Helicopter
     
     private boolean hasValidTeleportDestination(int x, int y)
     {
-        return  !(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y && y >= GROUND_Y)
-                && !(	   x > this.bounds.getX() + 33
-                        && x < this.bounds.getX() + 133
-                        && y > this.bounds.getY() + 6
-                        && y < this.bounds.getY() + 106);
+        return  !(this.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y && y >= GROUND_Y)
+                && !(	   x > this.getX() + 33
+                        && x < this.getX() + 133
+                        && y > this.getY() + 6
+                        && y < this.getY() + 106);
     }
     
     @Override

@@ -8,18 +8,17 @@ import java.awt.Color;
 public class CrazyEnemy extends BasicEnemy
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
         this.primaryColor = new Color((180 + Calculations.random(50)),
-            (230 + Calculations.random(20)),
-            (20 + Calculations.random(60)));
-        this.setInitialWidth();
+                                      (230 + Calculations.random(20)),
+                                      ( 20 + Calculations.random(60)));
         this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(),
             0.5 + Math.random());
         this.canExplode = true;
         this.canChaosSpeedup = true;
         this.canDodge = true;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
 }

@@ -10,19 +10,17 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 public class Shooter extends BasicEnemy
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.model = CARGO;
-    
         this.primaryColor = new Color(80 + Calculations.random(25),
                                       80 + Calculations.random(25),
                                       80 + Calculations.random(25));
-        this.setInitialWidth();
-        this.targetSpeedLevel.setLocation( 0.5 + Math.random(),
-            0.5 * Math.random());
+        this.targetSpeedLevel.setLocation(0.5 + Math.random(),
+                                          0.5 * Math.random());
         this.canDodge = true;
         this.shootTimer = 0;
         this.shootingRate = 35;
-        
-        super.create(helicopter);
-    }}
+    
+        super.doTypeSpecificInitialization();
+    }
+}

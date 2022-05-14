@@ -7,15 +7,11 @@ import de.helicopter_vs_aliens.util.Calculations;
 public class ShootingBarrier extends ArmedBarrier
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.setInitialWidth();
-        this.hasYPosSet = true;
         this.barrierShootTimer = READY;
-        
-        this.isLasting = true;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
     
     @Override

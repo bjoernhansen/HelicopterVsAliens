@@ -114,11 +114,11 @@ public final class Pegasus extends Helicopter
         Audio.play(Audio.emp);
         Explosion.start(explosion,
                 this,
-                (int)(this.bounds.getX()
+                (int)(this.getX()
                         + (this.isMovingLeft
                         ? FOCAL_PNT_X_LEFT
                         : FOCAL_PNT_X_RIGHT)),
-                (int)(this.bounds.getY()
+                (int)(this.getY()
                         + FOCAL_PNT_Y_EXP),
                 EMP,
                 false);

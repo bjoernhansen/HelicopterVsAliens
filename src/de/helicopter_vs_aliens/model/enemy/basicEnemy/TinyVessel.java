@@ -8,18 +8,17 @@ import java.awt.Color;
 public class TinyVessel extends BasicEnemy
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
         this.primaryColor = new Color((180 + Calculations.random(30)),
-                                (120 + Calculations.random(30)),
-                                (      Calculations.random(15)));
-        this.setInitialWidth();
+                                      (120 + Calculations.random(30)),
+                                      (      Calculations.random(15)));
         this.targetSpeedLevel.setLocation(0.5 + Math.random(),
                                           0.5 * Math.random());
         this.canExplode = true;
         this.dimFactor = 1.2f;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
     
     @Override

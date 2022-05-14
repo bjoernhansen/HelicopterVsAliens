@@ -5,10 +5,10 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 public abstract class BurrowingBarrier extends ArmedBarrier
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
         this.burrowTimer = READY;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
 }

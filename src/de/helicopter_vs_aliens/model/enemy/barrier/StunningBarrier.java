@@ -6,16 +6,13 @@ import de.helicopter_vs_aliens.util.Colorations;
 public class StunningBarrier extends Barrier
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
         this.primaryColor = Colorations.bleachedYellow;
         this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
-        this.setInitialWidth();
-    
         this.rotorColor = 2;
         this.staticChargeTimer = READY;
-        this.isLasting = true;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
 }

@@ -1,7 +1,5 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-
 import java.awt.Color;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
@@ -9,18 +7,12 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 public class Healer extends FinalBossServant
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.model = CARGO;
-    
-        this.bounds.setRect(boss.getX(),
-            boss.getY(),
-            115,
-            this.bounds.getHeight());
         this.primaryColor = Color.white;
         this.targetSpeedLevel.setLocation(2.5, 3);
         this.canDodge = true;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
 }

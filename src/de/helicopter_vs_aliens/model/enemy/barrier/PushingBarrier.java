@@ -1,25 +1,47 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
 public class PushingBarrier extends Barrier
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = Colorations.bleachedOrange;
-        this.targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
-        this.setInitialWidth();
-        if(this.targetSpeedLevel.getX() >= 5){this.direction.x = 1;}
+        primaryColor = Colorations.bleachedOrange;
+        targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
+        if(isIntendedToAppearOnTheLeft()){direction.x = 1;}
     
-        this.setLocation(this.targetSpeedLevel.getX() >= 5
-                ? -this.bounds.getWidth()-APPEARANCE_DISTANCE
-                : this.bounds.getX(),
-            GROUND_Y - this.bounds.getWidth() - (5 + Calculations.random(11)));
-        this.hasYPosSet = true;
-        
-        super.create(helicopter);
+        super.doTypeSpecificInitialization();
+    }
+    
+    @Override
+    protected double calculateInitialX()
+    {
+        return isIntendedToAppearOnTheLeft()
+                ? -getWidth()-APPEARANCE_DISTANCE
+                : super.calculateInitialX() ;
+    }
+    
+    private boolean isIntendedToAppearOnTheLeft()
+    {
+        return targetSpeedLevel.getX() >= 5;
+    }
+    
+    @Override
+    protected double calculateInitialY()
+    {
+        return getOnTheGroundY() - calculateRandomDistanceFromTheGround();
+    }
+    
+    private int calculateRandomDistanceFromTheGround()
+    {
+        return 5 + Calculations.random(11);
+    }
+    
+    @Override
+    public boolean isRemainingAfterEnteringRepairShop()
+    {
+        return false;
     }
 }

@@ -1,23 +1,17 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
 public class Bodyguard extends FinalBossServant
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.bounds.setRect(boss.getX(),
-            boss.getY(),
-            225,
-            this.bounds.getHeight());
-        this.primaryColor = Colorations.cloaked;
-        this.targetSpeedLevel.setLocation(1, 2);
+        primaryColor = Colorations.cloaked;
+        targetSpeedLevel.setLocation(1, 2);
+        cloakingTimer = 0;
+        canInstantTurn = true;
     
-        this.cloakingTimer = 0;
-        this.canInstantTurn = true;
-        
-        super.create(helicopter);
+        super.doTypeSpecificInitialization();
     }
 }

@@ -2,16 +2,15 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
-public abstract class FinalBossServant extends BossEnemy
+public abstract class FinalBossServant extends BossServant
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
         selectAsFinalBossServant(this);
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
     
     public static void selectAsFinalBossServant(Enemy enemy)

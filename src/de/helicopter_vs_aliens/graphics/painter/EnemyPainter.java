@@ -95,7 +95,7 @@ public class EnemyPainter extends Painter<Enemy>
             // blinkende Scheibe von Bossen und Mini-Bossen bzw. Eyes bei Hindernissen
             if(enemy.hasGlowingEyes())
             {
-                if(enemy.model != BARRIER){this.paintCockpitWindow(graphicsAdapter);}
+                if(enemy.getModel() != BARRIER){this.paintCockpitWindow(graphicsAdapter);}
                 else{this.paintBarrierEyes(graphicsAdapter);}
             }
             
@@ -119,7 +119,7 @@ public class EnemyPainter extends Painter<Enemy>
                 }
             }
             
-            if(enemy.model == BARRIER && !enemy.isDestroyed())
+            if(enemy.getModel() == BARRIER && !enemy.isDestroyed())
             {
                 this.paintRotor(graphicsAdapter);
             }
@@ -136,14 +136,14 @@ public class EnemyPainter extends Painter<Enemy>
         if(SHOW_BARRIER_TESTING_INFO)
         {
             graphicsAdapter.setColor(Color.red);
-            if(enemy.model == BARRIER)
+            if(enemy.getModel() == BARRIER)
             {
                 graphicsAdapter.drawString(   "Borrow: " + enemy.burrowTimer + " ; "
                         
                         + "Stun: "   + enemy.stunningTimer + " ; "
                         + "Snooze: " + enemy.getSnoozeTimer() + " ; ",
-                    (int)enemy.getBounds().getX(),
-                    (int)enemy.getBounds().getY());
+                    (int)enemy.getX(),
+                    (int)enemy.getY());
             }
         }
     }
@@ -190,7 +190,7 @@ public class EnemyPainter extends Painter<Enemy>
     
     private void paintCannon(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color inputColor)
     {
-        if(enemy.model == TIT)
+        if(enemy.getModel() == TIT)
         {
             paintBar(	graphicsAdapter,
                 x,	y,
@@ -198,7 +198,7 @@ public class EnemyPainter extends Painter<Enemy>
                 0.02f, 0.007f, 0.167f, 0.04f, 0.6f,
                 directionX, true, inputColor);
         }
-        else if(enemy.model == CARGO)
+        else if(enemy.getModel() == CARGO)
         {
             paintBar(	graphicsAdapter,
                 x, (int) (y + 0.48f * enemy.getPaintBounds().height),
@@ -350,16 +350,16 @@ public class EnemyPainter extends Painter<Enemy>
     // TODO bessere Namen für Bezeichner color2 , color 4
     private void paintExhaustPipe(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color color2, Color color4)
     {
-        if(enemy.model == TIT)
+        if(enemy.getModel() == TIT)
         {
             paintEngine(graphicsAdapter, x, y, 0.45f, 0.27f, 0.5f, 0.4f, directionX, color2, color4);
         }
-        else if(enemy.model == CARGO)
+        else if(enemy.getModel() == CARGO)
         {
             paintEngine(graphicsAdapter, x, y, 0.45f, 0.17f, 0.45f, 0.22f, directionX, color2, color4);
             paintEngine(graphicsAdapter, x, y, 0.45f, 0.17f, 0.25f, 0.70f, directionX, color2, color4);
         }
-        else if(enemy.model == BARRIER)
+        else if(enemy.getModel() == BARRIER)
         {
             paintBarFrame(graphicsAdapter, enemy.getPaintBounds().x, enemy.getPaintBounds().y,
                 0.07f, 0.35f, 0.04f, 0.7f, color4, null, false);
@@ -439,14 +439,14 @@ public class EnemyPainter extends Painter<Enemy>
             mainColorDark = Colorations.dimColor(color, 1.5f);
         }
         
-        if(enemy.model == BARRIER){barColor = Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];}
+        if(enemy.getModel() == BARRIER){barColor = Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];}
         else if(!enemy.isDestroyed() && (enemy.getTractor() == AbilityStatusType.ACTIVE || enemy.getShootTimer() > 0 || enemy.isShielding())){barColor = Colorations.variableGreen;}
         else if(!enemy.isDestroyed() && !imagePaint && enemy.isInvincible()){barColor = Color.green;}
         else if(enemy.isMiniBoss){barColor = enemy.secondaryColor;}
         else{barColor = Colorations.enemyGray;}
         inactiveNozzleColor = Colorations.INACTIVE_NOZZLE;
         
-        if(enemy.model == BARRIER && Events.timeOfDay == NIGHT)
+        if(enemy.getModel() == BARRIER && Events.timeOfDay == NIGHT)
         {
             inactiveNozzleColor = Colorations.barrierColor[Colorations.NOZZLE][Events.timeOfDay.ordinal()];
         }
@@ -458,7 +458,7 @@ public class EnemyPainter extends Painter<Enemy>
         }
         
         //Malen des Gegners
-        if(enemy.model != BARRIER)
+        if(enemy.getModel() != BARRIER)
         {
             paintVessel(	graphicsAdapter,
                             offsetX, 
@@ -493,13 +493,13 @@ public class EnemyPainter extends Painter<Enemy>
                              Color cannonColor,
                              Color inactiveNozzleColor)
     {
-        if(enemy.model == CARGO)
+        if(enemy.getModel() == CARGO)
         {
             this.paintRoof(graphicsAdapter, cannonColor, offsetX, offsetY, directionX);
         }
         this.paintAirframe(graphicsAdapter, mainColorLight, offsetX, offsetY, directionX);
         this.paintCannon(graphicsAdapter, offsetX, offsetY, directionX, cannonColor);
-        if(enemy.model == TIT)
+        if(enemy.getModel() == TIT)
         {
             this.paintVerticalStabilizer(graphicsAdapter, offsetX, offsetY, directionX);
         }
@@ -513,7 +513,7 @@ public class EnemyPainter extends Painter<Enemy>
                 offsetX,
                 (int)(offsetY
                     + enemy.getPaintBounds().height
-                    *(enemy.model == TIT ? 0.067f : 0.125f)),
+                    *(enemy.getModel() == TIT ? 0.067f : 0.125f)),
                 Color.red.equals(color) ? Colorations.cloakedBossEye : null,
                 directionX,
                 getarnt && !imagePaint);
@@ -533,7 +533,7 @@ public class EnemyPainter extends Painter<Enemy>
         
         if(SHOW_RED_FRAME){
             graphicsAdapter.setColor(Color.red);
-            graphicsAdapter.drawRect(offsetX, offsetY, (int)(enemy.getBounds().getWidth() - 1), (int)(enemy.getBounds().getHeight() - 1));
+            graphicsAdapter.drawRect(offsetX, offsetY, (int)(enemy.getWidth() - 1), (int)(enemy.getHeight() - 1));
         }
     }
     
@@ -600,7 +600,7 @@ public class EnemyPainter extends Painter<Enemy>
     {
         this.setAirframeColor(graphicsAdapter, offsetY, mainColorLight);
         
-        if(enemy.model == TIT)
+        if(enemy.getModel() == TIT)
         {
             graphicsAdapter.fillArc(offsetX,
                 (int) (offsetY - 0.333f * enemy.getPaintBounds().height - 2),
@@ -612,7 +612,7 @@ public class EnemyPainter extends Painter<Enemy>
                 (int)(			 0.8f   * enemy.getPaintBounds().width),
                 (int)(			 1.667f * enemy.getPaintBounds().height), 180, 180);
         }
-        else if(enemy.model == CARGO)
+        else if(enemy.getModel() == CARGO)
         {
             graphicsAdapter.fillOval(	(int)(offsetX + 0.02f * enemy.getPaintBounds().width),
                 (int)(offsetY + 0.1f * enemy.getPaintBounds().height),
@@ -657,7 +657,7 @@ public class EnemyPainter extends Painter<Enemy>
     {
         this.gradientColor = new GradientPaint(
             0,
-            offsetY + (enemy.model == TIT ? 0.25f : 0.375f) * enemy.getPaintBounds().height,
+            offsetY + (enemy.getModel() == TIT ? 0.25f : 0.375f) * enemy.getPaintBounds().height,
             mainColorLight,
             0,
             offsetY + enemy.getPaintBounds().height,
@@ -706,7 +706,7 @@ public class EnemyPainter extends Painter<Enemy>
     private static void paintRedCross(GraphicsAdapter graphicsAdapter, int x, int y, int height)
     {
         graphicsAdapter.setColor(Color.red);
-        graphicsAdapter.setStroke(new BasicStroke(height/5, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        graphicsAdapter.setStroke(new BasicStroke(height/5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         graphicsAdapter.drawLine(x + height/2, y + height/5, x + height/2, y + (4 * height)/5);
         graphicsAdapter.drawLine(x + height/5, y + height/2, x + (4 * height)/5, y + height/2);
         graphicsAdapter.setStroke(new BasicStroke(1));
@@ -718,11 +718,11 @@ public class EnemyPainter extends Painter<Enemy>
         GraphicalEntities.paintGlowingLine(	graphicsAdapter,
                                             enemy.getPaintBounds().x,
                                             enemy.getPaintBounds().y + 1,
-                                            (int)(helicopter.getBounds().getX()
+                                            (int)(helicopter.getX()
                                                 + (helicopter.isMovingLeft
                                                 ? Helicopter.FOCAL_PNT_X_LEFT
                                                 : Helicopter.FOCAL_PNT_X_RIGHT)),  // 114
-                                            (int)(helicopter.getBounds().getY()
+                                            (int)(helicopter.getY()
                                                 + Helicopter.FOCAL_PNT_Y_EXP));
     }
     
@@ -741,7 +741,7 @@ public class EnemyPainter extends Painter<Enemy>
             enemy.getPaintBounds().x,
             (int) (enemy.getPaintBounds().y
                 + enemy.getPaintBounds().height
-                *(enemy.model == TIT ? 0.067f : 0.125f)),
+                *(enemy.getModel() == TIT ? 0.067f : 0.125f)),
             enemy.alpha != 255
                 ? Colorations.setAlpha(Colorations.variableRed, enemy.alpha)
                 : Colorations.variableRed,
@@ -753,7 +753,7 @@ public class EnemyPainter extends Painter<Enemy>
     {
         this.setWindowColor(graphicsAdapter, color, getarnt);
         
-        if(enemy.model == TIT)
+        if(enemy.getModel() == TIT)
         {
             graphicsAdapter.fillArc(	(int) (x + (directionX == 1 ? 0.25f : 0.55f)
                     * enemy.getPaintBounds().width),
@@ -763,7 +763,7 @@ public class EnemyPainter extends Painter<Enemy>
                 180,
                 180);
         }
-        else if(enemy.model == CARGO)
+        else if(enemy.getModel() == CARGO)
         {
             graphicsAdapter.fillArc(	(int) (x + (directionX == 1 ? 0.1 : 0.6)
                     * enemy.getPaintBounds().width),

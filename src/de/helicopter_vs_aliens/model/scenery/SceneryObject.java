@@ -252,17 +252,18 @@ public class SceneryObject extends RectangularGameEntity
 		return coordinatesOfComponents[i][j];
 	}
 	
-	public float getX()
+	// TODO ggf. über bounds realisieren und dann die Methoden von RectangularGameEntity nutzen
+	public float getSceneryObjectX()
 	{
 		return x;
 	}
 	
-	public int getWidth()
+	public int getSceneryObjectWidth()
 	{
 		return width;
 	}
 	
-	public float getMaxX()
+	public float getSceneryObjectMaxX()
 	{
 		return x + width;
 	}

@@ -2,18 +2,17 @@ package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
-
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 public abstract class BasicEnemy extends StandardEnemy
 {
     private static final float
         STANDARD_MINI_BOSS_PROB = 0.05f,
         CHEAT_MINI_BOSS_PROB = 1.0f;
+    private static final double
+        MINI_BOSS_SIZE_FACTOR = 1.44;
     
     public static Enemy
         currentMiniBoss;    // Referenz auf den aktuellen Boss-Gegner
@@ -27,13 +26,13 @@ public abstract class BasicEnemy extends StandardEnemy
     }
     
     @Override
-    protected void create(Helicopter helicopter)
+    protected void finalizeInitialization(Helicopter helicopter)
     {
         if(canBecomeMiniBoss())
         {
             turnIntoMiniBoss(helicopter);
         }
-        super.create(helicopter);
+        super.finalizeInitialization(helicopter);
     }
     
     protected boolean canBecomeMiniBoss()
@@ -47,10 +46,7 @@ public abstract class BasicEnemy extends StandardEnemy
     {
         helicopter.numberOfMiniBossSeen++;
         currentMiniBoss = this;
-        bounds.setRect( this.bounds.getX(),
-                        bounds.getY(),
-                        1.44 * this.bounds.getWidth(),
-                        1.44 * this.bounds.getHeight());
+        resizeToMiniBossDimension();
         isMiniBoss = true;
         canExplode = false;
         callBack += 2;
@@ -59,6 +55,14 @@ public abstract class BasicEnemy extends StandardEnemy
         {
             cloakingTimer = 0;
         }
+    }
+    
+    private void resizeToMiniBossDimension()
+    {
+        setBounds( getX(),
+                   getY(),
+                   MINI_BOSS_SIZE_FACTOR * getWidth(),
+                   MINI_BOSS_SIZE_FACTOR * getHeight());
     }
     
     @Override

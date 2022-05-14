@@ -6,24 +6,33 @@ import de.helicopter_vs_aliens.util.Calculations;
 public class EscapedSpeeder extends Speeder
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
         initializeBolt();
-        this.setLocation(carrierDestroyedJustNow.getBounds().getCenterX(),
-            carrierDestroyedJustNow.getBounds().getCenterY());
-        this.hasYPosSet = true;
-        this.targetSpeedLevel.setLocation(	10  + 7.5 * Math.random(),
-            0.5 + 3   * Math.random());
+        this.targetSpeedLevel.setLocation(	10.0 + 7.5 * Math.random(),
+                                             0.5 + 3   * Math.random());
         this.callBack = 1 + Calculations.random(3);
         this.direction.x = Calculations.randomDirection();
         this.invincibleTimer = 67;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
     
     @Override
     protected boolean canBecomeMiniBoss()
     {
         return false;
+    }
+    
+    @Override
+    protected double calculateInitialX()
+    {
+        return carrierDestroyedJustNow.getCenterX();
+    }
+    
+    @Override
+    protected double calculateInitialY()
+    {
+        return carrierDestroyedJustNow.getCenterY();
     }
 }

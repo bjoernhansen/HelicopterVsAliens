@@ -29,14 +29,14 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         // Kaktus
         if(sceneryObject.type == CACTUS)
         {
-            graphicsAdapter.drawImage(CACTUS_IMG[Events.timeOfDay.ordinal()], (int) sceneryObject.getX(), 235, null);
+            graphicsAdapter.drawImage(CACTUS_IMG[Events.timeOfDay.ordinal()], (int) sceneryObject.getSceneryObjectX(), 235, null);
         }
     
         // Steine
         if(sceneryObject.type == STONE)
         {
             graphicsAdapter.setPaint(Colorations.gradientStones[Events.timeOfDay.ordinal()]);
-            graphicsAdapter.fillOval( (int)(sceneryObject.getX() + sceneryObject.getCoordinateOfComponent(0,0)),
+            graphicsAdapter.fillOval( (int)(sceneryObject.getSceneryObjectX() + sceneryObject.getCoordinateOfComponent(0,0)),
                     400 + sceneryObject.getCoordinateOfComponent(0,1),
                     sceneryObject.getCoordinateOfComponent(0,2),
                     sceneryObject.getCoordinateOfComponent(0,3));
@@ -46,11 +46,11 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         if(sceneryObject.type == HILL)
         {
             graphicsAdapter.setPaint(Colorations.gradientHills[Events.timeOfDay.ordinal()]);
-            graphicsAdapter.fillArc( (int)(sceneryObject.getX() + sceneryObject.getCoordinateOfComponent(0,0)),
+            graphicsAdapter.fillArc( (int)(sceneryObject.getSceneryObjectX() + sceneryObject.getCoordinateOfComponent(0,0)),
                     400 + sceneryObject.getCoordinateOfComponent(0,1),
                     sceneryObject.getCoordinateOfComponent(0,2),
                     sceneryObject.getCoordinateOfComponent(0,3), 0, 180);
-            graphicsAdapter.fillArc( (int)(sceneryObject.getX() + sceneryObject.getCoordinateOfComponent(1,0)),
+            graphicsAdapter.fillArc( (int)(sceneryObject.getSceneryObjectX() + sceneryObject.getCoordinateOfComponent(1,0)),
                     400 + sceneryObject.getCoordinateOfComponent(1,1),
                     sceneryObject.getCoordinateOfComponent(1,2),
                     sceneryObject.getCoordinateOfComponent(1,3), 0, 180);
@@ -59,15 +59,15 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         // Sand
         if(sceneryObject.type == DESERT)
         {
-            graphicsAdapter.drawImage(sceneryObject.getImage(Events.timeOfDay.ordinal()), (int) sceneryObject.getX(), 426, null);
+            graphicsAdapter.drawImage(sceneryObject.getImage(Events.timeOfDay.ordinal()), (int) sceneryObject.getSceneryObjectX(), 426, null);
         }
     
         // Palme
         if(sceneryObject.type == PALM)
         {
-            graphicsAdapter.drawImage( sceneryObject.getImage(Events.timeOfDay.ordinal()), (int)(sceneryObject.getX() + 110),
+            graphicsAdapter.drawImage( sceneryObject.getImage(Events.timeOfDay.ordinal()), (int)(sceneryObject.getSceneryObjectX() + 110),
                     350 - sceneryObject.getCoordinateOfComponent(0,0), null);
-            graphicsAdapter.drawImage( PALM_CROWN_IMG[Events.timeOfDay.ordinal()], (int) sceneryObject.getX(),
+            graphicsAdapter.drawImage( PALM_CROWN_IMG[Events.timeOfDay.ordinal()], (int) sceneryObject.getSceneryObjectX(),
                     340 - sceneryObject.getCoordinateOfComponent(0,0), null);
         }
     }
@@ -94,15 +94,15 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         // TODO ist vermutlich loop für Tageszeiten hier entsprechend Enum-Datentypen verwenden
         for(int i = 0; i < 2; i++)
         {
-            sceneryObject.setImage(i, new BufferedImage(sceneryObject.getWidth(), 35, BufferedImage.TYPE_INT_ARGB));
+            sceneryObject.setImage(i, new BufferedImage(sceneryObject.getSceneryObjectWidth(), 35, BufferedImage.TYPE_INT_ARGB));
             GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(sceneryObject.getImage(i));
             graphicsAdapter.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-            graphicsAdapter.setPaint(new GradientPaint(	 0 + sceneryObject.getX(),  0, Colorations.sand[i],
-                    10 + sceneryObject.getX(), 20, Colorations.dimColor(Colorations.sand[i], 0.9f), true));
+            graphicsAdapter.setPaint(new GradientPaint(	 0 + sceneryObject.getSceneryObjectX(),  0, Colorations.sand[i],
+                    10 + sceneryObject.getSceneryObjectX(), 20, Colorations.dimColor(Colorations.sand[i], 0.9f), true));
             graphicsAdapter.fillArc(0, -35, 300, 70, 180, 90);
-            graphicsAdapter.fillRect(149, 0, sceneryObject.getWidth() - 298, 35);
-            graphicsAdapter.fillArc(sceneryObject.getWidth() - 300, -35, 300, 70, 270, 90);
+            graphicsAdapter.fillRect(149, 0, sceneryObject.getSceneryObjectWidth() - 298, 35);
+            graphicsAdapter.fillArc(sceneryObject.getSceneryObjectWidth() - 300, -35, 300, 70, 270, 90);
         }
     }
     

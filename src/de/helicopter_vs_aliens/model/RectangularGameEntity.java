@@ -12,38 +12,159 @@ public abstract class RectangularGameEntity extends GameEntity
 		
 	// TODO paintBound sind vermutlich nur da, da in floats gerechnet aber in int gezeichnet wird, diese Funktionalität in eigene Klasse auslagern
 	// TODO bounds sollten nicht public sein, lieber einen Accessor schreiben
-	protected final Rectangle2D
+	private final Rectangle2D
 		bounds = new Rectangle2D.Float();
 	
 	//TODO paintBounds sollten nicht public sein, lieber einen Accessor schreiben
 	protected final Rectangle
         paintBounds = new Rectangle();
 	
-	protected void setPaintBounds()
+	protected final void setPaintBounds()
 	{
 		this.setPaintBounds(this.paintBounds.width, this.paintBounds.height);
 	}
 	
-	protected void setPaintBounds(int width, int height)
+	protected final void setPaintBounds(int width, int height)
 	{
-		this.paintBounds.setBounds(	(int)Math.round(this.bounds.getX()),
-									(int)Math.round(this.bounds.getY()),
+		this.paintBounds.setBounds(	(int)Math.round(this.getX()),
+									(int)Math.round(this.getY()),
 									width, 
 									height);
 	}
 	
-	public Rectangle getPaintBounds()
+	public final Rectangle getPaintBounds()
 	{
 		return paintBounds;
 	}
-	
-	public Rectangle2D getBounds()
+
+	public final Rectangle2D getBounds()
 	{
 		return bounds;
 	}
 	
 	public boolean isRightOf(RectangularGameEntity gameEntity)
 	{
-		return this.getBounds().getX() > gameEntity.getBounds().getX();
+		return getX() > gameEntity.getX();
 	}
+	
+	protected final void setBounds(Rectangle2D rectangle)
+	{
+		setBounds(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+	}
+	
+	protected final void setBounds(double x, double y, double width, double height)
+	{
+		bounds.setRect(x, y, width, height);
+	}
+	
+	protected final void setLocation(double x, double y)
+	{
+		setBounds(x,
+				  y,
+				  bounds.getWidth(),
+				  bounds.getHeight());
+	}
+	
+	protected final void setX(double x)
+	{
+		setBounds(x,
+			      bounds.getY(),
+			      bounds.getWidth(),
+			      bounds.getHeight());
+	}
+	
+	protected final void setY(double y)
+	{
+		setBounds(bounds.getX(),
+			      y,
+			      bounds.getWidth(),
+			      bounds.getHeight());
+	}
+	
+	protected final void setDimension(double width, double height)
+	{
+		setBounds(bounds.getX(),
+				  bounds.getY(),
+				  width,
+				  height);
+	}
+	
+	protected final void setHeight(double height)
+	{
+		setBounds(bounds.getX(),
+			      bounds.getY(),
+			      bounds.getWidth(),
+			      height);
+	}
+	
+	protected final void setWidth(double width)
+	{
+		setBounds(bounds.getX(),
+			      bounds.getY(),
+			      width,
+			      bounds.getHeight());
+	}
+	
+	public final boolean intersects(double x, double y, double width, double height)
+	{
+		return bounds.intersects(x, y, width, height);
+	}
+	
+	public final boolean intersects(Rectangle2D rectangle)
+	{
+		return bounds.intersects(rectangle);
+	}
+	
+	public final double getX()
+	{
+		return bounds.getX();
+	}
+	
+	public final double getMinX()
+	{
+		return bounds.getMinX();
+	}
+	
+	public final double getMaxX()
+	{
+		return bounds.getMaxX();
+	}
+	
+	public final double getCenterX()
+	{
+		return bounds.getCenterX();
+	}
+	
+	public final double getY()
+	{
+		return bounds.getY();
+	}
+	
+	public final double getMinY()
+	{
+		return bounds.getMinY();
+	}
+	
+	public final double getMaxY()
+	{
+		return bounds.getMaxY();
+	}
+	
+	public final double getCenterY()
+	{
+		return bounds.getCenterY();
+	}
+	
+	public final double getWidth()
+	{
+		return bounds.getWidth();
+	}
+	
+	public final double getHeight()
+	{
+		return bounds.getHeight();
+	}
+
+	
+
 }

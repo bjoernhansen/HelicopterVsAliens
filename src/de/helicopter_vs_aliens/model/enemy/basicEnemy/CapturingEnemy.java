@@ -9,17 +9,16 @@ import java.awt.Color;
 public class CapturingEnemy extends BasicEnemy
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color(  5 + Calculations.random(55),
-            105 + Calculations.random(40),
-            90 + Calculations.random(30));
-        this.setInitialWidth();
+        this.primaryColor = new Color(    5 + Calculations.random(55),
+                                        105 + Calculations.random(40),
+                                         90 + Calculations.random(30));
         this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(),
             4.5 + 1.5*Math.random());
         this.tractor = AbilityStatusType.READY;
         this.canExplode = true;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
 }

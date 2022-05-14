@@ -133,8 +133,8 @@ public class Explosion extends GameEntity
 		}
 		if(this.source != null)
 		{
-			this.center.setLocation((int)this.source.getBounds().getCenterX(),
-				(int)this.source.getBounds().getCenterY());
+			this.center.setLocation((int)this.source.getCenterX(),
+				(int)this.source.getCenterY());
 		}
 	}
 	

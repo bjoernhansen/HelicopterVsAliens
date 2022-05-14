@@ -1,13 +1,11 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
+import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBossServant;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 public class Protector extends BurrowingBarrier
 {
-    public static final int
-        WIDTH = 90;
-    
     private static final int
         POSITION_X = 919,
         SHOOT_PAUSE = 0,
@@ -16,18 +14,12 @@ public class Protector extends BurrowingBarrier
         SHOOT_SPEED = 10;
     
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.bounds.setRect(POSITION_X,
-                            GROUND_Y,
-                            WIDTH,
-                            this.bounds.getHeight());
-        
         this.isStunable = false;
-    
         FinalBossServant.selectAsFinalBossServant(this);
     
-        super.create(helicopter);
+        super.doTypeSpecificInitialization();
     }
     
     @Override
@@ -58,5 +50,29 @@ public class Protector extends BurrowingBarrier
     protected boolean isArmingWithBusterMissilesApproved()
     {
         return true;
+    }
+    
+    @Override
+    protected double calculateInitialX()
+    {
+        return POSITION_X;
+    }
+    
+    @Override
+    protected double calculateInitialY()
+    {
+        return GROUND_Y;
+    }
+    
+    @Override
+    protected int getWidthVariance()
+    {
+        return 0;
+    }
+    
+    @Override
+    public boolean isRemainingAfterEnteringRepairShop()
+    {
+        return false;
     }
 }

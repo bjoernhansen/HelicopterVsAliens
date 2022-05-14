@@ -7,7 +7,7 @@ public enum EnemyModelType
     BARRIER(1.00);
     
     private final double
-        heightFactor;
+        heightFactor;   // legt das Verhältnis der Höhe zur Länge fest: width * heightFactor = height
     
     EnemyModelType(double heightFactor)
     {

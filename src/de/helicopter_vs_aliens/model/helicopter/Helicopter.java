@@ -307,6 +307,7 @@ public abstract class Helicopter extends RectangularGameEntity
 			{
 				missile = new Missile();
 			}
+			// TODO warum immer true
 			if (sister != null && sister.sister != null &&
 				(this.getType() == ROCH || this.getType() == OROCHI))
 			{
@@ -332,6 +333,7 @@ public abstract class Helicopter extends RectangularGameEntity
 			{
 				missile = new Missile();
 			}
+			// TODO warum immer true
 			if (sister != null && sister.sister != null &&
 				(this.getType() == ROCH || this.getType() == OROCHI))
 			{
@@ -367,7 +369,7 @@ public abstract class Helicopter extends RectangularGameEntity
 			
 			if (fraction < 1)
 			{
-				if (!(this.bounds.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
+				if (!(this.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y
 					&& this.destination.y >= GROUND_Y))
 				{
 					nextX += (float) (fraction * (this.destination.x - this.location.getX()) - 1);
@@ -427,7 +429,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			if (!this.isCrashing)
 			{
-				if (this.bounds.getMaxY() + NO_COLLISION_HEIGHT != GROUND_Y
+				if (this.getMaxY() + NO_COLLISION_HEIGHT != GROUND_Y
 					|| lastX != (float) this.location.getX())
 				{
 					this.isRotorSystemActive = true;
@@ -456,7 +458,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	public boolean isLocationAdaptionApproved(Enemy enemy)
 	{
 		return enemy.getBounds()
-					.intersects(this.bounds)
+					.intersects(this.getBounds())
 			&& enemy.alpha == 255
 			&& enemy.burrowTimer != 0;
 	}
@@ -464,9 +466,9 @@ public abstract class Helicopter extends RectangularGameEntity
 	void adaptPosTo(Enemy enemy)
 	{
 		double
-			x = this.bounds.getCenterX() - enemy.getBounds()
+			x = this.getCenterX() - enemy.getBounds()
 												.getCenterX(),
-			y = this.bounds.getCenterY() - enemy.getBounds()
+			y = this.getCenterY() - enemy.getBounds()
 												.getCenterY(),
 			pseudoAngle = (x / Calculations.ZERO_POINT.distance(x, y)),
 			distance,
@@ -485,20 +487,20 @@ public abstract class Helicopter extends RectangularGameEntity
 		} else if (pseudoAngle < -Calculations.ROOT05)
 		{
 			// Left
-			// new pos x: enemy.bounds.x - this.bounds.getWidth() + (this.moves_left ? 39 : 83)
+			// new pos x: enemy.x - this.getWidth() + (this.moves_left ? 39 : 83)
 			distance = this.location.getX() - enemy.getBounds()
-												   .getX() + this.bounds.getWidth() - (this.isMovingLeft ? 39 : 83);
+												   .getX() + this.getWidth() - (this.isMovingLeft ? 39 : 83);
 			this.nextLocation.setLocation(
 				this.location.getX() - Math.min(distance, localSpeed),
 				this.location.getY());
 			enemy.setTouchedSiteToLeft();
 		} else
 		{
-			if (this.bounds.getCenterY() > enemy.getBounds()
+			if (this.getCenterY() > enemy.getBounds()
 												.getCenterY())
 			{
 				// Bottom
-				// new pos y: enemy.bounds.getMaxY() + 56
+				// new pos y: enemy.getMaxY() + 56
 				distance = enemy.getBounds()
 								.getMaxY() + 56 - this.location.getY();
 				this.nextLocation.setLocation(
@@ -508,9 +510,9 @@ public abstract class Helicopter extends RectangularGameEntity
 			} else
 			{
 				// Top
-				// new pos y: enemy.bounds.y - this.bounds.getHeight() + 56
+				// new pos y: enemy.getY() - this.getHeight() + 56
 				distance = this.location.getY() - enemy.getBounds()
-													   .getY() + this.bounds.getHeight() - 56;
+													   .getY() + this.getHeight() - 56;
 				this.nextLocation.setLocation(
 					this.location.getX(),
 					this.location.getY() - Math.min(distance, localSpeed));
@@ -533,16 +535,16 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.setBounds();
 	}
 	
+	// TODO in Methoden auslagern
 	void setBounds()
 	{
-		this.bounds.setRect(
-			this.location.getX()
+		setBounds(this.location.getX()
 				- (this.isMovingLeft
 				? FOCAL_PNT_X_LEFT
 				: FOCAL_PNT_X_RIGHT),
-			this.location.getY() - FOCAL_PNT_Y_POS,
-			this.bounds.getWidth(),
-			this.bounds.getHeight());
+				this.location.getY() - FOCAL_PNT_Y_POS,
+				this.getWidth(),
+				this.getHeight());
 	}
 	
 	public void initializeForNewGame()
@@ -779,8 +781,8 @@ public abstract class Helicopter extends RectangularGameEntity
 	public void placeAtStartpos()
 	{
 		this.isMovingLeft = false;
-		this.bounds.setRect(INITIAL_BOUNDS);
-		this.location.setLocation(this.bounds.getX() + FOCAL_PNT_X_RIGHT,
+		setBounds(INITIAL_BOUNDS);
+		this.location.setLocation(this.getX() + FOCAL_PNT_X_RIGHT,
 			INITIAL_BOUNDS.y + FOCAL_PNT_Y_POS);
 		this.setPaintBounds();
 	}
@@ -797,7 +799,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.isDamaged = true;
 		this.isRotorSystemActive = false;
 		this.battery.discharge();
-		this.destination.setLocation(this.bounds.getX() + 40, 520);
+		this.destination.setLocation(this.getX() + 40, 520);
 		if (this.tractor != null)
 		{
 			this.stopTractor();
@@ -821,11 +823,11 @@ public abstract class Helicopter extends RectangularGameEntity
 			Audio.play(Audio.explosion3);
 			Explosion.start(explosion,
 				this,
-				(int) (this.bounds.getX()
+				(int) (this.getX()
 					+ (this.isMovingLeft
 					? FOCAL_PNT_X_LEFT
 					: FOCAL_PNT_X_RIGHT)),
-				(int) (this.bounds.getY() + FOCAL_PNT_Y_EXP),
+				(int) (this.getY() + FOCAL_PNT_Y_EXP),
 				ORDINARY,
 				false);
 		}
@@ -1006,7 +1008,7 @@ public abstract class Helicopter extends RectangularGameEntity
     public boolean canCollideWith(Enemy e)
 	{
 		return this.basicCollisionRequirementsSatisfied(e)
-			   && !(e.model == BARRIER
+			   && !(e.getModel() == BARRIER
 						&& (    e.alpha != 255
 							||  e.burrowTimer == 0
 							|| !e.hasUnresolvedIntersection));
@@ -1016,7 +1018,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		return !this.isDamaged
 				&& e.isOnScreen()
-				&& e.getBounds().intersects(this.bounds);
+				&& e.getBounds().intersects(this.getBounds());
 	}
 	
 	public float getProtectionFactor()
@@ -1029,15 +1031,15 @@ public abstract class Helicopter extends RectangularGameEntity
     public void becomesCenterOf(Explosion exp)
 	{
 		exp.ellipse.setFrameFromCenter(
-			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
-			this.bounds.getY() + FOCAL_PNT_Y_EXP,
-			this.bounds.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
-			this.bounds.getY() + FOCAL_PNT_Y_EXP);
+			this.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
+			this.getY() + FOCAL_PNT_Y_EXP,
+			this.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
+			this.getY() + FOCAL_PNT_Y_EXP);
 	}
  
 	public boolean isOnTheGround()
 	{
-		return this.bounds.getMaxY() + NO_COLLISION_HEIGHT == GROUND_Y;
+		return this.getMaxY() + NO_COLLISION_HEIGHT == GROUND_Y;
 	}
 
 	public void turnAround()

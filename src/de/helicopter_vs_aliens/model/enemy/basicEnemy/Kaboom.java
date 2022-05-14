@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
+import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 import java.awt.Color;
@@ -7,17 +8,20 @@ import java.awt.Color;
 public class Kaboom extends BasicEnemy
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
         this.primaryColor = Color.white;
-        this.setInitialWidth();
         this.targetSpeedLevel.setLocation(0.5 + 0.5*Math.random(), 0);
         this.canExplode = true;
-        this.setFixedY(GROUND_Y - 2*this.bounds.getWidth()*HEIGHT_FACTOR);
-        
+    
+        super.doTypeSpecificInitialization();
+    }
+    
+    @Override
+    protected void finalizeInitialization(Helicopter helicopter)
+    {
         helicopter.numberOfEnemiesSeen--;
-        
-        super.create(helicopter);
+        super.finalizeInitialization(helicopter);
     }
     
     @Override
@@ -30,5 +34,11 @@ public class Kaboom extends BasicEnemy
     protected boolean isMeetingRequirementsForGlowingEyes()
     {
         return true;
+    }
+    
+    @Override
+    protected double calculateInitialY()
+    {
+        return getOnTheGroundY() - getHeight();
     }
 }

@@ -65,7 +65,7 @@ public class PowerUp extends RectangularGameEntity
 
 	private void update(Helicopter helicopter)
 	{		
-		if(this.bounds.intersects(helicopter.getBounds())){this.collect(helicopter);}
+		if(this.intersects(helicopter.getBounds())){this.collect(helicopter);}
 		
 		if(!this.hasStopped
 		   && helicopter.canImmobilizePowerUp()
@@ -81,25 +81,26 @@ public class PowerUp extends RectangularGameEntity
 				double new_y_speed = 0.20 * this.direction * this.speed.getX();
 				this.speed.setLocation(0.25 * this.direction + this.speed.getX(), 
 										helicopter.canImmobilizePowerUp()
-											? Math.min(new_y_speed, 0.03*(this.bounds.getCenterY()-30))
+											? Math.min(new_y_speed, 0.03*(this.getCenterY()-30))
 											: new_y_speed);
 			}	
-			else if(this.bounds.getMaxY() < GROUND_Y )
+			else if(this.getMaxY() < GROUND_Y )
 			{
 				this.speed.setLocation(this.speed.getX(), this.speed.getY() - 0.35);
 			}
 			else{this.speed.setLocation(0, 0);}
 			
-			this.bounds.setRect(
-					this.bounds.getX() 
+			// TODO unverständlich, in Methoden auslagern
+			setBounds(
+					this.getX()
 						- this.speed.getX()
 						- (Scenery.backgroundMoves ? BG_SPEED : 0),
-					Math.min(this.bounds.getY() - this.speed.getY(), 
-							GROUND_Y - this.bounds.getHeight()),
+					Math.min(this.getY() - this.speed.getY(),
+							GROUND_Y - this.getHeight()),
                     SIZE, SIZE);
 			
-			if(   (this.speed.getX() == 0 && this.bounds.getMaxX() < 0) 
-			    ||(this.speed.getX() != 0 && this.bounds.getMaxY() < 0))
+			if(   (this.speed.getX() == 0 && this.getMaxX() < 0)
+			    ||(this.speed.getX() != 0 && this.getMaxY() < 0))
 			{
 				this.setCollected();
 			}
@@ -109,7 +110,7 @@ public class PowerUp extends RectangularGameEntity
 	
 	private boolean hasReachedStopPosition()
 	{
-		return POWERUP_STOP_POSITION < (this.bounds.getX() - this.speed.getX() + 20);
+		return POWERUP_STOP_POSITION < (this.getX() - this.speed.getX() + 20);
 	}
 	
 	private void initialize()
@@ -119,15 +120,15 @@ public class PowerUp extends RectangularGameEntity
 	
 	private void initialize(Enemy enemy, int powerUpDirection)
 	{
-		this.initialize( enemy.getBounds().getX(),
-					     enemy.getBounds().getY(),
+		this.initialize( enemy.getX(),
+					     enemy.getY(),
 					     enemy.getBounty(),
 					     powerUpDirection );
 	}
 	
 	private void initialize(double x, double y, int powerUpWorth, int powerUpDirection)
 	{
-		this.bounds.setRect(x, y, SIZE, SIZE);
+		setBounds(x, y, SIZE, SIZE);
 		this.setPaintBounds(SIZE, SIZE);
 		this.wasCollected = false;
 		this.hasStopped = false;
@@ -207,7 +208,7 @@ public class PowerUp extends RectangularGameEntity
 		this.speed.setLocation(0, 0);
 		this.isInStatusBar = true;
 		this.wasCollected = false;
-		this.bounds.setRect(100, 432, Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
+		setBounds(100, 432, Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 	

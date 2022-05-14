@@ -54,9 +54,9 @@ public class EnemyMissile extends GameEntity
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (Scenery.backgroundMoves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
 		if(	helicopter.canBeHit()
-			&& helicopter.getBounds().intersectsLine( this.location.getX() + this.diameter/2,
+			&& helicopter.getBounds().intersectsLine( this.location.getX() + this.diameter/2f,
 												  this.location.getY(),
-												  this.location.getX() + this.diameter/2,
+												  this.location.getX() + this.diameter/2f,
 												  this.location.getY() + this.diameter))
         {
 			this.hit(helicopter);
@@ -71,11 +71,11 @@ public class EnemyMissile extends GameEntity
     		helicopter.takeMissileDamage();
     		Explosion.start(Controller.getInstance().explosions,
     						helicopter,
-							(int)(helicopter.getBounds().getX()
+							(int)(helicopter.getX()
 									+ (helicopter.isMovingLeft
 										? Helicopter.FOCAL_PNT_X_LEFT
 										: Helicopter.FOCAL_PNT_X_RIGHT)),
-							(int)(helicopter.getBounds().getY() + Helicopter.FOCAL_PNT_Y_EXP),
+							(int)(helicopter.getY() + Helicopter.FOCAL_PNT_Y_EXP),
                     ORDINARY,
 							false);
     	}
@@ -113,10 +113,10 @@ public class EnemyMissile extends GameEntity
     {
     	this.type = missileType;
     	    	
-    	if(enemy.model == BARRIER)
+    	if(enemy.getModel() == BARRIER)
     	{
-    		this.location.setLocation(enemy.getBounds().getX() + (enemy.getBounds().getWidth() -this.diameter)/2,
-					  				  enemy.getBounds().getY() + (enemy.getBounds().getHeight()-this.diameter)/2);
+    		this.location.setLocation(enemy.getX() + (enemy.getWidth() -this.diameter)/2,
+					  				  enemy.getY() + (enemy.getHeight()-this.diameter)/2);
     		this.speed.setLocation(	shootingSpeed * shootingDirection.getX(),
 		 							shootingSpeed * shootingDirection.getY());
     	}
@@ -124,15 +124,15 @@ public class EnemyMissile extends GameEntity
     	{
     		this.speed.setLocation(	shootingSpeed * (enemy.direction.x == -1 ? -1f : 1f), 0);
     		    		
-    		if(enemy.model == TIT)
+    		if(enemy.getModel() == TIT)
     		{
-    			this.location.setLocation(enemy.getBounds().getX() + (enemy.direction.x == -1 ? 0 : enemy.getBounds().getWidth()),
-    									  enemy.getBounds().getY() );
+    			this.location.setLocation(enemy.getX() + (enemy.direction.x == -1 ? 0 : enemy.getWidth()),
+    									  enemy.getY() );
     		}
-	    	else if(enemy.model == CARGO)
+	    	else if(enemy.getModel() == CARGO)
 	    	{
-	    		this.location.setLocation(enemy.getBounds().getX() + (enemy.direction.x == -1 ? 0 : enemy.getBounds().getWidth()),
-	    								  enemy.getBounds().getY() + (enemy.getBounds().getHeight()-this.diameter)/2);
+	    		this.location.setLocation(enemy.getX() + (enemy.direction.x == -1 ? 0 : enemy.getWidth()),
+	    								  enemy.getY() + (enemy.getHeight()-this.diameter)/2);
 	    	}
     	}    	
     	this.diameter = ((this.type == DISCHARGER) ? DIAMETER : (DIAMETER + 2));

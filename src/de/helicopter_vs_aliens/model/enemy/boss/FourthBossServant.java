@@ -1,33 +1,35 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Color;
 
-public class FourthBossServant extends BossEnemy
+public class FourthBossServant extends BossServant
 {
+    private static final int
+        WIDTH_VARIANCE = 15;
+    
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.bounds.setRect(boss.getX(),
-            boss.getY(),
-            85 + Calculations.random(15),
-            this.bounds.getHeight());
-        this.hasYPosSet = true;
         this.primaryColor = new Color(80 + Calculations.random(20), 80 + Calculations.random(20), 80 + Calculations.random(20));
-        this.targetSpeedLevel.setLocation(6 + 2.5*Math.random(),
-            6 + 2.5*Math.random());
+        this.targetSpeedLevel.setLocation(  6 + 2.5*Math.random(),
+                                            6 + 2.5*Math.random());
         this.direction.x = Calculations.randomDirection();
         this.canExplode = true;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
     
     @Override
     protected int hitPointVariance()
     {
         return Calculations.random(type.getHitPoints()/2);
+    }
+    
+    @Override
+    protected int getWidthVariance()
+    {
+        return Calculations.random(WIDTH_VARIANCE);
     }
 }

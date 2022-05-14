@@ -88,25 +88,18 @@ public class Missile extends RectangularGameEntity
 		}		
 	}
 	
+	// TODO in Methoden auslagern
 	private void setBounds(Helicopter helicopter, int y)
 	{
-		this.bounds.setRect(helicopter.location.getX() 
+		setBounds(helicopter.location.getX()
 								- (helicopter.isMovingLeft
 									? (this.typeOfExplosion == JUMBO ? 30 : 20)
 									: 0), 
-							helicopter.getBounds().getY() + y,
+							helicopter.getY() + y,
 							this.typeOfExplosion == JUMBO  ? 30 : 20,
 							this.typeOfExplosion == JUMBO ? 6 : 4);
-		this.setPaintBounds((int)this.bounds.getWidth(),
-							  (int)this.bounds.getHeight());
-	}
-	
-	private void setX(double x)
-	{
-		this.bounds.setRect(x,
-							this.bounds.getY(),
-							this.bounds.getWidth(),
-							this.bounds.getHeight());	
+		this.setPaintBounds((int)this.getWidth(),
+							  (int)this.getHeight());
 	}
 	
 	private void setDmg(float baseDamage)
@@ -127,11 +120,11 @@ public class Missile extends RectangularGameEntity
 
 	private void update(Controller controller, Iterator<Missile> i, Helicopter helicopter)
 	{		
-		this.setX(this.bounds.getX()
+		this.setX(this.getX()
 					+ this.speed
 					+ (Scenery.backgroundMoves ? - BG_SPEED : 0));
 				
-		if(this.bounds.getX() > 1175 || this.bounds.getX() + 20 < 0){this.flying = false;}
+		if(this.getX() > 1175 || this.getX() + 20 < 0){this.flying = false;}
 		else{this.checkForHitHelicopter(helicopter);}
 		this.checkForHitEnemys(controller, helicopter);
 		if(!this.flying)
@@ -145,7 +138,7 @@ public class Missile extends RectangularGameEntity
 	private void checkForHitHelicopter(Helicopter helicopter)
 	{
 		if(	this.dangerous 
-			&& helicopter.getBounds().intersects(this.bounds))
+			&& helicopter.getBounds().intersects(this.getBounds()))
 		{
 			Audio.play(Audio.explosion2);
 			this.dangerous = false;
@@ -221,18 +214,18 @@ public class Missile extends RectangularGameEntity
 	public boolean intersects(Enemy e)
 	{
 		int intersectLineX
-			= (int)(this.bounds.getX()
-					+ (this.speed < 0 ? 0 : this.bounds.getWidth()) 
+			= (int)(this.getX()
+					+ (this.speed < 0 ? 0 : this.getWidth())
 					+ (this.speed < 0 
-						? 2*e.getBounds().getWidth()/15
-						: -(e.model == TIT 
-							? e.getBounds().getWidth()/3
-							: 2*e.getBounds().getWidth()/15)));
+						? 2*e.getWidth()/15
+						: -(e.getModel() == TIT
+							? e.getWidth()/3
+							: 2*e.getWidth()/15)));
 		
 		return e.getBounds().intersectsLine(	intersectLineX,
-										this.bounds.getY(),
+										this.getY(),
 										intersectLineX,
-										this.bounds.getMaxY());
+										this.getMaxY());
 	}
 	
 	public static boolean canTakeCredit(Missile missile, Enemy enemy)
@@ -250,14 +243,14 @@ public class Missile extends RectangularGameEntity
 	private boolean couldHit(Enemy enemy)
 	{		
 		return 	  (this.speed > 0 
-				   && enemy.getBounds().intersects(	this.bounds.getX(),
-					   							this.bounds.getY()-1, 
+				   && enemy.getBounds().intersects(	this.getX(),
+					   							this.getY()-1,
 					   							20 * this.speed, 
-					   							this.bounds.getWidth()+2))
+					   							this.getWidth()+2))
 				||(this.speed < 0 
-				   && enemy.getBounds().intersects(	this.bounds.getMaxX() + 20 * this.speed,
-												this.bounds.getY()-1, 
+				   && enemy.getBounds().intersects(	this.getMaxX() + 20 * this.speed,
+												this.getY()-1,
 												-20 * this.speed,
-												this.bounds.getWidth()+2));
+												this.getWidth()+2));
 	}
 }

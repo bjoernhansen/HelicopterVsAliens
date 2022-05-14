@@ -10,35 +10,53 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 public class Rock extends BasicEnemy
 {
     private static final int
-        ROCK_WIDTH = 300;
+        GROUND_DISTANCE = 15;
     
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        currentRock = this;
-        this.model = CARGO;
+        primaryColor = new Color((180 + Calculations.random(30)),
+                                 (120 + Calculations.random(30)),
+                                 (      Calculations.random(15)));
+        becomeInvincibleForever();
     
-        this.primaryColor = new Color((180 + Calculations.random(30)),
-            (120 + Calculations.random(30)),
-            (      Calculations.random(15)));
-        this.invincibleTimer = Integer.MAX_VALUE;
+        super.doTypeSpecificInitialization();
+    }
     
-        this.bounds.setRect(this.bounds.getX(),
-            GROUND_Y - ROCK_WIDTH * (HEIGHT_FACTOR_SUPERSIZE - 0.05f),
-            ROCK_WIDTH,
-            ROCK_WIDTH * HEIGHT_FACTOR_SUPERSIZE);
-        this.hasHeightSet = true;
-        this.hasYPosSet = true;
-        this.isLasting = true;
-        
+    private void becomeInvincibleForever()
+    {
+        invincibleTimer = Integer.MAX_VALUE;
+    }
+    
+    @Override
+    protected void finalizeInitialization(Helicopter helicopter)
+    {
         helicopter.numberOfEnemiesSeen--;
-        
-        super.create(helicopter);
+        currentRock = this;
+        super.finalizeInitialization(helicopter);
     }
     
     @Override
     protected boolean canBecomeMiniBoss()
     {
         return false;
+    }
+
+    @Override
+    protected double calculateInitialY()
+    {
+        return getOnTheGroundY() - GROUND_DISTANCE;
+    }
+    
+    @Override
+    protected int getWidthVariance()
+    {
+        return 0;
+    }
+    
+    @Override
+    public boolean isRemainingAfterEnteringRepairShop()
+    {
+        return true;
     }
 }

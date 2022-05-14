@@ -9,10 +9,10 @@ public abstract class Speeder extends BasicEnemy
     protected void initializeBolt()
     {
         this.primaryColor = new Color(75 + Calculations.random(30),
-            75 + Calculations.random(30),
-            75 + Calculations.random(30) );
-        this.setInitialWidth();
-        
+                                      75 + Calculations.random(30),
+                                      75 + Calculations.random(30));
         this.canExplode = true;
+    
+        super.doTypeSpecificInitialization();
     }
 }

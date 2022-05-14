@@ -1066,15 +1066,9 @@ public class Events
 			}
 			else
 			{
-				for(Iterator<Enemy> i = controller.enemies.get(ACTIVE).iterator(); i.hasNext();)
-				{
-					Enemy e = i.next();					
-					if(!e.isLasting)
-					{
-						// controller.enemies.get(INACTIVE).add(e);
-						i.remove();
-					}
-				}
+				// controller.enemies.get(INACTIVE).add(e);
+				controller.enemies.get(ACTIVE)
+								  .removeIf(Enemy::isRemainingAfterEnteringRepairShop);
 			}
 			BasicEnemy.currentMiniBoss = null;
 		}

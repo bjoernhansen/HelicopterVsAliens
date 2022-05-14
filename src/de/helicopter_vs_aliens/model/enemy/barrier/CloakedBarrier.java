@@ -6,19 +6,14 @@ import de.helicopter_vs_aliens.util.Calculations;
 public class CloakedBarrier extends ArmedBarrier
 {
     // TODO CLOAKED_BARRIER  überarbeiten, wie oft soll er wiederkommen? manchmal schießt er nicht,
+    
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.setInitialWidth();
-    
         this.barrierTeleportTimer = READY;
-        
-        this.startBarrierUncloaking(helicopter);
-    
-        this.hasYPosSet = true;
         this.callBack = 1 + Calculations.random(4);
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
     
     @Override
@@ -37,5 +32,17 @@ public class CloakedBarrier extends ArmedBarrier
     protected boolean isArmingWithBusterMissilesApproved()
     {
         return true;
+    }
+    
+    @Override
+    protected void setInitialLocation(Helicopter helicopter)
+    {
+        this.startBarrierUncloaking(helicopter);
+    }
+    
+    @Override
+    public boolean isRemainingAfterEnteringRepairShop()
+    {
+        return false;
     }
 }

@@ -8,17 +8,16 @@ import java.awt.Color;
 public class CallbackEnemy extends BasicEnemy
 {
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color((70 + Calculations.random(40)),
-            (130 + Calculations.random(50)),
-            (30 + Calculations.random(45)));
-        this.setInitialWidth();
+        this.primaryColor = new Color(  ( 70 + Calculations.random(40)),
+                                        (130 + Calculations.random(50)),
+                                        ( 30 + Calculations.random(45)));
         this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(),
             5 + 2*Math.random());
         this.canExplode = true;
         this.callBack = 1;
-        
-        super.create(helicopter);
+    
+        super.doTypeSpecificInitialization();
     }
 }

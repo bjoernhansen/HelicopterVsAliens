@@ -17,10 +17,11 @@ abstract class ArmedBarrier extends Barrier
         BUSTER_PROBABILITY = 0.35f;
     
     @Override
-    protected void create(Helicopter helicopter)
+    protected void doTypeSpecificInitialization()
     {
-        this.setBarrierShootingProperties();
-        super.create(helicopter);
+        setBarrierShootingProperties();
+    
+        super.doTypeSpecificInitialization();
     }
     
     private void setBarrierShootingProperties()

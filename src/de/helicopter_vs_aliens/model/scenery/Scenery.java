@@ -101,7 +101,7 @@ public class Scenery extends GameEntity
             {
                 sceneryObject.move();
             }
-            if(sceneryObject.getMaxX() < X_LIMIT_FOR_REMOVAL)
+            if(sceneryObject.getSceneryObjectMaxX() < X_LIMIT_FOR_REMOVAL)
             {
                 sceneryObject.clearImage();
                 i.remove();

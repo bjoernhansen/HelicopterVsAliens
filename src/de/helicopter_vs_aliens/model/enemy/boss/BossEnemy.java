@@ -15,4 +15,10 @@ public abstract class BossEnemy extends StandardEnemy
     {
         return true;
     }
+    
+    @Override
+    protected int getWidthVariance()
+    {
+        return 0;
+    }
 }
