@@ -6,11 +6,4 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 public class ShieldingBarrier extends Barrier
 {
-    @Override
-    protected void doTypeSpecificInitialization()
-    {
-        this.primaryColor = Colorations.shieldingBarrierTurquoise;
-    
-        super.doTypeSpecificInitialization();
-    }
 }

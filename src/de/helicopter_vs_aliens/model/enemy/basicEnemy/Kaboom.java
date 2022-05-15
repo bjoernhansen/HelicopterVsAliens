@@ -10,7 +10,6 @@ public class Kaboom extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = Color.white;
         this.targetSpeedLevel.setLocation(0.5 + 0.5*Math.random(), 0);
         this.canExplode = true;
     
@@ -40,5 +39,11 @@ public class Kaboom extends BasicEnemy
     protected double calculateInitialY()
     {
         return getOnTheGroundY() - getHeight();
+    }
+    
+    @Override
+    protected int hitPointVariance()
+    {
+        return 0;
     }
 }

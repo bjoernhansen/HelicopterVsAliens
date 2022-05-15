@@ -158,7 +158,7 @@ public class EnemyPainter extends Painter<Enemy>
         HelicopterPainter.paintRotor(graphicsAdapter,
             !enemy.isDestroyed()
                 ?(Colorations.setAlpha(Colorations.barrierColor[enemy.getRotorColor()][Events.timeOfDay.ordinal()], enemy.alpha))
-                : Colorations.dimColor(Colorations.barrierColor[enemy.getRotorColor()][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
+                : Colorations.adjustBrightness(Colorations.barrierColor[enemy.getRotorColor()][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
             x, y, enemy.getPaintBounds().width, enemy.getPaintBounds().height, 5, (enemy.getSpeedLevel().equals(Enemy.ZERO_SPEED) ? (enemy.getSnoozeTimer() <= Enemy.SNOOZE_TIME ? 3 : 0) : 8) * (enemy.isClockwiseBarrier() ? -1 : 1) * enemy.getLifetime()%360,
             24, BARRIER_BORDER_SIZE, enemy.getSnoozeTimer() == 0);
         this.paintBarrierCannon(graphicsAdapter, x, y);
@@ -174,7 +174,7 @@ public class EnemyPainter extends Painter<Enemy>
                 ?  Colorations.variableGreen
                 : !enemy.isDestroyed()
                 ? Colorations.barrierColor[i][Events.timeOfDay.ordinal()]
-                : Colorations.dimColor(Colorations.barrierColor[i][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR);
+                : Colorations.adjustBrightness(Colorations.barrierColor[i][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR);
             if(enemy.alpha != 255){tempColor = Colorations.setAlpha(tempColor, enemy.alpha);}
             graphicsAdapter.setColor(tempColor);
             
@@ -222,7 +222,7 @@ public class EnemyPainter extends Painter<Enemy>
                 backgroundColor,
                 0,
                 y + 0.3f*thicknessFactor*enemy.getPaintBounds().height,
-                Colorations.dimColor(backgroundColor, 0.85f),
+                Colorations.adjustBrightness(backgroundColor, 0.85f),
                 true));
             
             graphicsAdapter.fillRect(x + (int)(thicknessFactor/2 * enemy.getPaintBounds().width),
@@ -325,7 +325,7 @@ public class EnemyPainter extends Painter<Enemy>
             inputColor,
             (int) (horizontal ? 0 : x + 1.0f * thicknessFactor * width),
             (int) (horizontal ?     y + 1.0f * thicknessFactor * height : 0),
-            Colorations.dimColor(inputColor, dimFactor),
+            Colorations.adjustBrightness(inputColor, dimFactor),
             true));
         
         graphicsAdapter.fillRoundRect(	(int) (x - (directionX == 1 ? xShiftLeft : xShiftRight) * width),
@@ -391,7 +391,7 @@ public class EnemyPainter extends Painter<Enemy>
             color,
             0,
             y + (yShift + height) * enemy.getPaintBounds().height,
-            Colorations.dimColor(color, 0.5f),
+            Colorations.adjustBrightness(color, 0.5f),
             true));
         
         graphicsAdapter.fillRoundRect(	(int) (x + (directionX == 1
@@ -424,8 +424,8 @@ public class EnemyPainter extends Painter<Enemy>
         {
             if(enemy.isDestroyed() && Events.timeOfDay == NIGHT)
             {
-                mainColorLight = Colorations.dimColor(enemy.primaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
-                mainColorDark  = Colorations.dimColor(enemy.secondaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
+                mainColorLight = Colorations.adjustBrightness(enemy.primaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
+                mainColorDark  = Colorations.adjustBrightness(enemy.secondaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
             }
             else
             {
@@ -436,7 +436,7 @@ public class EnemyPainter extends Painter<Enemy>
         else
         {
             mainColorLight = color;
-            mainColorDark = Colorations.dimColor(color, 1.5f);
+            mainColorDark = Colorations.adjustBrightness(color, 1.5f);
         }
         
         if(enemy.getModel() == BARRIER){barColor = Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];}
@@ -453,8 +453,8 @@ public class EnemyPainter extends Painter<Enemy>
         
         if(enemy.isDestroyed())
         {
-            barColor = Colorations.dimColor(barColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
-            inactiveNozzleColor = Colorations.dimColor(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
+            barColor = Colorations.adjustBrightness(barColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
+            inactiveNozzleColor = Colorations.adjustBrightness(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
         }
         
         //Malen des Gegners
@@ -573,7 +573,7 @@ public class EnemyPainter extends Painter<Enemy>
             mainColorDark,
             0,
             offsetY + 0.045f*enemy.getPaintBounds().height,
-            Colorations.dimColor(mainColorDark, 0.85f),
+            Colorations.adjustBrightness(mainColorDark, 0.85f),
             true));
         
         graphicsAdapter.fillOval(offsetX + distanceX,
@@ -661,7 +661,7 @@ public class EnemyPainter extends Painter<Enemy>
             mainColorLight,
             0,
             offsetY + enemy.getPaintBounds().height,
-            Colorations.dimColor(mainColorLight, 0.5f),
+            Colorations.adjustBrightness(mainColorLight, 0.5f),
             true);
         
         graphicsAdapter.setPaint(this.gradientColor);

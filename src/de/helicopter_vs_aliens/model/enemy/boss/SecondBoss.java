@@ -11,7 +11,6 @@ public class SecondBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color(85, 85, 85);
         this.targetSpeedLevel.setLocation(7, 8);
         this.canMoveChaotic = true;
         this.shootTimer = 0;

@@ -10,9 +10,6 @@ public class Dodger extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color((85 + Calculations.random(20)),
-                                      (35 + Calculations.random(30)),
-                                      (95 + Calculations.random(30)));
         this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(),
             0.5*Math.random());
         this.canDodge = true;

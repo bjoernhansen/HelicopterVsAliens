@@ -148,7 +148,7 @@ public class SceneryObject extends RectangularGameEntity
             b = 150 + Calculations.random(12);
             c = 104 + Calculations.random(12);
             this.colors[1] = new Color(a, b,c);
-            this.colors[0] = Colorations.dimColor(this.colors[1], Colorations.NIGHT_DIM_FACTOR);
+            this.colors[0] = Colorations.adjustBrightness(this.colors[1], Colorations.NIGHT_DIM_FACTOR);
             this.coordinatesOfComponents[0][0] = 20 + Calculations.random(70);
             cactusTimer = 140;
 			sceneryObjectPainter.paintPalmStemImage(this);

@@ -8,7 +8,6 @@ public class ThirdBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = Colorations.cloaked;
         this.targetSpeedLevel.setLocation(5, 4);
         this.canMoveChaotic = true;
         this.canKamikaze = true;

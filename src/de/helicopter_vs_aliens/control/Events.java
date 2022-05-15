@@ -37,7 +37,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -520,7 +519,7 @@ public class Events
 												
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
 				{
-					// TODO diese EntitiyManagment gehört in eine eigene Klasse
+					// TODO diese EntityManagement gehört in eine eigene Klasse
 					/* controller.enemies.get(INACTIVE)
 									  .addAll(controller.enemies.get(ACTIVE)); */
 					controller.enemies.get(ACTIVE)

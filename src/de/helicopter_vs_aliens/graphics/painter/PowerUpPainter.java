@@ -36,7 +36,7 @@ public class PowerUpPainter extends Painter<PowerUp>
         graphicsAdapter.drawLine(x + width/2, y + height/5, x + width/2, y + (4 * height)/5);
         graphicsAdapter.drawLine(x + width/5, y + height/2, x + (4 * width)/5, y + height/2);
         graphicsAdapter.setStroke(new BasicStroke(1));
-        graphicsAdapter.setPaint(Colorations.dimColor(surfaceColor, 0.75f));
+        graphicsAdapter.setPaint(Colorations.adjustBrightness(surfaceColor, 0.75f));
         graphicsAdapter.drawRoundRect(x, y, width, height, 12, 12);
     }
 }

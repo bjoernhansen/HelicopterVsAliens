@@ -70,6 +70,11 @@ public abstract class Enemy extends RectangularGameEntity
 	private static final int
 		WIDTH_VARIANCE_DIVISOR = 10;
 	
+	private static final float
+		PRIMARY_COLOR_BRIGHTNESS_FACTOR = 1.3f,
+		SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.5f;
+	
+	
 	public static class FinalEnemyOperator
 	{
 		// TODO EnumMap verwenden
@@ -337,8 +342,7 @@ public abstract class Enemy extends RectangularGameEntity
 		
 	protected float
 		deactivationProb;
-	protected float dimFactor;
-    
+	   
     protected boolean
 		canExplode;            // = true: explodiert bei Kollisionen mit dem Helikopter
         protected boolean canDodge;                // = true: Gegner kann Schüssen ausweichen
@@ -396,7 +400,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.direction.setLocation(-1, Calculations.randomDirection());
 		this.callBack = 0;
 		this.shield = 0;
-		this.dimFactor = 1.5f;
 		this.operator = null;
 		this.alpha = 255;
 		
@@ -480,8 +483,8 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public void dimmedRepaint()
 	{
-		primaryColor = Colorations.dimColor(primaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-		secondaryColor = Colorations.dimColor(secondaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+		primaryColor = Colorations.adjustBrightness(primaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+		secondaryColor = Colorations.adjustBrightness(secondaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
 		repaint();
 	}
 	
@@ -934,8 +937,45 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void setBasicProperties()
 	{
+		setTypeSpecificPrerequisites();
 		setHitPoints();
 		setInitialDimension();
+		setColors();
+	}
+	
+	protected void setTypeSpecificPrerequisites()
+	{
+	}
+	
+	private void setColors()
+	{
+		primaryColor = calculatePrimaryColor();
+		secondaryColor = calculateSecondaryColor();
+	}
+	
+	private Color calculatePrimaryColor()
+	{
+		return Colorations.adjustBrightness(getBaseColor(), getPrimaryColorBrightnessFactor());
+	}
+	
+	protected Color getBaseColor()
+	{
+		return type.calculateColor();
+	}
+	
+	protected float getPrimaryColorBrightnessFactor()
+	{
+		return PRIMARY_COLOR_BRIGHTNESS_FACTOR;
+	}
+	
+	private Color calculateSecondaryColor()
+	{
+		return Colorations.adjustBrightness(primaryColor, getSecondaryColorBrightnessFactor());
+	}
+	
+	protected float getSecondaryColorBrightnessFactor()
+	{
+		return SECONDARY_COLOR_BRIGHTNESS_FACTOR;
 	}
 	
 	protected abstract void doTypeSpecificInitialization();
@@ -2833,8 +2873,8 @@ public abstract class Enemy extends RectangularGameEntity
 		this.isDestroyed = true;
 		if(this.cloakingTimer > 0){this.uncloak(DISABLED);}
 		this.teleportTimer = DISABLED;
-		this.primaryColor = Colorations.dimColor(this.primaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
-		this.secondaryColor = Colorations.dimColor(this.secondaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
+		this.primaryColor = Colorations.adjustBrightness(this.primaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
+		this.secondaryColor = Colorations.adjustBrightness(this.secondaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
 		
 		this.repaint();
 	

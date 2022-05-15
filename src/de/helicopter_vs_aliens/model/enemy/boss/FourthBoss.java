@@ -10,7 +10,6 @@ public class FourthBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = Color.red;
         this.targetSpeedLevel.setLocation(10, 10);
         this.spawningHornetTimer = 30;
         nextBossEnemyType = EnemyType.BOSS_4_SERVANT;

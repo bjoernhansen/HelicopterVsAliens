@@ -12,9 +12,6 @@ public class Shooter extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color(80 + Calculations.random(25),
-                                      80 + Calculations.random(25),
-                                      80 + Calculations.random(25));
         this.targetSpeedLevel.setLocation(0.5 + Math.random(),
                                           0.5 * Math.random());
         this.canDodge = true;

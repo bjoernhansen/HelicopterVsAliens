@@ -8,7 +8,6 @@ public class StunningBarrier extends Barrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = Colorations.bleachedYellow;
         this.targetSpeedLevel.setLocation(0, 1 + 2*Math.random());
         this.rotorColor = 2;
         this.staticChargeTimer = READY;

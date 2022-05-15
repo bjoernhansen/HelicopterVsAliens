@@ -12,7 +12,6 @@ public class FourthBossServant extends BossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color(80 + Calculations.random(20), 80 + Calculations.random(20), 80 + Calculations.random(20));
         this.targetSpeedLevel.setLocation(  6 + 2.5*Math.random(),
                                             6 + 2.5*Math.random());
         this.direction.x = Calculations.randomDirection();

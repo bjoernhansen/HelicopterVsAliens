@@ -9,7 +9,6 @@ public class FirstBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color(115, 70, 100);
         this.targetSpeedLevel.setLocation(2, 0.5);
         this.canKamikaze = true;
         Events.boss = this;

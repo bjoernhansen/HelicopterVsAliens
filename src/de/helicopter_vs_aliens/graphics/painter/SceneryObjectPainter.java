@@ -83,7 +83,7 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
                                             RenderingHints.VALUE_ANTIALIAS_ON);
             
             graphicsAdapter.setPaint( new GradientPaint(	12, 0,  sceneryObject.getColor(i),
-                    23, 0, 	Colorations.dimColor(sceneryObject.getColor(i), 0.75f), true));
+                    23, 0, 	Colorations.adjustBrightness(sceneryObject.getColor(i), 0.75f), true));
             graphicsAdapter.fillRect(0, 0, 20, 80 + sceneryObject.getCoordinateOfComponent(0,0));
             graphicsAdapter.fillArc( 0, 73 + sceneryObject.getCoordinateOfComponent(0,0), 20, 12, 180, 180);
         }
@@ -99,7 +99,7 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
             graphicsAdapter.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
             graphicsAdapter.setPaint(new GradientPaint(	 0 + sceneryObject.getSceneryObjectX(),  0, Colorations.sand[i],
-                    10 + sceneryObject.getSceneryObjectX(), 20, Colorations.dimColor(Colorations.sand[i], 0.9f), true));
+                    10 + sceneryObject.getSceneryObjectX(), 20, Colorations.adjustBrightness(Colorations.sand[i], 0.9f), true));
             graphicsAdapter.fillArc(0, -35, 300, 70, 180, 90);
             graphicsAdapter.fillRect(149, 0, sceneryObject.getSceneryObjectWidth() - 298, 35);
             graphicsAdapter.fillArc(sceneryObject.getSceneryObjectWidth() - 300, -35, 300, 70, 270, 90);
@@ -118,11 +118,11 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
             graphicsAdapter.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
             myGradientColor[0] = new GradientPaint(	 2,  0, Colorations.myGreen[0][i],
-                    15,  0, Colorations.dimColor(Colorations.myGreen[0][i], 0.80f), true);
+                    15,  0, Colorations.adjustBrightness(Colorations.myGreen[0][i], 0.80f), true);
             myGradientColor[1] = new GradientPaint(	 8,  0, Colorations.myGreen[1][i],
-                    17,  0, Colorations.dimColor(Colorations.myGreen[1][i], 0.80f), true);
+                    17,  0, Colorations.adjustBrightness(Colorations.myGreen[1][i], 0.80f), true);
             myGradientColor[2] = new GradientPaint(	 9,  0, Colorations.myGreen[2][i],
-                    17,  0, Colorations.dimColor(Colorations.myGreen[2][i], 0.85f), true);
+                    17,  0, Colorations.adjustBrightness(Colorations.myGreen[2][i], 0.85f), true);
             graphicsAdapter.setPaint(myGradientColor[0]);
             graphicsAdapter.fillOval( 11, 62, 30, 135);
             graphicsAdapter.setPaint(myGradientColor[1]);
@@ -145,15 +145,15 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
             graphicsAdapter.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
                                                 RenderingHints.VALUE_ANTIALIAS_ON);
             graphicsAdapter.setPaint(new GradientPaint(	0,  4, Colorations.myGreen[0][i],
-                                    0, 17, Colorations.dimColor(Colorations.myGreen[0][i],
+                                    0, 17, Colorations.adjustBrightness(Colorations.myGreen[0][i],
                                     0.65f), true));
             graphicsAdapter.fillArc(115, 1, 94, 26, 0, 225);
             graphicsAdapter.setPaint(new GradientPaint(	0,  3, Colorations.myGreen[1][i],
-                    0, 13, Colorations.dimColor(Colorations.myGreen[1][i],
+                    0, 13, Colorations.adjustBrightness(Colorations.myGreen[1][i],
                     0.60f), true));
             graphicsAdapter.fillArc(0, 0 , 125, 21, -45, 225);
             graphicsAdapter.setPaint(new GradientPaint(	0, 17, Colorations.myGreen[2][i],
-                    0, 23, Colorations.dimColor(Colorations.myGreen[2][i],
+                    0, 23, Colorations.adjustBrightness(Colorations.myGreen[2][i],
                     0.65f), true));
             graphicsAdapter.fillArc(55, 14, 68, 11, -45, 240);
         }

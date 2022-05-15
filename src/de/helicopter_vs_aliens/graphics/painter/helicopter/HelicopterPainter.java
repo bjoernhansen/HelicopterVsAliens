@@ -158,16 +158,16 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     
     private void determineGradientColors(int left, int top)
     {
-        this.gradientHull = new GradientPaint(0, top-10, Colorations.dimColor(this.inputColorHull, 1.65f),
-            0, top+ 2, Colorations.dimColor(this.inputColorHull, 0.75f), true);
-        this.gradientCannon1 = new GradientPaint(0, top+56, Colorations.dimColor(this.inputColorCannon, 1.65f),
-            0, top+64, Colorations.dimColor(this.inputColorCannon, 0.55f), true);
-        this.gradientWindow = new GradientPaint(0, top-10, Colorations.dimColor(this.inputColorWindow, 2.2f),
-            0, top+ 2, Colorations.dimColor(this.inputColorWindow, 0.70f), true);
-        this.gradientCannon2and3 = new GradientPaint(0, top+28, Colorations.dimColor(this.inputColorCannon, 1.7f),
-            0, top+35, Colorations.dimColor(this.inputColorCannon, 0.4f), true);
-        this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, Colorations.dimColor(this.inputColorFuss1, 0.44f), true);
-        this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, Colorations.dimColor(this.inputColorFuss2, 0.55f), true);
+        this.gradientHull = new GradientPaint(0, top-10, Colorations.adjustBrightness(this.inputColorHull, 1.65f),
+            0, top+ 2, Colorations.adjustBrightness(this.inputColorHull, 0.75f), true);
+        this.gradientCannon1 = new GradientPaint(0, top+56, Colorations.adjustBrightness(this.inputColorCannon, 1.65f),
+            0, top+64, Colorations.adjustBrightness(this.inputColorCannon, 0.55f), true);
+        this.gradientWindow = new GradientPaint(0, top-10, Colorations.adjustBrightness(this.inputColorWindow, 2.2f),
+            0, top+ 2, Colorations.adjustBrightness(this.inputColorWindow, 0.70f), true);
+        this.gradientCannon2and3 = new GradientPaint(0, top+28, Colorations.adjustBrightness(this.inputColorCannon, 1.7f),
+            0, top+35, Colorations.adjustBrightness(this.inputColorCannon, 0.4f), true);
+        this.gradientFuss1 = new GradientPaint(left+61, 0, this.inputColorFuss1, left+68, 0, Colorations.adjustBrightness(this.inputColorFuss1, 0.44f), true);
+        this.gradientFuss2 = new GradientPaint(0, top+72, this.inputColorFuss2, 0, top+76, Colorations.adjustBrightness(this.inputColorFuss2, 0.55f), true);
         this.gradientCannonHole = this.getGradientCannonHoleColor();
     }
     

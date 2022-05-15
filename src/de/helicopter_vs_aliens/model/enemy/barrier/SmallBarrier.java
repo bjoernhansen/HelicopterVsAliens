@@ -5,11 +5,4 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 public class SmallBarrier extends Barrier
 {
-    @Override
-    protected void doTypeSpecificInitialization()
-    {
-        this.primaryColor = Colorations.bleachedGreen;
-    
-        super.doTypeSpecificInitialization();
-    }
 }

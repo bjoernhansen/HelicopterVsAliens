@@ -31,7 +31,6 @@ abstract class ArmedBarrier extends Barrier
         this.shotsPerCycle = calculateShotsPerCycle();
         this.shootingCycleLength = this.shootPause + this.shootingRate * this.shotsPerCycle;
         this.shotSpeed = calculateShootSpeed();
-        setShotType();
         this.shotRotationSpeed = calculateRotationSpeed();
     }
     
@@ -58,7 +57,6 @@ abstract class ArmedBarrier extends Barrier
     private void setShotType()
     {
         this.shotType = calculateMissileType();
-        this.primaryColor = getArmedBarrierColor();
     }
  
     private EnemyMissileType calculateMissileType()
@@ -73,15 +71,25 @@ abstract class ArmedBarrier extends Barrier
         return Calculations.tossUp(BUSTER_PROBABILITY) && Events.level >= MIN_BUSTER_LEVEL;
     }
     
-    private Color getArmedBarrierColor()
+    protected Color getArmedBarrierColor()
     {
-        return this.shotType == EnemyMissileType.BUSTER
-                ? Colorations.bleachedViolet
-                : Colorations.bleachedRed;
+        return this.shotType.getCorrespondingBarrierColor();
     }
     
     protected int calculateRotationSpeed()
     {
         return 0;
+    }
+    
+    @Override
+    protected void setTypeSpecificPrerequisites()
+    {
+        setShotType();
+    }
+    
+    @Override
+    protected Color getBaseColor()
+    {
+        return getArmedBarrierColor();
     }
 }

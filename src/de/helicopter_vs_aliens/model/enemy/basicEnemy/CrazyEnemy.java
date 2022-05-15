@@ -10,9 +10,6 @@ public class CrazyEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color((180 + Calculations.random(50)),
-                                      (230 + Calculations.random(20)),
-                                      ( 20 + Calculations.random(60)));
         this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(),
             0.5 + Math.random());
         this.canExplode = true;

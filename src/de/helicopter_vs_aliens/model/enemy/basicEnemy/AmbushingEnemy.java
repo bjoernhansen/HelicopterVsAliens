@@ -10,9 +10,6 @@ public class AmbushingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.primaryColor = new Color(   30 + Calculations.random(40),
-            60 + Calculations.random(40),
-            120 + Calculations.random(40));
         this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0);
         this.canExplode = true;
         this.speedup = READY;

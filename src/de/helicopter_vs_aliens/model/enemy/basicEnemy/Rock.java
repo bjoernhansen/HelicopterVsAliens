@@ -15,9 +15,6 @@ public class Rock extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        primaryColor = new Color((180 + Calculations.random(30)),
-                                 (120 + Calculations.random(30)),
-                                 (      Calculations.random(15)));
         becomeInvincibleForever();
     
         super.doTypeSpecificInitialization();

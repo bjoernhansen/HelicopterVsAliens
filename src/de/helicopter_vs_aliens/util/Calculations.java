@@ -62,21 +62,6 @@ public final class Calculations
 		return tossUp() ? 1 : -1;
 	}
     
-    public static boolean isEmpty(long[][] intArray)
-    {
-		for(long[] anIntArray : intArray)
-		{
-			for (int j = 0; j < intArray[0].length; j++)
-			{
-				if (anIntArray[j] != 0)
-				{
-					return false;
-				}
-			}
-		}
-    	return true;
-    }
-    
     static float max(double a, double b, double c)
     {
     	return (float) Math.max(Math.max(a, b), c);
@@ -87,8 +72,7 @@ public final class Calculations
 		return base > 0 ? 100*amount/base : 0;
 	} 
 	
-	public static double getIntersectionLength(double eMin, double eMax,
-                                               double bMin, double bMax)
+	public static double getIntersectionLength(double eMin, double eMax, double bMin, double bMax)
 	{		
 		return Math.min(eMax, bMax) - Math.max(eMin, bMin);
 	}

@@ -1,7 +1,11 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
 import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
+
+import java.awt.Color;
 
 public class CloakedBarrier extends ArmedBarrier
 {
@@ -44,5 +48,11 @@ public class CloakedBarrier extends ArmedBarrier
     public boolean isRemainingAfterEnteringRepairShop()
     {
         return false;
+    }
+    
+    @Override
+    protected Color getArmedBarrierColor()
+    {
+        return Colorations.bleachedCloaked;
     }
 }

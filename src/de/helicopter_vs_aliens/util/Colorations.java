@@ -67,7 +67,7 @@ public final class Colorations
 		
 		hitPoints = new Color (80, 190, 140),
 		shieldingBarrierTurquoise = new Color(122 ,177 ,171),
-		cloaked = new Color(79, 110, 128),
+		cloakedEnemy = new Color(79, 110, 128),
 		arrowGreen = new Color (0, 170, 0),
 		darkArrowGreen = new Color (0, 100, 0),
 		darkYellow = new Color (120, 120, 0),	
@@ -95,7 +95,7 @@ public final class Colorations
 		bleachedGreen = Colorations.bleach(Color.green, BLEACH_FACTOR),
 		bleachedYellow = Colorations.bleach(Color.yellow, BLEACH_FACTOR),
 		bleachedViolet = bleach(Colorations.endlessEnergyViolet, BLEACH_FACTOR),
-		bleachedCloaked = Colorations.bleach(Colorations.cloaked, BLEACH_FACTOR),
+		bleachedCloaked = Colorations.bleach(Colorations.cloakedEnemy, BLEACH_FACTOR),
 		detected = new Color(MAX_VALUE, 0, 0, 35),	 // TODO wieso unused?
 		INACTIVE_NOZZLE = new Color(MAX_VALUE, 192, 129),
 		HS_GREEN = new Color(130, MAX_VALUE, 130),
@@ -111,30 +111,30 @@ public final class Colorations
 		                      new Color(MAX_VALUE, 200, 200, 210)},
 		shieldColor = { new Color(157, 220, MAX_VALUE, 80),
 	                    new Color(0, 0, MAX_VALUE, 40)},
-	    sand =   {dimColor( new Color(200,185,120), NIGHT_DIM_FACTOR),
+	    sand =   {adjustBrightness( new Color(200,185,120), NIGHT_DIM_FACTOR),
 			 			    new Color(200,185,120)},
-	    stones = {dimColor( new Color(155,160,125), NIGHT_DIM_FACTOR),
+	    stones = {adjustBrightness( new Color(155,160,125), NIGHT_DIM_FACTOR),
 			                new Color(155,160,125)};
 	
 	public static final Color [][]
-	    myGreen = {{dimColor(new Color(65,205,140), NIGHT_DIM_FACTOR),
+	    myGreen = {{adjustBrightness(new Color(65,205,140), NIGHT_DIM_FACTOR),
 							 new Color(65,205,140)},
-				   {dimColor(new Color(80,230,160), NIGHT_DIM_FACTOR),
+				   {adjustBrightness(new Color(80,230,160), NIGHT_DIM_FACTOR),
 							 new Color(80,230,160)},
-				   {dimColor(new Color(80,190,140), NIGHT_DIM_FACTOR),
+				   {adjustBrightness(new Color(80,190,140), NIGHT_DIM_FACTOR),
 							 new Color(80,190,140)}},
 		// TODO enum einführen, der FRAME, NOZZLE, EYES ersetzt und hier entsprechende EnumMap verwenden
-	    barrierColor = {{dimColor(new Color(140,140,140), BARRIER_NIGHT_DIM_FACTOR),
+	    barrierColor = {{adjustBrightness(new Color(140,140,140), BARRIER_NIGHT_DIM_FACTOR),
 								  new Color(140,140,140)},
-					    {dimColor(new Color(165,165,165), BARRIER_NIGHT_DIM_FACTOR),
+					    {adjustBrightness(new Color(165,165,165), BARRIER_NIGHT_DIM_FACTOR),
 								  new Color(165,165,165)},
-					    {dimColor(new Color(190,190,190), BARRIER_NIGHT_DIM_FACTOR),
+					    {adjustBrightness(new Color(190,190,190), BARRIER_NIGHT_DIM_FACTOR),
 						  		  new Color(190,190,190)},
-					    {dimColor(Color.white, BARRIER_NIGHT_DIM_FACTOR),
+					    {adjustBrightness(Color.white, BARRIER_NIGHT_DIM_FACTOR),
 								  Color.white},
-					    {dimColor(INACTIVE_NOZZLE, BARRIER_NIGHT_DIM_FACTOR),
+					    {adjustBrightness(INACTIVE_NOZZLE, BARRIER_NIGHT_DIM_FACTOR),
 							  	  INACTIVE_NOZZLE},
-					    {dimColor(new Color (39,52,123), BARRIER_NIGHT_DIM_FACTOR),
+					    {adjustBrightness(new Color (39,52,123), BARRIER_NIGHT_DIM_FACTOR),
 								  new Color (39,52,123)}};
 	
 	public static final GradientPaint
@@ -142,28 +142,28 @@ public final class Colorations
     
 	// tageszeit-abhängige Gradienten-Farben für Hintergrundobjekte
     public static final GradientPaint []
-    	gradientGround = { new GradientPaint( 0,  28, dimColor(ground, NIGHT_DIM_FACTOR), 
-    										  0,  42, dimColor(ground, NIGHT_DIM_FACTOR * 0.75f), true),
+    	gradientGround = { new GradientPaint( 0,  28, adjustBrightness(ground, NIGHT_DIM_FACTOR),
+    										  0,  42, adjustBrightness(ground, NIGHT_DIM_FACTOR * 0.75f), true),
     					   new GradientPaint( 0,  28, ground, 
-    							   			  0,  42, dimColor(ground, 0.75f), true)};
-    public static final GradientPaint [] gradientHills =  { new GradientPaint( 0,   0, dimColor(ground, NIGHT_DIM_FACTOR),
-			  								  0,  20, dimColor(ground, NIGHT_DIM_FACTOR * 0.8f), true),
-			  			   new GradientPaint( 0,   0, ground, 0,  20, dimColor(ground, 0.8f), true)};
+    							   			  0,  42, adjustBrightness(ground, 0.75f), true)};
+    public static final GradientPaint [] gradientHills =  { new GradientPaint( 0,   0, adjustBrightness(ground, NIGHT_DIM_FACTOR),
+			  								  0,  20, adjustBrightness(ground, NIGHT_DIM_FACTOR * 0.8f), true),
+			  			   new GradientPaint( 0,   0, ground, 0,  20, adjustBrightness(ground, 0.8f), true)};
     public static final GradientPaint [] gradientCloud =  { new GradientPaint( 0,  60, cloud[0],
-    										  0, 120, dimColor(cloud[0], 0.40f), true), 
+    										  0, 120, adjustBrightness(cloud[0], 0.40f), true),
                            new GradientPaint( 0,  60, cloud[1],
-                        		   			  0, 120, dimColor(cloud[1], 0.65f), false)};
+                        		   			  0, 120, adjustBrightness(cloud[1], 0.65f), false)};
     public static final GradientPaint [] gradientStones = { new GradientPaint( 0, 412, stones[0],
-    										  0, 447, dimColor(stones[0], 0.65f), true),
+    										  0, 447, adjustBrightness(stones[0], 0.65f), true),
     					   new GradientPaint( 0,  412, stones[1],
-    							   			  0, 447, dimColor(stones[1], 0.65f), true)};
+    							   			  0, 447, adjustBrightness(stones[1], 0.65f), true)};
 	
 	private Colorations() throws Exception
 	{
 		throw new Exception();
 	}
 	
-	public static Color dimColor(Color color, float dim)
+	public static Color adjustBrightness(Color color, float dim)
     {
     	int r = Math.min(MAX_VALUE, (int)(color.getRed()*dim));
     	int g = Math.min(MAX_VALUE, (int)(color.getGreen()*dim));
@@ -227,13 +227,13 @@ public final class Colorations
 								   130 + helligkeit);
 		gradientVariableWhite = new GradientPaint(value,  value, variableWhite,
 												  40 + value, 40 + value,
-												  dimColor(variableWhite, 0.55f), true);
+												  adjustBrightness(variableWhite, 0.55f), true);
 		if(WindowManager.window != REPAIR_SHOP)
 		{			
 			gradientVariableGray = new GradientPaint( - value,  -value, 
-													  dimColor(variableWhite, 0.5f),
+													  adjustBrightness(variableWhite, 0.5f),
 													  40 - value, 40 - value,
-													  dimColor(variableWhite, 0.2f), true);
+													  adjustBrightness(variableWhite, 0.2f), true);
 			if(WindowManager.window == START_SCREEN)
 			{
 				variableYellow = new Color( 175 + 2 * helligkeit/3, 
@@ -250,7 +250,7 @@ public final class Colorations
 		else
 		{
 			variableWhite = new Color(50 + helligkeit/4, 50 + helligkeit/4, 50 + helligkeit/4);				
-			gradientVariableGray = new GradientPaint( -value,  -value, dimColor(variableWhite, 1.2f),
+			gradientVariableGray = new GradientPaint( -value,  -value, adjustBrightness(variableWhite, 1.2f),
 													  40 - value, 40 - value, variableWhite, true);
 		}		
 	}

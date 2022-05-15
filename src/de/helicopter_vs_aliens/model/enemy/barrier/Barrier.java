@@ -7,7 +7,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 abstract class Barrier extends Enemy
 {
@@ -15,7 +14,7 @@ abstract class Barrier extends Enemy
         WIDTH_VARIANCE_DIVISOR = 5;
     
     private static final float
-        DIM_FACTOR = 0.75f;
+        SECONDARY_COLOR_BRIGHTNESS_FACTOR = 0.75f;
     
     
     @Override
@@ -23,14 +22,7 @@ abstract class Barrier extends Enemy
     {
         rotorColor = 1;
         isClockwiseBarrier = Calculations.tossUp();
-        secondaryColor = Colorations.dimColor(primaryColor, DIM_FACTOR);
         deactivationProb = 1.0f / type.getStrength();
-    
-        if(Events.timeOfDay == NIGHT)
-        {
-            primaryColor = Colorations.dimColor(primaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-            secondaryColor = Colorations.dimColor(secondaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-        }
     }
     
     @Override
@@ -87,5 +79,17 @@ abstract class Barrier extends Enemy
     public boolean isRemainingAfterEnteringRepairShop()
     {
         return true;
+    }
+    
+    @Override
+    protected float getPrimaryColorBrightnessFactor()
+    {
+        return Events.timeOfDay.getBrightnessFactor();
+    }
+    
+    @Override
+    protected float getSecondaryColorBrightnessFactor()
+    {
+        return SECONDARY_COLOR_BRIGHTNESS_FACTOR;
     }
 }
