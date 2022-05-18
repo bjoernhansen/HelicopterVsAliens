@@ -15,10 +15,8 @@ public class FinalBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(23.5, 0);
         maxNr = 5; // TODO diese Zuweisung gehört hier nicht her oder?
         this.operator = new Enemy.FinalEnemyOperator();
-        this.isStunable = false;
         Events.boss = this;
     
         super.doTypeSpecificInitialization();
@@ -34,5 +32,11 @@ public class FinalBoss extends BossEnemy
     protected float getSecondaryColorBrightnessFactor()
     {
         return SECONDARY_COLOR_BRIGHTNESS_FACTOR;
+    }
+    
+    @Override
+    public boolean isStunable()
+    {
+        return false;
     }
 }

@@ -11,7 +11,6 @@ public class SecondBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(7, 8);
         this.canMoveChaotic = true;
         this.shootTimer = 0;
         this.shootingRate = 5;

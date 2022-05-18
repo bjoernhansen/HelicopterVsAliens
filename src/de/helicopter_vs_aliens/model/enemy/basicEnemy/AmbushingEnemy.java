@@ -10,7 +10,6 @@ public class AmbushingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation( 1 + 1.5*Math.random(), 0);
         this.canExplode = true;
         this.speedup = READY;
         

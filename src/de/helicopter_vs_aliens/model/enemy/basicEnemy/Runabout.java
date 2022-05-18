@@ -10,8 +10,6 @@ public class Runabout extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(2.0 + 2.0 * Math.random(),
-                                          2.5 + 1.5 * Math.random());
         this.canExplode = true;
     
         super.doTypeSpecificInitialization();

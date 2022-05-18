@@ -9,8 +9,6 @@ public class SecondBossServant extends BossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(  3 + 10.5*Math.random(),
-                                            3 + 10.5*Math.random());
         this.direction.x = Calculations.randomDirection();
         this.invincibleTimer = 67;
     

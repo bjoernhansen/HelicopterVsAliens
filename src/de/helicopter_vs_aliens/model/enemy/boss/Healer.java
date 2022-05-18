@@ -9,7 +9,6 @@ public class Healer extends FinalBossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(2.5, 3);
         this.canDodge = true;
     
         super.doTypeSpecificInitialization();

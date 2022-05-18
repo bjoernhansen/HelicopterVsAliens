@@ -9,8 +9,6 @@ public class EscapedSpeeder extends Speeder
     protected void doTypeSpecificInitialization()
     {
         initializeBolt();
-        this.targetSpeedLevel.setLocation(	10.0 + 7.5 * Math.random(),
-                                             0.5 + 3   * Math.random());
         this.callBack = 1 + Calculations.random(3);
         this.direction.x = Calculations.randomDirection();
         this.invincibleTimer = 67;

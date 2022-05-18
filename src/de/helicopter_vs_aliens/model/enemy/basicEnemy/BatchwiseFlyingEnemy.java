@@ -10,8 +10,6 @@ public class BatchwiseFlyingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(	7 + 4*Math.random(),
-                                            1 + 0.5*Math.random());
         this.batchWiseMove = 1;
     
         super.doTypeSpecificInitialization();

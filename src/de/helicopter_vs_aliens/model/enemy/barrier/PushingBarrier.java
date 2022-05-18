@@ -8,7 +8,6 @@ public class PushingBarrier extends Barrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        targetSpeedLevel.setLocation(0.5 + 2*Math.random(), 0);
         if(isIntendedToAppearOnTheLeft()){direction.x = 1;}
     
         super.doTypeSpecificInitialization();

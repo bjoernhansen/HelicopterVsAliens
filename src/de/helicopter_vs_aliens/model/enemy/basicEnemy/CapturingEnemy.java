@@ -11,8 +11,6 @@ public class CapturingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation( 2.5 + 2*Math.random(),
-            4.5 + 1.5*Math.random());
         this.tractor = AbilityStatusType.READY;
         this.canExplode = true;
     

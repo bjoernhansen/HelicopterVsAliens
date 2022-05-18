@@ -1,16 +1,11 @@
 package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.util.Calculations;
-
-import java.awt.Color;
-
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 
 public class Rock extends BasicEnemy
 {
     private static final int
-        GROUND_DISTANCE = 15;
+        BURIAL_DEPTH = 15;
     
     @Override
     protected void doTypeSpecificInitialization()
@@ -42,7 +37,7 @@ public class Rock extends BasicEnemy
     @Override
     protected double calculateInitialY()
     {
-        return getOnTheGroundY() - GROUND_DISTANCE;
+        return getOnTheGroundY() + BURIAL_DEPTH;
     }
     
     @Override

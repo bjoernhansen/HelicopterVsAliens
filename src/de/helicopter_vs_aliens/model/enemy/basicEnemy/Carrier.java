@@ -12,7 +12,6 @@ public class Carrier extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation( 0.5 + Math.random(),0.5 * Math.random());
         this.canEarlyTurn = true;
         this.isCarrier = true;
         this.canTurn = true;

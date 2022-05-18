@@ -7,7 +7,6 @@ public class LoopingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(9, 11);
         this.direction.y = -1;
         this.cloakingTimer = 0;
         this.canLoop = true;

@@ -10,8 +10,6 @@ public class CrazyEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation( 4 + 2.5 * Math.random(),
-            0.5 + Math.random());
         this.canExplode = true;
         this.canChaosSpeedup = true;
         this.canDodge = true;

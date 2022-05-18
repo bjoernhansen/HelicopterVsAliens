@@ -12,8 +12,6 @@ public class FourthBossServant extends BossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(  6 + 2.5*Math.random(),
-                                            6 + 2.5*Math.random());
         this.direction.x = Calculations.randomDirection();
         this.canExplode = true;
     

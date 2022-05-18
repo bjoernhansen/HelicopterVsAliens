@@ -9,8 +9,6 @@ public class LonelySpeeder extends Speeder
     protected void doTypeSpecificInitialization()
     {
         initializeBolt();
-        this.targetSpeedLevel.setLocation(  12  + 3.5 * Math.random(),
-            0.5 + 3   * Math.random());
         if(Calculations.tossUp()){this.callBack = 1;}
     
         super.doTypeSpecificInitialization();

@@ -10,8 +10,6 @@ public class CallbackEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation( 5.5 + 2.5*Math.random(),
-            5 + 2*Math.random());
         this.canExplode = true;
         this.callBack = 1;
     

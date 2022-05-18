@@ -10,7 +10,6 @@ public class SinusoidallyFlyingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(2.5 + 2.5 * Math.random(), 11);
         this.canSinusMove = true;
         this.canExplode = true;
     

@@ -2,25 +2,14 @@ package de.helicopter_vs_aliens.model.enemy;
 
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.model.enemy.barrier.BigBarrier;
-import de.helicopter_vs_aliens.model.enemy.barrier.DiggerBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.CloakedBarrier;
+import de.helicopter_vs_aliens.model.enemy.barrier.DiggerBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.Protector;
 import de.helicopter_vs_aliens.model.enemy.barrier.PushingBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.ShieldingBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.ShootingBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.SmallBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.StunningBarrier;
-import de.helicopter_vs_aliens.model.enemy.boss.BigShieldMaker;
-import de.helicopter_vs_aliens.model.enemy.boss.Bodyguard;
-import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
-import de.helicopter_vs_aliens.model.enemy.boss.FirstBoss;
-import de.helicopter_vs_aliens.model.enemy.boss.FourthBoss;
-import de.helicopter_vs_aliens.model.enemy.boss.FourthBossServant;
-import de.helicopter_vs_aliens.model.enemy.boss.Healer;
-import de.helicopter_vs_aliens.model.enemy.boss.SecondBoss;
-import de.helicopter_vs_aliens.model.enemy.boss.SecondBossServant;
-import de.helicopter_vs_aliens.model.enemy.boss.SmallShieldMaker;
-import de.helicopter_vs_aliens.model.enemy.boss.ThirdBoss;
 import de.helicopter_vs_aliens.model.enemy.basicEnemy.AmbushingEnemy;
 import de.helicopter_vs_aliens.model.enemy.basicEnemy.BatchwiseFlyingEnemy;
 import de.helicopter_vs_aliens.model.enemy.basicEnemy.CallbackEnemy;
@@ -42,10 +31,22 @@ import de.helicopter_vs_aliens.model.enemy.basicEnemy.SinusoidallyFlyingEnemy;
 import de.helicopter_vs_aliens.model.enemy.basicEnemy.SmallCruiser;
 import de.helicopter_vs_aliens.model.enemy.basicEnemy.TeleportingEnemy;
 import de.helicopter_vs_aliens.model.enemy.basicEnemy.TinyVessel;
+import de.helicopter_vs_aliens.model.enemy.boss.BigShieldMaker;
+import de.helicopter_vs_aliens.model.enemy.boss.Bodyguard;
+import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
+import de.helicopter_vs_aliens.model.enemy.boss.FirstBoss;
+import de.helicopter_vs_aliens.model.enemy.boss.FourthBoss;
+import de.helicopter_vs_aliens.model.enemy.boss.FourthBossServant;
+import de.helicopter_vs_aliens.model.enemy.boss.Healer;
+import de.helicopter_vs_aliens.model.enemy.boss.SecondBoss;
+import de.helicopter_vs_aliens.model.enemy.boss.SecondBossServant;
+import de.helicopter_vs_aliens.model.enemy.boss.SmallShieldMaker;
+import de.helicopter_vs_aliens.model.enemy.boss.ThirdBoss;
 import de.helicopter_vs_aliens.util.ColorRange;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -61,7 +62,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(180, 120, 0), 30, 30, 15),
         1,
         2,
-        110),
+        110,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5,1, 1)),
     
     SMALL( // ab Level 3
         SmallCruiser::new,
@@ -70,7 +72,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(140, 65, 0), 25, 35, 25),
         2,
         3,
-        125),
+        125,
+        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,1.5, 0.5)),
     
     RUNABOUT( // level 5
         Runabout::new,
@@ -79,7 +82,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(100, 100, 40), 30, 30, 25),
         2,
         2,
-        100),
+        100,
+        TargetSpeedLevelProvider.ofVariableSpeed(2.0, 2.5,2.0, 1.5)),
     
     FREIGHTER( // ab Level 7
         Freighter::new,
@@ -88,8 +92,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(100, 50, 45), 30, 30, 20),
         4,
         25,
-        145),
-    
+        145,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0,1.0, 0.5)),
+        
     BATCHWISE( // ab Level 11
         BatchwiseFlyingEnemy::new,
         BatchwiseFlyingEnemy.class,
@@ -97,7 +102,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(135, 80, 85), 30, 20, 30),
         6,
         16,
-        130),
+        130,
+        TargetSpeedLevelProvider.ofVariableSpeed(7.0, 1.0, 4.0, 0.5)),
     
     SINUS( // ab Level 13
         SinusoidallyFlyingEnemy::new,
@@ -106,7 +112,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(185, 70, 135), 40, 30, 40),
         6,
         6,
-        110),
+        110,
+        TargetSpeedLevelProvider.ofVariableSpeed(2.5, 11.0, 2.5, 0.0)),
     
     DODGER( // ab Level 16
         Dodger::new,
@@ -115,8 +122,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(85, 35, 95), 20, 30, 30),
         9,
         24,
-        170),
-    
+        170,
+        TargetSpeedLevelProvider.ofVariableSpeed(1.5, 0.0, 1.5, 0.5)),
+        
     CHAOTIC( // ab Level 21
         ChaoticallyFlyingEnemy::new,
         ChaoticallyFlyingEnemy.class,
@@ -124,8 +132,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(150, 130, 75), 20, 25, 30),
         11,
         22,
-        125),
-        
+        125,
+        TargetSpeedLevelProvider.ofVariableSpeed(3.5, 6.5, 1.5, 2.0)),
+    
     CALLBACK( // ab Level 24
         CallbackEnemy::new,
         CallbackEnemy.class,
@@ -133,7 +142,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(70, 130, 30), 40, 50, 45),
         10,
         30,
-        95),
+        95,
+        TargetSpeedLevelProvider.ofVariableSpeed(5.5, 5.0,2.5, 2.0)),
     
     SHOOTER( // ab Level 26
         Shooter::new, 
@@ -142,7 +152,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(80, 80, 80), 25, 25, 25),   
         12,
         60,
-        80),
+        80,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5,1.0, 1.0)),
     
     CLOAK( // ab Level 31
         CloakedEnemy::new, 
@@ -151,8 +162,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.cloakedEnemy),   
         16, 
         100, 
-        85),
-    
+        85,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 1.0,1.0, 0.5)),
+        
     LONELY_SPEEDER( // ab Level 35
         LonelySpeeder::new, 
         LonelySpeeder.class, 
@@ -160,8 +172,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(75, 75, 75), 30, 30, 30),   
         14, 
         26, 
-        70),
-
+        70,
+        TargetSpeedLevelProvider.ofVariableSpeed(12.0, 0.5, 3.5, 3.0)),
+        
     CARRIER( // ab Level 36
         Carrier::new, 
         Carrier.class, 
@@ -169,8 +182,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(70, 60, 45), 15, 10, 10),
         19, 
         450, 
-        165),
-
+        165,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5, 1.0, 1.0)),
+    
     CRAZY( // ab Level 37
         CrazyEnemy::new, 
         CrazyEnemy.class, 
@@ -178,7 +192,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(180, 230, 20), 50, 20, 60),   
         22, 
         140, 
-        115),      
+        115,
+        TargetSpeedLevelProvider.ofVariableSpeed(4.0, 0.5, 2.5, 1.0)),
     
     AMBUSH( // ab Level 41
         AmbushingEnemy::new, 
@@ -187,8 +202,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(30, 60, 120), 40, 40, 40),   
         30, 
         150, 
-        95),
-        
+        95,
+        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,1.5, 0.0)),
+    
     LOOPING( // ab Level 43
         LoopingEnemy::new, 
         LoopingEnemy.class, 
@@ -196,7 +212,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.cloakedEnemy),
         30, 
         330, 
-        105),
+        105,
+        TargetSpeedLevelProvider.ofFixedSpeed(9.0, 11.0)),
         
     CAPTURING( // ab Level 45
         CapturingEnemy::new, 
@@ -205,7 +222,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(5, 105, 90), 55, 40, 30),   
         30, 
         520, 
-        115),
+        115,
+        TargetSpeedLevelProvider.ofVariableSpeed(2.5, 4.5,2.0, 1.5)),
 
     TELEPORTING( // ab Level 46
         TeleportingEnemy::new, 
@@ -214,7 +232,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(190, 10, 15), 40, 60, 60),   
         35, 
         500, 
-        130),
+        130,
+        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,0.0, 0.5)),
     
     // Boss-Gegner
     BOSS_1(
@@ -224,7 +243,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(new Color(115, 70, 100)),
         75, 
         225, 
-        275),
+        275,
+        TargetSpeedLevelProvider.ofFixedSpeed(2.0, 0.5)),
     
     BOSS_2(
         SecondBoss::new, 
@@ -233,8 +253,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(new Color(85, 85, 85)),
         100, 
         500, 
-        250),
-        
+        250,
+        TargetSpeedLevelProvider.ofFixedSpeed(7.0, 8.0)),
+    
     BOSS_2_SERVANT(
         SecondBossServant::new, 
         SecondBossServant.class, 
@@ -242,7 +263,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(80, 80, 80), 25, 25, 25),
         5, 
         15, 
-        65),
+        65,
+        TargetSpeedLevelProvider.ofVariableSpeed(3.0, 3.0, 10.5, 10.5)),
     
     BOSS_3(
         ThirdBoss::new, 
@@ -251,7 +273,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.cloakedEnemy),
         500, 
         1750, 
-        250),
+        250,
+        TargetSpeedLevelProvider.ofFixedSpeed(5.0, 4.0)),
     
     BOSS_4(
         FourthBoss::new, 
@@ -260,7 +283,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Color.red),
         1250, 
         10000, 
-        250),
+        250,
+        TargetSpeedLevelProvider.ofFixedSpeed(10.0, 10.0)),
     
     BOSS_4_SERVANT(
         FourthBossServant::new, 
@@ -269,7 +293,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(80, 80, 80), 20, 20, 20),
         1, 
         100, 
-        85),
+        85,
+        TargetSpeedLevelProvider.ofVariableSpeed(6.0, 6.0, 2.5, 2.5)),
     
     FINAL_BOSS(
         FinalBoss::new, 
@@ -278,7 +303,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.brown),
         5000, 
         25000, 
-        450),
+        450,
+        TargetSpeedLevelProvider.ofFixedSpeed(23.5, 0.0)),
     
     SMALL_SHIELD_MAKER(
         SmallShieldMaker::new, 
@@ -287,7 +313,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(new Color(25, 125, 105)),
         55, 
         3000, 
-        125),
+        125,
+        TargetSpeedLevelProvider.ofFixedSpeed(7.0, 6.5)),
     
     BIG_SHIELD_MAKER(
         BigShieldMaker::new, 
@@ -296,7 +323,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(new Color(105, 135, 65)),
         80, 
         4250, 
-        145),
+        145,
+        TargetSpeedLevelProvider.ofFixedSpeed(6.5, 7.0)),
     
     BODYGUARD(
         Bodyguard::new, 
@@ -305,7 +333,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.cloakedEnemy),
         150, 
         7500, 
-        225),
+        225,
+        TargetSpeedLevelProvider.ofFixedSpeed(1.0, 2.0)),
     
     HEALER(
         Healer::new, 
@@ -314,7 +343,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Color.white),
         65, 
         3500, 
-        115),
+        115,
+        TargetSpeedLevelProvider.ofFixedSpeed(2.5, 3.0)),
     
     PROTECTOR(
         Protector::new,
@@ -323,7 +353,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.getDefault(),
         25,
         Constants.COUNTLESS_HIT_POINTS,
-        90),
+        90,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
     
     // Hindernisse (Barrier)
     SMALL_BARRIER( // ab Level 2
@@ -333,7 +364,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.bleachedGreen),
         4,
         Constants.COUNTLESS_HIT_POINTS,
-        65), 
+        65,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
     
     BIG_BARRIER( // ab Level 6
         BigBarrier::new, 
@@ -342,7 +374,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.bleachedGreen),
         4,
         Constants.COUNTLESS_HIT_POINTS,
-        150),
+        150,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
     
     STUNNING_BARRIER( // ab Level 12
         StunningBarrier::new, 
@@ -351,7 +384,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.bleachedYellow),
         5,
         Constants.COUNTLESS_HIT_POINTS,
-        65),
+        65,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.0, 1.0, 0.0, 2.0)),
     
     PUSHING_BARRIER( // ab Level 15
         PushingBarrier::new, 
@@ -360,7 +394,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.bleachedOrange),
         6,
         Constants.COUNTLESS_HIT_POINTS,
-        105),
+        105,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 2.0, 0.0)),
     
     SHOOTING_BARRIER( // ab Level 18
         ShootingBarrier::new, 
@@ -369,7 +404,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.getDefault(),
         7,
         Constants.COUNTLESS_HIT_POINTS,
-        85),
+        85,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
     
     BURROWING_BARRIER( // ab Level 32
         DiggerBarrier::new, 
@@ -378,7 +414,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.getDefault(),
         9,
         Constants.COUNTLESS_HIT_POINTS,
-        80),
+        80,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
             
     SHIELDING_BARRIER( // ab Level 42
         ShieldingBarrier::new, 
@@ -387,7 +424,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Colorations.shieldingBarrierTurquoise),
         4,
         Constants.COUNTLESS_HIT_POINTS,
-        80),
+        80,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
     
     CLOAKED_BARRIER( // ab Level 44
         CloakedBarrier::new, 
@@ -396,7 +434,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.getDefault(),
         15,
         Constants.COUNTLESS_HIT_POINTS,
-        100),
+        100,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
     
     // Hindernis (Rock-Enemy)
     ROCK( // ab Level 27
@@ -406,7 +445,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.getDefault(),
         0, 
         2, 
-        300),
+        300,
+        TargetSpeedLevelProvider.ofZeroSpeed()),
     
     // sonstige Gegner
     KABOOM( // ab Level 12
@@ -416,7 +456,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.withoutScatteringOf(Color.white),
         0,
         Constants.COUNTLESS_HIT_POINTS,
-        120),
+        120,
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 0.5, 0.0)),
     
     ESCAPED_SPEEDER( // ab Level 36
         EscapedSpeeder::new, 
@@ -425,7 +466,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         ColorRange.of(new Color(75, 75, 75), 30, 30, 30),
         14, 
         26, 
-        70);
+        70,
+        TargetSpeedLevelProvider.ofVariableSpeed(10.0, 0.5, 7.5, 3.0));
         
     private static final List<EnemyType>
         VALUES = List.of(values());
@@ -467,7 +509,18 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     private final int
         width;
     
-    EnemyType(Supplier<? extends Enemy> instanceSupplier, Class<? extends Enemy> enemyClass, EnemyModelType enemyModelType, ColorRange colorRange, int strength, int hitPoints, int width)
+    private final TargetSpeedLevelProvider
+        targetSpeedLevelProvider;
+    
+    
+    EnemyType(Supplier<? extends Enemy> instanceSupplier,
+              Class<? extends Enemy> enemyClass,
+              EnemyModelType enemyModelType,
+              ColorRange colorRange,
+              int strength,
+              int hitPoints,
+              int width,
+              TargetSpeedLevelProvider targetSpeedLevelProvider)
     {
         this.instanceSupplier = instanceSupplier;
         this.enemyClass = enemyClass;
@@ -476,6 +529,7 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         this.strength = strength;
         this.hitPoints = hitPoints;
         this.width = width;
+        this.targetSpeedLevelProvider = targetSpeedLevelProvider;
     }
     
     static Set<EnemyType> getFinalBossServantTypes()
@@ -570,5 +624,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     public Color calculateColor()
     {
         return colorRange.selectColor();
+    }
+    
+    public Point2D calculateTargetSpeed(){
+        return targetSpeedLevelProvider.selectTargetSpeedLevel();
     }
 }

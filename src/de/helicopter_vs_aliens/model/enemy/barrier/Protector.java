@@ -16,7 +16,6 @@ public class Protector extends BurrowingBarrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.isStunable = false;
         FinalBossServant.selectAsFinalBossServant(this);
     
         super.doTypeSpecificInitialization();
@@ -72,6 +71,12 @@ public class Protector extends BurrowingBarrier
     
     @Override
     public boolean isRemainingAfterEnteringRepairShop()
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean isStunable()
     {
         return false;
     }

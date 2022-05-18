@@ -10,8 +10,6 @@ public class Dodger extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.targetSpeedLevel.setLocation(1.5 + 1.5*Math.random(),
-            0.5*Math.random());
         this.canDodge = true;
     
         super.doTypeSpecificInitialization();

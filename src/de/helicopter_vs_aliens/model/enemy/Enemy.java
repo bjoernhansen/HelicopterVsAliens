@@ -365,7 +365,6 @@ public abstract class Enemy extends RectangularGameEntity
         private boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
         private boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
         private boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
-        protected boolean isStunable;            // = false für Boss 5; bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) "betäubt" werden kann
         protected boolean isCarrier;                // = true
         protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
         private boolean isRecoveringSpeed;
@@ -423,7 +422,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.isClockwiseBarrier = true;
 		this.stoppingBarrier = null;
 		this.isPreviousStoppingBarrier = null;
-		this.isStunable = true;
 		this.isMiniBoss = false;
 		this.hasCrashed = false;
 		this.canInstantTurn = false;
@@ -935,12 +933,19 @@ public abstract class Enemy extends RectangularGameEntity
 		finalizeInitialization(helicopter);
 	}
 	
+	private void setTargetSpeedLevel()
+	{
+		Point2D targetSpeedLevel = type.calculateTargetSpeed();
+		this.targetSpeedLevel.setLocation(targetSpeedLevel);
+	}
+	
 	private void setBasicProperties()
 	{
 		setTypeSpecificPrerequisites();
 		setHitPoints();
-		setInitialDimension();
+		setSize();
 		setColors();
+		setTargetSpeedLevel();
 	}
 	
 	protected void setTypeSpecificPrerequisites()
@@ -1011,7 +1016,7 @@ public abstract class Enemy extends RectangularGameEntity
 		return 0;
 	}
 	
-	private void setInitialDimension()
+	private void setSize()
 	{
 		int width = calculateInitialWidth();
 		double height = calculateInitialHeight(width);
@@ -1587,34 +1592,34 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void empShock(Controller controller, Pegasus pegasus)
     {
-    	this.takeDamage((int)this.getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
-		this.isEmpShocked = true;
-		if(this.type == EnemyType.BOSS_4){this.spawningHornetTimer = READY;}
-		this.disableSiteEffects(pegasus);
+    	takeDamage((int)getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
+		isEmpShocked = true;
+		if(type == EnemyType.BOSS_4){spawningHornetTimer = READY;}
+		disableSiteEffects(pegasus);
 				
-		if(this.hasHPsLeft())
+		if(hasHPsLeft())
 		{			
 			Audio.play(Audio.stun);
-			if(getModel() == BARRIER){this.snooze(true);}
-			else if(this.teleportTimer == READY ){this.teleport();}
-			else if(this.isStunable && !this.isShielding)
+			if(getModel() == BARRIER){snooze(true);}
+			else if(teleportTimer == READY ){teleport();}
+			else if(isStunable() && !isShielding)
 			{
-				this.empSlowedTimer = this.type.isMainBoss()
+				empSlowedTimer = type.isMainBoss()
 											? EMP_SLOW_TIME_BOSS 
 											: EMP_SLOW_TIME;
 			}
-			this.reactToHit(pegasus, null);
+			reactToHit(pegasus, null);
 			
 			Explosion.start(controller.explosions, pegasus,
-							this.getCenterX(),
-							this.getCenterY(), STUNNING, false);
+							getCenterX(),
+							getCenterY(), STUNNING, false);
 		}
 		else
 		{
 			Audio.play(Audio.explosion2);
 			pegasus.empWave.kills++;
-			pegasus.empWave.earnedMoney += this.calculateReward(pegasus);
-			this.die(controller, pegasus, null);
+			pegasus.empWave.earnedMoney += calculateReward(pegasus);
+			die(controller, pegasus, null);
 		}
     }
     
@@ -2753,13 +2758,18 @@ public abstract class Enemy extends RectangularGameEntity
 				this.snooze(true);
 			}
 		}		
-		if(missile.typeOfExplosion == STUNNING
-		   && this.isStunable
-		   && this.nonStunableTimer == READY)
+		if(areStunningRequirementsMet(missile))
 		{			
 			this.stun(helicopter, missile, explosion);
 		}
-	}	
+	}
+	
+	private boolean areStunningRequirementsMet(Missile missile)
+	{
+		return missile.typeOfExplosion == STUNNING
+			&& this.isStunable()
+			&& this.nonStunableTimer == READY;
+	}
 	
 	private void stun(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
@@ -3353,5 +3363,11 @@ public abstract class Enemy extends RectangularGameEntity
 	public boolean isRemainingAfterEnteringRepairShop()
 	{
 		return false;
+	}
+	
+	// bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) oder EMP-Schockwellen (Pegasus) "betäubt" werden kann
+	public boolean isStunable()
+	{
+		return true;
 	}
 }

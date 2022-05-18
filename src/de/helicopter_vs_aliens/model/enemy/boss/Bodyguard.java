@@ -7,7 +7,6 @@ public class Bodyguard extends FinalBossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        targetSpeedLevel.setLocation(1, 2);
         cloakingTimer = 0;
         canInstantTurn = true;
     
