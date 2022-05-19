@@ -4,15 +4,7 @@ public class TinyVessel extends BasicEnemy
 {
     public static final float
         SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.2f;
-    
-    @Override
-    protected void doTypeSpecificInitialization()
-    {
-        this.canExplode = true;
-    
-        super.doTypeSpecificInitialization();
-    }
-    
+        
     @Override
     protected boolean canBecomeMiniBoss()
     {

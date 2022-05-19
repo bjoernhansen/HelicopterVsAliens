@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static de.helicopter_vs_aliens.gui.PriceLevel.CHEAP;
@@ -439,28 +440,27 @@ public abstract class Window implements Paintable
     	if(isSearchForButtonToBeHighlightedNecessary(helicopter))
         {
 			stopButtonHighlighting();
-			for(ButtonSpecifier buttonSpecifier : buttonGroup.getButtonSpecifiers())
-			{
-				Button button = buttons.get(buttonSpecifier);
-				if(button == null || helicopter == null)
-				{
-					System.out.format("Button: %s; Helicopter: %s", button, helicopter);
-					throw new RuntimeException();
-				}
-				if (button.getBounds().contains(helicopter.destination.x, helicopter.destination.y))
-				{
-					button.setHighlighted(true);
-					highlightedButton = button;
-					break;
-				}
-			}
-        }
+			selectHighlightedButton(helicopter, buttonGroup);
+		}
 	}
 	
 	private static boolean isSearchForButtonToBeHighlightedNecessary(Helicopter helicopter)
 	{
-		return highlightedButton == null
-			   || !highlightedButton.getBounds().contains(helicopter.destination);
+		return highlightedButton == null || !highlightedButton.contains(helicopter.destination);
+	}
+	
+	private static void selectHighlightedButton(Helicopter helicopter, ButtonGroup buttonGroup)
+	{
+		buttonGroup.getButtonSpecifiers()
+				   .stream()
+				   .map(buttons::get)
+				   .filter(Objects::nonNull)
+				   .filter(button -> button.contains(helicopter.destination))
+				   .findFirst()
+				   .ifPresent(button -> {
+					   button.setHighlighted(true);
+					   highlightedButton = button;
+				   });
 	}
 	
 	public static Polygon getCrossPolygon()
@@ -518,12 +518,11 @@ public abstract class Window implements Paintable
 	
 	public static void stopButtonHighlighting()
 	{
-		Optional.ofNullable(highlightedButton).ifPresent(
-			button -> {
-				button.setHighlighted(false);
-				highlightedButton = null;
-			}
-		);
+		Optional.ofNullable(highlightedButton)
+				.ifPresent(button -> {
+						button.setHighlighted(false);
+						highlightedButton = null;
+				});
 	}
 
 	public static void updateCollectedPowerUps(Helicopter helicopter, PowerUp powerUp)

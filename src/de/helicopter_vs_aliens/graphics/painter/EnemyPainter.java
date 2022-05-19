@@ -7,6 +7,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -14,16 +15,14 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.image.RescaleOp;
-import java.util.Optional;
+import java.util.Objects;
 
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BIG_SHIELD_MAKER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.FINAL_BOSS;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.HEALER;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.SMALL_SHIELD_MAKER;
 
 public class EnemyPainter extends Painter<Enemy>
 {
@@ -100,7 +99,7 @@ public class EnemyPainter extends Painter<Enemy>
             }
             
             // Auspuff
-            if(!(enemy.isDestroyed() || enemy.stunningTimer > 0))
+            if(!(enemy.isDestroyed() || enemy.isStunned()))
             {
                 int temp = 63 - (((int)(2 + 0.1f * Math.abs(enemy.getSpeedLevel().getX())) * enemy.getLifetime())%32);
                 Color colorTemp = new Color(255, 192+temp, 129+temp, enemy.alpha);
@@ -111,14 +110,13 @@ public class EnemyPainter extends Painter<Enemy>
             if(enemy.getTractor() == AbilityStatusType.ACTIVE){this.paintTractorBeam(graphicsAdapter, helicopter);}
             else if(enemy.type == FINAL_BOSS)
             {
-                for(int servantType = Enemy.id(SMALL_SHIELD_MAKER); servantType <= Enemy.id(BIG_SHIELD_MAKER); servantType++)
-                {
-                    Optional.ofNullable(enemy.getOperatorServant(servantType))
-                            .filter(Enemy::isShielding)
-                            .ifPresent(servant -> this.paintShieldBeam(graphicsAdapter, servant));
-                }
+                FinalBossServantType.getShieldMaker()
+                                    .stream()
+                                    .map(enemy::getOperatorServant)
+                                    .filter(Objects::nonNull)
+                                    .filter(Enemy::isShielding)
+                                    .forEach(servant -> this.paintShieldBeam(graphicsAdapter, servant));
             }
-            
             if(enemy.getModel() == BARRIER && !enemy.isDestroyed())
             {
                 this.paintRotor(graphicsAdapter);

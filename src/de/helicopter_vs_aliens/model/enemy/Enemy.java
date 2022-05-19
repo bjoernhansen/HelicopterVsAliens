@@ -4,16 +4,14 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
-import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
-import de.helicopter_vs_aliens.model.enemy.basicEnemy.BasicEnemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -32,14 +30,13 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.function.Predicate;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -67,35 +64,63 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 public abstract class Enemy extends RectangularGameEntity
 {
+	public static class FinalEnemyOperator
+	{
+		private final EnumMap<FinalBossServantType, Enemy>
+			servants = new EnumMap<>(FinalBossServantType.class);
+		
+		private final EnumMap<FinalBossServantType, Integer>
+			timeSinceDeath = new EnumMap<>(FinalBossServantType.class);
+		
+		public boolean hasMinimumTimeBeforeRecreationElapsed(FinalBossServantType servantType)
+		{
+			return this.timeSinceDeath.get(servantType) > servantType.getMinimumTimeBeforeRecreation();
+		}
+		
+		public void incrementTimeSinceDeathCounter(FinalBossServantType servantType)
+		{
+			Integer timeSinceDeathCounter = timeSinceDeath.get(servantType);
+			timeSinceDeath.put(servantType, timeSinceDeathCounter + 1);
+		}
+		
+		public boolean containsServant(FinalBossServantType servantType)
+		{
+			return servants.containsKey(servantType);
+		}
+		
+		public void remove(FinalBossServantType servantType)
+		{
+			servants.remove(servantType);
+		}
+		
+		public void resetTimeSinceDeath(FinalBossServantType servantType)
+		{
+			timeSinceDeath.put(servantType, 0);
+		}
+		
+		public Enemy getServant(FinalBossServantType servantType)
+		{
+			return servants.get(servantType);
+		}
+		
+		public void putServant(Enemy enemy)
+		{
+			FinalBossServantType.of(enemy.type)
+								.ifPresent(servantType -> servants.put(servantType, enemy));
+		}
+	}
+	
 	private static final int
-		WIDTH_VARIANCE_DIVISOR = 10;
+		WIDTH_VARIANCE_DIVISOR = 10,
+		MAX_STARTING_Y = 220,
+		MIN_STARTING_Y = 90;
 	
 	private static final float
 		PRIMARY_COLOR_BRIGHTNESS_FACTOR = 1.3f,
 		SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.5f;
 	
-	
-	public static class FinalEnemyOperator
-	{
-		// TODO EnumMap verwenden
-		public final Enemy[] servants;
-		// TODO EnumMap verwenden
-		final int [] timeSinceDeath;
-		
-		public FinalEnemyOperator()
-		{
-			this.servants = new Enemy [NR_OF_BOSS_5_SERVANTS];
-			this.timeSinceDeath = new int [NR_OF_BOSS_5_SERVANTS];
-		}
-	}
-	
-	private static final int
-		MAX_STARTING_Y = 220,
-		MIN_STARTING_Y = 90;
-	
 	// Konstanten
 	public static final int
-		SPEED_KILL_BONUS_TIME 	= 15, // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
 		CLOAKING_TIME = 135, // Zeit, die beim Vorgang der Tarnung und Enttarnung vergeht
 		CLOAKED_TIME = 135,     // Zeit, die ein Gegner getarnt bleibt
 		SNOOZE_TIME = 100,    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
@@ -106,9 +131,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private static final float
 		RADAR_DETECTABILITY = 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
-	private static final float ROCK_PROB					= 0.05f;
 	
-	private static final float KABOOM_PROB				    = 0.02f;    // Rate mit der Kaboom-Gegner erscheinen
 		private static final float POWER_UP_PROB				= 0.02f;
 	protected static final float SPIN_SHOOTER_RATE 		   	= 0.55f;
 	private static final float EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f;
@@ -121,27 +144,18 @@ public abstract class Enemy extends RectangularGameEntity
 		private static final float TELEPORT_DAMAGE_FACTOR = 4f;            // Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
 		private static final float EMP_DAMAGE_FACTOR_BOSS = 1.5f;            // Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
 		private static final float EMP_DAMAGE_FACTOR_ORDINARY = 2.5f;        // Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
-
-	
-	private static final float[]
-		RETURN_PROB	= { 0.013f,	 	// SMALL_SHIELD_MAKER
-						0.013f,  	// BIG_SHIELD_MAKER
-						0.007f,  	// BODYGUARD
-						0.01f,  	// HEALER
-						0.04f}; 	// PROTECTOR
 	
 	private static final int
 		// Raum-Konstanten
 		SAVE_ZONE_WIDTH = 116;
 	protected static final int APPEARANCE_DISTANCE = 10;
-	private static final int SHIELD_TARGET_DISTANCE = 20;
+	
 	private static final int DISAPPEARANCE_DISTANCE = 100;
 	private static final int BARRIER_DISTANCE = 100;
 
 	private static final int KABOOM_Y_TURN_LINE = GROUND_Y - (int) (EnemyModelType.TIT.getHeightFactor() * EnemyType.KABOOM.getWidth());
+	// Zeit-Konstanten
 	
-	private static final int// Zeit-Konstanten
-		ROCK_FREE_TIME = 250;    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
 		private static final int EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
 		private static final int EMP_SLOW_TIME_BOSS = 110;
 	private static final int INACTIVATION_TIME = 150;
@@ -150,19 +164,13 @@ public abstract class Enemy extends RectangularGameEntity
 	private static final int MIN_TURN_TIME = 31;
 	private static final int MIN_TURN_NOISELESS_TIME = 15;
 	private static final int STATIC_CHARGE_TIME = 110;
-	private static final int MAX_BARRIER_NUMBER = 3;
 	
-	private static final int// Level-Voraussetzungen
-		MIN_BARRIER_LEVEL = 2;
-	private static final int MIN_POWER_UP_LEVEL = 3;
-	private static final int MIN_FUTURE_LEVEL = 8;
-	private static final int MIN_KABOOM_LEVEL = 12;
-	protected static final int MIN_SPIN_SHOOTER_LEVEL = 23;
-	private static final int MIN_ROCK_LEVEL = 27;
+
 	
-	private static final int// für Boss-Gegner
-		NR_OF_BOSS_5_SERVANTS = 5;
-	private static final int HEALED_HIT_POINTS = 11;
+	public static final int
+		MIN_POWER_UP_LEVEL = 3;
+	
+
 	private static final int STANDARD_REWARD_FACTOR = 1;
 	private static final int MINI_BOSS_REWARD_FACTOR = 4;
 	
@@ -171,18 +179,9 @@ public abstract class Enemy extends RectangularGameEntity
 	protected static final int READY = 0;
 	private static final int ACTIVE_TIMER = 1;
 	
-	private static final int[]
-		MIN_ABSENT_TIME = { 175,  // SMALL_SHIELD_MAKER
-							175,  // BIG_SHIELD_MAKER
-							900,  // BODYGUARD
-							250,  // HEALER
-							90}; // PROTECTOR
-	
 	private static final Point
 		TURN_DISTANCE = new Point(50, 10),
-		TARGET_DISTANCE_VARIANCE = new Point(10, 3),
-		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10),
-		SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3);
+		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10);
 		
 	protected static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
@@ -192,32 +191,7 @@ public abstract class Enemy extends RectangularGameEntity
 								   GROUND_Y 
 									- SAVE_ZONE_WIDTH
 									- 2*TURN_DISTANCE.y);
-
-	private static final EnemySelector
-		ENEMY_SELECTOR = new EnemySelector();
-
-	// statische Variablen (keine Konstanten)
-	public static int
-		maxNr,				 	// bestimmt wie viele Standard-Gegner gleichzeitig erscheinen können
-		maxBarrierNr,			// bestimmt wie viele Hindernis-Gegner gleichzeitig erscheinen können
-		currentNumberOfBarriers; // aktuelle Anzahl von "lebenden" Hindernis-Gegnern
 	
-	public static Enemy currentRock;
-	public static Enemy carrierDestroyedJustNow;  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
-	
-	public static final Enemy[]
-		livingBarrier = new Enemy [MAX_BARRIER_NUMBER];
-	
-	public static EnemyType
-		nextBossEnemyType;		 	// bestimmt, welche Boss-Typ erstellt wird
-	
-	private static int 
-		// TODO selection ist kein guter Bezeichner
-		selection;            // bestimmt welche Typen von Gegnern zufällig erscheinen können
-		private static int selectionBarrier;    // bestimmt den Typ der Hindernis-Gegner
-		private static int rockTimer;            // reguliert das Erscheinen von "Rock"-Gegnern
-		protected static int barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
-		
 	// für die Tarnung nötige Variablen
     public static final float[]
     	scales = { 1f, 1f, 1f, RADAR_DETECTABILITY},
@@ -225,20 +199,8 @@ public abstract class Enemy extends RectangularGameEntity
 	
     private static final RescaleOp
 		ROP_CLOAKED = new RescaleOp(scales, offsets, null);
-    
-	private static boolean
-		wasEnemyCreationPaused =  false,	// = false: es werden keine neuen Gegner erzeugt, bis die Anzahl aktiver Gegner auf 0 fällt
-		makeBossTwoServants =  false,	// make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
-		makeBoss4Servant =  false,
-	    makeAllBoss5Servants =  false;
 	
-	private static final boolean[]
-	    makeBoss5Servant	= 	  {false,	// SMALL_SHIELD_MAKER
-	                        	   false,	// BIG_SHIELD_MAKER
-	                        	   false,	// BODYGUARD
-	                        	   false,	// HEALER
-	                        	   false};	// PROTECTOR
-			
+	
 	public static final
 		Point2D boss = new Point2D.Float();	// Koordinaten vom aktuellen Boss; wichtig für Gegner-produzierende Boss-Gegner	
 		
@@ -317,7 +279,7 @@ public abstract class Enemy extends RectangularGameEntity
 		spawningHornetTimer;
 	private int
 		turnTimer;
-	private int
+	protected int
 		dodgeTimer;            // Zeit [frames], bis ein Gegner erneut ausweichen kann
 	protected int
 		snoozeTimer;
@@ -342,9 +304,7 @@ public abstract class Enemy extends RectangularGameEntity
 		
 	protected float
 		deactivationProb;
-	   
-    protected boolean
-		canExplode;            // = true: explodiert bei Kollisionen mit dem Helikopter
+	       
         protected boolean canDodge;                // = true: Gegner kann Schüssen ausweichen
         protected boolean canKamikaze;            // = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
         protected boolean canLearnKamikaze;        // = true: Gegner kann den Kamikaze-Modus einschalten, wenn der Helikopter zu nahe kommt
@@ -359,15 +319,14 @@ public abstract class Enemy extends RectangularGameEntity
         private boolean isSpeedBoosted;
 	private boolean isDestroyed;            // = true: Gegner wurde vernichtet
         protected boolean hasHeightSet;            // = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
-        public boolean hasYPosSet;                // = false --> y-Position wurde nicht vorab festgelegt und muss automatisch ermittelt werden
         private boolean hasCrashed;            // = true: Gegner ist abgestürzt
         private boolean isEmpShocked;            // = true: Gegner steht unter EMP-Schock --> ist verlangsamt
-        private boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
-        private boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
-        private boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
+        public boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
+        protected boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
+        protected boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
         protected boolean isCarrier;                // = true
         protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
-        private boolean isRecoveringSpeed;
+        protected boolean isRecoveringSpeed;
   
 	protected AbilityStatusType
 		tractor;				// = DISABLED (Gegner ohne Traktor); = READY (Traktor nicht aktiv); = 1 (Traktor aktiv)
@@ -395,7 +354,6 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		this.lifetime = 0;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
-		// this.setX(Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE);
 		this.direction.setLocation(-1, Calculations.randomDirection());
 		this.callBack = 0;
 		this.shield = 0;
@@ -412,7 +370,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.canEarlyTurn = false;
 		this.isTouchingHelicopter = false;
 		this.isSpeedBoosted = false;
-		this.canExplode = false;
 		this.canLearnKamikaze = false;
 		this.canFrontalSpeedup = false;
 		this.canSinusMove = false;
@@ -428,7 +385,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.isCarrier = false;
 		this.isRecoveringSpeed = false;
 		this.hasHeightSet = false;
-		this.hasYPosSet = false;
 		this.isEmpShocked = false;
 		
 		this.collisionDamageTimer = READY;
@@ -473,7 +429,7 @@ public abstract class Enemy extends RectangularGameEntity
 		this.untouchedCounter = 0;
 		this.rotorColor = 0;
 		this.deactivationProb = 0f;
-		this.stunningTimer = 0;
+		this.stunningTimer = READY;
 		
 		this.totalStunningTime = 0;
 		this.knockBackDirection = 0;
@@ -493,7 +449,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	protected abstract boolean isMeetingRequirementsForGlowingEyes();
 	
-	private void clearImage()
+	public void clearImage()
     {
     	for(int i = 0; i < this.image.length; i++)
     	{
@@ -517,416 +473,15 @@ public abstract class Enemy extends RectangularGameEntity
 			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(this.getClass());
 			enemyPainter.paintImage(this.graphicsAdapters[j], this, 1-2*j, null, true);
 		}
-	}		
-	
-
-	/** 
-	 ** 	Level-Anpassung
-	 **/
-
-	// TODO dies sollten wohl keine statischen Methoden innerhalb von Enemy sein
-	public static void adaptToFirstLevel()
-	{
-		maxNr = 2;
-		nextBossEnemyType = null;
-		selection = 3;
-		maxBarrierNr = 0;
-		selectionBarrier = 1;
-	}
-
-	public static void adaptToLevel(Helicopter helicopter, int level, boolean isRealLevelUp)
-	{		
-		if(level == 1)
-		{
-			adaptToFirstLevel();
-		}
-		else if(level == 2){maxNr = 3;}
-		else if(level == 3){selection = 6;}
-		else if(level == 4){selection = 10; maxBarrierNr = 1;}
-		else if(level == 5){selection = 15;}
-		else if(level == 6)
-		{			
-			wasEnemyCreationPaused = false;
-			maxNr = 3;
-			nextBossEnemyType = null;
-			selection = 25;
-			maxBarrierNr = 1;
-			selectionBarrier = 2;
-			
-		}
-		else if(level == 7){selection = 30; maxBarrierNr = 2;}
-		else if(level == 8){
-			maxNr = 4;}
-		else if(level == 9)
-		{
-			selection = 35; 
-			maxNr = 3;
-			maxBarrierNr = 3;
-		}
-		else if(level == 10)
-		{
-			wasEnemyCreationPaused = true;
-			nextBossEnemyType = EnemyType.BOSS_1;
-			selection = 0;
-			helicopter.startDecayOfAllCurrentBooster();
-		}	  
-		else if(level == 11)
-		{
-			maxNr = 3;
-			nextBossEnemyType = null;
-			selection = 75;
-			maxBarrierNr = 1;
-			selectionBarrier = 2;
-			
-			if(	 helicopter.isCountingAsFairPlayedHelicopter()
-				 && !Events.recordTimeManager.hasAnyBossBeenKilledBefore())
-			{
-				Window.unlock(HelicopterType.HELIOS);
-			}
-			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
-		}				
-		else if(level == 12){
-			selectionBarrier = 3;}
-		else if(level == 13){
-			maxBarrierNr = 2; selection = 105;}
-		else if(level == 14){selection = 135;} 
-		else if(level == 15){
-			selectionBarrier = 4;}
-		else if(level == 16)
-		{			
-			wasEnemyCreationPaused = false;
-			maxNr = 4;
-			nextBossEnemyType = null;
-			selection = 155;	
-			maxBarrierNr = 2;
-			selectionBarrier = 4;
-		}
-		else if(level == 17){selection = 175;}
-		else if(level == 18){
-			selectionBarrier = 5;}
-		else if(level == 19){
-			maxBarrierNr = 3;}
-		else if(level == 20)
-		{
-			wasEnemyCreationPaused = true;
-			nextBossEnemyType = EnemyType.BOSS_2;
-			selection = 0;
-			helicopter.startDecayOfAllCurrentBooster();
-			if(helicopter.isCountingAsFairPlayedHelicopter() && !helicopter.getType().hasReachedLevel20())
-			{
-				Events.helicoptersThatReachedLevel20.add(helicopter.getType());
-				helicopter.updateUnlockedHelicopters();
-			}
-		}
-		else if(level == 21)
-		{
-			maxNr = 3;
-			nextBossEnemyType = null;
-			selection = 400;
-			maxBarrierNr = 2;
-			selectionBarrier = 5;
-			
-			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
-		}
-		else if(level == 22){selection = 485;}
-		else if(level == 23){selection = 570;}
-		else if(level == 24){
-			maxNr = 4;}
-		else if(level == 25){selection = 660;}		
-		else if(level == 26)
-		{
-			wasEnemyCreationPaused = false;
-			maxNr = 4;
-			nextBossEnemyType = null;
-			selection = 735;	
-			maxBarrierNr = 2;
-			selectionBarrier = 5;
-		}		 
-		else if(level == 27){selection = 835;}
-		else if(level == 28){
-			maxNr = 5;}
-		else if(level == 29){
-			maxNr = 4; maxBarrierNr = 3;}
-		else if(level == 30)
-		{
-			wasEnemyCreationPaused = true;
-			nextBossEnemyType = EnemyType.BOSS_3;
-			selection = 0;	
-			helicopter.startDecayOfAllCurrentBooster();
-		}
-		else if(level == 31)
-		{
-			maxNr = 3;
-			nextBossEnemyType = null;
-			selection = 1670;
-			maxBarrierNr = 2;
-			selectionBarrier = 5;
-			
-			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
-		}
-		else if(level == 32){
-			selectionBarrier = 6;}
-		else if(level == 33){selection = 2175;}
-		else if(level == 34){
-			maxNr = 4;}
-		else if(level == 35){selection = 3180;} 
-		else if(level == 36)
-		{
-			wasEnemyCreationPaused = false;
-			maxNr = 4;
-			nextBossEnemyType = null;
-			selection = 4185;
-			maxBarrierNr = 2;
-			selectionBarrier = 6;
-		} 
-		else if(level == 37){selection = 5525;} 
-		else if(level == 38){
-			maxNr = 5;}
-		else if(level == 39){
-			maxNr = 4; maxBarrierNr = 3;}
-		else if(level == 40)
-		{
-			wasEnemyCreationPaused = true;
-			nextBossEnemyType = EnemyType.BOSS_4;
-			selection = 0;
-			helicopter.startDecayOfAllCurrentBooster();
-		}			  
-		else if(level == 41)
-		{
-			maxNr = 3;
-			nextBossEnemyType = null;
-			selection = 15235;	
-			maxBarrierNr = 2;
-			selectionBarrier = 6;
-			
-			if(isRealLevelUp){Events.determineHighscoreTimes(helicopter);}
-		}
-		else if(level == 42){
-			selectionBarrier = 7; maxNr = 4;}
-		else if(level == 43){selection = 20760;}
-		else if(level == 44){
-			selectionBarrier = 8; maxNr = 5;}
-		else if(level == 45){selection = 26285;}
-		else if(level == 46)
-		{
-			wasEnemyCreationPaused = false;
-			maxNr = 5;
-			nextBossEnemyType = null;
-			selection = 31810;
-			maxBarrierNr = 2 ;
-			selectionBarrier = 8;
-		}
-		else if(level == 47){
-			maxNr = 6;}
-		else if(level == 48){
-			maxBarrierNr = 3;}
-		else if(level == 49){
-			maxNr = 7;}
-		else if(level == Events.MAXIMUM_LEVEL)
-		{
-			wasEnemyCreationPaused = true;
-			nextBossEnemyType = EnemyType.FINAL_BOSS;
-			selection = 0;
-			helicopter.startDecayOfAllCurrentBooster();
-		}
 	}
 	
-	/** Methoden zur Erstellung von Gegnern
-	 */	
-	
-	// TODO die Begrenzung nach Anzahl funktioniert nicht mehr
-	public static void generateNewEnemies(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy, Helicopter helicopter)
-	{
-		Events.lastCreationTimer++;
-		if(wasCarrierDestroyedJustNow()){
-			createCarrierServants(helicopter, enemy);}
-		else if(wasEnemyCreationPaused){
-			verifyCreationStop(enemy, helicopter);}
-		if(isBossServantCreationApproved()){
-			createBossServant(helicopter, enemy);}
-		else if(isEnemyCreationApproved(enemy))
-		{
-			creation(helicopter, enemy);
-		}
-	}
-	
-	private static boolean wasCarrierDestroyedJustNow()
-	{
-		return carrierDestroyedJustNow != null;
-	}
-	
-	// TODO könnte diese Methode nicht direkt aufgerufen werden, wenn der Carrier zerstört wurde. Die Variable "carrierKilledJustNow" könnte dann entfallen.
-	private static void createCarrierServants(Helicopter helicopter,
-											  EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-	{
-		for(int m = 0; 
-				m < (carrierDestroyedJustNow.isMiniBoss
-						? 5 + Calculations.random(3)
-						: 2 + Calculations.random(2));
-				m++)
-			{
-				creation(helicopter, enemy);
-			}			
-			carrierDestroyedJustNow = null;
-	}
-
-	private static void verifyCreationStop(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
-										   Helicopter helicopter)
-	{
-		if(	enemy.get(ACTIVE).isEmpty()
-			&& carrierDestroyedJustNow == null
-			&& !(helicopter.isUnacceptablyBoostedForBossLevel()
-				 && Events.isBossLevel()) )
-		{
-			wasEnemyCreationPaused = false;
-			if(Events.isBossLevel())
-			{
-				maxNr = 1;
-				maxBarrierNr = 0;
-				Events.setBossLevelUpConditions();
-			}
-		}
-	}	
-		
-	private static boolean isBossServantCreationApproved()
-	{
-		return     makeBossTwoServants
-				|| makeBoss4Servant
-				|| makeAllBoss5Servants
-				|| hasToMakeBoss5Servants();
-	}
-	
-	private static boolean hasToMakeBoss5Servants()
-	{			
-		for(int type = 0; type < NR_OF_BOSS_5_SERVANTS; type++)
-		{
-			if(makeBoss5Servant[type]){return true;}
-		}
-		return false;
-	}
-	
-	private static void createBossServant(Helicopter helicopter,
-										  EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-	{
-		// TODO Wir haben hier 3 boolesche Variablen, nur um Festzulegen, welche Servants zu erzeugen sind. Ein Enum wäre hier besser.
-		if(makeBossTwoServants)
-		{
-			createBoss2Servants(helicopter, enemy);
-		}
-		else if(makeBoss4Servant)
-		{								 
-            makeBoss4Servant = false;
-			creation(helicopter, enemy);                
-		}
-		else if(makeAllBoss5Servants)
-		{
-			createAllBoss5Servants(helicopter, enemy);
-		}
-		else
-		{
-			EnemyType.getFinalBossServantTypes().forEach(type -> {
-				if(makeBoss5Servant[id(type)])
-				{
-					makeBoss5Servant[id(type)] = false;
-					nextBossEnemyType = type;
-					creation(helicopter, enemy);
-				}
-			});
-		}
-	}
-	
-	private static void createBoss2Servants(Helicopter helicopter,
-											EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-    {
-    	makeBossTwoServants = false;
-		wasEnemyCreationPaused = true;
-		nextBossEnemyType = EnemyType.BOSS_2_SERVANT;
-		maxNr = 12;
-		for (int m = 0; m < maxNr; m++)
-		{
-			creation(helicopter, enemy);
-		}
-    }
-    
-    private static void createAllBoss5Servants(Helicopter helicopter,
-											   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-    {
-    	makeAllBoss5Servants = false;
-    	EnemyType.getFinalBossServantTypes().forEach(type -> {
-			nextBossEnemyType = type;
-			creation(helicopter, enemy);
-		});
-    }	
-
-    private static boolean isEnemyCreationApproved(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
-	{		
-		int numberOfEnemies = enemies.get(ACTIVE).size();
-		return     !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
-				&& !isMajorBossActive(enemies)
-				&& !wasEnemyCreationPaused
-				&& !Events.wasMaximumLevelExceeded()
-				&& Events.hasEnoughTimePassedSinceLastCreation()
-				&& Events.wereRandomRequirementsMet(maxNr + maxBarrierNr - numberOfEnemies);
-	}
-	
-	private static boolean isMajorBossActive(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-	{
-		return !enemy.get(ACTIVE).isEmpty() && enemy.get(ACTIVE).getFirst().type.isMajorBoss();
-	}
-	
-	private static boolean hasNumberOfEnemiesReachedLimit(int numberOfEnemies)
-	{
-		return numberOfEnemies >= maxNr + maxBarrierNr;
-	}
-	
-	private static void creation(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
-	{
-		/*Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
-		Enemy e;
-		if (i.hasNext())
-		{
-			e = i.next();
-			i.remove();
-		}
-		else{e = EnemyFactory.createEnemy();}*/
-		
-		LinkedList<Enemy> activeEnemies = enemies.get(ACTIVE);
-		int activeEnemyCount = activeEnemies.size();
-		GameEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
-		Enemy enemy = enemyFactory.makeInstance();
-		activeEnemies.add(enemy);
-		if(enemy.countsForTotalAmountOfEnemiesSeen()){helicopter.numberOfEnemiesSeen++;}
-		Events.lastCreationTimer = 0;
-		enemy.initialize(helicopter);
-	}
-	
-	private boolean countsForTotalAmountOfEnemiesSeen()
+	public boolean countsForTotalAmountOfEnemiesSeen()
 	{
 		// TODO countsForTotalAmountOfEnemiesSeen implementieren, an anderen Stellen die -- aufrufe streichen; finale instanzvariable anlegen
 		return true;
 	}
 	
-	private static GameEntityFactory<Enemy> getEnemyFactory(int activeEnemyCount)
-	{
-		if(wasCarrierDestroyedJustNow()){return EnemyType.ESCAPED_SPEEDER;}
-		if(barrierCreationApproved(activeEnemyCount)){return getNextBarrierType();}
-		if(rockCreationApproved()){return EnemyType.ROCK;}
-		if(kaboomCreationApproved()){return EnemyType.KABOOM;}
-		if(isBossEnemyToBeCreated()){return nextBossEnemyType;}
-		return getNextDefaultEnemyType();
-	}
-	
-	private static boolean isBossEnemyToBeCreated()
-	{
-		return nextBossEnemyType != null;
-	}
-	
-	private static EnemyType getNextDefaultEnemyType()
-	{
-		return ENEMY_SELECTOR.getType(Calculations.random(selection));
-	}
-	
-	private void initialize(Helicopter helicopter)
+	public void initialize(Helicopter helicopter)
 	{
 		setBasicProperties();
 		doTypeSpecificInitialization();
@@ -1069,7 +624,7 @@ public abstract class Enemy extends RectangularGameEntity
 			this.image[i] = new BufferedImage((int)(1.028f * this.paintBounds.width),
 											  (int)(1.250f * this.paintBounds.height),
 											  BufferedImage.TYPE_INT_ARGB);
-			this.graphicsAdapters[i] = getGraphicAdapter(this.image[i]);
+			this.graphicsAdapters[i] = Graphics2DAdapter.withAntialiasing(this.image[i]);
 			//this.graphics[i].setComposite(AlphaComposite.Src);
 			
 			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(this.getClass());
@@ -1085,60 +640,18 @@ public abstract class Enemy extends RectangularGameEntity
 													(int)(1.250f * this.paintBounds.height),
 													BufferedImage.TYPE_INT_ARGB);
 				
-				enemyPainter.paintImage(getGraphicAdapter(tempImage), this,1-2*i, Color.red, true);
-				getGraphicAdapter(this.image[2+i]).drawImage(tempImage, ROP_CLOAKED, 0, 0);
+				enemyPainter.paintImage(Graphics2DAdapter.withAntialiasing(tempImage), this,1-2*i, Color.red, true);
+				Graphics2DAdapter.withAntialiasing(this.image[2+i]).drawImage(tempImage, ROP_CLOAKED, 0, 0);
 			}
 		}		
 	}
 
-	private static boolean barrierCreationApproved(int numberOfEnemies)
-	{		
-		return Events.level >= MIN_BARRIER_LEVEL 
-				&& !Events.isBossLevel()
-				&& barrierTimer == 0
-				&& (Calculations.tossUp(0.35f)
-					|| (numberOfEnemies - currentNumberOfBarriers >= maxNr))
-				&& currentNumberOfBarriers < maxBarrierNr;
-	}
-	
-	
- 
-	private static EnemyType getNextBarrierType()
-	{
-		int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
-			? Calculations.random(3)
-			: 0;
-		int selectedBarrierIndex = Calculations.random(Math.min(selectionBarrier + randomBarrierSelectionModifier, EnemyType.getBarrierTypes().size()));
-		return (EnemyType) EnemyType.getBarrierTypes().toArray()[selectedBarrierIndex];
-	}
-    
-    private static boolean isBarrierFromFutureCreationApproved()
-    {
-        return Calculations.tossUp(0.05f) && Events.level >= MIN_FUTURE_LEVEL;
-    }
-    
     private void placeCloakingBarrierAtPausePosition()
 	{
 		this.callBack--;
 		this.uncloak(DISABLED);
 		this.barrierTeleportTimer = READY;
 		this.setY(GROUND_Y + 2 * this.getWidth());
-	}
-
-	private static boolean rockCreationApproved()
-	{
-		return currentRock == null
-				&& Events.level >= MIN_ROCK_LEVEL 
-				&& !Events.isBossLevel()
-				&& rockTimer == 0
-				&& Calculations.tossUp(ROCK_PROB);
-	}
-	
-	private static boolean kaboomCreationApproved()
-	{		
-		return Events.level >= MIN_KABOOM_LEVEL 
-				&& !Events.isBossLevel()
-				&& Calculations.tossUp(KABOOM_PROB);
 	}
 
 	private void placeNearHelicopter(Helicopter helicopter)
@@ -1193,68 +706,6 @@ public abstract class Enemy extends RectangularGameEntity
 		return this.shootTimer == READY;
 	}
 	
-	
-	
-	private static GraphicsAdapter getGraphicAdapter(BufferedImage bufferedImage)
-	{
-		GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(bufferedImage);
-		graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-										 RenderingHints.VALUE_ANTIALIAS_ON);
-		return graphicsAdapter;
-	}
-
-	// TODO gehört in eine eigene Klasse
-	/* Die folgende Funktion reguliert die Gegner-Bewegung:
-	 * 1. Unter Berücksichtigung jeglicher Eventualitäten (specialManöver, ausweichen, etc.)
-	 *	  werden die neuen Koordinaten berechnet.
-	 * 2. Der Gegner wird an Stelle seiner neuen Koordinaten gemalt.
-	 */
-	public static void updateAllActive(Controller controller,
-									   Helicopter helicopter)
-	{
-		if(rockTimer > 0){
-			rockTimer--;}
-		if(Scenery.backgroundMoves && barrierTimer > 0){
-			barrierTimer--;}
-		countBarriers(controller.enemies);
-		
-		for(Iterator<Enemy> i = controller.enemies.get(ACTIVE).iterator(); i.hasNext();)
-		{
-			Enemy enemy = i.next();			
-			if(!enemy.isDestroyed && !enemy.isMarkedForRemoval)
-			{								
-				enemy.update(controller, helicopter);
-			}
-			else if(enemy.isDestroyed)
-			{
-				i.remove(); 
-				controller.enemies.get(DESTROYED).add(enemy);
-			}			
-			else
-			{
-				enemy.clearImage();
-				i.remove(); 
-				// controller.enemies.get(INACTIVE).add(enemy);
-			}			
-		}
-	}	
-
-	private static void countBarriers(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-	{
-		Arrays.fill(livingBarrier, null);
-		currentNumberOfBarriers = 0;
-		for(Enemy e : enemy.get(ACTIVE))
-		{
-			if (e.getModel() == BARRIER
-				&& !e.isDestroyed
-				&& !e.isMarkedForRemoval)
-			{
-				livingBarrier[currentNumberOfBarriers] = e;
-				currentNumberOfBarriers++;
-			}
-		}		
-	}
-
 	private static boolean turnaroundIsTurnAway(double dir, double enemyCenter,
 												double barrierCenter)
 	{
@@ -1271,66 +722,78 @@ public abstract class Enemy extends RectangularGameEntity
 				&& !hasRadarDevice);
 	}
 	
-	private void update(Controller controller, Helicopter helicopter)
+	public final void update(Controller controller, Helicopter helicopter)
 	{												
-		this.lifetime++;		
-		this.updateTimer();
-		if(this.callBack > 0 && Events.isBossLevel()){this.callBack = 0;}
-		if(this.type != EnemyType.ROCK){
-			checkForBarrierCollision();}
-		if(this.stunningTimer == READY)
+		lifetime++;
+		updateTimer();
+		if(Events.isBossLevel())
 		{
-			this.updateStoppableTimer();
-			if(this.type.isMajorBoss()){this.calculateBossManeuver(controller.enemies);}
-			this.calculateFlightManeuver(controller, helicopter);
-			this.validateTurns();
+			callBack = 0;
+		}
+		checkForBarrierCollision();
+		if(!isStunned())
+		{
+			updateStoppableTimer();
+			performFlightManeuver(controller, helicopter);
+			validateTurns();
 		}		
-		this.calculateSpeed(helicopter);
-		this.move();
+		calculateSpeed(helicopter);
+		move();
 		
-		if(helicopter.canCollideWith(this)){this.collision(controller, helicopter);}
-		if(helicopter.getType() == HelicopterType.PEGASUS){this.checkForEmpStrike(controller, (Pegasus)helicopter);}
-		if(this.hasDeadlyGroundContact()){this.destroy(helicopter, controller.powerUps, false);}
-		if(this.isToBeRemoved()){this.prepareRemoval();}
-		this.setPaintBounds();
-	}	
+		if(helicopter.canCollideWith(this))
+		{
+			collision(controller, helicopter);
+		}
+		if(helicopter.getType() == HelicopterType.PEGASUS)
+		{
+			checkForEmpStrike(controller, (Pegasus)helicopter);
+		}
+		if(hasDeadlyGroundContact())
+		{
+			destroy(helicopter, controller.powerUps, false);
+		}
+		if(isToBeRemoved())
+		{
+			prepareRemoval();
+		}
+		setPaintBounds();
+	}
+	
+	protected void performFlightManeuver(Controller controller, Helicopter helicopter)
+	{
+		this.calculateFlightManeuver(controller, helicopter);
+	}
+	
+	public boolean isStunned()
+	{
+		return stunningTimer > READY;
+	}
 	
 	private void updateStoppableTimer()
 	{
-		if(this.snoozeTimer > 0){this.snoozeTimer--;}
+		if(snoozeTimer > 0){snoozeTimer--;}
 	}
 
-	private boolean hasDeadlyGroundContact()
+	protected boolean hasDeadlyGroundContact()
 	{	
-		return this.getMaxY() > GROUND_Y
+		return getMaxY() > GROUND_Y
 			   && getModel() != BARRIER
-			   && !this.isDestroyed
-			   && this.type != EnemyType.ROCK;
+			   && !this.isDestroyed;
 	}
 
-	private void calculateBossManeuver(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-	{
-		     if(this.type == EnemyType.BOSS_4)    {this.boss4Action(enemy);}
-		else if(this.type == EnemyType.FINAL_BOSS){this.finalBossAction();}
-		else if(this.shieldMakerTimer != DISABLED){this.shieldMakerAction();}
-		else if(this.type == EnemyType.BODYGUARD) {this.bodyguardAction();}
-		else if(this.type == EnemyType.HEALER
-				&& this.dodgeTimer == READY){this.healerAction();}
-	}
-
-	private void checkForBarrierCollision()
+	protected void checkForBarrierCollision()
 	{
 		this.isPreviousStoppingBarrier = this.stoppingBarrier;
 		if(this.stoppingBarrier == null || !this.stoppingBarrier.intersects(this.getBounds()))
 		{
 			this.stoppingBarrier = null;
-			for(int i = 0; i < currentNumberOfBarriers; i++)
+			for(int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
 			{
-				if(	   livingBarrier[i] != this
-					&& livingBarrier[i].intersects(this.getBounds()))
+				if(	   EnemyController.livingBarrier[i] != this
+					&& EnemyController.livingBarrier[i].intersects(this.getBounds()))
 					
 				{
-					this.stoppingBarrier = livingBarrier[i];
+					this.stoppingBarrier = EnemyController.livingBarrier[i];
 					break;
 				}
 			}
@@ -1405,7 +868,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(	this.chaosTimer > 0) {this.chaosTimer--;}
 		if(	this.nonStunableTimer > 0) {this.nonStunableTimer--;}
 		if( this.turnTimer > 0) {this.turnTimer--;}
-		if( this.stunningTimer > 0) {this.stunningTimer--;}
+		if( this.isStunned()) {this.stunningTimer--;}
 	}
 
 	private void calculateFlightManeuver(Controller controller,
@@ -1568,8 +1031,7 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void validateTurns()
 	{
-		if(	this.stoppingBarrier != null
-			&& this.burrowTimer == DISABLED)
+		if(	this.stoppingBarrier != null && this.burrowTimer == DISABLED)
 		{
 			this.tryToTurnAtBarrier();
 		}
@@ -1695,18 +1157,9 @@ public abstract class Enemy extends RectangularGameEntity
 			   && this.getMinX() < Main.VIRTUAL_DIMENSION.width;
 	}
 	
-	private void prepareRemoval()
+	protected void prepareRemoval()
 	{
 		this.isMarkedForRemoval = true;
-		if(this.type == EnemyType.ROCK)
-		{
-			currentRock = null;
-			rockTimer = ROCK_FREE_TIME;
-		}
-		else if(this.isMiniBoss)
-		{
-			BasicEnemy.currentMiniBoss = null;
-		}		
 	}	
 	
 	private boolean isEmpShockable(Pegasus pegasus)
@@ -1753,60 +1206,6 @@ public abstract class Enemy extends RectangularGameEntity
 								  helicopter.getHeight());
 	}
 	
-	private void finalBossAction()
-    {
-		if(this.speedLevel.getX() > 0)
-		{
-			if(this.speedLevel.getX() - 0.5 <= 0)
-			{
-				this.speedLevel.setLocation(ZERO_SPEED);
-				boss.setLocation(this.getCenterX(),
-						 		 this.getCenterY());
-				makeAllBoss5Servants = true;
-			}
-			else
-			{
-				this.speedLevel.setLocation(this.speedLevel.getX()-0.5,	0);
-			}
-		}
-		else for(int servantType = 0; servantType < NR_OF_BOSS_5_SERVANTS; servantType++)
-		{
-			if(this.operator.servants[servantType] == null)
-			{	
-				if(Calculations.tossUp(RETURN_PROB[servantType])
-					&& this.operator.timeSinceDeath[servantType] > MIN_ABSENT_TIME[servantType])
-				{
-					makeBoss5Servant[servantType] = true;
-				}
-				else{this.operator.timeSinceDeath[servantType]++;}
-			}
-		}		
-	}
-	
-	public int id()
-	{
-		return id(this.type);
-	}
-	
-	public static int id(EnemyType type)
-	{
-		switch(type)
-		{
-			case SMALL_SHIELD_MAKER:
-				return 0;
-			case BIG_SHIELD_MAKER:
-				return 1;
-			case BODYGUARD:
-				return 2;
-			case HEALER:
-				return 3;
-			case PROTECTOR:
-				return 4;
-			default:
-				return -1;
-		}
-	}	
-		
 	private void evaluateBatchWiseMove()
 	{
 		if(this.batchWiseMove == 1)
@@ -1821,20 +1220,6 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 		if(this.speedLevel.getX() <= 0){this.batchWiseMove = 1;}
 		if(this.speedLevel.getX() >= this.targetSpeedLevel.getX()){this.batchWiseMove = -1;}
-	}
-	
-	private void bodyguardAction()
-	{
-		if(Events.boss.shield < 1)
-		{
-			this.canKamikaze = true;
-			this.speedLevel.setLocation(7.5, this.speedLevel.getY());
-		}
-		else
-		{
-			this.canKamikaze = false;
-			this.speedLevel.setLocation(this.targetSpeedLevel);
-		}		
 	}
 	
 	private void startKamikazeMode()
@@ -2065,42 +1450,7 @@ public abstract class Enemy extends RectangularGameEntity
 		this.placeNearHelicopter(helicopter);
 	}
 
-	private void boss4Action(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
-    {
-    	if(    this.getX() < 930
-    		&& this.getX() > 150)
-    	{
-    		this.spawningHornetTimer++;
-    	}
-		if(this.spawningHornetTimer == 1)
-		{
-			this.speedLevel.setLocation(11, 11);
-			this.canMoveChaotic = true;
-			this.canKamikaze = true;
-		}
-		else if(this.spawningHornetTimer >= 50)
-		{
-			if(this.spawningHornetTimer == 50)
-			{
-				this.speedLevel.setLocation(3, 3);
-				this.canMoveChaotic = false;
-				this.canKamikaze = false;
-			}
-			else if(this.spawningHornetTimer == 90)
-			{
-				this.speedLevel.setLocation(ZERO_SPEED);
-			}						
-			if(enemy.get(ACTIVE).size() < 15
-			   && (    this.spawningHornetTimer == 60
-			   	    || this.spawningHornetTimer == 90
-			   	    || Calculations.tossUp(0.02f)))
-			{
-				boss.setLocation(	this.getX() + this.getWidth() /2,
-									this.getY() + this.getHeight()/2);
-				makeBoss4Servant = true;
-			}
-		}
-    }
+	
 	
 	private void sinusLoop()
     {
@@ -2178,150 +1528,6 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		this.tractor = AbilityStatusType.DISABLED;
 		this.speedLevel.setLocation(this.targetSpeedLevel);
-	}
-	
-	private void shieldMakerAction()
-	{			   
-		this.shieldMakerTimer++;
-		if(this.shieldMakerTimer > 100)
-		{
-			if(this.shieldMakerTimer == 101){this.calmDown();}
-			this.correctShieldMakerDirection();
-			if(this.canStartShielding()){this.startShielding();}
-		}		
-	}
-	
-	private void calmDown()
-	{
-		this.speedLevel.setLocation(SHIELD_MAKER_CALM_DOWN_SPEED);	
-		this.targetSpeedLevel.setLocation(SHIELD_MAKER_CALM_DOWN_SPEED);
-		this.canMoveChaotic = false;
-	}
-
-	private void startShielding()
-	{
-		Audio.play(Audio.shieldUp);
-		this.speedLevel.setLocation(ZERO_SPEED);
-		this.direction.x = -1;
-		this.isShielding = true;
-		Events.boss.shield++;
-		this.canDodge = true;
-		this.shieldMakerTimer = DISABLED;
-	}
-
-	// TODO Bedingungen in Methoden auslagern
-	private void correctShieldMakerDirection()
-	{
-		if(      this.getX()
-					< Events.boss.getCenterX()
-					  - TARGET_DISTANCE_VARIANCE.x)
-		{
-			this.direction.x =  1;
-		}
-		else if( this.getX()
-					> Events.boss.getCenterX()
-					  + TARGET_DISTANCE_VARIANCE.x)
-		{										
-			this.direction.x = -1;
-		}
-		
-		if(		 this.isUpperShieldMaker
-				 && this.getMaxY()
-				 	  < Events.boss.getMinY()
-				 	    - SHIELD_TARGET_DISTANCE
-				 	    - TARGET_DISTANCE_VARIANCE.y
-			     ||
-			     !this.isUpperShieldMaker
-			     && this.getMinY()
-			     	  < Events.boss.getMaxY()
-			     	  	+ SHIELD_TARGET_DISTANCE
-			     	  	- TARGET_DISTANCE_VARIANCE.y)
-		{
-			this.direction.y = 1;
-		}   
-		else if( this.isUpperShieldMaker
-				 && this.getMaxY() > Events.boss.getMinY() - SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y
-				 ||
-				 !this.isUpperShieldMaker
-				 && this.getMinY() > Events.boss.getMaxY() + SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y)
-		{
-			this.direction.y = -1;
-		}		
-	}
-
-	private boolean canStartShielding()
-	{		
-		return 	   this.shieldMakerTimer > 200
-				&& !this.isRecoveringSpeed
-				&& TARGET_DISTANCE_VARIANCE.x	
-				     > Math.abs(Events.boss.getCenterX()
-						        -this.getX())
-			    &&  TARGET_DISTANCE_VARIANCE.y
-					  > (this.isUpperShieldMaker
-						 ? Math.abs(this.getMaxY()
-								    - Events.boss.getMinY()
-								    + SHIELD_TARGET_DISTANCE) 
-						 : Math.abs(this.getMinY()
-								    - Events.boss.getMaxY()
-								    - SHIELD_TARGET_DISTANCE));
-	}
-
-	private void healerAction()
-    {    	
-		if(Events.boss.getHitPoints() < Events.boss.startingHitPoints)
-		{						
-			if(this.speedLevel.getX() != 0)
-			{
-				int stop = 0;
-				if(this.getX() < Events.boss.getX()
-										+ 0.55f * Events.boss.getWidth())
-				{
-					this.direction.x = 1;					
-				}
-				else if(this.getX() > Events.boss.getX()
-											 + 0.65f * Events.boss.getWidth())
-				{
-					this.direction.x = -1;					
-				}
-				else{stop++;}
-				
-				if(		this.getY() < Events.boss.getY()
-											 + Events.boss.getHeight()
-											 - 1.25f * this.getHeight())
-				{
-					this.direction.y = 1;					
-				}
-				else if(this.getY() > Events.boss.getY()
-											 + Events.boss.getHeight()
-											 - 1.05f * this.getHeight())
-				{
-					this.direction.y = -1;					
-				}
-				else{stop++;}
-			
-				if(stop >= 2)
-				{
-					this.speedLevel.setLocation(ZERO_SPEED);
-					this.direction.x = -1;
-					this.canDodge = true;
-				}				
-			}
-			else
-			{
-				Events.boss.healHitPoints();
-			}						 
-		}
-		else
-		{
-			this.speedLevel.setLocation(this.targetSpeedLevel);
-		}
-    }
-	
-	private void healHitPoints()
-	{
-		int newHitPoints = Math.min(Events.boss.hitPoints + HEALED_HIT_POINTS,
-									Events.boss.startingHitPoints);
-		this.setHitPoints(newHitPoints);
 	}
 	
 	private void evaluateDodge()
@@ -2407,7 +1613,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void calculateSpeed(Helicopter helicopter)
 	{		
-		if(this.stunningTimer != READY)
+		if(this.isStunned())
 		{
 			this.adjustSpeedTo(helicopter.missileDrive);
 			if(this.stunningTimer == 1)
@@ -2631,7 +1837,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 		this.collisionDamageTimer = Helicopter.NO_COLLISION_DAMAGE_TIME;
 			
-		if(	this.canExplode
+		if(	this.isExplodingOnCollisions()
 			&& !this.isInvincible()
 			&& !this.isDestroyed)
 		{
@@ -2704,7 +1910,7 @@ public abstract class Enemy extends RectangularGameEntity
 	private boolean canTakeCollisionDamage()
 	{		
 		return 	   !this.isDestroyed
-				&& !this.canExplode
+				&& !this.isExplodingOnCollisions()
 				&& !this.isInvincible()
 				&& !(this.barrierTeleportTimer != DISABLED && this.barrierShootTimer == DISABLED)
 				&& this.collisionAudioTimer == READY;
@@ -2714,10 +1920,10 @@ public abstract class Enemy extends RectangularGameEntity
 	{		
 		return helicopter.getProtectionFactor()
 				// TODO 0.65 und 1.0 in Konstanten auslagern
-			   *helicopter.getBaseProtectionFactor(this.canExplode)
+			   *helicopter.getBaseProtectionFactor(this.isExplodingOnCollisions())
 			   *(helicopter.isTakingKaboomDamageFrom(this)
 			     ? helicopter.kaboomDamage()
-			     : (this.canExplode && !this.isInvincible() && !this.isDestroyed)
+			     : (this.isExplodingOnCollisions() && !this.isInvincible() && !this.isDestroyed)
 					? 1.0f 
 					: this.collisionDamageTimer > 0
 						? 0.0325f 
@@ -2939,7 +2145,7 @@ public abstract class Enemy extends RectangularGameEntity
 											  controller.enemies,
 											  controller.explosions);
 		if(this.isCarrier){
-			carrierDestroyedJustNow = this;}
+			EnemyController.carrierDestroyedJustNow = this;}
 		if(missile != null){missile.hits.remove(this.hashCode());}
 	}	
 
@@ -2960,7 +2166,7 @@ public abstract class Enemy extends RectangularGameEntity
 		return getModel() != BARRIER
 			   &&( (!Events.isBossLevel()
 				    &&( ( Calculations.tossUp(POWER_UP_PROB)
-						  && Events.level >= MIN_POWER_UP_LEVEL) 
+						  && Events.level >= MIN_POWER_UP_LEVEL)
 						|| this.isMiniBoss))
 				|| this.type == EnemyType.BOSS_1
 				|| this.type == EnemyType.BOSS_3
@@ -3019,13 +2225,13 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		if(this.isMiniBoss)
 		{
-			BasicEnemy.currentMiniBoss = null;
+			EnemyController.currentMiniBoss = null;
 		}			
 		else if(this.type == EnemyType.BOSS_2)
 		{								
 			boss.setLocation(this.getCenterX(),
 							 this.getCenterY());
-			makeBossTwoServants = true;
+			EnemyController.makeBossTwoServants = true;
 		}					
 		else if(this.type == EnemyType.BOSS_4)
 		{
@@ -3058,8 +2264,10 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 		else if(this.type.isFinalBossServant())
 		{
-			Events.boss.operator.servants[this.id()] = null;
-			Events.boss.operator.timeSinceDeath[this.id()] = 0;
+			FinalBossServantType.of(this.type).ifPresent(servantType -> {
+				Events.boss.operator.remove(servantType);
+				Events.boss.operator.resetTimeSinceDeath(servantType);
+			});
 		}
 		if(this.type.isMainBoss() && this.type != EnemyType.FINAL_BOSS){Events.boss = null;}
 	}
@@ -3103,22 +2311,22 @@ public abstract class Enemy extends RectangularGameEntity
 
 	protected void setShieldingPosition()
 	{
-		if(Events.boss.operator.servants[this.shieldingBrotherId()] == null)
+		if(!Events.boss.operator.containsServant(this.shieldingBrother()))
 		{
 			this.isUpperShieldMaker = Calculations.tossUp();
 		}
 		else
 		{
 			this.isUpperShieldMaker
-				= !Events.boss.operator.servants[this.shieldingBrotherId()].isUpperShieldMaker;
+				= !Events.boss.getOperatorServant(this.shieldingBrother()).isUpperShieldMaker;
 		}		
 	}
 
-	private int shieldingBrotherId()
+	private FinalBossServantType shieldingBrother()
 	{		
 		return this.type == EnemyType.SMALL_SHIELD_MAKER
-				 ? id(EnemyType.BIG_SHIELD_MAKER)
-				 : id(EnemyType.SMALL_SHIELD_MAKER);
+							 ? FinalBossServantType.BIG_SHIELD_MAKER
+							 : FinalBossServantType.SMALL_SHIELD_MAKER;
 	}
 
 	public void teleport()
@@ -3285,9 +2493,9 @@ public abstract class Enemy extends RectangularGameEntity
 		return isDestroyed;
 	}
 	
-	public Enemy getOperatorServant(int servantType)
+	public Enemy getOperatorServant(FinalBossServantType servantType)
 	{
-		return operator.servants[servantType];
+		return operator.getServant(servantType);
 	}
 	
 	public Point2D getSpeedLevel()
@@ -3369,5 +2577,10 @@ public abstract class Enemy extends RectangularGameEntity
 	public boolean isStunable()
 	{
 		return true;
+	}
+	
+	protected boolean isExplodingOnCollisions()
+	{
+		return type.isExplodingOnCollisions();
 	}
 }

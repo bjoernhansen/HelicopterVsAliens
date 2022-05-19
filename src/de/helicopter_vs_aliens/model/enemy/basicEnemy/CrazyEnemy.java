@@ -10,7 +10,6 @@ public class CrazyEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.canExplode = true;
         this.canChaosSpeedup = true;
         this.canDodge = true;
     

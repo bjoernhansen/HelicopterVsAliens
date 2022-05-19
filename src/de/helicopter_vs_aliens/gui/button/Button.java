@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.GameEntity;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
 // TODO Button könnte evtl. von RectangularGameEntity erben, dann könnten die bounds verwendet werden
@@ -172,4 +173,9 @@ public class Button extends GameEntity
 	{
 		return category;
 	}
+    
+    public boolean contains(Point point)
+    {
+		return this.getBounds().contains(point);
+    }
 }

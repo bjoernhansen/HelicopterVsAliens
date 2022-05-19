@@ -12,7 +12,6 @@ public class CloakedEnemy extends BasicEnemy
         this.cloakingTimer = CLOAKING_TIME + CLOAKED_TIME;
         this.uncloakingSpeed = 2;
         this.canEarlyTurn = true;
-        this.canExplode = true;
     
         super.doTypeSpecificInitialization();
     }

@@ -1,9 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
-
-import java.awt.Color;
 
 public class FourthBoss extends BossEnemy
 {
@@ -11,8 +10,8 @@ public class FourthBoss extends BossEnemy
     protected void doTypeSpecificInitialization()
     {
         this.spawningHornetTimer = 30;
-        nextBossEnemyType = EnemyType.BOSS_4_SERVANT;
-        maxNr = 15;
+        LevelManager.nextBossEnemyType = EnemyType.BOSS_4_SERVANT;
+        LevelManager.maxNr = 15;
         this.canTurn = true;
         Events.boss = this;
     

@@ -10,7 +10,6 @@ public class CallbackEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.canExplode = true;
         this.callBack = 1;
     
         super.doTypeSpecificInitialization();

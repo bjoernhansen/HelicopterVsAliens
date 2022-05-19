@@ -13,7 +13,6 @@ import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
-import static de.helicopter_vs_aliens.model.enemy.Enemy.SPEED_KILL_BONUS_TIME;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
@@ -23,11 +22,12 @@ import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERG
 public final class Kamaitachi extends Helicopter
 {
     private static final int
-        RAPIDFIRE_AMOUNT = 2;
+        SPEED_KILL_BONUS_TIME 	= 15, // Zeit [frames], innerhalb welcher für einen Kamaitachi-Extra-Bonus Gegner besiegt werden müssen, erhöht sich um diesen Wert
+        RAPID_FIRE_AMOUNT = 2;
     
     private static final float[]
         // Faktor, um den sich die Schadenswirkung der Raketen erhöht, wenn diese Plasmaraketen sind
-        PLASMA_DMG_FACTOR = {3.26f, 3.5f, 3.76f, 4.05f, 4.35f, 4.68f, 5.03f, 5.41f, 5.81f, 6.25f};
+        PLASMA_DAMAGE_FACTOR = {3.26f, 3.5f, 3.76f, 4.05f, 4.35f, 4.68f, 5.03f, 5.41f, 5.81f, 6.25f};
     
     private int
         plasmaActivationTimer; // Timer zur Überwachung der Zeit [frames], in der die Plasma-Raketen aktiviert sind
@@ -131,7 +131,7 @@ public final class Kamaitachi extends Helicopter
     public int calculateSumOfFireRateBooster(boolean poweredUp)
     {
         return super.calculateSumOfFireRateBooster(poweredUp)
-                + (this.hasRapidFire ? RAPIDFIRE_AMOUNT : 0);
+                + (this.hasRapidFire ? RAPID_FIRE_AMOUNT : 0);
     }
     
     @Override
@@ -181,9 +181,9 @@ public final class Kamaitachi extends Helicopter
     
     private float plasmaDamageFactor(int n)
     {
-        if(n > 0 && n <= PLASMA_DMG_FACTOR.length)
+        if(n > 0 && n <= PLASMA_DAMAGE_FACTOR.length)
         {
-            return PLASMA_DMG_FACTOR[n-1];
+            return PLASMA_DAMAGE_FACTOR[n-1];
         }
         return 0;
     }

@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.util.Colorations;
 
 public class FinalBoss extends BossEnemy
 {
@@ -15,7 +15,7 @@ public class FinalBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        maxNr = 5; // TODO diese Zuweisung gehört hier nicht her oder?
+        LevelManager.maxNr = 5; // TODO diese Zuweisung gehört hier nicht her oder?
         this.operator = new Enemy.FinalEnemyOperator();
         Events.boss = this;
     

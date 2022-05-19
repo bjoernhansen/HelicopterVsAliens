@@ -8,14 +8,6 @@ import java.awt.Color;
 public class Runabout extends BasicEnemy
 {
     @Override
-    protected void doTypeSpecificInitialization()
-    {
-        this.canExplode = true;
-    
-        super.doTypeSpecificInitialization();
-    }
-    
-    @Override
     protected int hitPointVariance()
     {
         return Calculations.random(type.getHitPoints());

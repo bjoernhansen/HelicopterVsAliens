@@ -11,7 +11,6 @@ public class SinusoidallyFlyingEnemy extends BasicEnemy
     protected void doTypeSpecificInitialization()
     {
         this.canSinusMove = true;
-        this.canExplode = true;
     
         super.doTypeSpecificInitialization();
     }

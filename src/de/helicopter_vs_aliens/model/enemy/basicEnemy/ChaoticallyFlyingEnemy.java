@@ -11,7 +11,6 @@ public class ChaoticallyFlyingEnemy extends BasicEnemy
     protected void doTypeSpecificInitialization()
     {
         this.canMoveChaotic = true;
-        this.canExplode = true;
     
         super.doTypeSpecificInitialization();
     }

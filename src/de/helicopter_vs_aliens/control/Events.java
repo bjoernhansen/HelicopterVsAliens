@@ -19,6 +19,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.basicEnemy.BasicEnemy;
+import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -137,7 +138,7 @@ public class Events
 	private static final String
 		cheatCode = "+cheats";			// Code, mit welchem Cheats aktiviert werden können
 	
-	public static Enemy
+	public static BossEnemy
 		boss;							// Referenz auf den aktuellen Endgegner
 
 	public static HelicopterType
@@ -525,7 +526,7 @@ public class Events
 					controller.enemies.get(ACTIVE)
 									  .clear();
 					level = level - ((level - 1) % 5);
-					Enemy.adaptToLevel(helicopter, level, false);
+					LevelManager.adaptToLevel(helicopter, level, false);
 					if (level < 6)
 					{
 						controller.getScenery()
@@ -538,13 +539,13 @@ public class Events
 									  .clear();
 					Window.buttons.get(LeftSideRepairShopButtonType.REPAIR)
 								  .adjustCostsToZero();
-					Enemy.currentRock = null;
+					EnemyController.currentRock = null;
 				}
 				else
 				{
-					Enemy.nextBossEnemyType = FINAL_BOSS;
-					Enemy.maxNr = 1;
-					Enemy.maxBarrierNr = 0;
+					LevelManager.nextBossEnemyType = FINAL_BOSS;
+					LevelManager.maxNr = 1;
+					LevelManager.maxBarrierNr = 0;
 				}
 				helicopter.repair();
 				Window.buttons.get(LeftSideRepairShopButtonType.REPAIR).adjustCostsToZero();
@@ -975,7 +976,7 @@ public class Events
 		restore(controller.getSaveGame());
 		for(int i =  highestSavePointLevelBefore(level); i <= level; i++)
 		{
-			Enemy.adaptToLevel(controller.getHelicopter(), i, false);
+			LevelManager.adaptToLevel(controller.getHelicopter(), i, false);
 		}
 		generalInitialization();
 	}
@@ -988,7 +989,7 @@ public class Events
 	private static void initializeForNewGame()
 	{
 		reset();
-		Enemy.adaptToFirstLevel();
+		LevelManager.adaptToFirstLevel();
 		generalInitialization();
 	}
 
@@ -1053,15 +1054,15 @@ public class Events
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
 			{
-				Enemy.nextBossEnemyType = level == 40 ? BOSS_4 : FINAL_BOSS;
-				Enemy.maxNr = 1;
-				Enemy.maxBarrierNr = 0;
+				LevelManager.nextBossEnemyType = level == 40 ? BOSS_4 : FINAL_BOSS;
+				LevelManager.maxNr = 1;
+				LevelManager.maxBarrierNr = 0;
 			}			
 			if(totalReset)
 			{
 				// controller.enemies.get(INACTIVE).addAll(controller.enemies.get(ACTIVE));
 				controller.enemies.get(ACTIVE).clear();
-				Enemy.currentRock = null;
+				EnemyController.currentRock = null;
 			}
 			else
 			{
@@ -1069,7 +1070,7 @@ public class Events
 				controller.enemies.get(ACTIVE)
 								  .removeIf(Enemy::isRemainingAfterEnteringRepairShop);
 			}
-			BasicEnemy.currentMiniBoss = null;
+			EnemyController.currentMiniBoss = null;
 		}
 		if(totalReset)
 		{
@@ -1231,7 +1232,7 @@ public class Events
 			if(previousLevel % 10 == 0){Audio.play(Audio.applause1);}
 		}
 		Window.levelDisplayTimer.start();
-		Enemy.adaptToLevel(helicopter, level, true);
+		LevelManager.adaptToLevel(helicopter, level, true);
 	}
 	
 	// Stellt sicher, dass mit dem Besiegen des End-Gegners direkt das nächste Level erreicht wird

@@ -12,7 +12,6 @@ public class CapturingEnemy extends BasicEnemy
     protected void doTypeSpecificInitialization()
     {
         this.tractor = AbilityStatusType.READY;
-        this.canExplode = true;
     
         super.doTypeSpecificInitialization();
     }

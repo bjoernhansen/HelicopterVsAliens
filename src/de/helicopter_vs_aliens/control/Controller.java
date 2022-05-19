@@ -286,10 +286,10 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 				Window.updateDisplays(this.helicopter);
 				Enemy.updateAllDestroyed(this, this.helicopter);
 				Missile.updateAll(this, this.helicopter);
-				Enemy.updateAllActive(this, this.helicopter);
+				EnemyController.updateAllActive(this, this.helicopter);
 				EnemyMissile.updateAll(this.enemyMissiles, this.helicopter);
 				Events.checkForLevelUp(this);
-				Enemy.generateNewEnemies(this.enemies, this.helicopter);
+				EnemyController.generateNewEnemies(this.enemies, this.helicopter);
 				this.helicopter.update(this.missiles, this.explosions);
 				Explosion.updateAll(this.helicopter, this.explosions);
 				PowerUp.updateAll(this.powerUps, this.helicopter);

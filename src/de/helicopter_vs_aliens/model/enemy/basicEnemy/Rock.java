@@ -1,6 +1,11 @@
 package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
+import de.helicopter_vs_aliens.control.EnemyController;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 public class Rock extends BasicEnemy
 {
@@ -24,7 +29,7 @@ public class Rock extends BasicEnemy
     protected void finalizeInitialization(Helicopter helicopter)
     {
         helicopter.numberOfEnemiesSeen--;
-        currentRock = this;
+        EnemyController.currentRock = this;
         super.finalizeInitialization(helicopter);
     }
     
@@ -51,4 +56,20 @@ public class Rock extends BasicEnemy
     {
         return true;
     }
+    
+    @Override
+    protected void prepareRemoval()
+    {
+        super.prepareRemoval();
+        EnemyController.removeCurrentRock();
+    }
+    
+    @Override
+    protected boolean hasDeadlyGroundContact()
+    {
+        return false;
+    }
+    
+    @Override
+    protected void checkForBarrierCollision(){}
 }

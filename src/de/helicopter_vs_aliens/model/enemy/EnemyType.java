@@ -53,6 +53,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+
+
 public enum EnemyType implements GameEntityFactory<Enemy>
 {
     TINY( // ab Level 1
@@ -63,7 +65,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         1,
         2,
         110,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5,1, 1)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5,1, 1),
+        CollisionEffect.EXPLOSION),
     
     SMALL( // ab Level 3
         SmallCruiser::new,
@@ -73,7 +76,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         2,
         3,
         125,
-        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,1.5, 0.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,1.5, 0.5),
+        CollisionEffect.EXPLOSION),
     
     RUNABOUT( // level 5
         Runabout::new,
@@ -83,7 +87,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         2,
         2,
         100,
-        TargetSpeedLevelProvider.ofVariableSpeed(2.0, 2.5,2.0, 1.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(2.0, 2.5,2.0, 1.5),
+        CollisionEffect.EXPLOSION),
     
     FREIGHTER( // ab Level 7
         Freighter::new,
@@ -93,7 +98,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         4,
         25,
         145,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0,1.0, 0.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0,1.0, 0.5),
+        CollisionEffect.NO_EFFECT),
         
     BATCHWISE( // ab Level 11
         BatchwiseFlyingEnemy::new,
@@ -103,7 +109,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         6,
         16,
         130,
-        TargetSpeedLevelProvider.ofVariableSpeed(7.0, 1.0, 4.0, 0.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(7.0, 1.0, 4.0, 0.5),
+        CollisionEffect.NO_EFFECT),
     
     SINUS( // ab Level 13
         SinusoidallyFlyingEnemy::new,
@@ -113,7 +120,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         6,
         6,
         110,
-        TargetSpeedLevelProvider.ofVariableSpeed(2.5, 11.0, 2.5, 0.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(2.5, 11.0, 2.5, 0.0),
+        CollisionEffect.EXPLOSION),
     
     DODGER( // ab Level 16
         Dodger::new,
@@ -123,7 +131,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         9,
         24,
         170,
-        TargetSpeedLevelProvider.ofVariableSpeed(1.5, 0.0, 1.5, 0.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(1.5, 0.0, 1.5, 0.5),
+        CollisionEffect.NO_EFFECT),
         
     CHAOTIC( // ab Level 21
         ChaoticallyFlyingEnemy::new,
@@ -133,7 +142,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         11,
         22,
         125,
-        TargetSpeedLevelProvider.ofVariableSpeed(3.5, 6.5, 1.5, 2.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(3.5, 6.5, 1.5, 2.0),
+        CollisionEffect.EXPLOSION),
     
     CALLBACK( // ab Level 24
         CallbackEnemy::new,
@@ -143,7 +153,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         10,
         30,
         95,
-        TargetSpeedLevelProvider.ofVariableSpeed(5.5, 5.0,2.5, 2.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(5.5, 5.0,2.5, 2.0),
+        CollisionEffect.EXPLOSION),
     
     SHOOTER( // ab Level 26
         Shooter::new, 
@@ -153,7 +164,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         12,
         60,
         80,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5,1.0, 1.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5,1.0, 1.0),
+        CollisionEffect.NO_EFFECT),
     
     CLOAK( // ab Level 31
         CloakedEnemy::new, 
@@ -163,7 +175,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         16, 
         100, 
         85,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 1.0,1.0, 0.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 1.0,1.0, 0.5),
+        CollisionEffect.EXPLOSION),
         
     LONELY_SPEEDER( // ab Level 35
         LonelySpeeder::new, 
@@ -173,7 +186,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         14, 
         26, 
         70,
-        TargetSpeedLevelProvider.ofVariableSpeed(12.0, 0.5, 3.5, 3.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(12.0, 0.5, 3.5, 3.0),
+        CollisionEffect.EXPLOSION),
         
     CARRIER( // ab Level 36
         Carrier::new, 
@@ -183,7 +197,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         19, 
         450, 
         165,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5, 1.0, 1.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5, 1.0, 1.0),
+        CollisionEffect.NO_EFFECT),
     
     CRAZY( // ab Level 37
         CrazyEnemy::new, 
@@ -193,7 +208,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         22, 
         140, 
         115,
-        TargetSpeedLevelProvider.ofVariableSpeed(4.0, 0.5, 2.5, 1.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(4.0, 0.5, 2.5, 1.0),
+        CollisionEffect.EXPLOSION),
     
     AMBUSH( // ab Level 41
         AmbushingEnemy::new, 
@@ -203,7 +219,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         30, 
         150, 
         95,
-        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,1.5, 0.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,1.5, 0.0),
+        CollisionEffect.EXPLOSION),
     
     LOOPING( // ab Level 43
         LoopingEnemy::new, 
@@ -213,7 +230,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         30, 
         330, 
         105,
-        TargetSpeedLevelProvider.ofFixedSpeed(9.0, 11.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(9.0, 11.0),
+        CollisionEffect.NO_EFFECT),
         
     CAPTURING( // ab Level 45
         CapturingEnemy::new, 
@@ -223,7 +241,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         30, 
         520, 
         115,
-        TargetSpeedLevelProvider.ofVariableSpeed(2.5, 4.5,2.0, 1.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(2.5, 4.5,2.0, 1.5),
+        CollisionEffect.EXPLOSION),
 
     TELEPORTING( // ab Level 46
         TeleportingEnemy::new, 
@@ -233,7 +252,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         35, 
         500, 
         130,
-        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,0.0, 0.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0,0.0, 0.5),
+        CollisionEffect.NO_EFFECT),
     
     // Boss-Gegner
     BOSS_1(
@@ -244,7 +264,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         75, 
         225, 
         275,
-        TargetSpeedLevelProvider.ofFixedSpeed(2.0, 0.5)),
+        TargetSpeedLevelProvider.ofFixedSpeed(2.0, 0.5),
+        CollisionEffect.NO_EFFECT),
     
     BOSS_2(
         SecondBoss::new, 
@@ -254,7 +275,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         100, 
         500, 
         250,
-        TargetSpeedLevelProvider.ofFixedSpeed(7.0, 8.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(7.0, 8.0),
+        CollisionEffect.NO_EFFECT),
     
     BOSS_2_SERVANT(
         SecondBossServant::new, 
@@ -264,7 +286,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         5, 
         15, 
         65,
-        TargetSpeedLevelProvider.ofVariableSpeed(3.0, 3.0, 10.5, 10.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(3.0, 3.0, 10.5, 10.5),
+        CollisionEffect.NO_EFFECT),
     
     BOSS_3(
         ThirdBoss::new, 
@@ -274,7 +297,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         500, 
         1750, 
         250,
-        TargetSpeedLevelProvider.ofFixedSpeed(5.0, 4.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(5.0, 4.0),
+        CollisionEffect.NO_EFFECT),
     
     BOSS_4(
         FourthBoss::new, 
@@ -284,7 +308,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         1250, 
         10000, 
         250,
-        TargetSpeedLevelProvider.ofFixedSpeed(10.0, 10.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(10.0, 10.0),
+        CollisionEffect.NO_EFFECT),
     
     BOSS_4_SERVANT(
         FourthBossServant::new, 
@@ -294,7 +319,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         1, 
         100, 
         85,
-        TargetSpeedLevelProvider.ofVariableSpeed(6.0, 6.0, 2.5, 2.5)),
+        TargetSpeedLevelProvider.ofVariableSpeed(6.0, 6.0, 2.5, 2.5),
+        CollisionEffect.EXPLOSION),
     
     FINAL_BOSS(
         FinalBoss::new, 
@@ -304,7 +330,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         5000, 
         25000, 
         450,
-        TargetSpeedLevelProvider.ofFixedSpeed(23.5, 0.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(23.5, 0.0),
+        CollisionEffect.NO_EFFECT),
     
     SMALL_SHIELD_MAKER(
         SmallShieldMaker::new, 
@@ -314,7 +341,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         55, 
         3000, 
         125,
-        TargetSpeedLevelProvider.ofFixedSpeed(7.0, 6.5)),
+        TargetSpeedLevelProvider.ofFixedSpeed(7.0, 6.5),
+        CollisionEffect.NO_EFFECT),
     
     BIG_SHIELD_MAKER(
         BigShieldMaker::new, 
@@ -324,7 +352,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         80, 
         4250, 
         145,
-        TargetSpeedLevelProvider.ofFixedSpeed(6.5, 7.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(6.5, 7.0),
+        CollisionEffect.NO_EFFECT),
     
     BODYGUARD(
         Bodyguard::new, 
@@ -334,7 +363,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         150, 
         7500, 
         225,
-        TargetSpeedLevelProvider.ofFixedSpeed(1.0, 2.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(1.0, 2.0),
+        CollisionEffect.NO_EFFECT),
     
     HEALER(
         Healer::new, 
@@ -344,7 +374,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         65, 
         3500, 
         115,
-        TargetSpeedLevelProvider.ofFixedSpeed(2.5, 3.0)),
+        TargetSpeedLevelProvider.ofFixedSpeed(2.5, 3.0),
+        CollisionEffect.NO_EFFECT),
     
     PROTECTOR(
         Protector::new,
@@ -354,7 +385,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         25,
         Constants.COUNTLESS_HIT_POINTS,
         90,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
     
     // Hindernisse (Barrier)
     SMALL_BARRIER( // ab Level 2
@@ -365,7 +397,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         4,
         Constants.COUNTLESS_HIT_POINTS,
         65,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
     
     BIG_BARRIER( // ab Level 6
         BigBarrier::new, 
@@ -375,7 +408,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         4,
         Constants.COUNTLESS_HIT_POINTS,
         150,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
     
     STUNNING_BARRIER( // ab Level 12
         StunningBarrier::new, 
@@ -385,7 +419,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         5,
         Constants.COUNTLESS_HIT_POINTS,
         65,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.0, 1.0, 0.0, 2.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.0, 1.0, 0.0, 2.0),
+        CollisionEffect.NO_EFFECT),
     
     PUSHING_BARRIER( // ab Level 15
         PushingBarrier::new, 
@@ -395,7 +430,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         6,
         Constants.COUNTLESS_HIT_POINTS,
         105,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 2.0, 0.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 2.0, 0.0),
+        CollisionEffect.NO_EFFECT),
     
     SHOOTING_BARRIER( // ab Level 18
         ShootingBarrier::new, 
@@ -405,7 +441,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         7,
         Constants.COUNTLESS_HIT_POINTS,
         85,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
     
     BURROWING_BARRIER( // ab Level 32
         DiggerBarrier::new, 
@@ -415,7 +452,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         9,
         Constants.COUNTLESS_HIT_POINTS,
         80,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
             
     SHIELDING_BARRIER( // ab Level 42
         ShieldingBarrier::new, 
@@ -425,7 +463,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         4,
         Constants.COUNTLESS_HIT_POINTS,
         80,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
     
     CLOAKED_BARRIER( // ab Level 44
         CloakedBarrier::new, 
@@ -435,7 +474,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         15,
         Constants.COUNTLESS_HIT_POINTS,
         100,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
     
     // Hindernis (Rock-Enemy)
     ROCK( // ab Level 27
@@ -446,7 +486,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         0, 
         2, 
         300,
-        TargetSpeedLevelProvider.ofZeroSpeed()),
+        TargetSpeedLevelProvider.ofZeroSpeed(),
+        CollisionEffect.NO_EFFECT),
     
     // sonstige Gegner
     KABOOM( // ab Level 12
@@ -457,7 +498,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         0,
         Constants.COUNTLESS_HIT_POINTS,
         120,
-        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 0.5, 0.0)),
+        TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 0.5, 0.0),
+        CollisionEffect.EXPLOSION),
     
     ESCAPED_SPEEDER( // ab Level 36
         EscapedSpeeder::new, 
@@ -467,8 +509,10 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         14, 
         26, 
         70,
-        TargetSpeedLevelProvider.ofVariableSpeed(10.0, 0.5, 7.5, 3.0));
-        
+        TargetSpeedLevelProvider.ofVariableSpeed(10.0, 0.5, 7.5, 3.0),
+        CollisionEffect.EXPLOSION),
+    ;
+    
     private static final List<EnemyType>
         VALUES = List.of(values());
     
@@ -478,8 +522,18 @@ public enum EnemyType implements GameEntityFactory<Enemy>
             COUNTLESS_HIT_POINTS = Integer.MAX_VALUE;
     }
     
+    private enum CollisionEffect{
+        EXPLOSION,
+        NO_EFFECT;
+        
+        boolean isExploding(){
+            return this == EXPLOSION;
+        }
+    }
+    
     private final static Set<EnemyType>
         BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOSS_1, PROTECTOR)),
+        // TODO prüfen wo anstelle dessen mit den FinalBossServantTypes gearbeitet werden kann
         FINAL_BOSS_SERVANT_TYPES = Collections.unmodifiableSet(EnumSet.range(SMALL_SHIELD_MAKER, PROTECTOR)),
         BARRIERS = Collections.unmodifiableSet(EnumSet.range(SMALL_BARRIER, CLOAKED_BARRIER)),
         CLOAKABLE_AS_MINI_BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(LONELY_SPEEDER, TELEPORTING));
@@ -512,6 +566,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     private final TargetSpeedLevelProvider
         targetSpeedLevelProvider;
     
+    private final boolean
+        isExplodingOnCollisions;    // = true: explodiert bei Kollisionen mit dem Helikopter
+    
     
     EnemyType(Supplier<? extends Enemy> instanceSupplier,
               Class<? extends Enemy> enemyClass,
@@ -520,7 +577,8 @@ public enum EnemyType implements GameEntityFactory<Enemy>
               int strength,
               int hitPoints,
               int width,
-              TargetSpeedLevelProvider targetSpeedLevelProvider)
+              TargetSpeedLevelProvider targetSpeedLevelProvider,
+              CollisionEffect collisionEffect)
     {
         this.instanceSupplier = instanceSupplier;
         this.enemyClass = enemyClass;
@@ -530,14 +588,10 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         this.hitPoints = hitPoints;
         this.width = width;
         this.targetSpeedLevelProvider = targetSpeedLevelProvider;
+        this.isExplodingOnCollisions = collisionEffect.isExploding();
     }
     
-    static Set<EnemyType> getFinalBossServantTypes()
-    {
-        return FINAL_BOSS_SERVANT_TYPES;
-    }
-    
-    static Set<EnemyType> getBarrierTypes()
+    public static Set<EnemyType> getBarrierTypes()
     {
         return BARRIERS;
     }
@@ -628,5 +682,10 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     
     public Point2D calculateTargetSpeed(){
         return targetSpeedLevelProvider.selectTargetSpeedLevel();
+    }
+    
+    public boolean isExplodingOnCollisions()
+    {
+        return isExplodingOnCollisions;
     }
 }

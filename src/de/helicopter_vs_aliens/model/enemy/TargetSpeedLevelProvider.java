@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy;
 
 import java.awt.geom.Point2D;
 
-public final class TargetSpeedLevelProvider
+final class TargetSpeedLevelProvider
 {
     private static final Point2D
         NO_VARIANCE_IN_SPEED = new Point2D.Double(0,0);

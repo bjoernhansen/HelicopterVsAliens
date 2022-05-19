@@ -1,7 +1,9 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -13,7 +15,6 @@ import de.helicopter_vs_aliens.gui.button.GroundButtonType;
 import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.basicEnemy.BasicEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -49,7 +50,7 @@ public class GameWindowPainter extends WindowPainter
     {
         paintBackground(graphicsAdapter);
         paintBackgroundDisplays(graphicsAdapter);
-        Optional.ofNullable(Enemy.currentRock)
+        Optional.ofNullable(EnemyController.currentRock)
                 .ifPresent(enemy -> enemy.paint(graphicsAdapter));
         paintAllDestroyedEnemies(graphicsAdapter);
         paintAllMissiles(graphicsAdapter);
@@ -85,9 +86,9 @@ public class GameWindowPainter extends WindowPainter
     private void paintAllActiveEnemies(GraphicsAdapter graphicsAdapter)
     {
         Helicopter helicopter = controller.getHelicopter();
-        for (int i = 0; i < Enemy.currentNumberOfBarriers; i++)
+        for (int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
         {
-            Enemy.livingBarrier[i].paint(graphicsAdapter);
+            EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
         for (Enemy enemy : controller.enemies.get(ACTIVE))
         {
@@ -170,14 +171,14 @@ public class GameWindowPainter extends WindowPainter
     
     private boolean showBossHealthBar()
     {
-        return BasicEnemy.currentMiniBoss != null || (Events.boss != null && Events.level < 51);
+        return EnemyController.currentMiniBoss != null || (Events.boss != null && Events.level < 51);
     }
     
     private void paintBossHealthBar(GraphicsAdapter graphicsAdapter)
     {
-        if (BasicEnemy.currentMiniBoss != null)
+        if (EnemyController.currentMiniBoss != null)
         {
-            paintBossHealthBar(graphicsAdapter, BasicEnemy.currentMiniBoss);
+            paintBossHealthBar(graphicsAdapter, EnemyController.currentMiniBoss);
         } else
         {
             paintBossHealthBar(graphicsAdapter, Events.boss);
@@ -483,12 +484,12 @@ public class GameWindowPainter extends WindowPainter
         {
             infoString = "Aktive Gegner: "
                 + (controller.enemies.get(ACTIVE)
-                                     .size() - Enemy.currentNumberOfBarriers) + " / " + (Enemy.maxNr)
+                                     .size() - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerstörte Gegner: "
                 + controller.enemies.get(DESTROYED)
                                     .size()
                 + ";   Hindernisse: "
-                + Enemy.currentNumberOfBarriers + " / " + Enemy.maxBarrierNr
+                + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
                 /*+ controller.enemies.get(INACTIVE)
                                     .size()*/;

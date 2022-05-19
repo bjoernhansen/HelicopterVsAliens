@@ -1,4 +1,6 @@
-package de.helicopter_vs_aliens.model.enemy;
+package de.helicopter_vs_aliens.control;
+
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 
 import java.util.*;
 

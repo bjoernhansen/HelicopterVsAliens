@@ -158,7 +158,7 @@ public class Missile extends RectangularGameEntity
 			if (enemy.isHittable(this))
 			{
 				if (enemy.teleportTimer == 0
-					&& enemy.stunningTimer == 0
+					&& !enemy.isStunned()
 					&& enemy.empSlowedTimer == 0)
 				{
 					enemy.teleport();
@@ -179,11 +179,12 @@ public class Missile extends RectangularGameEntity
 				
 				if (enemy.hasHPsLeft())
 				{
-					if (enemy.stunningTimer == 0)
+					if (!enemy.isStunned())
 					{
 						enemy.reactToHit(helicopter, this);
 					}
-				} else
+				}
+				else
 				{
 					enemy.die(controller, helicopter, this);
 					

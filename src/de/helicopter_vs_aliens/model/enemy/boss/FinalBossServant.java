@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 
 public abstract class FinalBossServant extends BossServant
 {
@@ -15,7 +16,6 @@ public abstract class FinalBossServant extends BossServant
     
     public static void selectAsFinalBossServant(Enemy enemy)
     {
-        Events.boss.operator.servants[enemy.id()] = enemy;
-        enemy.hasYPosSet = true;
+        Events.boss.operator.putServant(enemy);
     }
 }

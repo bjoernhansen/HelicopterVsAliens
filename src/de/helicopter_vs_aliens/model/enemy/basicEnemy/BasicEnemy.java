@@ -1,7 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
+import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -11,13 +12,12 @@ public abstract class BasicEnemy extends StandardEnemy
     private static final float
         STANDARD_MINI_BOSS_PROB = 0.05f,
         CHEAT_MINI_BOSS_PROB = 1.0f;
+    
     private static final double
         MINI_BOSS_SIZE_FACTOR = 1.44;
     
-    public static Enemy
-        currentMiniBoss;    // Referenz auf den aktuellen Boss-Gegner
-    public static float
-        miniBossProb = 0.05f;// bestimmt die Häufigkeit, mit der Mini-Bosse erscheinen
+    private static float
+        miniBossProb = STANDARD_MINI_BOSS_PROB; // bestimmt die Häufigkeit, mit der Mini-Bosse erscheinen
     
     
     public static void changeMiniBossProb()
@@ -37,7 +37,7 @@ public abstract class BasicEnemy extends StandardEnemy
     
     protected boolean canBecomeMiniBoss()
     {
-        return 	currentMiniBoss == null
+        return 	EnemyController.currentMiniBoss == null
             && Events.level > 4
             && Calculations.tossUp(miniBossProb);
     }
@@ -45,10 +45,9 @@ public abstract class BasicEnemy extends StandardEnemy
     private void turnIntoMiniBoss(Helicopter helicopter)
     {
         helicopter.numberOfMiniBossSeen++;
-        currentMiniBoss = this;
+        EnemyController.currentMiniBoss = this;
         resizeToMiniBossDimension();
         isMiniBoss = true;
-        canExplode = false;
         callBack += 2;
         canTurn = true;
         if((type.isCloakableAsMiniBoss() && !canLearnKamikaze && Calculations.tossUp(0.2f)) || shootTimer == 0 )
@@ -92,5 +91,21 @@ public abstract class BasicEnemy extends StandardEnemy
     protected boolean isMeetingRequirementsForGlowingEyes()
     {
         return this.isMiniBoss;
+    }
+    
+    @Override
+    protected boolean isExplodingOnCollisions()
+    {
+        return !this.isMiniBoss && super.isExplodingOnCollisions();
+    }
+    
+    @Override
+    protected void prepareRemoval()
+    {
+        super.prepareRemoval();
+        if(this.isMiniBoss)
+        {
+            EnemyController.currentMiniBoss = null;
+        }
     }
 }

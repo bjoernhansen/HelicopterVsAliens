@@ -8,14 +8,6 @@ import java.awt.Color;
 public class Kaboom extends BasicEnemy
 {
     @Override
-    protected void doTypeSpecificInitialization()
-    {
-        this.canExplode = true;
-    
-        super.doTypeSpecificInitialization();
-    }
-    
-    @Override
     protected void finalizeInitialization(Helicopter helicopter)
     {
         helicopter.numberOfEnemiesSeen--;

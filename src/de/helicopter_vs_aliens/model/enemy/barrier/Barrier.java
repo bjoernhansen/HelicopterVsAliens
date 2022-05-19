@@ -1,12 +1,10 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
+import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
-import de.helicopter_vs_aliens.util.Colorations;
-
-import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 
 abstract class Barrier extends Enemy
 {
@@ -29,7 +27,7 @@ abstract class Barrier extends Enemy
     protected void finalizeInitialization(Helicopter helicopter)
     {
         helicopter.numberOfEnemiesSeen--;
-        barrierTimer = (int)((helicopter.getWidth() + getWidth())/2);
+        EnemyController.barrierTimer = (int)((helicopter.getWidth() + getWidth())/2);
  
         super.finalizeInitialization(helicopter);
         

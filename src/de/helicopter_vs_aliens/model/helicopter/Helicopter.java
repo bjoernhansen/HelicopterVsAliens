@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -388,11 +389,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.nextLocation.setLocation(nextX, nextY);
 		this.correctAndSetCoordinates();
 		
-		if (Enemy.currentNumberOfBarriers > 0 && !this.isDamaged)
+		if (EnemyController.currentNumberOfBarriers > 0 && !this.isDamaged)
 		{
-			for (int i = 0; i < Enemy.currentNumberOfBarriers; i++)
+			for (int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
 			{
-				Enemy enemy = Enemy.livingBarrier[i];
+				Enemy enemy = EnemyController.livingBarrier[i];
 				enemy.lastTouchedSite = enemy.touchedSite;
 				if (this.isLocationAdaptionApproved(enemy))
 				{
@@ -419,9 +420,9 @@ public abstract class Helicopter extends RectangularGameEntity
 					enemy.untouchedCounter = 0;
 				}
 			}
-			for (int i = 0; i < Enemy.currentNumberOfBarriers; i++)
+			for (int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
 			{
-				Enemy.livingBarrier[i].evaluatePosAdaption(this);
+				EnemyController.livingBarrier[i].evaluatePosAdaption(this);
 			}
 		}
 		

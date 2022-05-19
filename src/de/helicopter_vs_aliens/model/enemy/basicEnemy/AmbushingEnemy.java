@@ -10,7 +10,6 @@ public class AmbushingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.canExplode = true;
         this.speedup = READY;
         
         super.doTypeSpecificInitialization();

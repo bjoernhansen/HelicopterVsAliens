@@ -1,14 +1,13 @@
 package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.util.Calculations;
 
-public class EscapedSpeeder extends Speeder
+public class EscapedSpeeder extends BasicEnemy
 {
     @Override
     protected void doTypeSpecificInitialization()
     {
-        initializeBolt();
         this.callBack = 1 + Calculations.random(3);
         this.direction.x = Calculations.randomDirection();
         this.invincibleTimer = 67;
@@ -25,12 +24,12 @@ public class EscapedSpeeder extends Speeder
     @Override
     protected double calculateInitialX()
     {
-        return carrierDestroyedJustNow.getCenterX();
+        return EnemyController.carrierDestroyedJustNow.getCenterX();
     }
     
     @Override
     protected double calculateInitialY()
     {
-        return carrierDestroyedJustNow.getCenterY();
+        return EnemyController.carrierDestroyedJustNow.getCenterY();
     }
 }

@@ -28,6 +28,13 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
         return Graphics2DAdapter.of(image.getGraphics());
     }
     
+    public static GraphicsAdapter withAntialiasing(Image image){
+        GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(image);
+        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                         RenderingHints.VALUE_ANTIALIAS_ON);
+        return graphicsAdapter;
+    }
+    
     private Graphics2DAdapter(Graphics2D graphics2D)
     {
         super(graphics2D);

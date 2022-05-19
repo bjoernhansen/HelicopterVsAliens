@@ -13,7 +13,6 @@ public class FourthBossServant extends BossServant
     protected void doTypeSpecificInitialization()
     {
         this.direction.x = Calculations.randomDirection();
-        this.canExplode = true;
     
         super.doTypeSpecificInitialization();
     }
