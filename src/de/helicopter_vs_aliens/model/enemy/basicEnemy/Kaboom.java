@@ -8,13 +8,6 @@ import java.awt.Color;
 public class Kaboom extends BasicEnemy
 {
     @Override
-    protected void finalizeInitialization(Helicopter helicopter)
-    {
-        helicopter.numberOfEnemiesSeen--;
-        super.finalizeInitialization(helicopter);
-    }
-    
-    @Override
     protected boolean canBecomeMiniBoss()
     {
         return false;
@@ -36,5 +29,11 @@ public class Kaboom extends BasicEnemy
     protected int hitPointVariance()
     {
         return 0;
+    }
+    
+    @Override
+    public boolean countsForTotalAmountOfEnemiesSeen()
+    {
+        return false;
     }
 }

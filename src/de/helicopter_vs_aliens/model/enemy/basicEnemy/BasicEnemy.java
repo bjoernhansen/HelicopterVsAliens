@@ -1,11 +1,16 @@
 package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
+
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 public abstract class BasicEnemy extends StandardEnemy
 {
@@ -26,13 +31,13 @@ public abstract class BasicEnemy extends StandardEnemy
     }
     
     @Override
-    protected void finalizeInitialization(Helicopter helicopter)
+    protected void finalizeInitialization(GameRessourceProvider gameRessourceProvider)
     {
         if(canBecomeMiniBoss())
         {
-            turnIntoMiniBoss(helicopter);
+            turnIntoMiniBoss(gameRessourceProvider.getGameStatisticsCalculator());
         }
-        super.finalizeInitialization(helicopter);
+        super.finalizeInitialization(gameRessourceProvider);
     }
     
     protected boolean canBecomeMiniBoss()
@@ -42,9 +47,9 @@ public abstract class BasicEnemy extends StandardEnemy
             && Calculations.tossUp(miniBossProb);
     }
     
-    private void turnIntoMiniBoss(Helicopter helicopter)
+    private void turnIntoMiniBoss(GameStatisticsCalculator gameStatisticsCalculator)
     {
-        helicopter.numberOfMiniBossSeen++;
+        gameStatisticsCalculator.incrementNumberOfMiniBossSeen();
         EnemyController.currentMiniBoss = this;
         resizeToMiniBossDimension();
         isMiniBoss = true;
@@ -54,6 +59,13 @@ public abstract class BasicEnemy extends StandardEnemy
         {
             cloakingTimer = 0;
         }
+    }
+    
+    @Override
+    protected void writeDestructionStatistics(GameStatisticsCalculator gameStatisticsCalculator)
+    {
+        super.writeDestructionStatistics(gameStatisticsCalculator);
+        if(this.isMiniBoss){gameStatisticsCalculator.incrementNumberOfMiniBossKilled();}
     }
     
     private void resizeToMiniBossDimension()

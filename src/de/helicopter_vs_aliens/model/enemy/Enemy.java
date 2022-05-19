@@ -3,9 +3,10 @@ package de.helicopter_vs_aliens.model.enemy;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -13,7 +14,7 @@ import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
@@ -36,6 +37,7 @@ import java.awt.image.RescaleOp;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -47,12 +49,12 @@ import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.LE
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.NONE;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.RIGHT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.TOP;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.EMP;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.EMP;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PHASE_SHIFT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PLASMA;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
@@ -473,18 +475,15 @@ public abstract class Enemy extends RectangularGameEntity
 			enemyPainter.paintImage(this.graphicsAdapters[j], this, 1-2*j, null, true);
 		}
 	}
-	
 	public boolean countsForTotalAmountOfEnemiesSeen()
 	{
-		// TODO countsForTotalAmountOfEnemiesSeen implementieren, an anderen Stellen die -- aufrufe streichen; finale instanzvariable anlegen
 		return true;
 	}
-	
-	public void initialize(Helicopter helicopter)
+	public void initialize(GameRessourceProvider gameRessourceProvider)
 	{
 		setBasicProperties();
 		doTypeSpecificInitialization();
-		finalizeInitialization(helicopter);
+		finalizeInitialization(gameRessourceProvider);
 	}
 	
 	private void setTargetSpeedLevel()
@@ -539,8 +538,9 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	protected abstract void doTypeSpecificInitialization();
 	
-	protected void finalizeInitialization(Helicopter helicopter)
+	protected void finalizeInitialization(GameRessourceProvider gameRessourceProvider)
 	{
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		setInitialLocation(helicopter);
 		
 		this.speedLevel.setLocation(this.targetSpeedLevel);
@@ -721,7 +721,7 @@ public abstract class Enemy extends RectangularGameEntity
 				&& !hasRadarDevice);
 	}
 	
-	public final void update(Controller controller, Helicopter helicopter)
+	public final void update(GameRessourceProvider gameRessourceProvider)
 	{												
 		lifetime++;
 		updateTimer();
@@ -730,10 +730,11 @@ public abstract class Enemy extends RectangularGameEntity
 			callBack = 0;
 		}
 		checkForBarrierCollision();
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(!isStunned())
 		{
 			updateStoppableTimer();
-			performFlightManeuver(controller, helicopter);
+			performFlightManeuver(gameRessourceProvider);
 			validateTurns();
 		}		
 		calculateSpeed(helicopter);
@@ -741,15 +742,15 @@ public abstract class Enemy extends RectangularGameEntity
 		
 		if(helicopter.canCollideWith(this))
 		{
-			collision(controller, helicopter);
+			collision(gameRessourceProvider);
 		}
 		if(helicopter.getType() == HelicopterType.PEGASUS)
 		{
-			checkForEmpStrike(controller, (Pegasus)helicopter);
+			checkForEmpStrike(gameRessourceProvider);
 		}
 		if(hasDeadlyGroundContact())
 		{
-			destroy(helicopter, controller.powerUps, false);
+			destroyByCrash(gameRessourceProvider);
 		}
 		if(isToBeRemoved())
 		{
@@ -758,9 +759,9 @@ public abstract class Enemy extends RectangularGameEntity
 		setPaintBounds();
 	}
 	
-	protected void performFlightManeuver(Controller controller, Helicopter helicopter)
+	protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
 	{
-		this.calculateFlightManeuver(controller, helicopter);
+		this.calculateFlightManeuver(gameRessourceProvider);
 	}
 	
 	public boolean isStunned()
@@ -870,9 +871,10 @@ public abstract class Enemy extends RectangularGameEntity
 		if( this.isStunned()) {this.stunningTimer--;}
 	}
 
-	private void calculateFlightManeuver(Controller controller,
-										 Helicopter helicopter)
-	{				
+	private void calculateFlightManeuver(GameRessourceProvider gameRessourceProvider)
+	{
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		
 		// Beschleunigung
 		if(    this.speedup != DISABLED 
 			|| this.canFrontalSpeedup)
@@ -932,10 +934,10 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 								
 		// Shooting
-		if(this.shootTimer != DISABLED){evaluateShooting(controller, helicopter);}
+		if(this.shootTimer != DISABLED){evaluateShooting(gameRessourceProvider);}
 		if(this.barrierShootTimer != DISABLED)
 		{
-			evaluateBarrierShooting(controller, helicopter);
+			evaluateBarrierShooting(gameRessourceProvider);
 		}									
 		
 		// Snooze bei Hindernissen									
@@ -1038,20 +1040,20 @@ public abstract class Enemy extends RectangularGameEntity
 		else if(this.hasToTurnAtYBorder()){this.changeYDirection();}
 	}
 	
-	private void checkForEmpStrike(Controller controller,
-								   Pegasus pegasus)
+	private void checkForEmpStrike(GameRessourceProvider gameRessourceProvider)
 	{
+		Pegasus pegasus = (Pegasus)gameRessourceProvider.getHelicopter();
 		if(pegasus.empWave != null)
 		{
 			if(this.isEmpShockable(pegasus))
 			{
-				this.empShock(controller, pegasus);
+				this.empShock(gameRessourceProvider, pegasus);
 			}
 		}
 		else{this.isEmpShocked = false;}
 	}
 
-	private void empShock(Controller controller, Pegasus pegasus)
+	private void empShock(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
     {
     	takeDamage((int)getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
 		isEmpShocked = true;
@@ -1071,7 +1073,7 @@ public abstract class Enemy extends RectangularGameEntity
 			}
 			reactToHit(pegasus, null);
 			
-			Explosion.start(controller.explosions, pegasus,
+			Explosion.start(gameRessourceProvider.getExplosions(), pegasus,
 							getCenterX(),
 							getCenterY(), STUNNING, false);
 		}
@@ -1080,7 +1082,7 @@ public abstract class Enemy extends RectangularGameEntity
 			Audio.play(Audio.explosion2);
 			pegasus.empWave.kills++;
 			pegasus.empWave.earnedMoney += calculateReward(pegasus);
-			die(controller, pegasus, null);
+			die(gameRessourceProvider,null);
 		}
     }
     
@@ -1321,7 +1323,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}	
 	}
 	
-	private void evaluateShooting(Controller controller, Helicopter helicopter)
+	private void evaluateShooting(GameRessourceProvider gameRessourceProvider)
 	{
 		if(	this.shootTimer == 0
 			&& !this.isEmpSlowed()
@@ -1329,20 +1331,20 @@ public abstract class Enemy extends RectangularGameEntity
 			&& this.getX() + this.getWidth() > 0
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
 			&& ((this.direction.x == -1 
-				 && helicopter.getBounds().intersects(	
-						 				this.getX() + Integer.MIN_VALUE/2f,
-						 				this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
-						 				Integer.MAX_VALUE/2f,
-						 				EnemyMissile.DIAMETER+30))
+				 && gameRessourceProvider.getHelicopter().getBounds().intersects(
+					this.getX() + Integer.MIN_VALUE/2f,
+					this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
+					Integer.MAX_VALUE/2f,
+					EnemyMissile.DIAMETER+30))
 				||
 				((this.direction.x == 1 
-				  && helicopter.getBounds().intersects(
-						  				this.getX(),
-						  				this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
-								 		Integer.MAX_VALUE/2f,
-								 		EnemyMissile.DIAMETER+30))))) 
+				  && gameRessourceProvider.getHelicopter().getBounds().intersects(
+					this.getX(),
+					this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
+					Integer.MAX_VALUE/2f,
+					EnemyMissile.DIAMETER+30)))))
 		{
-			this.shoot(	controller.enemyMissiles,
+			this.shoot(gameRessourceProvider.getEnemyMissiles(),
 						this.hasDeadlyShots() ? BUSTER : DISCHARGER,
 						this.shotSpeed + 3*Math.random()+5);
 			
@@ -1358,9 +1360,9 @@ public abstract class Enemy extends RectangularGameEntity
 				|| (this.type == EnemyType.BIG_SHIELD_MAKER && Calculations.tossUp());
 	}
 
-	private void evaluateBarrierShooting(Controller controller,
-										 Helicopter helicopter)
+	private void evaluateBarrierShooting(GameRessourceProvider gameRessourceProvider)
 	{
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(this.barrierShootTimer == 0)
 		{
 			this.barrierShootTimer = this.shootingCycleLength;
@@ -1394,12 +1396,12 @@ public abstract class Enemy extends RectangularGameEntity
 				this.shootingDirection.setLocation(this.shootingDirection.getX()/distance,
 													this.shootingDirection.getY()/distance);
 			}
-			this.shoot(controller.enemyMissiles, this.shotType, this.shotSpeed);
+			this.shoot(gameRessourceProvider.getEnemyMissiles(), this.shotType, this.shotSpeed);
 		}				
 		this.barrierShootTimer--;
 	}
 	
-	public void shoot(EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissiles, EnemyMissileType missileType, double missileSpeed)
+	public void shoot(Map<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissiles, EnemyMissileType missileType, double missileSpeed)
     {
     	Iterator<EnemyMissile> i = enemyMissiles.get(INACTIVE).iterator();
 		EnemyMissile em;
@@ -1746,29 +1748,29 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 	}
 	
-	public static void updateAllDestroyed(Controller controller,
-										  Helicopter helicopter)
+	public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Enemy> i = controller.enemies.get(DESTROYED).iterator(); i.hasNext();)
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		for(Iterator<Enemy> i = gameRessourceProvider.getEnemies().get(DESTROYED).iterator(); i.hasNext();)
 		{
 			Enemy e = i.next();
-			e.updateDead(controller.explosions, helicopter);
+			e.updateDead(gameRessourceProvider.getExplosions(), helicopter);
 			
 			if(	helicopter.basicCollisionRequirementsSatisfied(e)
 				&& !e.hasCrashed)
 			{
-				e.collision(controller, helicopter);
+				e.collision(gameRessourceProvider);
 			}				
 			if(e.isMarkedForRemoval)
 			{
 				e.clearImage();
 				i.remove(); 
-				// controller.enemies.get(INACTIVE).add(e);
+				// gameRessourceProvider.enemies.get(INACTIVE).add(e);
 			}				
 		}		// this.slowed_timer
 	}
 
-	private void updateDead(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter)
+	private void updateDead(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter)
 	{				
 		if(this.collisionDamageTimer > 0){this.collisionDamageTimer--;}
 		if(this.collisionAudioTimer > 0){this.collisionAudioTimer--;}
@@ -1783,7 +1785,7 @@ public abstract class Enemy extends RectangularGameEntity
 		this.setPaintBounds();
 	}
 	
-	private void handleCrashToTheGround(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
+	private void handleCrashToTheGround(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion,
 										Helicopter helicopter)
 	{
 		this.hasCrashed = true;
@@ -1809,10 +1811,11 @@ public abstract class Enemy extends RectangularGameEntity
 		return this.isBoss() && !this.isDestroyed;
 	}
 
-	private void collision(Controller controller, Helicopter helicopter)
+	private void collision(GameRessourceProvider gameRessourceProvider)
 	{
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		boolean playCollisionSound = this.collisionAudioTimer == READY;
-		helicopter.beAffectedByCollisionWith(this, controller, playCollisionSound);
+		helicopter.beAffectedByCollisionWith(this, gameRessourceProvider, playCollisionSound);
 				
 		if(playCollisionSound)
 		{
@@ -1824,8 +1827,7 @@ public abstract class Enemy extends RectangularGameEntity
 			&& !this.isInvincible()
 			&& !this.isDestroyed)
 		{
-			this.explode( controller.explosions,
-						  helicopter, 
+			this.explode( gameRessourceProvider,
 						  0, 
 						  this.type == EnemyType.KABOOM
 						  	? JUMBO 
@@ -1835,9 +1837,9 @@ public abstract class Enemy extends RectangularGameEntity
 			if(	helicopter.canObtainCollisionReward()
 				&& !(this.type == EnemyType.KABOOM))
 			{
-				this.grantRewards(helicopter, null, helicopter.hasPerformedTeleportKill(), controller.powerUps);
+				this.grantRewards(gameRessourceProvider, null, helicopter.hasPerformedTeleportKill());
 			}
-			this.destroy(helicopter);
+			this.destroyByHelicopter(gameRessourceProvider);
 		}				
 		if(	helicopter.isDestinedToCrash())
 		{
@@ -1845,14 +1847,15 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 	}
 
-	private void grantRewards(Helicopter helicopter, Missile missile, boolean beamKill, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
+	private void grantRewards(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
 	{
-		helicopter.receiveRewardFor(this, missile, beamKill);
-		this.grantGeneralRewards(helicopter, powerUps);
+		gameRessourceProvider.getHelicopter().receiveRewardFor(this, missile, beamKill);
+		this.grantGeneralRewards(gameRessourceProvider);
 	}
 
-	public void reactToRadiation(Controller controller, Helicopter helicopter)
+	public void reactToRadiation(GameRessourceProvider gameRessourceProvider)
 	{
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(	this.teleportTimer == READY){this.teleport();}
 		else if(this.canTakeCollisionDamage())
 		{
@@ -1885,7 +1888,7 @@ public abstract class Enemy extends RectangularGameEntity
 			else
 			{
 				boolean beamKill = helicopter.bonusKillsTimer > 0;
-				this.die(controller, helicopter, null, beamKill);
+				this.die(gameRessourceProvider, null, beamKill);
 			}
 		}		
 	}
@@ -1919,9 +1922,11 @@ public abstract class Enemy extends RectangularGameEntity
 		if(!hasHPsLeft()){hitPoints = 0;}
 	}
 	
-	public void hitByMissile(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
-	{		
-		helicopter.hitCounter++;
+	public void hitByMissile(GameRessourceProvider gameRessourceProvider, Missile missile)
+	{
+		gameRessourceProvider.getGameStatisticsCalculator()
+							 .incrementHitCounter();
+				
 		if( missile.typeOfExplosion == JUMBO
 			|| missile.typeOfExplosion == PHASE_SHIFT
 			|| missile.extraDamage)
@@ -1948,8 +1953,8 @@ public abstract class Enemy extends RectangularGameEntity
 			}
 		}		
 		if(areStunningRequirementsMet(missile))
-		{			
-			this.stun(helicopter, missile, explosion);
+		{
+			this.stun(gameRessourceProvider, missile);
 		}
 	}
 	
@@ -1960,15 +1965,16 @@ public abstract class Enemy extends RectangularGameEntity
 			&& this.nonStunableTimer == READY;
 	}
 	
-	private void stun(Helicopter helicopter, Missile missile, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	private void stun(GameRessourceProvider gameRessourceProvider, Missile missile)
 	{
 		if(this.hasHPsLeft()){Audio.play(Audio.stun);}
-		this.explode(explosion, helicopter, missile);	
+		this.explode(gameRessourceProvider, missile);
 		this.nonStunableTimer = (int)(this.type.isMainBoss() || this.type.isFinalBossServant()
 										  ? 2.25f*Events.level 
 										  : 0);
 		this.knockBackDirection = missile.speed > 0 ? 1 : -1;
-				
+		
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		this.speedLevel.setLocation(
 				(this.knockBackDirection == this.direction.x ? 1 : -1)
 				  *(this.type.isMainBoss() || this.type.isFinalBossServant()
@@ -2035,19 +2041,22 @@ public abstract class Enemy extends RectangularGameEntity
 										: this.isCarrier ? 0.1f : 0.25f);
 	}
 
-	private void explode(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter, Missile missile)
+	void explode(GameRessourceProvider gameRessourceProvider)
 	{
-		explode(explosion, helicopter, missile.speed, missile.typeOfExplosion, missile.extraDamage);
-	}	
-	void explode(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter)
+		explode(gameRessourceProvider, 0, ORDINARY, false);
+	}
+	
+	private void explode(GameRessourceProvider gameRessourceProvider, Missile missile)
 	{
-		explode(explosion, helicopter, 0, ORDINARY, false);
-	}	
-	private void explode(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter, double missileSpeed, ExplosionTypes explosionType, boolean extraDamage)
-	{		
+		explode(gameRessourceProvider, missile.speed, missile.typeOfExplosion, missile.extraDamage);
+	}
+	
+	private void explode(GameRessourceProvider gameRessourceProvider, double missileSpeed, ExplosionType explosionType, boolean extraDamage)
+	{
+		// TODO refactoring
 		if(this.explodingTimer == 0){this.explodingTimer = 7;}
-		Explosion.start(explosion, 
-						helicopter, 
+		Explosion.start(gameRessourceProvider.getExplosions(),
+						gameRessourceProvider.getHelicopter(),
 						this.getX() + ((explosionType != EMP && getModel() != BARRIER)
 							? (missileSpeed < 0 ? 2 : 1) * this.getWidth()/3
 							: this.getWidth()/2),
@@ -2055,20 +2064,25 @@ public abstract class Enemy extends RectangularGameEntity
 						explosionType, extraDamage);
 	}
 	
-	void destroy(Helicopter helicopter){destroy(helicopter, null, true);}
-	void destroy(Helicopter helicopter,
-				 EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
-				 boolean wasDestroyedByPlayer)
+	void destroyByHelicopter(GameRessourceProvider gameRessourceProvider)
 	{
-		if(wasDestroyedByPlayer)
-		{
-			if(getModel() != BARRIER){helicopter.numberOfEnemiesKilled++;}
-			if(this.isMiniBoss){helicopter.numberOfMiniBossKilled++;}
-		}	
-		else
-		{
-			if(this.canDropPowerUp()){this.dropRandomPowerUp(helicopter, powerUp);}
-		}
+		writeDestructionStatistics(gameRessourceProvider.getGameStatisticsCalculator());
+		this.beDestroyed(gameRessourceProvider.getHelicopter());
+	}
+	
+	protected void writeDestructionStatistics(GameStatisticsCalculator gameStatisticsCalculator)
+	{
+		gameStatisticsCalculator.incrementNumberOfEnemiesKilled();
+	}
+	
+	void destroyByCrash(GameRessourceProvider gameRessourceProvider)
+	{
+		if(this.canDropPowerUp()){this.dropRandomPowerUp(gameRessourceProvider);}
+		this.beDestroyed(gameRessourceProvider.getHelicopter());
+	}
+	
+	private void beDestroyed(Helicopter helicopter)
+	{
 		this.isDestroyed = true;
 		if(this.cloakingTimer > 0){this.uncloak(DISABLED);}
 		this.teleportTimer = DISABLED;
@@ -2076,21 +2090,21 @@ public abstract class Enemy extends RectangularGameEntity
 		this.secondaryColor = Colorations.adjustBrightness(this.secondaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
 		
 		this.repaint();
-	
+		
 		if(helicopter.tractor == this)
 		{
 			helicopter.stopTractor();
-		}		
+		}
 		this.speedLevel.setLocation(0, 12);
 		this.direction.y = 1;
 		
 		this.empSlowedTimer = READY;
 		this.yCrashPos = (int)(this.getMaxY() >= GROUND_Y
-									? this.getMaxY()
-									: GROUND_Y 
-									  + 1
-									  + Math.random()
-									    *(this.getHeight()/4));
+			? this.getMaxY()
+			: GROUND_Y
+			+ 1
+			+ Math.random()
+			*(this.getHeight()/4));
 	}
 	
 	private void uncloak(int nextCloakingState)
@@ -2101,32 +2115,28 @@ public abstract class Enemy extends RectangularGameEntity
 		this.cloakingTimer = nextCloakingState;
 	}
 
-	public void die(Controller controller, Helicopter helicopter,
-					Missile missile)
+	public void die(GameRessourceProvider gameRessourceProvider, Missile missile)
 	{
-		this.die(controller, helicopter, missile, false);
+		this.die(gameRessourceProvider, missile, false);
 	}
 
-	public void die(Controller controller, Helicopter helicopter,
-					Missile missile, boolean beamKill)
+	public void die(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
 	{
-		this.grantRewards(helicopter, missile, beamKill, controller.powerUps);
-		this.destroy(helicopter);
+		this.grantRewards(gameRessourceProvider, missile, beamKill);
+		this.destroyByHelicopter(gameRessourceProvider);
 		if(this.isShielding){this.stopShielding();}
 		if(this.cloakingTimer != DISABLED){Audio.play(Audio.cloak);}
 		
 		if(missile == null)
 		{
-			this.explode(controller.explosions, helicopter);
+			this.explode(gameRessourceProvider);
 		}		
 		else if(missile.typeOfExplosion != STUNNING)
 		{
-			this.explode(controller.explosions, helicopter, missile);
+			this.explode(gameRessourceProvider, missile);
 		}		
 		
-		this.evaluateBossDestructionEffect(helicopter,
-											  controller.enemies,
-											  controller.explosions);
+		this.evaluateBossDestructionEffect(gameRessourceProvider);
 		if(this.isCarrier){
 			EnemyController.carrierDestroyedJustNow = this;}
 		if(missile != null){missile.hits.remove(this.hashCode());}
@@ -2156,11 +2166,9 @@ public abstract class Enemy extends RectangularGameEntity
 				|| this.type == EnemyType.BOSS_4 );
 	}
 	
-	public void dropRandomPowerUp(Helicopter helicopter,
-								  EnumMap<CollectionSubgroupType,
-								  LinkedList<PowerUp>> powerUps)
+	public void dropRandomPowerUp(GameRessourceProvider gameRessourceProvider)
 	{
-		PowerUp.activateInstance(helicopter, powerUps, this);
+		PowerUp.activateInstance(gameRessourceProvider, this);
 	}
 	
 	public PowerUpType getTypeOfRandomlyDroppedPowerUp()
@@ -2202,10 +2210,11 @@ public abstract class Enemy extends RectangularGameEntity
 		return this.isMiniBoss ? MINI_BOSS_REWARD_FACTOR : STANDARD_REWARD_FACTOR;
 	}
  
-	private void evaluateBossDestructionEffect(Helicopter helicopter,
-											   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
-											   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	private void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
 	{
+		Map<CollectionSubgroupType, LinkedList<Enemy>>
+			enemies = gameRessourceProvider.getEnemies();
+		
 		if(this.isMiniBoss)
 		{
 			EnemyController.currentMiniBoss = null;
@@ -2218,31 +2227,32 @@ public abstract class Enemy extends RectangularGameEntity
 		}					
 		else if(this.type == EnemyType.BOSS_4)
 		{
-			for(Enemy e : enemy.get(ACTIVE))
+			for(Enemy e : enemies.get(ACTIVE))
 			{
-				e.explode(explosion, helicopter);
+				e.explode(gameRessourceProvider);
 				if (e.type != EnemyType.BOSS_4)
 				{
-					e.destroy(helicopter);
+					e.destroyByHelicopter(gameRessourceProvider);
 				}
 			}
 		}
 		else if(this.type == EnemyType.FINAL_BOSS)
 		{
-			for(Enemy e : enemy.get(ACTIVE))
+			for(Enemy e : enemies.get(ACTIVE))
 			{
-				e.explode(explosion, helicopter);
+				e.explode(gameRessourceProvider);
 				if (e.type != EnemyType.FINAL_BOSS)
 				{
-					e.destroy(helicopter);
+					e.destroyByHelicopter(gameRessourceProvider);
 				}
 			}
 			Events.isRestartWindowVisible = true;
 			Events.level = Events.maxLevel = 51;
+			
+			Helicopter helicopter = gameRessourceProvider.getHelicopter();
 			helicopter.isDamaged = true;
-		
-			helicopter.destination.setLocation(helicopter.getX()+40,
-											   520.0);	
+			// TODO Konstanten definieren
+			helicopter.destination.setLocation(helicopter.getX()+40,520.0);
 			Events.determineHighscoreTimes(helicopter);
 		}
 		else if(this.type.isFinalBossServant())
@@ -2252,7 +2262,10 @@ public abstract class Enemy extends RectangularGameEntity
 				Events.boss.operator.resetTimeSinceDeath(servantType);
 			});
 		}
-		if(this.type.isMainBoss() && this.type != EnemyType.FINAL_BOSS){Events.boss = null;}
+		if(this.type.isMainBoss() && this.type != EnemyType.FINAL_BOSS)
+		{
+			Events.boss = null;
+		}
 	}
 
 	public void dodge()
@@ -2328,7 +2341,7 @@ public abstract class Enemy extends RectangularGameEntity
    	 		   && this.snoozeTimer <= SNOOZE_TIME;
 	}
 	
-	public void startStaticDischarge(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
+	public void startStaticDischarge(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion,
 									 Helicopter helicopter)
 	{
 		this.staticChargeTimer = STATIC_CHARGE_TIME;
@@ -2385,16 +2398,14 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 	}
 
-	public static void getRidOfSomeEnemies(Helicopter helicopter,
-										   EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
-										   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Enemy e : enemy.get(ACTIVE))
+		for(Enemy e : gameRessourceProvider.getEnemies().get(ACTIVE))
 		{
 			if (e.getModel() == BARRIER && e.isOnScreen())
 			{
-				e.explode(explosion, helicopter);
-				e.destroy(helicopter);
+				e.explode(gameRessourceProvider);
+				e.destroyByHelicopter(gameRessourceProvider);
 			} else if (!e.isOnScreen())
 			{
 				e.isMarkedForRemoval = true;
@@ -2440,13 +2451,13 @@ public abstract class Enemy extends RectangularGameEntity
 		return this.type == EnemyType.KABOOM && !this.isDestroyed;
 	}
 
-	public void grantGeneralRewards(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
+	public void grantGeneralRewards(GameRessourceProvider gameRessourceProvider)
 	{
 		if(this.canCountForKillsAfterLevelUp())
 		{
 			Events.killsAfterLevelUp++;
 		}
-		if(this.canDropPowerUp()){this.dropRandomPowerUp(helicopter, powerUps);}
+		if(this.canDropPowerUp()){this.dropRandomPowerUp(gameRessourceProvider);}
 		if(this.isMiniBoss){Audio.play(Audio.applause2);}
 	}
 	

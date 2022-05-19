@@ -1,7 +1,9 @@
 package de.helicopter_vs_aliens.model.explosion;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -12,9 +14,9 @@ import de.helicopter_vs_aliens.model.scenery.Scenery;
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
@@ -22,11 +24,11 @@ import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.gui.window.Window.HELICOPTER_DISTANCE;
 import static de.helicopter_vs_aliens.gui.window.Window.START_SCREEN_HELICOPTER_OFFSET_Y;
 import static de.helicopter_vs_aliens.gui.window.Window.START_SCREEN_OFFSET_X;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.EMP;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.EMP;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PHASE_SHIFT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PLASMA;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
@@ -58,7 +60,7 @@ public class Explosion extends GameEntity
     private final Point2D
 		center = new Point2D.Float();			// Zentrum der Explosion
 
-	private ExplosionTypes
+	private ExplosionType
 		type;		// Standard, Plasma, EMP, etc.
 
 
@@ -75,10 +77,9 @@ public class Explosion extends GameEntity
 		this.source = null;
     }    
 	   
-	public static void updateAll(Helicopter helicopter,
-								 EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<Explosion> i = explosion.get(ACTIVE).iterator(); i.hasNext();)
+    	for(Iterator<Explosion> i = gameRessourceProvider.getExplosions().get(ACTIVE).iterator(); i.hasNext();)
 		{
 			Explosion exp = i.next();
 			exp.update();
@@ -86,15 +87,16 @@ public class Explosion extends GameEntity
 			if(exp.time >= exp.maxTime)
 			{
 				i.remove();
+				// TODO irgendwie auslagern in Pegasus und ggf. auch Methode in Explosion
 				if(exp.type == EMP)
 				{
-					((Pegasus)helicopter).empWave = null;
+					((Pegasus)gameRessourceProvider.getHelicopter()).empWave = null;
 					if(exp.kills > 1)
 					{
 						Events.extraReward(exp.kills, exp.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
-				explosion.get(INACTIVE).add(exp);
+				gameRessourceProvider.getExplosions().get(INACTIVE).add(exp);
 	        }
 		}		
 	}
@@ -154,19 +156,19 @@ public class Explosion extends GameEntity
 		}
 	}
 	
-	public static void start(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
-                             Helicopter helicopter,
-                             double x, double y,
-                             ExplosionTypes explosionType,
-                             boolean extraDamage)
+	public static void start(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion,
+							 Helicopter helicopter,
+							 double x, double y,
+							 ExplosionType explosionType,
+							 boolean extraDamage)
     {
     	start(explosion, helicopter, x, y, explosionType, extraDamage, null);
     }
 	
-	public static void start(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion,
+	public static void start(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion,
 							 Helicopter helicopter,
 							 double x, double y,
-							 ExplosionTypes explosionType,
+							 ExplosionType explosionType,
 							 boolean extraDamage,
 							 Enemy source)
     {

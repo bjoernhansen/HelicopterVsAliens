@@ -1,27 +1,27 @@
 package de.helicopter_vs_aliens.model.missile;
-import java.awt.Color;
-import java.awt.geom.Point2D;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.GameEntity;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.util.Iterator;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
+import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 
 public class EnemyMissile extends GameEntity
@@ -38,14 +38,14 @@ public class EnemyMissile extends GameEntity
 		diameter;		// Geschoss-Durchmesser
     
 	private boolean
-		hasHit,			// = true: Hat den Helikoper getroffen und kann entsorgt werden
+		hasHit,			// = true: Hat den Helikopter getroffen und kann entsorgt werden
     	lightUpColor; 	// = true: Farbe der grünen Geschosse wird heller, sonst dunkler
     
 	private Color
         variableColor;  // variable grüne Farbe der gegnerischen Geschosse
     	
     private EnemyMissileType
-		type;				// Art des Geschoss
+		type;				// Art des Geschosses
 	
     
     private void update(Helicopter helicopter)
@@ -69,7 +69,7 @@ public class EnemyMissile extends GameEntity
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-    		Explosion.start(Controller.getInstance().explosions,
+    		Explosion.start(Controller.getInstance().getExplosions(),
     						helicopter,
 							(int)(helicopter.getX()
 									+ (helicopter.isMovingLeft
@@ -140,13 +140,12 @@ public class EnemyMissile extends GameEntity
 		this.lightUpColor = true;
     }
 	
-	public static void updateAll(EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissile,
-								 Helicopter helicopter)
+	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<EnemyMissile> i = enemyMissile.get(ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<EnemyMissile> i = gameRessourceProvider.getEnemyMissiles().get(ACTIVE).iterator(); i.hasNext();)
 		{
 			EnemyMissile em = i.next();	    			
-			em.update(helicopter);	
+			em.update(gameRessourceProvider.getHelicopter());
 			if(    em.location.getX() + 80 < 0 
 				|| em.location.getX() > 1050 
 				|| em.location.getY() + 20 < 0 
@@ -154,7 +153,7 @@ public class EnemyMissile extends GameEntity
 				|| em.hasHit)
 			{
 				i.remove();					
-				enemyMissile.get(INACTIVE).add(em);
+				gameRessourceProvider.getEnemyMissiles().get(INACTIVE).add(em);
 			}
 		}		
 	}

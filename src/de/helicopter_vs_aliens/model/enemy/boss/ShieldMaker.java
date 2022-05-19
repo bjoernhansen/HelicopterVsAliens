@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
@@ -28,13 +29,13 @@ public abstract class ShieldMaker extends FinalBossServant
     }
     
     @Override
-    protected void performFlightManeuver(Controller controller, Helicopter helicopter)
+    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
         if(this.shieldMakerTimer != DISABLED)
         {
             this.shieldMakerAction();
         }
-        super.performFlightManeuver(controller, helicopter);
+        super.performFlightManeuver(gameRessourceProvider);
     }
     
     private void shieldMakerAction()

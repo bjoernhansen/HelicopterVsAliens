@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -16,6 +17,7 @@ import java.applet.AudioClip;
 import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
@@ -115,16 +117,16 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void tryToUseEnergyAbility(Controller controller)
     {
         if(this.isEnergyAbilityActivatable())
         {
-            useEnergyAbility(powerUp, explosion);
+            useEnergyAbility(controller);
         }
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(Controller controller)
     {
         this.prepareTeleportation();
     }
@@ -141,13 +143,13 @@ public final class Phoenix extends Helicopter
 
     @Override
     public void beAffectedByCollisionWith(Enemy enemy,
-                                          Controller controller,
+                                          GameRessourceProvider gameRessourceProvider,
                                           boolean playCollisionSound)
     {
-        super.beAffectedByCollisionWith(enemy, controller, playCollisionSound);
+        super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
         if(this.hasShortRangeRadiation)
         {
-            enemy.reactToRadiation(controller, this);
+            enemy.reactToRadiation(gameRessourceProvider);
         }
     }
     

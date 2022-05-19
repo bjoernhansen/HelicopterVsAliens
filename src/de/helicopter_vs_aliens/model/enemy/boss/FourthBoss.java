@@ -4,14 +4,15 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
-import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 
@@ -30,13 +31,13 @@ public class FourthBoss extends BossEnemy
     }
     
     @Override
-    protected void performFlightManeuver(Controller controller, Helicopter helicopter)
+    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        this.boss4Action(controller.enemies);
-        super.performFlightManeuver(controller, helicopter);
+        this.boss4Action(gameRessourceProvider.getEnemies());
+        super.performFlightManeuver(gameRessourceProvider);
     }
     
-    private void boss4Action(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private void boss4Action(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
         if(    this.getX() < 930
             && this.getX() > 150)

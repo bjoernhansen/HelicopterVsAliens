@@ -1,13 +1,14 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.BossLevel;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
@@ -92,11 +93,13 @@ public class ScoreScreenWindowPainter extends WindowPainter
         
         graphicsAdapter.setColor(Color.white);
         // TODO hier dictionary einsetzen und loop erzeugen
+        GameStatisticsCalculator gameStatisticsCalculator = Controller.getInstance()
+                                                                      .getGameStatisticsCalculator();
         graphicsAdapter.drawString((Window.language == ENGLISH ? "Crash landings: " : "Bruchlandungen: ")
-                + helicopter.numberOfCrashes,
-            X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 1 + 11);
+                + gameStatisticsCalculator.getNumberOfCrashes(),
+            X_POS_2, Y_POS + SPACE_BETWEEN_ROWS + 11);
         graphicsAdapter.drawString((Window.language == ENGLISH ? "Repairs: " : "Reparaturen: ")
-                + helicopter.numberOfRepairs,
+                + gameStatisticsCalculator.getNumberOfRepairs(),
             X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 2 + 11);
         graphicsAdapter.drawString((Window.language == ENGLISH ? "Overall earnings: " : "Gesamt-Sold: ")
                 +  Events.overallEarnings + " €",
@@ -106,15 +109,15 @@ public class ScoreScreenWindowPainter extends WindowPainter
         graphicsAdapter.setColor(Colorations.scoreScreen[0]);
         graphicsAdapter.drawString((Window.language == ENGLISH ? "Additional income due to extra boni: " : "Zusätzliche Einnahmen durch Extra-Boni: +") + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 5);
         
-        percentage = Calculations.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen);
+        percentage = gameStatisticsCalculator.getKillRate();
         graphicsAdapter.setColor(Colorations.scoreScreen[1]);
-        graphicsAdapter.drawString((Window.language == ENGLISH ? "Defeated enemies: " : "Besiegte Gegner: ") + helicopter.numberOfEnemiesKilled + (Window.language == ENGLISH ? " of " : " von ") + helicopter.numberOfEnemiesSeen + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 6);
+        graphicsAdapter.drawString((Window.language == ENGLISH ? "Defeated enemies: " : "Besiegte Gegner: ") + gameStatisticsCalculator.getNumberOfEnemiesKilled() + (Window.language == ENGLISH ? " of " : " von ") + gameStatisticsCalculator.getNumberOfEnemiesSeen() + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 6);
         
-        percentage = Calculations.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen);
+        percentage = gameStatisticsCalculator.getMiniBossKillRate();
         graphicsAdapter.setColor(Colorations.scoreScreen[2]);
-        graphicsAdapter.drawString((Window.language == ENGLISH ? "Defeated mini-bosses: " : "Besiegte Mini-Bosse: ") + helicopter.numberOfMiniBossKilled + (Window.language == ENGLISH ? " of " : " von ") + helicopter.numberOfMiniBossSeen + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 7);
+        graphicsAdapter.drawString((Window.language == ENGLISH ? "Defeated mini-bosses: " : "Besiegte Mini-Bosse: ") + gameStatisticsCalculator.getNumberOfMiniBossKilled() + (Window.language == ENGLISH ? " of " : " von ") + gameStatisticsCalculator.getNumberOfMiniBossSeen() + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 7);
         
-        percentage = (Calculations.percentage(helicopter.hitCounter, helicopter.missileCounter));
+        percentage = gameStatisticsCalculator.getMissileHitRate();
         graphicsAdapter.setColor(Colorations.scoreScreen[3]);
         graphicsAdapter.drawString((Window.language == ENGLISH ? "Hit rate: " : "Raketen-Trefferquote: ") + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 8); //Zielsicherheit
     }

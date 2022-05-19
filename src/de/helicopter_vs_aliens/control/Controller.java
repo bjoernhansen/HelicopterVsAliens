@@ -38,6 +38,7 @@ import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
 import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -45,7 +46,7 @@ import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
 public final class Controller extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener,
-									   					WindowListener
+									   					WindowListener, GameRessourceProvider
 {
 	private static final boolean
 		STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW = true;
@@ -82,21 +83,24 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		
 	private Helicopter
 		helicopter = HelicopterType.getDefault().makeInstance();
-
+	
+	
 	// TODO Verwaltung anders lösen, vermutlich mit den erstellten Klassen im Packet control/entities
-	public final EnumMap<CollectionSubgroupType, LinkedList<Enemy>>
+	// TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
+	// TODO LinkedList nicht verwenden, ggf. Queue oder Dequeue .. an einer Stelle muss das erste Element gezogen werden, in jedem Fall gegen das Interface und nicht gegen LinkedLIst
+	private final Map<CollectionSubgroupType, LinkedList<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public final EnumMap<CollectionSubgroupType, LinkedList<Missile>>
+	private final Map<CollectionSubgroupType, LinkedList<Missile>>
 		missiles = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public final EnumMap<CollectionSubgroupType, LinkedList<Explosion>>
+	private final Map<CollectionSubgroupType, LinkedList<Explosion>>
 		explosions = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public final EnumMap<CollectionSubgroupType, LinkedList<EnemyMissile>>
+	private final Map<CollectionSubgroupType, LinkedList<EnemyMissile>>
 		enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
 	
-	public final EnumMap<CollectionSubgroupType, LinkedList<PowerUp>>
+	private final Map<CollectionSubgroupType, LinkedList<PowerUp>>
 		powerUps = new EnumMap<>(CollectionSubgroupType.class);
 	
 	private GraphicsAdapter
@@ -119,6 +123,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	
 	private final GameEntityRecycler
 		gameEntityRecycler = new GameEntityRecycler();
+	
+	private final GameStatisticsCalculator
+		gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
 	
 	
 	private Controller(){}
@@ -279,26 +286,26 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 			calculateFps();
 			if(!Window.isMenuVisible)
 			{				
-		    	Colorations.calculateVariableGameColors(this.framesCounter);
+		    	Colorations.calculateVariableGameColors(framesCounter);
 				
-				scenery.update(getInstance());
+				scenery.update(this);
 				Events.updateTimer();
-				Window.updateDisplays(this.helicopter);
-				Enemy.updateAllDestroyed(this, this.helicopter);
-				Missile.updateAll(this, this.helicopter);
-				EnemyController.updateAllActive(this, this.helicopter);
-				EnemyMissile.updateAll(this.enemyMissiles, this.helicopter);
+				Window.updateDisplays(this);
+				Enemy.updateAllDestroyed(this);
+				Missile.updateAll(this);
+				EnemyController.updateAllActive(this);
+				EnemyMissile.updateAll(this);
 				Events.checkForLevelUp(this);
-				EnemyController.generateNewEnemies(this.enemies, this.helicopter);
-				this.helicopter.update(this.missiles, this.explosions);
-				Explosion.updateAll(this.helicopter, this.explosions);
-				PowerUp.updateAll(this.powerUps, this.helicopter);
+				EnemyController.generateNewEnemies(this);
+				this.helicopter.update(this);
+				Explosion.updateAll(this);
+				PowerUp.updateAll(this);
 			}			
 		}
 		else
 		{
-			Colorations.calculateVariableMenuColors(this.framesCounter);
-			Window.update(this, this.helicopter);
+			Colorations.calculateVariableMenuColors(framesCounter);
+			Window.update(this);
 		}
 	}
 	
@@ -404,6 +411,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	@Override
 	public void windowDeactivated(WindowEvent e){}
 	
+	@Override
 	public Helicopter getHelicopter()
 	{
 		return helicopter;
@@ -476,5 +484,41 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	public void resetBackgroundRepaintTimer()
 	{
 		backgroundRepaintTimer = 0;
+	}
+	
+	@Override
+	public GameStatisticsCalculator getGameStatisticsCalculator()
+	{
+		return gameStatisticsCalculator;
+	}
+	
+	@Override
+	public Map<CollectionSubgroupType, LinkedList<Enemy>> getEnemies()
+	{
+		return enemies;
+	}
+	
+	@Override
+	public Map<CollectionSubgroupType, LinkedList<Missile>> getMissiles()
+	{
+		return missiles;
+	}
+	
+	@Override
+	public Map<CollectionSubgroupType, LinkedList<Explosion>> getExplosions()
+	{
+		return explosions;
+	}
+	
+	@Override
+	public Map<CollectionSubgroupType, LinkedList<EnemyMissile>> getEnemyMissiles()
+	{
+		return enemyMissiles;
+	}
+	
+	@Override
+	public Map<CollectionSubgroupType, LinkedList<PowerUp>> getPowerUps()
+	{
+		return powerUps;
 	}
 }

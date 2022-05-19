@@ -1,7 +1,9 @@
 package de.helicopter_vs_aliens.score;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -239,15 +241,18 @@ public class Savegame implements Serializable
 		this.hasFifthSpecial = helicopter.hasFifthSpecial();
 		this.currentPlating = helicopter.getCurrentPlating();
 		this.currentEnergy = helicopter.getCurrentEnergy();
-		this.enemiesSeen = helicopter.numberOfEnemiesSeen;
-		this.enemiesKilled = helicopter.numberOfEnemiesKilled;
-		this.miniBossSeen = helicopter.numberOfMiniBossSeen;
-		this.miniBossKilled = helicopter.numberOfMiniBossKilled;
-		this.numberOfCrashes = helicopter.numberOfCrashes;
-		this.numberOfRepairs = helicopter.numberOfRepairs;
 		this.wasCreatedThroughCheating = helicopter.isPlayedWithCheats;
-		this.missileCounter = helicopter.missileCounter;
-		this.hitCounter = helicopter.hitCounter;
+		
+		GameStatisticsCalculator
+			gameStatisticsCalculator = Controller.getInstance().getGameStatisticsCalculator();
+		this.enemiesSeen = gameStatisticsCalculator.getNumberOfEnemiesSeen();
+		this.enemiesKilled = gameStatisticsCalculator.getNumberOfEnemiesKilled();
+		this.miniBossSeen = gameStatisticsCalculator.getNumberOfMiniBossSeen();
+		this.miniBossKilled = gameStatisticsCalculator.getNumberOfMiniBossKilled();
+		this.numberOfCrashes = gameStatisticsCalculator.getNumberOfCrashes();
+		this.numberOfRepairs = gameStatisticsCalculator.getNumberOfRepairs();
+		this.missileCounter = gameStatisticsCalculator.getMissileCounter();
+		this.hitCounter = gameStatisticsCalculator.getHitCounter();
 	}
 		
     boolean isWorthyForHighscore()

@@ -4,22 +4,28 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
-import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BONUS_INCOME;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
+import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITED_ENERGY;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.*;
 
 
 public class PowerUp extends RectangularGameEntity
@@ -48,12 +54,12 @@ public class PowerUp extends RectangularGameEntity
 		crossColor;
 
 		
-	public static void updateAll(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, Helicopter helicopter)
+	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<PowerUp> i = powerUp.get(ACTIVE).iterator(); i.hasNext();)
+    	for(Iterator<PowerUp> i = gameRessourceProvider.getPowerUps().get(ACTIVE).iterator(); i.hasNext();)
 		{
 			PowerUp pu = i.next();
-			pu.update(helicopter);			
+			pu.update(gameRessourceProvider.getHelicopter());
 			if(pu.wasCollected)
 			{
 				i.remove();
@@ -212,23 +218,20 @@ public class PowerUp extends RectangularGameEntity
 		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 	
-	public void activateAndMoveToStatusBar(	EnumMap<CollectionSubgroupType,	LinkedList<PowerUp>> powerUps)
+	public void activateAndMoveToStatusBar(	Map<CollectionSubgroupType,	LinkedList<PowerUp>> powerUps)
 	{
 		this.initialize();
 		this.moveToStatusbar();
 		powerUps.get(ACTIVE).add(this);
 	}
 
-	public static void activateInstance(Helicopter helicopter,
-										EnumMap<CollectionSubgroupType,
-								 		LinkedList<PowerUp>> powerUps,
-										Enemy enemy)
+	public static void activateInstance(GameRessourceProvider gameRessourceProvider, Enemy enemy)
 	{
 		PowerUpType powerUpType = enemy.getTypeOfRandomlyDroppedPowerUp();
-		int powerUpDirection = PowerUp.getPowerUpDirection(helicopter, enemy);
+		int powerUpDirection = PowerUp.getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
 		PowerUp powerUp = PowerUp.getInstance(powerUpType);
 		powerUp.initialize(enemy, powerUpDirection);
-		powerUps.get(ACTIVE).add(powerUp);
+		gameRessourceProvider.getPowerUps().get(ACTIVE).add(powerUp);
 	}
 	
 	public static PowerUp getInstance(PowerUpType powerUpType)

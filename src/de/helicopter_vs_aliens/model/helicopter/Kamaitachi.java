@@ -2,19 +2,21 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PLASMA;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PLASMA;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 
@@ -42,7 +44,7 @@ public final class Kamaitachi extends Helicopter
     }
 
     @Override
-    public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if(this.plasmaActivationTimer > 0){return PLASMA;}
         return ORDINARY;
@@ -71,7 +73,7 @@ public final class Kamaitachi extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(Controller controller)
     {
         this.activatePlasma();
     }

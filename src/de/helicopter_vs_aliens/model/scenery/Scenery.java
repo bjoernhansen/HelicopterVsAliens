@@ -3,18 +3,20 @@ package de.helicopter_vs_aliens.model.scenery;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
@@ -39,7 +41,7 @@ public class Scenery extends GameEntity
     private List<Point>
         stars = new ArrayList<>(NR_OF_STARS);
         
-    private final EnumMap<CollectionSubgroupType, LinkedList<SceneryObject>>
+    private final Map<CollectionSubgroupType, LinkedList<SceneryObject>>
         sceneryObjects = new EnumMap<>(CollectionSubgroupType.class);
     
     
@@ -91,9 +93,9 @@ public class Scenery extends GameEntity
         sceneryObjects.get(ACTIVE).add(firstDesert);
     }
     
-    public void update(Controller controller)
+    public void update(GameRessourceProvider gameRessourceProvider)
     {
-        backgroundMoves = isBackgroundMoving(controller);
+        backgroundMoves = isBackgroundMoving(gameRessourceProvider);
         for(Iterator<SceneryObject> i = sceneryObjects.get(ACTIVE).iterator(); i.hasNext();)
         {
             SceneryObject sceneryObject = i.next();
@@ -119,15 +121,15 @@ public class Scenery extends GameEntity
         moveCloud();
     }
     
-    private boolean isBackgroundMoving(Controller controller)
+    private boolean isBackgroundMoving(GameRessourceProvider gameRessourceProvider)
     {
-        Helicopter helicopter = controller.getHelicopter();
+        Helicopter helicopter = gameRessourceProvider.getHelicopter();
         return helicopter.isRotorSystemActive
-            && !isMajorBossActive(controller.enemies)
+            && !isMajorBossActive(gameRessourceProvider.getEnemies())
             && helicopter.tractor == null;
     }
     
-    private boolean isMajorBossActive(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private boolean isMajorBossActive(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
         return !enemy.get(ACTIVE).isEmpty()
                 && enemy.get(ACTIVE).getFirst().type.isMajorBoss();
@@ -187,7 +189,7 @@ public class Scenery extends GameEntity
         return cloudX;
     }
     
-    public EnumMap<CollectionSubgroupType, LinkedList<SceneryObject>> getSceneryObjects()
+    public Map<CollectionSubgroupType, LinkedList<SceneryObject>> getSceneryObjects()
     {
         return sceneryObjects;
     }

@@ -4,15 +4,14 @@ import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -58,18 +57,18 @@ public class EnemyController
     public static int currentNumberOfBarriers; // aktuelle Anzahl von "lebenden" Hindernis-Gegnern
     
     // TODO die Begrenzung nach Anzahl funktioniert nicht mehr
-    public static void generateNewEnemies(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy, Helicopter helicopter)
+    public static void generateNewEnemies(GameRessourceProvider gameRessourceProvider)
     {
         Events.lastCreationTimer++;
         if(wasCarrierDestroyedJustNow()){
-            createCarrierServants(helicopter, enemy);}
+            createCarrierServants(gameRessourceProvider);}
         else if(LevelManager.wasEnemyCreationPaused){
-            verifyCreationStop(enemy, helicopter);}
+            verifyCreationStop(gameRessourceProvider);}
         if(isBossServantCreationApproved()){
-            createBossServant(helicopter, enemy);}
-        else if(isEnemyCreationApproved(enemy))
+            createBossServant(gameRessourceProvider);}
+        else if(isEnemyCreationApproved(gameRessourceProvider.getEnemies()))
         {
-            creation(helicopter, enemy);
+            creation(gameRessourceProvider);
         }
     }
     
@@ -79,8 +78,7 @@ public class EnemyController
     }
     
     // TODO könnte diese Methode nicht direkt aufgerufen werden, wenn der Carrier zerstört wurde. Die Variable "carrierKilledJustNow" könnte dann entfallen.
-    private static void createCarrierServants(Helicopter helicopter,
-                                              EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static void createCarrierServants(GameRessourceProvider gameRessourceProvider)
     {
         for(int m = 0;
             m < (carrierDestroyedJustNow.isMiniBoss
@@ -88,17 +86,16 @@ public class EnemyController
                 : 2 + Calculations.random(2));
             m++)
         {
-            creation(helicopter, enemy);
+            creation(gameRessourceProvider);
         }
         carrierDestroyedJustNow = null;
     }
     
-    private static void verifyCreationStop(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy,
-                                           Helicopter helicopter)
+    private static void verifyCreationStop(GameRessourceProvider gameRessourceProvider)
     {
-        if(	enemy.get(ACTIVE).isEmpty()
+        if(	gameRessourceProvider.getEnemies().get(ACTIVE).isEmpty()
             && carrierDestroyedJustNow == null
-            && !(helicopter.isUnacceptablyBoostedForBossLevel()
+            && !(gameRessourceProvider.getHelicopter().isUnacceptablyBoostedForBossLevel()
             && Events.isBossLevel()) )
         {
             LevelManager.wasEnemyCreationPaused = false;
@@ -126,22 +123,21 @@ public class EnemyController
                                    .anyMatch(makeFinalBossServant::contains);
     }
     
-    private static void createBossServant(Helicopter helicopter,
-                                          EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static void createBossServant(GameRessourceProvider gameRessourceProvider)
     {
         // TODO Wir haben hier 3 boolesche Variablen, nur um Festzulegen, welche Servants zu erzeugen sind. Ein Enum wäre hier besser.
         if(makeBossTwoServants)
         {
-            createBoss2Servants(helicopter, enemy);
+            createBoss2Servants(gameRessourceProvider);
         }
         else if(makeBoss4Servant)
         {
             makeBoss4Servant = false;
-            creation(helicopter, enemy);
+            creation(gameRessourceProvider);
         }
         else if(makeAllBoss5Servants)
         {
-            createAllBoss5Servants(helicopter, enemy);
+            createAllBoss5Servants(gameRessourceProvider);
         }
         else
         {
@@ -151,13 +147,13 @@ public class EnemyController
                                     {
                                         makeFinalBossServant.remove(servantType);
                                         LevelManager.nextBossEnemyType = servantType.getEnemyType();
-                                        creation(helicopter, enemy);
+                                        creation(gameRessourceProvider);
                                     }
                                 });
         }
     }
     
-    private static boolean isEnemyCreationApproved(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
+    private static boolean isEnemyCreationApproved(Map<CollectionSubgroupType, LinkedList<Enemy>> enemies)
     {
         int numberOfEnemies = enemies.get(ACTIVE).size();
         return     !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
@@ -173,13 +169,12 @@ public class EnemyController
         return numberOfEnemies >= LevelManager.maxNr + LevelManager.maxBarrierNr;
     }
     
-    private static boolean isMajorBossActive(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static boolean isMajorBossActive(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
         return !enemy.get(ACTIVE).isEmpty() && enemy.get(ACTIVE).getFirst().type.isMajorBoss();
     }
     
-    private static void createBoss2Servants(Helicopter helicopter,
-                                            EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static void createBoss2Servants(GameRessourceProvider gameRessourceProvider)
     {
         makeBossTwoServants = false;
         LevelManager.wasEnemyCreationPaused = true;
@@ -187,22 +182,21 @@ public class EnemyController
         LevelManager.maxNr = 12;
         for (int m = 0; m < LevelManager.maxNr; m++)
         {
-            creation(helicopter, enemy);
+            creation(gameRessourceProvider);
         }
     }
     
-    private static void createAllBoss5Servants(Helicopter helicopter,
-                                               EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static void createAllBoss5Servants(GameRessourceProvider gameRessourceProvider)
     {
         makeAllBoss5Servants = false;
         FinalBossServantType.getValues().forEach(servantType -> {
             LevelManager.nextBossEnemyType = servantType.getEnemyType();
-            creation(helicopter, enemy);
+            creation(gameRessourceProvider);
         });
     }
     
     
-    public static void creation(Helicopter helicopter, EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemies)
+    public static void creation(GameRessourceProvider gameRessourceProvider)
     {
 		/*Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
 		Enemy e;
@@ -213,14 +207,14 @@ public class EnemyController
 		}
 		else{e = EnemyFactory.createEnemy();}*/
         
-        LinkedList<Enemy> activeEnemies = enemies.get(ACTIVE);
+        LinkedList<Enemy> activeEnemies = gameRessourceProvider.getEnemies().get(ACTIVE);
         int activeEnemyCount = activeEnemies.size();
         GameEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
         Enemy enemy = enemyFactory.makeInstance();
         activeEnemies.add(enemy);
-        if(enemy.countsForTotalAmountOfEnemiesSeen()){helicopter.numberOfEnemiesSeen++;}
+        if(enemy.countsForTotalAmountOfEnemiesSeen()){gameRessourceProvider.getGameStatisticsCalculator().incrementNumberOfEnemiesSeen();}
         Events.lastCreationTimer = 0;
-        enemy.initialize(helicopter);
+        enemy.initialize(gameRessourceProvider);
     }
     
     private static GameEntityFactory<Enemy> getEnemyFactory(int activeEnemyCount)
@@ -293,37 +287,36 @@ public class EnemyController
      *	  werden die neuen Koordinaten berechnet.
      * 2. Der Gegner wird an Stelle seiner neuen Koordinaten gemalt.
      */
-    public static void updateAllActive(Controller controller,
-                                       Helicopter helicopter)
+    public static void updateAllActive(GameRessourceProvider gameRessourceProvider)
     {
         if(rockTimer > 0){
             rockTimer--;}
         if(Scenery.backgroundMoves && barrierTimer > 0){
             barrierTimer--;}
-        countBarriers(controller.enemies);
+        countBarriers(gameRessourceProvider.getEnemies());
         
-        for(Iterator<Enemy> i = controller.enemies.get(ACTIVE).iterator(); i.hasNext();)
+        for(Iterator<Enemy> i = gameRessourceProvider.getEnemies().get(ACTIVE).iterator(); i.hasNext();)
         {
             Enemy enemy = i.next();
             if(!enemy.isDestroyed() && !enemy.isMarkedForRemoval)
             {
-                enemy.update(controller, helicopter);
+                enemy.update(gameRessourceProvider);
             }
             else if(enemy.isDestroyed())
             {
                 i.remove();
-                controller.enemies.get(DESTROYED).add(enemy);
+                gameRessourceProvider.getEnemies().get(DESTROYED).add(enemy);
             }
             else
             {
                 enemy.clearImage();
                 i.remove();
-                // controller.enemies.get(INACTIVE).add(enemy);
+                // gameRessourceProvider.enemies.get(INACTIVE).add(enemy);
             }
         }
     }
     
-    private static void countBarriers(EnumMap<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static void countBarriers(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
         Arrays.fill(livingBarrier, null);
         currentNumberOfBarriers = 0;

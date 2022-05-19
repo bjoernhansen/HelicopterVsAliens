@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -14,6 +15,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.Events.lastBonus;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
@@ -94,12 +96,12 @@ public final class Helios extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(Controller controller)
     {
-        this.activatePowerUpGenerator(powerUp);
+        this.activatePowerUpGenerator(controller.getPowerUps());
     }
 
-    private void activatePowerUpGenerator(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
+    private void activatePowerUpGenerator(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWER_UP_DURATION);
         this.consumeSpellCosts();

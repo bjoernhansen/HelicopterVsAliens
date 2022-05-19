@@ -101,7 +101,7 @@ public class PowerUpController
                    });
     }
     
-    public void switchPowerUpActivationState(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps,
+    public void switchPowerUpActivationState(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps,
                                              PowerUpType powerUpType)
     {
         if(isPowerUpActive(powerUpType))
@@ -122,7 +122,7 @@ public class PowerUpController
         }
     }
     
-    public void activatePowerUp(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
+    public void activatePowerUp(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
     {
         if(!Window.collectedPowerUps.containsKey(powerUpType))
         {

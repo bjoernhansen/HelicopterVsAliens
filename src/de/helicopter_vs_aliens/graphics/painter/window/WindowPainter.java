@@ -32,11 +32,14 @@ public abstract class WindowPainter extends Painter<Window>
         HELICOPTER_START_SCREEN_OFFSET = new Point(66, 262),
         HEALTH_BAR_POSITION = new Point(5, RectangularGameEntity.GROUND_Y + 5);
     
-    protected static Controller controller;
-    protected static Helicopter helicopter;
-    
-    protected static void updateDependencies(){
+    protected static Controller
         controller = Controller.getInstance();
+    
+    protected static Helicopter
+        helicopter;
+        
+    // TODO warum muss dann immer wieder upgedated werden
+    protected static void updateDependencies(){
         helicopter = controller.getHelicopter();
     }
     

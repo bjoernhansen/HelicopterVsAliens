@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
@@ -48,10 +49,10 @@ public class FinalBoss extends BossEnemy
     }
     
     @Override
-    protected void performFlightManeuver(Controller controller, Helicopter helicopter)
+    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
         this.finalBossAction();
-        super.performFlightManeuver(controller, helicopter);
+        super.performFlightManeuver(gameRessourceProvider);
     }
     private void finalBossAction()
     {

@@ -2,24 +2,23 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.control.timer.VariableTimer;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
-import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
-import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.EMP;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.EMP;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PHASE_SHIFT;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PHOENIX;
@@ -102,12 +101,12 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(Controller controller)
     {
-        this.releaseEMP(explosion);
+        this.releaseEMP(controller.getExplosions());
     }
 
-    private void releaseEMP(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    private void releaseEMP(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion)
     {
         this.empTimer.start();
         this.consumeSpellCosts();
@@ -138,7 +137,7 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if(stunningMissile){return PHASE_SHIFT;}
         return ORDINARY;
@@ -161,9 +160,9 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    void shoot(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles)
+    void shoot(GameRessourceProvider gameRessourceProvider)
     {
-        super.shoot(missiles);
+        super.shoot(gameRessourceProvider);
         if(this.hasInterphaseGenerator)
         {
             Audio.phaseShift.stop();

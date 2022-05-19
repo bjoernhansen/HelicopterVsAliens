@@ -280,10 +280,10 @@ public class Events
 					Window.specialInfoSelection = (Window.specialInfoSelection +1)% NUMBER_OF_DEBUGGING_INFOS;
 				}
 				// TODO übergabe von powerUps anders regeln
-				else if(e.getKeyChar() == 'd'){helicopter.switchPowerUpActivationState(controller.powerUps, TRIPLE_DAMAGE);}
-				else if(e.getKeyChar() == 'i'){helicopter.switchPowerUpActivationState(controller.powerUps, INVINCIBLE);}
-				else if(e.getKeyChar() == 'c'){helicopter.switchPowerUpActivationState(controller.powerUps, UNLIMITED_ENERGY);}
-				else if(e.getKeyChar() == 'y'){helicopter.switchPowerUpActivationState(controller.powerUps, BOOSTED_FIRE_RATE);}
+				else if(e.getKeyChar() == 'd'){helicopter.switchPowerUpActivationState(controller.getPowerUps(), TRIPLE_DAMAGE);}
+				else if(e.getKeyChar() == 'i'){helicopter.switchPowerUpActivationState(controller.getPowerUps(), INVINCIBLE);}
+				else if(e.getKeyChar() == 'c'){helicopter.switchPowerUpActivationState(controller.getPowerUps(), UNLIMITED_ENERGY);}
+				else if(e.getKeyChar() == 'y'){helicopter.switchPowerUpActivationState(controller.getPowerUps(), BOOSTED_FIRE_RATE);}
 				else if(e.getKeyChar() == 'a')
 				{
 					if(level < 51)
@@ -382,7 +382,7 @@ public class Events
 		{
 			if(e.getButton() == 3)
 			{
-				helicopter.tryToUseEnergyAbility(controller.powerUps, controller.explosions);
+				helicopter.tryToUseEnergyAbility(controller);
 			}
 			else{helicopter.turnAround();}
 		}	
@@ -492,7 +492,7 @@ public class Events
 				helicopter.isDamaged = false;
                 savegame.becomeValid();
 				savegame.saveToFile(helicopter);
-				Colorations.updateScoreScreenColors(helicopter);
+				Colorations.updateScoreScreenColors(controller.getGameStatisticsCalculator());
 			}
 			else{enterRepairShop(helicopter);}
 		}
@@ -523,8 +523,9 @@ public class Events
 					// TODO diese EntityManagement gehört in eine eigene Klasse
 					/* controller.enemies.get(INACTIVE)
 									  .addAll(controller.enemies.get(ACTIVE)); */
-					controller.enemies.get(ACTIVE)
-									  .clear();
+					controller.getEnemies()
+							  .get(ACTIVE)
+							  .clear();
 					level = level - ((level - 1) % 5);
 					LevelManager.adaptToLevel(helicopter, level, false);
 					if (level < 6)
@@ -535,8 +536,9 @@ public class Events
 					killsAfterLevelUp = 0;
 					/*controller.enemies.get(INACTIVE)
 									  .addAll(controller.enemies.get(DESTROYED));*/
-					controller.enemies.get(DESTROYED)
-									  .clear();
+					controller.getEnemies()
+							  .get(DESTROYED)
+							  .clear();
 					Window.buttons.get(LeftSideRepairShopButtonType.REPAIR)
 								  .adjustCostsToZero();
 					EnemyController.currentRock = null;
@@ -588,13 +590,15 @@ public class Events
 				
 				Window.updateRepairShopButtonsAfterSpotlightPurchase();
 				
-				controller.enemies.get(DESTROYED)
-								  .forEach(Enemy::repaint);
+				controller.getEnemies()
+						  .get(DESTROYED)
+						  .forEach(Enemy::repaint);
 				
-				controller.enemies.get(ACTIVE)
-								  .stream()
-								  .filter(Predicate.not(Enemy::isRock))
-								  .forEach(Enemy::dimmedRepaint);
+				controller.getEnemies()
+						  .get(ACTIVE)
+						  .stream()
+						  .filter(Predicate.not(Enemy::isRock))
+						  .forEach(Enemy::dimmedRepaint);
 			}
 		}
 		// Goliath-Panzerung
@@ -1048,8 +1052,10 @@ public class Events
 		Window.conditionalReset();
 		
 		// kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-		if(!controller.enemies.get(ACTIVE).isEmpty()
-		   && !(!totalReset && controller.enemies.get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
+		if(!controller.getEnemies()
+					  .get(ACTIVE).isEmpty()
+		   && !(!totalReset && controller.getEnemies()
+										 .get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
 		{
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
@@ -1061,14 +1067,16 @@ public class Events
 			if(totalReset)
 			{
 				// controller.enemies.get(INACTIVE).addAll(controller.enemies.get(ACTIVE));
-				controller.enemies.get(ACTIVE).clear();
+				controller.getEnemies()
+						  .get(ACTIVE).clear();
 				EnemyController.currentRock = null;
 			}
 			else
 			{
 				// controller.enemies.get(INACTIVE).add(e);
-				controller.enemies.get(ACTIVE)
-								  .removeIf(Enemy::isRemainingAfterEnteringRepairShop);
+				controller.getEnemies()
+						  .get(ACTIVE)
+						  .removeIf(Enemy::isRemainingAfterEnteringRepairShop);
 			}
 			EnemyController.currentMiniBoss = null;
 		}
@@ -1076,22 +1084,23 @@ public class Events
 		{
 			killsAfterLevelUp = 0;
 			// controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
-			controller.enemies.get(DESTROYED).clear();
+			controller.getEnemies()
+					  .get(DESTROYED).clear();
 			if(level < 6)
 			{
 				controller.getScenery().reset();
 			}
 		}									
-		controller.explosions.get(INACTIVE).addAll(controller.explosions.get(ACTIVE));
-		controller.explosions.get(ACTIVE).clear();
-		controller.missiles.get(INACTIVE).addAll(controller.missiles.get(ACTIVE));
-		controller.missiles.get(ACTIVE).clear();
-		controller.enemyMissiles.get(INACTIVE).addAll(controller.enemyMissiles.get(ACTIVE));
-		controller.enemyMissiles.get(ACTIVE).clear();
+		controller.getExplosions().get(INACTIVE).addAll(controller.getExplosions().get(ACTIVE));
+		controller.getExplosions().get(ACTIVE).clear();
+		controller.getMissiles().get(INACTIVE).addAll(controller.getMissiles().get(ACTIVE));
+		controller.getMissiles().get(ACTIVE).clear();
+		controller.getEnemyMissiles().get(INACTIVE).addAll(controller.getEnemyMissiles().get(ACTIVE));
+		controller.getEnemyMissiles().get(ACTIVE).clear();
 		// TODO wieso auskommentiert?
 		//controller.powerUps.get(INACTIVE).addAll(controller.powerUps.get(ACTIVE));
-		controller.getGameEntityRecycler().storeAll(controller.powerUps.get(ACTIVE));
-		controller.powerUps.get(ACTIVE).clear();
+		controller.getGameEntityRecycler().storeAll(controller.getPowerUps().get(ACTIVE));
+		controller.getPowerUps().get(ACTIVE).clear();
 		// TODO
 		if(Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))
 		{
@@ -1196,11 +1205,11 @@ public class Events
 	}
 
 	// überprüfen, ob Level-Up Voraussetzungen erfüllt. Wenn ja: Schwierigkeitssteigerung
-	static void checkForLevelUp(Controller controller)
+	static void checkForLevelUp(GameRessourceProvider gameRessourceProvider)
 	{
 		if( killsAfterLevelUp >= numberOfKillsNecessaryForNextLevelUp() && level < 50)
 		{
-			levelUp(controller, 1);
+			levelUp(gameRessourceProvider, 1);
 		}
 	}
 	
@@ -1210,10 +1219,10 @@ public class Events
 	}
 
 	// erhöht das Spiel-Level auf "nr_of_levelUp" mit allen Konsequenzen
-	private static void levelUp(Controller controller,
+	private static void levelUp(GameRessourceProvider gameRessourceProvider,
 								int numberOfLevelUp)
 	{
-		Helicopter helicopter = controller.getHelicopter();
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		Audio.play(level + numberOfLevelUp <= 50
 					? Audio.levelUp
 					: Audio.applause1);
@@ -1224,7 +1233,7 @@ public class Events
         helicopter.levelUpEffect(previousLevel);
         maxLevel = Math.max(level, maxLevel);
         
-		if(isBossLevel()){Enemy.getRidOfSomeEnemies(helicopter, controller.enemies, controller.explosions);}
+		if(isBossLevel()){Enemy.getRidOfSomeEnemies(gameRessourceProvider);}
 		
 		if(	isBossLevel() || isBossLevel(previousLevel) || level == 49)
 		{

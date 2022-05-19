@@ -4,19 +4,21 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 
@@ -53,7 +55,7 @@ public final class Roch extends Helicopter
     }
 
     @Override
-    public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if(this.hasJumboMissiles){return JUMBO;}
         else{return ORDINARY;}
@@ -95,7 +97,7 @@ public final class Roch extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void tryToUseEnergyAbility(Controller controller)
     {
         if(this.isPowerShieldActivated)
         {
@@ -103,12 +105,12 @@ public final class Roch extends Helicopter
         }
         else
         {
-            super.tryToUseEnergyAbility(powerUp, explosion);
+            super.tryToUseEnergyAbility(controller);
         }
     }
 
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void useEnergyAbility(Controller controller)
     {
         this.turnOnPowerShield();
     }
@@ -121,12 +123,12 @@ public final class Roch extends Helicopter
 
     @Override
     public void beAffectedByCollisionWith(Enemy enemy,
-                                          Controller controller,
+                                          GameRessourceProvider gameRessourceProvider,
                                           boolean playCollisionSound)
     {
         if(!this.isPowerShieldProtected(enemy))
         {
-            super.beAffectedByCollisionWith(enemy, controller, playCollisionSound);
+            super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
             if(this.isPowerShieldActivated)
             {
                 this.shutDownPowerShield();
@@ -249,10 +251,9 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
-                       EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void update(Controller controller)
     {
-        super.update(missile, explosion);
+        super.update(controller);
         if(this.isPowerShieldActivated && this.battery.isDischarged())
         {
             this.shutDownPowerShield();
@@ -336,7 +337,7 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void inactivate(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    public void inactivate(Map<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
     {
         if(missile.sister[0] == null && missile.sister[1] == null)
         {

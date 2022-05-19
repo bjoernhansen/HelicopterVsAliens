@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.explosion;
 
-public enum ExplosionTypes
+public enum ExplosionType
 {
     ORDINARY,
 	PLASMA,

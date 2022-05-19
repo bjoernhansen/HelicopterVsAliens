@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.util;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
@@ -255,12 +256,12 @@ public final class Colorations
 		}		
 	}
     
-    public static void updateScoreScreenColors(Helicopter helicopter)
+    public static void updateScoreScreenColors(GameStatisticsCalculator gameStatisticsCalculator)
     {       
     	scoreScreen[0] = percentColor(Events.bonusIncomePercentage());
-    	scoreScreen[1] = percentColor(Calculations.percentage(helicopter.numberOfEnemiesKilled, helicopter.numberOfEnemiesSeen));
-    	scoreScreen[2] = percentColor(Calculations.percentage(helicopter.numberOfMiniBossKilled, helicopter.numberOfMiniBossSeen));
-    	scoreScreen[3] = percentColor(Calculations.percentage(helicopter.hitCounter, helicopter.missileCounter));
+    	scoreScreen[1] = percentColor(gameStatisticsCalculator.getKillRate());
+    	scoreScreen[2] = percentColor(gameStatisticsCalculator.getMiniBossKillRate());
+    	scoreScreen[3] = percentColor(gameStatisticsCalculator.getMissileHitRate());
     }
     
     static Color percentColor(int percentage){return percentColor(((float)percentage)/100);}

@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.graphics.painter.window;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
@@ -73,14 +74,16 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintAllDestroyedEnemies(GraphicsAdapter graphicsAdapter)
     {
-        controller.enemies.get(DESTROYED)
-                          .forEach(enemy -> enemy.paint(graphicsAdapter));
+        controller.getEnemies()
+                  .get(DESTROYED)
+                  .forEach(enemy -> enemy.paint(graphicsAdapter));
     }
     
     private void paintAllMissiles(GraphicsAdapter graphicsAdapter)
     {
-        controller.missiles.get(ACTIVE)
-                           .forEach(missile -> missile.paint(graphicsAdapter));
+        controller.getMissiles()
+                  .get(ACTIVE)
+                  .forEach(missile -> missile.paint(graphicsAdapter));
     }
     
     private void paintAllActiveEnemies(GraphicsAdapter graphicsAdapter)
@@ -90,7 +93,7 @@ public class GameWindowPainter extends WindowPainter
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        for (Enemy enemy : controller.enemies.get(ACTIVE))
+        for (Enemy enemy : controller.getEnemies().get(ACTIVE))
         {
             if (enemy.isVisibleNonBarricadeVessel(helicopter.canDetectCloakedVessels()))
             {
@@ -101,20 +104,23 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintAllEnemyMissiles(GraphicsAdapter graphicsAdapter)
     {
-        controller.enemyMissiles.get(ACTIVE)
-                                .forEach(enemyMissile -> enemyMissile.paint(graphicsAdapter));
+        controller.getEnemyMissiles()
+                  .get(ACTIVE)
+                  .forEach(enemyMissile -> enemyMissile.paint(graphicsAdapter));
     }
     
     private void paintAllExplosions(GraphicsAdapter graphicsAdapter)
     {
-        controller.explosions.get(ACTIVE)
-                             .forEach(explosion -> explosion.paint(graphicsAdapter));
+        controller.getExplosions()
+                  .get(ACTIVE)
+                  .forEach(explosion -> explosion.paint(graphicsAdapter));
     }
     
     private void paintAllPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        controller.powerUps.get(ACTIVE)
-                           .forEach(powerUp -> powerUp.paint(graphicsAdapter));
+        controller.getPowerUps()
+                  .get(ACTIVE)
+                  .forEach(powerUp -> powerUp.paint(graphicsAdapter));
     }
     
     private void paintForeground(GraphicsAdapter graphicsAdapter)
@@ -455,6 +461,7 @@ public class GameWindowPainter extends WindowPainter
     
     private static void paintSpecialInfoDisplay(GraphicsAdapter graphicsAdapter)
     {
+        GameStatisticsCalculator gameStatisticsCalculator = controller.getGameStatisticsCalculator();
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
         String infoString = "";
@@ -467,27 +474,32 @@ public class GameWindowPainter extends WindowPainter
         } else if (Window.specialInfoSelection == 2)
         {
             infoString = "Aktive PowerUps: "
-                + controller.powerUps.get(ACTIVE)
-                                     .size()
+                + controller.getPowerUps()
+                            .get(ACTIVE)
+                            .size()
                 + ";   Inaktive PowerUps: "
                 + controller.getGameEntityRecycler()
                             .sizeOf(PowerUp.class);
         } else if (Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
-                + controller.explosions.get(ACTIVE)
-                                       .size()
+                + controller.getExplosions()
+                            .get(ACTIVE)
+                            .size()
                 + ";   Inaktive Explosionen: "
-                + controller.explosions.get(INACTIVE)
-                                       .size();
+                + controller.getExplosions()
+                            .get(INACTIVE)
+                            .size();
         } else if (Window.specialInfoSelection == 4)
         {
             infoString = "Aktive Gegner: "
-                + (controller.enemies.get(ACTIVE)
-                                     .size() - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
+                + (controller.getEnemies()
+                             .get(ACTIVE)
+                             .size() - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerstörte Gegner: "
-                + controller.enemies.get(DESTROYED)
-                                    .size()
+                + controller.getEnemies()
+                            .get(DESTROYED)
+                            .size()
                 + ";   Hindernisse: "
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
@@ -496,19 +508,23 @@ public class GameWindowPainter extends WindowPainter
         } else if (Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
-                + controller.missiles.get(ACTIVE)
-                                     .size()
+                + controller.getMissiles()
+                            .get(ACTIVE)
+                            .size()
                 + ";   Inaktive Raketen: "
-                + controller.missiles.get(INACTIVE)
-                                     .size();
+                + controller.getMissiles()
+                            .get(INACTIVE)
+                            .size();
         } else if (Window.specialInfoSelection == 6)
         {
             infoString = "Aktive gegnerische Geschosse: "
-                + controller.enemyMissiles.get(ACTIVE)
-                                          .size()
+                + controller.getEnemyMissiles()
+                            .get(ACTIVE)
+                            .size()
                 + ";   Inaktive gegnerische Geschosse: "
-                + controller.enemyMissiles.get(INACTIVE)
-                                          .size();
+                + controller.getEnemyMissiles()
+                            .get(INACTIVE)
+                            .size();
         } else if (Window.specialInfoSelection == 7)
         {
             infoString = "Aktive Hintergrundobjekte: "
@@ -533,27 +549,22 @@ public class GameWindowPainter extends WindowPainter
             infoString = "Menü sichtbar: " + Window.isMenuVisible;
         } else if (Window.specialInfoSelection == 11)
         {
-            int percentage = helicopter.numberOfEnemiesSeen > 0
-                ? 100 * helicopter.numberOfEnemiesKilled / helicopter.numberOfEnemiesSeen
-                : 0;
             infoString = (Window.language == ENGLISH
                 ? "Defeated enemies: "
                 : "Besiegte Gegner: ")
-                + helicopter.numberOfEnemiesKilled
+                + gameStatisticsCalculator.getNumberOfEnemiesKilled()
                 + (Window.language == ENGLISH ? " of " : " von ")
-                + helicopter.numberOfEnemiesSeen
+                + gameStatisticsCalculator.getNumberOfEnemiesSeen()
                 + " ("
-                + percentage
+                + gameStatisticsCalculator.getKillRate()
                 + "%)";
         } else if (Window.specialInfoSelection == 12)
         {
-            int percentage = helicopter.missileCounter != 0
-                ? 100 * helicopter.hitCounter / helicopter.missileCounter
-                : 0;
+            int percentage = gameStatisticsCalculator.getMissileHitRate();
             infoString = "Missile counter: "
-                + helicopter.missileCounter
+                + gameStatisticsCalculator.getMissileCounter()
                 + "; Hit counter: "
-                + helicopter.hitCounter
+                + gameStatisticsCalculator.getHitCounter()
                 + "; Hit rate: "
                 + percentage;
         } else if (Window.specialInfoSelection == 13)
@@ -564,7 +575,7 @@ public class GameWindowPainter extends WindowPainter
             infoString = helicopter.getTypeSpecificDebuggingOutput();
         } else if (Window.specialInfoSelection == 15)
         {
-            infoString = String.format("Hitpoints: %.2f/%.2f; Energie: %.2f/%.2f",
+            infoString = String.format("Hit points: %.2f/%.2f; Energie: %.2f/%.2f",
                 helicopter.getCurrentPlating(),
                 helicopter.getMaximumPlating(),
                 helicopter.getCurrentEnergy(),

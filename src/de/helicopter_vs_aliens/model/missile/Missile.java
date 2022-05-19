@@ -3,10 +3,11 @@ package de.helicopter_vs_aliens.model.missile;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 
@@ -17,8 +18,8 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.JUMBO;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.PHASE_SHIFT;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PHASE_SHIFT;
 
 
 public class Missile extends RectangularGameEntity
@@ -47,7 +48,7 @@ public class Missile extends RectangularGameEntity
 	public final HashMap<Integer, Enemy>
 		hits = new HashMap<> ();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
 
-	public ExplosionTypes
+	public ExplosionType
 		typeOfExplosion;
 
 	public int
@@ -109,28 +110,29 @@ public class Missile extends RectangularGameEntity
 							* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 	
-	public static void updateAll(Controller controller, Helicopter helicopter)
+	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Missile> i = controller.missiles.get(ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<Missile> i = gameRessourceProvider.getMissiles().get(ACTIVE).iterator(); i.hasNext();)
 		{
 			Missile missile = i.next();
-			missile.update(controller, i, helicopter);
+			missile.update(gameRessourceProvider, i);
 		}
 	}
 
-	private void update(Controller controller, Iterator<Missile> i, Helicopter helicopter)
-	{		
+	private void update(GameRessourceProvider gameRessourceProvider, Iterator<Missile> i)
+	{
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		this.setX(this.getX()
 					+ this.speed
 					+ (Scenery.backgroundMoves ? - BG_SPEED : 0));
 				
 		if(this.getX() > 1175 || this.getX() + 20 < 0){this.flying = false;}
 		else{this.checkForHitHelicopter(helicopter);}
-		this.checkForHitEnemys(controller, helicopter);
+		this.checkIfMissileHitEnemy(gameRessourceProvider);
 		if(!this.flying)
 		{
-			i.remove();	
-			helicopter.inactivate(controller.missiles, this);
+			i.remove();
+			helicopter.inactivate(gameRessourceProvider.getMissiles(), this);
 		}
 		this.setPaintBounds();
 	}
@@ -150,10 +152,10 @@ public class Missile extends RectangularGameEntity
 		}
 	}		
 	
-	private void checkForHitEnemys(Controller controller,
-								   Helicopter helicopter)
+	private void checkIfMissileHitEnemy(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Enemy enemy : controller.enemies.get(ACTIVE))
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		for(Enemy enemy : gameRessourceProvider.getEnemies().get(ACTIVE))
 		{
 			if (enemy.isHittable(this))
 			{
@@ -165,7 +167,7 @@ public class Missile extends RectangularGameEntity
 				}
 				else if (!enemy.isInvincible())
 				{
-					enemy.hitByMissile(helicopter, this, controller.explosions);
+					enemy.hitByMissile(gameRessourceProvider, this);
 				}
 				else if (!this.bounced
 					&& enemy.teleportTimer < 1
@@ -186,7 +188,7 @@ public class Missile extends RectangularGameEntity
 				}
 				else
 				{
-					enemy.die(controller, helicopter, this);
+					enemy.die(gameRessourceProvider, this);
 					
 					if (helicopter.deservesMantisReward(this.launchingTime))
 					{

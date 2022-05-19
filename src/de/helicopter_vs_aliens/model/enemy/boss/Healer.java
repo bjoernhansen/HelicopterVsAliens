@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 public class Healer extends FinalBossServant
@@ -15,13 +16,13 @@ public class Healer extends FinalBossServant
     }
 
     @Override
-    protected void performFlightManeuver(Controller controller, Helicopter helicopter)
+    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
         if(dodgeTimer == READY)
         {
             this.healerAction();
         }
-        super.performFlightManeuver(controller, helicopter);
+        super.performFlightManeuver(gameRessourceProvider);
     }
     
     private void healerAction()

@@ -1,10 +1,15 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
+
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 abstract class Barrier extends Enemy
 {
@@ -24,17 +29,21 @@ abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void finalizeInitialization(Helicopter helicopter)
+    protected void finalizeInitialization(GameRessourceProvider gameRessourceProvider)
     {
-        helicopter.numberOfEnemiesSeen--;
-        EnemyController.barrierTimer = (int)((helicopter.getWidth() + getWidth())/2);
+        EnemyController.barrierTimer = (int)((gameRessourceProvider.getHelicopter().getWidth() + getWidth())/2);
  
-        super.finalizeInitialization(helicopter);
+        super.finalizeInitialization(gameRessourceProvider);
         
         if(isShootingBarrier())
         {
             this.initializeShootDirectionOfBarriers();
         }
+    }
+    
+    @Override
+    protected void writeDestructionStatistics(GameStatisticsCalculator gameStatisticsCalculator)
+    {
     }
     
     private boolean isShootingBarrier()
@@ -89,5 +98,11 @@ abstract class Barrier extends Enemy
     protected float getSecondaryColorBrightnessFactor()
     {
         return SECONDARY_COLOR_BRIGHTNESS_FACTOR;
+    }
+    
+    @Override
+    public boolean countsForTotalAmountOfEnemiesSeen()
+    {
+        return false;
     }
 }

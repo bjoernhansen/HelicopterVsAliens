@@ -2,20 +2,22 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
 import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Map;
 
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.STUNNING;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 
@@ -37,7 +39,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
     {
         if (stunningMissile)
         {
@@ -103,7 +105,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void tryToUseEnergyAbility(Controller controller)
     {
         if (!this.isNextMissileStunner)
         {
@@ -113,7 +115,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion){}
+    public void useEnergyAbility(Controller controller){}
     
     @Override
     boolean canRegenerateEnergy()
@@ -210,7 +212,7 @@ public final class Orochi extends Helicopter
     
     @Override
     // TODO Großteil des Codes nach Missile und redudanzen damit auflösen Subklassenspezischen Code in eigene Methode
-    public void inactivate(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    public void inactivate(Map<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
     {
         if(missile.sister[0] == null && missile.sister[1] == null)
         {

@@ -1,6 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.basicEnemy;
 
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -26,11 +28,10 @@ public class Rock extends BasicEnemy
     }
     
     @Override
-    protected void finalizeInitialization(Helicopter helicopter)
+    protected void finalizeInitialization(GameRessourceProvider gameRessourceProvider)
     {
-        helicopter.numberOfEnemiesSeen--;
         EnemyController.currentRock = this;
-        super.finalizeInitialization(helicopter);
+        super.finalizeInitialization(gameRessourceProvider);
     }
     
     @Override
@@ -72,4 +73,10 @@ public class Rock extends BasicEnemy
     
     @Override
     protected void checkForBarrierCollision(){}
+    
+    @Override
+    public boolean countsForTotalAmountOfEnemiesSeen()
+    {
+        return false;
+    }
 }

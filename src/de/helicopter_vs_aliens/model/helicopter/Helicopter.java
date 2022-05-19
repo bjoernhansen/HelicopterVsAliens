@@ -5,13 +5,14 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.explosion.ExplosionTypes;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.components.Battery;
 import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -41,7 +42,7 @@ import static de.helicopter_vs_aliens.gui.PriceLevel.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionTypes.ORDINARY;
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
@@ -119,17 +120,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		currentBaseFirepower,                // aktuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des eventuell erforschten Jumbo-Raketen-Spezial-Upgrades
 		platingDurabilityFactor = STANDARD_PLATING_STRENGTH,    // SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
 		numberOfCannons = 1,                // Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
-		recentDamageTimer,                    // aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
+		recentDamageTimer;                    // aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
 	
-		// für die Spielstatistik
-		numberOfCrashes,                    // Anzahl der Abstürze
-		numberOfRepairs,                    // Anzahl der Reparaturen
-		missileCounter,                        // Anzahl der abgeschossenen Raketen
-		hitCounter,                            // Anzahl der getroffenen Gegner
-		numberOfEnemiesSeen,                // Anzahl der erschienenen Gegner
-		numberOfEnemiesKilled,                // Anzahl der vernichteten Gegner
-		numberOfMiniBossSeen,                // Anzahl der erschienenen Mini-Bosse
-		numberOfMiniBossKilled;                // Anzahl der vernichteten Mini-Bosse
+	// für die Spielstatistik
+	
+	
 	private final Map<StandardUpgradeType, Integer>
 		levelsOfStandardUpgrades = new EnumMap<>(StandardUpgradeType.class);  // Upgrade-Level aller 6 StandardUpgrades
 	
@@ -199,24 +194,22 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	private boolean
 		isCrashing;            // Helikopter befindet sich im Sturzflug
-	
-	
+
 	public Helicopter()
 	{
 		this.paintBounds.setSize(HELICOPTER_SIZE);
 		this.powerUpController.turnOfAllBoosters();
 	}
 	
-	public void update(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile,
-					   EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	public void update(GameRessourceProvider gameRessourceProvider)
 	{
 		this.updateTimer();
 		if (this.canRegenerateEnergy())
 		{
 			this.battery.recharge();
 		}
-		this.evaluateFire(missile);
-		this.move(explosion);
+		this.evaluateFire(gameRessourceProvider);
+		this.move(gameRessourceProvider);
 	}
 	
 	public boolean hasSpotlightsTurnedOn()
@@ -239,11 +232,11 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.powerUpController.evaluatePowerUpActivationStates();
 	}
 	
-	private void evaluateFire(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missile)
+	private void evaluateFire(GameRessourceProvider gameRessourceProvider)
 	{
 		if (this.isReadyForShooting())
 		{
-			this.shoot(missile);
+			this.shoot(gameRessourceProvider);
 		}
 		this.fireRateTimer++;
 	}
@@ -256,7 +249,7 @@ public abstract class Helicopter extends RectangularGameEntity
 			&& this.fireRateTimer >= this.timeBetweenTwoShots;
 	}
 	
-	void shoot(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles)
+	void shoot(GameRessourceProvider gameRessourceProvider)
 	{
 		// TODO Code Duplizierungen auflösen
 		if (this.hasPiercingWarheads)
@@ -267,11 +260,12 @@ public abstract class Helicopter extends RectangularGameEntity
 			Audio.play(Audio.launch1);
 		}
 		this.fireRateTimer = 0;
-		this.missileCounter += this.numberOfCannons;
+		gameRessourceProvider.getGameStatisticsCalculator().incrementMissileCounterBy(this.numberOfCannons);
 		
 		boolean stunningMissile = isShootingStunningMissile();
 		Missile sister = null;
 		
+		Map<CollectionSubgroupType, LinkedList<Missile>> missiles = gameRessourceProvider.getMissiles();
 		if (this.numberOfCannons >= 1)
 		{
 			Iterator<Missile> i = missiles.get(INACTIVE)
@@ -349,7 +343,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		}
 	}
 	
-	private void move(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	private void move(GameRessourceProvider gameRessourceProvider)
 	{
 		if (this.isOnTheGround())
 		{
@@ -401,7 +395,7 @@ public abstract class Helicopter extends RectangularGameEntity
 					this.correctAndSetCoordinates();
 					if (enemy.isStaticallyCharged())
 					{
-						enemy.startStaticDischarge(explosion, this);
+						enemy.startStaticDischarge(gameRessourceProvider.getExplosions(), this);
 					}
 				} else
 				{
@@ -441,7 +435,7 @@ public abstract class Helicopter extends RectangularGameEntity
 				}
 			} else if (isInTheAir && this.location.getY() == 407d)
 			{
-				this.crashed(explosion);
+				this.crashed(gameRessourceProvider.getExplosions());
 			}
 		}
 		if (this.isRotorSystemActive)
@@ -595,15 +589,10 @@ public abstract class Helicopter extends RectangularGameEntity
 			this.obtainFifthSpecial();
 		}
 		
-		this.numberOfEnemiesSeen = savegame.enemiesSeen;
-		this.numberOfEnemiesKilled = savegame.enemiesKilled;
-		this.numberOfMiniBossSeen = savegame.miniBossSeen;
-		this.numberOfMiniBossKilled = savegame.miniBossKilled;
-		this.numberOfCrashes = savegame.numberOfCrashes;
-		this.numberOfRepairs = savegame.numberOfRepairs;
+		Controller.getInstance().getGameStatisticsCalculator().restoreFrom(savegame);
+		
 		this.isPlayedWithCheats = savegame.wasCreatedThroughCheating;
-		this.missileCounter = savegame.missileCounter;
-		this.hitCounter = savegame.hitCounter;
+
 		this.scoreScreenTimes = savegame.scoreScreenTimes;
 	}
 	
@@ -614,11 +603,10 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.resetStateTypeSpecific();
 		this.isDamaged = false;
 		this.isPlayedWithCheats = false;
-		this.resetCounterForHighscore();
+		Controller.getInstance().getGameStatisticsCalculator().resetCounterForHighscore();
 		this.resetSpecialUpgrades();
 		this.scoreScreenTimes.clear();
 	}
-	
 	
 	public void resetStateGeneral(boolean resetStartPos)
 	{
@@ -635,18 +623,6 @@ public abstract class Helicopter extends RectangularGameEntity
 		}
 	}
 	
-	private void resetCounterForHighscore()
-	{
-		this.numberOfCrashes = 0;
-		this.numberOfRepairs = 0;
-		this.missileCounter = 0;
-		this.hitCounter = 0;
-		this.numberOfEnemiesSeen = 0;
-		this.numberOfEnemiesKilled = 0;
-		this.numberOfMiniBossSeen = 0;
-		this.numberOfMiniBossKilled = 0;
-	}
-	
 	private void resetSpecialUpgrades()
 	{
 		this.hasSpotlights = false;
@@ -661,7 +637,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	public void repair()
 	{
 		Audio.play(Audio.cash);
-		this.numberOfRepairs++;
+		Controller.getInstance().getGameStatisticsCalculator().incrementNumberOfRepairs();
 		this.isDamaged = false;
 		this.isCrashing = false;
 		this.restorePlating();
@@ -805,17 +781,17 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			this.stopTractor();
 		}
-		this.numberOfCrashes++;
+		Controller.getInstance().getGameStatisticsCalculator().incrementNumberOfCrashes();
 		if (this.location.getY() == 407d)
 		{
-			this.crashed(Controller.getInstance().explosions);
+			this.crashed(Controller.getInstance().getExplosions());
 		} else
 		{
 			this.isCrashing = true;
 		}
 	}
 	
-	private void crashed(EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	private void crashed(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion)
 	{
 		this.isActive = false;
 		this.powerUpController.startDecayOfAllActivePowerUps();
@@ -1050,7 +1026,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	}
  
 	public void beAffectedByCollisionWith(Enemy enemy,
-										  Controller controller,
+										  GameRessourceProvider gameRessourceProvider,
 										  boolean playCollisionSound)
 	{
 		this.startRecentDamageEffect(enemy);
@@ -1112,7 +1088,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		return STANDARD_MISSILE_DAMAGE_FACTOR;
 	}
 
-	public ExplosionTypes getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+	public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
 	{
 		return ORDINARY;
 	}
@@ -1308,16 +1284,15 @@ public abstract class Helicopter extends RectangularGameEntity
         this.battery.upgradeTo(this.getUpgradeLevelOf(ENERGY_ABILITY));
     }
     
-    public void tryToUseEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp,
-                                      EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    public void tryToUseEnergyAbility(Controller controller)
     {
         if(this.isEnergyAbilityActivatable())
         {
-            useEnergyAbility(powerUp, explosion);
+            useEnergyAbility(controller);
         }
     }
     
-    public abstract void useEnergyAbility(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUp, EnumMap<CollectionSubgroupType, LinkedList<Explosion>> explosion);
+    public abstract void useEnergyAbility(Controller controller);
     
     public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{
@@ -1407,7 +1382,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		return false;
 	}
     
-    public void inactivate(EnumMap<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    public void inactivate(Map<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
     {
         missiles.get(INACTIVE).add(missile);
     }
@@ -1508,8 +1483,9 @@ public abstract class Helicopter extends RectangularGameEntity
 		powerUpController.restartPowerUpTimer(powerUpType);
 	}
 	
-	public void switchPowerUpActivationState(EnumMap<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
+	public void switchPowerUpActivationState(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
 	{
 		powerUpController.switchPowerUpActivationState(powerUps, powerUpType);
 	}
+
 }
