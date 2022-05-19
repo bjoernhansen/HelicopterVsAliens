@@ -19,4 +19,22 @@ public class LoopingEnemy extends BasicEnemy
     {
         return TURN_FRAME.getCenterY();
     }
+    
+    @Override
+    protected void sinusLoop()
+    {
+        super.sinusLoop();
+        if(this.direction.x == -1 && this.getY()-155>0)
+        {
+            this.direction.x = 1;
+            this.getSpeedLevel()
+                .setLocation(11, this.getSpeedLevel().getY());
+        }
+        else if(this.direction.x == 1 && this.getY()-155<0)
+        {
+            this.direction.x = -1;
+            this.getSpeedLevel()
+                .setLocation(7.5, this.getSpeedLevel().getY());
+        }
+    }
 }

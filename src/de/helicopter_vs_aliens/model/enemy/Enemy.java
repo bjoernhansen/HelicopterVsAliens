@@ -36,7 +36,6 @@ import java.awt.image.RescaleOp;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.function.Predicate;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -953,7 +952,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}				
 				
 		// Sinus- und Loop-Flug
-		if(this.canSinusMove || this.canLoop){this.sinusLoop();}
+		if(this.canSinusMove){this.sinusLoop();}
 		
 		// tarnen
 		if(this.cloakingTimer > 0
@@ -1449,28 +1448,12 @@ public abstract class Enemy extends RectangularGameEntity
 		this.cloakingTimer = CLOAKED_TIME + CLOAKING_TIME;
 		this.placeNearHelicopter(helicopter);
 	}
-
 	
-	
-	private void sinusLoop()
+	protected void sinusLoop()
     {
 		this.speedLevel.setLocation(
 				this.speedLevel.getX(),
 				Math.max(4.0, 0.15f*(145-Math.abs(this.getY()-155))));
-		
-    	if(this.canLoop)
-    	{
-    		if(this.direction.x == -1 && this.getY()-155>0)
-    		{
-    			this.direction.x = 1;
-    			this.speedLevel.setLocation(11, this.speedLevel.getY());
-    		}
-    		else if(this.direction.x == 1 && this.getY()-155<0)
-    		{
-    			this.direction.x = -1;
-    			this.speedLevel.setLocation(7.5, this.speedLevel.getY());
-    		}
-    	}
     }	
 	
 	private void cloaking()

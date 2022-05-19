@@ -1,6 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 public class Bodyguard extends FinalBossServant
 {
@@ -11,5 +13,26 @@ public class Bodyguard extends FinalBossServant
         canInstantTurn = true;
     
         super.doTypeSpecificInitialization();
+    }
+    
+    @Override
+    protected void performFlightManeuver(Controller controller, Helicopter helicopter)
+    {
+        this.bodyguardAction();
+        super.performFlightManeuver(controller, helicopter);
+    }
+    
+    private void bodyguardAction()
+    {
+        if(Events.boss.shield < 1)
+        {
+            this.canKamikaze = true;
+            this.getSpeedLevel().setLocation(7.5, this.getSpeedLevel().getY());
+        }
+        else
+        {
+            this.canKamikaze = false;
+            this.getSpeedLevel().setLocation(this.targetSpeedLevel);
+        }
     }
 }
