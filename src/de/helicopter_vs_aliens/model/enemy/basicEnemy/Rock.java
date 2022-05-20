@@ -53,9 +53,9 @@ public class Rock extends BasicEnemy
     }
     
     @Override
-    public boolean isRemainingAfterEnteringRepairShop()
+    public boolean isDisappearingAfterEnteringRepairShop()
     {
-        return true;
+        return false;
     }
     
     @Override

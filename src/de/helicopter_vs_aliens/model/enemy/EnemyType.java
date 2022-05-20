@@ -531,6 +531,9 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         }
     }
     
+    private final static List<EnemyType>
+        RANDOM_SELECTION_TYPES = List.copyOf(EnumSet.range(TINY, TELEPORTING));
+    
     private final static Set<EnemyType>
         BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOSS_1, PROTECTOR)),
         // TODO prüfen wo anstelle dessen mit den FinalBossServantTypes gearbeitet werden kann
@@ -589,6 +592,11 @@ public enum EnemyType implements GameEntityFactory<Enemy>
         this.width = width;
         this.targetSpeedLevelProvider = targetSpeedLevelProvider;
         this.isExplodingOnCollisions = collisionEffect.isExploding();
+    }
+    
+    public static List<EnemyType> getRandomSelectionTypes()
+    {
+        return RANDOM_SELECTION_TYPES;
     }
     
     public static Set<EnemyType> getBarrierTypes()

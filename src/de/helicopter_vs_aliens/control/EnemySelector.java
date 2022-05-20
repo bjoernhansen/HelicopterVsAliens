@@ -4,43 +4,42 @@ import de.helicopter_vs_aliens.model.enemy.EnemyType;
 
 import java.util.*;
 
-public class EnemySelector
+public final class EnemySelector
 {
-    private final NavigableMap<Integer, RangeTypePair>
-        map;
-    
-    // TODO wenn neue Gegner aufgenommen werden, muss diese Klasse geändert werden. Das darf so nicht sein.
-    // TODO Idee: EnumSet in EnemyType für die Standardgegner, über diese Iterieren in der Schleife, Borders aus Methode beziehen mit default-Fall, falls weitere Gegner hinzukommen
+    private static final int
+        OVERHANG_INDEX_FACTOR = 5525;
     
     private static final List<Integer>
-        BORDERS = List.of(0, 3, 10, 25, 35, 75, 135, 310, 485, 660, 835, 2175, 3740, 3960, 9710, 15235, 20760, 26285, 31810);
-
+        BORDERS = List.of(0, 3, 10, 25, 35, 75, 135, 310, 485, 660, 835, 2175, 3740, 3960, 9710);
+        
+    private final NavigableMap<Integer, EnemyType>
+        map;
+    
     EnemySelector()
     {
-        List<EnemyType> enemyTypes = EnemyType.getValues();
-        NavigableMap<Integer, RangeTypePair> tempMap = new TreeMap<>();
-        for(int i = 0; i < BORDERS.size()-1; i++)
+        List<EnemyType> enemyTypes = EnemyType.getRandomSelectionTypes();
+        NavigableMap<Integer, EnemyType> tempMap = new TreeMap<>();
+        for(int i = 0; i < enemyTypes.size(); i++)
         {
-            tempMap.put(BORDERS.get(i), new RangeTypePair(BORDERS.get(i+1)-1, enemyTypes.get(i)));
+            tempMap.put(getBorderValue(i), enemyTypes.get(i));
         }
         map = Collections.unmodifiableNavigableMap(tempMap);
     }
 
     public EnemyType getType(int key)
     {
-        Map.Entry<Integer, RangeTypePair> entry = map.floorEntry(key);
-        return entry.getValue().enemyType;
+        return map.floorEntry(key)
+                  .getValue();
     }
-
-    private static class RangeTypePair
+    
+    private int getBorderValue(int index)
     {
-        final int upper;
-        final EnemyType enemyType;
-
-        RangeTypePair(int upper, EnemyType enemyType)
+        if(index < BORDERS.size())
         {
-            this.upper = upper;
-            this.enemyType = enemyType;
+            return BORDERS.get(index);
         }
+        int overhangIndex = index - BORDERS.size() + 1;
+        int lastIndex = BORDERS.size()-1;
+        return BORDERS.get(lastIndex) + overhangIndex * OVERHANG_INDEX_FACTOR;
     }
 }

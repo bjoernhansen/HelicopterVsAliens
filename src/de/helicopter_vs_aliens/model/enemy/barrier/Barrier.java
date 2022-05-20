@@ -83,9 +83,9 @@ abstract class Barrier extends Enemy
     }
     
     @Override
-    public boolean isRemainingAfterEnteringRepairShop()
+    public boolean isDisappearingAfterEnteringRepairShop()
     {
-        return true;
+        return false;
     }
     
     @Override

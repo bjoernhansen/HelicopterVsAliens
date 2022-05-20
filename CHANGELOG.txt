@@ -908,5 +908,6 @@ Versionen:
 			wird die Phasenshift-Zeit nun korrekt berechnet.
 			Eine Fehler im Zusammenhang mit den Werkstatt-Buttons bzgl. Preisanzeige
 			und Farbe wurden behoben.
+			Ausweichende Gegner fliegen nun immer von der Rakete weg, egal aus welcher Richtung sie kommt.
 
 Letzte Änderung: 26.02.2022

@@ -7,6 +7,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 public class LevelManager
 {
+    // TODO nicht mehr alles statisch
     public static int
         maxNr;// bestimmt wie viele Standard-Gegner gleichzeitig erscheinen können
     

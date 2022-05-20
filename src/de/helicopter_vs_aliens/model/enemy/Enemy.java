@@ -114,7 +114,9 @@ public abstract class Enemy extends RectangularGameEntity
 	private static final int
 		WIDTH_VARIANCE_DIVISOR = 10,
 		MAX_STARTING_Y = 220,
-		MIN_STARTING_Y = 90;
+		MIN_STARTING_Y = 90,
+		DODGE_BORDER_DISTANCE_LEFT = 90,
+		DODGE_BORDER_DISTANCE_RIGHT = Main.VIRTUAL_DIMENSION.width - DODGE_BORDER_DISTANCE_LEFT;
 	
 	private static final float
 		PRIMARY_COLOR_BRIGHTNESS_FACTOR = 1.3f,
@@ -239,8 +241,8 @@ public abstract class Enemy extends RectangularGameEntity
 		primaryColor,
     	secondaryColor;
 
-	// TODO Zugriff ändern (moveToTheLeft() moveToTheRight() isMovingLeft() isMovingRight()
-    public final Point
+	// TODO is wird of -direction.x (minus) übergeben, unlogisch, implementieren hier verständlicher machen. ggf. enemy übergeben und dann isMovingLeft etc. aufrufen
+    private final Point
     	direction = new Point();		// Flugrichtung
     	
 	Enemy
@@ -355,7 +357,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		this.lifetime = 0;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
-		this.direction.setLocation(-1, Calculations.randomDirection());
+		initializeMovingDirection();
 		this.callBack = 0;
 		this.shield = 0;
 		this.operator = null;
@@ -434,6 +436,12 @@ public abstract class Enemy extends RectangularGameEntity
 		
 		this.totalStunningTime = 0;
 		this.knockBackDirection = 0;
+	}
+	
+	private void initializeMovingDirection()
+	{
+		turnLeft();
+		setRandomDirectionY();
 	}
 	
 	public void dimmedRepaint()
@@ -696,7 +704,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void initializeShootDirectionOfDefaultEnemies()
 	{
-		float shootingDirectionX = (float) this.direction.x;
+		float shootingDirectionX = (float) this.getDirectionX();
 		this.shootingDirection.setLocation( shootingDirectionX, 0f);
 	}
 	
@@ -814,7 +822,7 @@ public abstract class Enemy extends RectangularGameEntity
 				
 		if(this.hasLateralFaceTouchWith(this.stoppingBarrier))
 		{
-			if(	turnaroundIsTurnAway(this.direction.x,
+			if(	turnaroundIsTurnAway(this.getDirectionX(),
 			   							 this.getCenterX(),
 			   							 this.stoppingBarrier.getCenterX())
 			   	// Gegner sollen nicht an Barriers abdrehen, bevor sie im Bild waren.					
@@ -825,15 +833,15 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 		else
 		{
-			if(turnaroundIsTurnAway(this.direction.y,
+			if(turnaroundIsTurnAway(this.getDirectionY(),
 										this.getCenterY(),
 										this.stoppingBarrier.getCenterY()))
 			{	
-				this.direction.y = -this.direction.y;				
+				this.switchDirectionY();				
 			}
 		}		
 	}
-		
+	
 	boolean hasLateralFaceTouchWith(Enemy barrier)
 	{
 		return  
@@ -850,7 +858,7 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void performXTurnAtBarrier()
 	{
-		this.direction.x = -this.direction.x;
+		this.turnAround();
 		if(this.callBack <= (this.isMiniBoss ? 2 : 0))
 		{
 			this.callBack++;
@@ -894,11 +902,11 @@ public abstract class Enemy extends RectangularGameEntity
 			if( Calculations.tossUp(0.2f)
 			    && this.type.isShieldMaker())
 			{
-				this.direction.x = -this.direction.x;
+				this.turnAround();
 			}
 			if( Calculations.tossUp(0.2f))
 			{
-				this.direction.y = -this.direction.y;
+				this.switchDirectionY();
 			}			
 			this.chaosTimer = 5;
 		}
@@ -908,22 +916,22 @@ public abstract class Enemy extends RectangularGameEntity
 			&& this.getMinX() < 0.85 * Main.VIRTUAL_DIMENSION.width)
 		{
 			this.canEarlyTurn = false;
-			this.direction.x = 1;
+			this.turnRight();
 		}
 							
 		// Frontal-Angriff
 		if( this.canLearnKamikaze
 				
-			&& ((this.direction.x == 1 
+			&& ((this.isFlyingRight()
 					&& helicopter.getMaxX() < this.getMinX()
 					&& this.getX() - helicopter.getX() < 620)
 				||
-				(this.direction.x == -1 
+				(this.isFlyingLeft() 
 					&& this.getMaxX() < helicopter.getMinX()
 					&& helicopter.getX() - this.getX() < 620)))
 		{
 			this.startKamikazeMode();
-			this.direction.x = -1;
+			this.turnLeft();
 		}			
 		if(	this.canKamikaze && !(this.teleportTimer > 0)){this.kamikaze(helicopter);}
 			
@@ -1026,18 +1034,26 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			this.burrowTimer = BORROW_TIME;
 		}
-		this.direction.y = 1;
+		this.flyDown();
 		this.speedLevel.setLocation(0, 1);
 	}
-
+	
 	private void validateTurns()
 	{
 		if(	this.stoppingBarrier != null && this.burrowTimer == DISABLED)
 		{
 			this.tryToTurnAtBarrier();
 		}
-		else if(this.hasToTurnAtXBorder()){this.changeXDirection();}
-		else if(this.hasToTurnAtYBorder()){this.changeYDirection();}
+		else if(this.hasToTurnAtXBorder())
+		{
+			this.turnAround();
+			//this.turn_timer = MIN_TURN_TIME;
+			if(this.callBack > 0){this.callBack--;}
+		}
+		else if(this.hasToTurnAtYBorder())
+		{
+			this.changeYDirection();
+		}
 	}
 	
 	private void checkForEmpStrike(GameRessourceProvider gameRessourceProvider)
@@ -1098,40 +1114,33 @@ public abstract class Enemy extends RectangularGameEntity
 		return this.barrierTeleportTimer == DISABLED
 			   //&& this.stoppingBarrier == null
 			   && this.turnTimer == READY
-			   &&(	(this.direction.x == -1 
+			   &&(	(this.isFlyingLeft()
 			   			&&(((this.callBack > 0 || this.type.isMajorBoss()) && this.getMinX() < TURN_FRAME.getMinX())
 			   					|| (this.type == EnemyType.HEALER && this.getX() < 563)))
 			   		||
-			   		(this.direction.x == 1 
+			   		(this.isFlyingRight()
 			   			&&(((this.callBack > 0 || this.type.isMajorBoss()) && this.getMaxX() > TURN_FRAME.getMaxX() && !this.canLearnKamikaze)
 			   					|| (this.type == EnemyType.BODYGUARD && (this.getX() + this.getWidth() > 660)))));
-	}
-
-	private void changeXDirection()
-	{
-		this.direction.x = -this.direction.x;
-		//this.turn_timer = MIN_TURN_TIME;
-		if(this.callBack > 0){this.callBack--;}
 	}
 	
 	private boolean hasToTurnAtYBorder()
 	{		
 		return 	this.burrowTimer == DISABLED
 				&&( (this.getMinY() <= (getModel() == BARRIER ? 0 : TURN_FRAME.getMinY())
-			   	  	 && this.direction.y < 0) 
+			   	  	 && this.isFlyingUp()) 
 			        ||
 			        (this.getMaxY() >= (getModel() == BARRIER ? GROUND_Y : TURN_FRAME.getMaxY())
-			   	     &&  this.direction.y > 0 
+			   	     &&  this.isFlyingDown() 
 			   	     && !this.isDestroyed) );
 	}
 
 	private void changeYDirection()
 	{
-		this.direction.y = -this.direction.y;
+		this.switchDirectionY();
 		if(this.canSinusMove){this.speedLevel.setLocation(this.speedLevel.getX(), 1);}
 		if(getModel() == BARRIER)
 		{
-			if(this.direction.y == -1){Audio.play(Audio.landing);}
+			if(this.isFlyingUp()){Audio.play(Audio.landing);}
 			this.snooze(false);
 		}		
 	}
@@ -1143,7 +1152,7 @@ public abstract class Enemy extends RectangularGameEntity
 			   && !this.isDodging()
 			   && (this.callBack == 0 || !this.speed.equals(ZERO_SPEED))
 			   && (    (this.getMinX() > Main.VIRTUAL_DIMENSION.width + DISAPPEARANCE_DISTANCE
-					   	 && this.direction.x ==  1)
+					   	 && this.isFlyingRight())
 				    || (this.getMaxX() < -DISAPPEARANCE_DISTANCE));
 	}
 	
@@ -1194,8 +1203,8 @@ public abstract class Enemy extends RectangularGameEntity
 			this.speedup = 3;
 			this.canSinusMove = false;
 			this.speedLevel.setLocation(this.speedLevel.getX(), 1.5);
-			if(this.getY() < helicopter.getY()){this.direction.y = 1;}
-			else{this.direction.y = -1;}	
+			if(this.getY() < helicopter.getY()){this.flyDown();}
+			else{this.flyUp();}	
 		}		
 	}
 	
@@ -1236,18 +1245,18 @@ public abstract class Enemy extends RectangularGameEntity
     	if(	this.isBoss()
     		&& Calculations.tossUp(0.008f)
     		&& ( (this.getMinX() > helicopter.getMaxX()
-    			   && this.direction.x == 1) 
+    			   && this.isFlyingRight()) 
     			 ||
     			 (helicopter.getMinX() > this.getMaxX()
-    			   && this.direction.x == -1)))		
+    			   && this.isFlyingLeft())))		
     	{
-			this.direction.x = -this.direction.x;	
+			this.turnAround();
 			this.speedLevel.setLocation(0, this.speedLevel.getY());
 		}		
 		
-    	if(((this.getMaxX() > helicopter.getMinX() && this.direction.x == -1)&&
+    	if(((this.getMaxX() > helicopter.getMinX() && this.isFlyingLeft())&&
 			(this.getMaxX() - helicopter.getMinX() ) < 620) ||
-		   ((helicopter.getMaxX() > this.getMinX() && this.direction.x == 1)&&
+		   ((helicopter.getMaxX() > this.getMinX() && this.isFlyingRight())&&
 			(helicopter.getMaxX() - this.getMinX() < 620)))
 		{			
 			if(!this.canLearnKamikaze)
@@ -1255,16 +1264,16 @@ public abstract class Enemy extends RectangularGameEntity
 				this.speedLevel.setLocation((this.type == EnemyType.BOSS_4 || this.type == EnemyType.BOSS_3) ? 12 : 8,
 											 this.speedLevel.getY());
 			}						
-			if(this.direction.y == 1 
+			if(this.isFlyingDown()
 				&& helicopter.getY()  < this.getY())
 			{							
-				this.direction.y = -1;				
+				this.flyUp();				
 				this.speedLevel.setLocation(this.speedLevel.getX(), 0);
 			}
-			else if(this.direction.y == -1 
+			else if(this.isFlyingUp()
 					&& helicopter.getMaxY() > this.getMaxY())
 			{
-				this.direction.y = 1;
+				this.flyDown();
 				this.speedLevel.setLocation(this.speedLevel.getX(), 0);
 			}
 			
@@ -1299,7 +1308,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			this.barrierShootTimer = DISABLED;
 			this.speedLevel.setLocation(0, 1);
-			this.direction.y = 1;
+			this.flyDown();
 		}
 		else if(this.burrowTimer == 1)
 		{
@@ -1319,7 +1328,7 @@ public abstract class Enemy extends RectangularGameEntity
 									: 0)
 								- 1;
 			this.speedLevel.setLocation(0, 1); 
-			this.direction.y = -1;
+			this.flyUp();
 		}	
 	}
 	
@@ -1330,14 +1339,14 @@ public abstract class Enemy extends RectangularGameEntity
 			&& Calculations.tossUp(0.1f)
 			&& this.getX() + this.getWidth() > 0
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
-			&& ((this.direction.x == -1 
+			&& ((this.isFlyingLeft() 
 				 && gameRessourceProvider.getHelicopter().getBounds().intersects(
 					this.getX() + Integer.MIN_VALUE/2f,
 					this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
 					Integer.MAX_VALUE/2f,
 					EnemyMissile.DIAMETER+30))
 				||
-				((this.direction.x == 1 
+				((this.isFlyingRight() 
 				  && gameRessourceProvider.getHelicopter().getBounds().intersects(
 					this.getX(),
 					this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
@@ -1506,7 +1515,7 @@ public abstract class Enemy extends RectangularGameEntity
 		this.tractor = AbilityStatusType.ACTIVE;
 		this.speedLevel.setLocation(ZERO_SPEED);
 		helicopter.tractor = this;
-		this.direction.x = -1;		
+		this.turnLeft();		
 	}
 	
 	public void stopTractor()
@@ -1521,7 +1530,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(this.dodgeTimer == READY)
 		{				
 			this.speedLevel.setLocation(this.targetSpeedLevel);
-			this.direction.x = -1;												   
+			this.turnLeft();												   
 		}		
 	}
 
@@ -1561,7 +1570,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			this.setLocation(
 					this.getX()
-						+ this.direction.x * this.speed.getX() 
+						+ this.getDirectionX() * this.speed.getX()
 						- (Scenery.backgroundMoves ? BG_SPEED : 0),
 					Math.max( getModel() == BARRIER ? 0 : Integer.MIN_VALUE,
 							this.type == EnemyType.ROCK ? this.getY() :
@@ -1569,7 +1578,7 @@ public abstract class Enemy extends RectangularGameEntity
 											? Integer.MAX_VALUE
 											: GROUND_Y - this.getHeight(),
 										this.getY()
-											+ this.direction.y 
+											+ this.getDirectionY()
 											* this.speed.getY())));
 		}
 	}
@@ -1689,9 +1698,9 @@ public abstract class Enemy extends RectangularGameEntity
 	private boolean mustAvoidGroundCollision(int yTurnLine)
 	{		
 		return this.getMaxY() > yTurnLine
-				   &&(   (this.direction.getX() ==  1 
+				   &&(   (this.isFlyingRight()
 				   			&& this.getCenterX() < this.stoppingBarrier.getCenterX())
-					   ||(this.direction.getX() == -1 
+					   ||(isFlyingLeft()
 					   		&& this.getCenterX() > this.stoppingBarrier.getCenterX()));
 	}
 	
@@ -1726,9 +1735,9 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private void adjustSpeedToBarrier(Helicopter helicopter)
 	{
-		if(   this.stoppingBarrier.direction.x == this.direction.x
-		   && this.stoppingBarrier.getCenterX()*this.direction.x
-		   		             < this.getCenterX()*this.direction.x
+		if(  this.hasSameDirectionX(stoppingBarrier)
+		   && this.stoppingBarrier.getCenterX()*this.getDirectionX()
+		   		             < this.getCenterX()*this.getDirectionX()
 		   && this.stoppingBarrier.speed.getX() > this.speed.getX())
 		{
 			this.speed.setLocation(	this.stoppingBarrier.isOnScreen()
@@ -1737,15 +1746,25 @@ public abstract class Enemy extends RectangularGameEntity
 			   							: this.stoppingBarrier.speed.getX(),
 			   						this.speed.getY());
 		}
-		else if( this.stoppingBarrier.direction.y == this.direction.y
-				 && this.stoppingBarrier.getCenterY()*this.direction.y
-				 		           < this.getCenterY()*this.direction.y
+		else if( this.hasSameDirectionY(this.stoppingBarrier)
+				 && this.stoppingBarrier.getCenterY()*this.getDirectionY()
+				 		           < this.getCenterY()*this.getDirectionY()
 				 && this.stoppingBarrier.speed.getY() > this.speed.getY()
 				 && this.burrowTimer == DISABLED)
 		{
 			this.speed.setLocation(this.speed.getX(), this.stoppingBarrier.speed.getY());
 			if(helicopter.tractor == this){helicopter.stopTractor();}
 		}		
+	}
+	
+	private boolean hasSameDirectionX(Enemy otherEnemy)
+	{
+		return otherEnemy.getDirectionX() == getDirectionX();
+	}
+	
+	private boolean hasSameDirectionY(Enemy otherEnemy)
+	{
+		return otherEnemy.getDirectionY() == getDirectionY();
 	}
 	
 	public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
@@ -1975,8 +1994,9 @@ public abstract class Enemy extends RectangularGameEntity
 		this.knockBackDirection = missile.speed > 0 ? 1 : -1;
 		
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		// TODO in Methoden auslagern, Code verständlicher machen
 		this.speedLevel.setLocation(
-				(this.knockBackDirection == this.direction.x ? 1 : -1)
+				(this.knockBackDirection == this.getDirectionX() ? 1 : -1)
 				  *(this.type.isMainBoss() || this.type.isFinalBossServant()
 				    ? (10f + helicopter.missileDrive)/(Events.level/10f)
 					:  10f + helicopter.missileDrive),
@@ -2002,13 +2022,13 @@ public abstract class Enemy extends RectangularGameEntity
 
 	public void reactToHit(Helicopter helicopter, Missile missile)
 	{
-		if(this.isReadyToDodge(helicopter)){this.dodge();}
+		if(this.isReadyToDodge(helicopter)){this.dodge(missile);}
 		
 		if(this.canDoHitTriggeredTurn())
 		{
 			if(this.canLearnKamikaze){this.startKamikazeMode();}
-			     if(this.getMinX() > helicopter.getMinX()){this.direction.x = -1;}
-			else if(this.getMaxX() < helicopter.getMaxX()){this.direction.x = 1;}
+			     if(this.getMinX() > helicopter.getMinX()){this.turnLeft();}
+			else if(this.getMaxX() < helicopter.getMaxX()){this.turnRight();}
 		}
 		if(this.type == EnemyType.BOSS_4){this.spawningHornetTimer = READY;}
 		
@@ -2096,7 +2116,7 @@ public abstract class Enemy extends RectangularGameEntity
 			helicopter.stopTractor();
 		}
 		this.speedLevel.setLocation(0, 12);
-		this.direction.y = 1;
+		this.flyDown();
 		
 		this.empSlowedTimer = READY;
 		this.yCrashPos = (int)(this.getMaxY() >= GROUND_Y
@@ -2268,7 +2288,7 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 	}
 
-	public void dodge()
+	public void dodge(Missile missile)
 	{
 		if(this.type == EnemyType.BOSS_3)
 		{			
@@ -2282,16 +2302,31 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 		else
 		{
+			if(isFlyingTowardsMissile(missile) && hasEnoughDistanceFromScreenBordersToDodgeAway())
+			{
+				turnAround();
+			}
 			this.speedLevel.setLocation(6, 6);
-			if(this.getMaxX() < 934){this.direction.x = 1;}
 			this.dodgeTimer = 16;
 		}															   
 		
-		if(this.getY() > 143){this.direction.y = -1;}
-		else{this.direction.y = 1;}
+		if(this.getY() > 143){this.flyUp();}
+		else{this.flyDown();}
 		
 		if(this.type.isShieldMaker()){this.stampedeShieldMaker();}
 		else if(this.type == EnemyType.HEALER){this.canDodge = false;}
+	}
+	
+	private boolean hasEnoughDistanceFromScreenBordersToDodgeAway()
+	{
+		return 	   (this.isFlyingLeft() && this.getMaxX() < DODGE_BORDER_DISTANCE_RIGHT)
+				|| (this.isFlyingRight()  && this.getMaxX() > DODGE_BORDER_DISTANCE_LEFT);
+	}
+	
+	private boolean isFlyingTowardsMissile(Missile missile)
+	{
+		return 	   (missile.isFlyingRight() && this.isFlyingLeft())
+				|| (missile.isFlyingLeft()  && this.isFlyingRight());
 	}
 	
 	private void stampedeShieldMaker()
@@ -2371,7 +2406,7 @@ public abstract class Enemy extends RectangularGameEntity
 				&& !( (     (helicopter.getX() - this.getMaxX() > -500)
 						 && (helicopter.getX() - this.getX() 	  <  150))
 					  && this.canKamikaze
-					  && this.direction.x == -1);
+					  && isFlyingLeft());
 	}
 
 	public boolean isInvincible()
@@ -2562,9 +2597,9 @@ public abstract class Enemy extends RectangularGameEntity
 		return type.getModel();
 	}
 	
-	public boolean isRemainingAfterEnteringRepairShop()
+	public boolean isDisappearingAfterEnteringRepairShop()
 	{
-		return false;
+		return true;
 	}
 	
 	// bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) oder EMP-Schockwellen (Pegasus) "betäubt" werden kann
@@ -2576,5 +2611,84 @@ public abstract class Enemy extends RectangularGameEntity
 	protected boolean isExplodingOnCollisions()
 	{
 		return type.isExplodingOnCollisions();
+	}
+	
+	
+	
+	// Methoden für Richtungsänderungen und -abfragen
+	// TODO dies sollte ggf. in eigene Klasse ausgelagert werden, nur die Methoden, die außerhalb von Enemy genutzt werden müssen weitergeleitet werden
+	public final boolean isFlyingLeft()
+	{
+		return getDirectionX() == -1;
+	}
+	
+	public final void turnLeft()
+	{
+		direction.x = -1;
+	}
+	
+	public final boolean isFlyingRight()
+	{
+		return getDirectionX() == 1;
+	}
+	
+	public final void turnRight()
+	{
+		direction.x = 1;
+	}
+	
+	public int getDirectionX()
+	{
+		return direction.x;
+	}
+	
+	public final void turnAround()
+	{
+		direction.x = -direction.x;
+	}
+	
+	public final void setRandomDirectionX()
+	{
+		direction.x = Calculations.randomDirection();
+	}
+	
+	public final int getNegativeDirectionX()
+	{
+		return -direction.x;
+	}
+	
+	public final boolean isFlyingDown()
+	{
+		return direction.y == 1;
+	}
+	
+	public final void flyDown()
+	{
+		direction.y = 1;
+	}
+	
+	public final boolean isFlyingUp()
+	{
+		return getDirectionY() == -1;
+	}
+		
+	public final void flyUp()
+	{
+		direction.y = -1;
+	}
+	
+	public final int getDirectionY()
+	{
+		return direction.y;
+	}
+	
+	public final void switchDirectionY()
+	{
+		direction.y = -getDirectionY();
+	}
+	
+	public final void setRandomDirectionY()
+	{
+		direction.y = Calculations.randomDirection();
 	}
 }

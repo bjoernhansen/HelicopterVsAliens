@@ -1,10 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
@@ -21,7 +19,7 @@ public abstract class ShieldMaker extends FinalBossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.direction.x = Calculations.randomDirection();
+        this.setRandomDirectionX();
         this.shieldMakerTimer = READY;
         this.setShieldingPosition();
     
@@ -63,13 +61,13 @@ public abstract class ShieldMaker extends FinalBossServant
             < Events.boss.getCenterX()
             - TARGET_DISTANCE_VARIANCE.x)
         {
-            this.direction.x =  1;
+            this.turnRight();
         }
         else if( this.getX()
             > Events.boss.getCenterX()
             + TARGET_DISTANCE_VARIANCE.x)
         {
-            this.direction.x = -1;
+            this.turnLeft();
         }
         
         if(	 this.isUpperShieldMaker
@@ -84,7 +82,7 @@ public abstract class ShieldMaker extends FinalBossServant
                 + SHIELD_TARGET_DISTANCE
                 - TARGET_DISTANCE_VARIANCE.y)
         {
-            this.direction.y = 1;
+            this.flyDown();
         }
         else if( this.isUpperShieldMaker
             && this.getMaxY() > Events.boss.getMinY() - SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y
@@ -92,7 +90,7 @@ public abstract class ShieldMaker extends FinalBossServant
             !this.isUpperShieldMaker
                 && this.getMinY() > Events.boss.getMaxY() + SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y)
         {
-            this.direction.y = -1;
+            this.flyUp();
         }
     }
     
@@ -117,7 +115,7 @@ public abstract class ShieldMaker extends FinalBossServant
     {
         Audio.play(Audio.shieldUp);
         this.getSpeedLevel().setLocation(ZERO_SPEED);
-        this.direction.x = -1;
+        this.turnLeft();
         this.isShielding = true;
         Events.boss.shield++;
         this.canDodge = true;

@@ -35,12 +35,12 @@ public class Healer extends FinalBossServant
                 if(this.getX() < Events.boss.getX()
                     + 0.55f * Events.boss.getWidth())
                 {
-                    this.direction.x = 1;
+                    this.turnRight();
                 }
                 else if(this.getX() > Events.boss.getX()
                     + 0.65f * Events.boss.getWidth())
                 {
-                    this.direction.x = -1;
+                    this.turnLeft();
                 }
                 else{stop++;}
                 
@@ -48,20 +48,20 @@ public class Healer extends FinalBossServant
                     + Events.boss.getHeight()
                     - 1.25f * this.getHeight())
                 {
-                    this.direction.y = 1;
+                    this.flyDown();
                 }
                 else if(this.getY() > Events.boss.getY()
                     + Events.boss.getHeight()
                     - 1.05f * this.getHeight())
                 {
-                    this.direction.y = -1;
+                    this.flyUp();
                 }
                 else{stop++;}
                 
                 if(stop >= 2)
                 {
                     this.getSpeedLevel().setLocation(ZERO_SPEED);
-                    this.direction.x = -1;
+                    this.turnLeft();
                     this.canDodge = true;
                 }
             }

@@ -433,16 +433,19 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		return instance;
 	}
 	
+	@Override
 	public GameEntityRecycler getGameEntityRecycler()
 	{
 		return gameEntityRecycler;
 	}
 	
+	@Override
 	public Scenery getScenery()
 	{
 		return this.scenery;
 	}
 	
+	@Override
 	public Savegame getSaveGame()
 	{
 		return saveGame;

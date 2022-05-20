@@ -45,9 +45,9 @@ public class CloakedBarrier extends ArmedBarrier
     }
     
     @Override
-    public boolean isRemainingAfterEnteringRepairShop()
+    public boolean isDisappearingAfterEnteringRepairShop()
     {
-        return false;
+        return true;
     }
     
     @Override

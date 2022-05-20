@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
@@ -209,7 +208,7 @@ public class Missile extends RectangularGameEntity
 			}
 			if (this.couldHit(enemy) && enemy.isReadyToDodge(helicopter))
 			{
-				enemy.dodge();
+				enemy.dodge(this);
 			}
 		}	
 	}
@@ -255,5 +254,15 @@ public class Missile extends RectangularGameEntity
 												this.getY()-1,
 												-20 * this.speed,
 												this.getWidth()+2));
+	}
+	
+	public boolean isFlyingRight()
+	{
+		return this.speed > 0;
+	}
+	
+	public boolean isFlyingLeft()
+	{
+		return this.speed < 0;
 	}
 }

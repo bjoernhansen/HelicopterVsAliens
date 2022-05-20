@@ -122,16 +122,16 @@ public class EnemyMissile extends GameEntity
     	}
     	else
     	{
-    		this.speed.setLocation(	shootingSpeed * (enemy.direction.x == -1 ? -1f : 1f), 0);
+    		this.speed.setLocation(	shootingSpeed * (enemy.isFlyingLeft() ? -1f : 1f), 0);
     		    		
     		if(enemy.getModel() == TIT)
     		{
-    			this.location.setLocation(enemy.getX() + (enemy.direction.x == -1 ? 0 : enemy.getWidth()),
+    			this.location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()),
     									  enemy.getY() );
     		}
 	    	else if(enemy.getModel() == CARGO)
 	    	{
-	    		this.location.setLocation(enemy.getX() + (enemy.direction.x == -1 ? 0 : enemy.getWidth()),
+	    		this.location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()),
 	    								  enemy.getY() + (enemy.getHeight()-this.diameter)/2);
 	    	}
     	}    	

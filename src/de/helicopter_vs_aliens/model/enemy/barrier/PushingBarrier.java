@@ -8,7 +8,7 @@ public class PushingBarrier extends Barrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        if(isIntendedToAppearOnTheLeft()){direction.x = 1;}
+        if(isIntendedToAppearOnTheLeft()){turnRight();}
     
         super.doTypeSpecificInitialization();
     }
@@ -38,8 +38,8 @@ public class PushingBarrier extends Barrier
     }
     
     @Override
-    public boolean isRemainingAfterEnteringRepairShop()
+    public boolean isDisappearingAfterEnteringRepairShop()
     {
-        return false;
+        return true;
     }
 }

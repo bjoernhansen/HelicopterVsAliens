@@ -1,3 +1,13 @@
+Bug-Report:
+
+Bug: in Level 20, Boss ist da, mit Cheats auf nächstes Level, dann erst Boss 2 töten
+--> die kleinen Flitzer kommen immer wieder
+
+Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kehrtwende unterbinden innerhalb gewisser Zeit,
+wenn gedreht an Barrier.
+
+
+
 Primäre Reihenfolge:
 
 Design Idee:
@@ -14,27 +24,9 @@ Inheritance für Enemy
 Generics: http://www.angelikalanger.com/Articles/EffectiveJava/30.GenericsIntro/30.GenericsIntro.html
 
 
-Bug: in Level 20, Boss ist da, mit Cheats auf nächstes Level, dann erst Boss 2 töten
---> die kleinen Flitzer kommen immer wieder
 
-Bug: nur gelegentlich
-Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
-	at de.helicopter_vs_aliens.gui.window.Window.identifyHighlightedButtons(Window.java:426)
-	at de.helicopter_vs_aliens.gui.window.Window.updateStartScreen(Window.java:212)
-	at de.helicopter_vs_aliens.gui.window.Window.update(Window.java:587)
-	at de.helicopter_vs_aliens.control.Controller.updateGame(Controller.java:307)
-	at de.helicopter_vs_aliens.control.Controller.paintComponent(Controller.java:246)
 
-Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kehrtwende unterbinden innerhalb gewisser Zeit,
-wenn gedreht an Barrier.
 
-Bug: unverwundbar + energy schild roch  an, absturz, wenn energie weg
-
-Bug: Die schießenden Lila Gegner erscheinen immer ganz oben, warum?
-
-Bug: Helicopter nimmt gelegentlich Schaden, wenn er von unten eine Barrier berührt
-
-Ausweichende Gegner (in lila) sollten immer vom Helicopter weg ausweichen
 
 UnitTests (JUnit5) einführen, zunächst für kleine Klassen
 

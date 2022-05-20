@@ -70,9 +70,9 @@ public class Protector extends BurrowingBarrier
     }
     
     @Override
-    public boolean isRemainingAfterEnteringRepairShop()
+    public boolean isDisappearingAfterEnteringRepairShop()
     {
-        return false;
+        return true;
     }
     
     @Override

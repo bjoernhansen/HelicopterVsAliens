@@ -7,8 +7,9 @@ public class LoopingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.direction.y = -1;
+        this.flyUp();
         this.cloakingTimer = 0;
+        this.canSinusMove = true;
         this.canLoop = true;
     
         super.doTypeSpecificInitialization();
@@ -24,15 +25,15 @@ public class LoopingEnemy extends BasicEnemy
     protected void sinusLoop()
     {
         super.sinusLoop();
-        if(this.direction.x == -1 && this.getY()-155>0)
+        if(isFlyingLeft() && this.getY()-155>0)
         {
-            this.direction.x = 1;
+            this.turnRight();
             this.getSpeedLevel()
                 .setLocation(11, this.getSpeedLevel().getY());
         }
-        else if(this.direction.x == 1 && this.getY()-155<0)
+        else if(this.isFlyingRight() && this.getY()-155<0)
         {
-            this.direction.x = -1;
+            this.turnLeft();
             this.getSpeedLevel()
                 .setLocation(7.5, this.getSpeedLevel().getY());
         }

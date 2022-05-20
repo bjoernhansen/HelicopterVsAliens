@@ -599,8 +599,8 @@ public abstract class Helicopter extends RectangularGameEntity
 	public void reset()
 	{
 		// TODO ggf. muss einiges nicht mehr resettet werden, da immer ein neuer Helicopter erzeugt wird
-		this.resetStateGeneral(true);
-		this.resetStateTypeSpecific();
+		this.partialReset();
+		this.placeAtStartpos();
 		this.isDamaged = false;
 		this.isPlayedWithCheats = false;
 		Controller.getInstance().getGameStatisticsCalculator().resetCounterForHighscore();
@@ -608,7 +608,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.scoreScreenTimes.clear();
 	}
 	
-	public void resetStateGeneral(boolean resetStartPos)
+	public void resetStateGeneral()
 	{
 		this.inactivate();
 		this.isCrashing = false;
@@ -617,10 +617,6 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.powerUpController.reset();
 		this.resetRotorPosition();
 		this.fireRateTimer = this.timeBetweenTwoShots;
-		if (resetStartPos)
-		{
-			this.placeAtStartpos();
-		}
 	}
 	
 	private void resetSpecialUpgrades()
@@ -1487,5 +1483,10 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		powerUpController.switchPowerUpActivationState(powerUps, powerUpType);
 	}
-
+	
+	public void partialReset()
+	{
+		resetStateGeneral();
+		resetStateTypeSpecific();
+	}
 }

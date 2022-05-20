@@ -24,7 +24,6 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
-import de.helicopter_vs_aliens.model.helicopter.Kamaitachi;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScore;
@@ -68,7 +67,6 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_4;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.FINAL_BOSS;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
@@ -415,10 +413,10 @@ public class Events
 		}
 	}	
 
-	private static void inGameMousePressedLeft(Controller controller)
+	private static void inGameMousePressedLeft(GameRessourceProvider gameRessourceProvider)
 	{
-		Helicopter helicopter = controller.getHelicopter();
-		Savegame savegame = controller.getSaveGame();
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		Savegame savegame = gameRessourceProvider.getSaveGame();
 		if(!helicopter.isDamaged)
 		{
 			if(Window.isMenuVisible)
@@ -427,8 +425,8 @@ public class Events
 				{
                     savegame.becomeValid();
 				    savegame.saveToFile(helicopter);
-					conditionalReset(controller,true);
-					restartGame(controller);
+					conditionalReset(gameRessourceProvider,true);
+					restartGame(gameRessourceProvider);
 					Audio.applause1.stop();
 				}
 				else if(Window.buttons.get(MainMenuButtonType.STOP_MUSIC).getBounds().contains(cursor))
@@ -440,7 +438,7 @@ public class Events
 				{
                     savegame.becomeValid();
 				    savegame.saveToFile(helicopter);
-					controller.shutDown();
+					Controller.getInstance().shutDown();
 				}
 				else if( 	(Window.buttons.get(GroundButtonType.MAIN_MENU).getBounds().contains(cursor)
 							&& helicopter.isOnTheGround())
@@ -454,7 +452,7 @@ public class Events
 				if(Window.buttons.get(GroundButtonType.REPAIR_SHOP).getBounds().contains(cursor))
 				{
 					// Betreten der Werkstatt über den Werkstatt-Button
-					conditionalReset(controller, false);
+					conditionalReset(gameRessourceProvider, false);
 					enterRepairShop(helicopter);
 				}
 				else if(Window.buttons.get(GroundButtonType.MAIN_MENU).getBounds().contains(cursor))
@@ -472,7 +470,7 @@ public class Events
 				 	&& isRestartWindowVisible)
 		{
 			// Betreten der Werkstatt nach Absturz bzw. Neustart bei Geldmangel				
-			conditionalReset(controller, true);
+			conditionalReset(gameRessourceProvider, true);
 			if(money < repairFee(helicopter, true) || level > 50)
 			{
 				if(level > 50)
@@ -492,7 +490,7 @@ public class Events
 				helicopter.isDamaged = false;
                 savegame.becomeValid();
 				savegame.saveToFile(helicopter);
-				Colorations.updateScoreScreenColors(controller.getGameStatisticsCalculator());
+				Colorations.updateScoreScreenColors(gameRessourceProvider.getGameStatisticsCalculator());
 			}
 			else{enterRepairShop(helicopter);}
 		}
@@ -1032,29 +1030,20 @@ public class Events
 	 * bedingter (conditional) Rest, da unterschieden wird, ob nur die 
 	 * Werkstatt betreten oder das Spiel komplett neu gestartet wird
 	 */
-	private static void conditionalReset(Controller controller, boolean totalReset)
+	private static void conditionalReset(GameRessourceProvider gameRessourceProvider, boolean totalReset)
 	{
 		Audio.play(Audio.choose);
-		
-		Helicopter helicopter = controller.getHelicopter();
-		helicopter.bonusKillsTimer = 1;
-		if(helicopter.getType() == KAMAITACHI){((Kamaitachi)helicopter).evaluateBonusKills();}
-		helicopter.resetStateGeneral(totalReset);
-        helicopter.resetStateTypeSpecific();
-		
-		boss = null;		
-		lastExtraBonus = 0;
-		lastMultiKill = 0;
-		commendationTimer = 0;		
-		isRestartWindowVisible = false;
-		lastBonus = 0;
-		
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		helicopter.partialReset();
+		helicopter.bonusKillsTimer = 1; // TODO ist das nur für Kamaitachi wichtig oder warum?
+		if(totalReset){helicopter.placeAtStartpos();}
+		resetEvents();
 		Window.conditionalReset();
 		
 		// kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-		if(!controller.getEnemies()
+		if(!gameRessourceProvider.getEnemies()
 					  .get(ACTIVE).isEmpty()
-		   && !(!totalReset && controller.getEnemies()
+		   && !(!totalReset && gameRessourceProvider.getEnemies()
 										 .get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
 		{
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
@@ -1066,41 +1055,41 @@ public class Events
 			}			
 			if(totalReset)
 			{
-				// controller.enemies.get(INACTIVE).addAll(controller.enemies.get(ACTIVE));
-				controller.getEnemies()
+				// gameRessourceProvider.enemies.get(INACTIVE).addAll(gameRessourceProvider.enemies.get(ACTIVE));
+				gameRessourceProvider.getEnemies()
 						  .get(ACTIVE).clear();
 				EnemyController.currentRock = null;
 			}
 			else
 			{
-				// controller.enemies.get(INACTIVE).add(e);
-				controller.getEnemies()
-						  .get(ACTIVE)
-						  .removeIf(Enemy::isRemainingAfterEnteringRepairShop);
+				// gameRessourceProvider.enemies.get(INACTIVE).add(e);
+				gameRessourceProvider.getEnemies()
+									 .get(ACTIVE)
+									 .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
 			}
 			EnemyController.currentMiniBoss = null;
 		}
 		if(totalReset)
 		{
 			killsAfterLevelUp = 0;
-			// controller.enemies.get(INACTIVE).addAll(controller.enemies.get(DESTROYED));
-			controller.getEnemies()
+			// gameRessourceProvider.enemies.get(INACTIVE).addAll(gameRessourceProvider.enemies.get(DESTROYED));
+			gameRessourceProvider.getEnemies()
 					  .get(DESTROYED).clear();
 			if(level < 6)
 			{
-				controller.getScenery().reset();
+				gameRessourceProvider.getScenery().reset();
 			}
 		}									
-		controller.getExplosions().get(INACTIVE).addAll(controller.getExplosions().get(ACTIVE));
-		controller.getExplosions().get(ACTIVE).clear();
-		controller.getMissiles().get(INACTIVE).addAll(controller.getMissiles().get(ACTIVE));
-		controller.getMissiles().get(ACTIVE).clear();
-		controller.getEnemyMissiles().get(INACTIVE).addAll(controller.getEnemyMissiles().get(ACTIVE));
-		controller.getEnemyMissiles().get(ACTIVE).clear();
+		gameRessourceProvider.getExplosions().get(INACTIVE).addAll(gameRessourceProvider.getExplosions().get(ACTIVE));
+		gameRessourceProvider.getExplosions().get(ACTIVE).clear();
+		gameRessourceProvider.getMissiles().get(INACTIVE).addAll(gameRessourceProvider.getMissiles().get(ACTIVE));
+		gameRessourceProvider.getMissiles().get(ACTIVE).clear();
+		gameRessourceProvider.getEnemyMissiles().get(INACTIVE).addAll(gameRessourceProvider.getEnemyMissiles().get(ACTIVE));
+		gameRessourceProvider.getEnemyMissiles().get(ACTIVE).clear();
 		// TODO wieso auskommentiert?
-		//controller.powerUps.get(INACTIVE).addAll(controller.powerUps.get(ACTIVE));
-		controller.getGameEntityRecycler().storeAll(controller.getPowerUps().get(ACTIVE));
-		controller.getPowerUps().get(ACTIVE).clear();
+		//gameRessourceProvider.powerUps.get(INACTIVE).addAll(gameRessourceProvider.powerUps.get(ACTIVE));
+		gameRessourceProvider.getGameEntityRecycler().storeAll(gameRessourceProvider.getPowerUps().get(ACTIVE));
+		gameRessourceProvider.getPowerUps().get(ACTIVE).clear();
 		// TODO
 		if(Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))
 		{
@@ -1108,7 +1097,17 @@ public class Events
 		}
 		Window.collectedPowerUps.clear();
 	}
-
+	
+	private static void resetEvents()
+	{
+		boss = null;
+		lastExtraBonus = 0;
+		lastMultiKill = 0;
+		commendationTimer = 0;
+		isRestartWindowVisible = false;
+		lastBonus = 0;
+	}
+	
 	static private void startNewGame(HelicopterType helicopterType, Controller controller)
 	{
 		Audio.play(Audio.applause1);
@@ -1139,11 +1138,11 @@ public class Events
 	}
 
 	// TODO die sceneryObject-Liste sollte teil innerhalb von Scenery definiert werden
-	private static void restartGame(Controller controller)
+	private static void restartGame(GameRessourceProvider gameRessourceProvider)
 	{
 		changeWindow(START_SCREEN);
-		controller.getHelicopter().reset();
-		controller.getScenery().reset();
+		gameRessourceProvider.getHelicopter().reset();
+		gameRessourceProvider.getScenery().reset();
 	}
 
 	private static void startMission(Controller controller)

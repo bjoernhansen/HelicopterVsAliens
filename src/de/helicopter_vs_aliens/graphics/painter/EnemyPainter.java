@@ -48,13 +48,13 @@ public class EnemyPainter extends Painter<Enemy>
         setEnemy(enemy);
         Helicopter helicopter = Controller.getInstance().getHelicopter();
         boolean cloaked = enemy.getCloakingTimer() > Enemy.CLOAKING_TIME && enemy.getCloakingTimer() <= Enemy.CLOAKING_TIME + Enemy.CLOAKED_TIME;
-        int g2DSel = enemy.direction.x == -1 ? 0 : 1;
+        int g2DSel = enemy.isFlyingLeft() ? 0 : 1;
         
         if(!cloaked)
         {
             if(enemy.isInvincible())
             {
-                this.paintImage(graphicsAdapter, enemy, -enemy.direction.x, Colorations.variableGreen, false);
+                this.paintImage(graphicsAdapter, enemy, enemy.getNegativeDirectionX(), Colorations.variableGreen, false);
             }
             else if(enemy.alpha != 255)
             {
@@ -63,20 +63,20 @@ public class EnemyPainter extends Painter<Enemy>
                     Enemy.scales[3] = ((float)enemy.alpha)/255;
                     graphicsAdapter.drawImage(	enemy.getImage()[g2DSel],
                         new RescaleOp(Enemy.scales, Enemy.offsets, null),
-                        enemy.getPaintBounds().x - (enemy.direction.x == -1 ? enemy.getPaintBounds().width/36 : 0),
+                        enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? enemy.getPaintBounds().width/36 : 0),
                         enemy.getPaintBounds().y - enemy.getPaintBounds().height/4);
                 }
                 else
                 {
                     graphicsAdapter.drawImage(enemy.getImage()[g2DSel + 2],
-                        enemy.getPaintBounds().x - (enemy.direction.x == -1 ? enemy.getPaintBounds().width/36 : 0),
+                        enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? enemy.getPaintBounds().width/36 : 0),
                         enemy.getPaintBounds().y - enemy.getPaintBounds().height/4, null);
                 }
             }
             else
             {
                 graphicsAdapter.drawImage(enemy.getImage()[g2DSel],
-                    enemy.getPaintBounds().x - (enemy.direction.x == -1 ? enemy.getPaintBounds().width/36 : 0),
+                    enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? enemy.getPaintBounds().width/36 : 0),
                     enemy.getPaintBounds().y - enemy.getPaintBounds().height/4, null);
             }
             
@@ -88,7 +88,7 @@ public class EnemyPainter extends Painter<Enemy>
                     ? Colorations.setAlpha(Colorations.variableGreen, enemy.alpha)
                     : Colorations.variableGreen;
                 
-                this.paintCannon(graphicsAdapter, enemy.getPaintBounds().x, enemy.getPaintBounds().y, -enemy.direction.x, inputColorRoof);
+                this.paintCannon(graphicsAdapter, enemy.getPaintBounds().x, enemy.getPaintBounds().y, enemy.getNegativeDirectionX(), inputColorRoof);
             }
             
             // blinkende Scheibe von Bossen und Mini-Bossen bzw. Eyes bei Hindernissen
@@ -125,7 +125,7 @@ public class EnemyPainter extends Painter<Enemy>
         else if(helicopter.canDetectCloakedVessels())
         {
             graphicsAdapter.drawImage(	enemy.getImage()[g2DSel + 2],
-                enemy.getPaintBounds().x - (enemy.direction.x == -1 ? enemy.getPaintBounds().width/36 : 0),
+                enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? enemy.getPaintBounds().width/36 : 0),
                 enemy.getPaintBounds().y - enemy.getPaintBounds().height/4,
                 null);
         }
@@ -235,7 +235,7 @@ public class EnemyPainter extends Painter<Enemy>
             yCenterShift = (int) (centerShift * enemy.getPaintBounds().height);
         
         
-        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.direction.x == 1))
+        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.isFlyingLeft()))
         {
             paintBar(	graphicsAdapter,
                 x + xCenterShift,
@@ -248,7 +248,7 @@ public class EnemyPainter extends Painter<Enemy>
                 false,
                 inputColor);
         }
-        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.direction.x ==  -1))
+        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.isFlyingLeft()))
         {
             paintBar(	graphicsAdapter,
                 (int)(x + 1 + (1f-thicknessFactor)*enemy.getPaintBounds().width)-xCenterShift,
@@ -261,7 +261,7 @@ public class EnemyPainter extends Painter<Enemy>
                 false,
                 inputColor);
         }
-        if(imagePaint || (enemy.getSpeedLevel().getY() != 0 && enemy.direction.y ==  1))
+        if(imagePaint || (enemy.getSpeedLevel().getY() != 0 && enemy.isFlyingDown()))
         {
             paintBar(	graphicsAdapter,
                 x + xShift,
@@ -274,7 +274,7 @@ public class EnemyPainter extends Painter<Enemy>
                 true,
                 inputColor);
         }
-        if(imagePaint || (enemy.getSpeedLevel().getY() != 0 && enemy.direction.y == -1))
+        if(imagePaint || (enemy.getSpeedLevel().getY() != 0 && enemy.isFlyingUp()))
         {
             paintBar(	graphicsAdapter,
                 x + xShift,
@@ -340,7 +340,7 @@ public class EnemyPainter extends Painter<Enemy>
         paintExhaustPipe(graphicsAdapter,
             enemy.getPaintBounds().x,
             enemy.getPaintBounds().y,
-            -enemy.direction.x,
+            enemy.getNegativeDirectionX(),
             null,
             color4);
     }
@@ -727,7 +727,7 @@ public class EnemyPainter extends Painter<Enemy>
     private void paintShieldBeam(GraphicsAdapter graphicsAdapter, Enemy enemy)
     {
         GraphicalEntities.paintGlowingLine(graphicsAdapter,
-                                           enemy.getPaintBounds().x + (enemy.direction.x + 1)/2 * enemy.getPaintBounds().width,
+                                           enemy.getPaintBounds().x + (enemy.getDirectionX() + 1)/2 * enemy.getPaintBounds().width,
                                            enemy.getPaintBounds().y,
                                            Events.boss.getPaintBounds().x + Events.boss.getPaintBounds().width/48,
                                            Events.boss.getPaintBounds().y + Events.boss.getPaintBounds().width/48);
@@ -743,7 +743,7 @@ public class EnemyPainter extends Painter<Enemy>
             enemy.alpha != 255
                 ? Colorations.setAlpha(Colorations.variableRed, enemy.alpha)
                 : Colorations.variableRed,
-            -enemy.direction.x,
+            enemy.getNegativeDirectionX(),
             false);
     }
     
