@@ -909,5 +909,7 @@ Versionen:
 			Eine Fehler im Zusammenhang mit den Werkstatt-Buttons bzgl. Preisanzeige
 			und Farbe wurden behoben.
 			Ausweichende Gegner fliegen nun immer von der Rakete weg, egal aus welcher Richtung sie kommt.
+			Ein Fehler, der dazu führte, dass BOSS2 Servants immer wieder kommen, wenn Boss2 nach Level 20
+			bestiegt wurde (durch Cheats möglich), wurde behoben.
 
 Letzte Änderung: 26.02.2022

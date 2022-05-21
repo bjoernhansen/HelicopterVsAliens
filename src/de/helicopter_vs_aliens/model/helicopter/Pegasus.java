@@ -19,10 +19,6 @@ import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.EMP;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PHASE_SHIFT;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PHOENIX;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIRE_RATE;
 
 
@@ -84,13 +80,13 @@ public final class Pegasus extends Helicopter
     @Override
     public void updateUnlockedHelicopters()
     {
-        if(!PHOENIX.hasReachedLevel20())
+        if(!HelicopterType.PHOENIX.hasReachedLevel20())
         {
-            Window.unlock(OROCHI);
+            Window.unlock(HelicopterType.OROCHI);
         }
-        else if(!ROCH.hasReachedLevel20())
+        else if(!HelicopterType.ROCH.hasReachedLevel20())
         {
-            Window.unlock(KAMAITACHI);
+            Window.unlock(HelicopterType.KAMAITACHI);
         }
     }
 

@@ -1,8 +1,5 @@
 Bug-Report:
 
-Bug: in Level 20, Boss ist da, mit Cheats auf nächstes Level, dann erst Boss 2 töten
---> die kleinen Flitzer kommen immer wieder
-
 Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kehrtwende unterbinden innerhalb gewisser Zeit,
 wenn gedreht an Barrier.
 

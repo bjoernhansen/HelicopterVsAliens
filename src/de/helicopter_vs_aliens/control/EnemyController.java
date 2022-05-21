@@ -184,6 +184,8 @@ public class EnemyController
         {
             creation(gameRessourceProvider);
         }
+        LevelManager.nextBossEnemyType = null;
+        LevelManager.maxNr = 3;
     }
     
     private static void createAllBoss5Servants(GameRessourceProvider gameRessourceProvider)

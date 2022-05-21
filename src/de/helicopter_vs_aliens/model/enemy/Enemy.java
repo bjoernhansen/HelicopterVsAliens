@@ -1098,7 +1098,7 @@ public abstract class Enemy extends RectangularGameEntity
 			Audio.play(Audio.explosion2);
 			pegasus.empWave.kills++;
 			pegasus.empWave.earnedMoney += calculateReward(pegasus);
-			die(gameRessourceProvider,null);
+			dieFromEmpWave(gameRessourceProvider);
 		}
     }
     
@@ -1907,7 +1907,7 @@ public abstract class Enemy extends RectangularGameEntity
 			else
 			{
 				boolean beamKill = helicopter.bonusKillsTimer > 0;
-				this.die(gameRessourceProvider, null, beamKill);
+				this.dieFromRadiation(gameRessourceProvider, beamKill);
 			}
 		}		
 	}
@@ -2134,10 +2134,21 @@ public abstract class Enemy extends RectangularGameEntity
 		this.secondaryColor = Colorations.setAlpha(this.secondaryColor, 255);
 		this.cloakingTimer = nextCloakingState;
 	}
-
-	public void die(GameRessourceProvider gameRessourceProvider, Missile missile)
+	
+	// TODO null und false sollten keine Eingabeargumente sein, hier die Implementierung anpassen
+	public void dieFromEmpWave(GameRessourceProvider gameRessourceProvider)
+	{
+		this.die(gameRessourceProvider, null, false);
+	}
+	
+	public void dieByMissile(GameRessourceProvider gameRessourceProvider, Missile missile)
 	{
 		this.die(gameRessourceProvider, missile, false);
+	}
+	
+	public void dieFromRadiation(GameRessourceProvider gameRessourceProvider, boolean beamKill)
+	{
+		this.die(gameRessourceProvider, null, beamKill);
 	}
 
 	public void die(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)

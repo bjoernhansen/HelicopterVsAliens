@@ -46,7 +46,8 @@ public class GameEntityRecycler
     
     public <T extends GameEntity> int sizeOf(Class<T> classOfGameEntity)
     {
-        return Objects.requireNonNull(recyclingQueues.putIfAbsent(classOfGameEntity, new LinkedList<T>()))
-                      .size();
+        return Optional.ofNullable(recyclingQueues.putIfAbsent(classOfGameEntity, new LinkedList<T>()))
+                       .map(Queue::size)
+                       .orElse(0);
     }
 }

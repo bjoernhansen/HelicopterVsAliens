@@ -53,10 +53,6 @@ import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
 import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
 import static de.helicopter_vs_aliens.gui.WindowType.SETTINGS;
 import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PHOENIX;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
@@ -437,7 +433,7 @@ public abstract class Window implements Paintable
 			buttons.get(buttonSpecifier).updateSecondaryLabel();
 		});
 	
-		if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
+		if(helicopter.getType() == HelicopterType.OROCHI && helicopter.numberOfCannons == 2)
 		{
 			buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setPrimaryLabel(dictionary.thirdCannon());
 		}
@@ -707,14 +703,14 @@ public abstract class Window implements Paintable
 		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsTo(helicopter.getSpotlightCosts());
 		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).setCostColor(CHEAP.getColor());
 		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).adjustCostsTo(helicopter.getGoliathCosts());
-		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).setCostColor((helicopter.getType() == PHOENIX || (helicopter.getType() == HELIOS && PHOENIX.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : REGULAR.getColor());
-		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).adjustCostsTo((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && ROCH.hasDefeatedFinalBoss())) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
-		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).setCostColor((helicopter.getType() == ROCH || (helicopter.getType() == HELIOS && ROCH.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : REGULAR.getColor());
-		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).adjustCostsTo((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
-		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setCostColor((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : helicopter.getType() == ROCH ? EXPENSIVE.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.GOLIATH_PLATING).setCostColor((helicopter.getType() == HelicopterType.PHOENIX || (helicopter.getType() == HelicopterType.HELIOS && HelicopterType.PHOENIX.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).adjustCostsTo((helicopter.getType() == HelicopterType.ROCH || (helicopter.getType() == HelicopterType.HELIOS && HelicopterType.ROCH.hasDefeatedFinalBoss())) ? Helicopter.CHEAP_SPECIAL_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		buttons.get(SpecialUpgradeButtonType.PIERCING_WARHEADS).setCostColor((helicopter.getType() == HelicopterType.ROCH || (helicopter.getType() == HelicopterType.HELIOS && HelicopterType.ROCH.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : REGULAR.getColor());
+		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).adjustCostsTo((helicopter.getType() == HelicopterType.OROCHI || (helicopter.getType() == HelicopterType.HELIOS && HelicopterType.OROCHI.hasDefeatedFinalBoss())) ? Helicopter.CHEAP_SPECIAL_COSTS  : helicopter.getType() == HelicopterType.ROCH ? Roch.ROCH_SECOND_CANNON_COSTS  : Helicopter.STANDARD_SPECIAL_COSTS);
+		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setCostColor((helicopter.getType() == HelicopterType.OROCHI || (helicopter.getType() == HelicopterType.HELIOS && HelicopterType.OROCHI.hasDefeatedFinalBoss())) ? VERY_CHEAP.getColor() : helicopter.getType() == HelicopterType.ROCH ? EXPENSIVE.getColor() : REGULAR.getColor());
 		buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS).setPrimaryLabel(dictionary.extraCannons());
 		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).adjustCostsTo(helicopter.getFifthSpecialCosts());
-		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).setCostColor(helicopter.getType() != ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor());
+		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).setCostColor(helicopter.getType() != HelicopterType.ROCH ? VERY_CHEAP.getColor() : CHEAP.getColor());
 		buttons.get(SpecialUpgradeButtonType.FIFTH_SPECIAL).setPrimaryLabel(dictionary.fifthSpecial());
 	}
 	

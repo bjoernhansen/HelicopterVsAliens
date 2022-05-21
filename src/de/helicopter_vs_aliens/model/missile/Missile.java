@@ -187,7 +187,7 @@ public class Missile extends RectangularGameEntity
 				}
 				else
 				{
-					enemy.die(gameRessourceProvider, this);
+					enemy.dieByMissile(gameRessourceProvider, this);
 					
 					if (helicopter.deservesMantisReward(this.launchingTime))
 					{

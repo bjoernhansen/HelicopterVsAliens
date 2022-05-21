@@ -8,15 +8,13 @@ import de.helicopter_vs_aliens.gui.button.SpecialUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.button.StandardUpgradeButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PHOENIX;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.EXTRA_CANNONS;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.FIFTH_SPECIAL;
 import static de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType.GOLIATH_PLATING;
@@ -94,13 +92,13 @@ public class RepairShopWindowPainter extends WindowPainter
             if((standardUpgradeType != ENERGY_ABILITY && helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType)
                 || ( standardUpgradeType == ENERGY_ABILITY
                 && helicopter.hasMaximumUpgradeLevelFor(ENERGY_ABILITY)
-                && !(helicopter.getType() == OROCHI
+                && !(helicopter.getType() == HelicopterType.OROCHI
                 && !helicopter.hasMaximumUpgradeLevelFor(MISSILE_DRIVE)))))
             {
                 graphicsAdapter.setColor(Colorations.golden);
             }
             else{graphicsAdapter.setColor(Color.white);}
-            if(standardUpgradeType == ENERGY_ABILITY && helicopter.getType() == OROCHI)
+            if(standardUpgradeType == ENERGY_ABILITY && helicopter.getType() == HelicopterType.OROCHI)
             {
                 graphicsAdapter.drawString(Window.dictionary.level() + " " + helicopter.getUpgradeLevelOf(standardUpgradeType) + " / " + (helicopter.getUpgradeLevelOf(MISSILE_DRIVE)-1), STATUS_BAR_X2, STANDARD_UPGRADE_OFFSET_Y + 150);
             }
@@ -112,7 +110,7 @@ public class RepairShopWindowPainter extends WindowPainter
         if(helicopter.hasSpotlights)
         {
             graphicsAdapter.setColor(Colorations.golden);
-            graphicsAdapter.drawString(Window.dictionary.specialUpgrade(SPOTLIGHT), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 0);
+            graphicsAdapter.drawString(Window.dictionary.specialUpgrade(SPOTLIGHT), STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y);
         }
         if(helicopter.hasGoliathPlating())
         {
@@ -126,7 +124,7 @@ public class RepairShopWindowPainter extends WindowPainter
         }
         if(helicopter.numberOfCannons >= 2)
         {
-            if(helicopter.getType() == OROCHI && helicopter.numberOfCannons == 2)
+            if(helicopter.getType() == HelicopterType.OROCHI && helicopter.numberOfCannons == 2)
             {
                 graphicsAdapter.setColor(Color.white);
             }
@@ -144,11 +142,11 @@ public class RepairShopWindowPainter extends WindowPainter
         {
             // TODO String zusammenbauen und dann einmal graphicsAdapter.drawString (auch oben)
             graphicsAdapter.setColor(Colorations.golden);
-            if(helicopter.getType() == PHOENIX || helicopter.getType() == PEGASUS)
+            if(helicopter.getType() == HelicopterType.PHOENIX || helicopter.getType() == HelicopterType.PEGASUS)
             {
                 if(!helicopter.isFifthSpecialOnMaximumStrength()){graphicsAdapter.setColor(Color.white);}
                 // TODO diese Fallunterscheidung in Methoden auslagern (überschreiben in PHOENIX und PEGASUS)
-                graphicsAdapter.drawString(Window.dictionary.specialUpgrade(FIFTH_SPECIAL) + " (" + Window.dictionary.level() + " " + (helicopter.getUpgradeLevelOf(helicopter.getType() == PHOENIX ? FIREPOWER : FIRE_RATE)-1) + ")", STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 100);
+                graphicsAdapter.drawString(Window.dictionary.specialUpgrade(FIFTH_SPECIAL) + " (" + Window.dictionary.level() + " " + (helicopter.getUpgradeLevelOf(helicopter.getType() == HelicopterType.PHOENIX ? FIREPOWER : FIRE_RATE)-1) + ")", STATUS_BAR_X1, SPECIAL_UPGRADE_OFFSET_Y + 100);
             }
             else
             {
