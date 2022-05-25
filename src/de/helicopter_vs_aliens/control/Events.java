@@ -18,7 +18,7 @@ import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.basicEnemy.BasicEnemy;
+import de.helicopter_vs_aliens.model.enemy.basic.BasicEnemy;
 import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
@@ -1088,7 +1088,7 @@ public class Events
 		gameRessourceProvider.getEnemyMissiles().get(ACTIVE).clear();
 		// TODO wieso auskommentiert?
 		//gameRessourceProvider.powerUps.get(INACTIVE).addAll(gameRessourceProvider.powerUps.get(ACTIVE));
-		gameRessourceProvider.getGameEntityRecycler().storeAll(gameRessourceProvider.getPowerUps().get(ACTIVE));
+		gameRessourceProvider.getGameEntityManager().storeAll(gameRessourceProvider.getPowerUps().get(ACTIVE));
 		gameRessourceProvider.getPowerUps().get(ACTIVE).clear();
 		// TODO
 		if(Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))

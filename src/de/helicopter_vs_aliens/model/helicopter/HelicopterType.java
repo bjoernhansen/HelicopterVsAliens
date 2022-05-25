@@ -1,7 +1,9 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HeliosPainter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.KamaitachiPainter;
@@ -11,6 +13,7 @@ import de.helicopter_vs_aliens.graphics.painter.helicopter.PhoenixPainter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.RochPainter;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -22,35 +25,49 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 
-public enum HelicopterType
+public enum HelicopterType implements GameEntityFactory<Helicopter>
 {
-    PHOENIX(Phoenix.class, Phoenix::new, PhoenixPainter::new),
-    ROCH(Roch.class, Roch::new, RochPainter::new),
-    OROCHI(Orochi.class, Orochi::new, OrochiPainter::new)
-    {
-        @Override
-        public List<HelicopterType> getUnlockerTypes()
-        {
-            return OROCHI_UNLOCKER;
-        }
-    },
-    KAMAITACHI(Kamaitachi.class, Kamaitachi::new, KamaitachiPainter::new)
-    {
-        @Override
-        public List<HelicopterType> getUnlockerTypes()
-        {
-            return KAMAITACHI_UNLOCKER;
-        }
-    },
-    PEGASUS(Pegasus.class, Pegasus::new, PegasusPainter::new)
-    {
-        @Override
-        public List<HelicopterType> getUnlockerTypes()
-        {
-            return PEGASUS_UNLOCKER;
-        }
-    },
-    HELIOS(Helios.class, Helios::new, HeliosPainter::new )
+    PHOENIX(
+        Phoenix.class,
+        Phoenix::new,
+        PhoenixPainter::new,
+        Unlocker::getEmpty,
+        Audio::getTeleport1),
+    
+    ROCH(
+        Roch.class,
+        Roch::new,
+        RochPainter::new,
+        Unlocker::getEmpty,
+        Audio::getShieldUp),
+    
+    OROCHI(
+        Orochi.class,
+        Orochi::new,
+        OrochiPainter::new,
+        Unlocker::getForOrochi,
+        Audio::getStunActivated),
+    
+    KAMAITACHI(
+        Kamaitachi.class,
+        Kamaitachi::new,
+        KamaitachiPainter::new,
+        Unlocker::getForKamaitachi,
+        Audio::getPlasmaOn),
+    
+    PEGASUS(
+        Pegasus.class,
+        Pegasus::new,
+        PegasusPainter::new,
+        Unlocker::getForPegasus,
+        Audio::getEmp),
+    
+    HELIOS(
+        Helios.class,
+        Helios::new,
+        HeliosPainter::new,
+        Unlocker::getEmpty,
+        Audio::getShieldUp)
     {
         @Override
         public boolean isUnlocked()
@@ -119,14 +136,7 @@ public enum HelicopterType
     
     private static final List<HelicopterType>
         VALUES = List.of(values());
-    
-    // TODO ggf. hier EnumSet verwenden
-    private static final List<HelicopterType>
-        NO_UNLOCKER = Collections.emptyList(),
-        OROCHI_UNLOCKER = List.of(PHOENIX, PEGASUS),
-        KAMAITACHI_UNLOCKER = List.of(ROCH, PEGASUS),
-        PEGASUS_UNLOCKER = List.of(OROCHI, KAMAITACHI);
-    
+        
     private static final Set<HelicopterType>
         NORMAL_MODE_HELICOPTERS = Set.copyOf(EnumSet.range(PHOENIX, PEGASUS));
     
@@ -149,16 +159,27 @@ public enum HelicopterType
     
     private final Class<? extends Helicopter>
         helicopterClass;
+    
+    private final Supplier<List<HelicopterType>>
+        unlockerTypes;
+    
+    private final Supplier<AudioClip>
+        specialSound;
        
+    
     HelicopterType(Class<? extends Helicopter> helicopterClass,
                    Supplier<? extends Helicopter> instance,
-                   Supplier<? extends Painter<? extends Helicopter>> painterInstance)
+                   Supplier<? extends Painter<? extends Helicopter>> painterInstance,
+                   Supplier<List<HelicopterType>> unlockerTypes,
+                   Supplier<AudioClip> specialSound)
     {
         this.number = ordinal()+1;
         this.helicopterClass = helicopterClass;
         this.instance = instance;
         this.painterInstance = painterInstance;
         this.fifthSpecialDictionaryKey = FIFTH_SPECIAL_KEY_PREFIX + this.getDesignation();
+        this.unlockerTypes = unlockerTypes;
+        this.specialSound = specialSound;
     }
     
     public static int count()
@@ -173,7 +194,7 @@ public enum HelicopterType
 
     public List<HelicopterType> getUnlockerTypes()
     {
-        return NO_UNLOCKER;
+        return this.unlockerTypes.get();
     }
     
     public static Set<HelicopterType> getNormalModeHelicopters(){
@@ -218,8 +239,7 @@ public enum HelicopterType
     public boolean isUnlocked()
     {
         return getUnlockerTypes().isEmpty()
-               || getUnlockerTypes().get(0).hasReachedLevel20()
-               || getUnlockerTypes().get(1).hasReachedLevel20();
+               || getUnlockerTypes().stream().anyMatch(HelicopterType::hasReachedLevel20);
     }
 
     public Color getStandardPrimaryHullColor()
@@ -293,12 +313,14 @@ public enum HelicopterType
         return Optional.ofNullable(ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
     }
     
+    @Override
     public Helicopter makeInstance()
     {
         return instance.get();
     }
     
-    public Class<? extends Helicopter> getHelicopterClass()
+    @Override
+    public Class<? extends Helicopter> getCorrespondingClass()
     {
         return helicopterClass;
     }
@@ -335,5 +357,39 @@ public enum HelicopterType
     public boolean hasReachedLevel20()
     {
         return Events.helicoptersThatReachedLevel20.contains(this);
+    }
+    
+    public AudioClip getSpecialSound()
+    {
+        return specialSound.get();
+    }
+    
+    private static class Unlocker
+    {
+        private static final List<HelicopterType>
+            EMPTY = Collections.emptyList(),
+            FOR_OROCHI =List.of(HelicopterType.PHOENIX, HelicopterType.PEGASUS),
+            FOR_KAMAITACHI = List.of(HelicopterType.ROCH, HelicopterType.PEGASUS),
+            FOR_PEGASUS = List.of(HelicopterType.OROCHI, HelicopterType.KAMAITACHI);
+        
+        static List<HelicopterType> getEmpty()
+        {
+            return EMPTY;
+        }
+        
+        static List<HelicopterType> getForOrochi()
+        {
+            return FOR_OROCHI;
+        }
+        
+        static List<HelicopterType> getForKamaitachi()
+        {
+            return FOR_KAMAITACHI;
+        }
+        
+        public static List<HelicopterType> getForPegasus()
+        {
+            return FOR_PEGASUS;
+        }
     }
 }

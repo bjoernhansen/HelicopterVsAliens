@@ -29,8 +29,6 @@ UnitTests (JUnit5) einführen, zunächst für kleine Klassen
 
 
 
-Wenn Savegame nicht mehr kompatibel ist automatisch löschen / neuen File erstellen
-
 Ggf. auch manche Konstanten in Enum (oder besser über Vererbung?)
 
 

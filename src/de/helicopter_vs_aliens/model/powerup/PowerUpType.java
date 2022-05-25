@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.powerup;
 
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public enum PowerUpType
+public enum PowerUpType implements GameEntityFactory<PowerUp>
 {
     TRIPLE_DAMAGE(4, Color.magenta, Color.black),
     INVINCIBLE(3, Color.green, Color.yellow),
@@ -66,5 +67,19 @@ public enum PowerUpType
     public static Set<PowerUpType> getStatusBarPowerUpTypes()
     {
         return STATUS_BAR_POWER_UP_TYPES;
+    }
+    
+    @Override
+    public PowerUp makeInstance()
+    {
+        PowerUp powerUp = new PowerUp();
+        powerUp.setType(this);
+        return powerUp;
+    }
+    
+    @Override
+    public Class<? extends PowerUp> getCorrespondingClass()
+    {
+        return PowerUp.class;
     }
 }

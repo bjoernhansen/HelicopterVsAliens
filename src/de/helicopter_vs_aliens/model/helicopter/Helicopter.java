@@ -40,7 +40,6 @@ import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevel.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
@@ -452,19 +451,14 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	public boolean isLocationAdaptionApproved(Enemy enemy)
 	{
-		return enemy.getBounds()
-					.intersects(this.getBounds())
-			&& enemy.alpha == 255
-			&& enemy.burrowTimer != 0;
+		return enemy.isPushingHelicopter(this);
 	}
 	
 	void adaptPosTo(Enemy enemy)
 	{
 		double
-			x = this.getCenterX() - enemy.getBounds()
-												.getCenterX(),
-			y = this.getCenterY() - enemy.getBounds()
-												.getCenterY(),
+			x = this.getCenterX() - enemy.getCenterX(),
+			y = this.getCenterY() - enemy.getCenterY(),
 			pseudoAngle = (x / Calculations.ZERO_POINT.distance(x, y)),
 			distance,
 			localSpeed = enemy.hasUnresolvedIntersection ? this.speed : Double.MAX_VALUE;
@@ -473,8 +467,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			// Right
 			// new pos x: enemy.getMaxX() + (this.moves_left ? 39 : 83)
-			distance = enemy.getBounds()
-							.getMaxX() + (this.isMovingLeft ? 39 : 83) - this.location.getX();
+			distance = enemy.getMaxX() + (this.isMovingLeft ? 39 : 83) - this.location.getX();
 			this.nextLocation.setLocation(
 				this.location.getX() + Math.min(distance, localSpeed),
 				this.location.getY());
@@ -483,21 +476,18 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			// Left
 			// new pos x: enemy.x - this.getWidth() + (this.moves_left ? 39 : 83)
-			distance = this.location.getX() - enemy.getBounds()
-												   .getX() + this.getWidth() - (this.isMovingLeft ? 39 : 83);
+			distance = this.location.getX() - enemy.getX() + this.getWidth() - (this.isMovingLeft ? 39 : 83);
 			this.nextLocation.setLocation(
 				this.location.getX() - Math.min(distance, localSpeed),
 				this.location.getY());
 			enemy.setTouchedSiteToLeft();
 		} else
 		{
-			if (this.getCenterY() > enemy.getBounds()
-												.getCenterY())
+			if (this.getCenterY() > enemy.getCenterY())
 			{
 				// Bottom
 				// new pos y: enemy.getMaxY() + 56
-				distance = enemy.getBounds()
-								.getMaxY() + 56 - this.location.getY();
+				distance = enemy.getMaxY() + 56 - this.location.getY();
 				this.nextLocation.setLocation(
 					this.location.getX(),
 					this.location.getY() + Math.min(distance, localSpeed));
@@ -506,8 +496,7 @@ public abstract class Helicopter extends RectangularGameEntity
 			{
 				// Top
 				// new pos y: enemy.getY() - this.getHeight() + 56
-				distance = this.location.getY() - enemy.getBounds()
-													   .getY() + this.getHeight() - 56;
+				distance = this.location.getY() - enemy.getY() + this.getHeight() - 56;
 				this.nextLocation.setLocation(
 					this.location.getX(),
 					this.location.getY() - Math.min(distance, localSpeed));
@@ -978,20 +967,16 @@ public abstract class Helicopter extends RectangularGameEntity
         return STATIC_CHARGE_ENERGY_DRAIN;
     }
     
-    public boolean canCollideWith(Enemy e)
+    public boolean canCollideWith(Enemy enemy)
 	{
-		return this.basicCollisionRequirementsSatisfied(e)
-			   && !(e.getModel() == BARRIER
-						&& (    e.alpha != 255
-							||  e.burrowTimer == 0
-							|| !e.hasUnresolvedIntersection));
+		return this.basicCollisionRequirementsSatisfied(enemy) && enemy.canCollide();
 	}
 
-	public boolean basicCollisionRequirementsSatisfied(Enemy e)
+	public boolean basicCollisionRequirementsSatisfied(Enemy enemy)
 	{
 		return !this.isDamaged
-				&& e.isOnScreen()
-				&& e.getBounds().intersects(this.getBounds());
+				&& enemy.isOnScreen()
+				&& enemy.intersects(this.getBounds());
 	}
 	
 	public float getProtectionFactor()
@@ -1488,5 +1473,9 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		resetStateGeneral();
 		resetStateTypeSpecific();
+	}
+	
+	public void typeSpecificActionOn(GameRessourceProvider gameRessourceProvider, Enemy enemy)
+	{
 	}
 }

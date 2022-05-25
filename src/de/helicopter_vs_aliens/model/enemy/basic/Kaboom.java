@@ -1,9 +1,9 @@
-package de.helicopter_vs_aliens.model.enemy.basicEnemy;
+package de.helicopter_vs_aliens.model.enemy.basic;
 
-import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
-import java.awt.Color;
+import java.applet.AudioClip;
 
 public class Kaboom extends BasicEnemy
 {
@@ -35,5 +35,23 @@ public class Kaboom extends BasicEnemy
     public boolean countsForTotalAmountOfEnemiesSeen()
     {
         return false;
+    }
+    
+    @Override
+    protected AudioClip getCrashToTheGroundSound()
+    {
+        return Audio.explosion4;
+    }
+    
+    @Override
+    protected ExplosionType getExplosionType()
+    {
+        return ExplosionType.JUMBO;
+    }
+    
+    @Override
+    protected boolean isDetonatingExtraStrong()
+    {
+        return true;
     }
 }

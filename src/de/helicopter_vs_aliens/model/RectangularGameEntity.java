@@ -115,6 +115,16 @@ public abstract class RectangularGameEntity extends GameEntity
 		return bounds.intersects(rectangle);
 	}
 	
+	public final boolean intersects(RectangularGameEntity rectangularGameEntity)
+	{
+		return bounds.intersects(rectangularGameEntity.getBounds());
+	}
+	
+	public final boolean intersectsLine(double x1, double y1, double x2, double y2)
+	{
+		return bounds.intersectsLine(x1, y1, x2, y2);
+	}
+	
 	public final double getX()
 	{
 		return bounds.getX();
@@ -164,7 +174,4 @@ public abstract class RectangularGameEntity extends GameEntity
 	{
 		return bounds.getHeight();
 	}
-
-	
-
 }

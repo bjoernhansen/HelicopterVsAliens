@@ -27,6 +27,7 @@ import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
+import java.applet.AudioClip;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Point;
@@ -42,29 +43,23 @@ import java.util.Map;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.BOTTOM;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.LEFT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.NONE;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.RIGHT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.TOP;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionType.EMP;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PHASE_SHIFT;
-import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PLASMA;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
 import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
-import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
-import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 
 public abstract class Enemy extends RectangularGameEntity
 {
+	
+	
+	
 	public static class FinalEnemyOperator
 	{
 		private final EnumMap<FinalBossServantType, Enemy>
@@ -120,7 +115,8 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private static final float
 		PRIMARY_COLOR_BRIGHTNESS_FACTOR = 1.3f,
-		SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.5f;
+		SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.5f,
+		DEFAULT_TURN_PROBABILITY = 0.25f;
 	
 	// Konstanten
 	public static final int
@@ -135,7 +131,7 @@ public abstract class Enemy extends RectangularGameEntity
 	private static final float
 		RADAR_DETECTABILITY = 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
 	
-		private static final float POWER_UP_PROB				= 0.02f;
+		protected static final float POWER_UP_PROB				= 0.02f;
 	protected static final float SPIN_SHOOTER_RATE 		   	= 0.55f;
 	private static final float EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f;
 	
@@ -175,7 +171,6 @@ public abstract class Enemy extends RectangularGameEntity
 	
 
 	private static final int STANDARD_REWARD_FACTOR = 1;
-	private static final int MINI_BOSS_REWARD_FACTOR = 4;
 	
 	private static final int// TODO die 4 austauschen / anders lösen
 		PRE_READY = 1;
@@ -306,7 +301,7 @@ public abstract class Enemy extends RectangularGameEntity
 	private int knockBackDirection;
 		
 	protected float
-		deactivationProb;
+		deactivationProbability;
 	       
         protected boolean canDodge;                // = true: Gegner kann Schüssen ausweichen
         protected boolean canKamikaze;            // = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
@@ -327,7 +322,6 @@ public abstract class Enemy extends RectangularGameEntity
         public boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
         protected boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
         protected boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
-        protected boolean isCarrier;                // = true
         protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
         protected boolean isRecoveringSpeed;
   
@@ -385,7 +379,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.isMiniBoss = false;
 		this.hasCrashed = false;
 		this.canInstantTurn = false;
-		this.isCarrier = false;
 		this.isRecoveringSpeed = false;
 		this.hasHeightSet = false;
 		this.isEmpShocked = false;
@@ -424,14 +417,14 @@ public abstract class Enemy extends RectangularGameEntity
 		this.shootingCycleLength = 0;
 		this.shotSpeed = 0;
 		this.shotRotationSpeed = 0;
-		this.shotType = DISCHARGER;
+		this.shotType = EnemyMissileType.DISCHARGER;
 		
 		this.touchedSite = NONE;
 		this.lastTouchedSite = NONE;
 		
 		this.untouchedCounter = 0;
 		this.rotorColor = 0;
-		this.deactivationProb = 0f;
+		this.deactivationProbability = 0f;
 		this.stunningTimer = READY;
 		
 		this.totalStunningTime = 0;
@@ -472,7 +465,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		for(int j = 0; j < 2; j++)
 		{		
-			if(getModel() != BARRIER)
+			if(getModel() != EnemyModelType.BARRIER)
 			{
 				// TODO hier taucht null pointer exception auf. Warum?
 				this.graphicsAdapters[j].setComposite(AlphaComposite.Src);
@@ -723,7 +716,7 @@ public abstract class Enemy extends RectangularGameEntity
 	public boolean isVisibleNonBarricadeVessel(boolean hasRadarDevice)
 	{
 		return this.type != EnemyType.ROCK
-			&& getModel() != BARRIER
+			&& getModel() != EnemyModelType.BARRIER
 			&& !(this.cloakingTimer > CLOAKING_TIME
 				&& this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME
 				&& !hasRadarDevice);
@@ -738,24 +731,20 @@ public abstract class Enemy extends RectangularGameEntity
 			callBack = 0;
 		}
 		checkForBarrierCollision();
-		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(!isStunned())
 		{
 			updateStoppableTimer();
 			performFlightManeuver(gameRessourceProvider);
 			validateTurns();
-		}		
+		}
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		calculateSpeed(helicopter);
 		move();
-		
 		if(helicopter.canCollideWith(this))
 		{
 			collision(gameRessourceProvider);
 		}
-		if(helicopter.getType() == HelicopterType.PEGASUS)
-		{
-			checkForEmpStrike(gameRessourceProvider);
-		}
+		helicopter.typeSpecificActionOn(gameRessourceProvider,this);
 		if(hasDeadlyGroundContact())
 		{
 			destroyByCrash(gameRessourceProvider);
@@ -785,20 +774,20 @@ public abstract class Enemy extends RectangularGameEntity
 	protected boolean hasDeadlyGroundContact()
 	{	
 		return getMaxY() > GROUND_Y
-			   && getModel() != BARRIER
+			   && getModel() != EnemyModelType.BARRIER
 			   && !this.isDestroyed;
 	}
 
 	protected void checkForBarrierCollision()
 	{
 		this.isPreviousStoppingBarrier = this.stoppingBarrier;
-		if(this.stoppingBarrier == null || !this.stoppingBarrier.intersects(this.getBounds()))
+		if(this.stoppingBarrier == null || !this.stoppingBarrier.intersects(this))
 		{
 			this.stoppingBarrier = null;
 			for(int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
 			{
 				if(	   EnemyController.livingBarrier[i] != this
-					&& EnemyController.livingBarrier[i].intersects(this.getBounds()))
+					&& EnemyController.livingBarrier[i].intersects(this))
 					
 				{
 					this.stoppingBarrier = EnemyController.livingBarrier[i];
@@ -934,15 +923,18 @@ public abstract class Enemy extends RectangularGameEntity
 			this.turnLeft();
 		}			
 		if(	this.canKamikaze && !(this.teleportTimer > 0)){this.kamikaze(helicopter);}
-			
-		// Vergraben			
+		
+		// Shooting
+		if(this.shootTimer != DISABLED){evaluateShooting(gameRessourceProvider);}
+		
+		// TODO das gehört zu den Barriers
+		// Vergraben
 		if(this.burrowTimer != DISABLED && !(this.snoozeTimer > 0))
 		{				
 			evaluateBorrowProcedure(helicopter);
 		}
-								
-		// Shooting
-		if(this.shootTimer != DISABLED){evaluateShooting(gameRessourceProvider);}
+		
+		// Shooting Barrier
 		if(this.barrierShootTimer != DISABLED)
 		{
 			evaluateBarrierShooting(gameRessourceProvider);
@@ -1056,9 +1048,8 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 	}
 	
-	private void checkForEmpStrike(GameRessourceProvider gameRessourceProvider)
+	public void checkForEmpStrike(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
 	{
-		Pegasus pegasus = (Pegasus)gameRessourceProvider.getHelicopter();
 		if(pegasus.empWave != null)
 		{
 			if(this.isEmpShockable(pegasus))
@@ -1066,7 +1057,10 @@ public abstract class Enemy extends RectangularGameEntity
 				this.empShock(gameRessourceProvider, pegasus);
 			}
 		}
-		else{this.isEmpShocked = false;}
+		else
+		{
+			this.isEmpShocked = false;
+		}
 	}
 
 	private void empShock(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
@@ -1079,7 +1073,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(hasHPsLeft())
 		{			
 			Audio.play(Audio.stun);
-			if(getModel() == BARRIER){snooze(true);}
+			if(getModel() == EnemyModelType.BARRIER){snooze(true);}
 			else if(teleportTimer == READY ){teleport();}
 			else if(isStunable() && !isShielding)
 			{
@@ -1126,10 +1120,10 @@ public abstract class Enemy extends RectangularGameEntity
 	private boolean hasToTurnAtYBorder()
 	{		
 		return 	this.burrowTimer == DISABLED
-				&&( (this.getMinY() <= (getModel() == BARRIER ? 0 : TURN_FRAME.getMinY())
+				&&( (this.getMinY() <= (getModel() == EnemyModelType.BARRIER ? 0 : TURN_FRAME.getMinY())
 			   	  	 && this.isFlyingUp()) 
 			        ||
-			        (this.getMaxY() >= (getModel() == BARRIER ? GROUND_Y : TURN_FRAME.getMaxY())
+			        (this.getMaxY() >= (getModel() == EnemyModelType.BARRIER ? GROUND_Y : TURN_FRAME.getMaxY())
 			   	     &&  this.isFlyingDown() 
 			   	     && !this.isDestroyed) );
 	}
@@ -1138,7 +1132,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		this.switchDirectionY();
 		if(this.canSinusMove){this.speedLevel.setLocation(this.speedLevel.getX(), 1);}
-		if(getModel() == BARRIER)
+		if(getModel() == EnemyModelType.BARRIER)
 		{
 			if(this.isFlyingUp()){Audio.play(Audio.landing);}
 			this.snooze(false);
@@ -1340,21 +1334,21 @@ public abstract class Enemy extends RectangularGameEntity
 			&& this.getX() + this.getWidth() > 0
 			&& !(this.cloakingTimer > CLOAKING_TIME && this.cloakingTimer <= CLOAKING_TIME + CLOAKED_TIME)
 			&& ((this.isFlyingLeft() 
-				 && gameRessourceProvider.getHelicopter().getBounds().intersects(
+				 && gameRessourceProvider.getHelicopter().intersects(
 					this.getX() + Integer.MIN_VALUE/2f,
-					this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
+					this.getY() + (getModel() == EnemyModelType.TIT ? 0 : this.getWidth()/2) - 15,
 					Integer.MAX_VALUE/2f,
 					EnemyMissile.DIAMETER+30))
 				||
 				((this.isFlyingRight() 
-				  && gameRessourceProvider.getHelicopter().getBounds().intersects(
+				  && gameRessourceProvider.getHelicopter().intersects(
 					this.getX(),
-					this.getY() + (getModel() == TIT ? 0 : this.getWidth()/2) - 15,
+					this.getY() + (getModel() == EnemyModelType.TIT ? 0 : this.getWidth()/2) - 15,
 					Integer.MAX_VALUE/2f,
 					EnemyMissile.DIAMETER+30)))))
 		{
 			this.shoot(gameRessourceProvider.getEnemyMissiles(),
-						this.hasDeadlyShots() ? BUSTER : DISCHARGER,
+						this.hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
 						this.shotSpeed + 3*Math.random()+5);
 			
 			this.shootTimer = this.shootingRate;
@@ -1362,11 +1356,9 @@ public abstract class Enemy extends RectangularGameEntity
 		if(this.shootTimer > 0){this.shootTimer--;}
 	}
 	
-	private boolean hasDeadlyShots()
+	protected boolean hasDeadlyShots()
 	{		
-		return this.type == EnemyType.BOSS_3
-				|| this.isMiniBoss
-				|| (this.type == EnemyType.BIG_SHIELD_MAKER && Calculations.tossUp());
+		return false;
 	}
 
 	private void evaluateBarrierShooting(GameRessourceProvider gameRessourceProvider)
@@ -1572,7 +1564,7 @@ public abstract class Enemy extends RectangularGameEntity
 					this.getX()
 						+ this.getDirectionX() * this.speed.getX()
 						- (Scenery.backgroundMoves ? BG_SPEED : 0),
-					Math.max( getModel() == BARRIER ? 0 : Integer.MIN_VALUE,
+					Math.max( getModel() == EnemyModelType.BARRIER ? 0 : Integer.MIN_VALUE,
 							this.type == EnemyType.ROCK ? this.getY() :
 								Math.min( this.canBePositionedBelowGround()
 											? Integer.MAX_VALUE
@@ -1585,7 +1577,7 @@ public abstract class Enemy extends RectangularGameEntity
 
 	private boolean canBePositionedBelowGround()
 	{		
-		return !(getModel() == BARRIER
+		return !(getModel() == EnemyModelType.BARRIER
 			     && this.burrowTimer == DISABLED)
 			   || this.isDestroyed
 			   || this.type == EnemyType.ROCK;
@@ -1612,11 +1604,11 @@ public abstract class Enemy extends RectangularGameEntity
 			this.adjustSpeedTo(helicopter.missileDrive);
 			if(this.stunningTimer == 1)
 			{
-				if(getModel() == BARRIER){this.snooze(true);}
+				if(getModel() == EnemyModelType.BARRIER){this.snooze(true);}
 				else{this.isRecoveringSpeed = true;}
 			}
 		}
-		if(getModel() != BARRIER){this.evaluateSpeedBoost();}
+		if(getModel() != EnemyModelType.BARRIER){this.evaluateSpeedBoost();}
 		if(this.isRecoveringSpeed){this.recoverSpeed();}
 		
 		this.speed.setLocation(this.speedLevel);			//d
@@ -1633,7 +1625,7 @@ public abstract class Enemy extends RectangularGameEntity
 				
 		if(	this.stoppingBarrier != null
 			&& this.burrowTimer == DISABLED
-			&& !(getModel() == BARRIER && this.type == EnemyType.BIG_BARRIER))
+			&& !(getModel() == EnemyModelType.BARRIER && this.type == EnemyType.BIG_BARRIER))
 		{
 			this.adjustSpeedToBarrier(helicopter);
 		}
@@ -1811,18 +1803,33 @@ public abstract class Enemy extends RectangularGameEntity
 		this.speedLevel.setLocation(ZERO_SPEED);
 		this.setY(this.yCrashPos - this.getHeight());
 		if(this.type.isServant()){this.isMarkedForRemoval = true;}
-		Audio.play(this.type == EnemyType.KABOOM ? Audio.explosion4 : Audio.explosion3);
+		Audio.play(this.getCrashToTheGroundSound());
 		Explosion.start(explosion, 
 						helicopter, 
 						this.getCenterX(),
 						this.getCenterY(),
-						this.type == EnemyType.KABOOM ? JUMBO : ORDINARY,
-						this.type == EnemyType.KABOOM);
+						this.getExplosionType(),
+						this.isDetonatingExtraStrong());
 	}
 	
-	private boolean isBoss()
+	protected boolean isDetonatingExtraStrong()
 	{
-		return this.isMiniBoss || this.type.isMajorBoss();
+		return false;
+	}
+	
+	protected AudioClip getCrashToTheGroundSound()
+	{
+		return Audio.explosion3;
+	}
+	
+	protected ExplosionType getExplosionType()
+	{
+		return ExplosionType.ORDINARY;
+	}
+	
+	protected boolean isBoss()
+	{
+		return this.type.isMajorBoss();
 	}
 	
 	public boolean isLivingBoss()
@@ -1848,9 +1855,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			this.explode( gameRessourceProvider,
 						  0, 
-						  this.type == EnemyType.KABOOM
-						  	? JUMBO 
-						  	: ORDINARY,
+						  this.getExplosionType(),
 						  this.type == EnemyType.KABOOM);
 			
 			if(	helicopter.canObtainCollisionReward()
@@ -1884,18 +1889,18 @@ public abstract class Enemy extends RectangularGameEntity
 					? TELEPORT_DAMAGE_FACTOR 
 					: RADIATION_DAMAGE_FACTOR)));				
 							
-			if(getModel() == BARRIER)
+			if(getModel() == EnemyModelType.BARRIER)
 			{
 				if(	helicopter.hasTripleDamage()
 					&&  Calculations.tossUp(
-							this.deactivationProb
+							this.deactivationProbability
 							*(helicopter.bonusKillsTimer
 								> NICE_CATCH_TIME
 								  - TELEPORT_KILL_TIME ? 2 : 1)))
 				{
 					this.hitPoints = 0;
 				}
-				else if(Calculations.tossUp(this.deactivationProb *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
+				else if(Calculations.tossUp(this.deactivationProbability *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
 				{
 					this.snooze(true);
 				}
@@ -1946,27 +1951,23 @@ public abstract class Enemy extends RectangularGameEntity
 		gameRessourceProvider.getGameStatisticsCalculator()
 							 .incrementHitCounter();
 				
-		if( missile.typeOfExplosion == JUMBO
-			|| missile.typeOfExplosion == PHASE_SHIFT
-			|| missile.extraDamage)
+		if(missile.hasGreatExplosivePower())
 		{
 			Audio.play(Audio.explosion4);
 		}
 		else{Audio.play(Audio.explosion2);}
 		missile.hits.put(this.hashCode(), this);
 		this.takeDamage(missile.dmg);
-		if(getModel() == BARRIER)
+		if(getModel() == EnemyModelType.BARRIER)
 		{
-			if((missile.typeOfExplosion == JUMBO || missile.typeOfExplosion == PHASE_SHIFT || missile.extraDamage)
+			if(missile.hasGreatExplosivePower()
 				&& Calculations.tossUp(	0.5f
-									* this.deactivationProb
-									* (( (missile.typeOfExplosion == JUMBO
-											|| missile.typeOfExplosion == PHASE_SHIFT)
-										  && missile.extraDamage) ? 2 : 1)))
+									* this.deactivationProbability
+									* (missile.hasGreatExplosivePower() ? 2 : 1)))
 			{
 				this.hitPoints = 0;
 			}
-			else if(Calculations.tossUp(this.deactivationProb *(missile.typeOfExplosion == PLASMA ? 2 : 1)))
+			else if(this.isToBeInactivatedBy(missile))
 			{
 				this.snooze(true);
 			}
@@ -1975,6 +1976,12 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			this.stun(gameRessourceProvider, missile);
 		}
+	}
+	
+	private boolean isToBeInactivatedBy(Missile missile)
+	{
+		return Calculations.tossUp(this.deactivationProbability
+									  * missile.typeOfExplosion.getBarrierDeactivationProbabilityFactor());
 	}
 	
 	private boolean areStunningRequirementsMet(Missile missile)
@@ -2041,7 +2048,7 @@ public abstract class Enemy extends RectangularGameEntity
 		    && missile.typeOfExplosion == STUNNING
 		    && this.cloakingTimer != DISABLED)
 		{
-			this.uncloak(getModel() == BARRIER ? DISABLED : READY);
+			this.uncloak(getModel() == EnemyModelType.BARRIER ? DISABLED : READY);
 		}
 		else if( !this.canLearnKamikaze
 				 && this.cloakingTimer > CLOAKING_TIME
@@ -2056,14 +2063,17 @@ public abstract class Enemy extends RectangularGameEntity
 		return this.canInstantTurn
 				|| this.canTurn
 					&& !this.canEarlyTurn
-					&& Calculations.tossUp(this.isMiniBoss
-										? this.isCarrier ? 0.2f : 0.5f
-										: this.isCarrier ? 0.1f : 0.25f);
+					&& Calculations.tossUp(getTurnProbability());
 	}
-
-	void explode(GameRessourceProvider gameRessourceProvider)
+	
+	protected float getTurnProbability()
 	{
-		explode(gameRessourceProvider, 0, ORDINARY, false);
+		return DEFAULT_TURN_PROBABILITY;
+	}
+	
+	public void explode(GameRessourceProvider gameRessourceProvider)
+	{
+		explode(gameRessourceProvider, 0, ExplosionType.ORDINARY, false);
 	}
 	
 	private void explode(GameRessourceProvider gameRessourceProvider, Missile missile)
@@ -2077,14 +2087,15 @@ public abstract class Enemy extends RectangularGameEntity
 		if(this.explodingTimer == 0){this.explodingTimer = 7;}
 		Explosion.start(gameRessourceProvider.getExplosions(),
 						gameRessourceProvider.getHelicopter(),
-						this.getX() + ((explosionType != EMP && getModel() != BARRIER)
+						this.getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
 							? (missileSpeed < 0 ? 2 : 1) * this.getWidth()/3
 							: this.getWidth()/2),
 						this.getY() + this.getHeight()/2,
-						explosionType, extraDamage);
+						explosionType,
+						extraDamage);
 	}
 	
-	void destroyByHelicopter(GameRessourceProvider gameRessourceProvider)
+	public void destroyByHelicopter(GameRessourceProvider gameRessourceProvider)
 	{
 		writeDestructionStatistics(gameRessourceProvider.getGameStatisticsCalculator());
 		this.beDestroyed(gameRessourceProvider.getHelicopter());
@@ -2097,8 +2108,16 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	void destroyByCrash(GameRessourceProvider gameRessourceProvider)
 	{
-		if(this.canDropPowerUp()){this.dropRandomPowerUp(gameRessourceProvider);}
+		evaluatePowerUpDrop(gameRessourceProvider);
 		this.beDestroyed(gameRessourceProvider.getHelicopter());
+	}
+	
+	private void evaluatePowerUpDrop(GameRessourceProvider gameRessourceProvider)
+	{
+		if(this.areALlRequirementsForPowerUpDropMet())
+		{
+			this.dropRandomPowerUp(gameRessourceProvider);
+		}
 	}
 	
 	private void beDestroyed(Helicopter helicopter)
@@ -2168,8 +2187,6 @@ public abstract class Enemy extends RectangularGameEntity
 		}		
 		
 		this.evaluateBossDestructionEffect(gameRessourceProvider);
-		if(this.isCarrier){
-			EnemyController.carrierDestroyedJustNow = this;}
 		if(missile != null){missile.hits.remove(this.hashCode());}
 	}	
 
@@ -2182,21 +2199,14 @@ public abstract class Enemy extends RectangularGameEntity
 
     public boolean canCountForKillsAfterLevelUp()
     {
-        return this.type != EnemyType.BOSS_4_SERVANT && !this.type.isFinalBossServant();
+        return true;
     }
-    
-    public boolean canDropPowerUp()
-	{		
-		return getModel() != BARRIER
-			   &&( (!Events.isBossLevel()
-				    &&( ( Calculations.tossUp(POWER_UP_PROB)
-						  && Events.level >= MIN_POWER_UP_LEVEL)
-						|| this.isMiniBoss))
-				|| this.type == EnemyType.BOSS_1
-				|| this.type == EnemyType.BOSS_3
-				|| this.type == EnemyType.BOSS_4 );
-	}
 	
+    public boolean areALlRequirementsForPowerUpDropMet()
+	{		
+		return false;
+	}
+
 	public void dropRandomPowerUp(GameRessourceProvider gameRessourceProvider)
 	{
 		PowerUp.activateInstance(gameRessourceProvider, this);
@@ -2236,68 +2246,13 @@ public abstract class Enemy extends RectangularGameEntity
         return this.type.getStrength() * this.getRewardFactor();
     }
     
-	private int getRewardFactor()
+	protected int getRewardFactor()
 	{
-		return this.isMiniBoss ? MINI_BOSS_REWARD_FACTOR : STANDARD_REWARD_FACTOR;
+		return STANDARD_REWARD_FACTOR;
 	}
  
-	private void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
-	{
-		Map<CollectionSubgroupType, LinkedList<Enemy>>
-			enemies = gameRessourceProvider.getEnemies();
-		
-		if(this.isMiniBoss)
-		{
-			EnemyController.currentMiniBoss = null;
-		}			
-		else if(this.type == EnemyType.BOSS_2)
-		{								
-			boss.setLocation(this.getCenterX(),
-							 this.getCenterY());
-			EnemyController.makeBossTwoServants = true;
-		}					
-		else if(this.type == EnemyType.BOSS_4)
-		{
-			for(Enemy e : enemies.get(ACTIVE))
-			{
-				e.explode(gameRessourceProvider);
-				if (e.type != EnemyType.BOSS_4)
-				{
-					e.destroyByHelicopter(gameRessourceProvider);
-				}
-			}
-		}
-		else if(this.type == EnemyType.FINAL_BOSS)
-		{
-			for(Enemy e : enemies.get(ACTIVE))
-			{
-				e.explode(gameRessourceProvider);
-				if (e.type != EnemyType.FINAL_BOSS)
-				{
-					e.destroyByHelicopter(gameRessourceProvider);
-				}
-			}
-			Events.isRestartWindowVisible = true;
-			Events.level = Events.maxLevel = 51;
-			
-			Helicopter helicopter = gameRessourceProvider.getHelicopter();
-			helicopter.isDamaged = true;
-			// TODO Konstanten definieren
-			helicopter.destination.setLocation(helicopter.getX()+40,520.0);
-			Events.determineHighscoreTimes(helicopter);
-		}
-		else if(this.type.isFinalBossServant())
-		{
-			FinalBossServantType.of(this.type).ifPresent(servantType -> {
-				Events.boss.operator.remove(servantType);
-				Events.boss.operator.resetTimeSinceDeath(servantType);
-			});
-		}
-		if(this.type.isMainBoss() && this.type != EnemyType.FINAL_BOSS)
-		{
-			Events.boss = null;
-		}
-	}
+	// TODO sobald die Voraussetzungen dafür hergestellt sind, sollte diese Methode als abstrakte Methode in die Klasse Standard-Enemy wandern
+	protected abstract void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider);
 
 	public void dodge(Missile missile)
 	{
@@ -2435,8 +2390,7 @@ public abstract class Enemy extends RectangularGameEntity
 		else
 		{
 			this.hasUnresolvedIntersection = false;
-			if(!this.isTouchingHelicopter
-			   && this.touchedSite != this.lastTouchedSite)
+			if(!this.isTouchingHelicopter && this.touchedSite != this.lastTouchedSite)
 			{
 				Audio.play(Audio.landing);
 				this.isTouchingHelicopter = true;
@@ -2448,7 +2402,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		for(Enemy e : gameRessourceProvider.getEnemies().get(ACTIVE))
 		{
-			if (e.getModel() == BARRIER && e.isOnScreen())
+			if (e.getModel() == EnemyModelType.BARRIER && e.isOnScreen())
 			{
 				e.explode(gameRessourceProvider);
 				e.destroyByHelicopter(gameRessourceProvider);
@@ -2503,8 +2457,7 @@ public abstract class Enemy extends RectangularGameEntity
 		{
 			Events.killsAfterLevelUp++;
 		}
-		if(this.canDropPowerUp()){this.dropRandomPowerUp(gameRessourceProvider);}
-		if(this.isMiniBoss){Audio.play(Audio.applause2);}
+		evaluatePowerUpDrop(gameRessourceProvider);
 	}
 	
 	public boolean isRock()
@@ -2624,7 +2577,23 @@ public abstract class Enemy extends RectangularGameEntity
 		return type.isExplodingOnCollisions();
 	}
 	
+	public boolean isPushingHelicopter(Helicopter helicopter)
+	{
+		return intersects(helicopter) && alpha == 255 && burrowTimer != 0;
+	}
 	
+	public boolean canCollide()
+	{
+		return true;
+	}
+	
+	protected void finalBossServantRemoval()
+	{
+		FinalBossServantType.of(this.type).ifPresent(servantType -> {
+			Events.boss.operator.remove(servantType);
+			Events.boss.operator.resetTimeSinceDeath(servantType);
+		});
+	}
 	
 	// Methoden für Richtungsänderungen und -abfragen
 	// TODO dies sollte ggf. in eigene Klasse ausgelagert werden, nur die Methoden, die außerhalb von Enemy genutzt werden müssen weitergeleitet werden

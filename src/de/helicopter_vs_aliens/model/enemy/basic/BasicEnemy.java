@@ -1,25 +1,26 @@
-package de.helicopter_vs_aliens.model.enemy.basicEnemy;
+package de.helicopter_vs_aliens.model.enemy.basic;
 
-import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
-
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 public abstract class BasicEnemy extends StandardEnemy
 {
+    private static final int
+        MIN_MINI_BOSS_LEVEL = 5,
+        MINI_BOSS_REWARD_FACTOR = 4;
+    
     private static final float
         STANDARD_MINI_BOSS_PROB = 0.05f,
         CHEAT_MINI_BOSS_PROB = 1.0f;
     
     private static final double
         MINI_BOSS_SIZE_FACTOR = 1.44;
+
     
     private static float
         miniBossProb = STANDARD_MINI_BOSS_PROB; // bestimmt die Häufigkeit, mit der Mini-Bosse erscheinen
@@ -43,7 +44,7 @@ public abstract class BasicEnemy extends StandardEnemy
     protected boolean canBecomeMiniBoss()
     {
         return 	EnemyController.currentMiniBoss == null
-            && Events.level > 4
+            && Events.level >= MIN_MINI_BOSS_LEVEL
             && Calculations.tossUp(miniBossProb);
     }
     
@@ -115,6 +116,66 @@ public abstract class BasicEnemy extends StandardEnemy
     protected void prepareRemoval()
     {
         super.prepareRemoval();
+        if(this.isMiniBoss)
+        {
+            EnemyController.currentMiniBoss = null;
+        }
+    }
+    
+    @Override
+    protected boolean hasDeadlyShots()
+    {
+        return this.isMiniBoss;
+    }
+    
+    @Override
+    public boolean areALlRequirementsForPowerUpDropMet()
+    {
+        return super.areALlRequirementsForPowerUpDropMet() || this.isMiniBoss;
+    }
+    
+    @Override
+    public void grantGeneralRewards(GameRessourceProvider gameRessourceProvider)
+    {
+        super.grantGeneralRewards(gameRessourceProvider);
+        if(this.isMiniBoss)
+        {
+            Audio.play(Audio.applause2);
+        }
+    }
+    
+    @Override
+    protected boolean canDropPowerUp()
+    {
+        return super.canDropPowerUp() || this.isMiniBoss;
+    }
+    
+    @Override
+    protected float getTurnProbability()
+    {
+        return getTurnProbabilityFactor() * super.getTurnProbability();
+    }
+    
+    protected float getTurnProbabilityFactor()
+    {
+        return this.isMiniBoss ? 2f : 1f;
+    }
+    
+    @Override
+    protected boolean isBoss()
+    {
+        return this.isMiniBoss || super.isBoss();
+    }
+    
+    @Override
+    protected int getRewardFactor()
+    {
+        return this.isMiniBoss ? MINI_BOSS_REWARD_FACTOR : super.getRewardFactor();
+    }
+    
+    @Override
+    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    {
         if(this.isMiniBoss)
         {
             EnemyController.currentMiniBoss = null;

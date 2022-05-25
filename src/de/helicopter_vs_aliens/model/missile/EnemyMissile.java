@@ -54,10 +54,10 @@ public class EnemyMissile extends GameEntity
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (Scenery.backgroundMoves ? BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
 		if(	helicopter.canBeHit()
-			&& helicopter.getBounds().intersectsLine( this.location.getX() + this.diameter/2f,
-												  this.location.getY(),
-												  this.location.getX() + this.diameter/2f,
-												  this.location.getY() + this.diameter))
+			&& helicopter.intersectsLine( 	this.location.getX() + this.diameter/2f,
+											this.location.getY(),
+										   	this.location.getX() + this.diameter/2f,
+											this.location.getY() + this.diameter))
         {
 			this.hit(helicopter);
 		}		

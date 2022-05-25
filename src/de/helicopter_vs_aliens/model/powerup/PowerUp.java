@@ -58,21 +58,23 @@ public class PowerUp extends RectangularGameEntity
 	{
     	for(Iterator<PowerUp> i = gameRessourceProvider.getPowerUps().get(ACTIVE).iterator(); i.hasNext();)
 		{
-			PowerUp pu = i.next();
-			pu.update(gameRessourceProvider.getHelicopter());
-			if(pu.wasCollected)
+			PowerUp powerUp = i.next();
+			powerUp.update(gameRessourceProvider.getHelicopter());
+			if(powerUp.wasCollected)
 			{
 				i.remove();
-				Controller.getInstance().getGameEntityRecycler().store(pu);
-				// powerUp.get(INACTIVE).add(pu);
+				gameRessourceProvider.getGameEntityManager().store(powerUp);
+				// powerUp.get(INACTIVE).add(powerUp);
 			}
 		}		
 	}
 
 	private void update(Helicopter helicopter)
 	{		
-		if(this.intersects(helicopter.getBounds())){this.collect(helicopter);}
-		
+		if(this.intersects(helicopter))
+		{
+			this.collect(helicopter);
+		}
 		if(!this.hasStopped
 		   && helicopter.canImmobilizePowerUp()
 		   && this.hasReachedStopPosition())
@@ -236,7 +238,9 @@ public class PowerUp extends RectangularGameEntity
 	
 	public static PowerUp getInstance(PowerUpType powerUpType)
 	{
-		PowerUp powerUp = Controller.getInstance().getGameEntityRecycler().retrieve(PowerUp.class);
+		PowerUp powerUp = Controller.getInstance()
+									 .getGameEntityManager()
+									 .retrieve(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;
 	}

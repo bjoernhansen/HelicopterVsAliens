@@ -1,13 +1,7 @@
-package de.helicopter_vs_aliens.model.enemy.basicEnemy;
+package de.helicopter_vs_aliens.model.enemy.basic;
 
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 public class Rock extends BasicEnemy
 {

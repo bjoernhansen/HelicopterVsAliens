@@ -1,14 +1,12 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.LinkedList;
@@ -75,5 +73,17 @@ public class FourthBoss extends BossEnemy
                 EnemyController.makeBoss4Servant = true;
             }
         }
+    }
+    
+    @Override
+    public boolean areALlRequirementsForPowerUpDropMet()
+    {
+        return true;
+    }
+    
+    @Override
+    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    {
+        killOwnServants(gameRessourceProvider);
     }
 }

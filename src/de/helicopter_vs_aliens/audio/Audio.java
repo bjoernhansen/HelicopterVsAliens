@@ -304,27 +304,31 @@ public class Audio
 
     public static void playSpecialSound(HelicopterType helicopterType)
     {
-        play(getSpecialSound(helicopterType));
+        play(helicopterType.getSpecialSound());
     }
-
-    private static AudioClip getSpecialSound(HelicopterType helicopterType)
+    
+    public static AudioClip getEmp()
     {
-        if(helicopterType == null)
-        {
-            return shieldUp;
-        }
-        else switch (helicopterType)
-        {
-            case PHOENIX:
-                return teleport1;
-            case OROCHI:
-                return stunActivated;
-            case KAMAITACHI:
-                return plasmaOn;
-            case PEGASUS:
-                return emp;
-            default:
-                return shieldUp;
-        }
+        return emp;
+    }
+    
+    public static AudioClip getPlasmaOn()
+    {
+        return plasmaOn;
+    }
+    
+    public static AudioClip getShieldUp()
+    {
+        return shieldUp;
+    }
+    
+    public static AudioClip getStunActivated()
+    {
+        return stunActivated;
+    }
+    
+    public static AudioClip getTeleport1()
+    {
+        return teleport1;
     }
 }

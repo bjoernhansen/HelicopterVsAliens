@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
+import de.helicopter_vs_aliens.model.enemy.basic.Carrier;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.util.Calculations;
 
@@ -48,8 +49,10 @@ public class EnemyController
     
     public static Enemy
         currentRock,                    // Referenz auf den aktiven Rock-Gegner
-        carrierDestroyedJustNow,  		// Referenz auf den zuletzt zerstörten Carrier-Gegner
         currentMiniBoss;    // Referenz auf den aktuellen Boss-Gegner
+    
+    public static Carrier
+        carrierDestroyedJustNow;    // Referenz auf den zuletzt zerstörten Carrier-Gegner
     
     public static final Enemy[]
         livingBarrier = new Enemy [MAX_BARRIER_NUMBER];
@@ -80,15 +83,16 @@ public class EnemyController
     // TODO könnte diese Methode nicht direkt aufgerufen werden, wenn der Carrier zerstört wurde. Die Variable "carrierKilledJustNow" könnte dann entfallen.
     private static void createCarrierServants(GameRessourceProvider gameRessourceProvider)
     {
-        for(int m = 0;
-            m < (carrierDestroyedJustNow.isMiniBoss
-                ? 5 + Calculations.random(3)
-                : 2 + Calculations.random(2));
-            m++)
+        for(int m = 0; m < calculateCarrierServantCount(); m++)
         {
             creation(gameRessourceProvider);
         }
         carrierDestroyedJustNow = null;
+    }
+    
+    private static int calculateCarrierServantCount()
+    {
+        return carrierDestroyedJustNow.calculateServantCount();
     }
     
     private static void verifyCreationStop(GameRessourceProvider gameRessourceProvider)

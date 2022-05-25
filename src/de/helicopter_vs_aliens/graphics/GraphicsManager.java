@@ -39,7 +39,7 @@ public class GraphicsManager
     {
         // HelicopterPainter
         HelicopterType.getValues().forEach(helicopterType ->
-            painters.put(helicopterType.getHelicopterClass(), helicopterType.makePainterInstance()));
+            painters.put(helicopterType.getCorrespondingClass(), helicopterType.makePainterInstance()));
         
         //GUI Painter
         painters.put(Button.class, new ButtonPainter());

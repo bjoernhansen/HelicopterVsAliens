@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.model.enemy.basicEnemy;
+package de.helicopter_vs_aliens.model.enemy.basic;
 
 public class TinyVessel extends BasicEnemy
 {

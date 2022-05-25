@@ -1,5 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.util.Calculations;
+
 public class BigShieldMaker extends ShieldMaker
 {
     @Override
@@ -10,5 +13,11 @@ public class BigShieldMaker extends ShieldMaker
         shotSpeed = 1;
         
         super.doTypeSpecificInitialization();
+    }
+    
+    @Override
+    protected boolean hasDeadlyShots()
+    {
+        return Calculations.tossUp();
     }
 }

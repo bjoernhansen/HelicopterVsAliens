@@ -19,4 +19,16 @@ public class ThirdBoss extends BossEnemy
     
         super.doTypeSpecificInitialization();
     }
+    
+    @Override
+    protected boolean hasDeadlyShots()
+    {
+        return true;
+    }
+    
+    @Override
+    public boolean areALlRequirementsForPowerUpDropMet()
+    {
+        return true;
+    }
 }

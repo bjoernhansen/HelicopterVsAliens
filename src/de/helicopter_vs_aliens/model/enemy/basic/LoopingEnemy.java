@@ -1,6 +1,4 @@
-package de.helicopter_vs_aliens.model.enemy.basicEnemy;
-
-import de.helicopter_vs_aliens.util.Colorations;
+package de.helicopter_vs_aliens.model.enemy.basic;
 
 public class LoopingEnemy extends BasicEnemy
 {

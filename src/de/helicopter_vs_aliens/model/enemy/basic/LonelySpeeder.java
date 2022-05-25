@@ -1,6 +1,5 @@
-package de.helicopter_vs_aliens.model.enemy.basicEnemy;
+package de.helicopter_vs_aliens.model.enemy.basic;
 
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 public class LonelySpeeder extends BasicEnemy

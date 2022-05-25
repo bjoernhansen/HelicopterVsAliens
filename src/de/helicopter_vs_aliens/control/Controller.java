@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.entities.GameEntityRecycler;
+import de.helicopter_vs_aliens.control.entities.GameEntityManager;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -121,8 +121,8 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	private final WindowManager
 		windowManager = new WindowManager();
 	
-	private final GameEntityRecycler
-		gameEntityRecycler = new GameEntityRecycler();
+	private final GameEntityManager
+		gameEntityManager = new GameEntityManager();
 	
 	private final GameStatisticsCalculator
 		gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
@@ -434,9 +434,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	}
 	
 	@Override
-	public GameEntityRecycler getGameEntityRecycler()
+	public GameEntityManager getGameEntityManager()
 	{
-		return gameEntityRecycler;
+		return gameEntityManager;
 	}
 	
 	@Override

@@ -1,14 +1,17 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
+import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 abstract class Barrier extends Enemy
@@ -25,7 +28,7 @@ abstract class Barrier extends Enemy
     {
         rotorColor = 1;
         isClockwiseBarrier = Calculations.tossUp();
-        deactivationProb = 1.0f / type.getStrength();
+        deactivationProbability = 1.0f / type.getStrength();
     }
     
     @Override
@@ -105,4 +108,14 @@ abstract class Barrier extends Enemy
     {
         return false;
     }
+    
+    @Override
+    public boolean canCollide()
+    {
+        return alpha == 255 && burrowTimer != 0 && hasUnresolvedIntersection;
+    }
+    
+    @Override
+    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider){}
 }
+

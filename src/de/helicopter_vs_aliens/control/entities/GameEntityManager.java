@@ -2,35 +2,39 @@ package de.helicopter_vs_aliens.control.entities;
 
 import de.helicopter_vs_aliens.model.GameEntity;
 
-import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Queue;
 
-public class GameEntityManager
+public final class GameEntityManager
 {
-    private final Map<Class<? extends GameEntity>, Queue<GameEntity>>
-        entities = new HashMap<>();
+    private final Map<Class<? extends GameEntity>, GameEntityStore<GameEntity>>
+        entityStores = new HashMap<>();
     
-    
-    private <T extends GameEntity> T getGameEntity(GameEntityFactory<T> factory)
+    public  <T extends GameEntity> T retrieve(GameEntityFactory<T> factory)
     {
-        @SuppressWarnings("unchecked")
-        T gameEntity = (T) Optional.ofNullable(entities.computeIfAbsent(factory.getCorrespondingClass(), gameEntityClass -> new ArrayDeque<>())
-                                                       .poll())
-                                   .orElseGet(factory::makeInstance);
-        return gameEntity;
-    }
-
-    public void recycle(GameEntity gameEntity)
-    {
-        entities.computeIfAbsent(gameEntity.getClass(), gameEntityClass -> new ArrayDeque<>())
-                .add(gameEntity);
+        Class<? extends T> gameEntityClass = factory.getCorrespondingClass();
+        GameEntity gameEntity = getGameEntityStore(gameEntityClass).retrieve(factory);
+        return gameEntityClass.cast(gameEntity);
     }
     
-    public void recycleAll(Queue<GameEntity> gameEntities)
+    public void store(GameEntity gameEntity)
     {
-        gameEntities.forEach(this::recycle);
+        getGameEntityStore(gameEntity.getClass()).store(gameEntity);
+    }
+    
+    public <T extends GameEntity> void storeAll(Queue<T> gameEntities)
+    {
+        gameEntities.forEach(this::store);
+    }
+ 
+    public <T extends GameEntity> int sizeOf(Class<T> classOfGameEntity)
+    {
+        return getGameEntityStore(classOfGameEntity).size();
+    }
+    
+    private GameEntityStore<GameEntity> getGameEntityStore(Class<? extends GameEntity> classOfGameEntity)
+    {
+        return entityStores.computeIfAbsent(classOfGameEntity, gameEntityClass -> new GameEntityStore<>());
     }
 }

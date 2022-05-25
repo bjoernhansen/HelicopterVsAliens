@@ -10,4 +10,10 @@ public class SecondBossServant extends BossServant
     
         super.doTypeSpecificInitialization();
     }
+    
+    @Override
+    public boolean canCountForKillsAfterLevelUp()
+    {
+        return true;
+    }
 }

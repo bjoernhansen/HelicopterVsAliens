@@ -478,7 +478,7 @@ public class GameWindowPainter extends WindowPainter
                             .get(ACTIVE)
                             .size()
                 + ";   Inaktive PowerUps: "
-                + controller.getGameEntityRecycler()
+                + controller.getGameEntityManager()
                             .sizeOf(PowerUp.class);
         } else if (Window.specialInfoSelection == 3)
         {

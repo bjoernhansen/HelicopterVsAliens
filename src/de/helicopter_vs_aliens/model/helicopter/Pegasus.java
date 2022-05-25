@@ -179,10 +179,10 @@ public final class Pegasus extends Helicopter
     }
     
     @Override
-    public boolean basicCollisionRequirementsSatisfied(Enemy e)
+    public boolean basicCollisionRequirementsSatisfied(Enemy enemy)
     {
         return this.isInPhase()
-                && super.basicCollisionRequirementsSatisfied(e);
+                && super.basicCollisionRequirementsSatisfied(enemy);
     }
 
     public boolean isInPhase()
@@ -265,5 +265,11 @@ public final class Pegasus extends Helicopter
     {
         super.generalInitialization();
         this.empWave = null;
+    }
+    
+    @Override
+    public void typeSpecificActionOn(GameRessourceProvider gameRessourceProvider, Enemy enemy)
+    {
+        enemy.checkForEmpStrike(gameRessourceProvider, this);
     }
 }

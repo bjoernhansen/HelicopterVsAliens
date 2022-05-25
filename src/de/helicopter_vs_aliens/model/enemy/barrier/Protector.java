@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
 import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBossServant;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
@@ -79,5 +80,17 @@ public class Protector extends BurrowingBarrier
     public boolean isStunable()
     {
         return false;
+    }
+    
+    @Override
+    public boolean canCountForKillsAfterLevelUp()
+    {
+        return false;
+    }
+    
+    @Override
+    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    {
+        finalBossServantRemoval();
     }
 }

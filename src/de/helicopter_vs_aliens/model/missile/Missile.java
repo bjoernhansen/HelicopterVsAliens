@@ -125,8 +125,14 @@ public class Missile extends RectangularGameEntity
 					+ this.speed
 					+ (Scenery.backgroundMoves ? - BG_SPEED : 0));
 				
-		if(this.getX() > 1175 || this.getX() + 20 < 0){this.flying = false;}
-		else{this.checkForHitHelicopter(helicopter);}
+		if(this.getX() > 1175 || this.getX() + 20 < 0)
+		{
+			this.flying = false;
+		}
+		else if(this.canHit(helicopter))
+		{
+			this.hit(helicopter);
+		}
 		this.checkIfMissileHitEnemy(gameRessourceProvider);
 		if(!this.flying)
 		{
@@ -136,20 +142,21 @@ public class Missile extends RectangularGameEntity
 		this.setPaintBounds();
 	}
 	
-	private void checkForHitHelicopter(Helicopter helicopter)
+	private boolean canHit(Helicopter helicopter)
 	{
-		if(	this.dangerous 
-			&& helicopter.getBounds().intersects(this.getBounds()))
+		return this.dangerous && this.intersects(helicopter);
+	}
+	
+	private void hit(Helicopter helicopter)
+	{
+		Audio.play(Audio.explosion2);
+		this.dangerous = false;
+		if(!helicopter.hasPiercingWarheads)
 		{
-			Audio.play(Audio.explosion2);
-			this.dangerous = false;
-			if(!helicopter.hasPiercingWarheads)
-			{
-				this.flying = false;
-			}			
-			helicopter.takeMissileDamage();
+			this.flying = false;
 		}
-	}		
+		helicopter.takeMissileDamage();
+	}
 	
 	private void checkIfMissileHitEnemy(GameRessourceProvider gameRessourceProvider)
 	{
@@ -224,10 +231,10 @@ public class Missile extends RectangularGameEntity
 							? e.getWidth()/3
 							: 2*e.getWidth()/15)));
 		
-		return e.getBounds().intersectsLine(	intersectLineX,
-										this.getY(),
-										intersectLineX,
-										this.getMaxY());
+		return e.intersectsLine(	intersectLineX,
+									this.getY(),
+									intersectLineX,
+									this.getMaxY());
 	}
 	
 	public static boolean canTakeCredit(Missile missile, Enemy enemy)
@@ -245,12 +252,12 @@ public class Missile extends RectangularGameEntity
 	private boolean couldHit(Enemy enemy)
 	{		
 		return 	  (this.speed > 0 
-				   && enemy.getBounds().intersects(	this.getX(),
+				   && enemy.intersects(	this.getX(),
 					   							this.getY()-1,
 					   							20 * this.speed, 
 					   							this.getWidth()+2))
 				||(this.speed < 0 
-				   && enemy.getBounds().intersects(	this.getMaxX() + 20 * this.speed,
+				   && enemy.intersects(	this.getMaxX() + 20 * this.speed,
 												this.getY()-1,
 												-20 * this.speed,
 												this.getWidth()+2));
@@ -265,4 +272,9 @@ public class Missile extends RectangularGameEntity
 	{
 		return this.speed < 0;
 	}
+    
+    public boolean hasGreatExplosivePower()
+    {
+		return this.typeOfExplosion.isBigExplosion() || this.extraDamage;
+    }
 }

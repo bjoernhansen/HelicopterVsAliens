@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.control;
 
-import de.helicopter_vs_aliens.control.entities.GameEntityRecycler;
+import de.helicopter_vs_aliens.control.entities.GameEntityManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -31,7 +31,7 @@ public interface GameRessourceProvider
     
     Scenery getScenery();
     
-    public GameEntityRecycler getGameEntityRecycler();
+    public GameEntityManager getGameEntityManager();
     
     public Savegame getSaveGame();
 }
