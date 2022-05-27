@@ -267,13 +267,13 @@ public abstract class Helicopter extends RectangularGameEntity
 		Map<CollectionSubgroupType, LinkedList<Missile>> missiles = gameRessourceProvider.getMissiles();
 		if (this.numberOfCannons >= 1)
 		{
-			Iterator<Missile> i = missiles.get(INACTIVE)
+			Iterator<Missile> iterator = missiles.get(INACTIVE)
 										  .iterator();
 			Missile missile;
-			if (i.hasNext())
+			if (iterator.hasNext())
 			{
-				missile = i.next();
-				i.remove();
+				missile = iterator.next();
+				iterator.remove();
 			} else
 			{
 				missile = new Missile();
@@ -290,13 +290,13 @@ public abstract class Helicopter extends RectangularGameEntity
 		}
 		if (this.numberOfCannons >= 2)
 		{
-			Iterator<Missile> i = missiles.get(INACTIVE)
+			Iterator<Missile> iterator = missiles.get(INACTIVE)
 										  .iterator();
 			Missile missile;
-			if (i.hasNext())
+			if (iterator.hasNext())
 			{
-				missile = i.next();
-				i.remove();
+				missile = iterator.next();
+				iterator.remove();
 			} else
 			{
 				missile = new Missile();
@@ -316,13 +316,13 @@ public abstract class Helicopter extends RectangularGameEntity
 		}
 		if (this.numberOfCannons >= 3)
 		{
-			Iterator<Missile> i = missiles.get(INACTIVE)
+			Iterator<Missile> iterator = missiles.get(INACTIVE)
 										  .iterator();
 			Missile missile;
-			if (i.hasNext())
+			if (iterator.hasNext())
 			{
-				missile = i.next();
-				i.remove();
+				missile = iterator.next();
+				iterator.remove();
 			} else
 			{
 				missile = new Missile();

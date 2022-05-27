@@ -1,6 +1,8 @@
 package de.helicopter_vs_aliens.control;
 
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntityManager;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -34,4 +36,6 @@ public interface GameRessourceProvider
     public GameEntityManager getGameEntityManager();
     
     public Savegame getSaveGame();
+    
+    public  <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory);
 }

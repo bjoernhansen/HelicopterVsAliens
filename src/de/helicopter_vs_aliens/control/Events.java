@@ -37,6 +37,7 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -518,25 +519,16 @@ public class Events
 												
 				if(!(level == 50 && helicopter.hasAllUpgrades()))
 				{
-					// TODO diese EntityManagement gehört in eine eigene Klasse
-					/* controller.enemies.get(INACTIVE)
-									  .addAll(controller.enemies.get(ACTIVE)); */
-					controller.getEnemies()
-							  .get(ACTIVE)
-							  .clear();
-					level = level - ((level - 1) % 5);
-					LevelManager.adaptToLevel(helicopter, level, false);
+					storeAndClearActiveEnemies(controller);
+					resetLevelAfterRepair();
+					LevelManager.adaptToLevel(helicopter, level, false); // TODO signatur der Methode ändern - zu viele Parameter und ein boolescher
 					if (level < 6)
 					{
 						controller.getScenery()
 								  .reset();
 					}
 					killsAfterLevelUp = 0;
-					/*controller.enemies.get(INACTIVE)
-									  .addAll(controller.enemies.get(DESTROYED));*/
-					controller.getEnemies()
-							  .get(DESTROYED)
-							  .clear();
+					storeAndClearDestroyedEnemies(controller);
 					Window.buttons.get(LeftSideRepairShopButtonType.REPAIR)
 								  .adjustCostsToZero();
 					EnemyController.currentRock = null;
@@ -733,6 +725,30 @@ public class Events
 				break;
 			}
 		}		
+	}
+	
+	private static void storeAndClearActiveEnemies(GameRessourceProvider gameRessourceProvider)
+	{
+		storeAndClearEnemies(gameRessourceProvider, ACTIVE);
+	}
+	
+	private static void storeAndClearDestroyedEnemies(GameRessourceProvider gameRessourceProvider)
+	{
+		storeAndClearEnemies(gameRessourceProvider, DESTROYED);
+	}
+	
+	private static void storeAndClearEnemies(GameRessourceProvider gameRessourceProvider, CollectionSubgroupType collectionSubgroupType)
+	{
+		LinkedList<Enemy> enemies = gameRessourceProvider.getEnemies()
+														 .get(collectionSubgroupType);
+		gameRessourceProvider.getGameEntityManager()
+							 .storeAll(enemies);
+		enemies.clear();
+	}
+	
+	private static void resetLevelAfterRepair()
+	{
+		level =  level - ((level - 1) % 5);
 	}
 	
 	private static void startScreenMousePressedLeft(Controller controller)
@@ -1041,8 +1057,7 @@ public class Events
 		Window.conditionalReset();
 		
 		// kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-		if(!gameRessourceProvider.getEnemies()
-					  .get(ACTIVE).isEmpty()
+		if(!gameRessourceProvider.getEnemies().get(ACTIVE).isEmpty()
 		   && !(!totalReset && gameRessourceProvider.getEnemies()
 										 .get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
 		{
@@ -1055,26 +1070,19 @@ public class Events
 			}			
 			if(totalReset)
 			{
-				// gameRessourceProvider.enemies.get(INACTIVE).addAll(gameRessourceProvider.enemies.get(ACTIVE));
-				gameRessourceProvider.getEnemies()
-						  .get(ACTIVE).clear();
+				storeAndClearActiveEnemies(gameRessourceProvider);
 				EnemyController.currentRock = null;
 			}
 			else
 			{
-				// gameRessourceProvider.enemies.get(INACTIVE).add(e);
-				gameRessourceProvider.getEnemies()
-									 .get(ACTIVE)
-									 .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
+				storeAndClearDisappearingEnemies(gameRessourceProvider);
 			}
 			EnemyController.currentMiniBoss = null;
 		}
 		if(totalReset)
 		{
 			killsAfterLevelUp = 0;
-			// gameRessourceProvider.enemies.get(INACTIVE).addAll(gameRessourceProvider.enemies.get(DESTROYED));
-			gameRessourceProvider.getEnemies()
-					  .get(DESTROYED).clear();
+			storeAndClearDestroyedEnemies(gameRessourceProvider);
 			if(level < 6)
 			{
 				gameRessourceProvider.getScenery().reset();
@@ -1086,8 +1094,6 @@ public class Events
 		gameRessourceProvider.getMissiles().get(ACTIVE).clear();
 		gameRessourceProvider.getEnemyMissiles().get(INACTIVE).addAll(gameRessourceProvider.getEnemyMissiles().get(ACTIVE));
 		gameRessourceProvider.getEnemyMissiles().get(ACTIVE).clear();
-		// TODO wieso auskommentiert?
-		//gameRessourceProvider.powerUps.get(INACTIVE).addAll(gameRessourceProvider.powerUps.get(ACTIVE));
 		gameRessourceProvider.getGameEntityManager().storeAll(gameRessourceProvider.getPowerUps().get(ACTIVE));
 		gameRessourceProvider.getPowerUps().get(ACTIVE).clear();
 		// TODO
@@ -1096,6 +1102,19 @@ public class Events
 			helicopter.adjustFireRate(false);
 		}
 		Window.collectedPowerUps.clear();
+	}
+	
+	private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
+	{
+		LinkedList<Enemy> activeEnemies = gameRessourceProvider.getEnemies()
+															   .get(ACTIVE);
+		activeEnemies.stream()
+					 .filter(Enemy::isDisappearingAfterEnteringRepairShop)
+					 .forEach(gameRessourceProvider.getGameEntityManager()::store);
+		
+		gameRessourceProvider.getEnemies()
+							 .get(ACTIVE)
+							 .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
 	}
 	
 	private static void resetEvents()

@@ -172,9 +172,9 @@ public class Explosion extends GameEntity
 							 boolean extraDamage,
 							 Enemy source)
     {
-    	Iterator<Explosion> i = explosion.get(INACTIVE).iterator();
+    	Iterator<Explosion> iterator = explosion.get(INACTIVE).iterator();
 		Explosion exp;
-		if(i.hasNext()){exp = i.next(); i.remove();}	
+		if(iterator.hasNext()){exp = iterator.next(); iterator.remove();}
 		else{exp = new Explosion();}
 		exp.center.setLocation(x, y);
 		exp.time = 0;

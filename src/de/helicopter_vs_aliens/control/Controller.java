@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntityManager;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
@@ -10,6 +11,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
+import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -523,5 +525,11 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	public Map<CollectionSubgroupType, LinkedList<PowerUp>> getPowerUps()
 	{
 		return powerUps;
+	}
+	
+	@Override
+	public  <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory)
+	{
+		return gameEntityManager.retrieve(factory);
 	}
 }

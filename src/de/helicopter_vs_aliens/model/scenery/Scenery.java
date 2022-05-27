@@ -72,22 +72,22 @@ public class Scenery extends GameEntity
     
     public void createInitialSceneryObjects()
     {
-        Iterator<SceneryObject> i = sceneryObjects.get(INACTIVE).iterator();
+        Iterator<SceneryObject> iterator = sceneryObjects.get(INACTIVE).iterator();
         
         SceneryObject firstCactus;
-        if(i.hasNext()){firstCactus = i.next(); i.remove();}
+        if(iterator.hasNext()){firstCactus = iterator.next(); iterator.remove();}
         else{firstCactus = new SceneryObject();}
         firstCactus.makeFirstCactus();
         sceneryObjects.get(ACTIVE).add(firstCactus);
     
         SceneryObject firstHill;
-        if(i.hasNext()){firstHill = i.next(); i.remove();}
+        if(iterator.hasNext()){firstHill = iterator.next(); iterator.remove();}
         else{firstHill = new SceneryObject();}
         firstHill.makeFirstHill();
         sceneryObjects.get(ACTIVE).add(firstHill);
     
         SceneryObject firstDesert;
-        if(i.hasNext()){firstDesert = i.next(); i.remove();}
+        if(iterator.hasNext()){firstDesert = iterator.next(); iterator.remove();}
         else{firstDesert = new SceneryObject();}
         firstDesert.makeFirstDesert();
         sceneryObjects.get(ACTIVE).add(firstDesert);
@@ -96,9 +96,9 @@ public class Scenery extends GameEntity
     public void update(GameRessourceProvider gameRessourceProvider)
     {
         backgroundMoves = isBackgroundMoving(gameRessourceProvider);
-        for(Iterator<SceneryObject> i = sceneryObjects.get(ACTIVE).iterator(); i.hasNext();)
+        for(Iterator<SceneryObject> iterator = sceneryObjects.get(ACTIVE).iterator(); iterator.hasNext();)
         {
-            SceneryObject sceneryObject = i.next();
+            SceneryObject sceneryObject = iterator.next();
             if (backgroundMoves)
             {
                 sceneryObject.move();
@@ -106,7 +106,7 @@ public class Scenery extends GameEntity
             if(sceneryObject.getSceneryObjectMaxX() < X_LIMIT_FOR_REMOVAL)
             {
                 sceneryObject.clearImage();
-                i.remove();
+                iterator.remove();
                 sceneryObjects.get(INACTIVE).add(sceneryObject);
             }
         }
@@ -157,12 +157,12 @@ public class Scenery extends GameEntity
     private void generateNewSceneryObject()
     {
         SceneryObject.generalObjectTimer = ACTIVATION_PAUSE_DURATION;
-        Iterator<SceneryObject> i = sceneryObjects.get(INACTIVE).iterator();
+        Iterator<SceneryObject> iterator = sceneryObjects.get(INACTIVE).iterator();
         SceneryObject sceneryObject;
-        if (i.hasNext())
+        if (iterator.hasNext())
         {
-            sceneryObject = i.next();
-            i.remove();
+            sceneryObject = iterator.next();
+            iterator.remove();
         }
         else{sceneryObject = new SceneryObject();}
         sceneryObject.preset();

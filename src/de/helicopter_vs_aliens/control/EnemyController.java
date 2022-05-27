@@ -204,21 +204,16 @@ public class EnemyController
     
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {
-		/*Iterator<Enemy> i = enemy.get(INACTIVE).iterator();
-		Enemy e;
-		if (i.hasNext())
-		{
-			e = i.next();
-			i.remove();
-		}
-		else{e = EnemyFactory.createEnemy();}*/
-        
         LinkedList<Enemy> activeEnemies = gameRessourceProvider.getEnemies().get(ACTIVE);
         int activeEnemyCount = activeEnemies.size();
         GameEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
-        Enemy enemy = enemyFactory.makeInstance();
+        Enemy enemy = gameRessourceProvider.getNewGameEntityInstance(enemyFactory);
+        enemy.reset();
         activeEnemies.add(enemy);
-        if(enemy.countsForTotalAmountOfEnemiesSeen()){gameRessourceProvider.getGameStatisticsCalculator().incrementNumberOfEnemiesSeen();}
+        if(enemy.countsForTotalAmountOfEnemiesSeen())
+        {
+            gameRessourceProvider.getGameStatisticsCalculator().incrementNumberOfEnemiesSeen();
+        }
         Events.lastCreationTimer = 0;
         enemy.initialize(gameRessourceProvider);
     }
@@ -301,38 +296,39 @@ public class EnemyController
             barrierTimer--;}
         countBarriers(gameRessourceProvider.getEnemies());
         
-        for(Iterator<Enemy> i = gameRessourceProvider.getEnemies().get(ACTIVE).iterator(); i.hasNext();)
+        for(Iterator<Enemy> iterator = gameRessourceProvider.getEnemies().get(ACTIVE).iterator(); iterator.hasNext();)
         {
-            Enemy enemy = i.next();
+            Enemy enemy = iterator.next();
             if(!enemy.isDestroyed() && !enemy.isMarkedForRemoval)
             {
                 enemy.update(gameRessourceProvider);
             }
             else if(enemy.isDestroyed())
             {
-                i.remove();
+                iterator.remove();
                 gameRessourceProvider.getEnemies().get(DESTROYED).add(enemy);
             }
             else
             {
                 enemy.clearImage();
-                i.remove();
-                // gameRessourceProvider.enemies.get(INACTIVE).add(enemy);
+                iterator.remove();
+                gameRessourceProvider.getGameEntityManager()
+                                     .store(enemy);
             }
         }
     }
     
-    private static void countBarriers(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static void countBarriers(Map<CollectionSubgroupType, LinkedList<Enemy>> enemies)
     {
         Arrays.fill(livingBarrier, null);
         currentNumberOfBarriers = 0;
-        for(Enemy e : enemy.get(ACTIVE))
+        for(Enemy enemy  : enemies.get(ACTIVE))
         {
-            if (e.getModel() == BARRIER
-                && !e.isDestroyed()
-                && !e.isMarkedForRemoval)
+            if (enemy.getModel() == BARRIER
+                && !enemy.isDestroyed()
+                && !enemy.isMarkedForRemoval)
             {
-                livingBarrier[currentNumberOfBarriers] = e;
+                livingBarrier[currentNumberOfBarriers] = enemy;
                 currentNumberOfBarriers++;
             }
         }

@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.LevelManager;
+import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -16,6 +17,7 @@ import de.helicopter_vs_aliens.gui.button.GroundButtonType;
 import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -29,6 +31,7 @@ import java.awt.FontMetrics;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
@@ -93,7 +96,8 @@ public class GameWindowPainter extends WindowPainter
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        for (Enemy enemy : controller.getEnemies().get(ACTIVE))
+        for (Enemy enemy : controller.getEnemies()
+                                     .get(ACTIVE))
         {
             if (enemy.isVisibleNonBarricadeVessel(helicopter.canDetectCloakedVessels()))
             {
@@ -503,8 +507,7 @@ public class GameWindowPainter extends WindowPainter
                 + ";   Hindernisse: "
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
-                /*+ controller.enemies.get(INACTIVE)
-                                    .size()*/;
+                + countInactiveNonBarrierEnemies();
         } else if (Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
@@ -533,8 +536,10 @@ public class GameWindowPainter extends WindowPainter
                             .get(ACTIVE)
                             .size()
                 + ";   Inaktive Hintergrundobjekte: "
-                + controller.getScenery().getSceneryObjects().get(INACTIVE)
-                                           .size();
+                + controller.getScenery()
+                            .getSceneryObjects()
+                            .get(INACTIVE)
+                            .size();
         } else if (Window.specialInfoSelection == 8)
         {
             infoString = "Speed level: "
@@ -582,5 +587,16 @@ public class GameWindowPainter extends WindowPainter
                 helicopter.getMaximumEnergy());
         }
         graphicsAdapter.drawString("Info: " + infoString, 20, 155);
+    }
+    
+    private static int countInactiveNonBarrierEnemies()
+    {
+        return EnemyType.getValues()
+                        .stream()
+                        .filter(Predicate.not(EnemyType.getBarrierTypes()::contains))
+                        .map(GameEntityFactory::getCorrespondingClass)
+                        .map(controller.getGameEntityManager()::sizeOf)
+                        .mapToInt(Integer::intValue)
+                        .sum();
     }
 }

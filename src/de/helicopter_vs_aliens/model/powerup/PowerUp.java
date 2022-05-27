@@ -56,15 +56,14 @@ public class PowerUp extends RectangularGameEntity
 		
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<PowerUp> i = gameRessourceProvider.getPowerUps().get(ACTIVE).iterator(); i.hasNext();)
+    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getPowerUps().get(ACTIVE).iterator(); iterator.hasNext();)
 		{
-			PowerUp powerUp = i.next();
+			PowerUp powerUp = iterator.next();
 			powerUp.update(gameRessourceProvider.getHelicopter());
 			if(powerUp.wasCollected)
 			{
-				i.remove();
+				iterator.remove();
 				gameRessourceProvider.getGameEntityManager().store(powerUp);
-				// powerUp.get(INACTIVE).add(powerUp);
 			}
 		}		
 	}
@@ -236,11 +235,12 @@ public class PowerUp extends RectangularGameEntity
 		gameRessourceProvider.getPowerUps().get(ACTIVE).add(powerUp);
 	}
 	
+	// TODO Was ist wenn der GameEntitiyManager noch keine PowerUps hat?
 	public static PowerUp getInstance(PowerUpType powerUpType)
 	{
 		PowerUp powerUp = Controller.getInstance()
-									 .getGameEntityManager()
-									 .retrieve(powerUpType);
+									.getGameEntityManager()
+									.retrieve(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;
 	}

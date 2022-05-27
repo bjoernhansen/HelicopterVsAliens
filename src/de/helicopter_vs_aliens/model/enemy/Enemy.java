@@ -344,7 +344,7 @@ public abstract class Enemy extends RectangularGameEntity
 		private final Point2D speed = new Point2D.Float();                // tatsächliche Geschwindigkeit
 		protected final Point2D shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
 	
-	public Enemy()
+	public void reset()
 	{
 		this.lifetime = 0;
 		this.targetSpeedLevel.setLocation(ZERO_SPEED);
@@ -1405,12 +1405,12 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public void shoot(Map<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissiles, EnemyMissileType missileType, double missileSpeed)
     {
-    	Iterator<EnemyMissile> i = enemyMissiles.get(INACTIVE).iterator();
-		EnemyMissile em;
-		if(i.hasNext()){em = i.next(); i.remove();}
-		else{em = new EnemyMissile();}
-		enemyMissiles.get(ACTIVE).add(em);
-		em.launch(this, missileType, missileSpeed, this.shootingDirection);
+    	Iterator<EnemyMissile> iterator = enemyMissiles.get(INACTIVE).iterator();
+		EnemyMissile enemyMissile;
+		if(iterator.hasNext()){enemyMissile = iterator.next(); iterator.remove();}
+		else{enemyMissile = new EnemyMissile();}
+		enemyMissiles.get(ACTIVE).add(enemyMissile);
+		enemyMissile.launch(this, missileType, missileSpeed, this.shootingDirection);
 		Audio.play(Audio.launch3);
     }
 	
@@ -1763,23 +1763,23 @@ public abstract class Enemy extends RectangularGameEntity
 	public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		for(Iterator<Enemy> i = gameRessourceProvider.getEnemies().get(DESTROYED).iterator(); i.hasNext();)
+		for(Iterator<Enemy> iterator = gameRessourceProvider.getEnemies().get(DESTROYED).iterator(); iterator.hasNext();)
 		{
-			Enemy e = i.next();
-			e.updateDead(gameRessourceProvider.getExplosions(), helicopter);
+			Enemy enemy = iterator.next();
+			enemy.updateDead(gameRessourceProvider.getExplosions(), helicopter);
 			
-			if(	helicopter.basicCollisionRequirementsSatisfied(e)
-				&& !e.hasCrashed)
+			if(	helicopter.basicCollisionRequirementsSatisfied(enemy)
+				&& !enemy.hasCrashed)
 			{
-				e.collision(gameRessourceProvider);
+				enemy.collision(gameRessourceProvider);
 			}				
-			if(e.isMarkedForRemoval)
+			if(enemy.isMarkedForRemoval)
 			{
-				e.clearImage();
-				i.remove(); 
-				// gameRessourceProvider.enemies.get(INACTIVE).add(e);
+				enemy.clearImage();
+				iterator.remove();
+				gameRessourceProvider.getGameEntityManager().store(enemy);
 			}				
-		}		// this.slowed_timer
+		}
 	}
 
 	private void updateDead(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion, Helicopter helicopter)
