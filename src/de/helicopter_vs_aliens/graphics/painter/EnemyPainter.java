@@ -33,8 +33,9 @@ public class EnemyPainter extends Painter<Enemy>
     
     private static final float
         BARRIER_BORDER_SIZE 		= 0.23f,
-        BARRIER_EYE_SIZE 			= 0.08f;
-            
+        BARRIER_EYE_SIZE 			= 0.08f,
+        DESTROYED_ENEMY_NIGHT_DIM_FACTOR = 1.3f * Colorations.NIGHT_DIM_FACTOR;
+    
     private Enemy 
         enemy;
 
@@ -402,28 +403,27 @@ public class EnemyPainter extends Painter<Enemy>
             (int) ((isExhaust ? 0f : height  ) * enemy.getPaintBounds().height)  );
     }
     
-    public void paintImage(GraphicsAdapter graphicsAdapter, Enemy enemy, int directionX, Color color, boolean imagePaint)
+    public void paintImage(GraphicsAdapter graphicsAdapter, Enemy enemy, int directionX, Color color, boolean isImagePaint)
     {
         setEnemy(enemy);
-        int offsetX = (int)(imagePaint
+        int offsetX = (int)(isImagePaint
             ? (directionX == 1 ? 0.028f * enemy.getPaintBounds().width : 0)
             : enemy.getPaintBounds().x),
             
-            offsetY = (int)(imagePaint
+            offsetY = (int)(isImagePaint
                 ? 0.25f * enemy.getPaintBounds().height
                 : enemy.getPaintBounds().y);
         
         /*
          * Festlegen der Farben
          */
-        Color mainColorLight, mainColorDark, barColor, inactiveNozzleColor;
-        
+        Color mainColorLight, mainColorDark;
         if(color == null)
         {
             if(enemy.isDestroyed() && Events.timeOfDay == NIGHT)
             {
-                mainColorLight = Colorations.adjustBrightness(enemy.primaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
-                mainColorDark  = Colorations.adjustBrightness(enemy.secondaryColor, 1.3f * Colorations.NIGHT_DIM_FACTOR);
+                mainColorLight = Colorations.adjustBrightness(enemy.primaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
+                mainColorDark  = Colorations.adjustBrightness(enemy.secondaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
             }
             else
             {
@@ -437,22 +437,13 @@ public class EnemyPainter extends Painter<Enemy>
             mainColorDark = Colorations.adjustBrightness(color, 1.5f);
         }
         
-        if(enemy.getModel() == BARRIER){barColor = Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];}
-        else if(!enemy.isDestroyed() && (enemy.getTractor() == AbilityStatusType.ACTIVE || enemy.getShootTimer() > 0 || enemy.isShielding())){barColor = Colorations.variableGreen;}
-        else if(!enemy.isDestroyed() && !imagePaint && enemy.isInvincible()){barColor = Color.green;}
-        else if(enemy.isMiniBoss){barColor = enemy.secondaryColor;}
-        else{barColor = Colorations.enemyGray;}
-        inactiveNozzleColor = Colorations.INACTIVE_NOZZLE;
-        
-        if(enemy.getModel() == BARRIER && Events.timeOfDay == NIGHT)
-        {
-            inactiveNozzleColor = Colorations.barrierColor[Colorations.NOZZLE][Events.timeOfDay.ordinal()];
-        }
+        Color barColor = enemy.getBarColor(isImagePaint);
+        Color inactiveNozzleColor = enemy.getInactiveNozzleColor();
         
         if(enemy.isDestroyed())
         {
-            barColor = Colorations.adjustBrightness(barColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
-            inactiveNozzleColor = Colorations.adjustBrightness(inactiveNozzleColor, Events.timeOfDay == NIGHT ? 1.3f * Colorations.NIGHT_DIM_FACTOR : 1);
+            barColor = Colorations.adjustBrightness(barColor, Events.timeOfDay == NIGHT ? DESTROYED_ENEMY_NIGHT_DIM_FACTOR : 1);
+            inactiveNozzleColor = Colorations.adjustBrightness(inactiveNozzleColor, Events.timeOfDay == NIGHT ? DESTROYED_ENEMY_NIGHT_DIM_FACTOR : 1);
         }
         
         //Malen des Gegners
@@ -464,7 +455,7 @@ public class EnemyPainter extends Painter<Enemy>
                             directionX,
                             color,
                             enemy.isCloaked(), 
-                            imagePaint,
+                            isImagePaint,
                             mainColorLight, 
                             mainColorDark,
                             barColor, 
@@ -475,7 +466,7 @@ public class EnemyPainter extends Painter<Enemy>
             paintBarrier(	graphicsAdapter,
                             offsetX, 
                             offsetY,
-                            imagePaint,
+                            isImagePaint,
                             mainColorLight, 
                             mainColorDark,
                             barColor,

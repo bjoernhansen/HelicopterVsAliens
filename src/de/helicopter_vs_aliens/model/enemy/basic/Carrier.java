@@ -34,7 +34,7 @@ public class Carrier extends BasicEnemy
     
     public int calculateServantCount()
     {
-        return isMiniBoss
+        return isMiniBoss()
                 ? 5 + Calculations.random(3)
                 : 2 + Calculations.random(2);
     }

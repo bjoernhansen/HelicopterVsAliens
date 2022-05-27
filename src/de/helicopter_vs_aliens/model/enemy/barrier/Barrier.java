@@ -4,14 +4,19 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
+import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
+
+import java.awt.Color;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
+import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 
 abstract class Barrier extends Enemy
@@ -117,5 +122,21 @@ abstract class Barrier extends Enemy
     
     @Override
     protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider){}
+    
+    @Override
+    public Color getBarColor(boolean isImagePaint)
+    {
+        return Colorations.barrierColor[Colorations.FRAME][Events.timeOfDay.ordinal()];
+    }
+    
+    @Override
+    public Color getInactiveNozzleColor()
+    {
+        if(Events.timeOfDay == NIGHT)
+        {
+            return Colorations.barrierColor[Colorations.NOZZLE][Events.timeOfDay.ordinal()];
+        }
+        return super.getInactiveNozzleColor();
+    }
 }
 

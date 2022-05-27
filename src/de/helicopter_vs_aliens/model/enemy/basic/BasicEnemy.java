@@ -7,12 +7,16 @@ import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
+
+import java.awt.Color;
 
 public abstract class BasicEnemy extends StandardEnemy
 {
     private static final int
         MIN_MINI_BOSS_LEVEL = 5,
-        MINI_BOSS_REWARD_FACTOR = 4;
+        MINI_BOSS_REWARD_FACTOR = 4,
+        MINI_BOSS_CALL_BACK_MINIMUM_FOR_TURN_AT_BARRIER = 2;
     
     private static final float
         STANDARD_MINI_BOSS_PROB = 0.05f,
@@ -20,10 +24,13 @@ public abstract class BasicEnemy extends StandardEnemy
     
     private static final double
         MINI_BOSS_SIZE_FACTOR = 1.44;
-
     
     private static float
         miniBossProb = STANDARD_MINI_BOSS_PROB; // bestimmt die Häufigkeit, mit der Mini-Bosse erscheinen
+    
+    
+    private boolean
+        isMiniBoss;					// = true: Gegner ist ein Mini-Boss
     
     
     public static void changeMiniBossProb()
@@ -66,7 +73,7 @@ public abstract class BasicEnemy extends StandardEnemy
     protected void writeDestructionStatistics(GameStatisticsCalculator gameStatisticsCalculator)
     {
         super.writeDestructionStatistics(gameStatisticsCalculator);
-        if(this.isMiniBoss){gameStatisticsCalculator.incrementNumberOfMiniBossKilled();}
+        if(isMiniBoss){gameStatisticsCalculator.incrementNumberOfMiniBossKilled();}
     }
     
     private void resizeToMiniBossDimension()
@@ -103,20 +110,20 @@ public abstract class BasicEnemy extends StandardEnemy
     @Override
     protected boolean isMeetingRequirementsForGlowingEyes()
     {
-        return this.isMiniBoss;
+        return isMiniBoss;
     }
     
     @Override
     protected boolean isExplodingOnCollisions()
     {
-        return !this.isMiniBoss && super.isExplodingOnCollisions();
+        return !isMiniBoss && super.isExplodingOnCollisions();
     }
     
     @Override
     protected void prepareRemoval()
     {
         super.prepareRemoval();
-        if(this.isMiniBoss)
+        if(isMiniBoss)
         {
             EnemyController.currentMiniBoss = null;
         }
@@ -125,20 +132,20 @@ public abstract class BasicEnemy extends StandardEnemy
     @Override
     protected boolean hasDeadlyShots()
     {
-        return this.isMiniBoss;
+        return isMiniBoss;
     }
     
     @Override
     public boolean areALlRequirementsForPowerUpDropMet()
     {
-        return super.areALlRequirementsForPowerUpDropMet() || this.isMiniBoss;
+        return super.areALlRequirementsForPowerUpDropMet() || isMiniBoss;
     }
     
     @Override
     public void grantGeneralRewards(GameRessourceProvider gameRessourceProvider)
     {
         super.grantGeneralRewards(gameRessourceProvider);
-        if(this.isMiniBoss)
+        if(isMiniBoss)
         {
             Audio.play(Audio.applause2);
         }
@@ -147,7 +154,7 @@ public abstract class BasicEnemy extends StandardEnemy
     @Override
     protected boolean canDropPowerUp()
     {
-        return super.canDropPowerUp() || this.isMiniBoss;
+        return super.canDropPowerUp() || isMiniBoss;
     }
     
     @Override
@@ -158,27 +165,50 @@ public abstract class BasicEnemy extends StandardEnemy
     
     protected float getTurnProbabilityFactor()
     {
-        return this.isMiniBoss ? 2f : 1f;
+        return isMiniBoss ? 2f : 1f;
     }
     
     @Override
     protected boolean isBoss()
     {
-        return this.isMiniBoss || super.isBoss();
+        return isMiniBoss || super.isBoss();
     }
     
     @Override
     protected int getRewardFactor()
     {
-        return this.isMiniBoss ? MINI_BOSS_REWARD_FACTOR : super.getRewardFactor();
+        return isMiniBoss ? MINI_BOSS_REWARD_FACTOR : super.getRewardFactor();
     }
     
     @Override
     protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
     {
-        if(this.isMiniBoss)
+        if(isMiniBoss)
         {
             EnemyController.currentMiniBoss = null;
         }
+    }
+    
+    @Override
+    protected Color getDefaultBarColor()
+    {
+        if(isMiniBoss)
+        {
+            return secondaryColor;
+        }
+        return super.getDefaultBarColor();
+    }
+    
+    @Override
+    protected int getCallBackMinimumForTurnAtBarrier()
+    {
+        return isMiniBoss
+                ? MINI_BOSS_CALL_BACK_MINIMUM_FOR_TURN_AT_BARRIER
+                : super.getCallBackMinimumForTurnAtBarrier();
+    }
+    
+    protected final boolean isMiniBoss()
+    {
+        return isMiniBoss;
     }
 }

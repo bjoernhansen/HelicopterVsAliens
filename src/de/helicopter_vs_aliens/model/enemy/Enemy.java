@@ -57,9 +57,6 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 public abstract class Enemy extends RectangularGameEntity
 {
-	
-	
-	
 	public static class FinalEnemyOperator
 	{
 		private final EnumMap<FinalBossServantType, Enemy>
@@ -111,7 +108,8 @@ public abstract class Enemy extends RectangularGameEntity
 		MAX_STARTING_Y = 220,
 		MIN_STARTING_Y = 90,
 		DODGE_BORDER_DISTANCE_LEFT = 90,
-		DODGE_BORDER_DISTANCE_RIGHT = Main.VIRTUAL_DIMENSION.width - DODGE_BORDER_DISTANCE_LEFT;
+		DODGE_BORDER_DISTANCE_RIGHT = Main.VIRTUAL_DIMENSION.width - DODGE_BORDER_DISTANCE_LEFT,
+		DEFAULT_CALL_BACK_MINIMUM_FOR_TURN_AT_BARRIER = 0;
 	
 	private static final float
 		PRIMARY_COLOR_BRIGHTNESS_FACTOR = 1.3f,
@@ -219,7 +217,6 @@ public abstract class Enemy extends RectangularGameEntity
 		collisionDamageTimer;			// Timer zur überwachung der Zeit zwischen zwei Helikopter-HP-Abzügen;
 	
 	public boolean
-		isMiniBoss,					// = true: Gegner ist ein Mini-Boss
 		isTouchingHelicopter,
 		hasUnresolvedIntersection;
 		
@@ -376,7 +373,6 @@ public abstract class Enemy extends RectangularGameEntity
 		this.isClockwiseBarrier = true;
 		this.stoppingBarrier = null;
 		this.isPreviousStoppingBarrier = null;
-		this.isMiniBoss = false;
 		this.hasCrashed = false;
 		this.canInstantTurn = false;
 		this.isRecoveringSpeed = false;
@@ -848,12 +844,17 @@ public abstract class Enemy extends RectangularGameEntity
 	private void performXTurnAtBarrier()
 	{
 		this.turnAround();
-		if(this.callBack <= (this.isMiniBoss ? 2 : 0))
+		if(this.callBack <= this.getCallBackMinimumForTurnAtBarrier())
 		{
 			this.callBack++;
 		}		
 	}
-
+	
+	protected int getCallBackMinimumForTurnAtBarrier()
+	{
+		return DEFAULT_CALL_BACK_MINIMUM_FOR_TURN_AT_BARRIER;
+	}
+	
 	private void updateTimer()
 	{		
 		if(	this.collisionDamageTimer > 0) {this.collisionDamageTimer--;}
@@ -2594,6 +2595,34 @@ public abstract class Enemy extends RectangularGameEntity
 			Events.boss.operator.resetTimeSinceDeath(servantType);
 		});
 	}
+	
+	public Color getBarColor(boolean isImagePaint)
+	{
+		if(isDestroyed())
+		{
+			return getDefaultBarColor();
+		}
+		if(getTractor() == AbilityStatusType.ACTIVE || getShootTimer() > 0 || isShielding())
+		{
+			return Colorations.variableGreen;
+		}
+		if(!isImagePaint && isInvincible())
+		{
+			return Color.green;
+		}
+		return getDefaultBarColor();
+	}
+	
+	protected Color getDefaultBarColor()
+	{
+		return Colorations.enemyGray;
+	}
+	
+	public Color getInactiveNozzleColor()
+	{
+		return Colorations.INACTIVE_NOZZLE;
+	}
+	
 	
 	// Methoden für Richtungsänderungen und -abfragen
 	// TODO dies sollte ggf. in eigene Klasse ausgelagert werden, nur die Methoden, die außerhalb von Enemy genutzt werden müssen weitergeleitet werden
