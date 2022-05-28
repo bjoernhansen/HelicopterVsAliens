@@ -8,8 +8,8 @@ public class StunningBarrier extends Barrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.rotorColor = 2;
-        this.staticChargeTimer = READY;
+        rotorColor = 2;
+        staticChargeTimer = READY;
     
         super.doTypeSpecificInitialization();
     }

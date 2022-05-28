@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.model.missile.Missile;
 
 public class ThirdBoss extends BossEnemy
 {
@@ -30,5 +31,20 @@ public class ThirdBoss extends BossEnemy
     public boolean areALlRequirementsForPowerUpDropMet()
     {
         return true;
+    }
+    
+    @Override
+    protected void doTypeSpecificDodgeActions(Missile missile)
+    {
+        this.getSpeedLevel()
+            .setLocation(this.getSpeedLevel()
+                             .getX(), 9);
+        this.dodgeTimer = 16;
+    }
+    
+    @Override
+    protected double getKamikazeSpeedUpX()
+    {
+        return INCREASED_KAMIKAZE_SPEED_UP_X;
     }
 }

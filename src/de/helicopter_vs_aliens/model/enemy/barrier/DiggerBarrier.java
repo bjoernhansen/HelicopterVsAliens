@@ -14,6 +14,6 @@ public class DiggerBarrier extends BurrowingBarrier
     @Override
     protected double calculateInitialY()
     {
-        return GROUND_Y - this.getWidth()/8;
+        return GROUND_Y - getWidth()/8;
     }
 }

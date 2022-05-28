@@ -19,10 +19,10 @@ public class FourthBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.spawningHornetTimer = 30;
+        spawningHornetTimer = 30;
         LevelManager.nextBossEnemyType = EnemyType.BOSS_4_SERVANT;
         LevelManager.maxNr = 15;
-        this.canTurn = true;
+        canTurn = true;
         Events.boss = this;
     
         super.doTypeSpecificInitialization();
@@ -31,45 +31,45 @@ public class FourthBoss extends BossEnemy
     @Override
     protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        this.boss4Action(gameRessourceProvider.getEnemies());
+        boss4Action(gameRessourceProvider.getEnemies());
         super.performFlightManeuver(gameRessourceProvider);
     }
     
     private void boss4Action(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
-        if(    this.getX() < 930
-            && this.getX() > 150)
+        if(    getX() < 930
+            && getX() > 150)
         {
-            this.spawningHornetTimer++;
+            spawningHornetTimer++;
         }
-        if(this.spawningHornetTimer == 1)
+        if(spawningHornetTimer == 1)
         {
-            this.getSpeedLevel()
+            getSpeedLevel()
                 .setLocation(11, 11);
-            this.canMoveChaotic = true;
-            this.canKamikaze = true;
+            canMoveChaotic = true;
+            canKamikaze = true;
         }
-        else if(this.spawningHornetTimer >= 50)
+        else if(spawningHornetTimer >= 50)
         {
-            if(this.spawningHornetTimer == 50)
+            if(spawningHornetTimer == 50)
             {
-                this.getSpeedLevel()
+                getSpeedLevel()
                     .setLocation(3, 3);
-                this.canMoveChaotic = false;
-                this.canKamikaze = false;
+                canMoveChaotic = false;
+                canKamikaze = false;
             }
-            else if(this.spawningHornetTimer == 90)
+            else if(spawningHornetTimer == 90)
             {
-                this.getSpeedLevel()
+                getSpeedLevel()
                     .setLocation(ZERO_SPEED);
             }
             if(enemy.get(ACTIVE).size() < 15
-                && (    this.spawningHornetTimer == 60
-                || this.spawningHornetTimer == 90
+                && (    spawningHornetTimer == 60
+                || spawningHornetTimer == 90
                 || Calculations.tossUp(0.02f)))
             {
-                boss.setLocation(	this.getX() + this.getWidth() /2,
-                    this.getY() + this.getHeight()/2);
+                boss.setLocation(	getX() + getWidth() /2,
+                    getY() + getHeight()/2);
                 EnemyController.makeBoss4Servant = true;
             }
         }
@@ -85,5 +85,11 @@ public class FourthBoss extends BossEnemy
     protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider)
     {
         killOwnServants(gameRessourceProvider);
+    }
+    
+    @Override
+    protected double getKamikazeSpeedUpX()
+    {
+        return INCREASED_KAMIKAZE_SPEED_UP_X;
     }
 }

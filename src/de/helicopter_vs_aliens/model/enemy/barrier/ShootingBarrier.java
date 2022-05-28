@@ -11,7 +11,7 @@ public class ShootingBarrier extends ArmedBarrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.barrierShootTimer = READY;
+        barrierShootTimer = READY;
     
         super.doTypeSpecificInitialization();
     }
@@ -31,6 +31,6 @@ public class ShootingBarrier extends ArmedBarrier
     
     private int getRandomShootingRate()
     {
-        return Calculations.randomDirection()*(this.shootingRate/3 + Calculations.random(10));
+        return Calculations.randomDirection()*(shootingRate/3 + Calculations.random(10));
     }
 }

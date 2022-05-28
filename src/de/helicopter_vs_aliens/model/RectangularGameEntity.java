@@ -21,13 +21,13 @@ public abstract class RectangularGameEntity extends GameEntity
 	
 	protected final void setPaintBounds()
 	{
-		this.setPaintBounds(this.paintBounds.width, this.paintBounds.height);
+		setPaintBounds(paintBounds.width, paintBounds.height);
 	}
 	
 	protected final void setPaintBounds(int width, int height)
 	{
-		this.paintBounds.setBounds(	(int)Math.round(this.getX()),
-									(int)Math.round(this.getY()),
+		paintBounds.setBounds(	(int)Math.round(getX()),
+									(int)Math.round(getY()),
 									width, 
 									height);
 	}

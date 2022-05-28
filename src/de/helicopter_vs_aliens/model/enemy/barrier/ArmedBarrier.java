@@ -26,10 +26,10 @@ abstract class ArmedBarrier extends Barrier
     
     private void setBarrierShootingProperties()
     {
-        this.shootPause = calculateShootPause();
-        this.shootingRate = calculateShootingRate();
-        this.shotsPerCycle = calculateShotsPerCycle();
-        this.shootingCycleLength = this.shootPause + this.shootingRate * this.shotsPerCycle;
+        shootPause = calculateShootPause();
+        shootingRate = calculateShootingRate();
+        shotsPerCycle = calculateShotsPerCycle();
+        shootingCycleLength = this.shootPause + this.shootingRate * this.shotsPerCycle;
         this.shotSpeed = calculateShootSpeed();
         this.shotRotationSpeed = calculateRotationSpeed();
     }

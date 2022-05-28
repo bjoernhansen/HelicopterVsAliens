@@ -3,6 +3,8 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
@@ -97,18 +99,18 @@ public abstract class ShieldMaker extends FinalBossServant
     private boolean canStartShielding()
     {
         return 	   this.shieldMakerTimer > 200
-            && !this.isRecoveringSpeed
-            && TARGET_DISTANCE_VARIANCE.x
-            > Math.abs(Events.boss.getCenterX()
-            -this.getX())
-            &&  TARGET_DISTANCE_VARIANCE.y
-            > (this.isUpperShieldMaker
-            ? Math.abs(this.getMaxY()
-            - Events.boss.getMinY()
-            + SHIELD_TARGET_DISTANCE)
-            : Math.abs(this.getMinY()
-            - Events.boss.getMaxY()
-            - SHIELD_TARGET_DISTANCE));
+                    && !this.isRecoveringSpeed
+                    && TARGET_DISTANCE_VARIANCE.x
+                    > Math.abs(Events.boss.getCenterX()
+                    -this.getX())
+                    &&  TARGET_DISTANCE_VARIANCE.y
+                    > (this.isUpperShieldMaker
+                    ? Math.abs(this.getMaxY()
+                    - Events.boss.getMinY()
+                    + SHIELD_TARGET_DISTANCE)
+                    : Math.abs(this.getMinY()
+                    - Events.boss.getMaxY()
+                    - SHIELD_TARGET_DISTANCE));
     }
     
     private void startShielding()
@@ -120,5 +122,12 @@ public abstract class ShieldMaker extends FinalBossServant
         Events.boss.shield++;
         this.canDodge = true;
         this.shieldMakerTimer = DISABLED;
+    }
+    
+    @Override
+    public void dodge(Missile missile)
+    {
+        super.dodge(missile);
+        this.stampedeShieldMaker();
     }
 }

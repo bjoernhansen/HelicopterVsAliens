@@ -27,7 +27,7 @@ public class FinalBoss extends BossEnemy
     protected void doTypeSpecificInitialization()
     {
         LevelManager.maxNr = 5; // TODO diese Zuweisung gehört hier nicht her oder?
-        this.operator = new Enemy.FinalEnemyOperator();
+        operator = new Enemy.FinalEnemyOperator();
         Events.boss = this;
     
         super.doTypeSpecificInitialization();
@@ -54,27 +54,27 @@ public class FinalBoss extends BossEnemy
     @Override
     protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        this.finalBossAction();
+        finalBossAction();
         super.performFlightManeuver(gameRessourceProvider);
     }
     private void finalBossAction()
     {
-        if(this.getSpeedLevel()
+        if(getSpeedLevel()
                .getX() > 0)
         {
-            if(this.getSpeedLevel()
+            if(getSpeedLevel()
                    .getX() - 0.5 <= 0)
             {
-                this.getSpeedLevel()
+                getSpeedLevel()
                     .setLocation(ZERO_SPEED);
-                boss.setLocation(this.getCenterX(),
-                    this.getCenterY());
+                boss.setLocation(getCenterX(),
+                    getCenterY());
                 EnemyController.makeAllBoss5Servants = true;
             }
             else
             {
-                this.getSpeedLevel()
-                    .setLocation(this.getSpeedLevel()
+                getSpeedLevel()
+                    .setLocation(getSpeedLevel()
                                      .getX()-0.5,	0);
             }
         }
@@ -82,7 +82,7 @@ public class FinalBoss extends BossEnemy
         {
             FinalBossServantType.getValues()
                                 .stream()
-                                .filter(Predicate.not(this.operator::containsServant))
+                                .filter(Predicate.not(operator::containsServant))
                                 .forEach(servantType -> {
                                     if (isFinalBossServantCreationAllowedFor(servantType))
                                     {
@@ -90,7 +90,7 @@ public class FinalBoss extends BossEnemy
                                     }
                                     else
                                     {
-                                        this.operator.incrementTimeSinceDeathCounter(servantType);
+                                        operator.incrementTimeSinceDeathCounter(servantType);
                                     }
                                 });
         }
@@ -99,7 +99,7 @@ public class FinalBoss extends BossEnemy
     private boolean isFinalBossServantCreationAllowedFor(FinalBossServantType servantType)
     {
         return Calculations.tossUp(servantType.getReturnProbability())
-            && this.operator.hasMinimumTimeBeforeRecreationElapsed(servantType);
+            && operator.hasMinimumTimeBeforeRecreationElapsed(servantType);
     }
     
     @Override

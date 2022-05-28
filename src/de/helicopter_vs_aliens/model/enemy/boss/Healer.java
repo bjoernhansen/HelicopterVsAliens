@@ -1,9 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.missile.Missile;
 
 public class Healer extends FinalBossServant
 {
@@ -74,5 +73,12 @@ public class Healer extends FinalBossServant
         {
             this.getSpeedLevel().setLocation(this.targetSpeedLevel);
         }
+    }
+    
+    @Override
+    public void dodge(Missile missile)
+    {
+        super.dodge(missile);
+        this.canDodge = false;
     }
 }

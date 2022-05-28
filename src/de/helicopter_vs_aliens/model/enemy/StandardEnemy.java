@@ -21,7 +21,7 @@ public abstract class StandardEnemy extends Enemy
     @Override
     public boolean areALlRequirementsForPowerUpDropMet()
     {
-        return !Events.isBossLevel() && this.canDropPowerUp();
+        return !Events.isBossLevel() && canDropPowerUp();
     }
     
     protected boolean canDropPowerUp()

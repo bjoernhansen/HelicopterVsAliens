@@ -621,12 +621,12 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     
     boolean isServant()
     {
-        return	this.isMinorServant() || this.isFinalBossServant();
+        return	isMinorServant() || isFinalBossServant();
     }
     
     boolean isMainBoss()
     {
-        return this.isMajorBoss() && !this.isServant();
+        return isMajorBoss() && !isServant();
     }
     
     public boolean isShieldMaker()
@@ -641,7 +641,7 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     
     public int getStrength()
     {
-        return this.strength;
+        return strength;
     }
     
     public static List<EnemyType> getValues()
@@ -665,7 +665,7 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     
     public int getBounty()
     {
-        return (int)(BOUNTY_MULTIPLIER * this.getStrength());
+        return (int)(BOUNTY_MULTIPLIER * getStrength());
     }
     
     public int getHitPoints()

@@ -19,7 +19,7 @@ public class Bodyguard extends FinalBossServant
     @Override
     protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        this.bodyguardAction();
+        bodyguardAction();
         super.performFlightManeuver(gameRessourceProvider);
     }
     
@@ -27,13 +27,13 @@ public class Bodyguard extends FinalBossServant
     {
         if(Events.boss.shield < 1)
         {
-            this.canKamikaze = true;
-            this.getSpeedLevel().setLocation(7.5, this.getSpeedLevel().getY());
+            canKamikaze = true;
+            getSpeedLevel().setLocation(7.5, getSpeedLevel().getY());
         }
         else
         {
-            this.canKamikaze = false;
-            this.getSpeedLevel().setLocation(this.targetSpeedLevel);
+            canKamikaze = false;
+            getSpeedLevel().setLocation(targetSpeedLevel);
         }
     }
 }

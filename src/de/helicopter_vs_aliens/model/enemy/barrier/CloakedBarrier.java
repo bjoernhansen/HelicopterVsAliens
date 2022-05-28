@@ -14,8 +14,8 @@ public class CloakedBarrier extends ArmedBarrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.barrierTeleportTimer = READY;
-        this.callBack = 1 + Calculations.random(4);
+        barrierTeleportTimer = READY;
+        callBack = 1 + Calculations.random(4);
     
         super.doTypeSpecificInitialization();
     }
@@ -41,7 +41,7 @@ public class CloakedBarrier extends ArmedBarrier
     @Override
     protected void setInitialLocation(Helicopter helicopter)
     {
-        this.startBarrierUncloaking(helicopter);
+        startBarrierUncloaking(helicopter);
     }
     
     @Override

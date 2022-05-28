@@ -1,23 +1,18 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
-import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-
-import java.util.LinkedList;
-import java.util.Map;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 
 public abstract class BossEnemy extends StandardEnemy
 {
-    private static final int HEALED_HIT_POINTS = 11;
+    protected static final int
+        INCREASED_KAMIKAZE_SPEED_UP_X = 12;
+    
+    private static final int
+        HEALED_HIT_POINTS = 11;
     
     @Override
     protected int getRewardModifier()
@@ -41,7 +36,7 @@ public abstract class BossEnemy extends StandardEnemy
     {
         int newHitPoints = Math.min(Events.boss.getHitPoints() + HEALED_HIT_POINTS,
             Events.boss.startingHitPoints);
-        this.setHitPoints(newHitPoints);
+        setHitPoints(newHitPoints);
     }
     
     @Override

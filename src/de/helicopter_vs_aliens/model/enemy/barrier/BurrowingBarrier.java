@@ -7,7 +7,7 @@ public abstract class BurrowingBarrier extends ArmedBarrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.burrowTimer = READY;
+        burrowTimer = READY;
     
         super.doTypeSpecificInitialization();
     }
