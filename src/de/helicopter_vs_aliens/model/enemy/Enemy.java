@@ -993,10 +993,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 				
 		//Chaos-SpeedUp
 		if(	canChaosSpeedup
-			&& speedLevel.getX() == targetSpeedLevel.getX()
+			&& speedLevel.getX() <= targetSpeedLevel.getX()
 			&& helicopter.getX() - getX() > -350	)
 		{
-			increaseSpeedLevelX(6);
+			setSpeedLevelX(targetSpeedLevel.getX() + 6);
 		}
 		if(canChaosSpeedup && (helicopter.getX() - getX()) > -160)
 		{			
@@ -2719,7 +2719,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void increaseSpeedLevelX(double increment)
 	{
-		setSpeedLevelX(targetSpeedLevel.getX() + increment);
+		setSpeedLevelX(speedLevel.getX() + increment);
 	}
 	
 	private void setSpeedLevelToZeroX()
@@ -2735,7 +2735,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void increaseSpeedLevelY(double increment)
 	{
-		setSpeedLevelY(targetSpeedLevel.getY() + increment);
+		setSpeedLevelY(speedLevel.getY() + increment);
 	}
 	
 	private void setSpeedLevelToZeroY()
