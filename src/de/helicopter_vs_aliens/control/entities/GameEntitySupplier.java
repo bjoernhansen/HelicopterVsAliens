@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
-public final class GameEntityManager
+public final class GameEntitySupplier
 {
     private final Map<Class<? extends GameEntity>, GameEntityStore<GameEntity>>
         entityStores = new HashMap<>();

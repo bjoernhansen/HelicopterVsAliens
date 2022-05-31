@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.control;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
-import de.helicopter_vs_aliens.control.entities.GameEntityManager;
+import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -43,7 +43,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
@@ -123,8 +122,8 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	private final WindowManager
 		windowManager = new WindowManager();
 	
-	private final GameEntityManager
-		gameEntityManager = new GameEntityManager();
+	private final GameEntitySupplier
+		gameEntitySupplier = new GameEntitySupplier();
 	
 	private final GameStatisticsCalculator
 		gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
@@ -180,7 +179,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 			this.powerUps.put(	   					standardSubgroupTypes, new LinkedList<>());
 			this.enemies.put(		   				standardSubgroupTypes, new LinkedList<>());
 		});
-		this.enemies.put(DESTROYED, new LinkedList<>());
+		this.enemies.put(CollectionSubgroupType.DESTROYED, new LinkedList<>());
 	}
 	
 	public void start()
@@ -436,9 +435,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	}
 	
 	@Override
-	public GameEntityManager getGameEntityManager()
+	public GameEntitySupplier getGameEntitySupplier()
 	{
-		return gameEntityManager;
+		return gameEntitySupplier;
 	}
 	
 	@Override
@@ -530,6 +529,6 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	@Override
 	public  <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory)
 	{
-		return gameEntityManager.retrieve(factory);
+		return gameEntitySupplier.retrieve(factory);
 	}
 }

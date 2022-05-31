@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
-import de.helicopter_vs_aliens.control.entities.GameEntityManager;
+import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -15,27 +15,17 @@ import de.helicopter_vs_aliens.score.Savegame;
 import java.util.LinkedList;
 import java.util.Map;
 
-public interface GameRessourceProvider
+public interface GameRessourceProvider extends ActiveGameEntityProvider
 {
     Helicopter getHelicopter();
     
     GameStatisticsCalculator getGameStatisticsCalculator();
     
-    Map<CollectionSubgroupType, LinkedList<Enemy>> getEnemies();
-    
-    Map<CollectionSubgroupType, LinkedList<Missile>> getMissiles();
-    
-    Map<CollectionSubgroupType, LinkedList<Explosion>> getExplosions();
-    
-    Map<CollectionSubgroupType, LinkedList<EnemyMissile>> getEnemyMissiles();
-    
-    Map<CollectionSubgroupType, LinkedList<PowerUp>> getPowerUps();
-    
     Scenery getScenery();
     
-    public GameEntityManager getGameEntityManager();
+    GameEntitySupplier getGameEntitySupplier();
     
-    public Savegame getSaveGame();
+    Savegame getSaveGame();
     
-    public  <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory);
+    <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory);
 }

@@ -63,7 +63,7 @@ public abstract class BasicEnemy extends StandardEnemy
         isMiniBoss = true;
         callBack += 2;
         canTurn = true;
-        if((type.isCloakableAsMiniBoss() && !canLearnKamikaze && Calculations.tossUp(0.2f)) || shootTimer == 0 )
+        if((type.isCloakableAsMiniBoss() && !canLearnKamikaze && Calculations.tossUp(0.2f)) || isReadyToShoot() )
         {
             cloakingTimer = 0;
         }

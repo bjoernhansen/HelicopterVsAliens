@@ -1,8 +1,11 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -13,7 +16,6 @@ import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
@@ -21,7 +23,7 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.PHASE_SHIFT;
 
 
-public class Missile extends RectangularGameEntity
+public class Missile extends RectangularGameEntity implements GroupTypeOwner
 {	
 	private static final float
 		STANDARD_DAMAGE_FACTOR = 1.0f,
@@ -111,7 +113,7 @@ public class Missile extends RectangularGameEntity
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Missile> i = gameRessourceProvider.getMissiles().get(ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<Missile> i = gameRessourceProvider.getMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			Missile missile = i.next();
 			missile.update(gameRessourceProvider, i);
@@ -161,7 +163,7 @@ public class Missile extends RectangularGameEntity
 	private void checkIfMissileHitEnemy(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		for(Enemy enemy : gameRessourceProvider.getEnemies().get(ACTIVE))
+		for(Enemy enemy : gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE))
 		{
 			if (enemy.isHittable(this))
 			{
@@ -277,4 +279,10 @@ public class Missile extends RectangularGameEntity
     {
 		return this.typeOfExplosion.isBigExplosion() || this.extraDamage;
     }
+	
+	@Override
+	public GameEntityGroupType getGroupType()
+	{
+		return GameEntityGroupType.MISSILE;
+	}
 }

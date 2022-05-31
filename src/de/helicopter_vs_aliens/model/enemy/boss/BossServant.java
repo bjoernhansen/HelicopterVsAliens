@@ -1,8 +1,5 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
-
 public abstract class BossServant extends BossEnemy
 {
     @Override
@@ -25,4 +22,10 @@ public abstract class BossServant extends BossEnemy
     
     @Override
     protected void bossInactivationEvent(){}
+    
+    @Override
+    protected int getEmpSlowTime()
+    {
+        return EMP_SLOW_TIME;
+    }
 }

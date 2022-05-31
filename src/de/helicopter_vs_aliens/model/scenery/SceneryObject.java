@@ -1,6 +1,8 @@
 package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
@@ -18,7 +20,7 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObjectType.STONE;
 
 // TODO Alles Allgemeines zu Backgrounds, was sich nicht auf die Background-Objekte bezieht in eigene Klasse
 // TODO diese Klasse bekommt dann auch einen eigenen Painter
-public class SceneryObject extends RectangularGameEntity
+public class SceneryObject extends RectangularGameEntity implements GroupTypeOwner
 {
 	private static final int
 		// Häufigkeit mit der Hintergrundobjekte eines bestimmten Typs erscheinen
@@ -296,5 +298,11 @@ public class SceneryObject extends RectangularGameEntity
 	public void move()
 	{
 		x -= BG_SPEED;
+	}
+	
+	@Override
+	public GameEntityGroupType getGroupType()
+	{
+		return GameEntityGroupType.SCENERY_OBJECT;
 	}
 }

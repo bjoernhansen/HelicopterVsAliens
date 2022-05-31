@@ -5,6 +5,8 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -18,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BONUS_INCOME;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
@@ -28,7 +29,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITED_ENERGY
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 
-public class PowerUp extends RectangularGameEntity
+public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 {
     private static final int
         SIZE = 30,
@@ -56,14 +57,14 @@ public class PowerUp extends RectangularGameEntity
 		
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getPowerUps().get(ACTIVE).iterator(); iterator.hasNext();)
+    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
 		{
 			PowerUp powerUp = iterator.next();
 			powerUp.update(gameRessourceProvider.getHelicopter());
 			if(powerUp.wasCollected)
 			{
 				iterator.remove();
-				gameRessourceProvider.getGameEntityManager().store(powerUp);
+				gameRessourceProvider.getGameEntitySupplier().store(powerUp);
 			}
 		}		
 	}
@@ -223,7 +224,7 @@ public class PowerUp extends RectangularGameEntity
 	{
 		this.initialize();
 		this.moveToStatusbar();
-		powerUps.get(ACTIVE).add(this);
+		powerUps.get(CollectionSubgroupType.ACTIVE).add(this);
 	}
 
 	public static void activateInstance(GameRessourceProvider gameRessourceProvider, Enemy enemy)
@@ -232,14 +233,13 @@ public class PowerUp extends RectangularGameEntity
 		int powerUpDirection = PowerUp.getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
 		PowerUp powerUp = PowerUp.getInstance(powerUpType);
 		powerUp.initialize(enemy, powerUpDirection);
-		gameRessourceProvider.getPowerUps().get(ACTIVE).add(powerUp);
+		gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE).add(powerUp);
 	}
-	
-	// TODO Was ist wenn der GameEntitiyManager noch keine PowerUps hat?
+
 	public static PowerUp getInstance(PowerUpType powerUpType)
 	{
 		PowerUp powerUp = Controller.getInstance()
-									.getGameEntityManager()
+									.getGameEntitySupplier()
 									.retrieve(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;
@@ -287,4 +287,10 @@ public class PowerUp extends RectangularGameEntity
     {
         return crossColor;
     }
+	
+	@Override
+	public GameEntityGroupType getGroupType()
+	{
+		return GameEntityGroupType.POWER_UP;
+	}
 }

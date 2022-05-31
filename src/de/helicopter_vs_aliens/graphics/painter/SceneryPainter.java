@@ -1,6 +1,8 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
@@ -8,9 +10,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 
 
 public class SceneryPainter extends Painter<Scenery>
@@ -22,7 +21,7 @@ public class SceneryPainter extends Painter<Scenery>
     {
         setScenery(scenery);
         paintSunOrMoon(graphicsAdapter);
-        if (Events.timeOfDay == NIGHT)
+        if (Events.timeOfDay == TimeOfDay.NIGHT)
         {
             paintStars(graphicsAdapter);
         }
@@ -53,7 +52,7 @@ public class SceneryPainter extends Painter<Scenery>
     private void paintSunOrMoon(GraphicsAdapter graphicsAdapter)
     {
         int coronaRadiusIncrease = 0;
-        if(Events.timeOfDay == NIGHT) {graphicsAdapter.setColor(Colorations.lighterYellow); }
+        if(Events.timeOfDay == TimeOfDay.NIGHT) {graphicsAdapter.setColor(Colorations.lighterYellow); }
         else
         {
             graphicsAdapter.setColor(Colorations.randomLight);
@@ -70,7 +69,7 @@ public class SceneryPainter extends Painter<Scenery>
     private void paintAllBackgroundSceneryObjects(GraphicsAdapter graphicsAdapter)
     {
         scenery.getSceneryObjects()
-               .get(ACTIVE)
+               .get(CollectionSubgroupType.ACTIVE)
                .stream()
                .filter(SceneryObject::isInBackground)
                .forEach(sceneryObject -> sceneryObject.paint(graphicsAdapter));

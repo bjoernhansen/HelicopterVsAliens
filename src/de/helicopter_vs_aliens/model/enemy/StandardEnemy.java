@@ -1,15 +1,7 @@
 package de.helicopter_vs_aliens.model.enemy;
 
-import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
-import de.helicopter_vs_aliens.util.Colorations;
-
-import java.awt.Color;
-
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 
 public abstract class StandardEnemy extends Enemy
 {

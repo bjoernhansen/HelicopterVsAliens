@@ -9,6 +9,8 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
 
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
+
 public abstract class ShieldMaker extends FinalBossServant
 {
     private static final int
@@ -16,7 +18,8 @@ public abstract class ShieldMaker extends FinalBossServant
     
     private static final Point
         TARGET_DISTANCE_VARIANCE = new Point(10, 3),
-        SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3);
+        SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3),
+        SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10);
     
     @Override
     protected void doTypeSpecificInitialization()
@@ -129,5 +132,36 @@ public abstract class ShieldMaker extends FinalBossServant
     {
         super.dodge(missile);
         this.stampedeShieldMaker();
+    }
+    
+    private void stampedeShieldMaker()
+    {
+        shieldMakerTimer = READY;
+        getSpeedLevel().setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
+        targetSpeedLevel.setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
+        canMoveChaotic = true;
+        canDodge = false;
+        setShieldingPosition();
+        if(isShielding){stopShielding();}
+    }
+    
+    @Override
+    public void die(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
+    {
+        if(isShielding){stopShielding();}
+        super.die(gameRessourceProvider, missile, beamKill);
+    }
+    
+    private void stopShielding()
+    {
+        if(Events.boss.shield == 1){Audio.shieldUp.stop();}
+        Events.boss.shield--;
+        isShielding = false;
+    }
+    
+    @Override
+    protected boolean isAbleToBeSlowedDownByEmp()
+    {
+        return !isShielding && super.isAbleToBeSlowedDownByEmp();
     }
 }

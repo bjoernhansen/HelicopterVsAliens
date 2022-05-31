@@ -41,9 +41,6 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.BlockMessage.HELICOPTER_ALREADY_REPAIRED;
@@ -581,11 +578,11 @@ public class Events
 				Window.updateRepairShopButtonsAfterSpotlightPurchase();
 				
 				controller.getEnemies()
-						  .get(DESTROYED)
+						  .get(CollectionSubgroupType.DESTROYED)
 						  .forEach(Enemy::repaint);
 				
 				controller.getEnemies()
-						  .get(ACTIVE)
+						  .get(CollectionSubgroupType.ACTIVE)
 						  .stream()
 						  .filter(Predicate.not(Enemy::isRock))
 						  .forEach(Enemy::dimmedRepaint);
@@ -729,19 +726,19 @@ public class Events
 	
 	private static void storeAndClearActiveEnemies(GameRessourceProvider gameRessourceProvider)
 	{
-		storeAndClearEnemies(gameRessourceProvider, ACTIVE);
+		storeAndClearEnemies(gameRessourceProvider, CollectionSubgroupType.ACTIVE);
 	}
 	
 	private static void storeAndClearDestroyedEnemies(GameRessourceProvider gameRessourceProvider)
 	{
-		storeAndClearEnemies(gameRessourceProvider, DESTROYED);
+		storeAndClearEnemies(gameRessourceProvider, CollectionSubgroupType.DESTROYED);
 	}
 	
 	private static void storeAndClearEnemies(GameRessourceProvider gameRessourceProvider, CollectionSubgroupType collectionSubgroupType)
 	{
 		LinkedList<Enemy> enemies = gameRessourceProvider.getEnemies()
 														 .get(collectionSubgroupType);
-		gameRessourceProvider.getGameEntityManager()
+		gameRessourceProvider.getGameEntitySupplier()
 							 .storeAll(enemies);
 		enemies.clear();
 	}
@@ -1057,9 +1054,9 @@ public class Events
 		Window.conditionalReset();
 		
 		// kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-		if(!gameRessourceProvider.getEnemies().get(ACTIVE).isEmpty()
+		if(!gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
 		   && !(!totalReset && gameRessourceProvider.getEnemies()
-										 .get(ACTIVE).getFirst().type == BOSS_2_SERVANT))
+										 .get(CollectionSubgroupType.ACTIVE).getFirst().type == BOSS_2_SERVANT))
 		{
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
@@ -1088,15 +1085,15 @@ public class Events
 				gameRessourceProvider.getScenery().reset();
 			}
 		}									
-		gameRessourceProvider.getExplosions().get(INACTIVE).addAll(gameRessourceProvider.getExplosions().get(ACTIVE));
-		gameRessourceProvider.getExplosions().get(ACTIVE).clear();
-		gameRessourceProvider.getMissiles().get(INACTIVE).addAll(gameRessourceProvider.getMissiles().get(ACTIVE));
-		gameRessourceProvider.getMissiles().get(ACTIVE).clear();
-		gameRessourceProvider.getEnemyMissiles().get(INACTIVE).addAll(gameRessourceProvider.getEnemyMissiles().get(ACTIVE));
-		gameRessourceProvider.getEnemyMissiles().get(ACTIVE).clear();
-		gameRessourceProvider.getGameEntityManager().storeAll(gameRessourceProvider.getPowerUps().get(ACTIVE));
-		gameRessourceProvider.getPowerUps().get(ACTIVE).clear();
-		// TODO
+		gameRessourceProvider.getExplosions().get(CollectionSubgroupType.INACTIVE).addAll(gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE));
+		gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
+		gameRessourceProvider.getMissiles().get(CollectionSubgroupType.INACTIVE).addAll(gameRessourceProvider.getMissiles().get(CollectionSubgroupType.ACTIVE));
+		gameRessourceProvider.getMissiles().get(CollectionSubgroupType.ACTIVE).clear();
+		gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.INACTIVE).addAll(gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE));
+		gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).clear();
+		gameRessourceProvider.getGameEntitySupplier().storeAll(gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE));
+		gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE).clear();
+
 		if(Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))
 		{
 			helicopter.adjustFireRate(false);
@@ -1107,13 +1104,13 @@ public class Events
 	private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
 	{
 		LinkedList<Enemy> activeEnemies = gameRessourceProvider.getEnemies()
-															   .get(ACTIVE);
+															   .get(CollectionSubgroupType.ACTIVE);
 		activeEnemies.stream()
 					 .filter(Enemy::isDisappearingAfterEnteringRepairShop)
-					 .forEach(gameRessourceProvider.getGameEntityManager()::store);
+					 .forEach(gameRessourceProvider.getGameEntitySupplier()::store);
 		
 		gameRessourceProvider.getEnemies()
-							 .get(ACTIVE)
+							 .get(CollectionSubgroupType.ACTIVE)
 							 .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
 	}
 	

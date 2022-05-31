@@ -1,8 +1,11 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -13,8 +16,6 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
@@ -24,7 +25,7 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 
-public class EnemyMissile extends GameEntity
+public class EnemyMissile extends GameEntity implements GroupTypeOwner
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
@@ -142,7 +143,7 @@ public class EnemyMissile extends GameEntity
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<EnemyMissile> i = gameRessourceProvider.getEnemyMissiles().get(ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<EnemyMissile> i = gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			EnemyMissile em = i.next();	    			
 			em.update(gameRessourceProvider.getHelicopter());
@@ -153,7 +154,7 @@ public class EnemyMissile extends GameEntity
 				|| em.hasHit)
 			{
 				i.remove();					
-				gameRessourceProvider.getEnemyMissiles().get(INACTIVE).add(em);
+				gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.INACTIVE).add(em);
 			}
 		}		
 	}
@@ -176,5 +177,11 @@ public class EnemyMissile extends GameEntity
 	public EnemyMissileType getType()
 	{
 		return type;
+	}
+	
+	@Override
+	public GameEntityGroupType getGroupType()
+	{
+		return GameEntityGroupType.ENEMY_MISSILE;
 	}
 }

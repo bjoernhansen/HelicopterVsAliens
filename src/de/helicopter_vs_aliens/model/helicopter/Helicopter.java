@@ -35,8 +35,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevel.EXTORTIONATE;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
@@ -267,7 +265,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		Map<CollectionSubgroupType, LinkedList<Missile>> missiles = gameRessourceProvider.getMissiles();
 		if (this.numberOfCannons >= 1)
 		{
-			Iterator<Missile> iterator = missiles.get(INACTIVE)
+			Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
 										  .iterator();
 			Missile missile;
 			if (iterator.hasNext())
@@ -284,13 +282,13 @@ public abstract class Helicopter extends RectangularGameEntity
 				missile.sister[1] = null;
 				sister = missile;
 			}
-			missiles.get(ACTIVE)
+			missiles.get(CollectionSubgroupType.ACTIVE)
 					.add(missile);
 			missile.launch(this, stunningMissile, 56);
 		}
 		if (this.numberOfCannons >= 2)
 		{
-			Iterator<Missile> iterator = missiles.get(INACTIVE)
+			Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
 										  .iterator();
 			Missile missile;
 			if (iterator.hasNext())
@@ -310,13 +308,13 @@ public abstract class Helicopter extends RectangularGameEntity
 				sister.sister[0] = missile;
 				sister = missile;
 			}
-			missiles.get(ACTIVE)
+			missiles.get(CollectionSubgroupType.ACTIVE)
 					.add(missile);
 			missile.launch(this, stunningMissile, 28);
 		}
 		if (this.numberOfCannons >= 3)
 		{
-			Iterator<Missile> iterator = missiles.get(INACTIVE)
+			Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
 										  .iterator();
 			Missile missile;
 			if (iterator.hasNext())
@@ -336,7 +334,7 @@ public abstract class Helicopter extends RectangularGameEntity
 				sister.sister[0].sister[1] = missile;
 				sister.sister[1] = missile;
 			}
-			missiles.get(ACTIVE)
+			missiles.get(CollectionSubgroupType.ACTIVE)
 					.add(missile);
 			missile.launch(this, stunningMissile, 42);
 		}
@@ -1365,7 +1363,7 @@ public abstract class Helicopter extends RectangularGameEntity
     
     public void inactivate(Map<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
     {
-        missiles.get(INACTIVE).add(missile);
+        missiles.get(CollectionSubgroupType.INACTIVE).add(missile);
     }
 
 	public int getFifthSpecialCosts()

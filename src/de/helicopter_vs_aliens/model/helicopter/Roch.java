@@ -6,21 +6,18 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
-import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 
 public final class Roch extends Helicopter
 {
@@ -370,7 +367,7 @@ public final class Roch extends Helicopter
                 else assert false;
             }
         }
-        missiles.get(INACTIVE).add(missile);
+        missiles.get(CollectionSubgroupType.INACTIVE).add(missile);
     }
     
     public boolean isPowerShieldActivated()

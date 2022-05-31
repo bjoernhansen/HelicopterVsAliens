@@ -7,6 +7,8 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
+import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -40,9 +42,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.DESTROYED;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.BOTTOM;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.LEFT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.NONE;
@@ -55,7 +54,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 
-public abstract class Enemy extends RectangularGameEntity
+public abstract class Enemy extends RectangularGameEntity implements GroupTypeOwner
 {
 	public static class FinalEnemyOperator
 	{
@@ -151,8 +150,8 @@ public abstract class Enemy extends RectangularGameEntity
 	private static final int KABOOM_Y_TURN_LINE = GROUND_Y - (int) (EnemyModelType.TIT.getHeightFactor() * EnemyType.KABOOM.getWidth());
 	// Zeit-Konstanten
 	
-		private static final int EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
-		private static final int EMP_SLOW_TIME_BOSS = 110;
+		protected static final int EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
+
 	private static final int INACTIVATION_TIME = 150;
 	private static final int STUNNING_TIME_BASIS = 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
 		private static final int BORROW_TIME = 65;
@@ -178,10 +177,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private static final Point2D
 		SLOW_VERTICAL_SPEED = new Point2D.Float(0, 1);
-	
-	private static final Point
-		SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10);
-	
+		
 	private static final Point
 		TURN_DISTANCE = new Point(50, 10);
 		
@@ -557,6 +553,31 @@ public abstract class Enemy extends RectangularGameEntity
 		}
 	}
 	
+	private boolean isShootingStandardEnemy()
+	{
+		return isReadyToShoot();
+	}
+	
+	protected boolean isReadyToShoot()
+	{
+		return shootTimer == READY;
+	}
+	
+	private boolean isShooter()
+	{
+		return shootTimer != DISABLED;
+	}
+	
+	private boolean isCurrentlyShooting()
+	{
+		return isShooter() && !isReadyToShoot();
+	}
+	
+	public int getShootTimer()
+	{
+		return shootTimer;
+	}
+	
 	private void setHitPoints()
 	{
 		hitPoints = calculateHitPoints();
@@ -701,11 +722,6 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		float shootingDirectionX = (float) getDirectionX();
 		shootingDirection.setLocation( shootingDirectionX, 0f);
-	}
-	
-	private boolean isShootingStandardEnemy()
-	{
-		return shootTimer == READY;
 	}
 	
 	private static boolean turnaroundIsTurnAway(double dir, double enemyCenter,
@@ -917,7 +933,6 @@ public abstract class Enemy extends RectangularGameEntity
 							
 		// Frontal-Angriff
 		if( canLearnKamikaze
-				
 			&& ((isFlyingRight()
 					&& helicopter.getMaxX() < getMinX()
 					&& getX() - helicopter.getX() < 620)
@@ -929,10 +944,13 @@ public abstract class Enemy extends RectangularGameEntity
 			startKamikazeMode();
 			turnLeft();
 		}			
-		if(	canKamikaze && !(teleportTimer > 0)){kamikaze(helicopter);}
+		if(	canKamikaze && !(teleportTimer > 0))
+		{
+			kamikaze(helicopter);
+		}
 		
 		// Shooting
-		if(shootTimer != DISABLED){evaluateShooting(gameRessourceProvider);}
+		if(isShooter()){evaluateShooting(gameRessourceProvider);}
 		
 		// TODO das gehört zu den Barriers
 		// Vergraben
@@ -964,8 +982,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(canSinusMove){sinusLoop();}
 		
 		// tarnen
-		if(cloakingTimer > 0
-			&& (!isEmpSlowed() || canLearnKamikaze))
+		if(cloakingTimer > 0 && (!isEmpSlowed() || canLearnKamikaze))
 		{
 			cloaking();
 		}
@@ -1001,6 +1018,7 @@ public abstract class Enemy extends RectangularGameEntity
 			}				
 		}		
 	}
+	
 	
 	private void endSnooze()
 	{
@@ -1079,11 +1097,9 @@ public abstract class Enemy extends RectangularGameEntity
 			Audio.play(Audio.stun);
 			if(getModel() == EnemyModelType.BARRIER){snooze(true);}
 			else if(teleportTimer == READY ){teleport();}
-			else if(isStunable() && !isShielding)
+			else if(isAbleToBeSlowedDownByEmp())
 			{
-				empSlowedTimer = type.isMainBoss()
-											? EMP_SLOW_TIME_BOSS 
-											: EMP_SLOW_TIME;
+				empSlowedTimer = getEmpSlowTime();
 			}
 			reactToHit(pegasus, null);
 			
@@ -1099,8 +1115,18 @@ public abstract class Enemy extends RectangularGameEntity
 			dieFromEmpWave(gameRessourceProvider);
 		}
     }
-    
-    private float getEmpVulnerabilityFactor()
+	
+	protected boolean isAbleToBeSlowedDownByEmp()
+	{
+		return isStunable();
+	}
+	
+	protected int getEmpSlowTime()
+	{
+		return EMP_SLOW_TIME;
+	}
+	
+	private float getEmpVulnerabilityFactor()
     {
         return type.isMajorBoss()
                 ? EMP_DAMAGE_FACTOR_BOSS
@@ -1256,7 +1282,9 @@ public abstract class Enemy extends RectangularGameEntity
 			(getMaxX() - helicopter.getMinX() ) < 620) ||
 		   ((helicopter.getMaxX() > getMinX() && isFlyingRight())&&
 			(helicopter.getMaxX() - getMinX() < 620)))
-		{			
+		{
+			
+			
 			if(!canLearnKamikaze)
 			{
 				setSpeedLevelX(getKamikazeSpeedUpX());
@@ -1333,7 +1361,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	private void evaluateShooting(GameRessourceProvider gameRessourceProvider)
 	{
-		if(	shootTimer == 0
+		if(	isReadyToShoot()
 			&& !isEmpSlowed()
 			&& Calculations.tossUp(0.1f)
 			&& getX() + getWidth() > 0
@@ -1358,7 +1386,7 @@ public abstract class Enemy extends RectangularGameEntity
 			
 			shootTimer = shootingRate;
 		}
-		if(shootTimer > 0){shootTimer--;}
+		if(isCurrentlyShooting()){shootTimer--;}
 	}
 	
 	protected boolean hasDeadlyShots()
@@ -1409,11 +1437,11 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	public void shoot(Map<CollectionSubgroupType, LinkedList<EnemyMissile>> enemyMissiles, EnemyMissileType missileType, double missileSpeed)
     {
-    	Iterator<EnemyMissile> iterator = enemyMissiles.get(INACTIVE).iterator();
+    	Iterator<EnemyMissile> iterator = enemyMissiles.get(CollectionSubgroupType.INACTIVE).iterator();
 		EnemyMissile enemyMissile;
 		if(iterator.hasNext()){enemyMissile = iterator.next(); iterator.remove();}
 		else{enemyMissile = new EnemyMissile();}
-		enemyMissiles.get(ACTIVE).add(enemyMissile);
+		enemyMissiles.get(CollectionSubgroupType.ACTIVE).add(enemyMissile);
 		enemyMissile.launch(this, missileType, missileSpeed, shootingDirection);
 		Audio.play(Audio.launch3);
     }
@@ -1762,7 +1790,7 @@ public abstract class Enemy extends RectangularGameEntity
 	public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		for(Iterator<Enemy> iterator = gameRessourceProvider.getEnemies().get(DESTROYED).iterator(); iterator.hasNext();)
+		for(Iterator<Enemy> iterator = gameRessourceProvider.getEnemies().get(CollectionSubgroupType.DESTROYED).iterator(); iterator.hasNext();)
 		{
 			Enemy enemy = iterator.next();
 			enemy.updateDead(gameRessourceProvider.getExplosions(), helicopter);
@@ -1776,7 +1804,7 @@ public abstract class Enemy extends RectangularGameEntity
 			{
 				enemy.clearImage();
 				iterator.remove();
-				gameRessourceProvider.getGameEntityManager().store(enemy);
+				gameRessourceProvider.getGameEntitySupplier().store(enemy);
 			}				
 		}
 	}
@@ -2030,14 +2058,25 @@ public abstract class Enemy extends RectangularGameEntity
 	public void reactToHit(Helicopter helicopter, Missile missile)
 	{
 		if(isReadyToDodge(helicopter)){dodge(missile);}
-		
 		if(canDoHitTriggeredTurn())
 		{
-			if(canLearnKamikaze){startKamikazeMode();}
-			     if(getMinX() > helicopter.getMinX()){turnLeft();}
-			else if(getMaxX() < helicopter.getMaxX()){turnRight();}
+			if(canLearnKamikaze)
+			{
+				startKamikazeMode();
+			}
+			if(getMinX() > helicopter.getMinX())
+			{
+				turnLeft();
+			}
+			else if(getMaxX() < helicopter.getMaxX())
+			{
+				turnRight();
+			}
 		}
-		if(type == EnemyType.BOSS_4){spawningHornetTimer = READY;}
+		if(type == EnemyType.BOSS_4)
+		{
+			spawningHornetTimer = READY;
+		}
 		
 		if(cloakingTimer == READY && !(tractor == AbilityStatusType.ACTIVE))
 		{
@@ -2174,7 +2213,7 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		grantRewards(gameRessourceProvider, missile, beamKill);
 		destroyByHelicopter(gameRessourceProvider);
-		if(isShielding){stopShielding();}
+		
 		if(cloakingTimer != DISABLED){Audio.play(Audio.cloak);}
 		
 		if(missile == null)
@@ -2190,12 +2229,7 @@ public abstract class Enemy extends RectangularGameEntity
 		if(missile != null){missile.hits.remove(hashCode());}
 	}	
 
-	private void stopShielding()
-	{
-		if(Events.boss.shield == 1){Audio.shieldUp.stop();}
-		Events.boss.shield--;
-		isShielding = false;
-	}
+
 
     public boolean canCountForKillsAfterLevelUp()
     {
@@ -2263,7 +2297,7 @@ public abstract class Enemy extends RectangularGameEntity
 	
 	protected void doTypeSpecificDodgeActions(Missile missile)
 	{
-		if(shootTimer != DISABLED || canChaosSpeedup)
+		if(isShooter() || canChaosSpeedup)
 		{
 			setSpeedLevelY(8.5);
 			dodgeTimer = 13;
@@ -2291,16 +2325,7 @@ public abstract class Enemy extends RectangularGameEntity
 				|| (missile.isFlyingLeft()  && isFlyingRight());
 	}
 	
-	protected void stampedeShieldMaker()
-	{
-		shieldMakerTimer = READY;
-		speedLevel.setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
-		targetSpeedLevel.setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
-		canMoveChaotic = true;
-		canDodge = false;
-		setShieldingPosition();
-		if(isShielding){stopShielding();}
-	}
+
 
 	protected void setShieldingPosition()
 	{
@@ -2356,7 +2381,8 @@ public abstract class Enemy extends RectangularGameEntity
 	}
 
 	public boolean isReadyToDodge(Helicopter helicopter)
-	{		
+	{
+		// TODO in weitere kleinere verständliche Methoden auslagern
 		return 	    canDodge
 				&&  dodgeTimer == READY
 				&& !isEmpSlowed()
@@ -2396,7 +2422,7 @@ public abstract class Enemy extends RectangularGameEntity
 
 	public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Enemy e : gameRessourceProvider.getEnemies().get(ACTIVE))
+		for(Enemy e : gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE))
 		{
 			if (e.getModel() == EnemyModelType.BARRIER && e.isOnScreen())
 			{
@@ -2520,11 +2546,6 @@ public abstract class Enemy extends RectangularGameEntity
 	public boolean isShielding()
 	{
 		return isShielding;
-	}
-	
-	public int getShootTimer()
-	{
-		return shootTimer;
 	}
 	
 	public int getBarrierShootTimer()
@@ -2726,5 +2747,11 @@ public abstract class Enemy extends RectangularGameEntity
 	{
 		double x = speedLevel.getX();
 		speedLevel.setLocation(x, y);
+	}
+	
+	@Override
+	public GameEntityGroupType getGroupType()
+	{
+		return GameEntityGroupType.ENEMY;
 	}
 }

@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.audio;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -9,7 +10,6 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.net.URL;
 
-import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
 import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BONUS_INCOME;
@@ -195,7 +195,7 @@ public class Audio
     {
         if (!standardBackgroundMusic)
         {
-            if (WindowManager.window == GAME && !Events.isBossLevel())
+            if (WindowManager.window == WindowType.GAME && !Events.isBossLevel())
             {
                 return bgMusic2;
             } else if (WindowManager.window == REPAIR_SHOP || WindowManager.window == SCORE_SCREEN)

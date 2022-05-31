@@ -12,7 +12,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
 
 public class FourthBoss extends BossEnemy
 {
@@ -63,7 +62,7 @@ public class FourthBoss extends BossEnemy
                 getSpeedLevel()
                     .setLocation(ZERO_SPEED);
             }
-            if(enemy.get(ACTIVE).size() < 15
+            if(enemy.get(CollectionSubgroupType.ACTIVE).size() < 15
                 && (    spawningHornetTimer == 60
                 || spawningHornetTimer == 90
                 || Calculations.tossUp(0.02f)))

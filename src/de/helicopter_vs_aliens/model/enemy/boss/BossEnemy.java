@@ -12,7 +12,8 @@ public abstract class BossEnemy extends StandardEnemy
         INCREASED_KAMIKAZE_SPEED_UP_X = 12;
     
     private static final int
-        HEALED_HIT_POINTS = 11;
+        HEALED_HIT_POINTS = 11,
+        EMP_SLOW_TIME_BOSS = 110;
     
     @Override
     protected int getRewardModifier()
@@ -64,5 +65,11 @@ public abstract class BossEnemy extends StandardEnemy
                                      enemy.destroyByHelicopter(gameRessourceProvider);
                                  }
                              });
+    }
+    
+    @Override
+    protected int getEmpSlowTime()
+    {
+        return EMP_SLOW_TIME_BOSS;
     }
 }

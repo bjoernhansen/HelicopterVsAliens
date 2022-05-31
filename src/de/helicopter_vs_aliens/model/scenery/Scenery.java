@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
 import de.helicopter_vs_aliens.model.GameEntity;
@@ -18,8 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.model.RectangularGameEntity.GROUND_Y;
 
 // TODO es sollte nicht alles static sein, sondern über eine Scenery Instanz laufen
@@ -64,39 +61,39 @@ public class Scenery extends GameEntity
     
     public void reset()
     {
-        sceneryObjects.get(INACTIVE).addAll(sceneryObjects.get(ACTIVE));
-        sceneryObjects.get(ACTIVE).clear();
+        sceneryObjects.get(CollectionSubgroupType.INACTIVE).addAll(sceneryObjects.get(CollectionSubgroupType.ACTIVE));
+        sceneryObjects.get(CollectionSubgroupType.ACTIVE).clear();
         createInitialSceneryObjects();
         cloudX = 135;
     }
     
     public void createInitialSceneryObjects()
     {
-        Iterator<SceneryObject> iterator = sceneryObjects.get(INACTIVE).iterator();
+        Iterator<SceneryObject> iterator = sceneryObjects.get(CollectionSubgroupType.INACTIVE).iterator();
         
         SceneryObject firstCactus;
         if(iterator.hasNext()){firstCactus = iterator.next(); iterator.remove();}
         else{firstCactus = new SceneryObject();}
         firstCactus.makeFirstCactus();
-        sceneryObjects.get(ACTIVE).add(firstCactus);
+        sceneryObjects.get(CollectionSubgroupType.ACTIVE).add(firstCactus);
     
         SceneryObject firstHill;
         if(iterator.hasNext()){firstHill = iterator.next(); iterator.remove();}
         else{firstHill = new SceneryObject();}
         firstHill.makeFirstHill();
-        sceneryObjects.get(ACTIVE).add(firstHill);
+        sceneryObjects.get(CollectionSubgroupType.ACTIVE).add(firstHill);
     
         SceneryObject firstDesert;
         if(iterator.hasNext()){firstDesert = iterator.next(); iterator.remove();}
         else{firstDesert = new SceneryObject();}
         firstDesert.makeFirstDesert();
-        sceneryObjects.get(ACTIVE).add(firstDesert);
+        sceneryObjects.get(CollectionSubgroupType.ACTIVE).add(firstDesert);
     }
     
     public void update(GameRessourceProvider gameRessourceProvider)
     {
         backgroundMoves = isBackgroundMoving(gameRessourceProvider);
-        for(Iterator<SceneryObject> iterator = sceneryObjects.get(ACTIVE).iterator(); iterator.hasNext();)
+        for(Iterator<SceneryObject> iterator = sceneryObjects.get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
         {
             SceneryObject sceneryObject = iterator.next();
             if (backgroundMoves)
@@ -107,7 +104,7 @@ public class Scenery extends GameEntity
             {
                 sceneryObject.clearImage();
                 iterator.remove();
-                sceneryObjects.get(INACTIVE).add(sceneryObject);
+                sceneryObjects.get(CollectionSubgroupType.INACTIVE).add(sceneryObject);
             }
         }
         if(arePrerequisitesForSceneryObjectsCreationMet())
@@ -131,8 +128,8 @@ public class Scenery extends GameEntity
     
     private boolean isMajorBossActive(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
     {
-        return !enemy.get(ACTIVE).isEmpty()
-                && enemy.get(ACTIVE).getFirst().type.isMajorBoss();
+        return !enemy.get(CollectionSubgroupType.ACTIVE).isEmpty()
+                && enemy.get(CollectionSubgroupType.ACTIVE).getFirst().type.isMajorBoss();
     }
     
     private boolean arePrerequisitesForSceneryObjectsCreationMet()
@@ -151,13 +148,13 @@ public class Scenery extends GameEntity
     
     private int numberOfMissingSceneryObjects()
     {
-        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - sceneryObjects.get(ACTIVE).size();
+        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - sceneryObjects.get(CollectionSubgroupType.ACTIVE).size();
     }
     
     private void generateNewSceneryObject()
     {
         SceneryObject.generalObjectTimer = ACTIVATION_PAUSE_DURATION;
-        Iterator<SceneryObject> iterator = sceneryObjects.get(INACTIVE).iterator();
+        Iterator<SceneryObject> iterator = sceneryObjects.get(CollectionSubgroupType.INACTIVE).iterator();
         SceneryObject sceneryObject;
         if (iterator.hasNext())
         {
@@ -166,7 +163,7 @@ public class Scenery extends GameEntity
         }
         else{sceneryObject = new SceneryObject();}
         sceneryObject.preset();
-        sceneryObjects.get(ACTIVE).add(sceneryObject);
+        sceneryObjects.get(CollectionSubgroupType.ACTIVE).add(sceneryObject);
     }
     
     private void moveCloud()

@@ -1,9 +1,10 @@
 package de.helicopter_vs_aliens.model.explosion;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -18,8 +19,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
-import static de.helicopter_vs_aliens.control.CollectionSubgroupType.INACTIVE;
 import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.gui.window.Window.HELICOPTER_DISTANCE;
 import static de.helicopter_vs_aliens.gui.window.Window.START_SCREEN_HELICOPTER_OFFSET_Y;
@@ -32,7 +31,7 @@ import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ENERGY_ABILITY;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
-public class Explosion extends GameEntity
+public class Explosion extends GameEntity implements GroupTypeOwner
 {
     public int 
     	time,				// vergangene Zeit [frames] seit Starten der Explosion
@@ -79,7 +78,7 @@ public class Explosion extends GameEntity
 	   
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<Explosion> i = gameRessourceProvider.getExplosions().get(ACTIVE).iterator(); i.hasNext();)
+    	for(Iterator<Explosion> i = gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			Explosion exp = i.next();
 			exp.update();
@@ -96,7 +95,7 @@ public class Explosion extends GameEntity
 						Events.extraReward(exp.kills, exp.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
-				gameRessourceProvider.getExplosions().get(INACTIVE).add(exp);
+				gameRessourceProvider.getExplosions().get(CollectionSubgroupType.INACTIVE).add(exp);
 	        }
 		}		
 	}
@@ -172,7 +171,7 @@ public class Explosion extends GameEntity
 							 boolean extraDamage,
 							 Enemy source)
     {
-    	Iterator<Explosion> iterator = explosion.get(INACTIVE).iterator();
+    	Iterator<Explosion> iterator = explosion.get(CollectionSubgroupType.INACTIVE).iterator();
 		Explosion exp;
 		if(iterator.hasNext()){exp = iterator.next(); iterator.remove();}
 		else{exp = new Explosion();}
@@ -208,7 +207,7 @@ public class Explosion extends GameEntity
 	    	exp.earnedMoney = 0;
 	    	exp.kills = 0;
 		}			
-		explosion.get(ACTIVE).add(exp);
+		explosion.get(CollectionSubgroupType.ACTIVE).add(exp);
     }
 	
 	public float[] getProgress()
@@ -234,5 +233,11 @@ public class Explosion extends GameEntity
 	public Point2D getCenter()
 	{
 		return center;
+	}
+	
+	@Override
+	public GameEntityGroupType getGroupType()
+	{
+		return GameEntityGroupType.EXPLOSION;
 	}
 }
