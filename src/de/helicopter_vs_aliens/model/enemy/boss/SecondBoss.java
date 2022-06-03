@@ -13,7 +13,7 @@ public class SecondBoss extends BossEnemy
         this.shootTimer = 0;
         this.shootingRate = 5;
         this.shotSpeed = 3;
-        this.canInstantTurn = true;
+        this.canInstantlyTurnAround = true;
         Events.boss = this;
     
         super.doTypeSpecificInitialization();

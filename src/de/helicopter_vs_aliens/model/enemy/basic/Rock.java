@@ -2,6 +2,8 @@ package de.helicopter_vs_aliens.model.enemy.basic;
 
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 
 public class Rock extends BasicEnemy
 {
@@ -70,6 +72,12 @@ public class Rock extends BasicEnemy
     
     @Override
     public boolean countsForTotalAmountOfEnemiesSeen()
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean isVisibleNonBarricadeVessel()
     {
         return false;
     }

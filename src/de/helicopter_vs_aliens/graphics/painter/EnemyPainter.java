@@ -48,10 +48,8 @@ public class EnemyPainter extends Painter<Enemy>
     {
         setEnemy(enemy);
         Helicopter helicopter = Controller.getInstance().getHelicopter();
-        boolean cloaked = enemy.getCloakingTimer() > Enemy.CLOAKING_TIME && enemy.getCloakingTimer() <= Enemy.CLOAKING_TIME + Enemy.CLOAKED_TIME;
         int g2DSel = enemy.isFlyingLeft() ? 0 : 1;
-        
-        if(!cloaked)
+        if(!enemy.isCloaked())
         {
             if(enemy.isInvincible())
             {

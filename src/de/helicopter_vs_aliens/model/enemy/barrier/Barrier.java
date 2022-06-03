@@ -6,6 +6,8 @@ import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -15,11 +17,11 @@ import java.awt.Color;
 abstract class Barrier extends Enemy
 {
     private static final int
-        WIDTH_VARIANCE_DIVISOR = 5;
+        WIDTH_VARIANCE_DIVISOR = 5,
+        TOP_BOUNDARY = 0;
     
     private static final float
         SECONDARY_COLOR_BRIGHTNESS_FACTOR = 0.75f;
-    
     
     @Override
     protected void doTypeSpecificInitialization()
@@ -56,9 +58,9 @@ abstract class Barrier extends Enemy
     {
         double randomAngle
             = Math.PI * (1 + Math.random()/2)
-            + (this.getY() + this.getHeight()/2 < GROUND_Y/2f
-            ? Math.PI/2
-            : 0);
+                + (this.getCenterY() < GROUND_Y/2f
+                    ? Math.PI/2
+                    : 0);
         
         this.shootingDirection.setLocation(
             Math.sin(randomAngle),
@@ -130,6 +132,30 @@ abstract class Barrier extends Enemy
             return Colorations.barrierColor[Colorations.NOZZLE][Events.timeOfDay.ordinal()];
         }
         return super.getInactiveNozzleColor();
+    }
+    
+    @Override
+    protected double getTopBoundary()
+    {
+        return TOP_BOUNDARY;
+    }
+    
+    @Override
+    protected double getBottomBoundary()
+    {
+        return GROUND_Y;
+    }
+    
+    @Override
+    protected void uncloakTriggeredByStunningMissile()
+    {
+        uncloakAndDisableCloakingDevice();
+    }
+    
+    @Override
+    public boolean isVisibleNonBarricadeVessel()
+    {
+        return false;
     }
 }
 

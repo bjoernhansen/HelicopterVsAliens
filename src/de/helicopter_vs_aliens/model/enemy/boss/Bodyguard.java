@@ -1,17 +1,18 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 public class Bodyguard extends FinalBossServant
 {
+    private static final int
+        RIGHT_BOUNDARY = 660;
+    
     @Override
     protected void doTypeSpecificInitialization()
     {
-        cloakingTimer = 0;
-        canInstantTurn = true;
+        setCloakingDeviceReadyForUse();
+        canInstantlyTurnAround = true;
     
         super.doTypeSpecificInitialization();
     }
@@ -35,5 +36,11 @@ public class Bodyguard extends FinalBossServant
             canKamikaze = false;
             getSpeedLevel().setLocation(targetSpeedLevel);
         }
+    }
+    
+    @Override
+    protected double getRightBoundary()
+    {
+        return RIGHT_BOUNDARY;
     }
 }

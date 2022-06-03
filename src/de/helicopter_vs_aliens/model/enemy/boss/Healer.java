@@ -6,6 +6,9 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 
 public class Healer extends FinalBossServant
 {
+    private static final int
+        LEFT_BOUNDARY = 563;
+    
     @Override
     protected void doTypeSpecificInitialization()
     {
@@ -80,5 +83,11 @@ public class Healer extends FinalBossServant
     {
         super.dodge(missile);
         this.canDodge = false;
+    }
+    
+    @Override
+    protected double getLeftBoundary()
+    {
+        return LEFT_BOUNDARY;
     }
 }

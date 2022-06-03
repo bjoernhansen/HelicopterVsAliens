@@ -8,14 +8,14 @@ public class ThirdBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.canMoveChaotic = true;
-        this.canKamikaze = true;
-        this.cloakingTimer = READY;
-        this.canDodge = true;
-        this.shootTimer = 0;
-        this.shootingRate = 10;
-        this.shotSpeed = 10;
-        this.canInstantTurn = true;
+        canMoveChaotic = true;
+        canKamikaze = true;
+        setCloakingDeviceReadyForUse();
+        canDodge = true;
+        shootTimer = 0;
+        shootingRate = 10;
+        shotSpeed = 10;
+        canInstantlyTurnAround = true;
         Events.boss = this;
     
         super.doTypeSpecificInitialization();
@@ -46,5 +46,11 @@ public class ThirdBoss extends BossEnemy
     protected double getKamikazeSpeedUpX()
     {
         return INCREASED_KAMIKAZE_SPEED_UP_X;
+    }
+    
+    @Override
+    protected boolean isUncloakingWhenDisabled()
+    {
+        return false;
     }
 }

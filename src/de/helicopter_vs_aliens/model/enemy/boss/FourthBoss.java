@@ -1,12 +1,16 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.LevelManager;
+import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.LinkedList;
@@ -90,5 +94,12 @@ public class FourthBoss extends BossEnemy
     protected double getKamikazeSpeedUpX()
     {
         return INCREASED_KAMIKAZE_SPEED_UP_X;
+    }
+    
+    @Override
+    public void reactToHit(Helicopter helicopter, Missile missile)
+    {
+        spawningHornetTimer = READY;
+        super.reactToHit(helicopter, missile);
     }
 }

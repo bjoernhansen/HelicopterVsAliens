@@ -6,7 +6,7 @@ public class LoopingEnemy extends BasicEnemy
     protected void doTypeSpecificInitialization()
     {
         this.flyUp();
-        this.cloakingTimer = 0;
+        setCloakingDeviceReadyForUse();
         this.canSinusMove = true;
         this.canLoop = true;
     

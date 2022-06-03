@@ -44,9 +44,14 @@ public abstract class RectangularGameEntity extends GameEntity
 		return bounds;
 	}
 	
+	public boolean isLeftOf(RectangularGameEntity rectangularGameEntity)
+	{
+		return getMaxX() < rectangularGameEntity.getMinX();
+	}
+	
 	public boolean isRightOf(RectangularGameEntity gameEntity)
 	{
-		return getX() > gameEntity.getX();
+		return getMinX() > gameEntity.getMaxX();
 	}
 	
 	protected final void setBounds(Rectangle2D rectangle)

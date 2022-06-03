@@ -97,7 +97,7 @@ public class GameWindowPainter extends WindowPainter
         for (Enemy enemy : controller.getEnemies()
                                      .get(CollectionSubgroupType.ACTIVE))
         {
-            if (enemy.isVisibleNonBarricadeVessel(helicopter.canDetectCloakedVessels()))
+            if(enemy.isVisibleNonBarricadeVessel())
             {
                 enemy.paint(graphicsAdapter);
             }

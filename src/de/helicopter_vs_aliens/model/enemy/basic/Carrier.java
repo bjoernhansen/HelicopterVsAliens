@@ -13,7 +13,7 @@ public class Carrier extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.canEarlyTurn = true;
+        this.isAbleToTurnAroundEarly = true;
         this.canTurn = true;
     
         super.doTypeSpecificInitialization();

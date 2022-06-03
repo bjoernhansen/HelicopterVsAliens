@@ -92,7 +92,7 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 											? Math.min(new_y_speed, 0.03*(this.getCenterY()-30))
 											: new_y_speed);
 			}	
-			else if(this.getMaxY() < GROUND_Y )
+			else if(isAboveGround())
 			{
 				this.speed.setLocation(this.speed.getX(), this.speed.getY() - 0.35);
 			}
@@ -114,6 +114,11 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 			}
 			this.setPaintBounds();
 		}		
+	}
+	
+	private boolean isAboveGround()
+	{
+		return this.getMaxY() < GROUND_Y;
 	}
 	
 	private boolean hasReachedStopPosition()
@@ -252,7 +257,7 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 	
 	private static int getPowerUpDirection(Helicopter helicopter, Enemy enemy)
 	{
-		return helicopter.isRightOf(enemy) || helicopter.canImmobilizePowerUp() ? -1 : 1;
+		return helicopter.getX() > enemy.getX() || helicopter.canImmobilizePowerUp() ? -1 : 1;
 	}
 	
 	private void stop()

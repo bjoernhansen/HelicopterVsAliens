@@ -16,6 +16,7 @@ import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
@@ -285,4 +286,9 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 	{
 		return GameEntityGroupType.MISSILE;
 	}
+    
+    public boolean isStunning()
+    {
+		return typeOfExplosion == STUNNING;
+    }
 }

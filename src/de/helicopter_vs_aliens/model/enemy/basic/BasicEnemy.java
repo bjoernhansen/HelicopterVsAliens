@@ -7,7 +7,6 @@ import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.util.Calculations;
-import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 
@@ -48,6 +47,13 @@ public abstract class BasicEnemy extends StandardEnemy
         super.finalizeInitialization(gameRessourceProvider);
     }
     
+    @Override
+    public void reset()
+    {
+        super.reset();
+        isMiniBoss = false;
+    }
+    
     protected boolean canBecomeMiniBoss()
     {
         return 	EnemyController.currentMiniBoss == null
@@ -63,10 +69,15 @@ public abstract class BasicEnemy extends StandardEnemy
         isMiniBoss = true;
         callBack += 2;
         canTurn = true;
-        if((type.isCloakableAsMiniBoss() && !canLearnKamikaze && Calculations.tossUp(0.2f)) || isReadyToShoot() )
+        if(isToBecomeCloakableMiniBoss())
         {
-            cloakingTimer = 0;
+            setCloakingDeviceReadyForUse();
         }
+    }
+    
+    private boolean isToBecomeCloakableMiniBoss()
+    {
+        return isReadyToShoot() || (type.isCloakableAsMiniBoss() && Calculations.tossUp(0.2f));
     }
     
     @Override
