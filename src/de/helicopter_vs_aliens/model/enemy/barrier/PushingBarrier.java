@@ -8,7 +8,7 @@ public class PushingBarrier extends Barrier
     @Override
     protected void doTypeSpecificInitialization()
     {
-        if(isIntendedToAppearOnTheLeft()){turnRight();}
+        if(isIntendedToAppearOnTheLeft()){getNavigationDevice().turnRight();}
     
         super.doTypeSpecificInitialization();
     }

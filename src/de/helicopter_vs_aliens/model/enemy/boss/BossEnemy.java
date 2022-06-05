@@ -84,7 +84,7 @@ public abstract class BossEnemy extends StandardEnemy
     {
         if(isTurningAroundSpontaneouslyTowards(helicopter))
         {
-            turnAround();
+            getNavigationDevice().turnAround();
             setSpeedLevelToZeroX();
         }
         super.makeKamikazeIfAppropriateWith(helicopter);

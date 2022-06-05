@@ -10,7 +10,7 @@ public class FourthBossServant extends BossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.setRandomDirectionX();
+        getNavigationDevice().setRandomDirectionX();
     
         super.doTypeSpecificInitialization();
     }

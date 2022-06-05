@@ -17,6 +17,7 @@ import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
+import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -63,6 +64,41 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public boolean isCloaked()
 	{
 		return cloakingDevice.isCompletelyCloaking();
+	}
+	
+	protected NavigationDevice getNavigationDevice()
+	{
+		return navigationDevice;
+	}
+	
+	public boolean isFlyingLeft()
+	{
+		return navigationDevice.isFlyingLeft();
+	}
+	
+	protected boolean isFlyingRight()
+	{
+		return navigationDevice.isFlyingRight();
+	}
+	
+	public int getNegativeDirectionX()
+	{
+		return -navigationDevice.getDirectionX();
+	}
+	
+	public boolean isFlyingDown()
+	{
+		return navigationDevice.isFlyingDown();
+	}
+	
+	public boolean isFlyingUp()
+	{
+		return navigationDevice.isFlyingUp();
+	}
+	
+	public int getDirectionX()
+	{
+		return navigationDevice.getDirectionX();
 	}
 	
 	public static class FinalEnemyOperator
@@ -244,8 +280,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
     	secondaryColor;
 
 	// TODO is wird of -direction.x (minus) übergeben, unlogisch, implementieren hier verständlicher machen. ggf. enemy übergeben und dann isMovingLeft etc. aufrufen
-    private final Point
-    	direction = new Point();		// Flugrichtung
+ 
     	
 	Enemy
 		stoppingBarrier,		// Hindernis-Gegner, der diesen Gegner aufgehalten hat
@@ -310,7 +345,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
         protected boolean canDodge;                // = true: Gegner kann Schüssen ausweichen
         protected boolean canKamikaze;            // = true: Gegner geht auf Kollisionskurs, wenn die Distanz zum Helicopter klein ist
         protected boolean isAbleToTurnAroundEarly;
-	protected boolean canMoveChaotic;        // reguliert den zufälligen Richtungswechsel bei Chaos-Flug-Modus
+		protected boolean canMoveChaotic;        // reguliert den zufälligen Richtungswechsel bei Chaos-Flug-Modus
         protected boolean canSinusMove;            // Gegner fliegt in Kurven ähnlicher einer Sinus-Kurve
         protected boolean canTurn;                // Gegner ändert bei Beschuss eventuell seine Flugrichtung in Richtung Helikopter
         protected boolean canInstantlyTurnAround;            // Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
@@ -343,6 +378,9 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private final CloakingDevice
 		cloakingDevice = new CloakingDevice();
+	
+	private final NavigationDevice
+		navigationDevice = new NavigationDevice();
 	
 	private final BufferedImage []
 		image = new BufferedImage[4];
@@ -436,8 +474,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void initializeMovingDirection()
 	{
-		turnLeft();
-		setRandomDirectionY();
+		navigationDevice.turnLeft();
+		navigationDevice.setRandomDirectionY();
 	}
 	
 	public void dimmedRepaint()
@@ -724,15 +762,14 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void initializeShootDirectionOfDefaultEnemies()
 	{
-		float shootingDirectionX = (float) getDirectionX();
+		float shootingDirectionX = (float) navigationDevice.getDirectionX();
 		shootingDirection.setLocation( shootingDirectionX, 0f);
 	}
 	
-	private static boolean turnaroundIsTurnAway(double dir, double enemyCenter,
-												double barrierCenter)
+	private static boolean turnaroundIsTurnAway(double directionX, double enemyCenter, double barrierCenter)
 	{
-		return 	   dir ==  1 && enemyCenter < barrierCenter
-				|| dir == -1 && enemyCenter > barrierCenter;
+		return 	   directionX ==  1 && enemyCenter < barrierCenter
+				|| directionX == -1 && enemyCenter > barrierCenter;
 	}
 	
 	public boolean isVisibleNonBarricadeVessel()
@@ -862,11 +899,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{
 			if( Calculations.tossUp(0.2f) && type.isShieldMaker())
 			{
-				turnAround();
+				navigationDevice.turnAround();
 			}
 			if( Calculations.tossUp(0.2f))
 			{
-				switchDirectionY();
+				navigationDevice.switchDirectionY();
 			}			
 			chaosTimer = 5;
 		}
@@ -875,7 +912,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if(isTurningAroundEarly())
 		{
 			isAbleToTurnAroundEarly = false;
-			turnRight();
+			navigationDevice.turnRight();
 		}
 							
 		// Frontal-Angriff
@@ -917,7 +954,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if(canSinusMove){sinusLoop();}
 		
 		// tarnen
-		if(cloakingDevice.isActive() && !isRestrictedByCloakingObstacles())
+		if(cloakingDevice.isActive() && !isPreventedFromCloaking())
 		{
 			cloaking();
 		}
@@ -956,7 +993,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}		
 	}
 	
-	protected boolean isRestrictedByCloakingObstacles()
+	protected boolean isPreventedFromCloaking()
 	{
 		return isEmpSlowed();
 	}
@@ -1000,7 +1037,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{
 			burrowTimer = BORROW_TIME;
 		}
-		flyDown();
+		navigationDevice.flyDown();
 		speedLevel.setLocation(SLOW_VERTICAL_SPEED);
 	}
 	
@@ -1039,7 +1076,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		
 		if(hasLateralFaceTouchWith(stoppingBarrier))
 		{
-			if(	turnaroundIsTurnAway(getDirectionX(),
+			if(	turnaroundIsTurnAway(navigationDevice.getDirectionX(),
 				getCenterX(),
 				stoppingBarrier.getCenterX())
 				// Gegner sollen nicht an Barriers abdrehen, bevor sie im Bild waren.
@@ -1050,11 +1087,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}
 		else
 		{
-			if(turnaroundIsTurnAway(getDirectionY(),
+			if(turnaroundIsTurnAway(navigationDevice.getDirectionY(),
 				getCenterY(),
 				stoppingBarrier.getCenterY()))
 			{
-				switchDirectionY();
+				navigationDevice.switchDirectionY();
 			}
 		}
 	}
@@ -1075,7 +1112,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void performXTurnAtBarrier()
 	{
-		turnAround();
+		navigationDevice.turnAround();
 		if(callBack <= getCallBackMinimumForTurnAtBarrier())
 		{
 			callBack++;
@@ -1137,7 +1174,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void performLateralTurn()
 	{
-		turnAround();
+		navigationDevice.turnAround();
 		turnTimer = MIN_TURN_TIME;
 		if(callBack > 0){callBack--;}
 	}
@@ -1187,7 +1224,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void performVerticalTurn()
 	{
-		switchDirectionY();
+		navigationDevice.switchDirectionY();
 		if(canSinusMove)
 		{
 			setSpeedLevelY(1.0);
@@ -1319,8 +1356,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			speedup = 3;
 			canSinusMove = false;
 			setSpeedLevelY(1.5);
-			if(getY() < helicopter.getY()){flyDown();}
-			else{flyUp();}	
+			if(getY() < helicopter.getY()){navigationDevice.flyDown();}
+			else{navigationDevice.flyUp();}
 		}		
 	}
 	
@@ -1376,12 +1413,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		adaptSpeedLevelForKamikaze();
 		if(isFlyingDown() && isFurtherDownThan(helicopter))
 		{
-			flyUp();
+			navigationDevice.flyUp();
 			setSpeedLevelToZeroY();
 		}
 		else if(isFlyingUp() && isFurtherUp(helicopter))
 		{
-			flyDown();
+			navigationDevice.flyDown();
 			setSpeedLevelToZeroY();
 		}
 		if(speedLevel.getY() < 8)
@@ -1422,7 +1459,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{
 			barrierShootTimer = DISABLED;
 			speedLevel.setLocation(SLOW_VERTICAL_SPEED);
-			flyDown();
+			navigationDevice.flyDown();
 		}
 		else if(burrowTimer == 1)
 		{
@@ -1442,7 +1479,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 									: 0)
 								- 1;
 			speedLevel.setLocation(SLOW_VERTICAL_SPEED);
-			flyUp();
+			navigationDevice.flyUp();
 		}	
 	}
 	
@@ -1453,14 +1490,14 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			&& Calculations.tossUp(0.1f)
 			&& getX() + getWidth() > 0
 			&& !isCloaked()
-			&& ((isFlyingLeft() 
+			&& ((isFlyingLeft()
 				 && gameRessourceProvider.getHelicopter().intersects(
 					getX() + Integer.MIN_VALUE/2f,
 					getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth()/2) - 15,
 					Integer.MAX_VALUE/2f,
 					EnemyMissile.DIAMETER+30))
 				||
-				((isFlyingRight() 
+				((isFlyingRight()
 				  && gameRessourceProvider.getHelicopter().intersects(
 					getX(),
 					getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth()/2) - 15,
@@ -1643,7 +1680,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		tractor = AbilityStatusType.ACTIVE;
 		speedLevel.setLocation(ZERO_SPEED);
 		helicopter.tractor = this;
-		turnLeft();		
+		navigationDevice.turnLeft();
 	}
 	
 	public void stopTractor()
@@ -1658,7 +1695,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if(dodgeTimer == READY)
 		{				
 			speedLevel.setLocation(targetSpeedLevel);
-			turnLeft();												   
+			navigationDevice.turnLeft();
 		}		
 	}
 
@@ -1698,7 +1735,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{
 			setLocation(
 					getX()
-						+ getDirectionX() * speed.getX()
+						+ navigationDevice.getDirectionX() * speed.getX()
 						- (Scenery.backgroundMoves ? BG_SPEED : 0),
 					Math.max( getModel() == EnemyModelType.BARRIER ? 0 : Integer.MIN_VALUE,
 							type == EnemyType.ROCK ? getY() :
@@ -1706,7 +1743,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 											? Integer.MAX_VALUE
 											: GROUND_Y - getHeight(),
 										getY()
-											+ getDirectionY()
+											+ navigationDevice.getDirectionY()
 											* speed.getY())));
 		}
 	}
@@ -1859,8 +1896,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private void adjustSpeedToBarrier(Helicopter helicopter)
 	{
 		if(  hasSameDirectionX(stoppingBarrier)
-		   && stoppingBarrier.getCenterX()*getDirectionX()
-		   		             < getCenterX()*getDirectionX()
+		   && stoppingBarrier.getCenterX()*navigationDevice.getDirectionX()
+		   		             < getCenterX()*navigationDevice.getDirectionX()
 		   && stoppingBarrier.speed.getX() > speed.getX())
 		{
 			speed.setLocation(	stoppingBarrier.isOnScreen()
@@ -1870,8 +1907,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			   						speed.getY());
 		}
 		else if( hasSameDirectionY(stoppingBarrier)
-				 && stoppingBarrier.getCenterY()*getDirectionY()
-				 		           < getCenterY()*getDirectionY()
+				 && stoppingBarrier.getCenterY()*navigationDevice.getDirectionY()
+				 		           < getCenterY()*navigationDevice.getDirectionY()
 				 && stoppingBarrier.speed.getY() > speed.getY()
 				 && burrowTimer == DISABLED)
 		{
@@ -1882,12 +1919,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private boolean hasSameDirectionX(Enemy otherEnemy)
 	{
-		return otherEnemy.getDirectionX() == getDirectionX();
+		return otherEnemy.navigationDevice.getDirectionX() == navigationDevice.getDirectionX();
 	}
 	
 	private boolean hasSameDirectionY(Enemy otherEnemy)
 	{
-		return otherEnemy.getDirectionY() == getDirectionY();
+		return otherEnemy.navigationDevice.getDirectionY() == navigationDevice.getDirectionY();
 	}
 	
 	public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
@@ -2134,7 +2171,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		// TODO in Methoden auslagern, Code verständlicher machen
 		speedLevel.setLocation(
-				(knockBackDirection == getDirectionX() ? 1 : -1)
+				(knockBackDirection == navigationDevice.getDirectionX() ? 1 : -1)
 				  *(type.isMainBoss() || type.isFinalBossServant()
 				    ? (10f + helicopter.missileDrive)/(Events.level/10f)
 					:  10f + helicopter.missileDrive),
@@ -2203,11 +2240,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		if(getMinX() > helicopter.getMinX())
 		{
-			turnLeft();
+			navigationDevice.turnLeft();
 		}
 		else if(getMaxX() < helicopter.getMaxX())
 		{
-			turnRight();
+			navigationDevice.turnRight();
 		}
 	}
 	
@@ -2288,7 +2325,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			helicopter.stopTractor();
 		}
 		speedLevel.setLocation(0, 12);
-		flyDown();
+		navigationDevice.flyDown();
 		
 		empSlowedTimer = READY;
 		crashPositionY = (int)(isIntersectingGroundLine()
@@ -2420,8 +2457,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public void dodge(Missile missile)
 	{
 		doTypeSpecificDodgeActions(missile);		
-		if(getY() > 143){flyUp();}
-		else{flyDown();}
+		if(getY() > 143){navigationDevice.flyUp();}
+		else{navigationDevice.flyDown();}
 	}
 	
 	protected void doTypeSpecificDodgeActions(Missile missile)
@@ -2435,7 +2472,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{
 			if(isFlyingTowardsMissile(missile) && hasEnoughDistanceFromScreenBordersToDodgeAway())
 			{
-				turnAround();
+				navigationDevice.turnAround();
 			}
 			speedLevel.setLocation(6, 6);
 			dodgeTimer = 16;
@@ -2762,80 +2799,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	// Methoden für Richtungsänderungen und -abfragen
 	// TODO dies sollte ggf. in eigene Klasse ausgelagert werden, nur die Methoden, die außerhalb von Enemy genutzt werden müssen weitergeleitet werden z.B NavigationDevice
-	public final boolean isFlyingLeft()
-	{
-		return getDirectionX() == -1;
-	}
-	
-	public final void turnLeft()
-	{
-		direction.x = -1;
-	}
-	
-	public final boolean isFlyingRight()
-	{
-		return getDirectionX() == 1;
-	}
-	
-	public final void turnRight()
-	{
-		direction.x = 1;
-	}
-	
-	public int getDirectionX()
-	{
-		return direction.x;
-	}
-	
-	public final void turnAround()
-	{
-		direction.x = -direction.x;
-	}
-	
-	public final void setRandomDirectionX()
-	{
-		direction.x = Calculations.randomDirection();
-	}
-	
-	public final int getNegativeDirectionX()
-	{
-		return -direction.x;
-	}
-	
-	public final boolean isFlyingDown()
-	{
-		return direction.y == 1;
-	}
-	
-	public final void flyDown()
-	{
-		direction.y = 1;
-	}
-	
-	public final boolean isFlyingUp()
-	{
-		return getDirectionY() == -1;
-	}
-		
-	public final void flyUp()
-	{
-		direction.y = -1;
-	}
-	
-	public final int getDirectionY()
-	{
-		return direction.y;
-	}
-	
-	public final void switchDirectionY()
-	{
-		direction.y = -getDirectionY();
-	}
-	
-	public final void setRandomDirectionY()
-	{
-		direction.y = Calculations.randomDirection();
-	}
 	
 	private void increaseSpeedLevelX(double increment)
 	{
@@ -2887,8 +2850,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		       && (   (!isLeftOf(gameEntity) && isFlyingLeft())
 			       || (!isRightOf(gameEntity) && isFlyingRight()));
 	}
-	
-
 	
 	private double getDistanceOfMaxX(RectangularGameEntity gameEntity)
 	{

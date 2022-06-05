@@ -8,9 +8,9 @@ public class EscapedSpeeder extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.callBack = 1 + Calculations.random(3);
-        this.setRandomDirectionX();
-        this.invincibleTimer = 67;
+        callBack = 1 + Calculations.random(3);
+        getNavigationDevice().setRandomDirectionX();
+        invincibleTimer = 67;
     
         super.doTypeSpecificInitialization();
     }

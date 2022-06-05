@@ -28,9 +28,8 @@ public class CloakedEnemy extends BasicEnemy
         startKamikazeMode();
         super.performHitTriggeredTurn(helicopter);
     }
-    
     @Override
-    protected boolean isRestrictedByCloakingObstacles()
+    protected boolean isPreventedFromCloaking()
     {
         return false;
     }
@@ -74,7 +73,7 @@ public class CloakedEnemy extends BasicEnemy
         if(isLearningKamikazeOn(gameRessourceProvider.getHelicopter()))
         {
             startKamikazeMode();
-            turnLeft();
+            getNavigationDevice().turnLeft();
         }
         super.calculateFlightManeuver(gameRessourceProvider);
     }

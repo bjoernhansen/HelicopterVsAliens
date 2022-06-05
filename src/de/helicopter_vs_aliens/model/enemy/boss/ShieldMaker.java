@@ -24,9 +24,9 @@ public abstract class ShieldMaker extends FinalBossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.setRandomDirectionX();
-        this.shieldMakerTimer = READY;
-        this.setShieldingPosition();
+        getNavigationDevice().setRandomDirectionX();
+        shieldMakerTimer = READY;
+        setShieldingPosition();
     
         super.doTypeSpecificInitialization();
     }
@@ -62,56 +62,56 @@ public abstract class ShieldMaker extends FinalBossServant
     // TODO Bedingungen in Methoden auslagern
     private void correctShieldMakerDirection()
     {
-        if(      this.getX()
+        if(      getX()
             < Events.boss.getCenterX()
             - TARGET_DISTANCE_VARIANCE.x)
         {
-            this.turnRight();
+            getNavigationDevice().turnRight();
         }
-        else if( this.getX()
+        else if( getX()
             > Events.boss.getCenterX()
             + TARGET_DISTANCE_VARIANCE.x)
         {
-            this.turnLeft();
+            getNavigationDevice().turnLeft();
         }
         
-        if(	 this.isUpperShieldMaker
-            && this.getMaxY()
+        if(	 isUpperShieldMaker
+            && getMaxY()
             < Events.boss.getMinY()
             - SHIELD_TARGET_DISTANCE
             - TARGET_DISTANCE_VARIANCE.y
             ||
-            !this.isUpperShieldMaker
-                && this.getMinY()
+            !isUpperShieldMaker
+                && getMinY()
                 < Events.boss.getMaxY()
                 + SHIELD_TARGET_DISTANCE
                 - TARGET_DISTANCE_VARIANCE.y)
         {
-            this.flyDown();
+            getNavigationDevice().flyDown();
         }
-        else if( this.isUpperShieldMaker
-            && this.getMaxY() > Events.boss.getMinY() - SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y
+        else if( isUpperShieldMaker
+            && getMaxY() > Events.boss.getMinY() - SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y
             ||
-            !this.isUpperShieldMaker
-                && this.getMinY() > Events.boss.getMaxY() + SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y)
+            !isUpperShieldMaker
+                && getMinY() > Events.boss.getMaxY() + SHIELD_TARGET_DISTANCE + TARGET_DISTANCE_VARIANCE.y)
         {
-            this.flyUp();
+            getNavigationDevice().flyUp();
         }
     }
     
     private boolean canStartShielding()
     {
         return 	   this.shieldMakerTimer > 200
-                    && !this.isRecoveringSpeed
+                    && !isRecoveringSpeed
                     && TARGET_DISTANCE_VARIANCE.x
                     > Math.abs(Events.boss.getCenterX()
-                    -this.getX())
+                    -getX())
                     &&  TARGET_DISTANCE_VARIANCE.y
-                    > (this.isUpperShieldMaker
-                    ? Math.abs(this.getMaxY()
+                    > (isUpperShieldMaker
+                    ? Math.abs(getMaxY()
                     - Events.boss.getMinY()
                     + SHIELD_TARGET_DISTANCE)
-                    : Math.abs(this.getMinY()
+                    : Math.abs(getMinY()
                     - Events.boss.getMaxY()
                     - SHIELD_TARGET_DISTANCE));
     }
@@ -119,19 +119,19 @@ public abstract class ShieldMaker extends FinalBossServant
     private void startShielding()
     {
         Audio.play(Audio.shieldUp);
-        this.getSpeedLevel().setLocation(ZERO_SPEED);
-        this.turnLeft();
-        this.isShielding = true;
+        getSpeedLevel().setLocation(ZERO_SPEED);
+        getNavigationDevice().turnLeft();
+        isShielding = true;
         Events.boss.shield++;
-        this.canDodge = true;
-        this.shieldMakerTimer = DISABLED;
+        canDodge = true;
+        shieldMakerTimer = DISABLED;
     }
     
     @Override
     public void dodge(Missile missile)
     {
         super.dodge(missile);
-        this.stampedeShieldMaker();
+        stampedeShieldMaker();
     }
     
     private void stampedeShieldMaker()

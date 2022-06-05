@@ -5,10 +5,10 @@ public class LoopingEnemy extends BasicEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.flyUp();
+        getNavigationDevice().flyUp();
         setCloakingDeviceReadyForUse();
-        this.canSinusMove = true;
-        this.canLoop = true;
+        canSinusMove = true;
+        canLoop = true;
     
         super.doTypeSpecificInitialization();
     }
@@ -23,17 +23,15 @@ public class LoopingEnemy extends BasicEnemy
     protected void sinusLoop()
     {
         super.sinusLoop();
-        if(isFlyingLeft() && this.getY()-155>0)
+        if(isFlyingLeft() && getY()-155>0)
         {
-            this.turnRight();
-            this.getSpeedLevel()
-                .setLocation(11, this.getSpeedLevel().getY());
+            getNavigationDevice().turnRight();
+            getSpeedLevel().setLocation(11, getSpeedLevel().getY());
         }
-        else if(this.isFlyingRight() && this.getY()-155<0)
+        else if(isFlyingRight() && getY()-155<0)
         {
-            this.turnLeft();
-            this.getSpeedLevel()
-                .setLocation(7.5, this.getSpeedLevel().getY());
+            getNavigationDevice().turnLeft();
+            getSpeedLevel().setLocation(7.5, getSpeedLevel().getY());
         }
     }
 }

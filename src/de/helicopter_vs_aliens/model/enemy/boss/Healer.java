@@ -31,40 +31,40 @@ public class Healer extends FinalBossServant
     {
         if(Events.boss.getHitPoints() < Events.boss.startingHitPoints)
         {
-            if(this.getSpeedLevel().getX() != 0)
+            if(getSpeedLevel().getX() != 0)
             {
                 int stop = 0;
-                if(this.getX() < Events.boss.getX()
+                if(getX() < Events.boss.getX()
                     + 0.55f * Events.boss.getWidth())
                 {
-                    this.turnRight();
+                    getNavigationDevice().turnRight();
                 }
-                else if(this.getX() > Events.boss.getX()
+                else if(getX() > Events.boss.getX()
                     + 0.65f * Events.boss.getWidth())
                 {
-                    this.turnLeft();
+                    getNavigationDevice().turnLeft();
                 }
                 else{stop++;}
                 
-                if(		this.getY() < Events.boss.getY()
+                if(		getY() < Events.boss.getY()
                     + Events.boss.getHeight()
-                    - 1.25f * this.getHeight())
+                    - 1.25f * getHeight())
                 {
-                    this.flyDown();
+                    getNavigationDevice().flyDown();
                 }
-                else if(this.getY() > Events.boss.getY()
+                else if(getY() > Events.boss.getY()
                     + Events.boss.getHeight()
-                    - 1.05f * this.getHeight())
+                    - 1.05f * getHeight())
                 {
-                    this.flyUp();
+                    getNavigationDevice().flyUp();
                 }
                 else{stop++;}
                 
                 if(stop >= 2)
                 {
-                    this.getSpeedLevel().setLocation(ZERO_SPEED);
-                    this.turnLeft();
-                    this.canDodge = true;
+                    getSpeedLevel().setLocation(ZERO_SPEED);
+                    getNavigationDevice().turnLeft();
+                    canDodge = true;
                 }
             }
             else
@@ -74,7 +74,7 @@ public class Healer extends FinalBossServant
         }
         else
         {
-            this.getSpeedLevel().setLocation(this.targetSpeedLevel);
+            getSpeedLevel().setLocation(targetSpeedLevel);
         }
     }
     
