@@ -1,24 +1,38 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.LevelManager;
-import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
+import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.Map;
 
 
 public class FourthBoss extends BossEnemy
 {
+    private static final int
+        FIRST_SERVANT_CREATION_TIME = 60,
+        SECOND_SERVANT_CREATION_TIME = 90;
+    
+    private static final float
+        SPONTANEOUS_SERVANT_CREATION_PROBABILITY = 0.02f;
+    
+    private static final Point2D
+        FAST_SPEED = new Point2D.Float(11, 11),
+        MEDIUM_SPEED = new Point2D.Float(3, 3);
+    
+    private int
+        spawningHornetTimer;
+    
     @Override
     protected void doTypeSpecificInitialization()
     {
@@ -47,8 +61,7 @@ public class FourthBoss extends BossEnemy
         }
         if(spawningHornetTimer == 1)
         {
-            getSpeedLevel()
-                .setLocation(11, 11);
+            getSpeedLevel().setLocation(FAST_SPEED);
             canMoveChaotic = true;
             canKamikaze = true;
         }
@@ -56,23 +69,20 @@ public class FourthBoss extends BossEnemy
         {
             if(spawningHornetTimer == 50)
             {
-                getSpeedLevel()
-                    .setLocation(3, 3);
+                getSpeedLevel().setLocation(MEDIUM_SPEED);
                 canMoveChaotic = false;
                 canKamikaze = false;
             }
-            else if(spawningHornetTimer == 90)
+            else if(spawningHornetTimer == SECOND_SERVANT_CREATION_TIME)
             {
-                getSpeedLevel()
-                    .setLocation(ZERO_SPEED);
+                getSpeedLevel().setLocation(ZERO_SPEED);
             }
             if(enemy.get(CollectionSubgroupType.ACTIVE).size() < 15
-                && (    spawningHornetTimer == 60
-                || spawningHornetTimer == 90
-                || Calculations.tossUp(0.02f)))
+                && (    spawningHornetTimer == FIRST_SERVANT_CREATION_TIME
+                        || spawningHornetTimer == SECOND_SERVANT_CREATION_TIME
+                        || Calculations.tossUp(SPONTANEOUS_SERVANT_CREATION_PROBABILITY)))
             {
-                boss.setLocation(	getX() + getWidth() /2,
-                    getY() + getHeight()/2);
+                boss.setLocation(getCenterX(), getCenterY());
                 EnemyController.makeBoss4Servant = true;
             }
         }
@@ -99,7 +109,19 @@ public class FourthBoss extends BossEnemy
     @Override
     public void reactToHit(Helicopter helicopter, Missile missile)
     {
-        spawningHornetTimer = READY;
+        resetSpawningHornetTimer();
         super.reactToHit(helicopter, missile);
+    }
+    
+    @Override
+    protected void empShock(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
+    {
+        resetSpawningHornetTimer();
+        super.empShock(gameRessourceProvider, pegasus);
+    }
+    
+    private void resetSpawningHornetTimer()
+    {
+        spawningHornetTimer = READY;
     }
 }

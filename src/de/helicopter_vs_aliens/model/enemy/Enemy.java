@@ -312,8 +312,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		batchWiseMove;
 	protected int
 		shootTimer;
-	protected int
-		spawningHornetTimer;
+
 	protected int
 		turnTimer;
 	protected int
@@ -436,8 +435,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		chaosTimer = READY;
 		snoozeTimer = READY;
 		nonStunableTimer = READY;
-		
-		spawningHornetTimer = DISABLED;
 		cloakingDevice.reset();
 		teleportTimer = DISABLED;
 		shieldMakerTimer = DISABLED;
@@ -1251,11 +1248,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}
 	}
 
-	private void empShock(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
+	protected void empShock(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
     {
-    	takeDamage((int)getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
+		takeDamage((int)getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
 		isEmpShocked = true;
-		if(type == EnemyType.BOSS_4){spawningHornetTimer = READY;}
 		disableSiteEffects(pegasus);
 				
 		if(hasHPsLeft())
