@@ -268,7 +268,7 @@ public final class Pegasus extends Helicopter
     }
     
     @Override
-    public void typeSpecificActionOn(GameRessourceProvider gameRessourceProvider, Enemy enemy)
+    public void typeSpecificActionOn(Enemy enemy, GameRessourceProvider gameRessourceProvider)
     {
         enemy.checkForEmpStrike(gameRessourceProvider, this);
     }

@@ -172,19 +172,19 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 		if(this.type == TRIPLE_DAMAGE)
 		{
 			Audio.play(Audio.shieldUp);
-			if(!Events.isBossLevel()){
+			if(!Events.isCurrentLevelBossLevel()){
 				Window.updateCollectedPowerUps(helicopter, this);}
 		}
 		else if(this.type == INVINCIBLE)
 		{
 			Audio.play(Audio.teleport1);
-			if(!Events.isBossLevel()){
+			if(!Events.isCurrentLevelBossLevel()){
 				Window.updateCollectedPowerUps(helicopter, this);}
 		}
 		else if(this.type == UNLIMITED_ENERGY)
 		{
 			Audio.play(Audio.shieldUp);
-			if(!Events.isBossLevel())
+			if(!Events.isCurrentLevelBossLevel())
 			{
 				helicopter.boostEnergy();
 				Window.updateCollectedPowerUps(helicopter, this);
@@ -193,7 +193,7 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 		else if(this.type == BOOSTED_FIRE_RATE)
 		{
 			Audio.play(Audio.shieldUp);
-			if(!Events.isBossLevel())
+			if(!Events.isCurrentLevelBossLevel())
 			{				
 				helicopter.adjustFireRate(true);
 				Window.updateCollectedPowerUps(helicopter, this);

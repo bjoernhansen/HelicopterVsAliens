@@ -318,7 +318,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	protected int
 		dodgeTimer;            // Zeit [frames], bis ein Gegner erneut ausweichen kann
 	protected int
-		snoozeTimer;
+		snoozeTimer;	// TODO gehört in Barrier-Klasse
 	protected int
 		staticChargeTimer;
 	
@@ -784,7 +784,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{												
 		lifetime++;
 		updateTimer();
-		if(Events.isBossLevel())
+		if(Events.isCurrentLevelBossLevel())
 		{
 			callBack = 0;
 		}
@@ -798,11 +798,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		calculateSpeed(helicopter);
 		move();
-		if(helicopter.canCollideWith(this))
+		if(helicopter.isCollidingWith(this))
 		{
 			collision(gameRessourceProvider);
 		}
-		helicopter.typeSpecificActionOn(gameRessourceProvider,this);
+		helicopter.typeSpecificActionOn(this, gameRessourceProvider);
 		if(hasDeadlyGroundContact())
 		{
 			destroyByCrash(gameRessourceProvider);

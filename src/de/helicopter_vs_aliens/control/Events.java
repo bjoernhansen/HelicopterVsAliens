@@ -252,11 +252,11 @@ public class Events
 					if(level < 50)
 					{
 						int nr_of_levelUp =    level - (level%5)
-											+ (level % 5 == 0 && !isBossLevel() ? 0 : 5);
+											+ (level % 5 == 0 && !isCurrentLevelBossLevel() ? 0 : 5);
 						nr_of_levelUp = nr_of_levelUp 
 										+ (nr_of_levelUp%10 == 0 ? 0 : 1) 
 										- level;
-						if(isBossLevel()){nr_of_levelUp = 1;}
+						if(isCurrentLevelBossLevel()){nr_of_levelUp = 1;}
 						playingTime += (nr_of_levelUp + Calculations.random(nr_of_levelUp)) * 60000L;
 						levelUp(controller, nr_of_levelUp);
 						helicopter.isPlayedWithCheats = true;
@@ -1248,9 +1248,9 @@ public class Events
         helicopter.levelUpEffect(previousLevel);
         maxLevel = Math.max(level, maxLevel);
         
-		if(isBossLevel()){Enemy.getRidOfSomeEnemies(gameRessourceProvider);}
+		if(isCurrentLevelBossLevel()){Enemy.getRidOfSomeEnemies(gameRessourceProvider);}
 		
-		if(	isBossLevel() || isBossLevel(previousLevel) || level == 49)
+		if(	isCurrentLevelBossLevel() || isBossLevel(previousLevel) || level == 49)
 		{
 			Audio.refreshBackgroundMusic();
 			if(previousLevel % 10 == 0){Audio.play(Audio.applause1);}
@@ -1335,7 +1335,7 @@ public class Events
 		}			
 	}
 	
-	public static boolean isBossLevel(){return isBossLevel(level);}
+	public static boolean isCurrentLevelBossLevel(){return isBossLevel(level);}
 	public static boolean isBossLevel(int game_level){return game_level%10 == 0;}
 
 	public static int bonusIncomePercentage()
@@ -1373,7 +1373,7 @@ public class Events
 	
 	public static boolean hasEnoughTimePassedSinceLastCreation()
 	{
-		if(isBossLevel())
+		if(isCurrentLevelBossLevel())
 		{
 			return lastCreationTimer > 135;
 		}
@@ -1382,7 +1382,7 @@ public class Events
 	
 	public static boolean wereRandomRequirementsMet(int numberOfMissingEnemies)
 	{
-		if(isBossLevel())
+		if(isCurrentLevelBossLevel())
 		{
 			return GameEntityActivation.isQuicklyApproved();
 		}

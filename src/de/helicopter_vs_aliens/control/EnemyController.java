@@ -98,10 +98,10 @@ public class EnemyController
         if(	gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
             && carrierDestroyedJustNow == null
             && !(gameRessourceProvider.getHelicopter().isUnacceptablyBoostedForBossLevel()
-            && Events.isBossLevel()) )
+            && Events.isCurrentLevelBossLevel()) )
         {
             LevelManager.wasEnemyCreationPaused = false;
-            if(Events.isBossLevel())
+            if(Events.isCurrentLevelBossLevel())
             {
                 LevelManager.maxNr = 1;
                 LevelManager.maxBarrierNr = 0;
@@ -229,7 +229,7 @@ public class EnemyController
     private static boolean barrierCreationApproved(int numberOfEnemies)
     {
         return Events.level >= MIN_BARRIER_LEVEL
-            && !Events.isBossLevel()
+            && !Events.isCurrentLevelBossLevel()
             && barrierTimer == 0
             && (Calculations.tossUp(0.35f)
             || (numberOfEnemies - currentNumberOfBarriers >= LevelManager.maxNr))
@@ -255,7 +255,7 @@ public class EnemyController
     {
         return currentRock == null
             && Events.level >= MIN_ROCK_LEVEL
-            && !Events.isBossLevel()
+            && !Events.isCurrentLevelBossLevel()
             && rockTimer == 0
             && Calculations.tossUp(ROCK_PROB);
     }
@@ -263,7 +263,7 @@ public class EnemyController
     private static boolean kaboomCreationApproved()
     {
         return Events.level >= MIN_KABOOM_LEVEL
-            && !Events.isBossLevel()
+            && !Events.isCurrentLevelBossLevel()
             && Calculations.tossUp(KABOOM_PROB);
     }
     

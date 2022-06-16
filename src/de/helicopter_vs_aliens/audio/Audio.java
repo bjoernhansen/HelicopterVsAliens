@@ -195,7 +195,7 @@ public class Audio
     {
         if (!standardBackgroundMusic)
         {
-            if (WindowManager.window == WindowType.GAME && !Events.isBossLevel())
+            if (WindowManager.window == WindowType.GAME && !Events.isCurrentLevelBossLevel())
             {
                 return bgMusic2;
             } else if (WindowManager.window == REPAIR_SHOP || WindowManager.window == SCORE_SCREEN)

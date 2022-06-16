@@ -965,9 +965,9 @@ public abstract class Helicopter extends RectangularGameEntity
         return STATIC_CHARGE_ENERGY_DRAIN;
     }
     
-    public boolean canCollideWith(Enemy enemy)
+    public boolean isCollidingWith(Enemy enemy)
 	{
-		return this.basicCollisionRequirementsSatisfied(enemy) && enemy.canCollide();
+		return basicCollisionRequirementsSatisfied(enemy) && enemy.canCollide();
 	}
 
 	public boolean basicCollisionRequirementsSatisfied(Enemy enemy)
@@ -1473,7 +1473,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		resetStateTypeSpecific();
 	}
 	
-	public void typeSpecificActionOn(GameRessourceProvider gameRessourceProvider, Enemy enemy)
+	public void typeSpecificActionOn(Enemy enemy, GameRessourceProvider gameRessourceProvider)
 	{
 	}
 }
