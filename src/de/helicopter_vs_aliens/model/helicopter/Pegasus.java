@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.control.timer.VariableTimer;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -14,6 +14,7 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.EMP;
@@ -102,12 +103,12 @@ public final class Pegasus extends Helicopter
         this.releaseEMP(controller.getExplosions());
     }
 
-    private void releaseEMP(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+    private void releaseEMP(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
     {
         this.empTimer.start();
         this.consumeSpellCosts();
         Audio.play(Audio.emp);
-        Explosion.start(explosion,
+        Explosion.start(explosions,
                 this,
                 (int)(this.getX()
                         + (this.isMovingLeft

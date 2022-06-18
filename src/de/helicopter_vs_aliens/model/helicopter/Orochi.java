@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
@@ -212,7 +213,7 @@ public final class Orochi extends Helicopter
     
     @Override
     // TODO Großteil des Codes nach Missile und redudanzen damit auflösen Subklassenspezischen Code in eigene Methode
-    public void inactivate(Map<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    public void inactivate(Map<CollectionSubgroupType, Queue<Missile>> missiles, Missile missile)
     {
         if(missile.sister[0] == null && missile.sister[1] == null)
         {

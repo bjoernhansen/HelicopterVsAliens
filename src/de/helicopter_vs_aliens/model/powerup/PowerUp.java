@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -19,6 +19,7 @@ import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BONUS_INCOME;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
@@ -225,7 +226,7 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 	
-	public void activateAndMoveToStatusBar(	Map<CollectionSubgroupType,	LinkedList<PowerUp>> powerUps)
+	public void activateAndMoveToStatusBar(	Map<CollectionSubgroupType, Queue<PowerUp>> powerUps)
 	{
 		this.initialize();
 		this.moveToStatusbar();

@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -42,6 +43,7 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
@@ -89,19 +91,19 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	// TODO Verwaltung anders lösen, vermutlich mit den erstellten Klassen im Packet control/entities
 	// TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
 	// TODO LinkedList nicht verwenden, ggf. Queue oder Dequeue .. an einer Stelle muss das erste Element gezogen werden, in jedem Fall gegen das Interface und nicht gegen LinkedLIst
-	private final Map<CollectionSubgroupType, LinkedList<Enemy>>
+	private final Map<CollectionSubgroupType, Queue<Enemy>>
 		enemies = new EnumMap<>(CollectionSubgroupType.class);
 	
-	private final Map<CollectionSubgroupType, LinkedList<Missile>>
+	private final Map<CollectionSubgroupType, Queue<Missile>>
 		missiles = new EnumMap<>(CollectionSubgroupType.class);
 	
-	private final Map<CollectionSubgroupType, LinkedList<Explosion>>
+	private final Map<CollectionSubgroupType, Queue<Explosion>>
 		explosions = new EnumMap<>(CollectionSubgroupType.class);
 	
-	private final Map<CollectionSubgroupType, LinkedList<EnemyMissile>>
+	private final Map<CollectionSubgroupType, Queue<EnemyMissile>>
 		enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
 	
-	private final Map<CollectionSubgroupType, LinkedList<PowerUp>>
+	private final Map<CollectionSubgroupType, Queue<PowerUp>>
 		powerUps = new EnumMap<>(CollectionSubgroupType.class);
 	
 	private GraphicsAdapter
@@ -497,31 +499,31 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	}
 	
 	@Override
-	public Map<CollectionSubgroupType, LinkedList<Enemy>> getEnemies()
+	public Map<CollectionSubgroupType, Queue<Enemy>> getEnemies()
 	{
 		return enemies;
 	}
 	
 	@Override
-	public Map<CollectionSubgroupType, LinkedList<Missile>> getMissiles()
+	public Map<CollectionSubgroupType, Queue<Missile>> getMissiles()
 	{
 		return missiles;
 	}
 	
 	@Override
-	public Map<CollectionSubgroupType, LinkedList<Explosion>> getExplosions()
+	public Map<CollectionSubgroupType, Queue<Explosion>> getExplosions()
 	{
 		return explosions;
 	}
 	
 	@Override
-	public Map<CollectionSubgroupType, LinkedList<EnemyMissile>> getEnemyMissiles()
+	public Map<CollectionSubgroupType, Queue<EnemyMissile>> getEnemyMissiles()
 	{
 		return enemyMissiles;
 	}
 	
 	@Override
-	public Map<CollectionSubgroupType, LinkedList<PowerUp>> getPowerUps()
+	public Map<CollectionSubgroupType, Queue<PowerUp>> getPowerUps()
 	{
 		return powerUps;
 	}

@@ -2,9 +2,9 @@ package de.helicopter_vs_aliens.model.explosion;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -16,8 +16,8 @@ import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.gui.window.Window.HELICOPTER_DISTANCE;
@@ -155,23 +155,23 @@ public class Explosion extends GameEntity implements GroupTypeOwner
 		}
 	}
 	
-	public static void start(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion,
+	public static void start(Map<CollectionSubgroupType, Queue<Explosion>> explosions,
 							 Helicopter helicopter,
 							 double x, double y,
 							 ExplosionType explosionType,
 							 boolean extraDamage)
     {
-    	start(explosion, helicopter, x, y, explosionType, extraDamage, null);
+    	start(explosions, helicopter, x, y, explosionType, extraDamage, null);
     }
 	
-	public static void start(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion,
+	public static void start(Map<CollectionSubgroupType, Queue<Explosion>> explosions,
 							 Helicopter helicopter,
 							 double x, double y,
 							 ExplosionType explosionType,
 							 boolean extraDamage,
 							 Enemy source)
     {
-    	Iterator<Explosion> iterator = explosion.get(CollectionSubgroupType.INACTIVE).iterator();
+    	Iterator<Explosion> iterator = explosions.get(CollectionSubgroupType.INACTIVE).iterator();
 		Explosion exp;
 		if(iterator.hasNext()){exp = iterator.next(); iterator.remove();}
 		else{exp = new Explosion();}
@@ -207,7 +207,7 @@ public class Explosion extends GameEntity implements GroupTypeOwner
 	    	exp.earnedMoney = 0;
 	    	exp.kills = 0;
 		}			
-		explosion.get(CollectionSubgroupType.ACTIVE).add(exp);
+		explosions.get(CollectionSubgroupType.ACTIVE).add(exp);
     }
 	
 	public float[] getProgress()

@@ -2,12 +2,10 @@ package de.helicopter_vs_aliens.model.enemy.barrier;
 
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -32,11 +30,11 @@ abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void finalizeInitialization(GameRessourceProvider gameRessourceProvider)
+    protected void finalizeInitialization()
     {
-        EnemyController.barrierTimer = (int)((gameRessourceProvider.getHelicopter().getWidth() + getWidth())/2);
+        EnemyController.barrierTimer = (int)((getHelicopter().getWidth() + getWidth())/2);
  
-        super.finalizeInitialization(gameRessourceProvider);
+        super.finalizeInitialization();
         
         if(isShootingBarrier())
         {

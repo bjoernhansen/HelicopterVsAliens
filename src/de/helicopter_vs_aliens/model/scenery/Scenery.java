@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.RectangularGameEntity.GROUND_Y;
 
@@ -126,10 +127,11 @@ public class Scenery extends GameEntity
             && helicopter.tractor == null;
     }
     
-    private boolean isMajorBossActive(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private boolean isMajorBossActive(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
     {
-        return !enemy.get(CollectionSubgroupType.ACTIVE).isEmpty()
-                && enemy.get(CollectionSubgroupType.ACTIVE).getFirst().type.isMajorBoss();
+        return !enemies.get(CollectionSubgroupType.ACTIVE).isEmpty()
+             && enemies.get(CollectionSubgroupType.ACTIVE)
+                       .element().type.isMajorBoss();
     }
     
     private boolean arePrerequisitesForSceneryObjectsCreationMet()

@@ -2,22 +2,16 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.applet.AudioClip;
 import java.awt.event.MouseEvent;
-import java.util.EnumMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;

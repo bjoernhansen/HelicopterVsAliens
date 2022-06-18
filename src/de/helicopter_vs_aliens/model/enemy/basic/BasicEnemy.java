@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.basic;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -38,13 +38,13 @@ public abstract class BasicEnemy extends StandardEnemy
     }
     
     @Override
-    protected void finalizeInitialization(GameRessourceProvider gameRessourceProvider)
+    protected void finalizeInitialization()
     {
         if(canBecomeMiniBoss())
         {
-            turnIntoMiniBoss(gameRessourceProvider.getGameStatisticsCalculator());
+            turnIntoMiniBoss();
         }
-        super.finalizeInitialization(gameRessourceProvider);
+        super.finalizeInitialization();
     }
     
     @Override
@@ -61,9 +61,9 @@ public abstract class BasicEnemy extends StandardEnemy
             && Calculations.tossUp(miniBossProb);
     }
     
-    private void turnIntoMiniBoss(GameStatisticsCalculator gameStatisticsCalculator)
+    private void turnIntoMiniBoss()
     {
-        gameStatisticsCalculator.incrementNumberOfMiniBossSeen();
+        getGameStatisticsCalculator().incrementNumberOfMiniBossSeen();
         EnemyController.currentMiniBoss = this;
         resizeToMiniBossDimension();
         isMiniBoss = true;
@@ -73,6 +73,11 @@ public abstract class BasicEnemy extends StandardEnemy
         {
             setCloakingDeviceReadyForUse();
         }
+    }
+    
+    private GameStatisticsCalculator getGameStatisticsCalculator()
+    {
+        return getGameRessourceProvider().getGameStatisticsCalculator();
     }
     
     private boolean isToBecomeCloakableMiniBoss()

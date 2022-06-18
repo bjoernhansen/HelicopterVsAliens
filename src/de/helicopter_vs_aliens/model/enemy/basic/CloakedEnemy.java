@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.basic;
 
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -23,10 +23,10 @@ public class CloakedEnemy extends BasicEnemy
     }
     
     @Override
-    protected void performHitTriggeredTurn(Helicopter helicopter)
+    protected void performHitTriggeredTurn()
     {
         startKamikazeMode();
-        super.performHitTriggeredTurn(helicopter);
+        super.performHitTriggeredTurn();
     }
     @Override
     protected boolean isPreventedFromCloaking()
@@ -80,7 +80,7 @@ public class CloakedEnemy extends BasicEnemy
     
     private boolean isLearningKamikazeOn(Helicopter helicopter)
     {
-        return isMovingAwayFrom(helicopter)
+        return isMovingAwayFromHelicopter()
                 && turnTimer == READY
                 && getDistanceOfMinX(helicopter) < KAMIKAZE_RANGE;
     }

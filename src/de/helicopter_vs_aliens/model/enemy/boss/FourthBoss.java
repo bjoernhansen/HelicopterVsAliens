@@ -3,11 +3,10 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -15,6 +14,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 
 public class FourthBoss extends BossEnemy
@@ -52,7 +52,7 @@ public class FourthBoss extends BossEnemy
         super.performFlightManeuver(gameRessourceProvider);
     }
     
-    private void boss4Action(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private void boss4Action(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
     {
         if(    getX() < 930
             && getX() > 150)
@@ -77,7 +77,7 @@ public class FourthBoss extends BossEnemy
             {
                 getSpeedLevel().setLocation(ZERO_SPEED);
             }
-            if(enemy.get(CollectionSubgroupType.ACTIVE).size() < 15
+            if(enemies.get(CollectionSubgroupType.ACTIVE).size() < 15
                 && (    spawningHornetTimer == FIRST_SERVANT_CREATION_TIME
                         || spawningHornetTimer == SECOND_SERVANT_CREATION_TIME
                         || Calculations.tossUp(SPONTANEOUS_SERVANT_CREATION_PROBABILITY)))
@@ -107,10 +107,10 @@ public class FourthBoss extends BossEnemy
     }
     
     @Override
-    public void reactToHit(Helicopter helicopter, Missile missile)
+    public void reactToHit(Missile missile)
     {
         resetSpawningHornetTimer();
-        super.reactToHit(helicopter, missile);
+        super.reactToHit(missile);
     }
     
     @Override

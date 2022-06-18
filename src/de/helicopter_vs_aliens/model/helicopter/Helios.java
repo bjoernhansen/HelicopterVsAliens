@@ -16,6 +16,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.control.Events.lastBonus;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
@@ -101,7 +102,7 @@ public final class Helios extends Helicopter
         this.activatePowerUpGenerator(controller.getPowerUps());
     }
 
-    private void activatePowerUpGenerator(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps)
+    private void activatePowerUpGenerator(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps)
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWER_UP_DURATION);
         this.consumeSpellCosts();

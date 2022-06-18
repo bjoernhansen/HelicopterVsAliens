@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
@@ -14,6 +15,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 
 public class EnemyController
@@ -155,7 +157,7 @@ public class EnemyController
         }
     }
     
-    private static boolean isEnemyCreationApproved(Map<CollectionSubgroupType, LinkedList<Enemy>> enemies)
+    private static boolean isEnemyCreationApproved(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
     {
         int numberOfEnemies = enemies.get(CollectionSubgroupType.ACTIVE).size();
         return     !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
@@ -171,9 +173,9 @@ public class EnemyController
         return numberOfEnemies >= LevelManager.maxNr + LevelManager.maxBarrierNr;
     }
     
-    private static boolean isMajorBossActive(Map<CollectionSubgroupType, LinkedList<Enemy>> enemy)
+    private static boolean isMajorBossActive(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
     {
-        return !enemy.get(CollectionSubgroupType.ACTIVE).isEmpty() && enemy.get(CollectionSubgroupType.ACTIVE).getFirst().type.isMajorBoss();
+        return !enemies.get(CollectionSubgroupType.ACTIVE).isEmpty() && enemies.get(CollectionSubgroupType.ACTIVE).element().type.isMajorBoss();
     }
     
     private static void createBoss2Servants(GameRessourceProvider gameRessourceProvider)
@@ -202,7 +204,7 @@ public class EnemyController
     
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {
-        LinkedList<Enemy> activeEnemies = gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE);
+        Queue<Enemy> activeEnemies = gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE);
         int activeEnemyCount = activeEnemies.size();
         GameEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
         Enemy enemy = gameRessourceProvider.getNewGameEntityInstance(enemyFactory);
@@ -213,7 +215,7 @@ public class EnemyController
             gameRessourceProvider.getGameStatisticsCalculator().incrementNumberOfEnemiesSeen();
         }
         Events.lastCreationTimer = 0;
-        enemy.initialize(gameRessourceProvider);
+        enemy.initialize();
     }
     
     private static GameEntityFactory<Enemy> getEnemyFactory(int activeEnemyCount)
@@ -316,7 +318,7 @@ public class EnemyController
         }
     }
     
-    private static void countBarriers(Map<CollectionSubgroupType, LinkedList<Enemy>> enemies)
+    private static void countBarriers(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
     {
         Arrays.fill(livingBarrier, null);
         currentNumberOfBarriers = 0;

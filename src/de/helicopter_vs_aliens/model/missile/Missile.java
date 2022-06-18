@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.missile;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
@@ -192,7 +192,7 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 				{
 					if (!enemy.isStunned())
 					{
-						enemy.reactToHit(helicopter, this);
+						enemy.reactToHit(this);
 					}
 				}
 				else
@@ -216,7 +216,7 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 					break;
 				}
 			}
-			if (this.couldHit(enemy) && enemy.isReadyToDodge(helicopter))
+			if (this.couldHit(enemy) && enemy.isReadyToDodge())
 			{
 				enemy.dodge(this);
 			}

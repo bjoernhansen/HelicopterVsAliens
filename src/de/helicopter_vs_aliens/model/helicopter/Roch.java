@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
@@ -12,6 +12,7 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
@@ -149,7 +150,7 @@ public final class Roch extends Helicopter
     {
         return this.hasUnlimitedEnergy()
                 ? 0.0f
-                : this.spellCosts * enemy.collisionDamage(this);
+                : this.spellCosts * enemy.collisionDamage();
     }
     
     @Override
@@ -267,7 +268,7 @@ public final class Roch extends Helicopter
     {
         return this.isPowerShieldActivated
             && (this.hasUnlimitedEnergy()
-                || this.battery.getCurrentCharge() >= this.spellCosts * enemy.collisionDamage(this));
+                || this.battery.getCurrentCharge() >= this.spellCosts * enemy.collisionDamage());
     }
     
     @Override
@@ -334,7 +335,7 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void inactivate(Map<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    public void inactivate(Map<CollectionSubgroupType, Queue<Missile>> missiles, Missile missile)
     {
         if(missile.sister[0] == null && missile.sister[1] == null)
         {

@@ -1,9 +1,7 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
-import de.helicopter_vs_aliens.Main;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBossServant;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 public class Protector extends BurrowingBarrier
 {

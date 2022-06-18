@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.control;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.button.ButtonGroup;
@@ -38,6 +39,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -736,8 +738,8 @@ public class Events
 	
 	private static void storeAndClearEnemies(GameRessourceProvider gameRessourceProvider, CollectionSubgroupType collectionSubgroupType)
 	{
-		LinkedList<Enemy> enemies = gameRessourceProvider.getEnemies()
-														 .get(collectionSubgroupType);
+		Queue<Enemy> enemies = gameRessourceProvider.getEnemies()
+													.get(collectionSubgroupType);
 		gameRessourceProvider.getGameEntitySupplier()
 							 .storeAll(enemies);
 		enemies.clear();
@@ -1056,7 +1058,7 @@ public class Events
 		// kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
 		if(!gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
 		   && !(!totalReset && gameRessourceProvider.getEnemies()
-										 .get(CollectionSubgroupType.ACTIVE).getFirst().type == BOSS_2_SERVANT))
+										 .get(CollectionSubgroupType.ACTIVE).element().type == BOSS_2_SERVANT))
 		{
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
@@ -1103,8 +1105,8 @@ public class Events
 	
 	private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
 	{
-		LinkedList<Enemy> activeEnemies = gameRessourceProvider.getEnemies()
-															   .get(CollectionSubgroupType.ACTIVE);
+		Queue<Enemy> activeEnemies = gameRessourceProvider.getEnemies()
+														  .get(CollectionSubgroupType.ACTIVE);
 		activeEnemies.stream()
 					 .filter(Enemy::isDisappearingAfterEnteringRepairShop)
 					 .forEach(gameRessourceProvider.getGameEntitySupplier()::store);
@@ -1364,8 +1366,8 @@ public class Events
 						.orElse(0);
 	}
 
-	public static void updateFinance(Enemy enemy, Helicopter helicopter) {
-		lastBonus = enemy.calculateReward(helicopter);
+	public static void updateFinance(Enemy enemy) {
+		lastBonus = enemy.calculateReward();
 		money += lastBonus;
 		overallEarnings += lastBonus;
 		lastExtraBonus = 0;

@@ -1,8 +1,6 @@
 package de.helicopter_vs_aliens.model;
 
-import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 

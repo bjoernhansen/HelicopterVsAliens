@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
@@ -34,6 +34,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.PriceLevel.EXTORTIONATE;
@@ -262,7 +263,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		boolean stunningMissile = isShootingStunningMissile();
 		Missile sister = null;
 		
-		Map<CollectionSubgroupType, LinkedList<Missile>> missiles = gameRessourceProvider.getMissiles();
+		Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getMissiles();
 		if (this.numberOfCannons >= 1)
 		{
 			Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
@@ -392,7 +393,7 @@ public abstract class Helicopter extends RectangularGameEntity
 					this.correctAndSetCoordinates();
 					if (enemy.isStaticallyCharged())
 					{
-						enemy.startStaticDischarge(gameRessourceProvider.getExplosions(), this);
+						enemy.startStaticDischarge(gameRessourceProvider.getExplosions());
 					}
 				} else
 				{
@@ -413,7 +414,7 @@ public abstract class Helicopter extends RectangularGameEntity
 			}
 			for (int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
 			{
-				EnemyController.livingBarrier[i].evaluatePosAdaption(this);
+				EnemyController.livingBarrier[i].evaluatePosAdaption();
 			}
 		}
 		
@@ -774,14 +775,14 @@ public abstract class Helicopter extends RectangularGameEntity
 		}
 	}
 	
-	private void crashed(Map<CollectionSubgroupType, LinkedList<Explosion>> explosion)
+	private void crashed(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
 	{
 		this.isActive = false;
 		this.powerUpController.startDecayOfAllActivePowerUps();
-		if (Events.level < 51 && explosion != null)
+		if (Events.level < 51 && explosions != null)
 		{
 			Audio.play(Audio.explosion3);
-			Explosion.start(explosion,
+			Explosion.start(explosions,
 				this,
 				(int) (this.getX()
 					+ (this.isMovingLeft
@@ -1016,7 +1017,7 @@ public abstract class Helicopter extends RectangularGameEntity
 					: this.getCollisionAudio());
 		}
 		this.slowedTimer = 2;
-		this.currentPlating = Math.max(0, this.currentPlating - enemy.collisionDamage(this));
+		this.currentPlating = Math.max(0, this.currentPlating - enemy.collisionDamage());
 	}
     
     void startRecentDamageEffect(Enemy enemy)
@@ -1164,7 +1165,7 @@ public abstract class Helicopter extends RectangularGameEntity
 
 	public void receiveRewardFor(Enemy enemy, Missile missile, boolean beamKill)
 	{
-		Events.updateFinance(enemy, this);
+		Events.updateFinance(enemy);
 		this.typeSpecificRewards(enemy, missile, beamKill);
 		Window.moneyDisplayTimer = Events.START;
 	}
@@ -1361,7 +1362,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		return false;
 	}
     
-    public void inactivate(Map<CollectionSubgroupType, LinkedList<Missile>> missiles, Missile missile)
+    public void inactivate(Map<CollectionSubgroupType, Queue<Missile>> missiles, Missile missile)
     {
         missiles.get(CollectionSubgroupType.INACTIVE).add(missile);
     }
@@ -1462,7 +1463,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		powerUpController.restartPowerUpTimer(powerUpType);
 	}
 	
-	public void switchPowerUpActivationState(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
+	public void switchPowerUpActivationState(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps, PowerUpType powerUpType)
 	{
 		powerUpController.switchPowerUpActivationState(powerUps, powerUpType);
 	}

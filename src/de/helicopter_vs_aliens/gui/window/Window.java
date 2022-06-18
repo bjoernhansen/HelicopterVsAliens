@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.gui.window;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -246,14 +246,6 @@ public abstract class Window implements Paintable
         Events.nextHelicopterType = null;
 		for(int i = 0; i < NUMBER_OF_START_SCREEN_HELICOPTERS; i++)
 		{
-			if (helicopter == null)
-			{
-				System.out.println("helicopter is null");
-			}
-			if (helicopterFrame[i] == null)
-			{
-				System.out.println("helicopterFrame[i] is null");
-			}
 			// TODO HelicopterDestination --> das darf nicht mehr eine Eigenschaft von Helicopter sein
 			if(	helicopterFrame[i].contains(helicopter.destination))
 			{

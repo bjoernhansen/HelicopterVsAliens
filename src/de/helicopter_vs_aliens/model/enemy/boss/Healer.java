@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
 public class Healer extends FinalBossServant

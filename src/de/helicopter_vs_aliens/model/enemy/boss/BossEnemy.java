@@ -1,9 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import static de.helicopter_vs_aliens.control.CollectionSubgroupType.ACTIVE;
@@ -53,7 +52,7 @@ public abstract class BossEnemy extends StandardEnemy
         bossInactivationEvent();
     }
     
-    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider){};
+    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider){}
     
     protected void bossInactivationEvent()
     {
@@ -80,21 +79,21 @@ public abstract class BossEnemy extends StandardEnemy
     }
     
     @Override
-    protected void makeKamikazeIfAppropriateWith(Helicopter helicopter)
+    protected void makeKamikazeIfAppropriate()
     {
-        if(isTurningAroundSpontaneouslyTowards(helicopter))
+        if(isTurningAroundSpontaneouslyTowards())
         {
             getNavigationDevice().turnAround();
             setSpeedLevelToZeroX();
         }
-        super.makeKamikazeIfAppropriateWith(helicopter);
+        super.makeKamikazeIfAppropriate();
     }
     
-    private boolean isTurningAroundSpontaneouslyTowards(Helicopter helicopter)
+    private boolean isTurningAroundSpontaneouslyTowards()
     {
         // Boss-Gegner mit der Fähigkeit "Kamikaze" drehen mit einer bestimmten
         // Wahrscheinlichkeit um, wenn sie dem Helikopter das Heck zugekehrt haben.
-        return Calculations.tossUp(SPONTANEOUS_TURN_PROBABILITY) && isMovingAwayFrom(helicopter);
+        return Calculations.tossUp(SPONTANEOUS_TURN_PROBABILITY) && isMovingAwayFromHelicopter();
     }
     
     @Override

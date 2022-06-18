@@ -2,14 +2,10 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
-
-import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
 
 public abstract class ShieldMaker extends FinalBossServant
 {

@@ -8,13 +8,24 @@ import java.util.Queue;
 
 final class GameEntityStore<T extends GameEntity>
 {
+    private final static DependencyInjector
+        dependencyInjector = DependencyInjector.getInstance();
+    
     private final Queue<T>
         entities = new ArrayDeque<>();
+    
     
     public T retrieve(GameEntityFactory<? extends T> factory)
     {
         return Optional.ofNullable(entities.poll())
-                       .orElseGet(factory::makeInstance);
+                       .orElseGet(() -> makeInstanceWithDependenciesUsing(factory));
+    }
+    
+    private T makeInstanceWithDependenciesUsing(GameEntityFactory<? extends T> factory)
+    {
+        T gameEntity = factory.makeInstance();
+        dependencyInjector.injectDependenciesFor(gameEntity);
+        return gameEntity;
     }
     
     public void store(T gameEntity)

@@ -11,6 +11,7 @@ import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 
 public class PowerUpController
@@ -101,7 +102,7 @@ public class PowerUpController
                    });
     }
     
-    public void switchPowerUpActivationState(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps,
+    public void switchPowerUpActivationState(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps,
                                              PowerUpType powerUpType)
     {
         if(isPowerUpActive(powerUpType))
@@ -122,7 +123,7 @@ public class PowerUpController
         }
     }
     
-    public void activatePowerUp(Map<CollectionSubgroupType, LinkedList<PowerUp>> powerUps, PowerUpType powerUpType)
+    public void activatePowerUp(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps, PowerUpType powerUpType)
     {
         if(!Window.collectedPowerUps.containsKey(powerUpType))
         {
