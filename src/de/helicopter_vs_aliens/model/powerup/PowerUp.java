@@ -17,7 +17,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
@@ -245,8 +244,7 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 	public static PowerUp getInstance(PowerUpType powerUpType)
 	{
 		PowerUp powerUp = Controller.getInstance()
-									.getGameEntitySupplier()
-									.retrieve(powerUpType);
+									.getNewGameEntityInstance(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;
 	}

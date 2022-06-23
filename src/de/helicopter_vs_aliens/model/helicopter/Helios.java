@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -97,9 +98,9 @@ public final class Helios extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(Controller controller)
+    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        this.activatePowerUpGenerator(controller.getPowerUps());
+        this.activatePowerUpGenerator(gameRessourceProvider.getPowerUps());
     }
 
     private void activatePowerUpGenerator(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps)

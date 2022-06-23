@@ -18,7 +18,7 @@ public final class DependencyInjector
         this.gameRessourceProvider = Controller.getInstance();
     }
     
-    void injectDependenciesFor(GameRessourceAcceptor gameRessourceAcceptor)
+    public void injectDependenciesFor(GameRessourceAcceptor gameRessourceAcceptor)
     {
         gameRessourceAcceptor.setGameRessourceProvider(gameRessourceProvider);
     }

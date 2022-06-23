@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
@@ -21,6 +22,7 @@ import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -39,8 +41,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
-import java.util.EnumMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -87,25 +87,6 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	private Helicopter
 		helicopter = HelicopterType.getDefault().makeInstance();
 	
-	
-	// TODO Verwaltung anders lösen, vermutlich mit den erstellten Klassen im Packet control/entities
-	// TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
-	// TODO LinkedList nicht verwenden, ggf. Queue oder Dequeue .. an einer Stelle muss das erste Element gezogen werden, in jedem Fall gegen das Interface und nicht gegen LinkedLIst
-	private final Map<CollectionSubgroupType, Queue<Enemy>>
-		enemies = new EnumMap<>(CollectionSubgroupType.class);
-	
-	private final Map<CollectionSubgroupType, Queue<Missile>>
-		missiles = new EnumMap<>(CollectionSubgroupType.class);
-	
-	private final Map<CollectionSubgroupType, Queue<Explosion>>
-		explosions = new EnumMap<>(CollectionSubgroupType.class);
-	
-	private final Map<CollectionSubgroupType, Queue<EnemyMissile>>
-		enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
-	
-	private final Map<CollectionSubgroupType, Queue<PowerUp>>
-		powerUps = new EnumMap<>(CollectionSubgroupType.class);
-	
 	private GraphicsAdapter
 		graphicsAdapter;
 
@@ -119,7 +100,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		wholeScreenClip;
 	
 	private final Scenery
-		scenery = new Scenery();
+		scenery = new Scenery(this);
 		
 	private final WindowManager
 		windowManager = new WindowManager();
@@ -129,6 +110,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	
 	private final GameStatisticsCalculator
 		gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
+	
+	private final ActiveGameEntityManager
+		activeGameEntityManager = ActiveGameEntityManager.getInstance();
 	
 	
 	private Controller(){}
@@ -164,24 +148,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		addMouseMotionListener(this);		
 		Window.initialize();
 		Window.updateButtonLabels(helicopter);
-		initializeLists();
 		scenery.createInitialSceneryObjects();
-	}
-	
-	void initializeLists()
-	{
-		// TODO alle Listen von inaktivierten überführen in GameEntityRecycler, auch die BackgroundObjects berücksichtigen
-		// TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
-		// TODO keine LinkedList verwenden, lieber ArrayDeque
-		CollectionSubgroupType.getStandardSubgroupTypes().forEach(standardSubgroupTypes -> {
-			this.missiles.put(	   					standardSubgroupTypes, new LinkedList<>());
-			this.explosions.put(	   				standardSubgroupTypes, new LinkedList<>());
-			this.scenery.getSceneryObjects().put(	standardSubgroupTypes, new LinkedList<>());
-			this.enemyMissiles.put( 				standardSubgroupTypes, new LinkedList<>());
-			this.powerUps.put(	   					standardSubgroupTypes, new LinkedList<>());
-			this.enemies.put(		   				standardSubgroupTypes, new LinkedList<>());
-		});
-		this.enemies.put(CollectionSubgroupType.DESTROYED, new LinkedList<>());
 	}
 	
 	public void start()
@@ -420,6 +387,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		return helicopter;
 	}
 	
+	@Override
 	public void setHelicopter(Helicopter helicopter)
 	{
 		this.helicopter = helicopter;
@@ -459,6 +427,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		this.saveGame = saveGame;
 	}
 	
+	@Override
 	public boolean isAntialiasingActivated()
 	{
 		return isAntialiasingActivated;
@@ -472,16 +441,19 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
 	}
 	
+	@Override
 	public int getFramesCounter()
 	{
 		return framesCounter;
 	}
 	
+	@Override
 	public boolean isMouseCursorInWindow()
 	{
 		return isMouseCursorInWindow;
 	}
 	
+	@Override
 	public boolean isFpsDisplayVisible()
 	{
 		return isFpsDisplayVisible;
@@ -501,36 +473,48 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	@Override
 	public Map<CollectionSubgroupType, Queue<Enemy>> getEnemies()
 	{
-		return enemies;
+		return activeGameEntityManager.getEnemies();
 	}
 	
 	@Override
 	public Map<CollectionSubgroupType, Queue<Missile>> getMissiles()
 	{
-		return missiles;
+		return activeGameEntityManager.getMissiles();
 	}
 	
 	@Override
 	public Map<CollectionSubgroupType, Queue<Explosion>> getExplosions()
 	{
-		return explosions;
+		return activeGameEntityManager.getExplosions();
+	}
+	
+	@Override
+	public Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects()
+	{
+		return activeGameEntityManager.getSceneryObjects();
 	}
 	
 	@Override
 	public Map<CollectionSubgroupType, Queue<EnemyMissile>> getEnemyMissiles()
 	{
-		return enemyMissiles;
+		return activeGameEntityManager.getEnemyMissiles();
 	}
 	
 	@Override
 	public Map<CollectionSubgroupType, Queue<PowerUp>> getPowerUps()
 	{
-		return powerUps;
+		return activeGameEntityManager.getPowerUps();
 	}
 	
 	@Override
 	public  <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory)
 	{
 		return gameEntitySupplier.retrieve(factory);
+	}
+	
+	@Override
+	public ActiveGameEntityManager getActiveGameEntityManager()
+	{
+		return activeGameEntityManager;
 	}
 }

@@ -68,7 +68,6 @@ public abstract class Window implements Paintable
 	public static final int
         NUMBER_OF_SETTING_OPTIONS = 5,	    
 		POWER_UP_SIZE = 23,
-		MAXIMUM_COLLECTED_POWERUPS_COUNT = 4,
 		NUMBER_OF_START_SCREEN_HELICOPTERS = 4,
 		MESSAGE_LINE_COUNT = 4,
 	
@@ -361,13 +360,13 @@ public abstract class Window implements Paintable
 			unlockedType = null;}
 	}
     
-	public static void changeLanguage(Controller controller)
+	public static void changeLanguage(GameRessourceProvider gameRessourceProvider)
 	{
 		Events.settingsChanged = true;
 		setLanguage(getNextLanguage());
-		controller.getSaveGame().language = language;
+		gameRessourceProvider.getSaveGame().language = language;
 		
-		updateButtonLabels(controller.getHelicopter());
+		updateButtonLabels(gameRessourceProvider.getHelicopter());
 	}
 
 	private static Language getNextLanguage() {
@@ -599,16 +598,16 @@ public abstract class Window implements Paintable
 		unlockedTimer = UNLOCKED_DISPLAY_TIME;
 	}
 
-	public static void update(Controller controller)
+	public static void update(GameRessourceProvider gameRessourceProvider)
 	{
-		Helicopter helicopter = controller.getHelicopter();
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(WindowManager.window  == REPAIR_SHOP)
 		{
 			updateRepairShop(helicopter);
 		}
 		else if(WindowManager.window  == START_SCREEN)
 		{
-			updateStartScreen(helicopter, controller.getFramesCounter());
+			updateStartScreen(helicopter, gameRessourceProvider.getFramesCounter());
 		}
 		else if(WindowManager.window  == SCORE_SCREEN)
 		{

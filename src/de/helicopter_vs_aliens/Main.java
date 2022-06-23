@@ -64,7 +64,7 @@ public class Main
 				controller.shutDown();
 			}
 		});
-
+		
 		controller.setLayout(null);
 		
 		device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();

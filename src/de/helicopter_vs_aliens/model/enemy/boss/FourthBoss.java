@@ -12,7 +12,6 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.geom.Point2D;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 

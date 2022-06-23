@@ -12,7 +12,6 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
@@ -98,9 +97,9 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(Controller controller)
+    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        this.releaseEMP(controller.getExplosions());
+        this.releaseEMP(gameRessourceProvider.getExplosions());
     }
 
     private void releaseEMP(Map<CollectionSubgroupType, Queue<Explosion>> explosions)

@@ -13,7 +13,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 

@@ -111,16 +111,16 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(Controller controller)
+    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
         if(this.isEnergyAbilityActivatable())
         {
-            useEnergyAbility(controller);
+            useEnergyAbility(gameRessourceProvider);
         }
     }
 
     @Override
-    public void useEnergyAbility(Controller controller)
+    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
         this.prepareTeleportation();
     }

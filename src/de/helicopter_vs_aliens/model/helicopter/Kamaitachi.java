@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
@@ -66,7 +67,7 @@ public final class Kamaitachi extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(Controller controller)
+    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
         this.activatePlasma();
     }

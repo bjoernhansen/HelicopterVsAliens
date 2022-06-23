@@ -15,7 +15,7 @@ public enum CollectionSubgroupType
     private final static Set<CollectionSubgroupType>
         STANDARD_SUBGROUP_TYPES = Collections.unmodifiableSet(EnumSet.of(INACTIVE, ACTIVE));
 
-    static Set<CollectionSubgroupType> getStandardSubgroupTypes()
+    public static Set<CollectionSubgroupType> getStandardSubgroupTypes()
     {
         return STANDARD_SUBGROUP_TYPES;
     }

@@ -6,6 +6,7 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -18,6 +19,8 @@ public interface ActiveGameEntitiesProvider
     Map<CollectionSubgroupType, Queue<Missile>> getMissiles();
     
     Map<CollectionSubgroupType, Queue<Explosion>> getExplosions();
+    
+    Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects();
     
     Map<CollectionSubgroupType, Queue<EnemyMissile>> getEnemyMissiles();
     

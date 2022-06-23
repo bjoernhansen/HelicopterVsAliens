@@ -43,7 +43,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 

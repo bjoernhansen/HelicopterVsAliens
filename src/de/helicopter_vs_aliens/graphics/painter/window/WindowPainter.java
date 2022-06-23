@@ -1,6 +1,8 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
 import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -32,15 +34,19 @@ public abstract class WindowPainter extends Painter<Window>
         HELICOPTER_START_SCREEN_OFFSET = new Point(66, 262),
         HEALTH_BAR_POSITION = new Point(5, RectangularGameEntity.GROUND_Y + 5);
     
-    protected static Controller
-        controller = Controller.getInstance();
+    // TODO DependencyInjection verwenden, ggf. alle Painter von Entity erben lassen, eine neue Superklasse von der dann auch GameEntity erbt --> Code verschieben aus GameEntity
+    protected static final GameRessourceProvider
+        gameRessourceProvider = Controller.getInstance();
+    
+    protected static final GuiStateProvider
+        guiStateProvider = gameRessourceProvider;
     
     protected static Helicopter
         helicopter;
         
     // TODO warum muss dann immer wieder upgedated werden
     protected static void updateDependencies(){
-        helicopter = controller.getHelicopter();
+        helicopter = gameRessourceProvider.getHelicopter();
     }
     
     @Override

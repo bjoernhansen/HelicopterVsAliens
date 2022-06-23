@@ -10,7 +10,6 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
@@ -95,7 +94,7 @@ public final class Roch extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(Controller controller)
+    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
         if(this.isPowerShieldActivated)
         {
@@ -103,12 +102,12 @@ public final class Roch extends Helicopter
         }
         else
         {
-            super.tryToUseEnergyAbility(controller);
+            super.tryToUseEnergyAbility(gameRessourceProvider);
         }
     }
 
     @Override
-    public void useEnergyAbility(Controller controller)
+    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
         this.turnOnPowerShield();
     }

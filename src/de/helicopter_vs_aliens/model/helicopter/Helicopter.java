@@ -32,7 +32,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
@@ -1264,15 +1263,15 @@ public abstract class Helicopter extends RectangularGameEntity
         this.battery.upgradeTo(this.getUpgradeLevelOf(ENERGY_ABILITY));
     }
     
-    public void tryToUseEnergyAbility(Controller controller)
+    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
         if(this.isEnergyAbilityActivatable())
         {
-            useEnergyAbility(controller);
+            useEnergyAbility(gameRessourceProvider);
         }
     }
     
-    public abstract void useEnergyAbility(Controller controller);
+    public abstract void useEnergyAbility(GameRessourceProvider gameRessourceProvider);
     
     public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
 	{

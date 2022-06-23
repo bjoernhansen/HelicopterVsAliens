@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
@@ -106,7 +107,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void tryToUseEnergyAbility(Controller controller)
+    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
         if (!this.isNextMissileStunner)
         {
@@ -116,7 +117,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void useEnergyAbility(Controller controller){}
+    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider){}
     
     @Override
     boolean canRegenerateEnergy()
