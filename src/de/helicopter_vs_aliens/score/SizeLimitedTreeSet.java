@@ -5,7 +5,7 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
-public class SizeLimitedTreeSet<E extends Comparable<E>> implements Serializable
+public class SizeLimitedTreeSet<E extends Comparable<? super E>> implements Serializable
 {
     private final NavigableSet<E>
         navigableSet = new TreeSet<>();

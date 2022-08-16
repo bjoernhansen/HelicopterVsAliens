@@ -320,11 +320,13 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
     }
     
     @Override
+    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Class<? extends Helicopter> getCorrespondingClass()
     {
         return helicopterClass;
     }
     
+    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Painter<? extends Helicopter> makePainterInstance()
     {
         return painterInstance.get();

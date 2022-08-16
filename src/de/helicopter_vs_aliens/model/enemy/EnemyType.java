@@ -658,6 +658,7 @@ public enum EnemyType implements GameEntityFactory<Enemy>
     }
     
     @Override
+    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Class<? extends Enemy> getCorrespondingClass()
     {
         return enemyClass;

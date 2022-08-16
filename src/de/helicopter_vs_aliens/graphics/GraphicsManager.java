@@ -72,6 +72,8 @@ public class GraphicsManager
         painter.paint(graphicsAdapter, gameEntity);
     }
     
+    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
+    // TODO unchecked Cast beseitigen
     public <E extends Painter<? extends Paintable>> E getPainter(Class<? extends Paintable> classOfGameEntity)
     {
         return (E) painters.get(classOfGameEntity);

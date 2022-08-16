@@ -140,11 +140,13 @@ public enum WindowType
         return menuInstance.get();
     }
     
+    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Painter<? extends Paintable> makePainterInstance()
     {
         return painterInstance.get();
     }
     
+    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Class<? extends Window> getMenuClass()
     {
         return menuClass;

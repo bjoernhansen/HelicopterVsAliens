@@ -78,6 +78,7 @@ public enum PowerUpType implements GameEntityFactory<PowerUp>
     }
     
     @Override
+    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Class<? extends PowerUp> getCorrespondingClass()
     {
         return PowerUp.class;
