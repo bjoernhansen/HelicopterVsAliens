@@ -1,6 +1,6 @@
 Versionen:
     
-    v0.1    erste spiebare Version
+    v0.1    erste spielbare Version
     
     v0.2    Kollision mit Gegner beschädigt den Helicopter.
             Soundeffekte eingefügt
@@ -18,16 +18,16 @@ Versionen:
             Alle grafischen Objekte werden jetzt von Methoden ihrer eigenen 
             Klasse gezeichnet.
             
-    v0.5    Es können mehrere Schüsse gleichzeitigt abgefeuert werden.
-    v0.5b   Gedrückthalten der Maustaste ermöglicht jetzt Dauerfeuer
+    v0.5    Es können mehrere Schüsse gleichzeitig abgefeuert werden.
+    v0.5b   Gedrückt halten der Maustaste ermöglicht jetzt Dauerfeuer
     		(bei gleichzeitiger Mausbewegung)
-            Die Trefferanzeige wurde in eine Guthabenanzeuge umgewandelt.
+            Die Trefferanzeige wurde in eine Guthaben-Anzeige umgewandelt.
     v0.5c   Die Dauerfeuerrate wurde reduziert.
             Abgeschossene Gegner oder Gegner die den sichtbaren Bereich 
             verlassen haben, erscheinen jetzt innerhalb zufällig langer
             Zeitintervalle wieder auf dem Bildschirm.
     v0.5d   Es können mehrere Gegner gleichzeitig dargestellt werden.
-    v0.5e   Ein Fehler im Zusammenhang mit der Darstellung der Levelanzeige 
+    v0.5e   Ein Fehler im Zusammenhang mit der Darstellung der Level-Anzeige
     		wurde behoben.
             Gegner werden jetzt nach Absturz des Helicopters inaktiviert und 
             fliegen deshalb nicht mehr durch das Neustartfenster.
@@ -35,26 +35,26 @@ Versionen:
             steigendem Level. Insgesamt sind jetzt 19 unterschiedliche Level 
             erreichbar.
             
-    v0.6    Ein Startmenue wurde integriert.
+    v0.6    Ein Startmenü wurde integriert.
             Dem Spieler stehen jetzt unterschiedliche Helicopter-Klassen zur 
             Verfügung.
     v0.6b   Es können mehrere Explosionen gleichzeitig dargestellt werden.
-    v0.6c   Es wurde ein Schaden/Hitpoint-System implementiert.
+    v0.6c   Es wurde ein Schaden/HitPoint-System implementiert.
             Die Helicopter-Klasse wurde um viele Attribute erweitert.
             
-    v0.7    Dem Spieler steht jetzt das Menue Werkstatt zur Verfügung.
+    v0.7    Dem Spieler steht jetzt das Menü Werkstatt zur Verfügung.
     		Nach Absturz des Helicopters kann hier eine Reparatur durchgeführt
     	    werden.
             Ein Darstellungsfehler der Raketen wurde behoben.
             Jede Rakete hat jetzt eine eigene Verzögerung. Nach einem Treffer
             kann nicht mehr wie bisher sofort eine neue Rakete gestartet werden.
             Nachteinsätze sind jetzt verfügbar.
-            Im Menue Werkstatt sind jetzt alle Upgrades verfügbar.
-            Vom Startmenue aus sind jetzt auch Spielanleitung sowie 
+            Im Menü Werkstatt sind jetzt alle Upgrades verfügbar.
+            Vom Startmenü aus sind jetzt auch Spielanleitung sowie
             Informationen zur Handlung verfügbar.
             
     v0.8    Beginn der Beta-Phase
-    v0.8b   Vom Startmenue aus ist jetzt eine Kontakt-Adresse verfügbar.
+    v0.8b   Vom Startmenü aus ist jetzt eine Kontakt-Adresse verfügbar.
             Ein Fehler bei der Darstellung von Explosionen wurde behoben.
     v0.8c   Bereits auf Level 1 können jetzt zwei Gegner gleichzeitig
             erscheinen.
@@ -68,7 +68,7 @@ Versionen:
             Verfügung, nicht-klassenspezifischen Spezial-Upgrades allerdings nur
             für 75000 €.
             Der aktuelle Zustand des Helicopters ist jetzt auch im Spiel über
-            eine Hitpoint-Anzeige ersichtlich.
+            eine HitPoint-Anzeige ersichtlich.
             Auch über Level 12 können jetzt noch gelegentlich einfache Gegner
             erscheinen.
             Es gibt jetzt 25 Level und bis zu maximal 15 Gegner die 
@@ -83,21 +83,21 @@ Versionen:
             Werkstatt-Menü zurück zu kehren.
             
     v0.9    Beginn der Beta-Phase Teil II
-    v0.9a   Nach Neustart beginnt das Spiel jetzt immer mit einem Tageinsatz.
+    v0.9a   Nach Neustart beginnt das Spiel jetzt immer mit einem Tag-Einsatz.
             Bei Wechsel der Tageszeit beginnt der Einsatz bei Level 1.
     v0.9b   Ein Grafikfehler, der nach Abschuss von mehr als 5 Gegner
     		gleichzeitig auftraft, wurde behoben.
-            Die verschiedenen Flugmanoever, die ein Gegner ausführen kann,
+            Die verschiedenen Flugmanöver, die ein Gegner ausführen kann,
             werden jetzt über Attribute der Gegner-Klasse reguliert und nicht
             wie bisher über das Level.
             Gegner werden jetzt übermalt BEVOR ihre Koordinaten neu berechnet
             werden. Zuvor mußte auf ihre alten Werte rechnerisch
             zurückgeschlossen werden. Neue Flugmanöver können jetzt sehr
-            einfach implementiert weren.
+            einfach implementiert werden.
             Der Preis für alle nicht-klassenspezifischen Spezial-Upgrades wurde
 			auf 125000 erhöht.
             Die Hintergrundmusik wurde geändert.
-            Die Gegneranzahl kann jetzt wieder reduziert werden, ohne dass 
+            Die Anzahl der Gegner kann jetzt wieder reduziert werden, ohne dass
             Grafik-Fehler auftreten.
     v0.9c   Das Upgrade-System des Helicopters wurde grundlegend überarbeitet:
             Helicopter- und Raketengeschwindigkeit sind jetzt jeweils in
@@ -107,7 +107,7 @@ Versionen:
             Die Anfangsschussrate wurde deutlich reduziert.
             Auch die Preise für die klassenspezifischen Standard-Upgrades sind
             jetzt günstiger.
-    v0.9d   Gegner haben jetzt eine variable "collison size" was
+    v0.9d   Gegner haben jetzt eine variable "collision size" was
     		unterschiedliche Gegner-Größen zuläßt.
             Das Model für die Gegner wurde durch ein neues ersetzt.
     v0.9e   "Double-Buffering" wurde nun verwendet, wodurch kein Flackern 
@@ -174,9 +174,9 @@ Versionen:
             Die Hitpoints einiger Gegner wurden entsprechend dieser neuen 
             Reihenfolge angepasst.
             Der Preis für HP-Scheinwerfer wurde auf 35.000 € erhöht.
-            über das Startmenue ist jetzt eine Ausführliche Spielanleitung
+            über das Startmenü ist jetzt eine Ausführliche Spielanleitung
             verfügbar.
-            Ab jetzt ist es möglich vom Startmenue aus die Hintergrundmusik zu
+            Ab jetzt ist es möglich vom Startmenü aus die Hintergrundmusik zu
             deaktivieren.
             Vom Spiel aus ist von nun an ein Hauptmenue verfügbar, dass die
             Optionen
