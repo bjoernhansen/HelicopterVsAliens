@@ -159,7 +159,6 @@ public class RepairShopWindowPainter extends WindowPainter
         graphicsAdapter.setFont(fontProvider.getBold(20));
         graphicsAdapter.drawString(Window.dictionary.standardUpgrades(), StandardUpgradeButtonType.OFFSET.x + 4, 82);
         graphicsAdapter.setFont(fontProvider.getPlain(15));
-        // TODO hier muss sich auf die Anzahl der Elemente im Enum StandardUpgradeButtonSize bezogen werden, am besten ein forEach über die Elemente
         
         StandardUpgradeButtonType.getValues()
                                  .forEach(buttonSpecifier -> Window.buttons.get(buttonSpecifier)

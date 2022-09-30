@@ -87,8 +87,10 @@ public enum WindowType
     public static final String
         START_OF_START_SCREEN_MENU_BUTTON_LABEL_PREFIX = "buttonLabel.startScreenSub.";
     
-    private final static Set<WindowType>
-        MAIN_WINDOWS = Collections.unmodifiableSet(EnumSet.complementOf(EnumSet.of(GAME, REPAIR_SHOP, SCORE_SCREEN))),
+    private static final Set<WindowType>
+        MAIN_WINDOWS = Collections.unmodifiableSet(EnumSet.complementOf(EnumSet.of(GAME, REPAIR_SHOP, SCORE_SCREEN)));
+    
+    private static final Set<WindowType>
         NON_SETTINGS_START_SCREEN_MENU_WINDOWS = Collections.unmodifiableSet(EnumSet.of(INFORMATION, DESCRIPTION, CONTACT, HELICOPTER_TYPES, HIGH_SCORE));
 
     
