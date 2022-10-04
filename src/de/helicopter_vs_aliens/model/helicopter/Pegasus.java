@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.control.timer.VariableTimer;
@@ -111,10 +110,10 @@ public final class Pegasus extends Helicopter
                 this,
                 (int)(this.getX()
                         + (this.isMovingLeft
-                        ? FOCAL_PNT_X_LEFT
-                        : FOCAL_PNT_X_RIGHT)),
+                        ? FOCAL_POINT_X_LEFT
+                        : FOCAL_POINT_X_RIGHT)),
                 (int)(this.getY()
-                        + FOCAL_PNT_Y_EXP),
+                        + FOCAL_POINT_Y_EXP),
                 EMP,
                 false);
         this.restartInterphaseGenerator();

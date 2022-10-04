@@ -82,7 +82,7 @@ public abstract class BasicEnemy extends StandardEnemy
     
     private boolean isToBecomeCloakableMiniBoss()
     {
-        return isReadyToShoot() || (type.isCloakableAsMiniBoss() && Calculations.tossUp(0.2f));
+        return hasCanonReadyToFire() || (type.isCloakableAsMiniBoss() && Calculations.tossUp(0.2f));
     }
     
     @Override

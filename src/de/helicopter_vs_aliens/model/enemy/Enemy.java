@@ -5,22 +5,20 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
-import de.helicopter_vs_aliens.graphics.painter.EnemyPainter;
+import de.helicopter_vs_aliens.graphics.painter.enemy.EnemyPainter;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
-
-
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
@@ -52,8 +50,6 @@ import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.NO
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.RIGHT;
 import static de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType.TOP;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
-import static de.helicopter_vs_aliens.model.helicopter.Phoenix.NICE_CATCH_TIME;
-import static de.helicopter_vs_aliens.model.helicopter.Phoenix.TELEPORT_KILL_TIME;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
@@ -61,6 +57,9 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 public abstract class Enemy extends RectangularGameEntity implements GroupTypeOwner
 {
 	public static final int KAMIKAZE_RANGE = 620;
+	public static final int FIELD_OF_FIRE_TOLERANCE_Y = 15;
+	public static final int TIMER_ALMOST_OVER = 1;
+	public static final float STUNNING_BARRIER_ENERGY_CONSUMPTION_FACTOR = 2.5f;
 	
 	public boolean isCloaked()
 	{
@@ -100,6 +99,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public int getDirectionX()
 	{
 		return navigationDevice.getDirectionX();
+	}
+	
+	public void performLocationAdaptionAction(GameRessourceProvider gameRessourceProvider)
+	{
 	}
 	
 	public static class FinalEnemyOperator
@@ -172,19 +175,16 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private static final float
 		RADAR_DETECTABILITY = 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
 	
-		protected static final float POWER_UP_PROB				= 0.02f;
+	protected static final float POWER_UP_PROB				= 0.02f;
 	protected static final float SPIN_SHOOTER_RATE 		   	= 0.55f;
-	private static final float EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f;
 	
 	public static final float
 		REPARATION_POWER_UP_DROP_RATE = 0.14f;
 	
-	private static final float// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
-		RADIATION_DAMAGE_FACTOR = 1.5f;            // Phönix-Klasse, nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
-		private static final float TELEPORT_DAMAGE_FACTOR = 4f;            // Phönix-Klasse: wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
-		private static final float EMP_DAMAGE_FACTOR_BOSS = 1.5f;            // Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
-		private static final float EMP_DAMAGE_FACTOR_ORDINARY = 2.5f;        // Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
-	
+	// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
+	private static final float EMP_DAMAGE_FACTOR_BOSS = 1.5f;            // Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
+	private static final float EMP_DAMAGE_FACTOR_ORDINARY = 2.5f;        // Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
+
 	private static final int
 		// Raum-Konstanten
 		SAVE_ZONE_WIDTH = 116;
@@ -193,34 +193,26 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private static final int DISAPPEARANCE_DISTANCE = 100;
 	private static final int BARRIER_DISTANCE = 100;
 
-	private static final int KABOOM_Y_TURN_LINE = GROUND_Y - (int) (EnemyModelType.TIT.getHeightFactor() * EnemyType.KABOOM.getWidth());
-	// Zeit-Konstanten
-	
-		protected static final int EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
 
-	private static final int INACTIVATION_TIME = 150;
+	// Zeit-Konstanten
+	protected static final int EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
+	
 	private static final int STUNNING_TIME_BASIS = 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
-		private static final int BORROW_TIME = 65;
+
 	private static final int MIN_TURN_TIME = 31;
 	private static final int MIN_TURN_NOISELESS_TIME = 15;
-	private static final int STATIC_CHARGE_TIME = 110;
-	
-
 	
 	public static final int
 		MIN_POWER_UP_LEVEL = 3;
 	
-
 	private static final int STANDARD_REWARD_FACTOR = 1;
 	
-	private static final int// TODO die 4 austauschen / anders lösen
-		PRE_READY = 1;
 	public static final int READY = 0;
 	
 	public static final Point2D
 		ZERO_SPEED = new Point2D.Float(0, 0);
 	
-	private static final Point2D
+	protected static final Point2D
 		SLOW_VERTICAL_SPEED = new Point2D.Float(0, 1);
 		
 	private static final Point
@@ -268,7 +260,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		hasUnresolvedIntersection;
 		
 	
-	public EnemyType
+	public EnemyType // TODO private und getter
 		type;
 	
 	public BarrierPositionType
@@ -295,7 +287,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private int
 		crashPositionY;                // Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
 	private int
-		collisionAudioTimer;
+		collisionTimer;
 	private int
 		turnAudioTimer;
 	private int
@@ -318,10 +310,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		turnTimer;
 	protected int
 		dodgeTimer;            // Zeit [frames], bis ein Gegner erneut ausweichen kann
-	protected int
-		snoozeTimer;	// TODO gehört in Barrier-Klasse
-	protected int
-		staticChargeTimer;
+	
 	
 	protected int// nur für Hindernis-Gegner relevant
 		rotorColor;	// TODO Color als int?? umbenennen!
@@ -352,7 +341,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
         protected boolean canFrontalSpeedup;        // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
         protected boolean canLoop;                // = true: Gegner fliegt Loopings
         protected boolean canChaosSpeedup;        // erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
-        private boolean isSpeedBoosted;
+     
 	private boolean isDestroyed;            // = true: Gegner wurde vernichtet
         protected boolean hasHeightSet;            // = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
         private boolean hasCrashed;            // = true: Gegner ist abgestürzt
@@ -387,9 +376,16 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		
 	protected final Point2D
 		targetSpeedLevel = new Point2D.Float();        // Anfangsgeschwindigkeit
-		private final Point2D speedLevel = new Point2D.Float();            // auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
-		private final Point2D speed = new Point2D.Float();                // tatsächliche Geschwindigkeit
-		protected final Point2D shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
+	
+	private final Point2D
+		speedLevel = new Point2D.Float();            // auf Basis dieses Objektes wird die tatsächliche Geschwindigkeit berechnet
+	
+	private final Point2D
+		speed = new Point2D.Float();                // tatsächliche Geschwindigkeit
+	
+	protected final Point2D
+		shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
+	
 	
 	public void reset()
 	{
@@ -410,7 +406,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		canKamikaze = false;
 		isAbleToTurnAroundEarly = false;
 		isTouchingHelicopter = false;
-		isSpeedBoosted = false;
 		canFrontalSpeedup = false;
 		canSinusMove = false;
 		isShielding = false;
@@ -426,7 +421,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		isEmpShocked = false;
 		
 		collisionDamageTimer = READY;
-		collisionAudioTimer = READY;
+		collisionTimer = READY;
 		turnAudioTimer = READY;
 		dodgeTimer = READY;
 		turnTimer = READY;
@@ -434,7 +429,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		empSlowedTimer = READY;
 		invincibleTimer = READY;
 		chaosTimer = READY;
-		snoozeTimer = READY;
 		nonStunableTimer = READY;
 		cloakingDevice.reset();
 		teleportTimer = DISABLED;
@@ -443,7 +437,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		barrierShootTimer = DISABLED;
 		barrierTeleportTimer = DISABLED;
 		burrowTimer = DISABLED;
-		staticChargeTimer = DISABLED;
 		speedup = DISABLED;
 		
 		tractor = AbilityStatusType.DISABLED;
@@ -500,6 +493,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
     }
     
     // TODO gehört diese Methode nicht eher in die Painter-Klasse?
+	// TODO Raw use beseitigen
 	public void repaint()
 	{
 		for(int j = 0; j < 2; j++)
@@ -587,18 +581,13 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 							(int)getHeight());
 		assignImage();
 		
-		if(isShootingStandardEnemy())
+		if(hasCanonReadyToFire())
 		{
 			initializeShootDirectionOfDefaultEnemies();
 		}
 	}
 	
-	private boolean isShootingStandardEnemy()
-	{
-		return isReadyToShoot();
-	}
-	
-	protected boolean isReadyToShoot()
+	protected boolean hasCanonReadyToFire()
 	{
 		return shootTimer == READY;
 	}
@@ -610,7 +599,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private boolean isCurrentlyShooting()
 	{
-		return isShooter() && !isReadyToShoot();
+		return isShooter() && !hasCanonReadyToFire();
 	}
 	
 	public int getShootTimer()
@@ -680,6 +669,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	
 	// TODO Methode überarbeiten und Teile in kleinere Methoden auslagern
+	// TODO Raw use beseitigen
 	private void assignImage()
 	{
 		for(int i = 0; i < 2; i++)
@@ -709,13 +699,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}		
 	}
 
-    private void placeCloakingBarrierAtPausePosition()
-	{
-		callBack--;
-		uncloakAndDisableCloakingDevice();
-		barrierTeleportTimer = READY;
-		setY(GROUND_Y + 2 * getWidth());
-	}
+
 
 	private void placeNearHelicopter()
 	{
@@ -791,13 +775,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		checkForBarrierCollision();
 		if(!isStunned())
 		{
-			updateStoppableTimer();
-			performFlightManeuver(gameRessourceProvider);
-			validateTurns();
+			performStoppableActions(gameRessourceProvider);
 		}
-		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		calculateSpeed();
 		move();
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(helicopter.isCollidingWith(this))
 		{
 			collision(gameRessourceProvider);
@@ -814,6 +796,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		setPaintBounds();
 	}
 	
+	protected void performStoppableActions(GameRessourceProvider gameRessourceProvider)
+	{
+		performFlightManeuver(gameRessourceProvider);
+		validateTurns();
+	}
+	
 	protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
 	{
 		calculateFlightManeuver(gameRessourceProvider);
@@ -824,11 +812,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return stunningTimer > READY;
 	}
 	
-	private void updateStoppableTimer()
-	{
-		if(snoozeTimer > 0){snoozeTimer--;}
-	}
-
 	protected boolean hasDeadlyGroundContact()
 	{	
 		return isIntersectingGroundLine()
@@ -860,14 +843,13 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}
 	}
 	
-	
-	private void updateTimer()
+	protected void updateTimer()
 	{		
 		if(	collisionDamageTimer > 0) {collisionDamageTimer--;}
-		if(	collisionAudioTimer > 0) {collisionAudioTimer--;}
+		if(	collisionTimer > 0) {
+			collisionTimer--;}
 		if(	turnAudioTimer > 0) {turnAudioTimer--;}
 		if(	empSlowedTimer > 0) {empSlowedTimer--;}
-		if(	staticChargeTimer > 0) {staticChargeTimer--;}
 		if(	invincibleTimer > 0) {invincibleTimer--;}
 		if(	chaosTimer > 0) {chaosTimer--;}
 		if(	nonStunableTimer > 0) {nonStunableTimer--;}
@@ -921,32 +903,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		// Shooting
 		if(isShooter()){evaluateShooting(gameRessourceProvider);}
 		
-		// TODO das gehört zu den Barriers
-		// Vergraben
-		if(burrowTimer != DISABLED && !(snoozeTimer > 0))
-		{				
-			evaluateBorrowProcedure();
-		}
-		
-		// Shooting Barrier
-		if(barrierShootTimer != DISABLED)
-		{
-			evaluateBarrierShooting(gameRessourceProvider);
-		}									
-		
-		// Snooze bei Hindernissen									
-		if(snoozeTimer == PRE_READY)
-		{
-			endSnooze();
-		}
-		
-		// Barrier-Teleport			
-		if(barrierTeleportTimer != DISABLED
-			&& !(snoozeTimer > 0))
-		{				
-			evaluateBarrierTeleport();
-		}				
-				
 		// Sinus- und Loop-Flug
 		if(canSinusMove){sinusLoop();}
 		
@@ -987,7 +943,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			{
 				speedLevel.setLocation(targetSpeedLevel);
 			}				
-		}		
+		}
 	}
 	
 	protected boolean isPreventedFromCloaking()
@@ -1006,38 +962,9 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	}
 	
 	
-	private void endSnooze()
-	{
-		if(burrowTimer == DISABLED)
-		{
-			speedLevel.setLocation(targetSpeedLevel);
-		}
-		else
-		{
-			endInterruptedBorrowProcedure();
-		}
-		
-		if(barrierTeleportTimer != DISABLED)
-		{
-			cloakingDevice.activate();
-			barrierTeleportTimer = CloakingDevice.BOOT_AND_FADE_TIME;
-		}		
-	}
-
-	private void endInterruptedBorrowProcedure()
-	{
-		if(burrowTimer > BORROW_TIME + shootingRate * shotsPerCycle)
-		{
-			burrowTimer = 2 * BORROW_TIME + shootingRate * shotsPerCycle - burrowTimer;
-		}
-		else if(burrowTimer > BORROW_TIME)
-		{
-			burrowTimer = BORROW_TIME;
-		}
-		navigationDevice.flyDown();
-		speedLevel.setLocation(SLOW_VERTICAL_SPEED);
-	}
 	
+
+
 	private void validateTurns()
 	{
 		if(isTouchingBarrier())
@@ -1107,7 +1034,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 					barrier.getMaxY());
 	}
 	
-	private void performXTurnAtBarrier()
+	void performXTurnAtBarrier()
 	{
 		navigationDevice.turnAround();
 		if(callBack <= getCallBackMinimumForTurnAtBarrier())
@@ -1219,17 +1146,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return TURN_FRAME.getMaxY();
 	}
 	
-	private void performVerticalTurn()
+	protected void performVerticalTurn()
 	{
 		navigationDevice.switchDirectionY();
 		if(canSinusMove)
 		{
 			setSpeedLevelY(1.0);
-		}
-		if(getModel() == EnemyModelType.BARRIER)
-		{
-			if(isFlyingUp()){Audio.play(Audio.landing);}
-			snooze(false);
 		}
 	}
 	
@@ -1255,17 +1177,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		disableSiteEffects();
 				
 		if(hasHPsLeft())
-		{			
-			Audio.play(Audio.stun);
-			if(getModel() == EnemyModelType.BARRIER){snooze(true);}
-			else if(teleportTimer == READY ){teleport();}
-			else if(isAbleToBeSlowedDownByEmp())
-			{
-				empSlowedTimer = getEmpSlowTime();
-			}
-			// TODO übergeben von null ... Implementierung verbessern
-			reactToHit(null);
-			
+		{
+			performEmpWaveSurvivorActions();
 			Explosion.start(gameRessourceProvider.getExplosions(), pegasus,
 							getCenterX(),
 							getCenterY(), STUNNING, false);
@@ -1278,6 +1191,21 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			dieFromEmpWave(gameRessourceProvider);
 		}
     }
+	
+	protected void performEmpWaveSurvivorActions()
+	{
+		Audio.play(Audio.stun);
+		if(teleportTimer == READY )
+		{
+			teleport();
+		}
+		else if(isAbleToBeSlowedDownByEmp())
+		{
+			empSlowedTimer = getEmpSlowTime();
+		}
+		// TODO übergeben von null ... Implementierung verbessern
+		reactToHit(null);
+	}
 	
 	protected boolean isAbleToBeSlowedDownByEmp()
 	{
@@ -1444,45 +1372,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return DEFAULT_KAMIKAZE_SPEED_UP_X;
 	}
 	
-	private void evaluateBorrowProcedure()
-	{		
-		if(burrowTimer > 0){burrowTimer--;}
-		if(burrowTimer == BORROW_TIME + shootingRate * shotsPerCycle)
-		{					
-			barrierShootTimer = shootingRate * shotsPerCycle;
-			speedLevel.setLocation(ZERO_SPEED);
-		}
-		else if(burrowTimer == BORROW_TIME)
-		{
-			barrierShootTimer = DISABLED;
-			speedLevel.setLocation(SLOW_VERTICAL_SPEED);
-			navigationDevice.flyDown();
-		}
-		else if(burrowTimer == 1)
-		{
-			speedLevel.setLocation(ZERO_SPEED);
-		}
-		else if(burrowTimer == READY
-				&&( (type != EnemyType.PROTECTOR
-				     && Calculations.tossUp(0.004f))
-				    || 
-				    (type == EnemyType.PROTECTOR
-				     && (getHelicopter().getX() > boss.getX() - 225) )))
-		{			
-			burrowTimer = 2 * BORROW_TIME
-								+ shootingRate * shotsPerCycle
-								+ (getY() == GROUND_Y
-									? EnemyType.PROTECTOR.getWidth()/8
-									: 0)
-								- 1;
-			speedLevel.setLocation(SLOW_VERTICAL_SPEED);
-			navigationDevice.flyUp();
-		}	
-	}
+	
 	
 	private void evaluateShooting(GameRessourceProvider gameRessourceProvider)
 	{
-		if(	isReadyToShoot()
+		// TODO if-Bedingung in mehrere(!) Methoden auslagern
+		if(	hasCanonReadyToFire()
 			&& !isEmpSlowed()
 			&& Calculations.tossUp(0.1f)
 			&& getX() + getWidth() > 0
@@ -1490,16 +1385,16 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			&& ((isFlyingLeft()
 				 && gameRessourceProvider.getHelicopter().intersects(
 					getX() + Integer.MIN_VALUE/2f,
-					getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth()/2) - 15,
+					getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth()/2) - FIELD_OF_FIRE_TOLERANCE_Y,
 					Integer.MAX_VALUE/2f,
-					EnemyMissile.DIAMETER+30))
+					EnemyMissile.DIAMETER + 2*FIELD_OF_FIRE_TOLERANCE_Y))
 				||
 				((isFlyingRight()
 				  && gameRessourceProvider.getHelicopter().intersects(
-					getX(),
-					getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth()/2) - 15,
+					getX() + 0,
+					getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth()/2) - FIELD_OF_FIRE_TOLERANCE_Y,
 					Integer.MAX_VALUE/2f,
-					EnemyMissile.DIAMETER+30)))))
+					EnemyMissile.DIAMETER + 2*FIELD_OF_FIRE_TOLERANCE_Y)))))
 		{
 			shoot(gameRessourceProvider.getEnemyMissiles(),
 						hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
@@ -1515,46 +1410,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return false;
 	}
 
-	private void evaluateBarrierShooting(GameRessourceProvider gameRessourceProvider)
-	{
-		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		if(barrierShootTimer == 0)
-		{
-			barrierShootTimer = shootingCycleLength;
-			if(	shotRotationSpeed == 0
-				&&	  (helicopter.getX()    < getX()         && shootingDirection.getX() > 0)
-					||(helicopter.getMaxX() > getMaxX() && shootingDirection.getX() < 0) )
-			{
-				shootingDirection.setLocation(-shootingDirection.getX(), shootingDirection.getY());
-			}
-		}		
-		if( barrierShootTimer <= shotsPerCycle * shootingRate
-			&& getX() + getWidth() > 0
-			&& barrierShootTimer %shootingRate == 0)
-		{					
-			if(shotRotationSpeed != 0)
-			{
-				float tempValue = 0.0005f * shotRotationSpeed * lifetime;
-				shootingDirection.setLocation(
-						Math.sin(tempValue),
-						Math.cos(tempValue) );
-			}
-			if(burrowTimer != DISABLED || barrierTeleportTimer != DISABLED)
-			{
-				// Schussrichtung wird auf Helicopter ausgerichtet
-				shootingDirection.setLocation(
-						( (helicopter.getX() + (helicopter.isMovingLeft ? Helicopter.FOCAL_PNT_X_LEFT : Helicopter.FOCAL_PNT_X_RIGHT))
-							  - (getX() +       getWidth()/2)),
-						  (helicopter.getY() + Helicopter.FOCAL_PNT_Y_EXP)
-						  	  - (getY() +       getHeight()/2)) ;
-				float distance = (float) Calculations.ZERO_POINT.distance(shootingDirection);
-				shootingDirection.setLocation(shootingDirection.getX()/distance,
-													shootingDirection.getY()/distance);
-			}
-			shoot(gameRessourceProvider.getEnemyMissiles(), shotType, shotSpeed);
-		}				
-		barrierShootTimer--;
-	}
+	
 	
 	public void shoot(Map<CollectionSubgroupType, Queue<EnemyMissile>> enemyMissiles, EnemyMissileType missileType, double missileSpeed)
     {
@@ -1567,37 +1423,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		Audio.play(Audio.launch3);
     }
 	
-	private void evaluateBarrierTeleport()
-	{
-		if(barrierTeleportTimer == CloakingDevice.BOOT_AND_FADE_TIME + shootingRate * shotsPerCycle)
-		{					
-			barrierShootTimer = shootingRate * shotsPerCycle;
-			uncloakAndDisableCloakingDevice();
-		}
-		else if(barrierTeleportTimer == CloakingDevice.BOOT_AND_FADE_TIME)
-		{
-			barrierShootTimer = DISABLED;
-			cloakingDevice.activate();
-			if(getMaxX() > 0){Audio.play(Audio.cloak);}
-		}	
-		else if(barrierTeleportTimer == READY && Calculations.tossUp(0.004f))
-		{
-			startBarrierUncloaking();
-		}
-		
-		if(barrierTeleportTimer != READY)
-		{
-			barrierTeleportTimer--;
-			if(barrierTeleportTimer == READY)
-			{				
-				if(callBack > 0)
-				{					
-					placeCloakingBarrierAtPausePosition();
-				}
-				else{isMarkedForRemoval = true;}
-			}
-		}		
-	}
+	
 	
 	protected void startBarrierUncloaking()
 	{
@@ -1699,36 +1525,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			navigationDevice.turnLeft();
 		}		
 	}
-
-	private void snooze(boolean inactivation)
-	{
-		snoozeTimer
-			= Math.max(	snoozeTimer,
-						SNOOZE_TIME 
-						+ (inactivation
-							? INACTIVATION_TIME
-							  + Calculations.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
-							:0));
-		speedLevel.setLocation(ZERO_SPEED);
-		if(targetSpeedLevel.getY() != 0
-		   && getMaxY() + 1.5 * speed.getY() > GROUND_Y)
-		{
-			setY(GROUND_Y - getHeight());
-		}		
-		if(burrowTimer != DISABLED)
-		{						
-			barrierShootTimer = DISABLED;
-		}		
-		else if(cloakingDevice.isEnabled())
-		{
-			barrierTeleportTimer = DISABLED;
-			barrierShootTimer = DISABLED;
-		}
-		else if(barrierShootTimer != DISABLED)
-		{
-			barrierShootTimer = snoozeTimer - SNOOZE_TIME + shootingCycleLength;
-		}
-	}
 	
 	private void move()
 	{			
@@ -1738,23 +1534,19 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 					getX()
 						+ navigationDevice.getDirectionX() * speed.getX()
 						- (Scenery.backgroundMoves ? BG_SPEED : 0),
-					Math.max( getModel() == EnemyModelType.BARRIER ? 0 : Integer.MIN_VALUE,
-							type == EnemyType.ROCK ? getY() :
-								Math.min( canBePositionedBelowGround()
-											? Integer.MAX_VALUE
-											: GROUND_Y - getHeight(),
-										getY()
-											+ navigationDevice.getDirectionY()
-											* speed.getY())));
+					Math.max( 	getModel() == EnemyModelType.BARRIER ? 0 : Integer.MIN_VALUE,
+								type == EnemyType.ROCK
+									? getY()
+									: Math.min( canBePositionedBelowGround()
+													? Integer.MAX_VALUE
+													: GROUND_Y - getHeight(),
+												getY() + navigationDevice.getDirectionY() * speed.getY())));
 		}
 	}
 
-	private boolean canBePositionedBelowGround()
+	protected boolean canBePositionedBelowGround()
 	{		
-		return !(getModel() == EnemyModelType.BARRIER
-			     && burrowTimer == DISABLED)
-			   || isDestroyed
-			   || type == EnemyType.ROCK;
+		return isDestroyed;
 	}
 
 	private void calculateSpeedDead()
@@ -1776,16 +1568,18 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if(isStunned())
 		{
 			adjustSpeedTo(getHelicopter().missileDrive);
-			if(stunningTimer == 1)
+			if(stunningTimer == TIMER_ALMOST_OVER)
 			{
-				if(getModel() == EnemyModelType.BARRIER){snooze(true);}
-				else{isRecoveringSpeed = true;}
+				recoverFromBeingStunned();
 			}
 		}
-		if(getModel() != EnemyModelType.BARRIER){evaluateSpeedBoost();}
-		if(isRecoveringSpeed){recoverSpeed();}
+		evaluateSpeedBoost();
+		if(isRecoveringSpeed)
+		{
+			recoverSpeed();
+		}
 		
-		speed.setLocation(speedLevel);			//d
+		speed.setLocation(speedLevel);
 		
 		if(isEmpSlowed())
 		{
@@ -1803,6 +1597,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{
 			adjustSpeedToBarrier();
 		}
+	}
+	
+	protected void recoverFromBeingStunned()
+	{
+		isRecoveringSpeed = true;
 	}
 	
 	private boolean isEmpSlowed()
@@ -1827,45 +1626,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}
 	}	
 	
-	private void evaluateSpeedBoost()
-	{		
-		int bottomTurnLine = type == EnemyType.KABOOM
-								  ? KABOOM_Y_TURN_LINE 
-								  : (int)TURN_FRAME.getMaxY();
-									
-		if(isSpeedBoosted)
-		{
-			if(    getMinY() > TURN_FRAME.getMinY()
-			    && getMaxY() < bottomTurnLine)
-			{
-				speedLevel.setLocation(targetSpeedLevel);
-				isSpeedBoosted = false;
-			}						
-		}
-		else if(stoppingBarrier != null
-				&&(     getMinY() < TURN_FRAME.getMinY()
-				    || (getMaxY() > bottomTurnLine)))
-		{
-			isSpeedBoosted = true;
-			speedLevel.setLocation(Math.max(speedLevel.getX(), targetSpeedLevel.getX() + 7.5),
-								   Math.max(speedLevel.getY(), 5.5));
-			
-			// Wenn Gegner droht am Boden durch Barrier zerdrückt zu werden, dann nimmt Gegner den kürzesten Weg.
-			if(mustAvoidGroundCollision(bottomTurnLine))
-			{
-				performXTurnAtBarrier();
-			}
-		}
-	}	
-
-	private boolean mustAvoidGroundCollision(int yTurnLine)
-	{		
-		return getMaxY() > yTurnLine
-				   &&(   (isFlyingRight()
-				   			&& getCenterX() < stoppingBarrier.getCenterX())
-					   ||(isFlyingLeft()
-					   		&& getCenterX() > stoppingBarrier.getCenterX()));
-	}
+	protected void evaluateSpeedBoost(){}
+	
 	
 	private void recoverSpeed()
 	{
@@ -1953,7 +1715,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private void updateDead(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
 	{				
 		if(collisionDamageTimer > 0){collisionDamageTimer--;}
-		if(collisionAudioTimer > 0){collisionAudioTimer--;}
+		if(collisionTimer > 0){
+			collisionTimer--;}
 		if( !hasCrashed
 		    && getMaxY() + speed.getY() >= crashPositionY)
 		{
@@ -2008,12 +1771,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private void collision(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		boolean playCollisionSound = collisionAudioTimer == READY;
+		boolean playCollisionSound = collisionTimer == READY;
 		helicopter.beAffectedByCollisionWith(this, gameRessourceProvider, playCollisionSound);
 				
 		if(playCollisionSound)
 		{
-			collisionAudioTimer = Helicopter.NO_COLLISION_DAMAGE_TIME;
+			collisionTimer = Helicopter.NO_COLLISION_DAMAGE_TIME;
 		}		
 		collisionDamageTimer = Helicopter.NO_COLLISION_DAMAGE_TIME;
 			
@@ -2051,28 +1814,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if(	teleportTimer == READY){teleport();}
 		else if(canTakeCollisionDamage())
 		{
-			takeDamage((int)(
-				helicopter.currentBaseFirepower
-				* (helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
-					? TELEPORT_DAMAGE_FACTOR 
-					: RADIATION_DAMAGE_FACTOR)));				
-							
-			if(getModel() == EnemyModelType.BARRIER)
-			{
-				if(	helicopter.hasTripleDamage()
-					&&  Calculations.tossUp(
-							deactivationProbability
-							*(helicopter.bonusKillsTimer
-								> NICE_CATCH_TIME
-								  - TELEPORT_KILL_TIME ? 2 : 1)))
-				{
-					hitPoints = 0;
-				}
-				else if(Calculations.tossUp(deactivationProbability *(helicopter.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME ? 4 : 2)))
-				{
-					snooze(true);
-				}
-			}
+			takeCollisionDamage(helicopter);
 			if(hasHPsLeft())
 			{
 				// TODO übergeben von null ... Implementierung verbessern
@@ -2085,14 +1827,20 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			}
 		}		
 	}
-
+	
+	protected void takeCollisionDamage(Helicopter helicopter)
+	{
+		int damage = helicopter.calculateCollisionDamage();
+		takeDamage(damage);
+	}
+	
 	private boolean canTakeCollisionDamage()
 	{		
 		return 	   !isDestroyed
 				&& !isExplodingOnCollisions()
 				&& !isInvincible()
 				&& !(barrierTeleportTimer != DISABLED && barrierShootTimer == DISABLED)
-				&& collisionAudioTimer == READY;
+				&& collisionTimer == READY;
 	}
 	
 	public float collisionDamage()
@@ -2120,7 +1868,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		gameRessourceProvider.getGameStatisticsCalculator()
 							 .incrementHitCounter();
-				
+		// TODO Audio.playExplosionSound(boolean isGreatExplosion)
 		if(missile.hasGreatExplosivePower())
 		{
 			Audio.play(Audio.explosion4);
@@ -2128,37 +1876,17 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		else{Audio.play(Audio.explosion2);}
 		missile.hits.put(hashCode(), this);
 		takeDamage(missile.dmg);
-		if(getModel() == EnemyModelType.BARRIER)
-		{
-			if(missile.hasGreatExplosivePower()
-				&& Calculations.tossUp(	0.5f
-									* deactivationProbability
-									* (missile.hasGreatExplosivePower() ? 2 : 1)))
-			{
-				hitPoints = 0;
-			}
-			else if(isToBeInactivatedBy(missile))
-			{
-				snooze(true);
-			}
-		}		
 		if(areStunningRequirementsMet(missile))
 		{
 			stun(gameRessourceProvider, missile);
 		}
 	}
 	
-	private boolean isToBeInactivatedBy(Missile missile)
-	{
-		return Calculations.tossUp(deactivationProbability
-									  * missile.typeOfExplosion.getBarrierDeactivationProbabilityFactor());
-	}
-	
 	private boolean areStunningRequirementsMet(Missile missile)
 	{
 		return missile.typeOfExplosion == STUNNING
-			&& isStunable()
-			&& nonStunableTimer == READY;
+				&& isStunable()
+				&& nonStunableTimer == READY;
 	}
 	
 	private void stun(GameRessourceProvider gameRessourceProvider, Missile missile)
@@ -2525,20 +2253,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		invincibleTimer = 40;
 	}
 	
-	public boolean isStaticallyCharged()
-	{		
-		return staticChargeTimer == READY
-   	 		   && snoozeTimer <= SNOOZE_TIME;
-	}
-	
-	public void startStaticDischarge(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
-	{
-		staticChargeTimer = STATIC_CHARGE_TIME;
-		getHelicopter().receiveStaticCharge(2.5f);
-		Audio.play(Audio.emp);
-		Explosion.start(explosions, getHelicopter(), (int)getCenterX(), (int)getCenterY(), STUNNING, false, this);
-	}
-
 	public boolean isHittable(Missile missile)
 	{		
 		return !isDestroyed
@@ -2566,8 +2280,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 
 	public boolean isInvincible()
 	{		
-		return    invincibleTimer > 0
-			   || shield > 0;
+		return invincibleTimer > 0 || shield > 0;
 	}
 
 	public void evaluatePosAdaption()
@@ -2694,11 +2407,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public int getRotorColor()
 	{
 		return rotorColor;
-	}
-	
-	public int getSnoozeTimer()
-	{
-		return snoozeTimer;
 	}
 	
 	public boolean isShielding()
@@ -2880,5 +2588,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	protected CloakingDevice getCloakingDevice()
 	{
 		return cloakingDevice;
+	}
+	
+	protected double getSpeedY()
+	{
+		return speed.getY();
 	}
 }

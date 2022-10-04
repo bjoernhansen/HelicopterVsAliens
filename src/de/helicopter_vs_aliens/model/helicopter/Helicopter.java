@@ -65,9 +65,9 @@ public abstract class Helicopter extends RectangularGameEntity
 		POWER_UP_FADE_TIME = POWER_UP_DURATION / 4;
 	
 	public static final double
-		FOCAL_PNT_X_LEFT = 39,
-		FOCAL_PNT_X_RIGHT = 83,
-		FOCAL_PNT_Y_EXP = 44,
+        FOCAL_POINT_X_LEFT = 39,
+		FOCAL_POINT_X_RIGHT = 83,
+		FOCAL_POINT_Y_EXP = 44,
 		FOCAL_PNT_Y_POS = 56;
 	
 	static final int
@@ -374,26 +374,23 @@ public abstract class Helicopter extends RectangularGameEntity
 			}
 		}
 		
-		boolean isInTheAir = this.location.getY() != 407d;
-		float lastX = (float) this.location.getX();
+		boolean isInTheAir = location.getY() != 407d;
+		float lastX = (float) location.getX();
 		
 		this.nextLocation.setLocation(nextX, nextY);
 		this.correctAndSetCoordinates();
 		
-		if (EnemyController.currentNumberOfBarriers > 0 && !this.isDamaged)
+		if (EnemyController.currentNumberOfBarriers > 0 && !isDamaged)
 		{
 			for (int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
 			{
 				Enemy enemy = EnemyController.livingBarrier[i];
 				enemy.lastTouchedSite = enemy.touchedSite;
-				if (this.isLocationAdaptionApproved(enemy))
+				if (isLocationAdaptionApproved(enemy))
 				{
-					this.adaptPosTo(enemy);
-					this.correctAndSetCoordinates();
-					if (enemy.isStaticallyCharged())
-					{
-						enemy.startStaticDischarge(gameRessourceProvider.getExplosions());
-					}
+					adaptPosTo(enemy);
+					correctAndSetCoordinates();
+					enemy.performLocationAdaptionAction(gameRessourceProvider);
 				} else
 				{
 					enemy.setUntouched();
@@ -522,8 +519,8 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		setBounds(this.location.getX()
 				- (this.isMovingLeft
-				? FOCAL_PNT_X_LEFT
-				: FOCAL_PNT_X_RIGHT),
+				? FOCAL_POINT_X_LEFT
+				: FOCAL_POINT_X_RIGHT),
 				this.location.getY() - FOCAL_PNT_Y_POS,
 				this.getWidth(),
 				this.getHeight());
@@ -742,7 +739,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	{
 		this.isMovingLeft = false;
 		setBounds(INITIAL_BOUNDS);
-		this.location.setLocation(this.getX() + FOCAL_PNT_X_RIGHT,
+		this.location.setLocation(this.getX() + FOCAL_POINT_X_RIGHT,
 			INITIAL_BOUNDS.y + FOCAL_PNT_Y_POS);
 		this.setPaintBounds();
 	}
@@ -785,9 +782,9 @@ public abstract class Helicopter extends RectangularGameEntity
 				this,
 				(int) (this.getX()
 					+ (this.isMovingLeft
-					? FOCAL_PNT_X_LEFT
-					: FOCAL_PNT_X_RIGHT)),
-				(int) (this.getY() + FOCAL_PNT_Y_EXP),
+					? FOCAL_POINT_X_LEFT
+					: FOCAL_POINT_X_RIGHT)),
+				(int) (this.getY() + FOCAL_POINT_Y_EXP),
 				ORDINARY,
 				false);
 		}
@@ -949,7 +946,7 @@ public abstract class Helicopter extends RectangularGameEntity
             this.slowDown();
 		    if(!this.hasUnlimitedEnergy())
             {
-                float energyConsumption = degree * this.getStaticChargeEnergyDrain();
+                float energyConsumption = degree * getStaticChargeEnergyDrain();
                 this.battery.drain(energyConsumption);
             }
 		}
@@ -987,10 +984,10 @@ public abstract class Helicopter extends RectangularGameEntity
     public void becomesCenterOf(Explosion exp)
 	{
 		exp.ellipse.setFrameFromCenter(
-			this.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
-			this.getY() + FOCAL_PNT_Y_EXP,
-			this.getX() + (this.isMovingLeft ? FOCAL_PNT_X_LEFT : FOCAL_PNT_X_RIGHT),
-			this.getY() + FOCAL_PNT_Y_EXP);
+			this.getX() + (this.isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),
+			this.getY() + FOCAL_POINT_Y_EXP,
+			this.getX() + (this.isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),
+			this.getY() + FOCAL_POINT_Y_EXP);
 	}
  
 	public boolean isOnTheGround()
@@ -1475,5 +1472,10 @@ public abstract class Helicopter extends RectangularGameEntity
 	
 	public void typeSpecificActionOn(Enemy enemy, GameRessourceProvider gameRessourceProvider)
 	{
+	}
+	
+	public int calculateCollisionDamage()
+	{
+		return 0;
 	}
 }

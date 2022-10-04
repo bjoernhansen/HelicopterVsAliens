@@ -29,6 +29,8 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
+	private static final float
+		STUNNING_MISSILE_ENERGY_CONSUMPTION_FACTOR = 1.0f;
 	
 	private final Point2D
 		location = new Point2D.Float(),
@@ -74,16 +76,16 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
     						helicopter,
 							(int)(helicopter.getX()
 									+ (helicopter.isMovingLeft
-										? Helicopter.FOCAL_PNT_X_LEFT
-										: Helicopter.FOCAL_PNT_X_RIGHT)),
-							(int)(helicopter.getY() + Helicopter.FOCAL_PNT_Y_EXP),
+										? Helicopter.FOCAL_POINT_X_LEFT
+										: Helicopter.FOCAL_POINT_X_RIGHT)),
+							(int)(helicopter.getY() + Helicopter.FOCAL_POINT_Y_EXP),
                     ORDINARY,
 							false);
     	}
     	else 
     	{
     		Audio.play(Audio.explosion5);
-    		helicopter.receiveStaticCharge(1.0f);
+    		helicopter.receiveStaticCharge(STUNNING_MISSILE_ENERGY_CONSUMPTION_FACTOR);
     	}
         this.hasHit = true;
     }
@@ -127,8 +129,7 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
     		    		
     		if(enemy.getModel() == TIT)
     		{
-    			this.location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()),
-    									  enemy.getY() );
+    			this.location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()), enemy.getY() );
     		}
 	    	else if(enemy.getModel() == CARGO)
 	    	{

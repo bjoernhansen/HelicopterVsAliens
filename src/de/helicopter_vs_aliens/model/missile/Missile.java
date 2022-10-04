@@ -229,13 +229,13 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 			= (int)(this.getX()
 					+ (this.speed < 0 ? 0 : this.getWidth())
 					+ (this.speed < 0 
-						? 2*e.getWidth()/15
+						? e.getWidth()/7.5
 						: -(e.getModel() == TIT
-							? e.getWidth()/3
-							: 2*e.getWidth()/15)));
+							? e.getWidth()/3.0
+							: e.getWidth()/7.5)));
 		
 		return e.intersectsLine(	intersectLineX,
-									this.getY(),
+									this.getMinY(),
 									intersectLineX,
 									this.getMaxY());
 	}

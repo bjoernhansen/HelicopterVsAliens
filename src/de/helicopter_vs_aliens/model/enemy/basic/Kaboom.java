@@ -1,12 +1,16 @@
 package de.helicopter_vs_aliens.model.enemy.basic;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
 import java.applet.AudioClip;
 
 public class Kaboom extends BasicEnemy
 {
+    private static final int
+        Y_TURN_LINE = GROUND_Y - (int) (EnemyType.KABOOM.getModel().getHeightFactor() * EnemyType.KABOOM.getWidth());
+    
     @Override
     protected boolean canBecomeMiniBoss()
     {
@@ -53,5 +57,11 @@ public class Kaboom extends BasicEnemy
     protected boolean isDetonatingExtraStrong()
     {
         return true;
+    }
+    
+    @Override
+    protected int getBottomTurnLine()
+    {
+        return Y_TURN_LINE;
     }
 }

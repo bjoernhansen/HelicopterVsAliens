@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -28,7 +27,9 @@ public final class Phoenix extends Helicopter
         GOLIATH_COSTS = 6000;
 
     private static final float
-        ENHANCED_RADIATION_PROB	= 0.25f;
+        ENHANCED_RADIATION_PROB	= 0.25f,
+        RADIATION_DAMAGE_FACTOR = 1.5f, // nach Erwerb von Nahkampf-Bestrahlung: Schaden im Verhältnis zum regulären Raketenschaden, den ein Gegner bei Kollisionen mit dem Helikopter erleidet
+        TELEPORT_DAMAGE_FACTOR = 4f;    // wie RADIATION_DAMAGE_FACTOR, aber für Kollisionen unmittelbar nach einem Transportvorgang
     
     private int
         enhancedRadiationTimer;
@@ -130,8 +131,8 @@ public final class Phoenix extends Helicopter
         this.isSearchingForTeleportDestination = true;
         this.priorTeleportLocation.setLocation(
                 this.getX() + (this.isMovingLeft
-                        ? FOCAL_PNT_X_LEFT
-                        : FOCAL_PNT_X_RIGHT),
+                        ? FOCAL_POINT_X_LEFT
+                        : FOCAL_POINT_X_RIGHT),
                 this.getY() + FOCAL_PNT_Y_POS);
     }
 
@@ -312,4 +313,15 @@ public final class Phoenix extends Helicopter
     {
         return hasShortRangeRadiation;
     }
+    
+    @Override
+    public int calculateCollisionDamage()
+    {
+        return (int)(currentBaseFirepower
+                * (this.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
+                    ? TELEPORT_DAMAGE_FACTOR
+                    : RADIATION_DAMAGE_FACTOR));
+    }
+    
+    
 }

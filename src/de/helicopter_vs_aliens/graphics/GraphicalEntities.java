@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 public final class GraphicalEntities
 {
-    private GraphicalEntities() throws Exception
+    private GraphicalEntities()
     {
-        throw new Exception();
+        throw new UnsupportedOperationException();
     }
     
     public static void paintGlowingLine(GraphicsAdapter graphicsAdapter, int x1, int y1, int x2, int y2)
@@ -28,7 +28,7 @@ public final class GraphicalEntities
     
     public static void paintFrame(GraphicsAdapter graphicsAdapter, Rectangle frame, Color filledColor)
     {
-        GraphicalEntities.paintFrame(graphicsAdapter, frame.x, frame.y, frame.width, frame.height, filledColor);
+        paintFrame(graphicsAdapter, frame.x, frame.y, frame.width, frame.height, filledColor);
     }
     
     public static void paintFrame(GraphicsAdapter graphicsAdapter, int left, int top, int width, int height)

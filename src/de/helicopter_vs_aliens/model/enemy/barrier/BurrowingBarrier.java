@@ -1,7 +1,5 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-
 public abstract class BurrowingBarrier extends ArmedBarrier
 {
     @Override
@@ -10,5 +8,12 @@ public abstract class BurrowingBarrier extends ArmedBarrier
         burrowTimer = READY;
     
         super.doTypeSpecificInitialization();
+    }
+    
+    @Override
+    protected boolean canBePositionedBelowGround()
+    {
+        return burrowTimer != DISABLED
+                || super.canBePositionedBelowGround();
     }
 }
