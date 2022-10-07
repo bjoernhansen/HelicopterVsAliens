@@ -71,4 +71,32 @@ public final class GraphicalEntities
         graphicsAdapter.drawLine(left+1, top, left+width-2, top);
         graphicsAdapter.setStroke(new BasicStroke(1));
     }
+    
+    public static void paintBar(GraphicsAdapter graphicsAdapter,
+                                int x, int y,
+                                int width, int height,
+                                float xShiftLeft, float xShiftRight,
+                                float thicknessFactor, float rounding, float dimFactor,
+                                int directionX,
+                                boolean horizontal,
+                                Color inputColor)
+    {
+        graphicsAdapter.setPaint(
+            new GradientPaint(
+                (int) (horizontal ? 0 : x + 0.5f * thicknessFactor * width),
+                (int) (horizontal ?     y + 0.5f * thicknessFactor * height : 0),
+                inputColor,
+                (int) (horizontal ? 0 : x + 1.0f * thicknessFactor * width),
+                (int) (horizontal ?     y + 1.0f * thicknessFactor * height : 0),
+                Colorations.adjustBrightness(inputColor, dimFactor),
+                true));
+        
+        graphicsAdapter.fillRoundRect(
+            (int) (x - (directionX == 1 ? xShiftLeft : xShiftRight) * width),
+            y,
+            (int) (	horizontal ? (1 + xShiftLeft + xShiftRight) * width : thicknessFactor * width),
+            (int) (	horizontal ? thicknessFactor * height : (1 + xShiftLeft + xShiftRight) * height ),
+            (int) (	horizontal ? rounding * width : thicknessFactor * width),
+            (int) (	horizontal ? thicknessFactor * height : rounding * height) );
+    }
 }

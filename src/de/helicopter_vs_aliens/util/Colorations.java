@@ -3,7 +3,6 @@ package de.helicopter_vs_aliens.util;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -20,7 +19,8 @@ public final class Colorations
 		FRAME = 3,
 		NOZZLE = 4,
 		EYES = 5,
-		MAX_VALUE = 255;
+		MAX_VALUE = 255,
+		MAX_OPACITY = MAX_VALUE;
 	
 	 // konstante Dimm-Faktoren
 	public static final float 
@@ -174,24 +174,26 @@ public final class Colorations
         
     public static Color setAlpha(Color color, int alpha)
     {
-    	if(color.getAlpha() == MAX_VALUE && alpha >= MAX_VALUE)
+    	int nextAlpha = getValidAlphaValue(alpha);
+		if(color.getAlpha() == MAX_OPACITY && nextAlpha == MAX_OPACITY)
     	{
     		return color;
     	}
-    	else if(alpha > 0)
-    	{
-    		return new Color( color.getRed(), 
-    						  color.getGreen(),
-    						  color.getBlue(), Math.min(MAX_VALUE, alpha));
-    	}
-		return new Color(color.getRed(), 
-					     color.getGreen(), 
-					     color.getBlue(), 0);
+		return new Color(
+			color.getRed(),
+			color.getGreen(),
+			color.getBlue(),
+			nextAlpha);
     }
+	
+	private static int getValidAlphaValue(int alpha)
+	{
+		return Calculations.constrainToRange(alpha, 0, MAX_OPACITY);
+	}
 	
 	public static Color setOpaque(Color color)
 	{
-		return new Color(color.getRed(), color.getGreen(), color.getBlue(), MAX_VALUE);
+		return new Color(color.getRed(), color.getGreen(), color.getBlue(), MAX_OPACITY);
 	}
     
     public static void calculateVariableGameColors(int counter)
@@ -286,8 +288,7 @@ public final class Colorations
     {
     	return new Color(MAX_VALUE, 192-color.getGreen(), 192-color.getBlue(), color.getAlpha());
     }
-    
-    
+	
     public static Color brightenUp(Color color)
     {
     	float colorMax = Calculations.max(color.getRed(), color.getGreen(), color.getBlue());

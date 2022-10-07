@@ -2,15 +2,17 @@ package de.helicopter_vs_aliens.model.enemy.devices;
 
 import static de.helicopter_vs_aliens.model.enemy.Enemy.DISABLED;
 import static de.helicopter_vs_aliens.model.enemy.Enemy.READY;
+import static de.helicopter_vs_aliens.util.Colorations.MAX_OPACITY;
 
 public class CloakingDevice
 {
     public static final int
         BOOT_AND_FADE_TIME = 135,    // Zeit, die beim Vorgang der Tarnung und Enttarnung vergeht
-        CLOAKED_TIME = 135;         // Zeit, die ein Gegner getarnt bleibt
+        CLOAKED_TIME = 135;          // Zeit, die ein Gegner getarnt bleibt
     
     private static final int
-        ACTIVE = 1;
+        ACTIVE = 1,
+        ALMOST_MAXIMUM_EFFICIENCY_THRESHOLD = 51;
     
     private int
         cloakingTimer = DISABLED;          // reguliert die Tarnung eines Gegners; = DISABLED: Gegner kann sich grundsätzlich nicht tarnen
@@ -37,31 +39,42 @@ public class CloakingDevice
     
     public int getAlpha()
     {
-        if(isNotCompletelyCloakedYet())
+        if(isEnabled() && isNotCompletelyCloakedYet())
         {
-            return 255 - 255*cloakingTimer / BOOT_AND_FADE_TIME;
+            return MAX_OPACITY - MAX_OPACITY*cloakingTimer / BOOT_AND_FADE_TIME;
         }
         else if(isUncloakingInProgress())
         {
-            return 255*(cloakingTimer - CLOAKED_TIME - BOOT_AND_FADE_TIME)/ BOOT_AND_FADE_TIME;
+            return MAX_OPACITY*(cloakingTimer - CLOAKED_TIME - BOOT_AND_FADE_TIME) / BOOT_AND_FADE_TIME;
         }
-        else
-        {
-            return 255;
-        }
+        return MAX_OPACITY;
     }
     
     public void run()
     {
-        cloakingTimer += cloakingSpeed;
+        if(isActive())
+        {
+            cloakingTimer += cloakingSpeed;
+        }
     }
     
-    public boolean isShutDownCompleted()
+    private boolean isNotCompletelyCloakedYet()
     {
-        return cloakingTimer >= CLOAKED_TIME + 2 * BOOT_AND_FADE_TIME;
+        return cloakingTimer <= BOOT_AND_FADE_TIME;
     }
     
-    public boolean hasJustStartedFadingAway()
+    public void setToStartOfCloakedTime()
+    {
+        cloakingTimer = BOOT_AND_FADE_TIME + cloakingSpeed;
+    }
+    
+    public boolean isWorkingAtMaximumEfficiency()
+    {
+        return 	   cloakingTimer >  BOOT_AND_FADE_TIME
+                && cloakingTimer <= BOOT_AND_FADE_TIME + CLOAKED_TIME;
+    }
+    
+    public boolean hasCloakingJustStartedFadingAway()
     {
         return cloakingTimer == BOOT_AND_FADE_TIME + CLOAKED_TIME + cloakingSpeed;
     }
@@ -71,19 +84,14 @@ public class CloakingDevice
         return cloakingTimer > BOOT_AND_FADE_TIME + CLOAKED_TIME && cloakingTimer <= CLOAKED_TIME + 2 * BOOT_AND_FADE_TIME;
     }
     
-    private boolean isNotCompletelyCloakedYet()
+    public boolean isShutDownCompleted()
     {
-        return cloakingTimer <= BOOT_AND_FADE_TIME;
+        return cloakingTimer >= CLOAKED_TIME + 2 * BOOT_AND_FADE_TIME;
     }
     
     public void activate()
     {
         cloakingTimer = ACTIVE;
-    }
-    
-    public void setToStartOfCloakedTime()
-    {
-        cloakingTimer = BOOT_AND_FADE_TIME + cloakingSpeed;
     }
     
     public boolean isReadyToBeUsed()
@@ -106,14 +114,13 @@ public class CloakingDevice
         cloakingTimer = DISABLED;
     }
     
-    public boolean isCompletelyCloaking()
-    {
-        return 	   cloakingTimer > BOOT_AND_FADE_TIME
-                && cloakingTimer <= BOOT_AND_FADE_TIME + CLOAKED_TIME;
-    }
-    
     public void setCloakingSpeed(int cloakingSpeed)
     {
         this.cloakingSpeed = cloakingSpeed;
+    }
+    
+    public boolean isAlmostWorkingAtMaximumEfficiency()
+    {
+        return getAlpha() < ALMOST_MAXIMUM_EFFICIENCY_THRESHOLD;
     }
 }

@@ -28,7 +28,7 @@ public interface GraphicsAdapter
     void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight);
     void fillRect(int x, int y, int width, int height);
     void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle);
-    void drawImage(Image img, int x, int y, ImageObserver observer);
+    void drawImage(Image img, int x, int y);
     void fill(Shape s);
     void setFont(Font font);
     void drawString(String str, int x, int y);

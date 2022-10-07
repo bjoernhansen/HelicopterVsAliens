@@ -1,7 +1,9 @@
 package de.helicopter_vs_aliens.graphics.painter.enemy;
 
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.boss.Healer;
 
 import java.awt.BasicStroke;
@@ -10,30 +12,26 @@ import java.awt.Color;
 public class HealerPainter extends CargoPainter<Healer>
 {
     @Override
-    void paintVessel(GraphicsAdapter graphicsAdapter, int offsetX, int offsetY,
-                     int directionX, Color color, boolean getarnt,
-                     boolean imagePaint,
-                     Color mainColorLight,
-                     Color mainColorDark,
-                     Color cannonColor,
-                     Color inactiveNozzleColor)
+    protected void paintEnemy(GraphicsAdapter graphicsAdapter,
+                              int directionX,
+                              boolean isCompletelyCloakedImagePaint,
+                              boolean isImagePaint,
+                              int offsetX, int offsetY,
+                              Color mainColorLight,
+                              Color mainColorDark,
+                              Color barColor,
+                              Color inactiveNozzleColor)
     {
-        super.paintVessel(  graphicsAdapter, offsetX, offsetY,
-                            directionX, color, getarnt,
-                            imagePaint,
-                            mainColorLight,
-                            mainColorDark,
-                            cannonColor,
-                            inactiveNozzleColor);
-        
+        super.paintEnemy(graphicsAdapter, directionX, isCompletelyCloakedImagePaint, isImagePaint, offsetX, offsetY, mainColorLight, mainColorDark, barColor, inactiveNozzleColor);
+    
         // das rote Kreuz
         Enemy enemy = getEnemy();
         paintRedCross(  graphicsAdapter,
-                        (int) (offsetX + (directionX == 1
-                                            ? 0.7f * enemy.getPaintBounds().width
-                                            : (1 - 0.7f - 0.18f) * enemy.getPaintBounds().width)),
-                        (int) (offsetY + 0.6f * enemy.getPaintBounds().height),
-                        (int) (0.18f * enemy.getPaintBounds().width));
+            (int) (offsetX + (directionX == 1
+                ? 0.7f * enemy.getPaintBounds().width
+                : (1 - 0.7f - 0.18f) * enemy.getPaintBounds().width)),
+            (int) (offsetY + 0.6f * enemy.getPaintBounds().height),
+            (int) (0.18f * enemy.getPaintBounds().width));
     }
     
     private static void paintRedCross(GraphicsAdapter graphicsAdapter, int x, int y, int height)

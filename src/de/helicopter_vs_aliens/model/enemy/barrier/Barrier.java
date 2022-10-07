@@ -7,6 +7,7 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -313,7 +314,7 @@ public abstract class Barrier extends Enemy
     @Override
     public boolean canCollide()
     {
-        return alpha == 255 && burrowTimer != 0 && hasUnresolvedIntersection;
+        return getAlpha() == 255 && burrowTimer != 0 && hasUnresolvedIntersection;
     }
     
     @Override
@@ -465,6 +466,12 @@ public abstract class Barrier extends Enemy
     public int getSnoozeTimer()
     {
         return snoozeTimer;
+    }
+    
+    @Override
+    protected boolean hasDeadlyGroundContact()
+    {
+        return false;
     }
 }
 

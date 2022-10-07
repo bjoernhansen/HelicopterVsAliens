@@ -107,9 +107,9 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void drawImage(Image img, int x, int y, ImageObserver observer)
+    public void drawImage(Image img, int x, int y)
     {
-        graphics.drawImage(img, x, y, observer);
+        graphics.drawImage(img, x, y, null);
     }
     
     @Override

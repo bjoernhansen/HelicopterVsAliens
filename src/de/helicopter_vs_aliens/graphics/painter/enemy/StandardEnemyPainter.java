@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.enemy;
 
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
+import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -11,6 +12,9 @@ import java.awt.GradientPaint;
 
 public abstract class StandardEnemyPainter <T extends StandardEnemy> extends EnemyPainter<T>
 {
+    private static final boolean
+        SHOW_RED_FRAME = false;
+    
     GradientPaint
         gradientColor;
         
@@ -27,8 +31,8 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
         int y = (int) (   getEnemy().getPaintBounds().y
                         + getEnemy().getPaintBounds().height *getCockpitWindowHeightFactor());
         
-        Color color = getEnemy().alpha != 255
-                        ? Colorations.setAlpha(Colorations.variableRed, getEnemy().alpha)
+        Color color = getEnemy().isCloakingDeviceActive()
+                        ? Colorations.setAlpha(Colorations.variableRed, getEnemy().getAlpha())
                         : Colorations.variableRed;
                 
         paintCockpitWindow(
@@ -40,23 +44,14 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
             false);
     }
     
-    protected void paintCockpitWindow(GraphicsAdapter graphicsAdapter, int x, int y, Color color, int directionX, boolean getarnt)
-    {
-        setWindowColor(graphicsAdapter, color, getarnt);
-    }
+    protected abstract void paintCockpitWindow(GraphicsAdapter graphicsAdapter, int x, int y, Color color, int directionX, boolean getarnt);
     
-    private void setWindowColor(GraphicsAdapter graphicsAdapter, Color color, boolean getarnt)
+    
+    protected void setWindowColor(GraphicsAdapter graphicsAdapter, Color color, boolean getarnt)
     {
-        Enemy enemy = getEnemy();
         if(color == null && !getarnt)
         {
-            graphicsAdapter.setColor(enemy.isLivingBoss()
-                ? (enemy.alpha == 255
-                ? Colorations.variableRed
-                : Colorations.setAlpha(Colorations.variableRed, enemy.alpha))
-                : (enemy.alpha == 255
-                ? Colorations.windowBlue
-                : Colorations.setAlpha(Colorations.windowBlue, enemy.alpha)));
+            graphicsAdapter.setColor(getWindowColor());
         }
         else
         {
@@ -64,35 +59,18 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
         }
     }
     
-    void paintVessel(GraphicsAdapter graphicsAdapter, int offsetX, int offsetY,
-                             int directionX, Color color, boolean getarnt,
-                             boolean imagePaint,
-                             Color mainColorLight,
-                             Color mainColorDark,
-                             Color cannonColor,
-                             Color inactiveNozzleColor)
+    private Color getWindowColor()
     {
-        Enemy enemy = getEnemy();
-        paintBackgroundComponents(graphicsAdapter, offsetX, offsetY, directionX, mainColorLight, cannonColor, enemy);
-        paintExhaustPipe(graphicsAdapter, offsetX, offsetY, directionX, mainColorDark, inactiveNozzleColor);
+        Color baseColor = getEnemy().isIntactBoss()
+                            ? Colorations.variableRed
+                            : Colorations.windowBlue;
         
-        if(Color.red.equals(color) || !enemy.isLivingBoss())
-        {
-            paintCockpitWindow(
-                graphicsAdapter,
-                offsetX,
-                (int)(offsetY + enemy.getPaintBounds().height * getCockpitWindowHeightFactor()),
-                Color.red.equals(color) ? Colorations.cloakedBossEye : null,
-                directionX,
-                getarnt && !imagePaint);
-        }
-        
-        if(SHOW_RED_FRAME){
-            graphicsAdapter.setColor(Color.red);
-            graphicsAdapter.drawRect(offsetX, offsetY, (int)(enemy.getWidth() - 1), (int)(enemy.getHeight() - 1));
-        }
+        return getEnemy().isCloakingDeviceActive()
+                ? Colorations.setAlpha(baseColor, getEnemy().getAlpha())
+                : baseColor;
     }
     
+    // TODO Name der Methode passend?
     protected void paintBackgroundComponents(GraphicsAdapter graphicsAdapter, int offsetX, int offsetY, int directionX,
                                              Color mainColorLight, Color cannonColor, Enemy enemy)
     {
@@ -103,13 +81,10 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
     protected abstract float getCockpitWindowHeightFactor();
     
     // Malen des Rumpfes
-    protected void paintAirframe(GraphicsAdapter graphicsAdapter, Color mainColorLight,
-                               int offsetX, int offsetY, int directionX)
-    {
-        setAirframeColor(graphicsAdapter, offsetY, mainColorLight);
-    }
+    protected abstract void paintAirframe(GraphicsAdapter graphicsAdapter, Color mainColorLight,
+                                          int offsetX, int offsetY, int directionX);
     
-    private void setAirframeColor(GraphicsAdapter graphicsAdapter, int offsetY,
+    protected void setAirframeColor(GraphicsAdapter graphicsAdapter, int offsetY,
                                   Color mainColorLight)
     {
         Enemy enemy = getEnemy();
@@ -129,24 +104,33 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
     
     @Override
     protected void paintEnemy(GraphicsAdapter graphicsAdapter,
-                              T enemy,
                               int directionX,
-                              Color color,
+                              boolean isCompletelyCloakedImagePaint,
                               boolean isImagePaint,
                               int offsetX, int offsetY,
-                              Color mainColorLight, Color mainColorDark, Color barColor, Color inactiveNozzleColor)
+                              Color mainColorLight,
+                              Color mainColorDark,
+                              Color barColor,
+                              Color inactiveNozzleColor)
     {
-        paintVessel(	graphicsAdapter,
-                        offsetX,
-                        offsetY,
-                        directionX,
-                        color,
-                        enemy.isCloaked(),
-                        isImagePaint,
-                        mainColorLight,
-                        mainColorDark,
-                        barColor,
-                        inactiveNozzleColor);
+        paintBackgroundComponents(graphicsAdapter, offsetX, offsetY, directionX, mainColorLight, barColor, getEnemy());
+        paintExhaustPipe(graphicsAdapter, offsetX, offsetY, directionX, mainColorDark, inactiveNozzleColor);
+    
+        if( isCompletelyCloakedImagePaint || !getEnemy().hasGlowingEyes() || getEnemy().isDestroyed())
+        {
+            paintCockpitWindow(
+                graphicsAdapter,
+                offsetX,
+                (int)(offsetY + getEnemy().getPaintBounds().height * getCockpitWindowHeightFactor()),
+                isCompletelyCloakedImagePaint ? Colorations.cloakedBossEye : null,
+                directionX,
+                getEnemy().isCompletelyCloaked() && !isImagePaint);
+        }
+    
+        if(SHOW_RED_FRAME){
+            graphicsAdapter.setColor(Color.red);
+            graphicsAdapter.drawRect(offsetX, offsetY, (int)(getEnemy().getWidth() - 1), (int)(getEnemy().getHeight() - 1));
+        }
     }
     
     void paintEngine(GraphicsAdapter graphicsAdapter,
@@ -158,7 +142,7 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
     {
         if(color2 != null)
         {
-            paintPipe(graphicsAdapter, x, y, width, height, xShift, 				  yShift, directionX, color2, false);
+            paintPipe(graphicsAdapter, x, y, width, height, xShift, yShift, directionX, color2, false);
         }
         paintPipe(graphicsAdapter, x, y, 0.05f, height, xShift + width - 0.05f, yShift, directionX, color4, true);
     }
@@ -187,5 +171,43 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
             (int) (		height  			   	* getEnemy().getPaintBounds().height),
             (int) ((isExhaust ? 0f : height/2) * getEnemy().getPaintBounds().width),
             (int) ((isExhaust ? 0f : height  ) * getEnemy().getPaintBounds().height)  );
+    }
+    
+    @Override
+    protected void paintAnimatedElements(GraphicsAdapter graphicsAdapter)
+    {
+        super.paintAnimatedElements(graphicsAdapter);
+    
+        // blinking enemy cannon
+        if(hasBlinkingCannon())
+        {
+            this.paintCannon(
+                graphicsAdapter,
+                getEnemy().getPaintBounds().x, getEnemy().getPaintBounds().y,
+                getEnemy().getNegativeDirectionX(),
+                getBlinkingCannonColor());
+        }
+    }
+    
+    private Color getBlinkingCannonColor()
+    {
+        return getEnemy().isCloakingDeviceActive()
+                ? Colorations.setAlpha(Colorations.variableGreen, getEnemy().getAlpha())
+                : Colorations.variableGreen;
+    }
+    
+    private boolean hasBlinkingCannon()
+    {
+        return getEnemy().isIntact() && qualifiesForBlinkingCannon();
+    }
+    
+    private boolean qualifiesForBlinkingCannon()
+    {
+        return getEnemy().getShootTimer() > 0 || generatesEnergieBeam();
+    }
+    
+    private boolean generatesEnergieBeam()
+    {
+        return getEnemy().getTractor() == AbilityStatusType.ACTIVE || getEnemy().isShielding();
     }
 }

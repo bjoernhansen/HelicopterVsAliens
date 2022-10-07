@@ -298,7 +298,7 @@ public class EnemyController
         for(Iterator<Enemy> iterator = gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
         {
             Enemy enemy = iterator.next();
-            if(!enemy.isDestroyed() && !enemy.isMarkedForRemoval)
+            if(enemy.isIntact() && !enemy.isMarkedForRemoval)
             {
                 enemy.update(gameRessourceProvider);
             }
@@ -324,7 +324,7 @@ public class EnemyController
         for(Enemy enemy  : enemies.get(CollectionSubgroupType.ACTIVE))
         {
             if (enemy.getModel() == EnemyModelType.BARRIER
-                && !enemy.isDestroyed()
+                && enemy.isIntact()
                 && !enemy.isMarkedForRemoval)
             {
                 livingBarrier[currentNumberOfBarriers] = enemy;

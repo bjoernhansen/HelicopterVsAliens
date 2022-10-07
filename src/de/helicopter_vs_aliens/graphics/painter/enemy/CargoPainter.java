@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.enemy;
 
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
@@ -18,8 +19,7 @@ public class CargoPainter <T extends StandardEnemy> extends StandardEnemyPainter
     protected void paintAirframe(GraphicsAdapter graphicsAdapter, Color mainColorLight,
                                  int offsetX, int offsetY, int directionX)
     {
-        super.paintAirframe(graphicsAdapter, mainColorLight, offsetX, offsetY, directionX);
-        
+        setAirframeColor(graphicsAdapter, offsetY, mainColorLight);
         Enemy enemy = getEnemy();
         graphicsAdapter.fillOval(
             (int)(offsetX + 0.02f * enemy.getPaintBounds().width),
@@ -81,7 +81,7 @@ public class CargoPainter <T extends StandardEnemy> extends StandardEnemyPainter
     @Override
     protected void paintCockpitWindow(GraphicsAdapter graphicsAdapter, int x, int y, Color color, int directionX, boolean getarnt)
     {
-        super.paintCockpitWindow(graphicsAdapter, x, y, color, directionX, getarnt);
+        setWindowColor(graphicsAdapter, color, getarnt);
         
         Enemy enemy = getEnemy();
         graphicsAdapter.fillArc(
@@ -96,20 +96,22 @@ public class CargoPainter <T extends StandardEnemy> extends StandardEnemyPainter
     @Override
     protected void paintCannon(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color inputColor)
     {
-        paintBar(
+        GraphicalEntities.paintBar(
             graphicsAdapter,
             x,
             (int) (y + 0.48f * getEnemy().getPaintBounds().height),
             getEnemy().getPaintBounds().width,
             getEnemy().getPaintBounds().height,
             0, 0, 0.1f, 0.04f, 0.6f,
-            directionX, true, inputColor);
+            directionX,
+            true,
+            inputColor);
     }
     
     @Override
-    protected void paintExhaustPipe(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color color2, Color color4)
+    protected void paintExhaustPipe(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color mainColor, Color nozzleColor)
     {
-        paintEngine(graphicsAdapter, x, y, 0.45f, 0.17f, 0.45f, 0.22f, directionX, color2, color4);
-        paintEngine(graphicsAdapter, x, y, 0.45f, 0.17f, 0.25f, 0.70f, directionX, color2, color4);
+        paintEngine(graphicsAdapter, x, y, 0.45f, 0.17f, 0.45f, 0.22f, directionX, mainColor, nozzleColor);
+        paintEngine(graphicsAdapter, x, y, 0.45f, 0.17f, 0.25f, 0.70f, directionX, mainColor, nozzleColor);
     }
 }

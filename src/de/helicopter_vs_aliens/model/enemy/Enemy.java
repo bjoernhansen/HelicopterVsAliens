@@ -61,9 +61,15 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public static final int TIMER_ALMOST_OVER = 1;
 	public static final float STUNNING_BARRIER_ENERGY_CONSUMPTION_FACTOR = 2.5f;
 	
-	public boolean isCloaked()
+	
+	public boolean isCompletelyCloaked()
 	{
-		return cloakingDevice.isCompletelyCloaking();
+		return cloakingDevice.isWorkingAtMaximumEfficiency();
+	}
+	
+	public boolean isCloakingDeviceActive()
+	{
+		return cloakingDevice.isActive();
 	}
 	
 	protected NavigationDevice getNavigationDevice()
@@ -76,7 +82,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return navigationDevice.isFlyingLeft();
 	}
 	
-	protected boolean isFlyingRight()
+	public boolean isFlyingRight()
 	{
 		return navigationDevice.isFlyingRight();
 	}
@@ -103,6 +109,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public void performLocationAdaptionAction(GameRessourceProvider gameRessourceProvider)
 	{
+	}
+	
+	public boolean isAlmostCloaked()
+	{
+		return cloakingDevice.isAlmostWorkingAtMaximumEfficiency();
 	}
 	
 	public static class FinalEnemyOperator
@@ -209,6 +220,9 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public static final int READY = 0;
 	
+	private static final int
+		MAX_IMAGE_COUNT = 4;
+	
 	public static final Point2D
 		ZERO_SPEED = new Point2D.Float(0, 0);
 	
@@ -230,10 +244,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	// für die Tarnung nötige Variablen
     public static final float[]
     	scales = { 1f, 1f, 1f, RADAR_DETECTABILITY},
-    	offsets = new float[4];	
+    	offsets = new float[4];
 	
     private static final RescaleOp
-		ROP_CLOAKED = new RescaleOp(scales, offsets, null);
+		CLOAKED_ENEMY_RESCALE_OPERATOR = new RescaleOp(scales, offsets, null);
 	
 	
 	public static final
@@ -248,7 +262,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		invincibleTimer,				// reguliert die Zeit, die ein Gegner unverwundbar ist
 		teleportTimer,					// Zeit [frames], bis der Gegner sich erneut teleportieren kann
 		shield,							// nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
-		alpha,
 		burrowTimer,
 		untouchedCounter,
 		stunningTimer,
@@ -281,7 +294,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private int
 		hitPoints;						// aktuelle HitPoints
-	
+		
 	private int
 		lifetime;                // Anzahl der Frames seit Erstellung des Gegners; und vergangene Zeit seit Erstellung, Zeit
 	private int
@@ -342,7 +355,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
         protected boolean canLoop;                // = true: Gegner fliegt Loopings
         protected boolean canChaosSpeedup;        // erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
      
-	private boolean isDestroyed;            // = true: Gegner wurde vernichtet
+		private boolean isDestroyed;            // = true: Gegner wurde vernichtet
         protected boolean hasHeightSet;            // = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
         private boolean hasCrashed;            // = true: Gegner ist abgestürzt
         private boolean isEmpShocked;            // = true: Gegner steht unter EMP-Schock --> ist verlangsamt
@@ -372,7 +385,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		navigationDevice = new NavigationDevice();
 	
 	private final BufferedImage []
-		image = new BufferedImage[4];
+		image = new BufferedImage[MAX_IMAGE_COUNT];
 		
 	protected final Point2D
 		targetSpeedLevel = new Point2D.Float();        // Anfangsgeschwindigkeit
@@ -395,8 +408,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		callBack = 0;
 		shield = 0;
 		operator = null;
-		alpha = 255;
-		
 		isDestroyed = false;
 		isMarkedForRemoval = false;
 		hasUnresolvedIntersection = false;
@@ -471,14 +482,13 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public void dimmedRepaint()
 	{
-		primaryColor = Colorations.adjustBrightness(primaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
-		secondaryColor = Colorations.adjustBrightness(secondaryColor, Colorations.BARRIER_NIGHT_DIM_FACTOR);
+		adjustBrightnessOfColors(Colorations.BARRIER_NIGHT_DIM_FACTOR);
 		repaint();
 	}
 	
 	public boolean hasGlowingEyes()
 	{
-		return !isDestroyed && isMeetingRequirementsForGlowingEyes();
+		return isIntact() && isMeetingRequirementsForGlowingEyes();
 	}
 	
 	protected abstract boolean isMeetingRequirementsForGlowingEyes();
@@ -500,13 +510,13 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{		
 			if(getModel() != EnemyModelType.BARRIER)
 			{
-				// TODO hier taucht null pointer exception auf. Warum?
+				// TODO hier taucht NullPointerException auf. Warum?
 				graphicsAdapters[j].setComposite(AlphaComposite.Src);
 				graphicsAdapters[j].setColor(Colorations.translucentDarkestBlack);
 				graphicsAdapters[j].fillRect(0, 0, image[j].getWidth(), image[j].getHeight());
 			}
 			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(getClass());
-			enemyPainter.paintImage(graphicsAdapters[j], this, 1-2*j, null, true);
+			enemyPainter.standardImagePaintForCorpus(graphicsAdapters[j], this, 1-2*j);
 		}
 	}
 	public boolean countsForTotalAmountOfEnemiesSeen()
@@ -667,40 +677,36 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return MIN_STARTING_Y + Math.random()*(MAX_STARTING_Y - getHeight());
 	}
 	
-	
 	// TODO Methode überarbeiten und Teile in kleinere Methoden auslagern
 	// TODO Raw use beseitigen
 	private void assignImage()
 	{
 		for(int i = 0; i < 2; i++)
 		{
-			image[i] = new BufferedImage((int)(1.028f * paintBounds.width),
-											  (int)(1.250f * paintBounds.height),
-											  BufferedImage.TYPE_INT_ARGB);
+			image[i] = getBufferedImage();
 			graphicsAdapters[i] = Graphics2DAdapter.withAntialiasing(image[i]);
 			//graphics[i].setComposite(AlphaComposite.Src);
 			
 			EnemyPainter enemyPainter = GraphicsManager.getInstance().getPainter(getClass());
-			enemyPainter.paintImage(graphicsAdapters[i], this,1-2*i, null, true);
+			enemyPainter.standardImagePaintForCorpus(graphicsAdapters[i], this,1-2*i);
 			if(cloakingDevice.isEnabled() && getHelicopter().getType() == HelicopterType.OROCHI)
 			{
-				BufferedImage 
-					 tempImage = new BufferedImage((int)(1.028f * paintBounds.width),
-							 						(int)(1.250f * paintBounds.height),
-							 						BufferedImage.TYPE_INT_ARGB);
-				
-				image[2+i] = new BufferedImage((int)(1.028f * paintBounds.width),
-													(int)(1.250f * paintBounds.height),
-													BufferedImage.TYPE_INT_ARGB);
-				
-				enemyPainter.paintImage(Graphics2DAdapter.withAntialiasing(tempImage), this,1-2*i, Color.red, true);
-				Graphics2DAdapter.withAntialiasing(image[2+i]).drawImage(tempImage, ROP_CLOAKED, 0, 0);
+				BufferedImage tempImage = getBufferedImage();
+				image[2+i] = getBufferedImage();
+				enemyPainter.paintCorpus(Graphics2DAdapter.withAntialiasing(tempImage), this,1-2*i, Color.red, true, true);
+				Graphics2DAdapter.withAntialiasing(image[2+i]).drawImage(tempImage, CLOAKED_ENEMY_RESCALE_OPERATOR, 0, 0);
 			}
 		}		
 	}
-
-
-
+	
+	private BufferedImage getBufferedImage()
+	{
+		return new BufferedImage((int) (1.028f * paintBounds.width),
+			(int) (1.250f * paintBounds.height),
+			BufferedImage.TYPE_INT_ARGB);
+	}
+	
+	
 	private void placeNearHelicopter()
 	{
 		Helicopter helicopter = getHelicopter();
@@ -761,7 +767,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private boolean isVisible()
 	{
-		return !isCloaked() || getHelicopter().canDetectCloakedVessels();
+		return !isCompletelyCloaked() || canBeDetectedByHelicopter();
+	}
+	
+	public boolean canBeDetectedByHelicopter()
+	{
+		return getHelicopter().canDetectCloakedVessels();
 	}
 	
 	public final void update(GameRessourceProvider gameRessourceProvider)
@@ -815,8 +826,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	protected boolean hasDeadlyGroundContact()
 	{	
 		return isIntersectingGroundLine()
-			   && getModel() != EnemyModelType.BARRIER
-			   && !isDestroyed;
+			   && isIntact();
 	}
 	
 	private boolean isIntersectingGroundLine()
@@ -895,7 +905,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}
 							
 		// Frontal-Angriff
-		if(isAbeleToMakeKamikaze())
+		if(isAbleToMakeKamikaze())
 		{
 			makeKamikazeIfAppropriate();
 		}
@@ -951,7 +961,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return isEmpSlowed();
 	}
 	
-	private boolean isAbeleToMakeKamikaze()
+	private boolean isAbleToMakeKamikaze()
 	{
 		return canKamikaze && !(teleportTimer > 0);
 	}
@@ -1133,7 +1143,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		return isFlyingDown()
 			&& hasCrossedBottomBoundaries()
-			&& !isDestroyed;
+			&& isIntact();
 	}
 	
 	private boolean hasCrossedBottomBoundaries()
@@ -1254,7 +1264,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private boolean isEmpShockable(Pegasus pegasus)
 	{
 		return     !isEmpShocked
-				&& !isDestroyed
+				&& isIntact()
 				&& !isInvincible()
 				&& !(barrierTeleportTimer != DISABLED && barrierShootTimer == DISABLED)
 				&& pegasus.empWave.ellipse.intersects(getBounds());
@@ -1381,7 +1391,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			&& !isEmpSlowed()
 			&& Calculations.tossUp(0.1f)
 			&& getX() + getWidth() > 0
-			&& !isCloaked()
+			&& !isCompletelyCloaked()
 			&& ((isFlyingLeft()
 				 && gameRessourceProvider.getHelicopter().intersects(
 					getX() + Integer.MIN_VALUE/2f,
@@ -1448,22 +1458,16 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}
     	if(cloakingDevice.isUncloakingInProgress())
 		{
-			if(cloakingDevice.hasJustStartedFadingAway())
+			if(cloakingDevice.hasCloakingJustStartedFadingAway())
 			{
 				Audio.play(Audio.cloak);
 			}
-			if(cloakingDevice.isShutDownCompleted())
+			else if(cloakingDevice.isShutDownCompleted())
 			{
 				uncloakAndResetCloakingDevice();
 			}
 		}
-		setTransparency();
     }
-	
-	private void setTransparency()
-	{
-		alpha = cloakingDevice.getAlpha();
-	}
 	
 	protected boolean isReadyToContinueCloakingProcess()
 	{
@@ -1546,7 +1550,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 
 	protected boolean canBePositionedBelowGround()
 	{		
-		return isDestroyed;
+		return isDestroyed();
 	}
 
 	private void calculateSpeedDead()
@@ -1763,9 +1767,9 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return type.isMajorBoss();
 	}
 	
-	public boolean isLivingBoss()
+	public boolean isIntactBoss()
 	{		
-		return isBoss() && !isDestroyed;
+		return isBoss() && isIntact();
 	}
 
 	private void collision(GameRessourceProvider gameRessourceProvider)
@@ -1782,7 +1786,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			
 		if(	isExplodingOnCollisions()
 			&& !isInvincible()
-			&& !isDestroyed)
+			&& isIntact())
 		{
 			explode( gameRessourceProvider,
 						  0, 
@@ -1836,7 +1840,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private boolean canTakeCollisionDamage()
 	{		
-		return 	   !isDestroyed
+		return 	   isIntact()
 				&& !isExplodingOnCollisions()
 				&& !isInvincible()
 				&& !(barrierTeleportTimer != DISABLED && barrierShootTimer == DISABLED)
@@ -1851,7 +1855,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			   *helicopter.getBaseProtectionFactor(isExplodingOnCollisions())
 			   *(helicopter.isTakingKaboomDamageFrom(this)
 			     ? helicopter.kaboomDamage()
-			     : (isExplodingOnCollisions() && !isInvincible() && !isDestroyed)
+			     : (isExplodingOnCollisions() && !isInvincible() && isIntact())
 					? 1.0f 
 					: collisionDamageTimer > 0
 						? 0.0325f 
@@ -1958,7 +1962,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	protected boolean prolongCloakingTimeWhenHitWhileCloaked()
 	{
-		return isCloaked();
+		return isCompletelyCloaked();
 	}
 	
 	protected void uncloakTriggeredByStunningMissile()
@@ -2045,9 +2049,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		isDestroyed = true;
 		if(cloakingDevice.isActive()){uncloakAndDisableCloakingDevice();}
 		teleportTimer = DISABLED;
-		primaryColor = Colorations.adjustBrightness(primaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
-		secondaryColor = Colorations.adjustBrightness(secondaryColor, Colorations.DESTRUCTION_DIM_FACTOR);
 		
+		adjustBrightnessOfColors(Colorations.DESTRUCTION_DIM_FACTOR);
 		repaint();
 		
 		if(getHelicopter().tractor == this)
@@ -2063,13 +2066,17 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 								: GROUND_Y + 1 + Math.random() * 0.25 * getHeight());
 	}
 	
+	private void adjustBrightnessOfColors(float dimFactor)
+	{
+		primaryColor = Colorations.adjustBrightness(primaryColor, dimFactor);
+		secondaryColor = Colorations.adjustBrightness(secondaryColor, dimFactor);
+	}
+	
 	private void uncloakAndSetCloakingDeviceReadyForUse()
 	{
 		uncloak();
 		cloakingDevice.setReadyForUse();
 	}
-	
-
 	
 	protected void uncloakAndDisableCloakingDevice()
 	{
@@ -2077,13 +2084,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		cloakingDevice.disable();
 	}
 	
-
-	
 	private void uncloak()
 	{
-		alpha = 255;
-		primaryColor = Colorations.setAlpha(primaryColor, 255);
-		secondaryColor = Colorations.setAlpha(secondaryColor, 255);
+		primaryColor = Colorations.setAlpha(primaryColor, Colorations.MAX_OPACITY);
+		secondaryColor = Colorations.setAlpha(secondaryColor, Colorations.MAX_OPACITY);
 	}
 	
 	// TODO null und false sollten keine Eingabeargumente sein, hier die Implementierung anpassen
@@ -2255,29 +2259,29 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public boolean isHittable(Missile missile)
 	{		
-		return !isDestroyed
-			   && !(barrierTeleportTimer != DISABLED && alpha != 255)
+		return isIntact()
+			   && !(barrierTeleportTimer != DISABLED && getAlpha() != 255)
 			   && missile.intersects(this)
 			   && !missile.hits.containsKey(hashCode());
 	}
 
 	public boolean isReadyToDodge()
 	{
-		// TODO in weitere kleinere verständliche Methoden auslagern
 		return 	    canDodge
 				&&  dodgeTimer == READY
 				&& !isEmpSlowed()
-				&& !isDestroyed
-				&& !(type == EnemyType.HEALER
-					 && Events.boss.shield > 0 
-					 && getMinX() > Events.boss.getMinX()
-				     && getMaxX() < Events.boss.getMaxX())
-				&& !( (     (getHelicopter().getX() - getMaxX() > -500)
-						 && (getHelicopter().getX() - getX() 	  <  150))
+				&& isIntact()				
+				&& !( isWithinKamikazeRange()
 					  && canKamikaze
 					  && isFlyingLeft());
 	}
-
+	
+	private boolean isWithinKamikazeRange()
+	{
+		return (getHelicopter().getX() - getMaxX() > -500)
+			&& (getHelicopter().getX() - getMinX() < 150);
+	}
+	
 	public boolean isInvincible()
 	{		
 		return invincibleTimer > 0 || shield > 0;
@@ -2350,7 +2354,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public boolean isKaboomDamageDealer()
 	{
-		return type == EnemyType.KABOOM && !isDestroyed;
+		return type == EnemyType.KABOOM && isIntact();
 	}
 
 	public void grantGeneralRewards(GameRessourceProvider gameRessourceProvider)
@@ -2379,6 +2383,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return isDestroyed;
 	}
 	
+	public boolean isIntact()
+	{
+		return !isDestroyed();
+	}
+	
 	public Enemy getOperatorServant(FinalBossServantType servantType)
 	{
 		return operator.getServant(servantType);
@@ -2399,9 +2408,24 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return tractor;
 	}
 	
-	public BufferedImage[] getImage()
+	public BufferedImage getStandardImage()
 	{
-		return image;
+		return image[getImageBaseIndex()];
+	}
+	
+	public BufferedImage getCloakedImage()
+	{
+		return image[getCloakedImageIndex()];
+	}
+	
+	private int getImageBaseIndex()
+	{
+		return isFlyingLeft() ? 0 : 1;
+	}
+	
+	private int getCloakedImageIndex()
+	{
+		return getImageBaseIndex() + 2;
 	}
 	
 	public int getRotorColor()
@@ -2462,7 +2486,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public boolean isPushingHelicopter(Helicopter helicopter)
 	{
-		return intersects(helicopter) && alpha == 255 && burrowTimer != 0;
+		return intersects(helicopter) && getAlpha() == 255 && burrowTimer != 0;
 	}
 	
 	public boolean canCollide()
@@ -2593,5 +2617,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	protected double getSpeedY()
 	{
 		return speed.getY();
+	}
+	
+	public int getAlpha()
+	{
+		return cloakingDevice.getAlpha();
 	}
 }

@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.enemy;
 
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
@@ -10,18 +11,21 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 public class CapturingEnemyPainter extends TitPainter<CapturingEnemy>
 {
     @Override
-    protected void paintUncloaked(GraphicsAdapter graphicsAdapter, Helicopter helicopter, int g2DSel)
+    protected void paintAnimatedElements(GraphicsAdapter graphicsAdapter)
     {
-        super.paintUncloaked(graphicsAdapter, helicopter, g2DSel);
-    
+        super.paintAnimatedElements(graphicsAdapter);
+        
+        // TODO Methode isTractorBeamActive einführen und überall austauschen
         if(getEnemy().getTractor() == AbilityStatusType.ACTIVE)
         {
-            this.paintTractorBeam(graphicsAdapter, helicopter);
+            this.paintTractorBeam(graphicsAdapter);
         }
     }
     
-    private void paintTractorBeam(GraphicsAdapter graphicsAdapter, Helicopter helicopter)
+    private void paintTractorBeam(GraphicsAdapter graphicsAdapter)
     {
+        Helicopter helicopter = Controller.getInstance().getHelicopter();
+        
         int destinationX =
             (int)(helicopter.getX()
             + (helicopter.isMovingLeft

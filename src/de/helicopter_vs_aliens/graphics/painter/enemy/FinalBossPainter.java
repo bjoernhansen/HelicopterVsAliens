@@ -13,10 +13,9 @@ import java.util.Objects;
 public class FinalBossPainter extends TitPainter<FinalBoss>
 {
     @Override
-    protected void paintUncloaked(GraphicsAdapter graphicsAdapter, Helicopter helicopter, int g2DSel)
+    protected void paintAnimatedElements(GraphicsAdapter graphicsAdapter)
     {
-        super.paintUncloaked(graphicsAdapter, helicopter, g2DSel);
-    
+        super.paintAnimatedElements(graphicsAdapter);
         FinalBossServantType.getShieldMaker()
                             .stream()
                             .map(getEnemy()::getOperatorServant)

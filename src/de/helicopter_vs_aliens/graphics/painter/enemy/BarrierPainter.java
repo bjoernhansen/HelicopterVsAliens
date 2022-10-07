@@ -1,11 +1,11 @@
 package de.helicopter_vs_aliens.graphics.painter.enemy;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.barrier.Barrier;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
@@ -45,15 +45,16 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
     }
     
     @Override
-    protected void paintUncloaked(GraphicsAdapter graphicsAdapter, Helicopter helicopter, int g2DSel)
+    protected void paintAnimatedElements(GraphicsAdapter graphicsAdapter)
     {
-        super.paintUncloaked(graphicsAdapter, helicopter, g2DSel);
-        if(!getEnemy().isDestroyed())
+        super.paintAnimatedElements(graphicsAdapter);
+        if(getEnemy().isIntact())
         {
             paintRotor(graphicsAdapter);
         }
     }
     
+    // TODO sollte in StandardEnemy definiert werden, da die Barriers dies nicht brauchen
     @Override
     protected void paintCannon(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color inputColor)
     {
@@ -69,9 +70,10 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
     private void paintRotor(GraphicsAdapter graphicsAdapter, int x, int y)
     {
         Barrier barrier = getEnemy();
-        HelicopterPainter.paintRotor(graphicsAdapter,
-            !barrier.isDestroyed()
-                ?(Colorations.setAlpha(Colorations.barrierColor[barrier.getRotorColor()][Events.timeOfDay.ordinal()], barrier.alpha))
+        HelicopterPainter.paintRotor(
+            graphicsAdapter,
+            barrier.isIntact()
+                ?(Colorations.setAlpha(Colorations.barrierColor[barrier.getRotorColor()][Events.timeOfDay.ordinal()], barrier.getAlpha()))
                 : Colorations.adjustBrightness(Colorations.barrierColor[barrier.getRotorColor()][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
             x, y, barrier.getPaintBounds().width, barrier.getPaintBounds().height, 5, (barrier.getSpeedLevel().equals(Enemy.ZERO_SPEED) ? (barrier.getSnoozeTimer() <= Enemy.SNOOZE_TIME ? 3 : 0) : 8) * (barrier.isClockwiseBarrier() ? -1 : 1) * barrier.getLifetime()%360,
             24, BORDER_SIZE, barrier.getSnoozeTimer() == 0);
@@ -85,18 +87,23 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
         int distanceX, distanceY;
         for(int i = 0; i < 3; i++)
         {
-            tempColor = (enemy.getBarrierShootTimer() != Enemy.DISABLED && enemy.getBarrierShootTimer() <= enemy.getShotsPerCycle() * enemy.getShootingRate() && i != 0 && !enemy.isDestroyed())
-                ?  Colorations.variableGreen
-                : !enemy.isDestroyed()
-                ? Colorations.barrierColor[i][Events.timeOfDay.ordinal()]
-                : Colorations.adjustBrightness(Colorations.barrierColor[i][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR);
-            if(enemy.alpha != 255){tempColor = Colorations.setAlpha(tempColor, enemy.alpha);}
+            // TODO Bedingung in Methode auslagern
+            tempColor = (enemy.getBarrierShootTimer() != Enemy.DISABLED && enemy.getBarrierShootTimer() <= enemy.getShotsPerCycle() * enemy.getShootingRate() && i != 0 && enemy.isIntact())
+                ? Colorations.variableGreen
+                : enemy.isIntact()
+                    ? Colorations.barrierColor[i][Events.timeOfDay.ordinal()]
+                    : Colorations.adjustBrightness(Colorations.barrierColor[i][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR);
+            if(enemy.isCloakingDeviceActive())
+            {
+                tempColor = Colorations.setAlpha(tempColor, enemy.getAlpha());
+            }
             graphicsAdapter.setColor(tempColor);
             
             distanceX = (int) ((0.45f + i * 0.01f) * enemy.getPaintBounds().width);
             distanceY = (int) ((0.45f + i * 0.01f) * enemy.getPaintBounds().height);
             
-            graphicsAdapter.fillOval(x + distanceX,
+            graphicsAdapter.fillOval(
+                x + distanceX,
                 y + distanceY,
                 enemy.getPaintBounds().width  - 2*distanceX,
                 enemy.getPaintBounds().height - 2*distanceY);
@@ -104,7 +111,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
     }
     
     @Override
-    protected void paintEnemy(GraphicsAdapter graphicsAdapter, Barrier enemy, int directionX, Color color, boolean isImagePaint, int offsetX, int offsetY, Color mainColorLight, Color mainColorDark, Color barColor, Color inactiveNozzleColor)
+    protected void paintEnemy(GraphicsAdapter graphicsAdapter, int directionX, boolean isCompletelyCloakedImagePaint, boolean isImagePaint, int offsetX, int offsetY, Color mainColorLight, Color mainColorDark, Color barColor, Color inactiveNozzleColor)
     {
         paintBarrier(graphicsAdapter,
                      offsetX,
@@ -187,7 +194,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
                 false,
                 inputColor);
         }
-        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.isFlyingLeft()))
+        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.isFlyingRight()))
         {
             paintBar(
                 graphicsAdapter,
@@ -240,7 +247,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
                                  boolean horizontal,
                                  Color inputColor)
     {
-        paintBar(
+        GraphicalEntities.paintBar(
             graphicsAdapter,
             x, y,
             width, height,
@@ -282,9 +289,9 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
     }
     
     @Override
-    protected void paintExhaustPipe(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color color2, Color color4)
+    protected void paintExhaustPipe(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color mainColor, Color nozzleColor)
     {
-        paintBarFrame(
+         paintBarFrame(
             graphicsAdapter,
             getEnemy().getPaintBounds().x,
             getEnemy().getPaintBounds().y,
@@ -292,7 +299,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
             0.35f,
             0.04f,
             0.7f,
-            color4,
+             nozzleColor,
             null,
             false);
     }
@@ -303,8 +310,8 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
             graphicsAdapter,
             getEnemy().getPaintBounds().x,
             getEnemy().getPaintBounds().y,
-            getEnemy().alpha != 255
-                ? Colorations.setAlpha(Colorations.variableRed, getEnemy().alpha)
+            getEnemy().isCloakingDeviceActive()
+                ? Colorations.setAlpha(Colorations.variableRed, getEnemy().getAlpha())
                 : Colorations.variableRed,
             false);
     }
@@ -326,7 +333,6 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
             y - borderDistance + getEnemy().getPaintBounds().height - eyeSize,
             eyeSize, eyeSize);
         
-        // TODO auslagern in Methode mit verständlichem Namen
         if(!imagePaint && !(getEnemy().getSnoozeTimer() > Enemy.SNOOZE_TIME))
         {
             graphicsAdapter.setPaint(Colorations.reversedRandomRed(color));

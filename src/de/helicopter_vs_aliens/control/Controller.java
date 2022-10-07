@@ -208,8 +208,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 				}
 				graphicsAdapter.drawImage(	this.offImage,
 											Main.displayShift.width,
-											Main.displayShift.height,
-											null);
+											Main.displayShift.height);
 			}
 			
 			if (Main.isFullScreen || this.isMouseCursorInWindow)

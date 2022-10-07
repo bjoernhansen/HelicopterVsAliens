@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
 public class Healer extends FinalBossServant
@@ -89,5 +90,20 @@ public class Healer extends FinalBossServant
     protected double getLeftBoundary()
     {
         return LEFT_BOUNDARY;
+    }
+    
+    
+    
+    @Override
+    public boolean isReadyToDodge()
+    {
+        return super.isReadyToDodge() && !isContainedByShieldedFinalBoss();
+    }
+    
+    private boolean isContainedByShieldedFinalBoss()
+    {
+        return Events.boss.shield > 0
+                && getMinX() > Events.boss.getMinX()
+                && getMaxX() < Events.boss.getMaxX();
     }
 }

@@ -29,7 +29,7 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         // Kaktus
         if(sceneryObject.type == CACTUS)
         {
-            graphicsAdapter.drawImage(CACTUS_IMG[Events.timeOfDay.ordinal()], (int) sceneryObject.getSceneryObjectX(), 235, null);
+            graphicsAdapter.drawImage(CACTUS_IMG[Events.timeOfDay.ordinal()], (int) sceneryObject.getSceneryObjectX(), 235);
         }
     
         // Steine
@@ -59,16 +59,21 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         // Sand
         if(sceneryObject.type == DESERT)
         {
-            graphicsAdapter.drawImage(sceneryObject.getImage(Events.timeOfDay.ordinal()), (int) sceneryObject.getSceneryObjectX(), 426, null);
+            graphicsAdapter.drawImage(sceneryObject.getImage(Events.timeOfDay.ordinal()), (int) sceneryObject.getSceneryObjectX(), 426);
         }
     
         // Palme
         if(sceneryObject.type == PALM)
         {
-            graphicsAdapter.drawImage( sceneryObject.getImage(Events.timeOfDay.ordinal()), (int)(sceneryObject.getSceneryObjectX() + 110),
-                    350 - sceneryObject.getCoordinateOfComponent(0,0), null);
-            graphicsAdapter.drawImage( PALM_CROWN_IMG[Events.timeOfDay.ordinal()], (int) sceneryObject.getSceneryObjectX(),
-                    340 - sceneryObject.getCoordinateOfComponent(0,0), null);
+            graphicsAdapter.drawImage(
+                sceneryObject.getImage(Events.timeOfDay.ordinal()),
+                (int)(sceneryObject.getSceneryObjectX() + 110),
+                350 - sceneryObject.getCoordinateOfComponent(0,0));
+            
+            graphicsAdapter.drawImage(
+                PALM_CROWN_IMG[Events.timeOfDay.ordinal()],
+                (int) sceneryObject.getSceneryObjectX(),
+                340 - sceneryObject.getCoordinateOfComponent(0,0));
         }
     }
     
