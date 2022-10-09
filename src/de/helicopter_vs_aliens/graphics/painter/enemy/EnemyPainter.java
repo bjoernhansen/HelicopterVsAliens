@@ -26,6 +26,7 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
     public void paint(GraphicsAdapter graphicsAdapter, T enemy)
     {
         setEnemy(enemy);
+        
         if(!enemy.isCompletelyCloaked())
         {
             paintUnOrIncompletelyCloaked(graphicsAdapter);
@@ -60,11 +61,28 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         paintAnimatedElements(graphicsAdapter);
     }
     
-    public void paintCorpus(GraphicsAdapter graphicsAdapter, T enemy, int directionX, Color color, boolean isCompletelyCloakedImagePaint, boolean isImagePaint)
+    public final void paintCorpus(GraphicsAdapter graphicsAdapter, T enemy, int directionX, Color color, boolean isCompletelyCloakedImagePaint, boolean isImagePaint)
     {
         Color mainColorLight = Objects.requireNonNull(color);
         Color mainColorDark = Colorations.adjustBrightness(mainColorLight, 1.5f);
         paintCorpus(graphicsAdapter, enemy, directionX, mainColorLight, mainColorDark, isCompletelyCloakedImagePaint, isImagePaint);
+    }
+    
+    public void standardImagePaintForCorpus(GraphicsAdapter graphicsAdapter, T enemy, int directionX)
+    {
+        Color mainColorLight, mainColorDark;
+        
+        if(enemy.isDestroyed() && Events.timeOfDay == NIGHT)
+        {
+            mainColorLight = Colorations.adjustBrightness(enemy.primaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
+            mainColorDark  = Colorations.adjustBrightness(enemy.secondaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
+        }
+        else
+        {
+            mainColorLight = enemy.primaryColor;
+            mainColorDark  = enemy.secondaryColor;
+        }
+        paintCorpus(graphicsAdapter, enemy, directionX, mainColorLight, mainColorDark, false, true);
     }
     
     private void paintCorpus(GraphicsAdapter graphicsAdapter,
@@ -85,7 +103,6 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         }
         
         //Malen des Gegners
-        
         int offsetX = (int)(isImagePaint
             ? (directionX == 1 ? 0.028f * enemy.getPaintBounds().width : 0)
             : enemy.getPaintBounds().x),
@@ -124,7 +141,7 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
             enemy.getPaintBounds().y - enemy.getPaintBounds().height/4);
     }
     
-    protected void paintAnimatedElements(GraphicsAdapter graphicsAdapter)
+    void paintAnimatedElements(GraphicsAdapter graphicsAdapter)
     {
         // blinkende Scheibe von Bossen und Mini-Bossen bzw. die 4 Eyes bei Hindernissen
         if(enemy.hasGlowingEyes())
@@ -165,33 +182,15 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         return enemy.isIntact() && !enemy.isStunned();
     }
     
-    public void standardImagePaintForCorpus(GraphicsAdapter graphicsAdapter, T enemy, int directionX)
-    {
-        Color mainColorLight, mainColorDark;
-        
-        if(enemy.isDestroyed() && Events.timeOfDay == NIGHT)
-        {
-            mainColorLight = Colorations.adjustBrightness(enemy.primaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
-            mainColorDark  = Colorations.adjustBrightness(enemy.secondaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
-        }
-        else
-        {
-            mainColorLight = enemy.primaryColor;
-            mainColorDark  = enemy.secondaryColor;
-        }
-        
-        paintCorpus(graphicsAdapter, enemy, directionX, mainColorLight, mainColorDark, false, true);
-    }
-    
-    protected abstract void paintCannon(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color inputColor);
+    abstract void paintCannon(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color inputColor);
     
     abstract void paintBlinkingElements(GraphicsAdapter graphicsAdapter, T enemy);
     
-    protected abstract void paintExhaustPipe(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color mainColor, Color nozzleColor);
+    abstract void paintExhaustPipe(GraphicsAdapter graphicsAdapter, int x, int y, int directionX, Color mainColor, Color nozzleColor);
     
-    protected abstract void paintEnemy(GraphicsAdapter graphicsAdapter, int directionX, boolean isCompletelyCloakedImagePaint, boolean isImagePaint, int offsetX, int offsetY, Color mainColorLight, Color mainColorDark, Color barColor, Color inactiveNozzleColor);
+    abstract void paintEnemy(GraphicsAdapter graphicsAdapter, int directionX, boolean isCompletelyCloakedImagePaint, boolean isImagePaint, int offsetX, int offsetY, Color mainColorLight, Color mainColorDark, Color barColor, Color inactiveNozzleColor);
     
-    protected final T getEnemy()
+    final T getEnemy()
     {
         return enemy;
     }

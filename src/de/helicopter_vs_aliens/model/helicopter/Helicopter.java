@@ -11,6 +11,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.components.Battery;
@@ -177,7 +178,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	final Point2D
 		nextLocation = new Point2D.Float();
 	
-	public Enemy
+	public CapturingEnemy
 		tractor;            // Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
 	
 	private int

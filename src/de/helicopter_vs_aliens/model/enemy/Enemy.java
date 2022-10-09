@@ -364,14 +364,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
         protected boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
         protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
         protected boolean isRecoveringSpeed;
-  
-	protected AbilityStatusType
-		tractor;				// = DISABLED (Gegner ohne Traktor); = READY (Traktor nicht aktiv); = 1 (Traktor aktiv)
-	
+
 	protected EnemyMissileType
 		shotType;
-	
-	
+		
 	private final GraphicsAdapter []
 		graphicsAdapters = new GraphicsAdapter[2];
 	
@@ -450,7 +446,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		burrowTimer = DISABLED;
 		speedup = DISABLED;
 		
-		tractor = AbilityStatusType.DISABLED;
+		
 		batchWiseMove = 0;
 		
 		shootingDirection.setLocation(0, 0);
@@ -922,12 +918,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			cloaking();
 		}
 		
-		// Tractor					
-		if(isAbleToStopHelicopterByTractorBeam())
-		{
-			startTractor();
-		}
-				
 		//Chaos-SpeedUp
 		if(	canChaosSpeedup
 			&& speedLevel.getX() <= targetSpeedLevel.getX()
@@ -1479,47 +1469,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		uncloakAndSetCloakingDeviceReadyForUse();
 	}
 	
-	private boolean isAbleToStopHelicopterByTractorBeam()
-	{		
-		return isTractorReady()
-				&& isInRangeOfHelicopter()
-				&& getHelicopter().canBeStoppedByTractorBeam();
-	}
-	
-	private boolean isInRangeOfHelicopter()
-	{
-		double
-			helicopterX = getHelicopter().getX(),
-			helicopterY = getHelicopter().getY();
-		
-		return    helicopterX - getX() > -750
-			   && helicopterX - getX() < -50
-			   && helicopterY + 56 > getY() + 0.2 * getHeight()
-			   && helicopterY + 60 < getY() + 0.8 * getHeight();
-	}
-	
-	private boolean isTractorReady() {
-		return tractor == AbilityStatusType.READY
-				&& !isEmpSlowed()
-				&& !cloakingDevice.isActive()
-				&& getMaxX() < Main.VIRTUAL_DIMENSION.width;
-	}
-
-	private void startTractor()
-	{
-		Audio.loop(Audio.tractorBeam);
-		tractor = AbilityStatusType.ACTIVE;
-		speedLevel.setLocation(ZERO_SPEED);
-		getHelicopter().tractor = this;
-		navigationDevice.turnLeft();
-	}
-	
-	public void stopTractor()
-	{
-		tractor = AbilityStatusType.DISABLED;
-		speedLevel.setLocation(targetSpeedLevel);
-	}
-	
 	private void evaluateDodge()
 	{
 		dodgeTimer--;
@@ -1608,7 +1557,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		isRecoveringSpeed = true;
 	}
 	
-	private boolean isEmpSlowed()
+	protected boolean isEmpSlowed()
 	{		
 		return empSlowedTimer > 0;
 	}
@@ -1943,7 +1892,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			performHitTriggeredTurn();
 		}
 
-		if(cloakingDevice.isReadyToBeUsed() && !(tractor == AbilityStatusType.ACTIVE))
+		if(canCloak())
 		{
 			Audio.play(Audio.cloak);
 			cloakingDevice.activate();
@@ -1959,6 +1908,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			cloakingDevice.setToStartOfCloakedTime();
 		}
 	}
+	
+	protected boolean canCloak()
+	{
+		return cloakingDevice.isReadyToBeUsed();
+	}
+	
 	
 	protected boolean prolongCloakingTimeWhenHitWhileCloaked()
 	{
@@ -2403,10 +2358,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return lifetime;
 	}
 	
-	public AbilityStatusType getTractor()
-	{
-		return tractor;
-	}
+	
 	
 	public BufferedImage getStandardImage()
 	{
@@ -2508,7 +2460,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		{
 			return getDefaultBarColor();
 		}
-		if(getTractor() == AbilityStatusType.ACTIVE || getShootTimer() > 0 || isShielding())
+		if(qualifiesForBlinkingCannon())
 		{
 			return Colorations.variableGreen;
 		}
@@ -2517,6 +2469,21 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			return Color.green;
 		}
 		return getDefaultBarColor();
+	}
+	
+	public boolean hasBlinkingCannon()
+	{
+		return isIntact() && qualifiesForBlinkingCannon();
+	}
+	
+	private boolean qualifiesForBlinkingCannon()
+	{
+		return getShootTimer() > 0 || generatesEnergieBeam();
+	}
+	
+	protected boolean generatesEnergieBeam()
+	{
+		return isShielding();
 	}
 	
 	protected Color getDefaultBarColor()

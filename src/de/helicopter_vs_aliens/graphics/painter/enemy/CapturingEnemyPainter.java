@@ -3,7 +3,6 @@ package de.helicopter_vs_aliens.graphics.painter.enemy;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
@@ -15,8 +14,7 @@ public class CapturingEnemyPainter extends TitPainter<CapturingEnemy>
     {
         super.paintAnimatedElements(graphicsAdapter);
         
-        // TODO Methode isTractorBeamActive einführen und überall austauschen
-        if(getEnemy().getTractor() == AbilityStatusType.ACTIVE)
+        if(getEnemy().isTractorBeamActive())
         {
             this.paintTractorBeam(graphicsAdapter);
         }

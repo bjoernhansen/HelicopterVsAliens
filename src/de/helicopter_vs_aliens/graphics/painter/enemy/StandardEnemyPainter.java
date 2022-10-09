@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.enemy;
 
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.util.Colorations;
@@ -179,7 +178,7 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
         super.paintAnimatedElements(graphicsAdapter);
     
         // blinking enemy cannon
-        if(hasBlinkingCannon())
+        if(getEnemy().hasBlinkingCannon())
         {
             this.paintCannon(
                 graphicsAdapter,
@@ -194,20 +193,5 @@ public abstract class StandardEnemyPainter <T extends StandardEnemy> extends Ene
         return getEnemy().isCloakingDeviceActive()
                 ? Colorations.setAlpha(Colorations.variableGreen, getEnemy().getAlpha())
                 : Colorations.variableGreen;
-    }
-    
-    private boolean hasBlinkingCannon()
-    {
-        return getEnemy().isIntact() && qualifiesForBlinkingCannon();
-    }
-    
-    private boolean qualifiesForBlinkingCannon()
-    {
-        return getEnemy().getShootTimer() > 0 || generatesEnergieBeam();
-    }
-    
-    private boolean generatesEnergieBeam()
-    {
-        return getEnemy().getTractor() == AbilityStatusType.ACTIVE || getEnemy().isShielding();
     }
 }
