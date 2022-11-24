@@ -3,3 +3,5 @@
 out/
 HelicopterVsAliens.iml
 savegame
+/.gradle/
+/build/

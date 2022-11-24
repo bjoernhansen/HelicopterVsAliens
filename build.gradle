@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+}
+
+mainClassName = 'de.helicopter_vs_aliens.Main'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+}
+
+javafx {
+    version = "16"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.graphics' ]
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': 'de.helicopter_vs_aliens.Main')
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
