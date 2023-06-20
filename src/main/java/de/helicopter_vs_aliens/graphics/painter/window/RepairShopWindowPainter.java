@@ -48,7 +48,7 @@ public class RepairShopWindowPainter extends WindowPainter
         graphicsAdapter.drawString(inputString, 251 + (285 - graphicsAdapter.getFontMetrics().stringWidth(inputString))/2, 65);
         graphicsAdapter.setColor(Colorations.lightOrange);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
-        graphicsAdapter.drawString(String.format("%s: %d €", Window.dictionary.credit(), Events.money), 27, 35);
+        graphicsAdapter.drawString(String.format("%s: %s", Window.dictionary.credit(), Events.getMoneyWithCurrency()), 27, 35);
         graphicsAdapter.drawString(String.format("%s: %d", Window.dictionary.currentLevel(), Events.level), 562, 35);
         graphicsAdapter.setFont(fontProvider.getPlain(18));
         graphicsAdapter.drawString(String.format("%s: %s", Window.dictionary.playingTime(), Window.repairShopTime), 27, 75);

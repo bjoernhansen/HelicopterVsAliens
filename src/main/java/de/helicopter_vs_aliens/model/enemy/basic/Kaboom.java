@@ -1,10 +1,10 @@
 package de.helicopter_vs_aliens.model.enemy.basic;
 
-import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
-import java.applet.AudioClip;
+import javax.sound.sampled.Clip;
 
 public class Kaboom extends BasicEnemy
 {
@@ -42,7 +42,7 @@ public class Kaboom extends BasicEnemy
     }
     
     @Override
-    protected AudioClip getCrashToTheGroundSound()
+    protected Clip getCrashToTheGroundSound()
     {
         return Audio.explosion4;
     }

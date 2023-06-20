@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy;
 
+import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
@@ -8,31 +9,30 @@ import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
+import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.painter.enemy.EnemyPainter;
 import de.helicopter_vs_aliens.model.RectangularGameEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
 import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.Main;
-import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
-import de.helicopter_vs_aliens.graphics.painter.enemy.EnemyPainter;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
-import de.helicopter_vs_aliens.model.helicopter.Pegasus;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
-import java.applet.AudioClip;
+import javax.sound.sampled.Clip;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Point;
@@ -686,6 +686,9 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			}
 		}		
 	}
+	
+	
+	
 	
 	private BufferedImage getBufferedImage()
 	{
@@ -1693,7 +1696,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return false;
 	}
 	
-	protected AudioClip getCrashToTheGroundSound()
+	protected Clip getCrashToTheGroundSound()
 	{
 		return Audio.explosion3;
 	}

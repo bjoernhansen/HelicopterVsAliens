@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
-import java.applet.AudioClip;
+import javax.sound.sampled.Clip;
 import java.awt.event.MouseEvent;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
@@ -200,7 +200,7 @@ public final class Phoenix extends Helicopter
     }
     
     @Override
-    AudioClip getCollisionAudio()
+    Clip getCollisionAudio()
     {
         return this.enhancedRadiationTimer == 0
             ? Audio.explosion1

@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
 }
@@ -27,4 +26,8 @@ jar {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << "-Xlint:unchecked"
 }

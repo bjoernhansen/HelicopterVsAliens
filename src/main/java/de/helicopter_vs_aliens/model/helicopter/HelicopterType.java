@@ -13,7 +13,7 @@ import de.helicopter_vs_aliens.graphics.painter.helicopter.PhoenixPainter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.RochPainter;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 
-import java.applet.AudioClip;
+import javax.sound.sampled.Clip;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -163,7 +163,7 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
     private final Supplier<List<HelicopterType>>
         unlockerTypes;
     
-    private final Supplier<AudioClip>
+    private final Supplier<Clip>
         specialSound;
        
     
@@ -171,7 +171,7 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
                    Supplier<? extends Helicopter> instance,
                    Supplier<? extends Painter<? extends Helicopter>> painterInstance,
                    Supplier<List<HelicopterType>> unlockerTypes,
-                   Supplier<AudioClip> specialSound)
+                   Supplier<Clip> specialSound)
     {
         this.number = ordinal()+1;
         this.helicopterClass = helicopterClass;
@@ -361,7 +361,7 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
         return Events.helicoptersThatReachedLevel20.contains(this);
     }
     
-    public AudioClip getSpecialSound()
+    public Clip getSpecialSound()
     {
         return specialSound.get();
     }

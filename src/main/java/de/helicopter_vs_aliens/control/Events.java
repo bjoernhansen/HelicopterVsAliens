@@ -1395,4 +1395,31 @@ public class Events
 	{
 		return level > MAXIMUM_LEVEL;
 	}
+	
+	// TODO hier wird wohl eine neue Klasse herausgelöst werden können
+	
+	public static String getMoneyWithCurrency()
+	{
+		return formatWithCurrency(money);
+	}
+	
+	public static String getLastBonusWithCurrency()
+	{
+		return formatWithCurrency(lastBonus);
+	}
+	
+	public static String getLastExtraBonusWithCurrency()
+	{
+		return formatWithCurrency(lastExtraBonus);
+	}
+	
+	public static String getLastOverallEarningsWithCurrency()
+	{
+		return formatWithCurrency(overallEarnings);
+	}
+	
+	private static String formatWithCurrency(int price)
+	{
+		return price + " " + Window.dictionary.currencySymbol();
+	}
 }

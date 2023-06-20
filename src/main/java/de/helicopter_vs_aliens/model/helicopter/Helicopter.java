@@ -1,11 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.EnemyController;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.TimeOfDay;
+import de.helicopter_vs_aliens.control.*;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
@@ -18,20 +14,17 @@ import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.components.Battery;
+import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
 import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.score.ScoreScreenTimes;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
-import java.applet.AudioClip;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.sound.sampled.Clip;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.EnumMap;
@@ -1014,7 +1007,7 @@ public abstract class Helicopter extends RectangularGameEntity
         this.startRecentDamageTimer();
     }
     
-    AudioClip getCollisionAudio()
+    Clip getCollisionAudio()
     {
         return Audio.explosion1;
     }
@@ -1277,28 +1270,15 @@ public abstract class Helicopter extends RectangularGameEntity
     public void setUpgradeLevelOf(StandardUpgradeType standardUpgradeType, Integer upgradeLevel)
     {
         this.levelsOfStandardUpgrades.put(standardUpgradeType, upgradeLevel);
-        
-        switch (standardUpgradeType)
-        {
-            case ROTOR_SYSTEM:
-                this.updateRotorSystem();
-                break;
-            case MISSILE_DRIVE:
-                this.updateMissileDrive();
-                break;
-            case PLATING:
-                this.updatePlating();
-                break;
-            case FIREPOWER:
-                this.setCurrentBaseFirepower();
-                break;
-            case FIRE_RATE:
-                this.adjustFireRate();
-                break;
-            case ENERGY_ABILITY:
-                this.updateEnergyAbility();
-                break;
-        }
+
+		switch (standardUpgradeType) {
+			case ROTOR_SYSTEM -> this.updateRotorSystem();
+			case MISSILE_DRIVE -> this.updateMissileDrive();
+			case PLATING -> this.updatePlating();
+			case FIREPOWER -> this.setCurrentBaseFirepower();
+			case FIRE_RATE -> this.adjustFireRate();
+			case ENERGY_ABILITY -> this.updateEnergyAbility();
+		}
     }
 		
     public boolean hasMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)

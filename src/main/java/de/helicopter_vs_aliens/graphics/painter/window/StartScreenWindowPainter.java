@@ -23,7 +23,7 @@ public class StartScreenWindowPainter extends WindowPainter
     private static final String
         VERSION =   "Version 1.3.4",			// Spielversion
         GAME_NAME = "Helicopter vs. Aliens",
-        DEVELOPERS_NAME = "Björn Hansen";
+        DEVELOPERS_NAME = "Bj\u00F6rn Hansen";
     
     private static final int
         CROSS_MAX_DISPLAY_TIME = 60; // Maximale Anzeigezeit des Block-Kreuzes (StartScreen)

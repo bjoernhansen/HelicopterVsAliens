@@ -1,14 +1,8 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.graphics.painter.ButtonPainter;
-import de.helicopter_vs_aliens.graphics.painter.EnemyMissilePainter;
-import de.helicopter_vs_aliens.graphics.painter.ExplosionPainter;
-import de.helicopter_vs_aliens.graphics.painter.MissilePainter;
-import de.helicopter_vs_aliens.graphics.painter.Painter;
-import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
-import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
-import de.helicopter_vs_aliens.graphics.painter.SceneryPainter;
+import de.helicopter_vs_aliens.graphics.painter.*;
 import de.helicopter_vs_aliens.graphics.painter.enemy.BurrowingBarrierPainter;
+import de.helicopter_vs_aliens.graphics.painter.enemy.CapturingEnemyPainter;
 import de.helicopter_vs_aliens.graphics.painter.enemy.FinalBossPainter;
 import de.helicopter_vs_aliens.graphics.painter.enemy.HealerPainter;
 import de.helicopter_vs_aliens.gui.WindowType;
@@ -17,17 +11,16 @@ import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.barrier.BurrowingBarrier;
+import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
 import de.helicopter_vs_aliens.model.enemy.boss.Healer;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
-import de.helicopter_vs_aliens.graphics.painter.enemy.CapturingEnemyPainter;
-import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -37,7 +30,6 @@ import java.util.function.BinaryOperator;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public class GraphicsManager
 {

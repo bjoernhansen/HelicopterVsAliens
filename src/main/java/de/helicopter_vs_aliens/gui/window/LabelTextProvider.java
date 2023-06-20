@@ -690,7 +690,7 @@ class LabelTextProvider
                             "translation assistance. <br><br>I'm looking forward to " +
                             "hearing from you!" +
                             "<br><br>Best regards," +
-                            "<br>Björn Hansen" +
+                            "<br>Bj\u00F6rn Hansen" +
                             "</font></html>";
                 }
             }
@@ -706,19 +706,19 @@ class LabelTextProvider
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
                             "Wir schreiben das Jahr 2371. Seit dem " +
-                            "Unabhängigkeitskrieg der Mars-Kolonien, der nun schon " +
-                            "über 100 Jahre zurück liegt, hat es keine " +
+                            "Unabh\u00E4ngigkeitskrieg der Mars-Kolonien, der nun schon " +
+                            "\u00FCber 100 Jahre zur\u00FCck liegt, hat es keine " +
                             "kriegerischen Auseinandersetzungen unter Menschen mehr " +
-                            "gegeben und Ausgaben für militärische Zwecke sind " +
+                            "gegeben und Ausgaben f\u00FCr milit\u00E4rische Zwecke sind " +
                             "folglich auf ein Minimum reduziert worden. " +
                             "\n\nDoch nun wurden tausende feindlicher Flugobjekte " +
-                            "unbekannter Herkunft über der nördlichen " +
-                            "Sahara und an der afrikanischen Mittelmeerküste " +
+                            "unbekannter Herkunft \u00FCber der n\u00F6rdlichen " +
+                            "Sahara und an der afrikanischen Mittelmeerk\u00FCste " +
                             "gesichtet. Einige dieser Flugobjekte haben bereits die " +
                             "nordafrikanischen Megametropolen unter Beschuss " +
                             "genommen, darunter auch Welthauptstadt Kairo. " +
-                            "\n\nKaranijem Su, der Präsident der Weltregierung, hat " +
-                            "den Ausnahmezustand verhängt und bittet " +
+                            "\n\nKaranijem Su, der Pr\u00E4sident der Weltregierung, hat " +
+                            "den Ausnahmezustand verh\u00E4ngt und bittet " +
                             "Reservisten und Freiwillige aus aller Welt um Hilfe. " +
                             "Sie sind einer davon." +
                             "</b></font></html>";
@@ -729,23 +729,23 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
-                            "- Zu Gunsten einer größeren Einsteigerfreundlichkeit " +
+                            "- Zu Gunsten einer gr\u00F6\u00DFeren Einsteigerfreundlichkeit " +
                             "wurde der Schwierigkeitsgrad der<br>" +
                             "&nbsp ersten Levels deutlich gesenkt und die " +
-                            "Spielanleitung wesentlich ausführlicher gestaltet.<br>" +
+                            "Spielanleitung wesentlich ausf\u00FChrlicher gestaltet.<br>" +
                             "- Die bisher eher unbeliebten Helikopter der " +
-                            "<font color=\"#FFFFD2\">Phönix-" +
+                            "<font color=\"#FFFFD2\">Ph\u00F6nix-" +
                             "<font color=\"#D2D2D2\">, " +
                             "<br>	&nbsp <font color=\"#FFFFD2\">Orochi-" +
                             "<font color=\"#D2D2D2\"> und " +
                             "<font color=\"#FFFFD2\">Kamaitachi-Klasse" +
-                            "<font color=\"#D2D2D2\"> sind jetzt schlagkräftiger.<br>" +
-                            "- Das Spiel verfügt nun über bewegte Hintergründe.<br>" +
+                            "<font color=\"#D2D2D2\"> sind jetzt schlagkr\u00E4ftiger.<br>" +
+                            "- Das Spiel verf\u00FCgt nun \u00FCber bewegte Hintergr\u00FCnde.<br>" +
                             "- Statt wie zuvor alle 10 erreicht der Spieler jetzt " +
                             "schon alle 5 Level einen " +
                             "Spielstand,<br> &nbsp von dem aus er nach Reparatur " +
-                            "oder Absturz nicht mehr zurück fallen kann.<br>" +
-                            "- Viele Änderungen, die unter anderem Spielbalance, " +
+                            "oder Absturz nicht mehr zur\u00FCck fallen kann.<br>" +
+                            "- Viele \u00C4nderungen, die unter anderem Spielbalance, " +
                             "Grafik<br>	&nbsp oder das Upgrade-System betreffen, " +
                             "wurden vorgenommen." +
                             "</b></font></html>";
@@ -758,28 +758,28 @@ class LabelTextProvider
                             "color=\"#D2D2D2\"><b>" +
                             "- Zur Verbesserung der Grafik kommen Gradientenfarben " +
                             "und Antialiasing zum Einsatz.<br>" +
-                            "- Jede Helikopter-Klasse verfügt nun über ein eigenes, " +
+                            "- Jede Helikopter-Klasse verf\u00FCgt nun \u00FCber ein eigenes, " +
                             "energieverbrauchendes <font color=\"#FFFFD2\">\"Standard-Upgrade\"<font color=\"#D2D2D2\"> " +
-                            "sowie über <br> &nbsp mindestens ein eigenes <font color=\"#FFFFD2\">\"Spezial-Upgrade\"<font color=\"#D2D2D2\">. Damit unterscheiden sich die Helikopter-" +
+                            "sowie \u00FCber <br> &nbsp mindestens ein eigenes <font color=\"#FFFFD2\">\"Spezial-Upgrade\"<font color=\"#D2D2D2\">. Damit unterscheiden sich die Helikopter-" +
                             "Klassen jetzt deutlicher.<br>" +
                             "- Mit der <font color=\"#FFFFD2\">Pegasus-" +
                             "<font color=\"#D2D2D2\"> und der  <font color=\"#FFFFD2\">Helios-Klasse" +
                             "<font color=\"#D2D2D2\"> stehen dem Spieler nun " +
-                            "zwei weitere Helikopter-Klassen zur Verfügung.<br>" +
+                            "zwei weitere Helikopter-Klassen zur Verf\u00FCgung.<br>" +
                             "- Als neuer Spielmodus ist der <font color=\"#FFFFD2\">Spezial-Modus" +
-                            "<font color=\"#D2D2D2\"> verfügbar, welcher nur von der Helios-Klasse gespielt werden kann.<br>" +
-                            "- Für zusätzlichen Spielreiz sorgen zufällig " +
+                            "<font color=\"#D2D2D2\"> verf\u00FCgbar, welcher nur von der Helios-Klasse gespielt werden kann.<br>" +
+                            "- F\u00FCr zus\u00E4tzlichen Spielreiz sorgen zuf\u00E4llig " +
                             "auftretende <font color=\"#FFFFD2\">\"Mini-Endgegner\"" +
-                            "<font color=\"#D2D2D2\">. <br>	&nbsp Diese können " +
+                            "<font color=\"#D2D2D2\">. <br>	&nbsp Diese k\u00F6nnen " +
                             "<font color=\"#FFFFD2\">PowerUps" +
                             "<font color=\"#D2D2D2\"> " +
                             "verlieren, welche den Helikopter kurzfristig " +
                             "verbessern.<br>" +
-                            "- Das Spiel läuft in einer vom Explorer unabhängigen " +
+                            "- Das Spiel l\u00E4uft in einer vom Explorer unabh\u00E4ngigen " +
                             "Applikation.<br>" +
                             "- Eine Speicherfunktion und eine Highscore wurden implementiert.<br>" +
-                            "- Eine Reihe neuer Gegner-Klassen wurden dem Spiel hinzugefügt.<br>" +
-                            "- Viele weitere Änderungen, welche die Bedienung, das " +
+                            "- Eine Reihe neuer Gegner-Klassen wurden dem Spiel hinzugef\u00FCgt.<br>" +
+                            "- Viele weitere \u00C4nderungen, welche die Bedienung, das " +
                             "Upgrade-System, <br>	&nbsp die Grafik oder die " +
                             "Spielbalance betreffen wurden vorgenommen." +
                             "</b></font></span></html>";
@@ -792,37 +792,37 @@ class LabelTextProvider
                             "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
                             "Besonderer Dank gilt allen meinen Beta-Testern, die " +
                             "HelikopterDefence 1.0 " +
-                            "ausführlich gespielt und mich mit hilfreichen Tipps " +
-                            "und Verbesserungsvorschlägen " +
-                            "unterstützt haben:<br><font color=\"#FFFFD2\">Alexander " +
+                            "ausf\u00FChrlich gespielt und mich mit hilfreichen Tipps " +
+                            "und Verbesserungsvorschl\u00E4gen " +
+                            "unterst\u00FCtzt haben:<br><font color=\"#FFFFD2\">Alexander " +
                             "Schmuck, Andreas Lotze, Boris Sapancilar, Fynn Hansen, Julian Tan, " +
                             "Hauke Holm, Henner Holm, Michael Sujatta,<br>Sascha " +
-                            "Degener, Thorsten Rückert, Tim Schumacher, " +
+                            "Degener, Thorsten R\u00FCckert, Tim Schumacher, " +
                             "Yannik Muthmann<br><font color=\"#D2D2D2\"><br>" +
-                            "Besonders bedanken möchte ich mich bei " +
+                            "Besonders bedanken m\u00F6chte ich mich bei " +
                             "<font color=\"#FFFFD2\">Fabian Gebert" +
-                            "<font color=\"#D2D2D2\"> für eine Vielzahl " +
-                            "wertvoller technischer Ratschläge, welche meine " +
+                            "<font color=\"#D2D2D2\"> f\u00FCr eine Vielzahl " +
+                            "wertvoller technischer Ratschl\u00E4ge, welche meine " +
                             "Entwicklungsarbeit an diesem Spiel erheblich " +
                             "bereichert haben. Ich bedanke mich auch bei " +
                             "<font color=\"#FFFFD2\">Michael Sujatta" +
-                            "<font color=\"#D2D2D2\"> fürs Korrekturlesen und bei " +
+                            "<font color=\"#D2D2D2\"> f\u00FCrs Korrekturlesen und bei " +
                             "<font color=\"#FFFFD2\">Hauke Holm" +
-                            "<font color=\"#D2D2D2\"> für seine Hilfe bei der " +
+                            "<font color=\"#D2D2D2\"> f\u00FCr seine Hilfe bei der " +
                             "Bearbeitung " +
                             "von Audio-Dateien. Vielen Dank an " +
                             "<font color=\"#FFFFD2\">Tobias P. Eser" +
                             "<font color=\"#D2D2D2\">. Mit ihm zusammen habe ich " +
                             "noch zu " +
                             "Schulzeiten mein Interesse an der " +
-                            "Computerspielentwicklung entdeckt. Zuletzt möchte ich " +
+                            "Computerspielentwicklung entdeckt. Zuletzt m\u00F6chte ich " +
                             "mich " +
                             "bei <font color=\"#FFFFD2\">Prof. Till Tantau" +
-                            "<font color=\"#D2D2D2\"> für eine exzellente " +
+                            "<font color=\"#D2D2D2\"> f\u00FCr eine exzellente " +
                             "Informatikvorlesung bedanken. Seine Lehrveranstaltung " +
                             "hat den Grundstein zur Entwicklung dieses Spiels " +
-                            "gelegt.<br><br>Du möchtest auch Beta-Tester werden? " +
-                            "Kein Problem! Schicke Deine Verbesserungsvorschläge an: " +
+                            "gelegt.<br><br>Du m\u00F6chtest auch Beta-Tester werden? " +
+                            "Kein Problem! Schicke Deine Verbesserungsvorschl\u00E4ge an: " +
                             "<font color=\"#FFFFD2\">info@HelicopterDefence.de" +
                             "</font></b></html>";
                 }
@@ -833,8 +833,8 @@ class LabelTextProvider
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
                             "Dies ist ein Freeware-Spiel. Die Weitergabe ist also " +
-                            "ausdrücklich erlaubt und auch erwünscht! " +
-                            "Programmänderungen jeglicher Art sind allerdings dem " +
+                            "ausdr\u00FCcklich erlaubt und auch erw\u00FCnscht! " +
+                            "Programm\u00E4nderungen jeglicher Art sind allerdings dem " +
                             "Programmierer vorbehalten!" +
                             "</font></html>";
                 }
@@ -852,19 +852,19 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> mit unterschiedlichen " +
                             "Startwerten zur " +
                             "Auswahl. Mit dem Helikopter Ihrer Wahl sollten Sie " +
-                            "möglichst viele feindliche Flugobjekte abschießen. Jede " +
-                            "erfolgreiche Zerstörung eines feindlichen Flugkörpers " +
+                            "m\u00F6glichst viele feindliche Flugobjekte abschie\u00DFen. Jede " +
+                            "erfolgreiche Zerst\u00F6rung eines feindlichen Flugk\u00F6rpers " +
                             "wird finanziell " +
                             "belohnt. Nach einer bestimmten " +
-                            "Anzahl von Treffern können Sie in höhere Level " +
+                            "Anzahl von Treffern k\u00F6nnen Sie in h\u00F6here Level " +
                             "aufsteigen, in denen immer schwerere Gegner auf Sie " +
                             "warten. " +
                             "Die Bezahlung bei Eliminierung von feindlichen Fliegern " +
-                            "mit besonders komplizierten Flugmanövern ist " +
-                            "entsprechend höher. " +
-                            "Mit dem so erwirtschafteten Geld können Sie in der " +
+                            "mit besonders komplizierten Flugman\u00F6vern ist " +
+                            "entsprechend h\u00F6her. " +
+                            "Mit dem so erwirtschafteten Geld k\u00F6nnen Sie in der " +
                             "<font color=\"#FFFFD2\">Werkstatt" +
-                            "<font color=\"#D2D2D2\"> Beschädigungen am Helikopter " +
+                            "<font color=\"#D2D2D2\"> Besch\u00E4digungen am Helikopter " +
                             "reparieren lassen sowie neue " +
                             "Upgrades erwerben, mit denen ihr Helikopter noch " +
                             "schlagfertiger wird." +
@@ -879,36 +879,36 @@ class LabelTextProvider
                             "Nach dem Absturz des Helikopters (Totalschaden) muss " +
                             "in der <font color=\"#FFFFD2\">Werkstatt" +
                             "<font color=\"#D2D2D2\"> eine <font color=\"#FFFFD2\">" +
-                            "Reparatur<font color=\"#D2D2D2\"> durchgeführt werden," +
+                            "Reparatur<font color=\"#D2D2D2\"> durchgef\u00FChrt werden," +
                             " bevor ein neuer Einsatz geflogen werden kann. Wenn " +
                             "der Spieler in diesem Fall nicht " +
-                            "über genügend Guthaben verfügt, um die Instandsetzung " +
+                            "\u00FCber gen\u00FCgend Guthaben verf\u00FCgt, um die Instandsetzung " +
                             "zu finanzieren, ist das Spiel " +
-                            "beendet. Natürlich kann der Spieler Reparaturen auch " +
+                            "beendet. Nat\u00FCrlich kann der Spieler Reparaturen auch " +
                             "bereits nach kleinen " +
-                            "Beschädigungen durchführen. Der Preis für eine " +
-                            "Reparatur hängt vom Ausmaß der " +
-                            "Beschädigung ab. Bei einem Totalschaden verteuert sich " +
-                            "die Reparatur. Nach einer Reparatur fällt der Spieler " +
+                            "Besch\u00E4digungen durchf\u00FChren. Der Preis f\u00FCr eine " +
+                            "Reparatur h\u00E4ngt vom Ausma\u00DF der " +
+                            "Besch\u00E4digung ab. Bei einem Totalschaden verteuert sich " +
+                            "die Reparatur. Nach einer Reparatur f\u00E4llt der Spieler " +
                             "zum letzten <font color=\"#FFFFD2\">\"sicheren\" Level" +
                             "<font color=\"#D2D2D2\"> " +
-                            "(1, 6, 11, 16, usw.) zurück.<br><br>Die Prämie, die " +
-                            "ein Spieler für abgeschossene Gegner " +
-                            "erhält, hängt von deren Stärke und der aktuellen " +
+                            "(1, 6, 11, 16, usw.) zur\u00FCck.<br><br>Die Pr\u00E4mie, die " +
+                            "ein Spieler f\u00FCr abgeschossene Gegner " +
+                            "erh\u00E4lt, h\u00E4ngt von deren St\u00E4rke und der aktuellen " +
                             "Sold-Stufe ab. Piloten eines mit " +
                             "<font color=\"#FFFFD2\">Scheinwerfern" +
                             "<font color=\"#D2D2D2\"> ausgestatteten Helikopters " +
-                            "können sowohl <font color=\"#FFFFD2\">Tag-" +
+                            "k\u00F6nnen sowohl <font color=\"#FFFFD2\">Tag-" +
                             "<font color=\"#D2D2D2\"> als auch " +
-                            "<font color=\"#FFFFD2\">Nachteinsätze" +
+                            "<font color=\"#FFFFD2\">Nachteins\u00E4tze" +
                             "<font color=\"#D2D2D2\"> " +
                             "fliegen und erhalten daher einen Verdienstbonus von " +
                             "50%.<br><br>In der Werkstatt kann der " +
                             "Spieler anhand der farblichen Markierungen um die " +
                             "Upgrade-Buttons erfahren, wie " +
-                            "preisgünstig ein Upgrade ist: <font color=\"#82FF82\">" +
-                            "grün<font color=\"#D2D2D2\"> - sehr guter Preis; " +
-                            "<font color=\"#D2FFB4\">gelbgrün" +
+                            "preisg\u00FCnstig ein Upgrade ist: <font color=\"#82FF82\">" +
+                            "gr\u00FCn<font color=\"#D2D2D2\"> - sehr guter Preis; " +
+                            "<font color=\"#D2FFB4\">gelbgr\u00FCn" +
                             "<font color=\"#D2D2D2\"> - guter Preis; " +
                             "<font color=\"#FFD200\">gelb<font color=\"#D2D2D2\"> - " +
                             "angemessener Preis; <font color=\"#FFA578\">orange" +
@@ -928,7 +928,7 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> und <font color=\"#FFFFD2\">" +
                             "Spezial-Upgrades<font color=\"#D2D2D2\">. Mit den " +
                             "Standard-Upgrades " +
-                            "können <font color=\"#FFFFD2\">Hauptrotor" +
+                            "k\u00F6nnen <font color=\"#FFFFD2\">Hauptrotor" +
                             "<font color=\"#D2D2D2\">, <font color=\"#FFFFD2\">" +
                             "Raketenantrieb<font color=\"#D2D2D2\">, " +
                             "<font color=\"#FFFFD2\">Panzerung" +
@@ -939,27 +939,27 @@ class LabelTextProvider
                             "Energie-Fertigkeit (siehe Abschnitt " +
                             "<font color=\"#FFFFFF\">\"Helikopter-Klassen\"" +
                             "<font color=\"#D2D2D2\">) gesteigert werden. Je nach " +
-                            "Helikopter-Klasse können die einzelnen Standard-" +
+                            "Helikopter-Klasse k\u00F6nnen die einzelnen Standard-" +
                             "Upgrades bis Stufe 6, 8 oder 10 ausgebaut werden. " +
                             "\nSpezial-Upgrades werden nur einmal erworben und " +
-                            "können (mit wenigen Ausnahmen) nicht weiter gesteigert " +
+                            "k\u00F6nnen (mit wenigen Ausnahmen) nicht weiter gesteigert " +
                             "werden. " +
                             "Neben den <font color=\"#FFFFD2\">Scheinwerfern" +
-                            "<font color=\"#D2D2D2\"> für <font color=\"#FFFFD2\">" +
-                            "Nachteinsätze<font color=\"#D2D2D2\"> sind folgende " +
-                            "Spezialupgrades für jede Helikopter-Klasse verfügbar: " +
+                            "<font color=\"#D2D2D2\"> f\u00FCr <font color=\"#FFFFD2\">" +
+                            "Nachteins\u00E4tze<font color=\"#D2D2D2\"> sind folgende " +
+                            "Spezialupgrades f\u00FCr jede Helikopter-Klasse verf\u00FCgbar: " +
                             "\n<font color=\"#FFFFD2\">Goliath-Panzerung" +
-                            "<font color=\"#D2D2D2\"> (verbessert die Effektivität " +
+                            "<font color=\"#D2D2D2\"> (verbessert die Effektivit\u00E4t " +
                             "der Standardpanzerung), " +
-                            "\n<font color=\"#FFFFD2\">Durchstoßsprengköpfe" +
+                            "\n<font color=\"#FFFFD2\">Durchsto\u00DFsprengk\u00F6pfe" +
                             "<font color=\"#D2D2D2\"> (dieselbe Rakete kann mehrere " +
                             "Gegner treffen) und " +
                             "\n<font color=\"#FFFFD2\">zweite Bordkanone" +
-                            "<font color=\"#D2D2D2\">\t(gleichzeitiges abschießen " +
+                            "<font color=\"#D2D2D2\">\t(gleichzeitiges abschie\u00DFen " +
                             "zweier Raketen). " +
-                            "Darüber hinaus existieren weitere Spezial-Upgrades, die " +
-                            "nur für eine " +
-                            "einzige Helicoper-Klasse verfügbar sind (siehe " +
+                            "Dar\u00FCber hinaus existieren weitere Spezial-Upgrades, die " +
+                            "nur f\u00FCr eine " +
+                            "einzige Helicoper-Klasse verf\u00FCgbar sind (siehe " +
                             "Abschnitt <font color=\"#FFFFFF\">\"Helikopter-" +
                             "Klassen\"<font color=\"#D2D2D2\">). " +
                             "</b></font></html>";
@@ -973,13 +973,13 @@ class LabelTextProvider
                             "Alle 10 Level trifft der Spieler auf einen besonders " +
                             "schwer zu besiegenden <font color=\"#FFFFD2\">Boss-" +
                             "Gegner<font color=\"#D2D2D2\">, " +
-                            "aber auch in den Standard-Levels können gelegentlich " +
+                            "aber auch in den Standard-Levels k\u00F6nnen gelegentlich " +
                             "kleine Boss-Gegner (<font color=\"#FFFFD2\">Mini-Bosse" +
                             "<font color=\"#D2D2D2\">) erscheinen, welche schwerer " +
-                            "zu zerstören sind als gewöhnliche Gegner. " +
-                            "Für den Abschuss eines Boss-Gegners erhält der Spieler " +
-                            "eine großzügige finanzielle Belohnung. Alle Boss-Gegner " +
-                            "verlieren nach ihrer Zerstörung außerdem " +
+                            "zu zerst\u00F6ren sind als gew\u00F6hnliche Gegner. " +
+                            "F\u00FCr den Abschuss eines Boss-Gegners erh\u00E4lt der Spieler " +
+                            "eine gro\u00DFz\u00FCgige finanzielle Belohnung. Alle Boss-Gegner " +
+                            "verlieren nach ihrer Zerst\u00F6rung au\u00DFerdem " +
                             "ein <font color=\"#FFFFD2\">PowerUp" +
                             "<font color=\"#D2D2D2\"> (siehe Abschitt " +
                             "<font color=\"#FFFFFF\">\"PowerUps\"" +
@@ -992,48 +992,48 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
-                            "Die Steuerung des Helikopters erfolgt ausschließlich mit der Maus:<br>" +
+                            "Die Steuerung des Helikopters erfolgt ausschlie\u00DFlich mit der Maus:<br>" +
                             "Der Helikopter bewegt sich immer auf den Maus-Cursor " +
                             "zu. " +
-                            "Das Betätigen der linken Maustaste bewirkt den " +
+                            "Das Bet\u00E4tigen der linken Maustaste bewirkt den " +
                             "Abschuss einer Rakete. " +
-                            "Mit der mittleren Maustaste (Mausrad) lässt sich der Helikopter wenden. " +
-                            "Er schießt dann in die entgegengesetzte Richtung.<br>" +
+                            "Mit der mittleren Maustaste (Mausrad) l\u00E4sst sich der Helikopter wenden. " +
+                            "Er schie\u00DFt dann in die entgegengesetzte Richtung.<br>" +
                             "Die Spezialfertigkeit der jeweiligen " +
                             "<font color=\"#FFFFD2\">Helikopter-Klasse" +
                             "<font color=\"#D2D2D2\"> kann mit der rechten Maustaste eingesetzt werden:" +
                             "<br>- Benutzen des <font color=\"#FFFFD2\">Teleporters" +
                             "<font color=\"#D2D2D2\"> (<font color=\"#FFFFD2\">" +
-                            "Phönix-Klasse<font color=\"#D2D2D2\">): mit gedrückt " +
+                            "Ph\u00F6nix-Klasse<font color=\"#D2D2D2\">): mit gedr\u00FCckt " +
                             "gehaltener rechter Maustaste<br> " +
                             "&nbsp den Maus-Cursor an einen anderen Ort ziehen und " +
-                            "dort die rechte Maustaste lösen" +
+                            "dort die rechte Maustaste l\u00F6sen" +
                             "<br>- Verwenden des <font color=\"#FFFFD2\">Energieschildes" +
                             "<font color=\"#D2D2D2\"> (<font color=\"#FFFFD2\">" +
                             "Roch-Klasse<font color=\"#D2D2D2\">): rechte " +
-                            "Maustaste drücken und gedrückt halten" +
+                            "Maustaste dr\u00FCcken und gedr\u00FCckt halten" +
                             "<br>- <font color=\"#FFFFD2\">Stopp-Rakete" +
                             "<font color=\"#D2D2D2\"> abfeuern (" +
                             "<font color=\"#FFFFD2\">Orochi-Klasse" +
-                            "<font color=\"#D2D2D2\">): mit gedrückt gehaltener " +
+                            "<font color=\"#D2D2D2\">): mit gedr\u00FCckt gehaltener " +
                             "rechter Maustaste eine Rakete abfeuern" +
                             "<br>- Aktivieren der <font color=\"#FFFFD2\">Plasma-" +
                             "Raketen<font color=\"#D2D2D2\"> (" +
                             "<font color=\"#FFFFD2\">Kamaitachi-Klasse" +
-                            "<font color=\"#D2D2D2\">): rechte Maustaste drücken" +
-                            "<br>- Auslösen einer <font color=\"#FFFFD2\">EMP-" +
+                            "<font color=\"#D2D2D2\">): rechte Maustaste dr\u00FCcken" +
+                            "<br>- Ausl\u00F6sen einer <font color=\"#FFFFD2\">EMP-" +
                             "Schockwelle<font color=\"#D2D2D2\"> (" +
                             "<font color=\"#FFFFD2\">Pegasus-Klasse" +
-                            "<font color=\"#D2D2D2\">): rechte Maustaste drücken" +
+                            "<font color=\"#D2D2D2\">): rechte Maustaste dr\u00FCcken" +
                             "<br>- Aktivieren des <font color=\"#FFFFD2\">PU-" +
                             "Generators<font color=\"#D2D2D2\"> (" +
                             "<font color=\"#FFFFD2\">Helios-Klasse" +
-                            "<font color=\"#D2D2D2\">): rechte Maustaste drücken" +
+                            "<font color=\"#D2D2D2\">): rechte Maustaste dr\u00FCcken" +
                             "<br>Nach dem Landen des Helikopter wird ein Button " +
                             "sichtbar, mit dem der Spieler jederzeit in die " +
                             "<font color=\"#FFFFD2\">Werkstatt" +
                             "<font color=\"#D2D2D2\"> " +
-                            "zurückkehren kann." +
+                            "zur\u00FCckkehren kann." +
                             "</font></html>";
                 }
                 else if(page == BUTTON_6)
@@ -1050,20 +1050,20 @@ class LabelTextProvider
                             "Geld (<font color=\"#FFFFD2\">Extra-Bonus<font color=\"#D2D2D2\">)" +
                             "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
                             "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            "unendlich Energie für 15 Sekunden" +
+                            "unendlich Energie f\u00FCr 15 Sekunden" +
                             "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
                             "<font size = \"" + (HTML_SIZE-1) + "\">" +
                             "Teil-Reparatur " +
                             "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
                             "<font size = \"" + (HTML_SIZE-1) + "\">" +
                             Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Unverwundbarkeit " +
-                            "für 15 Sekunden " +
+                            "f\u00FCr 15 Sekunden " +
                             "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
                             "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            "3-fache Feuerkraft für 15 " + "Sekunden" +
+                            "3-fache Feuerkraft f\u00FCr 15 " + "Sekunden" +
                             "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
                             "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            "erhöhte Schussrate für 15 Sekunden " +
+                            "erh\u00F6hte Schussrate f\u00FCr 15 Sekunden " +
                             "</b></font></html>";
                 }
                 else if(page == BUTTON_8)
@@ -1073,16 +1073,16 @@ class LabelTextProvider
                         "<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
                             "\" color=\"#D2D2D2\">" +
                             "Im <font color=\"#FFFFD2\">Spezial-Modus"
-                            + "<font color=\"#D2D2D2\"> erhält der Spieler keine "
-                            + "Belohnung für "
+                            + "<font color=\"#D2D2D2\"> erh\u00E4lt der Spieler keine "
+                            + "Belohnung f\u00FCr "
                             + "abgeschossene Gegner. Stattdessen wird in diesem "
                             + "Spielmodus jeder Levelaufstieg belohnt. Je "
                             + "erfolgreicher Sie mit den anderen Helikopter-Klassen "
                             + "gespielt haben, desto mehr Geld erhalten Sie. "
                             + "<br><br>Hintergrund: Die Weltregierung unter "
                             + "President Kranijem Su steht der Helios-Klasse sehr "
-                            + "skeptisch gegenüber. 'Woher haben die Konstrukteure "
-                            + "ihr Wissen über die Verwendung außerirdischer "
+                            + "skeptisch gegen\u00FCber. 'Woher haben die Konstrukteure "
+                            + "ihr Wissen \u00FCber die Verwendung au\u00DFerirdischer "
                             + "Technologie?' Daher wurden alle Piloten von "
                             + "Helikoptern der Helios-Klasse vom "
                             + "Reservisten-Programm ausgeschlossen."
@@ -1100,24 +1100,24 @@ class LabelTextProvider
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
                             "Der Spieler hat die Wahl zwischen " + HelicopterType.count() + " verschiedenen " +
                             "Helikopter-Klassen. " +
-                            "Jede dieser 5 Klassen verfügt über eine einzigartige, " +
+                            "Jede dieser 5 Klassen verf\u00FCgt \u00FCber eine einzigartige, " +
                             "energieverbrauchende Fertigkeit " +
-                            "sowie über mindestens ein <font color=\"#FFFFD2\">" +
+                            "sowie \u00FCber mindestens ein <font color=\"#FFFFD2\">" +
                             "Spezial-Upgrade<font color=\"#D2D2D2\">, welches nur " +
                             "von dieser Helikopter-Klasse " +
-                            "erworben werden kann. Darüber hinaus unterscheiden " +
+                            "erworben werden kann. Dar\u00FCber hinaus unterscheiden " +
                             "sich die einzelnen Helikopter-Klassen hinsichtlich des " +
-                            "Preises und der Ausbaufähigkeit der einzelnen " +
+                            "Preises und der Ausbauf\u00E4higkeit der einzelnen " +
                             "<font color=\"#FFFFD2\">Standard-Upgrades" +
                             "<font color=\"#D2D2D2\"> (siehe Abschnitt " +
                             "<font color=\"#FFFFFF\">\"Finanzen/Reparatur\"" +
                             "<font color=\"#D2D2D2\"> sowie <font color=\"#FFFFFF\">" +
                             "\"Upgrades\"<font color=\"#D2D2D2\">). Insbesondere hat " +
-                            "jede Helikopter-Klasse eigene Möglichkeiten an " +
-                            "zusätzliche finanzielle Belohnungen, die sogenannten <font color=\"#FFFFD2\">Extra-Boni" +
-                            "<font color=\"#D2D2D2\">, zu kommen. Diese Extra-Boni werden für " +
+                            "jede Helikopter-Klasse eigene M\u00F6glichkeiten an " +
+                            "zus\u00E4tzliche finanzielle Belohnungen, die sogenannten <font color=\"#FFFFD2\">Extra-Boni" +
+                            "<font color=\"#D2D2D2\">, zu kommen. Diese Extra-Boni werden f\u00FCr " +
                             "besonders eindrucksvolle " +
-                            "Abwehrleistungen ausgezahlt. Näheres hierzu " +
+                            "Abwehrleistungen ausgezahlt. N\u00E4heres hierzu " +
                             "finden Sie in den detaillierten " +
                             "Beschreibungen zu den einzelnen Helikopter-Klassen." +
                             "</font></html>";
@@ -1128,48 +1128,48 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
-                            "Die <font color=\"#FFFFD2\">Phönix-Klasse" +
+                            "Die <font color=\"#FFFFD2\">Ph\u00F6nix-Klasse" +
                             "<font color=\"#D2D2D2\"> ist die robusteste der 5 " +
-                            "Helikopter-Klassen, denn für keine andere " +
-                            "Helikopter-Klasse können die <font color=\"#FFFFD2\">" +
+                            "Helikopter-Klassen, denn f\u00FCr keine andere " +
+                            "Helikopter-Klasse k\u00F6nnen die <font color=\"#FFFFD2\">" +
                             "Standard-Upgrades<font color=\"#D2D2D2\"> der " +
                             "<font color=\"#FFFFD2\">Panzerung" +
                             "<font color=\"#D2D2D2\"> sowie das " +
                             "<font color=\"#FFFFD2\">SpezialUpgrade " +
                             "\"Goliathpanzerung\"<font color=\"#D2D2D2\"> so " +
                             "preiswert erworben werden. Die schwere Panzerung " +
-                            "bezahlt die Phönix-Klasse allerdings mit einem " +
+                            "bezahlt die Ph\u00F6nix-Klasse allerdings mit einem " +
                             "schwachen <font color=\"#FFFFD2\">Hauptrotor" +
                             "<font color=\"#D2D2D2\">, der sie auch zur langsamsten " +
-                            "der 5 verfügbaren Helikopter-Klassen macht. Durch " +
+                            "der 5 verf\u00FCgbaren Helikopter-Klassen macht. Durch " +
                             "einen <font color=\"#FFFFD2\">Teleporter" +
                             "<font color=\"#D2D2D2\">, welcher den " +
-                            "Helikopter an einen anderen Ort beamt und ihn für " +
+                            "Helikopter an einen anderen Ort beamt und ihn f\u00FCr " +
                             "einen kurzen Augenblick " +
                             "unverwundbar macht, wird dieser Nachteil jedoch " +
                             "ausgeglichen. Helikopter der " +
-                            "Phönix-Klasse, welche das Spezial-Upgrade " +
+                            "Ph\u00F6nix-Klasse, welche das Spezial-Upgrade " +
                             "<font color=\"#FFFFD2\">\"Nahkampfbestrahlung\"" +
                             "<font color=\"#D2D2D2\"> erworben haben, " +
-                            "überraschen ihre Gegner mit einer intensiven " +
+                            "\u00FCberraschen ihre Gegner mit einer intensiven " +
                             "kurzreichweitigen Strahlung, welche die " +
-                            "Außenhülle feindlicher Flugobjekte aufweicht. Die so " +
-                            "geschwächten Gegner werden bei " +
-                            "Kollisionen mit dem Helikopter schwer beschädigt, " +
-                            "während der Helikopter selbst weniger " +
-                            "Schaden nimmt als gewöhnlich. Durch Steigerung der " +
+                            "Au\u00DFenh\u00FClle feindlicher Flugobjekte aufweicht. Die so " +
+                            "geschw\u00E4chten Gegner werden bei " +
+                            "Kollisionen mit dem Helikopter schwer besch\u00E4digt, " +
+                            "w\u00E4hrend der Helikopter selbst weniger " +
+                            "Schaden nimmt als gew\u00F6hnlich. Durch Steigerung der " +
                             "<font color=\"#FFFFD2\">Feuerkraft" +
                             "<font color=\"#D2D2D2\"> wird gleichzeitig auch die " +
-                            "Intensität der Nahkampfbestrahlung vergrößert. Wenn " +
-                            "sich ein Helikopter der Phönix-Klasse " +
+                            "Intensit\u00E4t der Nahkampfbestrahlung vergr\u00F6\u00DFert. Wenn " +
+                            "sich ein Helikopter der Ph\u00F6nix-Klasse " +
                             "an einen anderen Ort teleportiert und dort mit Hilfe " +
                             "der Nahmkampfbestrahlung mehrere " +
                             "Gegner gleichzeitig ausschaltet, dann wird dieses " +
-                            "gewagte Flugmanöver mit einem " +
+                            "gewagte Flugman\u00F6ver mit einem " +
                             "<font color=\"#FFFFD2\">Extra-Bonus" +
-                            "<font color=\"#D2D2D2\"> belohnt. Auch für das " +
-                            "unmittelbare Abschießen eines Gegners nach Nutzung des " +
-                            "Teleporters erhält der Spieler einen Extra-Bonus." +
+                            "<font color=\"#D2D2D2\"> belohnt. Auch f\u00FCr das " +
+                            "unmittelbare Abschie\u00DFen eines Gegners nach Nutzung des " +
+                            "Teleporters erh\u00E4lt der Spieler einen Extra-Bonus." +
                             "</b></font></html>";
                 }
                 else if(page == BUTTON_4)
@@ -1178,24 +1178,24 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
-                            "Für die  <font color=\"#FFFFD2\">Roch-Klasse " +
+                            "F\u00FCr die  <font color=\"#FFFFD2\">Roch-Klasse " +
                             "<font color=\"#D2D2D2\"> kann die " +
                             "<font color=\"#FFFFD2\">Feuerkraft" +
-                            "<font color=\"#D2D2D2\"> besonders kostengünstig " +
+                            "<font color=\"#D2D2D2\"> besonders kosteng\u00FCnstig " +
                             "gesteigert und das " +
                             "<font color=\"#FFFFD2\">Spezial-Upgrade \"" +
-                            "Durchstoßsprengköpfe\"<font color=\"#D2D2D2\"> sehr " +
-                            "preiswert erworben werden. Außerdem ist " +
-                            "ausschließlich für die Roch-Klasse das Spezial-Upgrade " +
+                            "Durchsto\u00DFsprengk\u00F6pfe\"<font color=\"#D2D2D2\"> sehr " +
+                            "preiswert erworben werden. Au\u00DFerdem ist " +
+                            "ausschlie\u00DFlich f\u00FCr die Roch-Klasse das Spezial-Upgrade " +
                             "<font color=\"#FFFFD2\">\"Jumbo-Raketen\"" +
                             "<font color=\"#D2D2D2\">, welches den " +
-                            "Raketen eine außerordentlich große Sprengkraft " +
-                            "verleiht, verfügbar. Somit kann " +
+                            "Raketen eine au\u00DFerordentlich gro\u00DFe Sprengkraft " +
+                            "verleiht, verf\u00FCgbar. Somit kann " +
                             "die Roch-Klasse <i>in puncto</i> Feuerkraft von keiner " +
                             "anderen Helikopter-Klasse " +
-                            "übertroffen werden. Die <font color=\"#FFFFD2\">" +
-                            "Schussrate<font color=\"#D2D2D2\"> lässt allerdings " +
-                            "sehr zu wünschen übrig und " +
+                            "\u00FCbertroffen werden. Die <font color=\"#FFFFD2\">" +
+                            "Schussrate<font color=\"#D2D2D2\"> l\u00E4sst allerdings " +
+                            "sehr zu w\u00FCnschen \u00FCbrig und " +
                             "auch die schwache <font color=\"#FFFFD2\">Panzerung" +
                             "<font color=\"#D2D2D2\"> stellt ein weiteres Manko " +
                             "dieser Helikopter-Klasse dar. " +
@@ -1204,7 +1204,7 @@ class LabelTextProvider
                             "allerdings dabei, diesen Nachteil zu " +
                             "kompensieren. Wenn es einem Helikopter der Roch-Klasse " +
                             "gelingt, mehrere " +
-                            "Gegner mit derselben Rakete zu zerstören, dann wird " +
+                            "Gegner mit derselben Rakete zu zerst\u00F6ren, dann wird " +
                             "diese glorreiche Tat mit " +
                             "einem  <font color=\"#FFFFD2\">Extra-Bonus" +
                             "<font color=\"#D2D2D2\"> belohnt." +
@@ -1218,26 +1218,26 @@ class LabelTextProvider
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
                             "Helikopter der <font color=\"#FFFFD2\">Orochi-Klasse" +
                             "<font color=\"#D2D2D2\"> sind wahre \"Allrounder\": " +
-                            "Sie sind sehr schnell, verfügen " +
-                            "über Raketen mit sehr gutem Antrieb und sind trotzdem " +
+                            "Sie sind sehr schnell, verf\u00FCgen " +
+                            "\u00FCber Raketen mit sehr gutem Antrieb und sind trotzdem " +
                             "ordentlich gepanzert. Zwar kann " +
                             "die <font color=\"#FFFFD2\">Schussrate" +
                             "<font color=\"#D2D2D2\"> dieser Helikopter-Klasse nur " +
-                            "begrenzt gesteigert werden, dafür kann nur " +
-                            "für die Orochi-Klasse eine <font color=\"#FFFFD2\">" +
+                            "begrenzt gesteigert werden, daf\u00FCr kann nur " +
+                            "f\u00FCr die Orochi-Klasse eine <font color=\"#FFFFD2\">" +
                             "dritte Bordkanone<font color=\"#D2D2D2\"> sowie eine " +
                             "<font color=\"#FFFFD2\">Radar-Vorrichtung" +
                             "<font color=\"#D2D2D2\"> installiert " +
-                            "werden. Mit letzterer können getarnte Gegner aufgespürt " +
+                            "werden. Mit letzterer k\u00F6nnen getarnte Gegner aufgesp\u00FCrt " +
                             "werden. Bei ausreichend Energie " +
-                            "kann diese Helikopter-Klasse außerdem " +
+                            "kann diese Helikopter-Klasse au\u00DFerdem " +
                             "<font color=\"#FFFFD2\">Stopp-Raketen" +
                             "<font color=\"#D2D2D2\"> abfeuern, welche getroffene " +
-                            "Gegner zurück stoßen und für einen kurzen Augenblick " +
-                            "kampfunfähig machen. Durch Steigerung des " +
+                            "Gegner zur\u00FCck sto\u00DFen und f\u00FCr einen kurzen Augenblick " +
+                            "kampfunf\u00E4hig machen. Durch Steigerung des " +
                             "<font color=\"#FFFFD2\">Raketenantriebs" +
-                            "<font color=\"#D2D2D2\"> kann die Rückstoßwirkung " +
-                            "weiter erhöht werden. Wenn die " +
+                            "<font color=\"#D2D2D2\"> kann die R\u00FCcksto\u00DFwirkung " +
+                            "weiter erh\u00F6ht werden. Wenn die " +
                             "Orochi-Klasse mehrere Raketen gleichzeitig abfeuert " +
                             "und mindestens zwei von diesen " +
                             "jeweils ein oder mehrere feindliche Flugobjekte " +
@@ -1256,26 +1256,26 @@ class LabelTextProvider
                             "Kamaitachi-Klasse<font color=\"#D2D2D2\"> ist sehr " +
                             "gering. Dank der preiswerten " +
                             "Upgrades auf die <font color=\"#FFFFD2\">Schussrate" +
-                            "<font color=\"#D2D2D2\"> sowie des nur für die " +
-                            "Kamaitachi-Klasse verfügbaren " +
+                            "<font color=\"#D2D2D2\"> sowie des nur f\u00FCr die " +
+                            "Kamaitachi-Klasse verf\u00FCgbaren " +
                             "<font color=\"#FFFFD2\">Spezial-Upgrades " +
                             "\"Schnellfeuer\"<font color=\"#D2D2D2\"> erreicht diese " +
                             "Helikopter-Klasse allerdings eine enorm " +
                             "hohe Schussrate. Im Zusammenspiel mit den " +
                             "<font color=\"#FFFFD2\">Plasma-Raketen" +
                             "<font color=\"#D2D2D2\"> der Kamaitachi-Klasse, " +
-                            "welche die Feuerkraft für 15 Sekunden erheblich erhöht, " +
-                            "führt dies zu einer " +
+                            "welche die Feuerkraft f\u00FCr 15 Sekunden erheblich erh\u00F6ht, " +
+                            "f\u00FChrt dies zu einer " +
                             "gewaltigen Schadenswirkung pro Sekunde. Da die " +
                             "Aktivierung der Plasma-Raketen " +
-                            "allerdings Energie verbraucht, können sie nicht " +
+                            "allerdings Energie verbraucht, k\u00F6nnen sie nicht " +
                             "permanent eingesetzt werden. Der " +
-                            "Zeitpunkt ihrer Aktivierung muss daher wohl überlegt " +
+                            "Zeitpunkt ihrer Aktivierung muss daher wohl \u00FCberlegt " +
                             "sein. Wenn es dem " +
                             "Kamaitachi-Piloten gelingt, innerhalb sehr kurzer Zeit " +
-                            "eine große Anzahl feindlicher " +
-                            "Flugobjekte abzuschießen, dann wird diese Leistung mit " +
-                            "einem großzügigen <font color=\"#FFFFD2\">Extra-Bonus" +
+                            "eine gro\u00DFe Anzahl feindlicher " +
+                            "Flugobjekte abzuschie\u00DFen, dann wird diese Leistung mit " +
+                            "einem gro\u00DFz\u00FCgigen <font color=\"#FFFFD2\">Extra-Bonus" +
                             "<font color=\"#D2D2D2\"> " +
                             "belohnt." +
                             "</font></html>";
@@ -1287,14 +1287,14 @@ class LabelTextProvider
                         "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
                             "Helikopter der <font color=\"#FFFFD2\">Pegasus-Klasse" +
-                            "<font color=\"#D2D2D2\"> wären stark benachteiligt, " +
+                            "<font color=\"#D2D2D2\"> w\u00E4ren stark benachteiligt, " +
                             "wenn sie sich allein auf ihre " +
-                            "Raketen verlassen müssten. Dank ihres mächtigen " +
+                            "Raketen verlassen m\u00FCssten. Dank ihres m\u00E4chtigen " +
                             "<font color=\"#FFFFD2\">EMP-Generators" +
                             "<font color=\"#D2D2D2\"> zur Aussendung " +
                             "elektromagnetischer Schockwellen, welche alle " +
                             "feindlichen Flugobjekte im Umkreis schwer " +
-                            "beschädigen und für einen kurzen Augenblick außer " +
+                            "besch\u00E4digen und f\u00FCr einen kurzen Augenblick au\u00DFer " +
                             "Gefecht setzen, steht diese " +
                             "Helikopter-Klasse den anderen allerdings in nichts " +
                             "nach. Durch Verbesserung des EMP-Generators kann die " +
@@ -1305,23 +1305,23 @@ class LabelTextProvider
                             "Bonus<font color=\"#D2D2D2\"> belohnt. Eine weitere " +
                             "Besonderheit der Pegasus-Klasse ist ihr " +
                             "<font color=\"#FFFFD2\">Interphasengenerator" +
-                            "<font color=\"#D2D2D2\">. Dieser ermöglicht es dem " +
+                            "<font color=\"#D2D2D2\">. Dieser erm\u00F6glicht es dem " +
                             "Helikopter partiell in eine andere Dimension zu " +
                             "gelangen, sobald er eine zeitlang keine Raketen " +
                             "abgefeuert hat. In diesem Zustand zwischen zwei " +
-                            "Dimensionen ist der Helikopter gegenüber jeglichen " +
-                            "Angriffen geschützt. Durch Steigerung der " +
+                            "Dimensionen ist der Helikopter gegen\u00FCber jeglichen " +
+                            "Angriffen gesch\u00FCtzt. Durch Steigerung der " +
                             "<font color=\"#FFFFD2\">Schussrate" +
-                            "<font color=\"#D2D2D2\"> wird ebenfalls die für einen " +
-                            "Phasensprung nötige Zeit verkürzt. Raketen, die während " +
+                            "<font color=\"#D2D2D2\"> wird ebenfalls die f\u00FCr einen " +
+                            "Phasensprung n\u00F6tige Zeit verk\u00FCrzt. Raketen, die w\u00E4hrend " +
                             "eines Phasensprungs " +
                             "abgeschossen werden, befinden sich in einem " +
-                            "intermediären Zustand zwischen zwei " +
-                            "Dimensionen und können daher die feindliche Panzerung " +
+                            "intermedi\u00E4ren Zustand zwischen zwei " +
+                            "Dimensionen und k\u00F6nnen daher die feindliche Panzerung " +
                             "leicht durchdringen und besonders " +
                             "schweren Schaden beim Gegner anrichten. Nach Abschuss " +
-                            "einer Rakete füllt der Helikopter allerdings wieder in " +
-                            "seinen Normalzustand zurück." +
+                            "einer Rakete f\u00FCllt der Helikopter allerdings wieder in " +
+                            "seinen Normalzustand zur\u00FCck." +
                             "</b></font></html>";
                 }
                 else if(page == BUTTON_8)
@@ -1335,15 +1335,15 @@ class LabelTextProvider
                             + "<font color=\"#FFFFD2\">Helios-Klasse<font color=\"#D2D2D2\"> ihre Upgrade-Erfahrung mit allen anderen "
                             + "Helikopter-Klassen genutzt. Je erfolgreicher Sie also "
                             + "mit den anderen Helikopter-Klassen gespielt haben, "
-                            + "desto geringer fallen die <font color=\"#FFFFD2\">Upgrade-Kosten<font color=\"#D2D2D2\"> für die "
+                            + "desto geringer fallen die <font color=\"#FFFFD2\">Upgrade-Kosten<font color=\"#D2D2D2\"> f\u00FCr die "
                             + "Helios-Klasse aus. Die Konstrukteure "
-                            + "haben nicht einmal davor Halt gemacht, außerirdische "
-                            + "Technologie aus abgestürzten Flugobjekten zu verbauen: "
+                            + "haben nicht einmal davor Halt gemacht, au\u00DFerirdische "
+                            + "Technologie aus abgest\u00FCrzten Flugobjekten zu verbauen: "
                             + "Ein <font color=\"#FFFFD2\">PowerUp-Stopper<font color=\"#D2D2D2\"> hilft dabei, die Bewegung von "
                             + "PowerUps zu kontrollieren, was ihr Einsammeln "
-                            + "erleichtert. Unter großem Energieaufwand können diese "
-                            + "Helikopter außerdem einen <font color=\"#FFFFD2\">PU-Generator<font color=\"#D2D2D2\"> zur Erzeugung "
-                            + "von PowerUps nutzen. Die Helios-Klasse lässt sich nur "
+                            + "erleichtert. Unter gro\u00DFem Energieaufwand k\u00F6nnen diese "
+                            + "Helikopter au\u00DFerdem einen <font color=\"#FFFFD2\">PU-Generator<font color=\"#D2D2D2\"> zur Erzeugung "
+                            + "von PowerUps nutzen. Die Helios-Klasse l\u00E4sst sich nur "
                             + "im <font color=\"#FFFFD2\">Spezial-Modus<font color=\"#D2D2D2\"> spielen."
                             + "</font></html>";
                 }
@@ -1355,16 +1355,16 @@ class LabelTextProvider
                     return
                         "<html><font size = \"" + HTML_SIZE + "\" " +
                             "face=\"Dialog\" color=\"#D2D2D2\">" +
-                            "Du hast neue Ideen oder Verbesserungsvorschläge für " +
+                            "Du hast neue Ideen oder Verbesserungsvorschl\u00E4ge f\u00FCr " +
                             "HelikopterDefence?<br> Dann schreibe eine E-Mail an: " +
                             "<font color=\"#FFFFD2\">info@HelicopterDefence.de" +
                             "<font color=\"#D2D2D2\"> " +
-                            "<br><br>Gerne nehme ich auch Übersetzunghilfen an, " +
+                            "<br><br>Gerne nehme ich auch \u00DCbersetzunghilfen an, " +
                             "falls du deine Muttersprache " +
                             "in der Sprachauswahl vermisst und behilflich sein " +
-                            "möchtest. <br><br>Ich freue mich darauf, von dir zu " +
-                            "hören. <br><br>Viele Grüße" +
-                            "<br>Björn Hansen" +
+                            "m\u00F6chtest. <br><br>Ich freue mich darauf, von dir zu " +
+                            "h\u00F6ren. <br><br>Viele Gr\u00FC\u00DFe" +
+                            "<br>Bj\u00F6rn Hansen" +
                             "</font></html>";
                 }
             }

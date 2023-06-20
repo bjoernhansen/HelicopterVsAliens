@@ -136,12 +136,17 @@ public class Button extends GameEntity
 		}
 		else if(this.showsPurchasableOffer())
 		{
-			this.secondaryLabel = Window.dictionary.price() + " " + costs + " €";
+			this.secondaryLabel = Window.dictionary.price() + " " + getPriceWithCurrency();
 		}
 		else
 		{
 			this.secondaryLabel = "";
 		}
+	}
+	
+	private String getPriceWithCurrency()
+	{
+		return costs + " " + Window.dictionary.currencySymbol();
 	}
 	
 	public boolean hasSecondaryLabel()

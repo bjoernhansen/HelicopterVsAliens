@@ -297,18 +297,18 @@ public class GameWindowPainter extends WindowPainter
         if (!gameOver)
         {
             graphicsAdapter.drawString((Window.language == ENGLISH ? "Your helicopter was" : "Ihr Helikopter wurde"), 410, 179);
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "severely damaged!" : "schwer beschädigt!"), 410, 197);
+            graphicsAdapter.drawString((Window.language == ENGLISH ? "severely damaged!" : "schwer besch\u00E4digt!"), 410, 197);
         } else if (Events.level < 51)
         {
             graphicsAdapter.drawString((Window.language == ENGLISH ? "Your helicopter was" : "Ihr Helikopter wurde"), 390, 137);
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "severely damaged!" : "schwer beschädigt!"), 390, 155);
+            graphicsAdapter.drawString((Window.language == ENGLISH ? "severely damaged!" : "schwer besch\u00E4digt!"), 390, 155);
             graphicsAdapter.drawString((Window.language == ENGLISH ? "Unfortunately, you " : "Leider reicht ihr Guthaben"), 390, 179);
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "cannot afford the repairs." : "nicht für eine Reparatur."), 390, 197);
+            graphicsAdapter.drawString((Window.language == ENGLISH ? "cannot afford the repairs." : "nicht f\u00FCr eine Reparatur."), 390, 197);
         } else
         {
             if (helicopter.getType() == HELIOS)
             {
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "Congratulations!" : "Herzlichen Glückwunsch!"), 390, 137);
+                graphicsAdapter.drawString((Window.language == ENGLISH ? "Congratulations!" : "Herzlichen Gl\u00FCckwunsch!"), 390, 137);
                 graphicsAdapter.drawString((Window.language == ENGLISH ? "The attack was repulsed." : "Der Angriff wurde abgewehrt."), 390, 155);
                 graphicsAdapter.drawString((Window.language == ENGLISH ? "Once again, mankind" : "Wieder einmal lebt die"), 390, 179);
                 graphicsAdapter.drawString((Window.language == ENGLISH ? "lives in peace!" : "Menschheit in Frieden!"), 390, 197);
@@ -316,13 +316,13 @@ public class GameWindowPainter extends WindowPainter
             {
                 int i = Window.language == ENGLISH ? 0 : 36;
                 
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "You won a great victory," : "Sie haben einen großen"), 390, 124 - i);
+                graphicsAdapter.drawString((Window.language == ENGLISH ? "You won a great victory," : "Sie haben einen gro\u00DFen"), 390, 124 - i);
                 graphicsAdapter.drawString((Window.language == ENGLISH ? "but the war isn't over yet." : "Sieg errungen, aber der"), 390, 142 - i);
                 graphicsAdapter.drawString((Window.language == ENGLISH ? "Rumor has it only helios" : "Krieg ist noch nicht vorbei."), 390, 160 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "type helicopters can" : "Gerüchten zufolge können "), 390, 178 - i);
+                graphicsAdapter.drawString((Window.language == ENGLISH ? "type helicopters can" : "Ger\u00FCchten zufolge k\u00F6nnen "), 390, 178 - i);
                 graphicsAdapter.drawString((Window.language == ENGLISH ? "finally stop the invasion." : "nur Helikopter der Helios-"), 390, 196 - i);
                 graphicsAdapter.drawString((Window.language == ENGLISH ? "" : "Klasse die Alien-Invasion"), 390, 214 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "" : "endgültig stoppen."), 390, 232 - i);
+                graphicsAdapter.drawString((Window.language == ENGLISH ? "" : "endg\u00FCltig stoppen."), 390, 232 - i);
             }
         }
         Button newGameButton2 = Window.buttons.get(MainMenuButtonType.NEW_GAME_2);
@@ -423,7 +423,7 @@ public class GameWindowPainter extends WindowPainter
             graphicsAdapter.setColor(Colorations.red);
         }
         graphicsAdapter.setFont(fontProvider.getPlain(22));
-        graphicsAdapter.drawString(String.format("%s: %d €", Window.dictionary.credit(), Events.money), 20, 35);
+        graphicsAdapter.drawString(String.format("%s: %s", Window.dictionary.credit(), Events.getMoneyWithCurrency()), 20, 35);
         if (Events.lastBonus > 0)
         {
             if (Events.timeOfDay == NIGHT)
@@ -445,7 +445,7 @@ public class GameWindowPainter extends WindowPainter
             {
                 graphicsAdapter.setFont(new Font("Dialog", Font.PLAIN, Window.BONUS_DISPLAY_TIME - Window.moneyDisplayTimer));
             }
-            graphicsAdapter.drawString("+" + Events.lastBonus + " €", 20, 60);
+            graphicsAdapter.drawString("+" + Events.getLastBonusWithCurrency(), 20, 60);
             if (Events.lastExtraBonus > 0)
             {
                 if (Events.timeOfDay == NIGHT)
@@ -455,7 +455,7 @@ public class GameWindowPainter extends WindowPainter
                 {
                     graphicsAdapter.setColor(Colorations.darkYellow);
                 }
-                graphicsAdapter.drawString("+" + Events.lastExtraBonus + " €", 20, 86);
+                graphicsAdapter.drawString("+" + Events.getLastExtraBonusWithCurrency(), 20, 86);
             }
         }
     }
@@ -497,7 +497,7 @@ public class GameWindowPainter extends WindowPainter
                 + (gameRessourceProvider.getEnemies()
                                         .get(CollectionSubgroupType.ACTIVE)
                                         .size() - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
-                + ";   Zerstörte Gegner: "
+                + ";   Zerst\u00F6rte Gegner: "
                 + gameRessourceProvider.getEnemies()
                                        .get(CollectionSubgroupType.DESTROYED)
                                        .size()
@@ -546,7 +546,7 @@ public class GameWindowPainter extends WindowPainter
                 + "   Extra-Bonus: " + Events.extraBonusCounter;
         } else if (Window.specialInfoSelection == 10)
         {
-            infoString = "Menü sichtbar: " + Window.isMenuVisible;
+            infoString = "Men\u00FC sichtbar: " + Window.isMenuVisible;
         } else if (Window.specialInfoSelection == 11)
         {
             infoString = (Window.language == ENGLISH

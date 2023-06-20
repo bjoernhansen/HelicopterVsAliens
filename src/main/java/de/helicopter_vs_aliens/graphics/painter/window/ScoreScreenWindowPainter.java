@@ -59,7 +59,7 @@ public class ScoreScreenWindowPainter extends WindowPainter
             }
             else
             {
-                graphicsAdapter.drawString("Mission in " + Window.minutes(helicopter.scoreScreenTimes.getTotalPlayingTime()) + " erfüllt!", X_POS_2, Y_POS -9);
+                graphicsAdapter.drawString("Mission in " + Window.minutes(helicopter.scoreScreenTimes.getTotalPlayingTime()) + " erf\u00FCllt!", X_POS_2, Y_POS -9);
             }
         }
         else
@@ -102,12 +102,12 @@ public class ScoreScreenWindowPainter extends WindowPainter
                 + gameStatisticsCalculator.getNumberOfRepairs(),
             X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 2 + 11);
         graphicsAdapter.drawString((Window.language == ENGLISH ? "Overall earnings: " : "Gesamt-Sold: ")
-                +  Events.overallEarnings + " €",
+                +  Events.getLastOverallEarningsWithCurrency(),
             X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 3 + 11);
         
         int percentage = Events.bonusIncomePercentage();
         graphicsAdapter.setColor(Colorations.scoreScreen[0]);
-        graphicsAdapter.drawString((Window.language == ENGLISH ? "Additional income due to extra boni: " : "Zusätzliche Einnahmen durch Extra-Boni: +") + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 5);
+        graphicsAdapter.drawString((Window.language == ENGLISH ? "Additional income due to extra boni: " : "Zus\u00E4tzliche Einnahmen durch Extra-Boni: +") + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 5);
         
         percentage = gameStatisticsCalculator.getKillRate();
         graphicsAdapter.setColor(Colorations.scoreScreen[1]);

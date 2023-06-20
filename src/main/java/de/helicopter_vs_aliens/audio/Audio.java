@@ -1,15 +1,20 @@
 package de.helicopter_vs_aliens.audio;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.model.powerup.PowerUpType;
-import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
+import de.helicopter_vs_aliens.score.Savegame;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.net.URL;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
 import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
@@ -19,24 +24,24 @@ public class Audio
 {
     public static final boolean
         MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
-
+    
     private static final int
         NUMBER_OF_ANNOUNCERS = 6;
-
+    
     public static boolean
         isSoundOn = true,            // = true: Hintergrundmusik wird abgespielt
         standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
-
-    public static AudioClip
+    
+    public static Clip
         currentBg,        // Die aktuell abgespielte Hintergrund-Musik
-
-        // Menü-Sounds
-        block,
+    
+    // Menü-Sounds
+    block,
         cash,
         choose,
-
-        // Game-Sounds
-        cloak,
+    
+    // Game-Sounds
+    cloak,
         emp,
         explosion1,
         explosion2,
@@ -60,9 +65,9 @@ public class Audio
         teleport1,
         teleport2,
         tractorBeam,
-
-        // Announcer
-        applause1,
+    
+    // Announcer
+    applause1,
         applause2,
         niceCatch,
         doubleKill,
@@ -70,14 +75,14 @@ public class Audio
         multiKill,
         megaKill,
         monsterKill,
-
-        // Hintergrundmusik für den Standard-Modus
-        bgMusic1,
+    
+    // Hintergrundmusik für den Standard-Modus
+    bgMusic1,
         bgMusic2,
         bgMusic3,
-
-        // Hintergrundmusik für Michael-Modus
-        mainMenu,
+    
+    // Hintergrundmusik für Michael-Modus
+    mainMenu,
         repairShop,
         scoreScreen,
         level_01_09,
@@ -90,15 +95,27 @@ public class Audio
         finalBossLevel,
         victory;
     
-    public static AudioClip[]
+    public static Clip[]
         powerAnnouncer;
-
-    private static AudioClip getAudioClip(String string)
+    
+    private static Clip getAudioClip(String audioFileName)
     {
-        URL url = Audio.class.getResource("/sounds/" + string);
-        return Applet.newAudioClip(url);
+        try
+        {
+            String filePath = "/sounds/" + audioFileName;
+            InputStream inputStream = Audio.class.getResourceAsStream(filePath);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Objects.requireNonNull(inputStream));
+            
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            return clip;
+        }
+        catch(UnsupportedAudioFileException | IOException | LineUnavailableException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
-
+    
     public static void initialize()
     {
         launch1 = getAudioClip("launch1.wav");
@@ -139,16 +156,16 @@ public class Audio
         powerUpFade1 = getAudioClip("pu_fade1.wav");
         powerUpFade2 = getAudioClip("pu_fade2.wav");
         stunActivated = getAudioClip("stun_activated.wav");
-
-        powerAnnouncer = new AudioClip[NUMBER_OF_ANNOUNCERS];
+        
+        powerAnnouncer = new Clip[NUMBER_OF_ANNOUNCERS];
         powerAnnouncer[PowerUpType.TRIPLE_DAMAGE.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
         powerAnnouncer[PowerUpType.INVINCIBLE.ordinal()] = getAudioClip("announcer_invincible.wav");
         powerAnnouncer[PowerUpType.UNLIMITED_ENERGY.ordinal()] = getAudioClip("announcer_unlimited_energy.wav");
         powerAnnouncer[PowerUpType.BOOSTED_FIRE_RATE.ordinal()] = getAudioClip("announcer_fire_rate_boosted.wav");
         powerAnnouncer[PowerUpType.REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
         powerAnnouncer[PowerUpType.BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");
-
-        if (MICHAEL_MODE)
+        
+        if(MICHAEL_MODE)
         {
             mainMenu = getAudioClip("main_menu.wav");
             repairShop = getAudioClip("repair_shop.wav");
@@ -164,20 +181,20 @@ public class Audio
             victory = getAudioClip("victory.wav");
         }
     }
-
+    
     public static void refreshBackgroundMusic()
     {
-        if (currentBg != null)
+        if(currentBg != null)
         {
             currentBg.stop();
         }
-        if (isSoundOn)
+        if(isSoundOn)
         {
             currentBg = getBgMusic();
-            currentBg.loop();
+            currentBg.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
-
+    
     public static void changeBgMusicMode(Savegame savegame)
     {
         standardBackgroundMusic = !standardBackgroundMusic;
@@ -185,145 +202,171 @@ public class Audio
         refreshBackgroundMusic();
         Events.settingsChanged = true;
     }
-
+    
     // Rückgabe der aktuell zu spielenden Hintergrundmusik
-    private static AudioClip getBgMusic()
+    private static Clip getBgMusic()
     {
-        if (!standardBackgroundMusic)
+        if(!standardBackgroundMusic)
         {
-            if (WindowManager.window == WindowType.GAME && !Events.isCurrentLevelBossLevel())
+            if(WindowManager.window == WindowType.GAME && !Events.isCurrentLevelBossLevel())
             {
                 return bgMusic2;
-            } else if (WindowManager.window == REPAIR_SHOP || WindowManager.window == SCORE_SCREEN)
+            }
+            else if(WindowManager.window == REPAIR_SHOP || WindowManager.window == SCORE_SCREEN)
             {
                 return bgMusic1;
             }
             return bgMusic3;
-        } else if (WindowManager.window == REPAIR_SHOP)
+        }
+        else if(WindowManager.window == REPAIR_SHOP)
         {
             return repairShop;
-        } else if (WindowManager.window == SCORE_SCREEN)
+        }
+        else if(WindowManager.window == SCORE_SCREEN)
         {
-            if (Events.level == 51)
+            if(Events.level == 51)
             {
                 return victory;
             }
             return scoreScreen;
-        } else if (WindowManager.window.isMainWindow())
+        }
+        else if(WindowManager.window.isMainWindow())
         {
             return mainMenu;
-        } else if (Events.level >= 1 && Events.level < 10)
+        }
+        else if(Events.level >= 1 && Events.level < 10)
         {
             return level_01_09;
-        } else if (Events.level == 10)
+        }
+        else if(Events.level == 10)
         {
             return bossLevel;
-        } else if (Events.level >= 11 && Events.level < 20)
+        }
+        else if(Events.level >= 11 && Events.level < 20)
         {
             return level_11_19;
-        } else if (Events.level == 20)
+        }
+        else if(Events.level == 20)
         {
             return bossLevel;
-        } else if (Events.level >= 21 && Events.level < 30)
+        }
+        else if(Events.level >= 21 && Events.level < 30)
         {
             return level_21_29;
-        } else if (Events.level == 30)
+        }
+        else if(Events.level == 30)
         {
             return bossLevel;
-        } else if (Events.level >= 31 && Events.level < 40)
+        }
+        else if(Events.level >= 31 && Events.level < 40)
         {
             return level_31_39;
-        } else if (Events.level == 40)
+        }
+        else if(Events.level == 40)
         {
             return bossLevel;
-        } else if (Events.level >= 41 && Events.level < 49)
+        }
+        else if(Events.level >= 41 && Events.level < 49)
         {
             return level_41_48;
-        } else if (Events.level == 49)
+        }
+        else if(Events.level == 49)
         {
             return level_49;
-        } else if (Events.level == Events.MAXIMUM_LEVEL)
+        }
+        else if(Events.level == Events.MAXIMUM_LEVEL)
         {
             return finalBossLevel;
         }
         return victory;
     }
-
-    public static void play(AudioClip clip)
+    
+    public static void play(Clip clip)
     {
-        clip.stop();
-        if(isSoundOn){clip.play();}
+        clip.setFramePosition(0);
+        if(isSoundOn)
+        {
+            clip.start();
+        }
     }
-
-    public static void loop(AudioClip clip)
+    
+    public static void loop(Clip clip)
     {
-        if(isSoundOn){clip.loop();}
+        if(isSoundOn)
+        {
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
     }
-
+    
     // Abspielen eines Lob-Sounds entsprechend der Anzahl mit einem Mal besiegter Gegner
     public static void praise(int nr)
     {
-        if (nr == 1)
+        if(nr == 1)
         {
             play(niceCatch);
             play(applause2);
-        } else if (nr == 2)
+        }
+        else if(nr == 2)
         {
             play(doubleKill);
-        } else if (nr == 3)
+        }
+        else if(nr == 3)
         {
             play(trippleKill);
             play(applause2);
-        } else if (nr == 4)
+        }
+        else if(nr == 4)
         {
             play(megaKill);
             play(applause2);
-        } else
+        }
+        else
         {
             stopApplause();
             play(applause1);
-            if (nr == 5)
+            if(nr == 5)
             {
                 play(multiKill);
-            } else if (nr >= 6)
+            }
+            else if(nr >= 6)
             {
                 play(monsterKill);
             }
         }
     }
-
+    
     private static void stopApplause()
     {
         applause1.stop();
         applause2.stop();
     }
-
+    
     public static void playSpecialSound(HelicopterType helicopterType)
     {
         play(helicopterType.getSpecialSound());
     }
     
-    public static AudioClip getEmp()
+    public static Clip getEmp()
     {
         return emp;
     }
     
-    public static AudioClip getPlasmaOn()
+    public static Clip getPlasmaOn()
     {
         return plasmaOn;
     }
     
-    public static AudioClip getShieldUp()
+    public static Clip getShieldUp()
     {
         return shieldUp;
     }
     
-    public static AudioClip getStunActivated()
+    public static Clip getStunActivated()
     {
         return stunActivated;
     }
     
-    public static AudioClip getTeleport1()
+    public static Clip getTeleport1()
     {
         return teleport1;
     }

@@ -55,7 +55,6 @@ public final class Dictionary
     private final Map<WindowType, Map<StartScreenMenuButtonType, String>>
         startScreenSubButtonName = new EnumMap<>(WindowType.class);
     
-    
     private final Map<HighScoreColumnType, String>
         highScoreColumnNames = new EnumMap<>(HighScoreColumnType.class);
     
@@ -179,9 +178,7 @@ public final class Dictionary
         updateSettingsLabels();
         
         highScoreColumnNames.clear();
-        HighScoreColumnType.getValues().forEach(highScoreColumnType -> {
-            highScoreColumnNames.put(highScoreColumnType, this.languageProperties.getProperty(highScoreColumnType.getKey()));
-        });
+        HighScoreColumnType.getValues().forEach(highScoreColumnType -> highScoreColumnNames.put(highScoreColumnType, this.languageProperties.getProperty(highScoreColumnType.getKey())));
         
         settingOptions.clear();
         for (int i = 1; i <= Window.NUMBER_OF_SETTING_OPTIONS; i++)
@@ -540,13 +537,14 @@ public final class Dictionary
     public String[] helicopterNotAvailable(HelicopterType helicopterType)
     {
         String[] message = {"", "", "", ""};
-        switch (helicopterType)
+        switch(helicopterType)
         {
-            case HELIOS:
+            case HELIOS ->
+            {
                 return this.blockMessage(BlockMessage.HELIOS_NOT_AVAILABLE);
-            case OROCHI:
-            case KAMAITACHI:
-            case PEGASUS:
+            }
+            case OROCHI, KAMAITACHI, PEGASUS ->
+            {
                 message[0] = String.format(
                     blockMessages.get(BlockMessage.HELICOPTER_NOT_AVAILABLE)[0],
                     this.typeName(helicopterType));
@@ -557,6 +555,7 @@ public final class Dictionary
                                                       .get(0)),
                     this.typeName(helicopterType.getUnlockerTypes()
                                                 .get(1)));
+            }
         }
         return message;
     }
@@ -582,5 +581,10 @@ public final class Dictionary
     public String startScreenButtonLabel(String dictionaryKey)
     {
         return this.languageProperties.getProperty(dictionaryKey);
+    }
+    
+    public String currencySymbol()
+    {
+        return this.languageProperties.getProperty("currencySymbol");
     }
 }
