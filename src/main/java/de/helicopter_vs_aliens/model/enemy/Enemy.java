@@ -263,8 +263,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public boolean
 		isTouchingHelicopter,
 		hasUnresolvedIntersection;
-		
 	
+		
 	public EnemyType // TODO private und getter
 		type;
 	
@@ -2584,5 +2584,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public int getAlpha()
 	{
 		return cloakingDevice.getAlpha();
+	}
+	
+	public EnemyType getType()
+	{
+		return type;
 	}
 }

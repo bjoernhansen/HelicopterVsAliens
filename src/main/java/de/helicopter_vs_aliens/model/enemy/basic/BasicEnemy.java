@@ -82,7 +82,7 @@ public abstract class BasicEnemy extends StandardEnemy
     
     private boolean isToBecomeCloakableMiniBoss()
     {
-        return hasCanonReadyToFire() || (type.isCloakableAsMiniBoss() && Calculations.tossUp(0.2f));
+        return hasCanonReadyToFire() || (getType().isCloakableAsMiniBoss() && Calculations.tossUp(0.2f));
     }
     
     @Override
@@ -103,7 +103,7 @@ public abstract class BasicEnemy extends StandardEnemy
     @Override
     protected int hitPointVariance()
     {
-        return Calculations.random(type.getHitPoints()/2);
+        return Calculations.random(getType().getHitPoints()/2);
     }
     
     @Override

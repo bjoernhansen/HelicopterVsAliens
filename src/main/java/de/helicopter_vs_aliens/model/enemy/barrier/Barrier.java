@@ -46,7 +46,7 @@ public abstract class Barrier extends Enemy
     {
         rotorColor = 1;
         isClockwiseBarrier = Calculations.tossUp();
-        deactivationProbability = 1.0f / type.getStrength();
+        deactivationProbability = 1.0f / getType().getStrength();
     }
     
     @Override
@@ -112,10 +112,10 @@ public abstract class Barrier extends Enemy
             getSpeedLevel().setLocation(ZERO_SPEED);
         }
         else if(burrowTimer == READY
-            &&( (type != EnemyType.PROTECTOR
+            &&( (getType() != EnemyType.PROTECTOR
             && Calculations.tossUp(0.004f))
             ||
-            (type == EnemyType.PROTECTOR
+            (getType() == EnemyType.PROTECTOR
                 && (getHelicopter().getX() > boss.getX() - 225) )))
         {
             burrowTimer = 2 * BORROW_TIME

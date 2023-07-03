@@ -174,7 +174,7 @@ public class EnemyController
     
     private static boolean isMajorBossActive(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
     {
-        return !enemies.get(CollectionSubgroupType.ACTIVE).isEmpty() && enemies.get(CollectionSubgroupType.ACTIVE).element().type.isMajorBoss();
+        return !enemies.get(CollectionSubgroupType.ACTIVE).isEmpty() && enemies.get(CollectionSubgroupType.ACTIVE).element().getType().isMajorBoss();
     }
     
     private static void createBoss2Servants(GameRessourceProvider gameRessourceProvider)

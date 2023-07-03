@@ -126,7 +126,7 @@ public class Scenery extends GameEntity
     {
         return !enemies.get(CollectionSubgroupType.ACTIVE).isEmpty()
              && enemies.get(CollectionSubgroupType.ACTIVE)
-                       .element().type.isMajorBoss();
+                       .element().getType().isMajorBoss();
     }
     
     private boolean arePrerequisitesForSceneryObjectsCreationMet()

@@ -161,7 +161,7 @@ public final class Phoenix extends Helicopter
     {
         return this.hasShortRangeRadiation
                 && enemy.collisionDamageTimer == 0
-                && !(enemy.type == KABOOM)
+                && !(enemy.getType() == KABOOM)
                 && this.enhancedRadiationTimer == 0
                 && Calculations.tossUp(ENHANCED_RADIATION_PROB);
     }

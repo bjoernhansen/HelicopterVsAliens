@@ -18,7 +18,7 @@ public class FourthBossServant extends BossServant
     @Override
     protected int hitPointVariance()
     {
-        return Calculations.random(type.getHitPoints()/2);
+        return Calculations.random(getType().getHitPoints()/2);
     }
     
     @Override

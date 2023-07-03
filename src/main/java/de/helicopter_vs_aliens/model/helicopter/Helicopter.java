@@ -994,7 +994,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.startRecentDamageEffect(enemy);
 		if(playCollisionSound)
 		{
-			Audio.play(enemy.type == EnemyType.KABOOM
+			Audio.play(enemy.getType() == EnemyType.KABOOM
 					? Audio.explosion4
 					: this.getCollisionAudio());
 		}

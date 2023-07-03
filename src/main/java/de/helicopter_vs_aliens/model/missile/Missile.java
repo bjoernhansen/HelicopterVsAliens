@@ -177,7 +177,7 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 				}
 				else if (!this.bounced
 					&& enemy.teleportTimer < 1
-					&& !(enemy.type == BOSS_2_SERVANT))
+					&& !(enemy.getType() == BOSS_2_SERVANT))
 				{
 					Audio.play(Audio.rebound);
 					this.speed = -Math.signum(this.speed) * StandardUpgradeType.MISSILE_DRIVE.getMagnitude(1);

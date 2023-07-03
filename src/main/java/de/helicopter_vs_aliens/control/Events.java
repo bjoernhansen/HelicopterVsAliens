@@ -1056,7 +1056,7 @@ public class Events
 		// kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
 		if(!gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
 		   && !(!totalReset && gameRessourceProvider.getEnemies()
-										 .get(CollectionSubgroupType.ACTIVE).element().type == BOSS_2_SERVANT))
+										 .get(CollectionSubgroupType.ACTIVE).element().getType() == BOSS_2_SERVANT))
 		{
 			// Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
 			if(	level == 40 || level == 50)
