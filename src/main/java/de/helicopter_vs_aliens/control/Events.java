@@ -751,14 +751,14 @@ public class Events
 	private static void startScreenMousePressedLeft(GameRessourceProvider gameRessourceProvider)
 	{
 		// TODO eventuell nach Menu auslagern
-		if(Window.triangle[0].contains(cursor))
+		if(Window.triangles[0].contains(cursor))
 		{
 			Window.crossPosition = (Window.crossPosition + 1)% HelicopterType.count();
 			Window.cross = Window.getCrossPolygon();
 			Window.helicopterSelection = (Window.helicopterSelection + HelicopterType.count() - 1)% HelicopterType.count();
 			Audio.play(Audio.choose);
 		}
-		else if(Window.triangle[1].contains(cursor))
+		else if(Window.triangles[1].contains(cursor))
 		{
 			Window.crossPosition = (Window.crossPosition + HelicopterType.count() - 1)% HelicopterType.count();
 			Window.cross = Window.getCrossPolygon();

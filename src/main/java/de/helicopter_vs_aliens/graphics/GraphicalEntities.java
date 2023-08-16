@@ -22,7 +22,7 @@ public final class GraphicalEntities
         graphicsAdapter.drawLine(x1, y1, x2, y2);
         graphicsAdapter.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         graphicsAdapter.setColor(Color.green);
-        graphicsAdapter.drawLine(x1, y1+1, x2, y2);
+        graphicsAdapter.drawLine(x1, y1, x2, y2);
         graphicsAdapter.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
     }
     

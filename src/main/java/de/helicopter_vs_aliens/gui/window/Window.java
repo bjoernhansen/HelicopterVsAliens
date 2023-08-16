@@ -33,9 +33,10 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Language;
+import de.helicopter_vs_aliens.util.geometry.Point;
+import de.helicopter_vs_aliens.util.geometry.Polygon;
 
 import java.awt.Dimension;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+// TODO statische importe entfernen und stattdessen direct PriceLevel.CHEAP, ... ansprechen
 import static de.helicopter_vs_aliens.gui.PriceLevel.CHEAP;
 import static de.helicopter_vs_aliens.gui.PriceLevel.EXPENSIVE;
 import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
@@ -116,8 +118,9 @@ public abstract class Window implements Paintable
     public static Polygon
     	cross;                      // das rote Block-Kreuz
 	
+	// TODO instead of Polygon create and use your own triangle class and use it in the GraphicsAdapter interface
 	public static final Polygon[]
-		triangle = new Polygon[2];	// die grünen Dreiecke auf dem StartScreen
+		triangles = new Polygon[2];	// die grünen Dreiecke auf dem StartScreen
 	 
 	public static final EnumMap<HelicopterType, Helicopter>
 		helicopterDummies = new EnumMap<>(HelicopterType.class);
@@ -206,8 +209,8 @@ public abstract class Window implements Paintable
 	    int[] py = {261 + START_SCREEN_HELICOPTER_OFFSET_Y,
 	                331 + START_SCREEN_HELICOPTER_OFFSET_Y,
 	                296 + START_SCREEN_HELICOPTER_OFFSET_Y};
-	    triangle[0] = new Polygon(px1, py, 3);
-	    triangle[1] = new Polygon(px2, py, 3);
+	    triangles[0] = new Polygon(getPointsFromCoordinateArrays(px1, py));
+		triangles[1] = new Polygon(getPointsFromCoordinateArrays(px2, py));
 	    
 	    initializeButtons();
 	    for(int i = 0; i < NUMBER_OF_START_SCREEN_HELICOPTERS; i++)
@@ -218,9 +221,20 @@ public abstract class Window implements Paintable
 	    						 239 + START_SCREEN_HELICOPTER_OFFSET_Y, 206, 116);
 	    }
     }
-	 
-    
-    /** Update-Methoden */
+	
+	private static Point[] getPointsFromCoordinateArrays(int[] pointsX, int[] pointsY)
+	{
+		int pointCount = pointsX.length;
+		Point[] points = new Point[pointCount];
+		for(int i = 0; i < pointCount; i++)
+		{
+			points[i] = Point.newInstance(pointsX[i], pointsY[i]);
+		}
+		return points;
+	}
+	
+	
+	/** Update-Methoden */
 	
     private static void updateStartScreen(Helicopter helicopter, int counter)
 	{
@@ -457,23 +471,21 @@ public abstract class Window implements Paintable
 					   highlightedButton = button;
 				   });
 	}
-	
-	public static Polygon getCrossPolygon()
+	   
+    public static Polygon getCrossPolygon()
     {
-    	// TODO mit Konstanten arbeiten, ggf. braucht man nicht zwei Methoden --> lokale Variablen einsetzen
-		return getCrossPolygon(	190, 100, 15, 38 + START_SCREEN_OFFSET_X
-    								+ crossPosition * HELICOPTER_DISTANCE,
-    								247 + START_SCREEN_HELICOPTER_OFFSET_Y);
-    }
-    
-    private static Polygon getCrossPolygon(int a, int b, int z, int v, int w)
-    {
+		int a = 190;
+		int b = 100;
+		int z = 15;
+		int v = 38 + START_SCREEN_OFFSET_X + crossPosition * HELICOPTER_DISTANCE;
+		int w = 247 + START_SCREEN_HELICOPTER_OFFSET_Y;
+		
     	int [] tempX = {0, (a/2), a, a, a*b/(2*(b-z)), a, a, a/2, 0, 0,
     	                 a*(b-2*z)/(2*(b-z)), 0};
     	int [] tempY = {0, (b-z)/2, 0, z, (b-2*z)/2+z, b-z, b, (b-z)/2+z,
     	                 b, b-z, (b-2*z)/2+z, z};
     	for(int i = 0; i < 12; i++){tempX[i] += v; tempY[i] += w;}
-    	return new Polygon(tempX, tempY, 12);
+    	return new Polygon(getPointsFromCoordinateArrays(tempX, tempY));
     }
 	
 	public static void block(BlockMessage blockMessage)

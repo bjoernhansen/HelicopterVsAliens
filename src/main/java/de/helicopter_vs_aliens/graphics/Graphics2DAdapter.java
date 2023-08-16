@@ -1,5 +1,7 @@
 package de.helicopter_vs_aliens.graphics;
 
+import de.helicopter_vs_aliens.util.geometry.Polygon;
+
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
@@ -8,8 +10,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
-import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -19,18 +19,21 @@ import java.awt.image.BufferedImageOp;
 
 public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
 {
-    public static GraphicsAdapter of(Graphics graphics){
-        return new Graphics2DAdapter((Graphics2D)graphics);
+    public static GraphicsAdapter of(Graphics graphics)
+    {
+        return new Graphics2DAdapter((Graphics2D) graphics);
     }
     
-    public static GraphicsAdapter of(Image image){
+    public static GraphicsAdapter of(Image image)
+    {
         return Graphics2DAdapter.of(image.getGraphics());
     }
     
-    public static GraphicsAdapter withAntialiasing(Image image){
+    public static GraphicsAdapter withAntialiasing(Image image)
+    {
         GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(image);
         graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                         RenderingHints.VALUE_ANTIALIAS_ON);
+            RenderingHints.VALUE_ANTIALIAS_ON);
         return graphicsAdapter;
     }
     
@@ -70,18 +73,6 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void drawPoint(int x, int y)
-    {
-        graphics.drawLine(x, y, x, y);
-    }
-    
-    @Override
-    public void drawPoint(Point point)
-    {
-        drawPoint(point.x, point.y);
-    }
-    
-    @Override
     public void setPaint(Paint paint)
     {
         graphics.setPaint(paint);
@@ -112,6 +103,12 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
+    public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y)
+    {
+        graphics.drawImage(img, op, x, y);
+    }
+    
+    @Override
     public void fill(Shape s)
     {
         graphics.fill(s);
@@ -128,6 +125,9 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     {
         graphics.drawString(str, x, y);
     }
+    
+    
+    
     
     @Override
     public FontMetrics getFontMetrics()
@@ -154,12 +154,6 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y)
-    {
-        graphics.drawImage(img, op, x, y);
-    }
-    
-    @Override
     public void setComposite(Composite comp)
     {
         graphics.setComposite(comp);
@@ -178,14 +172,14 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void fillPolygon(Polygon p)
+    public void fillPolygon(Polygon polygon)
     {
-        graphics.fillPolygon(p);
+        graphics.fillPolygon(polygon.asAwtPolygon());
     }
     
     @Override
-    public void drawPolygon(Polygon p)
+    public void drawPolygon(Polygon polygon)
     {
-        graphics.drawPolygon(p);
+        graphics.drawPolygon(polygon.asAwtPolygon());
     }
 }

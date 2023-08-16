@@ -85,7 +85,7 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
             sceneryObject.setImage(i, new BufferedImage(20, 80 + sceneryObject.getCoordinateOfComponent(0,0) + 6, BufferedImage.TYPE_INT_ARGB));
             GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(sceneryObject.getImage(i));
             graphicsAdapter.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-                                            RenderingHints.VALUE_ANTIALIAS_ON);
+                                                RenderingHints.VALUE_ANTIALIAS_ON);
             
             graphicsAdapter.setPaint( new GradientPaint(	12, 0,  sceneryObject.getColor(i),
                     23, 0, 	Colorations.adjustBrightness(sceneryObject.getColor(i), 0.75f), true));

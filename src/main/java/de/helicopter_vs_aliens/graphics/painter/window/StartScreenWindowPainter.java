@@ -113,8 +113,7 @@ public class StartScreenWindowPainter extends WindowPainter
             }
             if(Events.allPlayable || HelicopterType.getValues().get((Window.helicopterSelection + i)% HelicopterType.count()).isUnlocked())
             {
-                // TODO diese boundaries als Konstante festlegen
-                paintTickMark(graphicsAdapter, i, 210, 323, 15, 20);
+                paintTickMark(graphicsAdapter, i);
             }
         }
         
@@ -125,11 +124,11 @@ public class StartScreenWindowPainter extends WindowPainter
         // die grünen Pfeile
         for(int i = 0; i < 2; i++)
         {
-            if(Window.triangle[i].contains(helicopter.destination.x, helicopter.destination.y)){graphicsAdapter.setColor(Color.green);}
+            if(Window.triangles[i].contains(helicopter.destination)){graphicsAdapter.setColor(Color.green);}
             else{graphicsAdapter.setColor(Colorations.arrowGreen);}
-            graphicsAdapter.fillPolygon(Window.triangle[i]);
+            graphicsAdapter.fillPolygon(Window.triangles[i]);
             graphicsAdapter.setColor(Colorations.darkArrowGreen);
-            graphicsAdapter.drawPolygon(Window.triangle[i]);
+            graphicsAdapter.drawPolygon(Window.triangles[i]);
         }
         
         if(Window.crossTimer > 0)
@@ -137,17 +136,24 @@ public class StartScreenWindowPainter extends WindowPainter
             int alpha = (int)(255*(((double)CROSS_MAX_DISPLAY_TIME- Window.crossTimer)/(CROSS_MAX_DISPLAY_TIME/2)));
             if(Window.crossTimer < CROSS_MAX_DISPLAY_TIME/2){graphicsAdapter.setColor(Color.red);}
             else{graphicsAdapter.setColor(Colorations.setAlpha(Color.red, alpha));}
-            graphicsAdapter.fill(Window.cross);
+            // graphicsAdapter.fill(Window.cross);
+            graphicsAdapter.fillPolygon(Window.cross);
             if(Window.crossTimer < CROSS_MAX_DISPLAY_TIME/2){graphicsAdapter.setColor(Colorations.red);}
             else{graphicsAdapter.setColor(Colorations.setAlpha(Colorations.red, alpha));}
             graphicsAdapter.setStroke(new BasicStroke(2));
-            graphicsAdapter.draw(Window.cross);
+            graphicsAdapter.drawPolygon(Window.cross);
             graphicsAdapter.setStroke(new BasicStroke(1));
         }
     }
     
-    private static void paintTickMark(GraphicsAdapter graphicsAdapter, int i, int x, int y, int w, int h)
+    private static void paintTickMark(GraphicsAdapter graphicsAdapter, int i)
     {
+        // TODO diese boundaries als Konstante festlegen
+        int x = 210;
+        int y = 323;
+        int w = 15;
+        int h = 20;
+        
         GraphicalEntities.paintGlowingLine( graphicsAdapter,
                                             x + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
                                             y + h/2 + Window.START_SCREEN_HELICOPTER_OFFSET_Y,

@@ -5,9 +5,11 @@ import de.helicopter_vs_aliens.Main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 
 public class Label extends JTextPane
 {
+    @Serial
     private static final long serialVersionUID = 1L;
     
     public Label()
@@ -25,7 +27,8 @@ public class Label extends JTextPane
     @Override
     protected void paintComponent(final Graphics g)
     {
-        final Graphics2D g2d = (Graphics2D) g;
+        //TODO funktioniert so nicht für javafx
+        final var g2d = (Graphics2D) g;
         g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
                               Controller.getAntialiasingRenderingHint());
         super.paintComponent(g2d);
