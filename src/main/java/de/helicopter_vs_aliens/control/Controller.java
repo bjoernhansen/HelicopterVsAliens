@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.control;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.Main;
@@ -41,6 +42,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -116,25 +118,17 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	
 	
 	private Controller(){}
-	
-	public static Object getAntialiasingRenderingHint()
-	{
-		return getInstance().isAntialiasingActivated
-					? RenderingHints.VALUE_ANTIALIAS_ON
-					: RenderingHints.VALUE_ANTIALIAS_OFF;
-	}
-	
+
 	public void init()
 	{					
 		Audio.initialize();
 		
 		Dimension offDimension = getSize();
 		wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
-		offImage = createImage((int) offDimension.getWidth(), (int) offDimension.getHeight());
-		
+		offImage = new BufferedImage((int) Main.VIRTUAL_DIMENSION.getWidth(), (int) Main.VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
 		graphicsAdapter = Graphics2DAdapter.of(offImage);
 	    graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		graphicsAdapter.fill(wholeScreenClip);
+		graphicsAdapter.fillRectangle(wholeScreenClip);
 		
 		Shape offscreenClip = new Rectangle2D.Double(0,
 													 0,
@@ -145,7 +139,8 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		add(Window.label);
 		addKeyListener(this);
 		addMouseListener(this);
-		addMouseMotionListener(this);		
+		addMouseMotionListener(this);
+
 		Window.initialize();
 		Window.updateButtonLabels(helicopter);
 		scenery.createInitialSceneryObjects();
@@ -223,7 +218,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 			else
 			{
 				this.graphicsAdapter.setColor(Colorations.bg);
-				this.graphicsAdapter.fill(this.wholeScreenClip);
+				this.graphicsAdapter.fillRectangle(this.wholeScreenClip);
 				paintFrame(this.graphicsAdapter);
 			}			
 		}
@@ -399,10 +394,11 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 		if(Optional.ofNullable(instance).isEmpty())
 		{
 			instance = new Controller();
+			GameResources.setGameResources(instance);
 		}
 		return instance;
 	}
-	
+
 	@Override
 	public GameEntitySupplier getGameEntitySupplier()
 	{
@@ -435,7 +431,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
 	public void switchAntialiasingActivationState(Button currentButton)
 	{
 		isAntialiasingActivated = !isAntialiasingActivated;
-		graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, getAntialiasingRenderingHint());
+		graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, getInstance().isAntialiasingActivated()
+			? RenderingHints.VALUE_ANTIALIAS_ON
+			: RenderingHints.VALUE_ANTIALIAS_OFF);
 		Window.dictionary.updateAntialiasing();
 		currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
 	}

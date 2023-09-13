@@ -1222,7 +1222,7 @@ public class Events
 	}
 
 	// überprüfen, ob Level-Up Voraussetzungen erfüllt. Wenn ja: Schwierigkeitssteigerung
-	static void checkForLevelUp(GameRessourceProvider gameRessourceProvider)
+	public static void checkForLevelUp(GameRessourceProvider gameRessourceProvider)
 	{
 		if( killsAfterLevelUp >= numberOfKillsNecessaryForNextLevelUp() && level < 50)
 		{

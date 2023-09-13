@@ -71,7 +71,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     private void paintRedFrame(GraphicsAdapter graphicsAdapter)
     {
         graphicsAdapter.setColor(Color.red);
-        graphicsAdapter.draw(helicopter.getBounds());
+        graphicsAdapter.drawRectangle(helicopter.getBounds());
         graphicsAdapter.fillOval((int) helicopter.location.getX() - 2, (int) helicopter.location.getY() - 2, 4, 4);
     }
     

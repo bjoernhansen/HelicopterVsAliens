@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.*;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
@@ -558,8 +559,10 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			this.obtainFifthSpecial();
 		}
-		
-		Controller.getInstance().getGameStatisticsCalculator().restoreFrom(savegame);
+
+		GameResources.getProvider()
+					 .getGameStatisticsCalculator()
+					 .restoreFrom(savegame);
 		
 		this.isPlayedWithCheats = savegame.wasCreatedThroughCheating;
 
@@ -573,7 +576,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		this.placeAtStartpos();
 		this.isDamaged = false;
 		this.isPlayedWithCheats = false;
-		Controller.getInstance().getGameStatisticsCalculator().resetCounterForHighscore();
+		GameResources.getProvider().getGameStatisticsCalculator().resetCounterForHighscore();
 		this.resetSpecialUpgrades();
 		this.scoreScreenTimes.clear();
 	}
@@ -603,7 +606,9 @@ public abstract class Helicopter extends RectangularGameEntity
 	public void repair()
 	{
 		Audio.play(Audio.cash);
-		Controller.getInstance().getGameStatisticsCalculator().incrementNumberOfRepairs();
+		GameResources.getProvider()
+					 .getGameStatisticsCalculator()
+					 .incrementNumberOfRepairs();
 		this.isDamaged = false;
 		this.isCrashing = false;
 		this.restorePlating();
@@ -747,10 +752,12 @@ public abstract class Helicopter extends RectangularGameEntity
 		{
 			this.stopTractor();
 		}
-		Controller.getInstance().getGameStatisticsCalculator().incrementNumberOfCrashes();
+		GameResources.getProvider()
+					 .getGameStatisticsCalculator()
+					 .incrementNumberOfCrashes();
 		if (this.location.getY() == 407d)
 		{
-			this.crashed(Controller.getInstance().getExplosions());
+			this.crashed(GameResources.getProvider().getExplosions());
 		} else
 		{
 			this.isCrashing = true;

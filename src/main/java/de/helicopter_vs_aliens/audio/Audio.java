@@ -124,7 +124,7 @@ public class Audio
         explosion3 = getAudioClip("explosion3.wav");
         explosion4 = getAudioClip("explosion4.wav");
         bgMusic1 = getAudioClip("bg_music1.wav");
-        bgMusic2 = getAudioClip("bg_music2.wav");
+        bgMusic2 = getAudioClip("bg_music2_old.wav");
         bgMusic3 = getAudioClip("bg_music3.wav");
         levelUp = getAudioClip("level_up.wav");
         choose = getAudioClip("choose.wav");

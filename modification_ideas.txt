@@ -1,5 +1,7 @@
 Bug-Report:
 
+evtl. ThreadLocalRandom.current().nextInt(set.size()) verwenden, soll effizienter sein
+
 Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kehrtwende unterbinden innerhalb gewisser
 Zeit, wenn gedreht an Barrier.
 

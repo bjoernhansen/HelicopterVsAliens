@@ -17,7 +17,7 @@ public class ExplosionPainter extends Painter<Explosion>
                                              explosion.getCenter().getY(),
                                       explosion.getCenter().getX() - (explosion.getProgress()[1] * explosion.getMaxRadius()),
                                       explosion.getCenter().getY() - (explosion.getProgress()[1] * explosion.getMaxRadius()));
-        graphicsAdapter.draw(explosion.ellipse);
+        graphicsAdapter.drawEllipse(explosion.ellipse);
         graphicsAdapter.setStroke(new BasicStroke(1));
     }
 }

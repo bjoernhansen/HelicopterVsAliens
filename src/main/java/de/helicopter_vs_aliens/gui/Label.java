@@ -30,7 +30,9 @@ public class Label extends JTextPane
         //TODO funktioniert so nicht für javafx
         final var g2d = (Graphics2D) g;
         g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
-                              Controller.getAntialiasingRenderingHint());
+            Controller.getInstance().isAntialiasingActivated()
+                ? RenderingHints.VALUE_ANTIALIAS_ON
+                : RenderingHints.VALUE_ANTIALIAS_OFF);
         super.paintComponent(g2d);
     }
 }

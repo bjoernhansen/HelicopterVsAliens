@@ -7,15 +7,20 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.FontMetrics;
+
 
 public class ButtonPainter extends Painter<Button>
 {
     private static final int
-        LABEL_OFFSET_X = 7,
-        PRIMARY_LABEL_OFFSET_Y = 20,
+        LABEL_OFFSET_X = 7;
+
+    private static final int
+        PRIMARY_LABEL_OFFSET_Y = 20;
+
+    private static final int
         SECONDARY_LABEL_OFFSET_Y = 40;
-        
+
+
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Button button)
     {
@@ -24,12 +29,12 @@ public class ButtonPainter extends Painter<Button>
             if((button.isHighlighted() && button.isEnabled()) || !button.isTranslucent())
             {
                 graphicsAdapter.setPaint(button.isHighlighted() ? Colorations.gradientVariableGray : Colorations.lightestGray);
-                graphicsAdapter.fill(button.getBounds());
+                graphicsAdapter.fillRectangle(button.getBounds());
             }
             graphicsAdapter.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             if(button.getCostColor() == null){graphicsAdapter.setColor(button.isEnabled() ? button.isMarked() ? Colorations.variableWhite : Color.white : Colorations.lightGray);}
             else{graphicsAdapter.setColor(button.getCostColor());}
-            if(button.isTranslucent()){graphicsAdapter.draw(button.getBounds());}
+            if(button.isTranslucent()){graphicsAdapter.drawRectangle(button.getBounds());}
             else
             {
                 graphicsAdapter.drawLine((int)button.getBounds().getX(), (int)button.getBounds().getY(), (int)(button.getBounds().getX() + button.getBounds().getWidth()), (int)button.getBounds().getY());
@@ -61,9 +66,8 @@ public class ButtonPainter extends Painter<Button>
                     graphicsAdapter.setFont(Window.fontProvider.getPlain(18));
                     graphicsAdapter.setColor(Color.black);
                 }
-                FontMetrics fm = graphicsAdapter.getFontMetrics();
-                int sw = fm.stringWidth(button.getPrimaryLabel());
-                graphicsAdapter.drawString(button.getPrimaryLabel(), (int)(button.getBounds().getX() + (button.getBounds().getWidth()-sw)/2), (int)(button.getBounds().getY() + button.getBounds().getHeight() - button.getBounds().getHeight()/2+6));
+                int stringWidth = graphicsAdapter.getStringWidth(button.getPrimaryLabel());
+                graphicsAdapter.drawString(button.getPrimaryLabel(), (int)(button.getBounds().getX() + (button.getBounds().getWidth()-stringWidth)/2), (int)(button.getBounds().getY() + button.getBounds().getHeight() - button.getBounds().getHeight()/2+6));
             }
             graphicsAdapter.setColor(Color.white);
             if(button.hasSecondaryLabel()){

@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
@@ -15,7 +15,6 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Point;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
@@ -36,7 +35,7 @@ public abstract class WindowPainter extends Painter<Window>
     
     // TODO DependencyInjection verwenden, ggf. alle Painter von Entity erben lassen, eine neue Superklasse von der dann auch GameEntity erbt --> Code verschieben aus GameEntity
     protected static final GameRessourceProvider
-        gameRessourceProvider = Controller.getInstance();
+        gameRessourceProvider = GameResources.getProvider();
     
     protected static final GuiStateProvider
         guiStateProvider = gameRessourceProvider;
@@ -76,7 +75,7 @@ public abstract class WindowPainter extends Painter<Window>
         graphicsAdapter.setColor(Color.white);
         graphicsAdapter.setFont(fontProvider.getBold(20));
         String typeName = Window.dictionary.typeName(helicopter.getType());
-        graphicsAdapter.drawString(typeName, 28 + x + (196-graphicsAdapter.getFontMetrics().stringWidth(typeName))/2, 113 + y);
+        graphicsAdapter.drawString(typeName, 28 + x + (196-graphicsAdapter.getStringWidth(typeName))/2, 113 + y);
         
         HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(helicopter.getClass());
         helicopterPainter.displayPaint(graphicsAdapter, helicopter, 59 + x, 141 + y);
@@ -101,7 +100,7 @@ public abstract class WindowPainter extends Painter<Window>
                 graphicsAdapter.setColor(Colorations.darkArrowGreen);
                 typeName = Window.dictionary.unlocked();
             }
-            graphicsAdapter.drawString(typeName, 28 + x + (196-graphicsAdapter.getFontMetrics().stringWidth(typeName))/2, 249 + y);
+            graphicsAdapter.drawString(typeName, 28 + x + (196-graphicsAdapter.getStringWidth(typeName))/2, 249 + y);
         }
         
         if(WindowManager.window  == REPAIR_SHOP)
@@ -115,9 +114,8 @@ public abstract class WindowPainter extends Painter<Window>
             graphicsAdapter.setFont(fontProvider.getBold(16));
             graphicsAdapter.setColor(Colorations.plating);
             int percentPlating = (Math.round(100 * helicopter.getRelativePlating()));
-            FontMetrics fm = graphicsAdapter.getFontMetrics();
-            int sw = fm.stringWidth(""+percentPlating);
-            graphicsAdapter.drawString(percentPlating + "%", 203 - sw + x, STANDARD_UPGRADE_OFFSET_Y + y + 69);
+            int stringWidth = graphicsAdapter.getStringWidth(""+percentPlating);
+            graphicsAdapter.drawString(percentPlating + "%", 203 - stringWidth + x, STANDARD_UPGRADE_OFFSET_Y + y + 69);
         }
     }
     

@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.missile;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
@@ -72,7 +72,7 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-    		Explosion.start(Controller.getInstance().getExplosions(),
+    		Explosion.start(GameResources.getProvider().getExplosions(),
     						helicopter,
 							(int)(helicopter.getX()
 									+ (helicopter.isMovingLeft

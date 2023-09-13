@@ -18,17 +18,19 @@ public class Main
 {
 	public static final Dimension
 		VIRTUAL_DIMENSION = new Dimension(1024, 461);
-	   
-    private final static Dimension
-		STANDARD_RESOLUTION = new Dimension(1280, 720),
+
+	private static final Dimension
+		STANDARD_RESOLUTION = new Dimension(1280, 720);
+
+	private static final Dimension
 		WINDOW_SIZE = new Dimension(STANDARD_RESOLUTION.width +6,
-									STANDARD_RESOLUTION.height+29); // 460 //489//new Dimension(1030, 492);//
+									STANDARD_RESOLUTION.height+29);
 			
     public static boolean
     	isFullScreen = true;
     
     public static Dimension
-			displayShift;
+		displayShift;
     
     private static GraphicsDevice
     	device;

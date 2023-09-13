@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.gui.window;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
@@ -673,7 +673,7 @@ public abstract class Window implements Paintable
 							.forEach(buttonSpecifier -> buttons.put(buttonSpecifier, Button.makeButton(buttonSpecifier)));
 				
 		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setMarked(true);
-		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(Controller.getInstance().getSaveGame().isValid());
+		buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(GameResources.getProvider().getSaveGame().isValid());
 		
 		if(Events.currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
 		{
@@ -688,7 +688,7 @@ public abstract class Window implements Paintable
 		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
 		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
 		
-		Helicopter helicopter = Controller.getInstance().getHelicopter();
+		Helicopter helicopter = GameResources.getProvider().getHelicopter();
 		
 		StandardUpgradeButtonType.getValues().forEach(buttonSpecifier -> {
 			StandardUpgradeType standardUpgradeType = ((StandardUpgradeButtonType)buttonSpecifier).getStandardUpgradeType();

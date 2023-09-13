@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.powerup;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
@@ -236,8 +236,8 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 
 	public static PowerUp getInstance(PowerUpType powerUpType)
 	{
-		PowerUp powerUp = Controller.getInstance()
-                                    .getNewGameEntityInstance(powerUpType);
+		PowerUp powerUp = GameResources.getProvider()
+									   .getNewGameEntityInstance(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;
 	}

@@ -28,7 +28,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,12 +40,16 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ROTOR_SYSTEM;
 import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
+
 public class GameWindowPainter extends WindowPainter
 {
     private static final int
-        HEALTH_BAR_LENGTH = 150,       // Länge des HitPoint-Balken des Helikopters
+        HEALTH_BAR_LENGTH = 150;
+
+    private static final int
         ENEMY_HEALTH_BAR_WIDTH = 206;
-    
+
+
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Window window)
     {
@@ -89,7 +92,6 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintAllActiveEnemies(GraphicsAdapter graphicsAdapter)
     {
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
         for (int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
@@ -390,9 +392,8 @@ public class GameWindowPainter extends WindowPainter
                 levelString = "Level " + Events.level;
             }
         }
-        FontMetrics fm = graphicsAdapter.getFontMetrics();
-        int sw = fm.stringWidth(levelString);
-        graphicsAdapter.drawString(levelString, (981 - sw) / 2, 55);
+        int stringWidth = graphicsAdapter.getStringWidth(levelString);
+        graphicsAdapter.drawString(levelString, (981 - stringWidth) / 2, 55);
     }
     
     private static void paintPraiseDisplay(GraphicsAdapter graphicsAdapter)
@@ -408,9 +409,8 @@ public class GameWindowPainter extends WindowPainter
         }
         MultiKillType multiKillType = MultiKillType.getMultiKillType(Events.lastMultiKill);
         graphicsAdapter.setFont(fontProvider.getPlain(multiKillType.getTextSize()));
-        FontMetrics fm = graphicsAdapter.getFontMetrics();
-        int sw = fm.stringWidth(multiKillType.getDesignation());
-        graphicsAdapter.drawString(multiKillType.getDesignation(), (981 - sw) / 2, 130);
+        int stringWidth = graphicsAdapter.getStringWidth(multiKillType.getDesignation());
+        graphicsAdapter.drawString(multiKillType.getDesignation(), (981 - stringWidth) / 2, 130);
     }
     
     private static void paintCreditDisplay(GraphicsAdapter graphicsAdapter)

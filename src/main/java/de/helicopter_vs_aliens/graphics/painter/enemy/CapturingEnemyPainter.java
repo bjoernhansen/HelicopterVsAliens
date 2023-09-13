@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.enemy;
 
-import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
@@ -22,7 +22,7 @@ public class CapturingEnemyPainter extends TitPainter<CapturingEnemy>
     
     private void paintTractorBeam(GraphicsAdapter graphicsAdapter)
     {
-        Helicopter helicopter = Controller.getInstance().getHelicopter();
+        Helicopter helicopter = GameResources.getProvider().getHelicopter();
         
         int destinationX =
             (int)(helicopter.getX()

@@ -14,12 +14,12 @@ public final class GameStatisticsCalculator
         missileCounter,                     // Anzahl der abgeschossenen Raketen
         numberOfRepairs,                    // Anzahl der Reparaturen
         numberOfCrashes;                    // Anzahl der Abstürze
-    
-    
-    private final static GameStatisticsCalculator
+
+
+    private static final GameStatisticsCalculator
         instance = new GameStatisticsCalculator();
     
-    static GameStatisticsCalculator getInstance(){
+    public static GameStatisticsCalculator getInstance(){
         return instance;
     }
  

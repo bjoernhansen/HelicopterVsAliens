@@ -12,14 +12,21 @@ import java.awt.Color;
 
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 
+
 public class SettingsWindowPainter extends StartScreenMenuWindowPainter
 {
     private static final int
-        LEFT = 80,
-        COLUMN_SPACING = 145,
-        LINE_SPACING = 40,
+        LEFT = 80;
+    private static final int
+        COLUMN_SPACING = 145;
+
+    private static final int
+        LINE_SPACING = 40;
+
+    private static final int
         TOP = 130;
-    
+
+
     @Override
     void paintStartScreenMenu(GraphicsAdapter graphicsAdapter)
     {
@@ -34,18 +41,13 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
         }
     
         graphicsAdapter.setColor(Colorations.golden);
-        graphicsAdapter.drawString( Window.dictionary.displayMode()
-                + (!Main.isFullScreen ? "" : " ("
-                + (Window.hasOriginalResolution
-                ? Main.currentDisplayMode.getWidth()
-                + "x"
-                + Main.currentDisplayMode.getHeight()
-                : "1280x720") + ")"),
+        graphicsAdapter.drawString(
+            Window.dictionary.displayMode() + (Main.isFullScreen ? getResolutionString() : ""),
             LEFT + COLUMN_SPACING,
             TOP);
     
         graphicsAdapter.setColor(Audio.isSoundOn ? Color.green : Color.red);
-        graphicsAdapter.drawString( Window.dictionary.activationState(Audio.isSoundOn)						, LEFT + COLUMN_SPACING, TOP + LINE_SPACING);
+        graphicsAdapter.drawString( Window.dictionary.activationState(Audio.isSoundOn), LEFT + COLUMN_SPACING, TOP + LINE_SPACING);
         if(Audio.MICHAEL_MODE && Audio.isSoundOn)
         {
             graphicsAdapter.setColor(Colorations.golden);
@@ -61,9 +63,19 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
         if(Window.page == StartScreenMenuButtonType.BUTTON_5){graphicsAdapter.setColor(Color.white);}
         graphicsAdapter.drawString(Events.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 4 * LINE_SPACING);
     
-        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (guiStateProvider.getFramesCounter()/30)%2 == 0){graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getFontMetrics().stringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
+        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (guiStateProvider.getFramesCounter()/30)%2 == 0){graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getStringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
     }
-    
+
+    private static String getResolutionString() {
+        return " (" + getResolution() + ")";
+    }
+
+    private static String getResolution() {
+        return Window.hasOriginalResolution
+                ? Main.currentDisplayMode.getWidth() + "x" + Main.currentDisplayMode.getHeight()
+                : "1280x720";
+    }
+
     @Override
     String getHeadline()
     {

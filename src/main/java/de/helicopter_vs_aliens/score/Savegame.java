@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.score;
 
-import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
@@ -242,9 +242,9 @@ public class Savegame implements Serializable
 		this.currentPlating = helicopter.getCurrentPlating();
 		this.currentEnergy = helicopter.getCurrentEnergy();
 		this.wasCreatedThroughCheating = helicopter.isPlayedWithCheats;
-		
-		GameStatisticsCalculator
-			gameStatisticsCalculator = Controller.getInstance().getGameStatisticsCalculator();
+
+		GameStatisticsCalculator gameStatisticsCalculator = GameResources.getProvider()
+																		 .getGameStatisticsCalculator();
 		this.enemiesSeen = gameStatisticsCalculator.getNumberOfEnemiesSeen();
 		this.enemiesKilled = gameStatisticsCalculator.getNumberOfEnemiesKilled();
 		this.miniBossSeen = gameStatisticsCalculator.getNumberOfMiniBossSeen();

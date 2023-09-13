@@ -5,7 +5,6 @@ import de.helicopter_vs_aliens.util.geometry.Polygon;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -13,6 +12,8 @@ import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
@@ -49,9 +50,9 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void draw(Shape s)
+    public void drawRectangle(Rectangle2D rectangle)
     {
-        graphics.draw(s);
+        graphics.draw(rectangle);
     }
     
     @Override
@@ -109,11 +110,17 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void fill(Shape s)
+    public void fillRectangle(Rectangle2D rectangle)
     {
-        graphics.fill(s);
+        graphics.fill(rectangle);
     }
-    
+
+    @Override
+    public void drawEllipse(Ellipse2D ellipse)
+    {
+        graphics.fill(ellipse);
+    }
+
     @Override
     public void setFont(Font font)
     {
@@ -126,13 +133,10 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
         graphics.drawString(str, x, y);
     }
     
-    
-    
-    
     @Override
-    public FontMetrics getFontMetrics()
+    public int getStringWidth(String text)
     {
-        return graphics.getFontMetrics();
+        return graphics.getFontMetrics().stringWidth(text);
     }
     
     @Override

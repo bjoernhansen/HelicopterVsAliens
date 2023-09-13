@@ -39,11 +39,11 @@ public class StartScreenWindowPainter extends WindowPainter
     {
         graphicsAdapter.setPaint(Colorations.gradientVariableWhite);
         graphicsAdapter.setFont(fontProvider.getPlain(80));
-        graphicsAdapter.drawString(GAME_NAME, 512 - graphicsAdapter.getFontMetrics().stringWidth(GAME_NAME)/2, 85);
+        graphicsAdapter.drawString(GAME_NAME, 512 - graphicsAdapter.getStringWidth(GAME_NAME)/2, 85);
         
         graphicsAdapter.setColor(Color.yellow);
         graphicsAdapter.setFont(fontProvider.getBold(16));
-        graphicsAdapter.drawString(VERSION, 1016 - graphicsAdapter.getFontMetrics().stringWidth(VERSION), 20);
+        graphicsAdapter.drawString(VERSION, 1016 - graphicsAdapter.getStringWidth(VERSION), 20);
         graphicsAdapter.setColor(Colorations.darkGray);
         graphicsAdapter.setFont(fontProvider.getItalicBold(15));
         graphicsAdapter.drawString(String.format("%s %s", Window.dictionary.developedBy(), DEVELOPERS_NAME), 505, 120);
@@ -53,16 +53,16 @@ public class StartScreenWindowPainter extends WindowPainter
             graphicsAdapter.setColor(Colorations.variableYellow);
             graphicsAdapter.setFont(fontProvider.getPlain(29));
             String tempString = Window.dictionary.helicopterSelectionRequest();
-            graphicsAdapter.drawString(tempString, (512 - graphicsAdapter.getFontMetrics().stringWidth(tempString)/2), 185);
+            graphicsAdapter.drawString(tempString, (512 - graphicsAdapter.getStringWidth(tempString)/2), 185);
         }
         else
         {
             graphicsAdapter.setColor(Colorations.golden);
             graphicsAdapter.setFont(fontProvider.getBold(16));
             
-            graphicsAdapter.drawString(Window.message[0], (512 - graphicsAdapter.getFontMetrics().stringWidth(Window.message[0])/2), 160);
-            graphicsAdapter.drawString(Window.message[1], (512 - graphicsAdapter.getFontMetrics().stringWidth(Window.message[1])/2), 185);
-            graphicsAdapter.drawString(Window.message[2], (512 - graphicsAdapter.getFontMetrics().stringWidth(Window.message[2])/2), 210);
+            graphicsAdapter.drawString(Window.message[0], (512 - graphicsAdapter.getStringWidth(Window.message[0])/2), 160);
+            graphicsAdapter.drawString(Window.message[1], (512 - graphicsAdapter.getStringWidth(Window.message[1])/2), 185);
+            graphicsAdapter.drawString(Window.message[2], (512 - graphicsAdapter.getStringWidth(Window.message[2])/2), 210);
         }
         
         for(int i = 0; i < Window.NUMBER_OF_START_SCREEN_HELICOPTERS; i++)
@@ -76,10 +76,10 @@ public class StartScreenWindowPainter extends WindowPainter
             graphicsAdapter.setFont(fontProvider.getBold(20));
             
             String className = Window.dictionary.typeName(HelicopterType.getValues().get((Window.helicopterSelection +i)% HelicopterType.count()));
-            int sw = graphicsAdapter.getFontMetrics().stringWidth(className);
+            int stringWidth = graphicsAdapter.getStringWidth(className);
             graphicsAdapter.drawString(
                 className,
-                30 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE + (206-sw)/2,
+                30 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE + (206-stringWidth)/2,
                 225 + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
             
             graphicsAdapter.setFont(new Font("Dialog", Font.BOLD, 15));

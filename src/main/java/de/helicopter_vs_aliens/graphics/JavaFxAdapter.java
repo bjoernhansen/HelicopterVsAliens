@@ -8,15 +8,13 @@ import javafx.scene.image.PixelBuffer;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import javafx.scene.shape.ArcType;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
+
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.DataBufferInt;
@@ -25,12 +23,11 @@ import java.nio.IntBuffer;
 
 public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
 {
-    protected JavaFxAdapter(GraphicsContext graphics)
+    public JavaFxAdapter(GraphicsContext graphics)
     {
         super(graphics);
     }
-    
-    
+
     @Override
     public void drawLine(int x1, int y1, int x2, int y2)
     {
@@ -90,19 +87,38 @@ public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
     {
         graphics.strokePolygon(polygon.getCoordinatesX(), polygon.getCoordinatesY(), polygon.getPointCount());
     }
-    
+
+    // TODO evtl. eigene Ractangle Klasse schreiben
     @Override
-    public void draw(Shape s)
+    public void drawRectangle(Rectangle2D rectangle)
     {
-        // TODO implement
+        drawRect(
+            (int)rectangle.getX(),
+            (int)rectangle.getY(),
+            (int)rectangle.getWidth(),
+            (int)rectangle.getHeight());
     }
     
     @Override
-    public void fill(Shape s)
+    public void fillRectangle(Rectangle2D rectangle)
     {
-        // TODO implement
+        fillRect(
+            (int)rectangle.getX(),
+            (int)rectangle.getY(),
+            (int)rectangle.getWidth(),
+            (int)rectangle.getHeight());
     }
-    
+
+    @Override
+    public void drawEllipse(Ellipse2D ellipse)
+    {
+        drawOval(
+            (int)ellipse.getX(),
+            (int)ellipse.getY(),
+            (int)ellipse.getWidth(),
+            (int)ellipse.getHeight());
+    }
+
     @Override
     public void drawString(String text, int x, int y)
     {
@@ -144,11 +160,14 @@ public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
         // TODO nur Zwischenlösung
         drawImage(img, x, y);
     }
-    
+
     @Override
-    public FontMetrics getFontMetrics()
+    public int getStringWidth(String s)
     {
-        return null;
+        Font font = graphics.getFont();
+        Text text = new Text(s);
+        text.setFont(font);
+        return (int)text.getBoundsInLocal().getWidth();
     }
     
     @Override
@@ -180,7 +199,7 @@ public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
     }
     
     @Override
-    public void setFont(Font font)
+    public void setFont(java.awt.Font font)
     {
         // graphics.setFont();
     }

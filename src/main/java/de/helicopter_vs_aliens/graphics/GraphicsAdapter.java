@@ -2,16 +2,9 @@ package de.helicopter_vs_aliens.graphics;
 
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
@@ -49,18 +42,19 @@ public interface GraphicsAdapter
     void drawPolygon(Polygon p);
     
     // TODO einen eigenen Shape-Typ einführen oder separate Methoden für die verschiedenen Shapes
-    void draw(Shape s);
+    void drawRectangle(Rectangle2D rectangle);
     
-    void fill(Shape s);
-    
+    void fillRectangle(Rectangle2D rectangle);
+
+    void drawEllipse(Ellipse2D ellipse);
+
     void drawString(String str, int x, int y);
     
     void drawImage(Image img, int x, int y);
     
     void drawImage(BufferedImage img, BufferedImageOp op, int x, int y);
     
-    
-    FontMetrics getFontMetrics();
+    int getStringWidth(String text);
     
     // TODO einen eigenen Color-Typ einführen, vgl. Water Morris Maze
     void setColor(Color c);

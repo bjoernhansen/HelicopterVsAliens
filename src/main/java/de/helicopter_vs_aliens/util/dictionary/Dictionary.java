@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
@@ -573,7 +574,8 @@ public final class Dictionary
     }
 
     public String sold(){
-        boolean hasSpotlights = Controller.getInstance().getHelicopter().hasSpotlights;
+        boolean hasSpotlights = GameResources.getProvider()
+                                             .getHelicopter().hasSpotlights;
         String key = "sold." + (hasSpotlights ? "highSalary" : "lowSalary");
         return this.languageProperties.getProperty(key);
     }
