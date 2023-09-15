@@ -118,7 +118,7 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     @Override
     public void drawEllipse(Ellipse2D ellipse)
     {
-        graphics.fill(ellipse);
+        graphics.draw(ellipse);
     }
 
     @Override
