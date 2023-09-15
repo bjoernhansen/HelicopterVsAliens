@@ -28,7 +28,8 @@ public class Main
 			
     public static boolean
     	isFullScreen = true;
-    
+
+	// TODO sollte aus dieser Main raus, da es gemeinsam auch durch MainFX verwendet wird
     public static Dimension
 		displayShift;
     

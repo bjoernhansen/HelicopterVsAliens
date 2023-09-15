@@ -31,49 +31,35 @@ import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.geometry.Dimension2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
 import javafx.stage.Stage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
 public class MainFx extends Application implements GameRessourceProvider
 {
-    private final DoubleProperty
-        centerX = new SimpleDoubleProperty(100);
-
-    private final DoubleProperty
-        centerY = new SimpleDoubleProperty(300);
-
     public static final Dimension
         VIRTUAL_DIMENSION = new Dimension(1024, 461);
 
-    private final Ellipse
-        ellipse = new Ellipse(100, 300, 75, 125);
-
     private final Button
         button = new Button("Werkstatt");
-
 
     private Savegame
         saveGame;
@@ -117,28 +103,41 @@ public class MainFx extends Application implements GameRessourceProvider
     @Override
     public void start(final Stage primaryStage)
     {
-
-        button.setOnAction(event -> primaryStage.close());
-
-
-        ellipse.centerXProperty().bind(centerX);
-        ellipse.centerYProperty().bind(centerY);
-
-
+        button.setOnAction(event -> {}/*primaryStage.close()*/);
         Canvas canvas = new Canvas(VIRTUAL_DIMENSION.width, VIRTUAL_DIMENSION.height);
 
+        canvas.setOnMouseMoved(this::mouseMoveEvent);
+        canvas.setOnMouseDragged(this::mouseMoveEvent);
+        canvas.setOnMousePressed(this::mouseClickEvent);
+        canvas.setOnMouseReleased(this::mouseClickEvent);
 
-        canvas.setOnMouseMoved(event -> printPosition("mouse cursor position", event.getX(), event.getY()));
-        canvas.setOnMouseClicked(this::mouseClickEvent);
+/*
+        @Override
+        public void keyPressed	 (KeyEvent e){Events.keyTyped(e, this);}
 
+        @Override
+        public void mousePressed (java.awt.event.MouseEvent e){Events.mousePressed(e, this);}
+
+        @Override
+        public void mouseReleased(java.awt.event.MouseEvent e){Events.mouseReleased(e, helicopter);}
+
+        @Override
+        public void mouseDragged (java.awt.event.MouseEvent e){Events.mouseMovedOrDragged(e, helicopter);}
+
+        @Override
+        public void mouseMoved   (java.awt.event.MouseEvent e){Events.mouseMovedOrDragged(e, helicopter);}
+
+              */
 
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY))); // Setze den Hintergrund auf Rot
         anchorPane.getChildren().add(canvas);
         anchorPane.getChildren().add(button);
 
+        anchorPane.setOnKeyPressed(this::keyEvent);
 
-        Scene scene = new Scene(anchorPane);
+
+        var scene = new Scene(anchorPane);
         primaryStage.setScene(scene);
 
 
@@ -147,18 +146,18 @@ public class MainFx extends Application implements GameRessourceProvider
         primaryStage.show();
 
 
-        Dimension2D displayShift = new Dimension2D(
-            (primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0,
-            (primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0);
+        Main.displayShift = new Dimension(
+            (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),
+            (int) ((primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0));
 
-        double verticalAnchorDistance = displayShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
+        double verticalAnchorDistance = Main.displayShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
         AnchorPane.setTopAnchor(button, verticalAnchorDistance);
-        double horizontalAnchorDistance = displayShift.getWidth() + VIRTUAL_DIMENSION.width / 2.0 - 60;
+        double horizontalAnchorDistance = Main.displayShift.getWidth() + VIRTUAL_DIMENSION.width / 2.0 - 60;
         AnchorPane.setLeftAnchor(button, horizontalAnchorDistance);
         AnchorPane.setRightAnchor(button, horizontalAnchorDistance);
 
-        AnchorPane.setLeftAnchor(canvas, displayShift.getWidth());
-        AnchorPane.setTopAnchor(canvas, displayShift.getHeight());
+        AnchorPane.setLeftAnchor(canvas, Main.displayShift.getWidth());
+        AnchorPane.setTopAnchor(canvas, Main.displayShift.getHeight());
 
 
         System.out.println(primaryStage.getWidth());
@@ -208,19 +207,27 @@ public class MainFx extends Application implements GameRessourceProvider
 
     private void mouseClickEvent(MouseEvent event)
     {
-        printPosition("ellipse", ellipse.getCenterX(), ellipse.getCenterY());
-
-        centerX.set(event.getX());
-        centerY.set(event.getY());
-
-        printPosition("event", event.getX(), event.getY());
-        printPosition("ellipse center", ellipse.getCenterX(), ellipse.getCenterY());
-        printPosition("ellipse center", ellipse.getCenterX(), ellipse.getCenterY());
+        System.out.println("mouseClickEvent");
+        System.out.println(event.getEventType());
+        System.out.println(event.getButton());
+        System.out.println(event.getX() + " " + event.getY());
     }
 
-    private void printPosition(String name, double x, double y)
+    private void mouseMoveEvent(MouseEvent event)
     {
-        System.out.println(name + ": " + x + " " + y);
+        System.out.println("mouseMoveEvent");
+        System.out.println(event.getEventType());
+        System.out.println(event.getButton());
+        System.out.println(event.getX() + " " + event.getY());
+    }
+
+    private void keyEvent(KeyEvent event)
+    {
+        System.out.println("keyEvent!");
+        System.out.println(event.getCharacter());
+        System.out.println(event.getEventType());
+        System.out.println(event.getCode());
+        System.out.println(event.getText());
     }
 
     public static void main(String[] args)
@@ -346,9 +353,10 @@ public class MainFx extends Application implements GameRessourceProvider
     {
         this.framesCounter++;
         Timer.countDownActiveTimers();
-        if(WindowManager.window == GAME)
+        if (WindowManager.window == GAME)
         {
-            if(!Window.isMenuVisible)
+            // TODO long duplicated code fragment -> common use
+            if (!Window.isMenuVisible)
             {
                 Colorations.calculateVariableGameColors(framesCounter);
 
