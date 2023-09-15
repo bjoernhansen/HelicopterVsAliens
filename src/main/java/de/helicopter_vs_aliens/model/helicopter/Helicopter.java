@@ -1,8 +1,11 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.*;
+import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.EnemyController;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.TimeOfDay;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
@@ -23,10 +26,13 @@ import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.score.ScoreScreenTimes;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.control.events.MouseEvent;
 
 import javax.sound.sampled.Clip;
-import java.awt.*;
-import java.awt.event.MouseEvent;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.EnumMap;
 import java.util.Iterator;
