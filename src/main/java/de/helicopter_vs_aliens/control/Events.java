@@ -1,5 +1,8 @@
 package de.helicopter_vs_aliens.control;
 
+
+import de.helicopter_vs_aliens.control.events.KeyEvent;
+import de.helicopter_vs_aliens.control.events.SpecialKey;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
@@ -33,9 +36,9 @@ import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
+
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
 import java.util.Queue;
@@ -152,10 +155,10 @@ public class Events
 		recordTimeManager = new RecordTimeManager();
 	
 
-	static void keyTyped( KeyEvent e, GameRessourceProvider gameRessourceProvider)
+	static void keyTyped(KeyEvent keyEvent, GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		if(e.getKeyCode() == KeyEvent.VK_ESCAPE && !helicopter.isDamaged)
+		if(keyEvent.keyEquals(SpecialKey.ESCAPE) && !helicopter.isDamaged)
 		{
 			if(WindowManager.window == GAME){changeVisibilityOfInGameMenu(helicopter);}
 			else if(WindowManager.window == START_SCREEN){
@@ -167,40 +170,36 @@ public class Events
 		}		
 		else if(WindowManager.window == SETTINGS && Window.page == StartScreenMenuButtonType.BUTTON_5)
 		{
-			int name_length = currentPlayerName.length();
-			if(e.getKeyCode() == KeyEvent.VK_ENTER)
+			int nameLength = currentPlayerName.length();
+			if(keyEvent.keyEquals(SpecialKey.ENTER))
 			{
 				Window.page = StartScreenMenuButtonType.BUTTON_1;
 				checkName(gameRessourceProvider.getSaveGame());
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+			else if(keyEvent.keyEquals(SpecialKey.BACK_SPACE))
 			{				
-				if(name_length > 0)
+				if(nameLength > 0)
 				{
-					currentPlayerName = currentPlayerName.substring(0, name_length-1);
+					currentPlayerName = currentPlayerName.substring(0, nameLength-1);
 				}
 			}
-			else if(name_length < 15 
-					&& ((e.getKeyCode() >= 65 && e.getKeyCode() <= 90)
-						|| e.getKeyCode() == 0 
-						|| e.getKeyCode() == 32
-						|| e.getKeyCode() == 45))
+			else if(nameLength < 15 && keyEvent.isKeyAllowedForPlayerName())
 			{
-				currentPlayerName += e.getKeyChar();
+				currentPlayerName += keyEvent.getKey();
 			}			
 		}		
-		else if(e.getKeyChar() =='f')
+		else if(keyEvent.keyEquals('f'))
 		{
 			Controller.getInstance().switchFpsVisibleState();
 		}		
-		else if(e.getKeyChar() =='p')
+		else if(keyEvent.keyEquals('p'))
 		{
 			if(WindowManager.window == GAME && !helicopter.isDamaged)
 			{
 				changeVisibilityOfInGameMenu(helicopter);
 			}
 		}		
-		else if(e.getKeyCode() == KeyEvent.VK_SPACE)
+		else if(keyEvent.keyEquals(SpecialKey.SPACE))
 		{
 			if(	WindowManager.window == GAME
 				&&	helicopter.isActive
@@ -212,7 +211,7 @@ public class Events
 		}		
 		else if(cheatingMode)
 		{			
-			if(e.getKeyChar() == 'e')
+			if(keyEvent.keyEquals('e'))
 			{
 				if(WindowManager.window == GAME || WindowManager.window == REPAIR_SHOP)
 				{
@@ -233,7 +232,7 @@ public class Events
 					Window.moneyDisplayTimer = START;
 				}
 			}				
-			else if(e.getKeyChar() == 'u')
+			else if(keyEvent.keyEquals('u'))
 			{
 				if(WindowManager.window == GAME || WindowManager.window == REPAIR_SHOP)
 				{
@@ -248,7 +247,7 @@ public class Events
 			}
 			else if(WindowManager.window == GAME)
 			{				
-				if(e.getKeyChar() == 'l')
+				if(keyEvent.keyEquals('l'))
 				{				
 					if(level < 50)
 					{
@@ -263,7 +262,7 @@ public class Events
 						helicopter.isPlayedWithCheats = true;
 					}					
 				}
-				else if(e.getKeyChar() == '+')
+				else if(keyEvent.keyEquals('+'))
 				{
 					if(level < 50)
 					{
@@ -272,16 +271,16 @@ public class Events
 						helicopter.isPlayedWithCheats = true;
 					}
 				}
-				else if(e.getKeyChar() =='s')
+				else if(keyEvent.keyEquals('s'))
 				{
 					Window.specialInfoSelection = (Window.specialInfoSelection +1)% NUMBER_OF_DEBUGGING_INFOS;
 				}
 				// TODO übergabe von powerUps anders regeln
-				else if(e.getKeyChar() == 'd'){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), TRIPLE_DAMAGE);}
-				else if(e.getKeyChar() == 'i'){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), INVINCIBLE);}
-				else if(e.getKeyChar() == 'c'){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), UNLIMITED_ENERGY);}
-				else if(e.getKeyChar() == 'y'){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), BOOSTED_FIRE_RATE);}
-				else if(e.getKeyChar() == 'a')
+				else if(keyEvent.keyEquals('d')){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), TRIPLE_DAMAGE);}
+				else if(keyEvent.keyEquals('i')){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), INVINCIBLE);}
+				else if(keyEvent.keyEquals('c')){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), UNLIMITED_ENERGY);}
+				else if(keyEvent.keyEquals('y')){helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), BOOSTED_FIRE_RATE);}
+				else if(keyEvent.keyEquals('a'))
 				{
 					if(level < 51)
 					{
@@ -293,28 +292,28 @@ public class Events
 						helicopter.isPlayedWithCheats = true;
 					}								
 				}
-				else if(e.getKeyChar() == 'm')
+				else if(keyEvent.keyEquals('m'))
 				{
 					BasicEnemy.changeMiniBossProb();
 					helicopter.isPlayedWithCheats = true;
 				}
-				else if(e.getKeyChar() == 'n')
+				else if(keyEvent.keyEquals('n'))
 				{
 					helicopter.destroyPlating();
 					helicopter.crash();
 				}
-				else if(e.getKeyChar() == 't'){
+				else if(keyEvent.keyEquals('t')){
 					playingTime += 60000;}
 			}
 			else if(WindowManager.window == START_SCREEN)
 			{
 				// Resetten der Helicopter-Bestzeiten
 				Savegame savegame = gameRessourceProvider.getSaveGame();
-				if(e.getKeyChar() == 'x')
+				if(keyEvent.keyEquals('x'))
 				{					
 					allPlayable = !allPlayable;
 				}
-				else if(e.getKeyChar() == '-')
+				else if(keyEvent.keyEquals('-'))
 				{					
 					if(!recordTimeManager.isEmpty())
 					{
@@ -324,7 +323,7 @@ public class Events
 						savegame.saveWithoutValidity(helicopter);
 					}
 				}
-				else if(e.getKeyChar() == '#')
+				else if(keyEvent.keyEquals('#'))
 				{
 					savegame.saveWithoutValidity(helicopter);
 				}
@@ -332,8 +331,8 @@ public class Events
 		}
 		else if(IS_CHEATING_MODE_ACTIVATABLE)
 		{
-			if(e.getKeyChar() == cheatCode.charAt(cheatString.length())){
-				cheatString += e.getKeyChar();}
+			if(keyEvent.keyEquals(cheatCode.charAt(cheatString.length()))){
+				cheatString += keyEvent.getKey();}
 			else{
 				cheatString = "";}
 			if(cheatString.equals(cheatCode)){
@@ -968,7 +967,7 @@ public class Events
 		}		
 	}
 	
-	// Aktualisierung der Ziel-Koordinaten, auf welche der Helikopter zufliegt
+	// Aktualisierung der Ziel-Koordinaten, auf welche der Helikopter zu fliegt
 	static void mouseMovedOrDragged(MouseEvent e, Helicopter helicopter)
 	{		
 		if(!helicopter.isDamaged || WindowManager.window == REPAIR_SHOP)
