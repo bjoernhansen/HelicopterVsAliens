@@ -829,7 +829,6 @@ public class Events
     private static void startScreenMousePressedLeft(GameRessourceProvider gameRessourceProvider)
     {
         // TODO eventuell nach Menu auslagern
-        System.out.println(cursor);
         if (Window.triangles[0].contains(cursor))
         {
             Window.crossPosition = (Window.crossPosition + 1) % HelicopterType.count();

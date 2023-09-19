@@ -23,9 +23,6 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     private final GameRessourceProvider
         gameRessourceProvider;
 
-    private final Helicopter
-        helicopter;
-
     private boolean
         isMouseCursorInWindow = true;
 
@@ -33,7 +30,6 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     public EventListener(GameRessourceProvider gameRessourceProvider)
     {
         this.gameRessourceProvider = gameRessourceProvider;
-        this.helicopter = gameRessourceProvider.getHelicopter();
     }
 
     // Behandlung von Fenster-, Tastatur- und Mausereignisse
@@ -52,19 +48,19 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     @Override
     public void mouseReleased(MouseEvent mouseEvent)
     {
-        Events.mouseReleased(EventFactory.makeMouseEvent(mouseEvent), helicopter);
+        Events.mouseReleased(EventFactory.makeMouseEvent(mouseEvent), getHelicopter());
     }
 
     @Override
     public void mouseDragged(MouseEvent mouseEvent)
     {
-        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), helicopter);
+        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), getHelicopter());
     }
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent)
     {
-        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), helicopter);
+        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), getHelicopter());
     }
 
     @Override
@@ -91,6 +87,11 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     public boolean isMouseCursorInWindow()
     {
         return isMouseCursorInWindow;
+    }
+
+    private Helicopter getHelicopter()
+    {
+        return gameRessourceProvider.getHelicopter();
     }
 
     @Override

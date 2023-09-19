@@ -179,7 +179,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
         frame.setBackground(Color.black);
         frame.add("Center", this);
 
-        // frame.addKeyListener(this); // TODO checken, onb erforderlich
+        frame.addKeyListener(eventListener);
         frame.setResizable(false);
         frame.addWindowListener(new WindowAdapter()
         {
@@ -225,7 +225,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
         graphicsAdapter.setClip(offscreenClip);
 
         add(Window.label);
-        addKeyListener(eventListener);
+        // TODO herausfinden, wieso die Listener nicht klappen
         addMouseListener(eventListener);
         addMouseMotionListener(eventListener);
 
@@ -295,7 +295,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
                     displayShift.height);
             }
 
-            if (isFullScreen || eventListener.isMouseCursorInWindow())
+            if (isFullScreen || isMouseCursorInWindow())
             {
                 updateGame();
             }
@@ -444,11 +444,6 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
         return gameLoopCount;
     }
 
-    @Override
-    public boolean isMouseCursorInWindow()
-    {
-        return eventListener.isMouseCursorInWindow();
-    }
 
     @Override
     public boolean isFpsDisplayVisible()
@@ -460,6 +455,12 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     public void resetBackgroundRepaintTimer()
     {
         backgroundRepaintTimer = 0;
+    }
+
+    @Override
+    public boolean isMouseCursorInWindow()
+    {
+        return eventListener.isMouseCursorInWindow();
     }
 
     @Override
