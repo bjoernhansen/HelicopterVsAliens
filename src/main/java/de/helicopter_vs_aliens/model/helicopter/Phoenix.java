@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
@@ -11,6 +11,8 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import javax.sound.sampled.Clip;
+
+import java.awt.Dimension;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
@@ -225,8 +227,9 @@ public final class Phoenix extends Helicopter
     @Override
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
     {
-        this.tryToTeleportTo(mouseEvent.getX() - Main.displayShift.width,
-            mouseEvent.getY() - Main.displayShift.height);
+        Dimension displayShift = Controller.getInstance().getDisplayShift();
+        this.tryToTeleportTo(   mouseEvent.getX() - displayShift.width,
+                                mouseEvent.getY() - displayShift.height);
     }
 
     public void tryToTeleportTo(int x, int y)

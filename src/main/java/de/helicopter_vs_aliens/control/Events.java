@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.control;
 
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
 import de.helicopter_vs_aliens.control.events.KeyEvent;
@@ -38,6 +37,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.util.EnumSet;
 import java.util.Queue;
@@ -158,7 +158,7 @@ public class Events
     static void keyTyped(KeyEvent keyEvent, GameRessourceProvider gameRessourceProvider)
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
-        if (keyEvent.keyEquals(SpecialKey.ESCAPE) && !helicopter.isDamaged)
+        if (keyEvent.isKeyEqualTo(SpecialKey.ESCAPE) && !helicopter.isDamaged)
         {
             if (WindowManager.window == GAME)
             {
@@ -176,12 +176,12 @@ public class Events
         else if (WindowManager.window == SETTINGS && Window.page == StartScreenMenuButtonType.BUTTON_5)
         {
             int nameLength = currentPlayerName.length();
-            if (keyEvent.keyEquals(SpecialKey.ENTER))
+            if (keyEvent.isKeyEqualTo(SpecialKey.ENTER))
             {
                 Window.page = StartScreenMenuButtonType.BUTTON_1;
                 checkName(gameRessourceProvider.getSaveGame());
             }
-            else if (keyEvent.keyEquals(SpecialKey.BACK_SPACE))
+            else if (keyEvent.isKeyEqualTo(SpecialKey.BACK_SPACE))
             {
                 if (nameLength > 0)
                 {
@@ -193,18 +193,18 @@ public class Events
                 currentPlayerName += keyEvent.getKey();
             }
         }
-        else if (keyEvent.keyEquals('f'))
+        else if (keyEvent.isKeyEqualTo('f'))
         {
             Controller.getInstance().switchFpsVisibleState();
         }
-        else if (keyEvent.keyEquals('p'))
+        else if (keyEvent.isKeyEqualTo('p'))
         {
             if (WindowManager.window == GAME && !helicopter.isDamaged)
             {
                 changeVisibilityOfInGameMenu(helicopter);
             }
         }
-        else if (keyEvent.keyEquals(SpecialKey.SPACE))
+        else if (keyEvent.isKeyEqualTo(SpecialKey.SPACE))
         {
             if (WindowManager.window == GAME
                 && helicopter.isActive
@@ -216,7 +216,7 @@ public class Events
         }
         else if (cheatingMode)
         {
-            if (keyEvent.keyEquals('e'))
+            if (keyEvent.isKeyEqualTo('e'))
             {
                 if (WindowManager.window == GAME || WindowManager.window == REPAIR_SHOP)
                 {
@@ -237,7 +237,7 @@ public class Events
                     Window.moneyDisplayTimer = START;
                 }
             }
-            else if (keyEvent.keyEquals('u'))
+            else if (keyEvent.isKeyEqualTo('u'))
             {
                 if (WindowManager.window == GAME || WindowManager.window == REPAIR_SHOP)
                 {
@@ -261,7 +261,7 @@ public class Events
             }
             else if (WindowManager.window == GAME)
             {
-                if (keyEvent.keyEquals('l'))
+                if (keyEvent.isKeyEqualTo('l'))
                 {
                     if (level < 50)
                     {
@@ -279,7 +279,7 @@ public class Events
                         helicopter.isPlayedWithCheats = true;
                     }
                 }
-                else if (keyEvent.keyEquals('+'))
+                else if (keyEvent.isKeyEqualTo('+'))
                 {
                     if (level < 50)
                     {
@@ -288,28 +288,28 @@ public class Events
                         helicopter.isPlayedWithCheats = true;
                     }
                 }
-                else if (keyEvent.keyEquals('s'))
+                else if (keyEvent.isKeyEqualTo('s'))
                 {
                     Window.specialInfoSelection = (Window.specialInfoSelection + 1) % NUMBER_OF_DEBUGGING_INFOS;
                 }
                 // TODO übergabe von powerUps anders regeln
-                else if (keyEvent.keyEquals('d'))
+                else if (keyEvent.isKeyEqualTo('d'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), TRIPLE_DAMAGE);
                 }
-                else if (keyEvent.keyEquals('i'))
+                else if (keyEvent.isKeyEqualTo('i'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), INVINCIBLE);
                 }
-                else if (keyEvent.keyEquals('c'))
+                else if (keyEvent.isKeyEqualTo('c'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), UNLIMITED_ENERGY);
                 }
-                else if (keyEvent.keyEquals('y'))
+                else if (keyEvent.isKeyEqualTo('y'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), BOOSTED_FIRE_RATE);
                 }
-                else if (keyEvent.keyEquals('a'))
+                else if (keyEvent.isKeyEqualTo('a'))
                 {
                     if (level < 51)
                     {
@@ -321,17 +321,17 @@ public class Events
                         helicopter.isPlayedWithCheats = true;
                     }
                 }
-                else if (keyEvent.keyEquals('m'))
+                else if (keyEvent.isKeyEqualTo('m'))
                 {
                     BasicEnemy.changeMiniBossProb();
                     helicopter.isPlayedWithCheats = true;
                 }
-                else if (keyEvent.keyEquals('n'))
+                else if (keyEvent.isKeyEqualTo('n'))
                 {
                     helicopter.destroyPlating();
                     helicopter.crash();
                 }
-                else if (keyEvent.keyEquals('t'))
+                else if (keyEvent.isKeyEqualTo('t'))
                 {
                     playingTime += 60000;
                 }
@@ -340,11 +340,11 @@ public class Events
             {
                 // Resetten der Helicopter-Bestzeiten
                 Savegame savegame = gameRessourceProvider.getSaveGame();
-                if (keyEvent.keyEquals('x'))
+                if (keyEvent.isKeyEqualTo('x'))
                 {
                     allPlayable = !allPlayable;
                 }
-                else if (keyEvent.keyEquals('-'))
+                else if (keyEvent.isKeyEqualTo('-'))
                 {
                     if (!recordTimeManager.isEmpty())
                     {
@@ -354,7 +354,7 @@ public class Events
                         savegame.saveWithoutValidity(helicopter);
                     }
                 }
-                else if (keyEvent.keyEquals('#'))
+                else if (keyEvent.isKeyEqualTo('#'))
                 {
                     savegame.saveWithoutValidity(helicopter);
                 }
@@ -362,7 +362,7 @@ public class Events
         }
         else if (IS_CHEATING_MODE_ACTIVATABLE)
         {
-            if (keyEvent.keyEquals(cheatCode.charAt(cheatString.length())))
+            if (keyEvent.isKeyEqualTo(cheatCode.charAt(cheatString.length())))
             {
                 cheatString += keyEvent.getKey();
             }
@@ -398,14 +398,15 @@ public class Events
         }
     }
 
-    static void mousePressed(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider)
+    public static void mousePressed(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider)
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (mouseEvent.isLeftButtonClicked())
         {
+            Dimension displayShift = Controller.getInstance().getDisplayShift();
             cursor.setLocation(
-                mouseEvent.getX() - Main.displayShift.width,
-                mouseEvent.getY() - Main.displayShift.height);
+                mouseEvent.getX() - displayShift.width,
+                mouseEvent.getY() - displayShift.height);
             Controller.getInstance().resetBackgroundRepaintTimer();
             mousePressedLeft(gameRessourceProvider);
         }
@@ -828,6 +829,7 @@ public class Events
     private static void startScreenMousePressedLeft(GameRessourceProvider gameRessourceProvider)
     {
         // TODO eventuell nach Menu auslagern
+        System.out.println(cursor);
         if (Window.triangles[0].contains(cursor))
         {
             Window.crossPosition = (Window.crossPosition + 1) % HelicopterType.count();
@@ -911,8 +913,9 @@ public class Events
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
-                Window.label.setBounds(Main.displayShift.width + 42,
-                    Main.displayShift.height + 83, 940, 240);
+                Dimension displayShift = Controller.getInstance().getDisplayShift();
+                Window.label.setBounds( displayShift.width + 42,
+                                        displayShift.height + 83, 940, 240);
             }
             newStartScreenSubWindow(INFORMATION, false);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
@@ -960,10 +963,12 @@ public class Events
                 (Window.page != buttonSpecifier || WindowManager.window == SETTINGS))
             {
                 StartScreenMenuButtonType oldPage = Window.page;
+                Dimension displayShift = Controller.getInstance().getDisplayShift();
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
-                    Window.label.setBounds(Main.displayShift.width + 42,
-                        Main.displayShift.height + 83, 940, 240);
+                    Window.label.setBounds(
+                        displayShift.width + 42,
+                        displayShift.height + 83, 940, 240);
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
@@ -972,8 +977,9 @@ public class Events
                 Window.page = (StartScreenMenuButtonType) buttonSpecifier;
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
-                    Window.label.setBounds(Main.displayShift.width + 92,
-                        Main.displayShift.height + 83, 890, 240);
+                    Window.label.setBounds(
+                        displayShift.width + 92,
+                        displayShift.height + 83, 890, 240);
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
@@ -1013,7 +1019,7 @@ public class Events
         Savegame savegame = gameRessourceProvider.getSaveGame();
         if (Window.page == StartScreenMenuButtonType.BUTTON_1)
         {
-            Main.switchDisplayMode(currentButton);
+            Controller.getInstance().switchDisplayMode(currentButton);
         }
         else if (Window.page == StartScreenMenuButtonType.BUTTON_2)
         {
@@ -1042,7 +1048,7 @@ public class Events
         Window.updateStartScreenSubLabelText();
     }
 
-    static void mouseReleased(MouseEvent mouseEvent, Helicopter helicopter)
+    public static void mouseReleased(MouseEvent mouseEvent, Helicopter helicopter)
     {
         if (mouseEvent.isLeftButtonClicked())
         {
@@ -1055,15 +1061,16 @@ public class Events
     }
 
     // Aktualisierung der Ziel-Koordinaten, auf welche der Helikopter zu fliegt
-    static void mouseMovedOrDragged(MouseEvent mouseEvent, Helicopter helicopter)
+    public static void mouseMovedOrDragged(MouseEvent mouseEvent, Helicopter helicopter)
     {
         if (!helicopter.isDamaged || WindowManager.window == REPAIR_SHOP)
         {
             if (!helicopter.isSearchingForTeleportDestination)
             {
+                Dimension displayShift = Controller.getInstance().getDisplayShift();
                 helicopter.destination.setLocation(
-                    mouseEvent.getX() - Main.displayShift.width,
-                    mouseEvent.getY() - Main.displayShift.height);
+                    mouseEvent.getX() - displayShift.width,
+                    mouseEvent.getY() - displayShift.height);
             }
             else
             {

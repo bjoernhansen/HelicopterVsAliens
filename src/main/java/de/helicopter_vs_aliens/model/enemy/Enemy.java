@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
@@ -159,7 +159,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		MAX_STARTING_Y = 220,
 		MIN_STARTING_Y = 90,
 		DODGE_BORDER_DISTANCE_LEFT = 90,
-		DODGE_BORDER_DISTANCE_RIGHT = Main.VIRTUAL_DIMENSION.width - DODGE_BORDER_DISTANCE_LEFT,
+		DODGE_BORDER_DISTANCE_RIGHT = Controller.VIRTUAL_DIMENSION.width - DODGE_BORDER_DISTANCE_LEFT,
 		DEFAULT_CALL_BACK_MINIMUM_FOR_TURN_AT_BARRIER = 0;
 	
 	protected static final int
@@ -227,7 +227,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	protected static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
 								   TURN_DISTANCE.y,
-								   Main.VIRTUAL_DIMENSION.width 
+								   Controller.VIRTUAL_DIMENSION.width
 								   	- 2*TURN_DISTANCE.x,
 								   GROUND_Y 
 									- SAVE_ZONE_WIDTH
@@ -657,7 +657,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	protected double calculateInitialX()
 	{
-		return Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE;
+		return Controller.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE;
 	}
 	
 	protected double calculateInitialY()
@@ -953,7 +953,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private boolean isTurningAroundEarly()
 	{
-		return isAbleToTurnAroundEarly && getMinX() < 0.85 * Main.VIRTUAL_DIMENSION.width;
+		return isAbleToTurnAroundEarly && getMinX() < 0.85 * Controller.VIRTUAL_DIMENSION.width;
 	}
 	
 	
@@ -1225,7 +1225,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			   && barrierTeleportTimer == DISABLED
 			   && !isDodging()
 			   && (callBack == 0 || !speed.equals(ZERO_SPEED))
-			   && (    (getMinX() > Main.VIRTUAL_DIMENSION.width + DISAPPEARANCE_DISTANCE
+			   && (    (getMinX() > Controller.VIRTUAL_DIMENSION.width + DISAPPEARANCE_DISTANCE
 					   	 && isFlyingRight())
 				    || (getMaxX() < -DISAPPEARANCE_DISTANCE));
 	}
@@ -1238,7 +1238,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public boolean isOnScreen()
 	{		
 		return getMaxX() > 0
-			   && getMinX() < Main.VIRTUAL_DIMENSION.width;
+			   && getMinX() < Controller.VIRTUAL_DIMENSION.width;
 	}
 	
 	protected void prepareRemoval()
@@ -1564,7 +1564,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			( totalStunningTime - 13 == stunningTimer
 			  || getMaxX()
 			  	 + 18 
-			  	 + missileDrive/2f > Main.VIRTUAL_DIMENSION.width
+			  	 + missileDrive/2f > Controller.VIRTUAL_DIMENSION.width
 			  	 								+ 2 * getWidth()/3
 			  || getMinX()
 			  	 - 18 

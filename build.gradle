@@ -37,6 +37,6 @@ java {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
+/*tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << "-Xlint:unchecked"
-}
+}*/

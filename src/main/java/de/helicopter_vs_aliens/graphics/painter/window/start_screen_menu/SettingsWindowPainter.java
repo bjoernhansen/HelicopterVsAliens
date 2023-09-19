@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
@@ -9,6 +9,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
+import java.awt.DisplayMode;
 
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 
@@ -42,7 +43,7 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
     
         graphicsAdapter.setColor(Colorations.golden);
         graphicsAdapter.drawString(
-            Window.dictionary.displayMode() + (Main.isFullScreen ? getResolutionString() : ""),
+            Window.dictionary.displayMode() + (Controller.getInstance().isFullScreen() ? getResolutionString() : ""),
             LEFT + COLUMN_SPACING,
             TOP);
     
@@ -71,8 +72,10 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
     }
 
     private static String getResolution() {
+
+        DisplayMode currentDisplayMode = Controller.getInstance().getCurrentDisplayMode();
         return Window.hasOriginalResolution
-                ? Main.currentDisplayMode.getWidth() + "x" + Main.currentDisplayMode.getHeight()
+                ? currentDisplayMode.getWidth() + "x" + currentDisplayMode.getHeight()
                 : "1280x720";
     }
 

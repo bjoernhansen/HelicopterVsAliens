@@ -29,13 +29,7 @@ class AwtBasedKeyEvent implements KeyEvent
     }
 
     @Override
-    public boolean keyEquals(char keyCode)
-    {
-        return keyEvent.getKeyChar() == keyCode;
-    }
-
-    @Override
-    public boolean keyEquals(SpecialKey specialKey)
+    public boolean isKeyEqualTo(SpecialKey specialKey)
     {
         return keyEvent.getKeyCode() == keyMap.get(specialKey);
     }
@@ -47,15 +41,7 @@ class AwtBasedKeyEvent implements KeyEvent
     }
 
     @Override
-    public boolean isKeyAllowedForPlayerName()
-    {
-        return isKeyLetter()
-            || keyEquals(SpecialKey.UNKNOWN)
-            || keyEquals(SpecialKey.SPACE)
-            || keyEquals(SpecialKey.HYPHEN);
-    }
-
-    private boolean isKeyLetter()
+    public boolean isLetterKey()
     {
         return keyEvent.getKeyCode() >= java.awt.event.KeyEvent.VK_A
             && keyEvent.getKeyCode() <= java.awt.event.KeyEvent.VK_Z;

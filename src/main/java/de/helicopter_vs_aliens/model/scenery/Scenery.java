@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
 import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -48,7 +48,7 @@ public class Scenery extends GameEntity
         List<Point> calculatedStars = new ArrayList<>(NR_OF_STARS);
         for(int i = 0; i < NR_OF_STARS; i++)
         {
-            Point star = new Point( Calculations.random(Main.VIRTUAL_DIMENSION.width),
+            Point star = new Point( Calculations.random(Controller.VIRTUAL_DIMENSION.width),
                 Calculations.random(GROUND_Y));
             calculatedStars.add(star);
         }

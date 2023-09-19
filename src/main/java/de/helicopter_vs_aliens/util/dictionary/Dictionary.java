@@ -14,7 +14,6 @@ import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.score.HighScoreColumnType;
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 
 import java.io.IOException;
@@ -212,13 +211,13 @@ public final class Dictionary
     
     public String displayMode()
     {
-        String key = "displayMode." + (Main.isFullScreen ? "fullscreen" : "window");
+        String key = "displayMode." + (Controller.getInstance().isFullScreen() ? "fullscreen" : "window");
         return this.languageProperties.getProperty(key);
     }
     
     public String oppositeDisplayMode()
     {
-        String key = "displayMode." + (Main.isFullScreen ? "window" : "fullscreen");
+        String key = "displayMode." + (Controller.getInstance().isFullScreen() ? "window" : "fullscreen");
         return this.languageProperties.getProperty(key);
     }
     

@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
@@ -131,7 +131,7 @@ public class GameWindowPainter extends WindowPainter
     {
         // der Boden
         graphicsAdapter.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
-        graphicsAdapter.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
+        graphicsAdapter.fillRect(0, GROUND_Y, Controller.VIRTUAL_DIMENSION.width, 35);
         
         // Objekte vor dem Helikopter
         Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getSceneryObjects()

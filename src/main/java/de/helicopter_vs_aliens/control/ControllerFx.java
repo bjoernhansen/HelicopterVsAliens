@@ -1,13 +1,11 @@
-package de.helicopter_vs_aliens;
+package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.EnemyController;
-import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
+import de.helicopter_vs_aliens.control.events.EventFactory;
+import de.helicopter_vs_aliens.control.events.SpecialKey;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
@@ -37,7 +35,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -45,19 +42,19 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.Queue;
 
+import static de.helicopter_vs_aliens.control.Controller.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
-public class MainFx extends Application implements GameRessourceProvider
+public class ControllerFx extends Application implements GameRessourceProvider
 {
-    public static final Dimension
-        VIRTUAL_DIMENSION = new Dimension(1024, 461);
-
     private final Button
         button = new Button("Werkstatt");
 
@@ -95,7 +92,7 @@ public class MainFx extends Application implements GameRessourceProvider
         framesCounter = 0;
 
 
-    public MainFx()
+    public ControllerFx()
     {
         GameResources.setGameResources(this);
     }
@@ -103,38 +100,32 @@ public class MainFx extends Application implements GameRessourceProvider
     @Override
     public void start(final Stage primaryStage)
     {
-        button.setOnAction(event -> {}/*primaryStage.close()*/);
+        button.setOnAction(event -> primaryStage.close());
+        button.setFocusTraversable(false);
+
         Canvas canvas = new Canvas(VIRTUAL_DIMENSION.width, VIRTUAL_DIMENSION.height);
 
-        canvas.setOnMouseMoved(this::mouseMoveEvent);
-        canvas.setOnMouseDragged(this::mouseMoveEvent);
-        canvas.setOnMousePressed(this::mouseClickEvent);
-        canvas.setOnMouseReleased(this::mouseClickEvent);
+        canvas.setOnMousePressed(e -> Events.mousePressed(EventFactory.makeMouseEvent(e), this));
 
-/*
-        @Override
-        public void keyPressed	 (KeyEvent e){Events.keyTyped(e, this);}
+        canvas.setOnMouseReleased(e -> Events.mouseReleased(EventFactory.makeMouseEvent(e), this.getHelicopter()));
 
-        @Override
-        public void mousePressed (java.awt.event.MouseEvent e){Events.mousePressed(e, this);}
+        canvas.setOnMouseDragged(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), this.getHelicopter()));
 
-        @Override
-        public void mouseReleased(java.awt.event.MouseEvent e){Events.mouseReleased(e, helicopter);}
+        canvas.setOnMouseMoved(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), this.getHelicopter()));
 
-        @Override
-        public void mouseDragged (java.awt.event.MouseEvent e){Events.mouseMovedOrDragged(e, helicopter);}
-
-        @Override
-        public void mouseMoved   (java.awt.event.MouseEvent e){Events.mouseMovedOrDragged(e, helicopter);}
-
-              */
 
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY))); // Setze den Hintergrund auf Rot
         anchorPane.getChildren().add(canvas);
         anchorPane.getChildren().add(button);
 
+        // Set the anchorPane to be focusable
+        canvas.setFocusTraversable(true);
+        canvas.requestFocus();
+
+
         anchorPane.setOnKeyPressed(this::keyEvent);
+        // canvas.setOnKeyPressed(this::keyEvent);
 
 
         var scene = new Scene(anchorPane);
@@ -145,23 +136,20 @@ public class MainFx extends Application implements GameRessourceProvider
         primaryStage.setFullScreen(true);
         primaryStage.show();
 
-
-        Main.displayShift = new Dimension(
+        var canvasShift = new Dimension(
             (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),
             (int) ((primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0));
 
-        double verticalAnchorDistance = Main.displayShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
+
+        double verticalAnchorDistance = canvasShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
         AnchorPane.setTopAnchor(button, verticalAnchorDistance);
-        double horizontalAnchorDistance = Main.displayShift.getWidth() + VIRTUAL_DIMENSION.width / 2.0 - 60;
+        double horizontalAnchorDistance = canvasShift.getWidth() + VIRTUAL_DIMENSION.width / 2.0 - 60;
         AnchorPane.setLeftAnchor(button, horizontalAnchorDistance);
         AnchorPane.setRightAnchor(button, horizontalAnchorDistance);
 
-        AnchorPane.setLeftAnchor(canvas, Main.displayShift.getWidth());
-        AnchorPane.setTopAnchor(canvas, Main.displayShift.getHeight());
+        AnchorPane.setLeftAnchor(canvas, canvasShift.getWidth());
+        AnchorPane.setTopAnchor(canvas, canvasShift.getHeight());
 
-
-        System.out.println(primaryStage.getWidth());
-        System.out.println(primaryStage.getHeight());
 
         // primaryStage.setResizable(false);
         // primaryStage.setOpacity(0.5);
@@ -176,7 +164,7 @@ public class MainFx extends Application implements GameRessourceProvider
         Audio.initialize();
 
 
-        offImage = new BufferedImage((int) Main.VIRTUAL_DIMENSION.getWidth(), (int) Main.VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
+        offImage = new BufferedImage((int) VIRTUAL_DIMENSION.getWidth(), (int) VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 
         graphicsAdapter = Graphics2DAdapter.of(offImage);
@@ -205,36 +193,18 @@ public class MainFx extends Application implements GameRessourceProvider
         }.start();
     }
 
-    private void mouseClickEvent(MouseEvent event)
+    private void keyEvent(KeyEvent keyEvent)
     {
-        System.out.println("mouseClickEvent");
-        System.out.println(event.getEventType());
-        System.out.println(event.getButton());
-        System.out.println(event.getX() + " " + event.getY());
-    }
+        de.helicopter_vs_aliens.control.events.KeyEvent javaFxEvent = EventFactory.makeKeyEvent(keyEvent);
 
-    private void mouseMoveEvent(MouseEvent event)
-    {
-        System.out.println("mouseMoveEvent");
-        System.out.println(event.getEventType());
-        System.out.println(event.getButton());
-        System.out.println(event.getX() + " " + event.getY());
+        System.out.println("keyEvent - start!");
+        System.out.println("equal to a: " + javaFxEvent.isKeyEqualTo('a'));
+        System.out.println("isLetterKey: " + javaFxEvent.isLetterKey());
+        System.out.println("isKeyAllowedForPlayerName: " + javaFxEvent.isKeyAllowedForPlayerName());
+        System.out.println("equal to ESCAPE: " + javaFxEvent.isKeyEqualTo(SpecialKey.ESCAPE));
+        System.out.println("getKey: " + javaFxEvent.getKey());
+        System.out.println("keyEvent - ende!");
     }
-
-    private void keyEvent(KeyEvent event)
-    {
-        System.out.println("keyEvent!");
-        System.out.println(event.getCharacter());
-        System.out.println(event.getEventType());
-        System.out.println(event.getCode());
-        System.out.println(event.getText());
-    }
-
-    public static void main(String[] args)
-    {
-        Application.launch(MainFx.class);
-    }
-
 
     @Override
     public Map<CollectionSubgroupType, Queue<Enemy>> getEnemies()
@@ -313,6 +283,12 @@ public class MainFx extends Application implements GameRessourceProvider
     {
         // TODO not necessary
         return true;
+    }
+
+    @Override
+    public void resetBackgroundRepaintTimer()
+    {
+        // TODO not necessary
     }
 
     @Override

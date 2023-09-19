@@ -1,17 +1,16 @@
 package de.helicopter_vs_aliens.control;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
-import de.helicopter_vs_aliens.control.events.EventFactory;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
@@ -28,17 +27,19 @@ import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import javax.swing.*;
-
-
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Map;
@@ -48,34 +49,63 @@ import java.util.Queue;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
-public final class Controller extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener,
-    WindowListener, GameRessourceProvider
+public final class Controller extends JPanel implements Runnable, GameRessourceProvider
 {
-    private static final boolean
-        STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW = true;
+    public static final Dimension
+        VIRTUAL_DIMENSION = new Dimension(1024, 461);
 
     private static final int
         BACKGROUND_PAINT_DISABLED = -1;
 
-    private static final long
-        DELAY = 16;
+    private static final Dimension
+        STANDARD_RESOLUTION = new Dimension(1280, 720);
+
+    private static final Dimension
+        WINDOW_SIZE = new Dimension(STANDARD_RESOLUTION.width + 6,
+        STANDARD_RESOLUTION.height + 29);
+
+    private static final DisplayMode
+        standardDisplayMode = new DisplayMode(
+        STANDARD_RESOLUTION.width,
+        STANDARD_RESOLUTION.height,
+        32, 60);
+
 
     private static Controller
         instance;
 
+
+    private static final long
+        DELAY = 16;
+
     private boolean
-        isAntialiasingActivated = true,
-        isMouseCursorInWindow = true,
+        isFullScreen = true;
+
+    private transient DisplayMode
+        currentDisplayMode;
+
+    private Dimension
+        displayShift = new Dimension();
+
+    private boolean
+        isAntialiasingActivated = true;
+
+    private boolean
         isFpsDisplayVisible = false;
 
-    // TODO Wieso gibt es framesCounter und numberOfFrames?
     private int
-        numberOfFrames,
-        framesCounter = 0,
+        framesCount;
+
+    private int
+        gameLoopCount = 0;
+
+    private int
         backgroundRepaintTimer = 0;
 
     private long
-        timeMillis,
+        timeMillis;
+
+    private long
         fpsStartTime;
 
     private FrameSkipStatusType
@@ -84,62 +114,120 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
     private Savegame
         saveGame;
 
-    private Helicopter
+    private transient Helicopter
         helicopter = HelicopterType.getDefault().makeInstance();
 
-    private GraphicsAdapter
+    private transient GraphicsAdapter
         graphicsAdapter;
 
-    private Thread
+    private transient Thread
         animator;
 
-    private Image
+    private transient Image
         offImage;
 
-    private Rectangle2D
+    private transient Rectangle2D
         wholeScreenClip;
 
-    private final Scenery
+    private transient final Scenery
         scenery = new Scenery(this);
 
-    private final WindowManager
+    private final transient WindowManager
         windowManager = new WindowManager();
 
-    private final GameEntitySupplier
+    private final transient GameEntitySupplier
         gameEntitySupplier = new GameEntitySupplier();
 
-    private final GameStatisticsCalculator
+    private final transient GameStatisticsCalculator
         gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
 
-    private final ActiveGameEntityManager
+    private final transient ActiveGameEntityManager
         activeGameEntityManager = ActiveGameEntityManager.getInstance();
+
+
+    private transient GraphicsDevice
+        device;
+
+    private JFrame
+        frame;
+
+    private transient DisplayMode
+        originalDisplayMode;
+
+    private transient EventListener
+        eventListener = new EventListener(this);
 
 
     private Controller()
     {
     }
 
+    public static Controller getInstance()
+    // TODO Aufrufe kontrollieren und ggf. ersetzen durch intern genutzte Variable plus "Dependency Injection"
+    {
+        if (Optional.ofNullable(instance).isEmpty())
+        {
+            instance = new Controller();
+            GameResources.setGameResources(instance);
+        }
+        return instance;
+    }
+
     public void init()
     {
+        frame = new JFrame("Helicopter vs. Aliens");
+        frame.setBackground(Color.black);
+        frame.add("Center", this);
+
+        // frame.addKeyListener(this); // TODO checken, onb erforderlich
+        frame.setResizable(false);
+        frame.addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                shutDown();
+            }
+        });
+
+        this.setLayout(null);
+
+        device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        if (!device.isFullScreenSupported())
+        {
+            isFullScreen = false;
+        }
+        originalDisplayMode = device.getDisplayMode();
+
+        this.setSaveGame(Savegame.initialize());
+
+        frame.setUndecorated(true);
+        device.setFullScreenWindow(frame);
+        activateDisplayMode();
+        switchDisplayMode(null);
+
+        frame.setVisible(true);
+
+
         Audio.initialize();
 
         Dimension offDimension = getSize();
         wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
-        offImage = new BufferedImage((int) Main.VIRTUAL_DIMENSION.getWidth(), (int) Main.VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
+        offImage = new BufferedImage((int) VIRTUAL_DIMENSION.getWidth(), (int) VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
         graphicsAdapter = Graphics2DAdapter.of(offImage);
         graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphicsAdapter.fillRectangle(wholeScreenClip);
 
         Shape offscreenClip = new Rectangle2D.Double(0,
             0,
-            Main.VIRTUAL_DIMENSION.getWidth(),
-            Main.VIRTUAL_DIMENSION.getHeight());
+            VIRTUAL_DIMENSION.getWidth(),
+            VIRTUAL_DIMENSION.getHeight());
         graphicsAdapter.setClip(offscreenClip);
 
         add(Window.label);
-        addKeyListener(this);
-        addMouseListener(this);
-        addMouseMotionListener(this);
+        addKeyListener(eventListener);
+        addMouseListener(eventListener);
+        addMouseMotionListener(eventListener);
 
         Window.initialize();
         Window.updateButtonLabels(helicopter);
@@ -151,11 +239,6 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
         this.animator = new Thread(this);
         this.animator.start();
         Audio.refreshBackgroundMusic();
-    }
-
-    public void shutDown()
-    {
-        System.exit(0);
     }
 
     @Override
@@ -193,6 +276,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
     @Override
     protected void paintComponent(Graphics g)
     {
+        // TODO kontrollieren warum hier ein Feld versteckt wird
         GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(g);
         if (this.graphicsAdapter != null)
         {
@@ -207,11 +291,11 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
                     this.clearBackground(graphicsAdapter);
                 }
                 graphicsAdapter.drawImage(this.offImage,
-                    Main.displayShift.width,
-                    Main.displayShift.height);
+                    displayShift.width,
+                    displayShift.height);
             }
 
-            if (Main.isFullScreen || this.isMouseCursorInWindow)
+            if (isFullScreen || eventListener.isMouseCursorInWindow())
             {
                 updateGame();
             }
@@ -242,20 +326,20 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
         graphicsAdapter.setColor(Color.black);
         graphicsAdapter.fillRect(0,
             0,
-            Main.currentDisplayMode.getWidth(),
-            Main.currentDisplayMode.getHeight());
+            currentDisplayMode.getWidth(),
+            currentDisplayMode.getHeight());
     }
 
     private void updateGame()
     {
-        this.framesCounter++;
+        this.gameLoopCount++;
         Timer.countDownActiveTimers();
         if (WindowManager.window == GAME)
         {
             calculateFps();
             if (!Window.isMenuVisible)
             {
-                Colorations.calculateVariableGameColors(framesCounter);
+                Colorations.calculateVariableGameColors(gameLoopCount);
 
                 scenery.update(this);
                 Events.updateTimer();
@@ -273,7 +357,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
         }
         else
         {
-            Colorations.calculateVariableMenuColors(framesCounter);
+            Colorations.calculateVariableMenuColors(gameLoopCount);
             Window.update(this);
         }
     }
@@ -289,12 +373,12 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
         if (isFpsDisplayVisible)
         {
             long timeDiff = System.currentTimeMillis() - fpsStartTime;
-            numberOfFrames++;
+            framesCount++;
             if (timeDiff > 3000)
             {
-                Window.fps = Math.round(1000f * numberOfFrames / timeDiff);
+                Window.fps = Math.round(1000f * framesCount / timeDiff);
                 fpsStartTime = System.currentTimeMillis();
-                numberOfFrames = 0;
+                framesCount = 0;
             }
         }
     }
@@ -307,112 +391,9 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
             if (isFpsDisplayVisible)
             {
                 fpsStartTime = System.currentTimeMillis();
-                numberOfFrames = 0;
+                framesCount = 0;
             }
         }
-    }
-
-    // Behandlung von Fenster-, Tastatur- und Mausereignisse
-    @Override
-    public void keyPressed(KeyEvent keyEvent)
-    {
-        Events.keyTyped(EventFactory.makeKeyEvent(keyEvent), this);
-    }
-
-    @Override
-    public void mousePressed(MouseEvent mouseEvent)
-    {
-        Events.mousePressed(EventFactory.makeMouseEvent(mouseEvent), this);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent mouseEvent)
-    {
-        Events.mouseReleased(EventFactory.makeMouseEvent(mouseEvent), helicopter);
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent mouseEvent)
-    {
-        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), helicopter);
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent mouseEvent)
-    {
-        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), helicopter);
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent mouseEvent)
-    {
-        if (WindowManager.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
-        {
-            this.isMouseCursorInWindow = true;
-            Events.lastCurrentTime = System.currentTimeMillis();
-        }
-        this.backgroundRepaintTimer = 0;
-    }
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent)
-    {
-        if (WindowManager.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
-        {
-            this.isMouseCursorInWindow = false;
-            Events.playingTime += System.currentTimeMillis() - Events.lastCurrentTime;
-        }
-    }
-
-    // ungenutzte Listener-Methoden
-    @Override
-    public void keyTyped(KeyEvent keyEvent)
-    {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent keyEvent)
-    {
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent windowEvent)
-    {
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent mouseEvent)
-    {
-    }
-
-    @Override
-    public void windowOpened(WindowEvent windowEvent)
-    {
-    }
-
-    @Override
-    public void windowClosing(WindowEvent windowEvent)
-    {
-    }
-
-    @Override
-    public void windowClosed(WindowEvent windowEvent)
-    {
-    }
-
-    @Override
-    public void windowIconified(WindowEvent windowEvent)
-    {
-    }
-
-    @Override
-    public void windowActivated(WindowEvent windowEvent)
-    {
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent windowEvent)
-    {
     }
 
     @Override
@@ -426,17 +407,6 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
     {
         this.helicopter = helicopter;
         Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
-    }
-
-    // TODO Aufrufe kontrollieren und ggf. ersetzen durch intern genutzte Variable plus "Dependency Injection"
-    public static Controller getInstance()
-    {
-        if (Optional.ofNullable(instance).isEmpty())
-        {
-            instance = new Controller();
-            GameResources.setGameResources(instance);
-        }
-        return instance;
     }
 
     @Override
@@ -468,26 +438,16 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
         return isAntialiasingActivated;
     }
 
-    public void switchAntialiasingActivationState(Button currentButton)
-    {
-        isAntialiasingActivated = !isAntialiasingActivated;
-        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, getInstance().isAntialiasingActivated()
-            ? RenderingHints.VALUE_ANTIALIAS_ON
-            : RenderingHints.VALUE_ANTIALIAS_OFF);
-        Window.dictionary.updateAntialiasing();
-        currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
-    }
-
     @Override
     public int getFramesCounter()
     {
-        return framesCounter;
+        return gameLoopCount;
     }
 
     @Override
     public boolean isMouseCursorInWindow()
     {
-        return isMouseCursorInWindow;
+        return eventListener.isMouseCursorInWindow();
     }
 
     @Override
@@ -496,6 +456,7 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
         return isFpsDisplayVisible;
     }
 
+    @Override
     public void resetBackgroundRepaintTimer()
     {
         backgroundRepaintTimer = 0;
@@ -553,5 +514,91 @@ public final class Controller extends JPanel implements Runnable, KeyListener, M
     public ActiveGameEntityManager getActiveGameEntityManager()
     {
         return activeGameEntityManager;
+    }
+
+    public void switchAntialiasingActivationState(Button currentButton)
+    {
+        isAntialiasingActivated = !isAntialiasingActivated;
+        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, getInstance().isAntialiasingActivated()
+            ? RenderingHints.VALUE_ANTIALIAS_ON
+            : RenderingHints.VALUE_ANTIALIAS_OFF);
+        Window.dictionary.updateAntialiasing();
+        currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
+    }
+
+    public void switchDisplayMode(Button currentButton)
+    {
+        isFullScreen = !isFullScreen;
+
+        Window.dictionary.updateDisplayMode();
+        Optional.ofNullable(currentButton)
+                .ifPresent(button -> button.setPrimaryLabel(Window.dictionary.oppositeDisplayMode()));
+
+        frame.dispose();
+        frame.setUndecorated(isFullScreen);
+
+        if (isFullScreen)
+        {
+            device.setFullScreenWindow(frame);
+            activateDisplayMode();
+        }
+        else
+        {
+            device.setFullScreenWindow(null);
+            if (currentButton != null)
+            {
+                Window.adaptToWindowMode(displayShift);
+            }
+            frame.setSize(WINDOW_SIZE);
+            frame.setLocation((int) ((originalDisplayMode.getWidth()
+                    - WINDOW_SIZE.getWidth()) / 2),
+                (int) ((originalDisplayMode.getHeight()
+                    - WINDOW_SIZE.getHeight()) / 2));
+            frame.setVisible(true);
+        }
+    }
+
+    private void activateDisplayMode()
+    {
+        currentDisplayMode = Window.hasOriginalResolution
+            ? originalDisplayMode
+            : standardDisplayMode;
+        device.setDisplayMode(currentDisplayMode);
+
+        displayShift = new Dimension((currentDisplayMode.getWidth() - VIRTUAL_DIMENSION.width) / 2,
+            (currentDisplayMode.getHeight() - VIRTUAL_DIMENSION.height) / 2);
+        if (Window.label == null)
+        {
+            Window.label = new Label();
+        }
+        else
+        {
+            Window.label.setBounds(
+                displayShift.width + 42,
+                displayShift.height + 83,
+                940,
+                240);
+        }
+        Controller.getInstance().resetBackgroundRepaintTimer();
+    }
+
+    public boolean isFullScreen()
+    {
+        return isFullScreen;
+    }
+
+    public Dimension getDisplayShift()
+    {
+        return displayShift;
+    }
+
+    public DisplayMode getCurrentDisplayMode()
+    {
+        return currentDisplayMode;
+    }
+
+    public void shutDown()
+    {
+        System.exit(0);
     }
 }
