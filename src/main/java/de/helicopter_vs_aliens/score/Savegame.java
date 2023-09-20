@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -168,11 +169,11 @@ public class Savegame implements Serializable
 		}
 	}
 	
-	public void saveWithoutValidity(Helicopter helicopter)
+	public void saveWithoutValidity(GameRessourceProvider gameRessourceProvider)
 	{
 		saveInHighscore();
 		loseValidity();
-		saveToFile(helicopter);
+		saveToFile(gameRessourceProvider);
 		Audio.play(Audio.emp);
 	}
 	
@@ -181,9 +182,9 @@ public class Savegame implements Serializable
 		Events.highScore.saveEntryFor(this);
 	}
 	
-	public void saveToFile(Helicopter helicopter)
+	public void saveToFile(GameRessourceProvider gameRessourceProvider)
 	{
-		this.save(helicopter);
+		this.save(gameRessourceProvider);
 		Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(this.isValid);
 		writeToFile();
 	}
@@ -213,13 +214,15 @@ public class Savegame implements Serializable
 		this.currentPlayerName = currentPlayerName;
 	}
 	
-	private void save(Helicopter helicopter)
+	private void save(GameRessourceProvider gameRessourceProvider)
 	{
-		this.currentPlayerName = Events.currentPlayerName;
-		this.language = Window.language;
 		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
-		this.originalResolution = Window.hasOriginalResolution;
 		this.isSoundOn = Audio.isSoundOn;
+
+		this.language = Window.language;
+		this.originalResolution = Window.hasOriginalResolution;
+
+		this.currentPlayerName = Events.currentPlayerName;
 		this.money = Events.money;	
 		this.killsAfterLevelUp = Events.killsAfterLevelUp;
 		this.level = Events.level;
@@ -228,10 +231,12 @@ public class Savegame implements Serializable
 		this.bonusCounter = Events.overallEarnings;
 		this.extraBonusCounter = Events.extraBonusCounter;
 		this.playingTime = Events.playingTime;
-		this.scoreScreenTimes = helicopter.scoreScreenTimes;
 		this.recordTimeManager = Events.recordTimeManager;
 		this.helicoptersThatReachedLevel20 = Events.helicoptersThatReachedLevel20;
 		this.highScore = Events.highScore;
+
+		var helicopter = gameRessourceProvider.getHelicopter();
+		this.scoreScreenTimes = helicopter.scoreScreenTimes;
 		this.helicopterType = helicopter.getType();
 		this.levelsOfStandardUpgrades = helicopter.getLevelsOfStandardUpgrades();
 		this.spotlight = helicopter.hasSpotlights;
@@ -243,8 +248,7 @@ public class Savegame implements Serializable
 		this.currentEnergy = helicopter.getCurrentEnergy();
 		this.wasCreatedThroughCheating = helicopter.isPlayedWithCheats;
 
-		GameStatisticsCalculator gameStatisticsCalculator = GameResources.getProvider()
-																		 .getGameStatisticsCalculator();
+		GameStatisticsCalculator gameStatisticsCalculator = gameRessourceProvider.getGameStatisticsCalculator();
 		this.enemiesSeen = gameStatisticsCalculator.getNumberOfEnemiesSeen();
 		this.enemiesKilled = gameStatisticsCalculator.getNumberOfEnemiesKilled();
 		this.miniBossSeen = gameStatisticsCalculator.getNumberOfMiniBossSeen();

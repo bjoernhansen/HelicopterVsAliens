@@ -166,7 +166,7 @@ public class Events
             }
             else if (WindowManager.window == START_SCREEN)
             {
-                Controller.getInstance().shutDown();
+                System.exit(0);
             }
             else if (WindowManager.window != REPAIR_SHOP)
             {
@@ -195,7 +195,7 @@ public class Events
         }
         else if (keyEvent.isKeyEqualTo('f'))
         {
-            Controller.getInstance().switchFpsVisibleState();
+            gameRessourceProvider.switchFpsVisibleState();
         }
         else if (keyEvent.isKeyEqualTo('p'))
         {
@@ -351,12 +351,12 @@ public class Events
                         recordTimeManager.eraseRecordTimes();
                         helicoptersThatReachedLevel20.clear();
                         heliosMaxMoney = Helios.getMaxMoney();
-                        savegame.saveWithoutValidity(helicopter);
+                        savegame.saveWithoutValidity(gameRessourceProvider);
                     }
                 }
                 else if (keyEvent.isKeyEqualTo('#'))
                 {
-                    savegame.saveWithoutValidity(helicopter);
+                    savegame.saveWithoutValidity(gameRessourceProvider);
                 }
             }
         }
@@ -403,11 +403,11 @@ public class Events
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (mouseEvent.isLeftButtonClicked())
         {
-            Dimension displayShift = Controller.getInstance().getDisplayShift();
+            Dimension displayShift = gameRessourceProvider.getDisplayShift();
             cursor.setLocation(
                 mouseEvent.getX() - displayShift.width,
                 mouseEvent.getY() - displayShift.height);
-            Controller.getInstance().resetBackgroundRepaintTimer();
+            gameRessourceProvider.resetBackgroundRepaintTimer();
             mousePressedLeft(gameRessourceProvider);
         }
         // TODO in Methode auslagern
@@ -464,7 +464,7 @@ public class Events
                 if (Window.buttons.get(MainMenuButtonType.NEW_GAME_1).getBounds().contains(cursor))
                 {
                     savegame.becomeValid();
-                    savegame.saveToFile(helicopter);
+                    savegame.saveToFile(gameRessourceProvider);
                     conditionalReset(gameRessourceProvider, true);
                     restartGame(gameRessourceProvider);
                     Audio.applause1.stop();
@@ -477,8 +477,8 @@ public class Events
                 else if (Window.buttons.get(MainMenuButtonType.NEW_GAME_2).getBounds().contains(cursor))
                 {
                     savegame.becomeValid();
-                    savegame.saveToFile(helicopter);
-                    Controller.getInstance().shutDown();
+                    savegame.saveToFile(gameRessourceProvider);
+                    System.exit(0);
                 }
                 else if ((Window.buttons.get(GroundButtonType.MAIN_MENU).getBounds().contains(cursor)
                     && helicopter.isOnTheGround())
@@ -532,7 +532,7 @@ public class Events
 
                 helicopter.isDamaged = false;
                 savegame.becomeValid();
-                savegame.saveToFile(helicopter);
+                savegame.saveToFile(gameRessourceProvider);
                 Colorations.updateScoreScreenColors(gameRessourceProvider.getGameStatisticsCalculator());
             }
             else
@@ -892,7 +892,7 @@ public class Events
         }
         else if (Window.buttons.get(StartScreenButtonType.QUIT).getBounds().contains(cursor))
         {
-            Controller.getInstance().shutDown();
+            System.exit(0);
         }
     }
 
@@ -905,14 +905,14 @@ public class Events
             savegame.saveInHighscore();
             restartGame(gameRessourceProvider);
             savegame.loseValidity();
-            savegame.saveToFile(gameRessourceProvider.getHelicopter());
+            savegame.saveToFile(gameRessourceProvider);
             Window.buttons.get(StartScreenSubCancelButtonType.CANCEL).setHighlighted(false);
         }
         else if (WindowManager.window == DESCRIPTION)
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
-                Dimension displayShift = Controller.getInstance().getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 Window.label.setBounds( displayShift.width + 42,
                                         displayShift.height + 83, 940, 240);
             }
@@ -962,7 +962,7 @@ public class Events
                 (Window.page != buttonSpecifier || WindowManager.window == SETTINGS))
             {
                 StartScreenMenuButtonType oldPage = Window.page;
-                Dimension displayShift = Controller.getInstance().getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
                     Window.label.setBounds(
@@ -1018,11 +1018,11 @@ public class Events
         Savegame savegame = gameRessourceProvider.getSaveGame();
         if (Window.page == StartScreenMenuButtonType.BUTTON_1)
         {
-            Controller.getInstance().switchDisplayMode(currentButton);
+            gameRessourceProvider.switchDisplayMode(currentButton);
         }
         else if (Window.page == StartScreenMenuButtonType.BUTTON_2)
         {
-            Controller.getInstance().switchAntialiasingActivationState(currentButton);
+            gameRessourceProvider.switchAntialiasingActivationState(currentButton);
         }
         else if (Window.page == StartScreenMenuButtonType.BUTTON_3)
         {
@@ -1060,13 +1060,14 @@ public class Events
     }
 
     // Aktualisierung der Ziel-Koordinaten, auf welche der Helikopter zu fliegt
-    public static void mouseMovedOrDragged(MouseEvent mouseEvent, Helicopter helicopter)
+    public static void mouseMovedOrDragged(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider)
     {
+        Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (!helicopter.isDamaged || WindowManager.window == REPAIR_SHOP)
         {
             if (!helicopter.isSearchingForTeleportDestination)
             {
-                Dimension displayShift = Controller.getInstance().getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 helicopter.destination.setLocation(
                     mouseEvent.getX() - displayShift.width,
                     mouseEvent.getY() - displayShift.height);
@@ -1239,7 +1240,7 @@ public class Events
         savegame.saveInHighscore();
         initializeForNewGame();
         savegame.becomeValid();
-        savegame.saveToFile(newHelicopter);
+        savegame.saveToFile(gameRessourceProvider);
         performGeneralActionsBeforeGameStart();
     }
 
@@ -1275,7 +1276,7 @@ public class Events
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         helicopter.prepareForMission();
         gameRessourceProvider.getSaveGame().becomeValid();
-        gameRessourceProvider.getSaveGame().saveToFile(helicopter);
+        gameRessourceProvider.getSaveGame().saveToFile(gameRessourceProvider);
     }
 
     private static void enterRepairShop(Helicopter helicopter)

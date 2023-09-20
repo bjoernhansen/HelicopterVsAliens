@@ -129,7 +129,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     private transient Rectangle2D
         wholeScreenClip;
 
-    private transient final Scenery
+    private final transient Scenery
         scenery = new Scenery(this);
 
     private final transient WindowManager
@@ -154,7 +154,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     private transient DisplayMode
         originalDisplayMode;
 
-    private transient EventListener
+    private final transient EventListener
         eventListener = new EventListener(this);
 
 
@@ -186,7 +186,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
             @Override
             public void windowClosing(WindowEvent e)
             {
-                shutDown();
+                System.exit(0);
             }
         });
 
@@ -383,6 +383,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
         }
     }
 
+    @Override
     public void switchFpsVisibleState()
     {
         if (WindowManager.window == GAME)
@@ -517,16 +518,18 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
         return activeGameEntityManager;
     }
 
+    @Override
     public void switchAntialiasingActivationState(Button currentButton)
     {
         isAntialiasingActivated = !isAntialiasingActivated;
-        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, getInstance().isAntialiasingActivated()
+        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, isAntialiasingActivated
             ? RenderingHints.VALUE_ANTIALIAS_ON
             : RenderingHints.VALUE_ANTIALIAS_OFF);
         Window.dictionary.updateAntialiasing();
         currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
     }
 
+    @Override
     public void switchDisplayMode(Button currentButton)
     {
         isFullScreen = !isFullScreen;
@@ -580,26 +583,24 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
                 940,
                 240);
         }
-        Controller.getInstance().resetBackgroundRepaintTimer();
+        resetBackgroundRepaintTimer();
     }
 
+    @Override
     public boolean isFullScreen()
     {
         return isFullScreen;
     }
 
+    @Override
     public Dimension getDisplayShift()
     {
         return displayShift;
     }
 
+    @Override
     public DisplayMode getCurrentDisplayMode()
     {
         return currentDisplayMode;
-    }
-
-    public void shutDown()
-    {
-        System.exit(0);
     }
 }

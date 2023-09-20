@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -227,7 +228,7 @@ public final class Phoenix extends Helicopter
     @Override
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
     {
-        Dimension displayShift = Controller.getInstance().getDisplayShift();
+        Dimension displayShift = getGameRessourceProvider().getDisplayShift();
         this.tryToTeleportTo(   mouseEvent.getX() - displayShift.width,
                                 mouseEvent.getY() - displayShift.height);
     }

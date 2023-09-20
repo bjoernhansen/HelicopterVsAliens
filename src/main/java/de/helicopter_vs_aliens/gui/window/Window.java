@@ -150,8 +150,8 @@ public abstract class Window implements Paintable
 	
 	public static final LabelTextProvider
 		labelTextProvider = new LabelTextProvider();
-	
-    public final static Dictionary
+
+	public static final Dictionary
 		dictionary = new Dictionary();
 		
 	public static final Timer

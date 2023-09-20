@@ -43,6 +43,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -91,6 +92,9 @@ public class ControllerFx extends Application implements GameRessourceProvider
     private int
         framesCounter = 0;
 
+    private final Dimension
+        displayShift = new Dimension();
+
 
     public ControllerFx()
     {
@@ -109,9 +113,9 @@ public class ControllerFx extends Application implements GameRessourceProvider
 
         canvas.setOnMouseReleased(e -> Events.mouseReleased(EventFactory.makeMouseEvent(e), this.getHelicopter()));
 
-        canvas.setOnMouseDragged(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), this.getHelicopter()));
+        canvas.setOnMouseDragged(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), this));
 
-        canvas.setOnMouseMoved(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), this.getHelicopter()));
+        canvas.setOnMouseMoved(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), this));
 
 
         AnchorPane anchorPane = new AnchorPane();
@@ -310,6 +314,42 @@ public class ControllerFx extends Application implements GameRessourceProvider
     {
         // TODO not necessary
         return 0;
+    }
+
+    @Override
+    public Dimension getDisplayShift()
+    {
+        return displayShift;
+    }
+
+    @Override
+    public void switchDisplayMode(de.helicopter_vs_aliens.gui.button.Button currentButton)
+    {
+        // TODO not necessary
+    }
+
+    @Override
+    public void switchAntialiasingActivationState(de.helicopter_vs_aliens.gui.button.Button currentButton)
+    {
+        // TODO not necessary
+    }
+
+    @Override
+    public boolean isFullScreen()
+    {
+        return false;
+    }
+
+    @Override
+    public DisplayMode getCurrentDisplayMode()
+    {
+        return null;
+    }
+
+    @Override
+    public void switchFpsVisibleState()
+    {
+        // TODO not necessary
     }
 
     @Override

@@ -54,13 +54,13 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     @Override
     public void mouseDragged(MouseEvent mouseEvent)
     {
-        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), getHelicopter());
+        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), gameRessourceProvider);
     }
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent)
     {
-        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), getHelicopter());
+        Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(mouseEvent), gameRessourceProvider);
     }
 
     @Override
