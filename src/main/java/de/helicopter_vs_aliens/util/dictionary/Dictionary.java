@@ -255,7 +255,7 @@ public final class Dictionary
 
     public String antialiasing()
     {
-        String key = "antialiazing." + (isAntialiasingActivated() ? "off" : "on");
+        String key = "antialiasing." + (isAntialiasingActivated() ? "off" : "on");
         return this.languageProperties.getProperty(key);
     }
 
