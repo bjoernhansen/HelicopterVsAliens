@@ -16,7 +16,7 @@ public interface GuiStateProvider
     
     boolean isAntialiasingActivated();
     
-    int getFramesCounter();
+    int getGameLoopCount();
 
     Dimension getDisplayShift();
 

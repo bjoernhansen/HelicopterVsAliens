@@ -255,7 +255,7 @@ public abstract class Helicopter extends RectangularGameEntity
 		boolean stunningMissile = isShootingStunningMissile();
 		Missile sister = null;
 		
-		Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getMissiles();
+		Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getActiveGameEntityManager().getMissiles();
 		if (this.numberOfCannons >= 1)
 		{
 			Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
@@ -422,7 +422,7 @@ public abstract class Helicopter extends RectangularGameEntity
 				}
 			} else if (isInTheAir && this.location.getY() == 407d)
 			{
-				this.crashed(gameRessourceProvider.getExplosions());
+				this.crashed(gameRessourceProvider.getActiveGameEntityManager().getExplosions());
 			}
 		}
 		if (this.isRotorSystemActive)
@@ -763,7 +763,7 @@ public abstract class Helicopter extends RectangularGameEntity
 					 .incrementNumberOfCrashes();
 		if (this.location.getY() == 407d)
 		{
-			this.crashed(GameResources.getProvider().getExplosions());
+			this.crashed(GameResources.getProvider().getActiveGameEntityManager().getExplosions());
 		} else
 		{
 			this.isCrashing = true;

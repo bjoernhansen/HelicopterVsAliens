@@ -68,7 +68,8 @@ public class EnemyController
             verifyCreationStop(gameRessourceProvider);}
         if(isBossServantCreationApproved()){
             createBossServant(gameRessourceProvider);}
-        else if(isEnemyCreationApproved(gameRessourceProvider.getEnemies()))
+        else if(isEnemyCreationApproved(gameRessourceProvider.getActiveGameEntityManager()
+                                                             .getEnemies()))
         {
             creation(gameRessourceProvider);
         }
@@ -96,7 +97,8 @@ public class EnemyController
     
     private static void verifyCreationStop(GameRessourceProvider gameRessourceProvider)
     {
-        if(	gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
+        if(	gameRessourceProvider.getActiveGameEntityManager()
+                                    .getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
             && carrierDestroyedJustNow == null
             && !(gameRessourceProvider.getHelicopter().isUnacceptablyBoostedForBossLevel()
             && Events.isCurrentLevelBossLevel()) )
@@ -203,7 +205,8 @@ public class EnemyController
     
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {
-        Queue<Enemy> activeEnemies = gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE);
+        Queue<Enemy> activeEnemies = gameRessourceProvider.getActiveGameEntityManager()
+                                                          .getEnemies().get(CollectionSubgroupType.ACTIVE);
         int activeEnemyCount = activeEnemies.size();
         GameEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
         Enemy enemy = gameRessourceProvider.getNewGameEntityInstance(enemyFactory);
@@ -293,9 +296,11 @@ public class EnemyController
             rockTimer--;}
         if(Scenery.backgroundMoves && barrierTimer > 0){
             barrierTimer--;}
-        countBarriers(gameRessourceProvider.getEnemies());
+        countBarriers(gameRessourceProvider.getActiveGameEntityManager()
+                                           .getEnemies());
         
-        for(Iterator<Enemy> iterator = gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
+        for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveGameEntityManager()
+                                                            .getEnemies().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
         {
             Enemy enemy = iterator.next();
             if(enemy.isIntact() && !enemy.isMarkedForRemoval)
@@ -305,7 +310,8 @@ public class EnemyController
             else if(enemy.isDestroyed())
             {
                 iterator.remove();
-                gameRessourceProvider.getEnemies().get(CollectionSubgroupType.DESTROYED).add(enemy);
+                gameRessourceProvider.getActiveGameEntityManager()
+                                     .getEnemies().get(CollectionSubgroupType.DESTROYED).add(enemy);
             }
             else
             {

@@ -111,7 +111,8 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Missile> i = gameRessourceProvider.getMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<Missile> i = gameRessourceProvider.getActiveGameEntityManager()
+													   .getMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			Missile missile = i.next();
 			missile.update(gameRessourceProvider, i);
@@ -137,7 +138,8 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 		if(!this.flying)
 		{
 			i.remove();
-			helicopter.inactivate(gameRessourceProvider.getMissiles(), this);
+			helicopter.inactivate(gameRessourceProvider.getActiveGameEntityManager()
+													   .getMissiles(), this);
 		}
 		this.setPaintBounds();
 	}
@@ -161,7 +163,8 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 	private void checkIfMissileHitEnemy(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		for(Enemy enemy : gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE))
+		for(Enemy enemy : gameRessourceProvider.getActiveGameEntityManager()
+											   .getEnemies().get(CollectionSubgroupType.ACTIVE))
 		{
 			if (enemy.isHittable(this))
 			{

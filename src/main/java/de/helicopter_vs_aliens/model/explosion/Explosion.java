@@ -73,7 +73,8 @@ public class Explosion extends GameEntity implements GroupTypeOwner
 	   
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<Explosion> i = gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
+    	for(Iterator<Explosion> i = gameRessourceProvider.getActiveGameEntityManager()
+														 .getExplosions().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			Explosion exp = i.next();
 			exp.update();
@@ -90,7 +91,8 @@ public class Explosion extends GameEntity implements GroupTypeOwner
 						Events.extraReward(exp.kills, exp.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
-				gameRessourceProvider.getExplosions().get(CollectionSubgroupType.INACTIVE).add(exp);
+				gameRessourceProvider.getActiveGameEntityManager()
+									 .getExplosions().get(CollectionSubgroupType.INACTIVE).add(exp);
 	        }
 		}		
 	}

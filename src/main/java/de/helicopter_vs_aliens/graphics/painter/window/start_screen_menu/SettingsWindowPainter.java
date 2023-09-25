@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -65,7 +64,7 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
         if(Window.page == StartScreenMenuButtonType.BUTTON_5){graphicsAdapter.setColor(Color.white);}
         graphicsAdapter.drawString(Events.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 4 * LINE_SPACING);
     
-        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (guiStateProvider.getFramesCounter()/30)%2 == 0){graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getStringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
+        if(Window.page == StartScreenMenuButtonType.BUTTON_5 && (guiStateProvider.getGameLoopCount()/30)%2 == 0){graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getStringWidth(Events.currentPlayerName), TOP + 4 * LINE_SPACING);}
     }
 
     private static String getResolutionString() {

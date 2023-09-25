@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
+import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
@@ -78,14 +78,16 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintAllDestroyedEnemies(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getEnemies()
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getEnemies()
                              .get(CollectionSubgroupType.DESTROYED)
                              .forEach(enemy -> enemy.paint(graphicsAdapter));
     }
     
     private void paintAllMissiles(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getMissiles()
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getMissiles()
                              .get(CollectionSubgroupType.ACTIVE)
                              .forEach(missile -> missile.paint(graphicsAdapter));
     }
@@ -96,7 +98,8 @@ public class GameWindowPainter extends WindowPainter
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        for (Enemy enemy : gameRessourceProvider.getEnemies()
+        for (Enemy enemy : gameRessourceProvider.getActiveGameEntityManager()
+                                                .getEnemies()
                                                 .get(CollectionSubgroupType.ACTIVE))
         {
             if(enemy.isVisibleNonBarricadeVessel())
@@ -108,21 +111,24 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintAllEnemyMissiles(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getEnemyMissiles()
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getEnemyMissiles()
                              .get(CollectionSubgroupType.ACTIVE)
                              .forEach(enemyMissile -> enemyMissile.paint(graphicsAdapter));
     }
     
     private void paintAllExplosions(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getExplosions()
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getExplosions()
                              .get(CollectionSubgroupType.ACTIVE)
                              .forEach(explosion -> explosion.paint(graphicsAdapter));
     }
     
     private void paintAllPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getPowerUps()
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getPowerUps()
                              .get(CollectionSubgroupType.ACTIVE)
                              .forEach(powerUp -> powerUp.paint(graphicsAdapter));
     }
@@ -131,10 +137,11 @@ public class GameWindowPainter extends WindowPainter
     {
         // der Boden
         graphicsAdapter.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
-        graphicsAdapter.fillRect(0, GROUND_Y, Controller.VIRTUAL_DIMENSION.width, 35);
+        graphicsAdapter.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
         
         // Objekte vor dem Helikopter
-        Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getSceneryObjects()
+        Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getActiveGameEntityManager()
+                                                                         .getSceneryObjects()
                                                                          .get(CollectionSubgroupType.ACTIVE);
         SceneryLayer.getForegroundLayers()
                     .forEach(layer -> activeSceneryObjects.stream()
@@ -475,7 +482,8 @@ public class GameWindowPainter extends WindowPainter
         } else if (Window.specialInfoSelection == 2)
         {
             infoString = "Aktive PowerUps: "
-                + gameRessourceProvider.getPowerUps()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getPowerUps()
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive PowerUps: "
@@ -484,21 +492,25 @@ public class GameWindowPainter extends WindowPainter
         } else if (Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
-                + gameRessourceProvider.getExplosions()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getExplosions()
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Explosionen: "
-                + gameRessourceProvider.getExplosions()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getExplosions()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
         } else if (Window.specialInfoSelection == 4)
         {
             infoString = "Aktive Gegner: "
-                + (gameRessourceProvider.getEnemies()
+                + (gameRessourceProvider.getActiveGameEntityManager()
+                                        .getEnemies()
                                         .get(CollectionSubgroupType.ACTIVE)
                                         .size() - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerst\u00F6rte Gegner: "
-                + gameRessourceProvider.getEnemies()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getEnemies()
                                        .get(CollectionSubgroupType.DESTROYED)
                                        .size()
                 + ";   Hindernisse: "
@@ -508,31 +520,37 @@ public class GameWindowPainter extends WindowPainter
         } else if (Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
-                + gameRessourceProvider.getMissiles()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getMissiles()
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Raketen: "
-                + gameRessourceProvider.getMissiles()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getMissiles()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
         } else if (Window.specialInfoSelection == 6)
         {
             infoString = "Aktive gegnerische Geschosse: "
-                + gameRessourceProvider.getEnemyMissiles()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getEnemyMissiles()
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive gegnerische Geschosse: "
-                + gameRessourceProvider.getEnemyMissiles()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getEnemyMissiles()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
         } else if (Window.specialInfoSelection == 7)
         {
             infoString = "Aktive Hintergrundobjekte: "
-                + gameRessourceProvider.getSceneryObjects()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getSceneryObjects()
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Hintergrundobjekte: "
-                + gameRessourceProvider.getSceneryObjects()
+                + gameRessourceProvider.getActiveGameEntityManager()
+                                       .getSceneryObjects()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
         } else if (Window.specialInfoSelection == 8)

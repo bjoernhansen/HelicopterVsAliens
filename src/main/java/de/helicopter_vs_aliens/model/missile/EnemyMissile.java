@@ -72,7 +72,8 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-    		Explosion.start(GameResources.getProvider().getExplosions(),
+    		Explosion.start(GameResources.getProvider().getActiveGameEntityManager()
+										 .getExplosions(),
     						helicopter,
 							(int)(helicopter.getX()
 									+ (helicopter.isMovingLeft
@@ -144,7 +145,8 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<EnemyMissile> i = gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<EnemyMissile> i = gameRessourceProvider.getActiveGameEntityManager()
+															.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			EnemyMissile em = i.next();	    			
 			em.update(gameRessourceProvider.getHelicopter());
@@ -155,7 +157,8 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
 				|| em.hasHit)
 			{
 				i.remove();					
-				gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.INACTIVE).add(em);
+				gameRessourceProvider.getActiveGameEntityManager()
+									 .getEnemyMissiles().get(CollectionSubgroupType.INACTIVE).add(em);
 			}
 		}		
 	}

@@ -46,7 +46,8 @@ public class StunningBarrier extends Barrier
         super.performLocationAdaptionAction(gameRessourceProvider);
         if (isStaticallyCharged())
         {
-            startStaticDischarge(gameRessourceProvider.getExplosions());
+            startStaticDischarge(gameRessourceProvider.getActiveGameEntityManager()
+                                                      .getExplosions());
         }
     }
     

@@ -50,7 +50,8 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 		
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
+    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getActiveGameEntityManager()
+															  .getPowerUps().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
 		{
 			PowerUp powerUp = iterator.next();
 			powerUp.update(gameRessourceProvider.getHelicopter());
@@ -231,7 +232,8 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 		int powerUpDirection = PowerUp.getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
 		PowerUp powerUp = PowerUp.getInstance(powerUpType);
 		powerUp.initialize(enemy, powerUpDirection);
-		gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE).add(powerUp);
+		gameRessourceProvider.getActiveGameEntityManager()
+							 .getPowerUps().get(CollectionSubgroupType.ACTIVE).add(powerUp);
 	}
 
 	public static PowerUp getInstance(PowerUpType powerUpType)

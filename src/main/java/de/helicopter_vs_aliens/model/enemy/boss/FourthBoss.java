@@ -47,7 +47,8 @@ public class FourthBoss extends BossEnemy
     @Override
     protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        boss4Action(gameRessourceProvider.getEnemies());
+        boss4Action(gameRessourceProvider.getActiveGameEntityManager()
+                                         .getEnemies());
         super.performFlightManeuver(gameRessourceProvider);
     }
     

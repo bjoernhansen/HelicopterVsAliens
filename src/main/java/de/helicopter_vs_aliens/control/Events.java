@@ -295,19 +295,23 @@ public class Events
                 // TODO übergabe von powerUps anders regeln
                 else if (keyEvent.isKeyEqualTo('d'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), TRIPLE_DAMAGE);
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                                                                                 .getPowerUps(), TRIPLE_DAMAGE);
                 }
                 else if (keyEvent.isKeyEqualTo('i'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), INVINCIBLE);
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                                                                                 .getPowerUps(), INVINCIBLE);
                 }
                 else if (keyEvent.isKeyEqualTo('c'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), UNLIMITED_ENERGY);
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                                                                                 .getPowerUps(), UNLIMITED_ENERGY);
                 }
                 else if (keyEvent.isKeyEqualTo('y'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getPowerUps(), BOOSTED_FIRE_RATE);
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                                                                                 .getPowerUps(), BOOSTED_FIRE_RATE);
                 }
                 else if (keyEvent.isKeyEqualTo('a'))
                 {
@@ -636,11 +640,13 @@ public class Events
 
                 Window.updateRepairShopButtonsAfterSpotlightPurchase();
 
-                gameRessourceProvider.getEnemies()
+                gameRessourceProvider.getActiveGameEntityManager()
+                                     .getEnemies()
                                      .get(CollectionSubgroupType.DESTROYED)
                                      .forEach(Enemy::repaint);
 
-                gameRessourceProvider.getEnemies()
+                gameRessourceProvider.getActiveGameEntityManager()
+                                     .getEnemies()
                                      .get(CollectionSubgroupType.ACTIVE)
                                      .stream()
                                      .filter(Predicate.not(Enemy::isRock))
@@ -814,7 +820,8 @@ public class Events
 
     private static void storeAndClearEnemies(GameRessourceProvider gameRessourceProvider, CollectionSubgroupType collectionSubgroupType)
     {
-        Queue<Enemy> enemies = gameRessourceProvider.getEnemies()
+        Queue<Enemy> enemies = gameRessourceProvider.getActiveGameEntityManager()
+                                                    .getEnemies()
                                                     .get(collectionSubgroupType);
         gameRessourceProvider.getGameEntitySupplier()
                              .storeAll(enemies);
@@ -1150,8 +1157,10 @@ public class Events
         Window.conditionalReset();
 
         // kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-        if (!gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
-            && !(!totalReset && gameRessourceProvider.getEnemies()
+        if (!gameRessourceProvider.getActiveGameEntityManager()
+                                  .getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
+            && !(!totalReset && gameRessourceProvider.getActiveGameEntityManager()
+                                                     .getEnemies()
                                                      .get(CollectionSubgroupType.ACTIVE)
                                                      .element()
                                                      .getType() == BOSS_2_SERVANT))
@@ -1185,21 +1194,32 @@ public class Events
         }
         // TODO vereinfachen und in die neuen Klassen (ActiveGameEntityManager und GameEntitySupplier
         // gameRessourceProvider.getActiveGameEntityManager().clearExplosions();
-        gameRessourceProvider.getExplosions()
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getExplosions()
                              .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
-        gameRessourceProvider.getMissiles()
+                             .addAll(gameRessourceProvider.getActiveGameEntityManager()
+                                                          .getExplosions().get(CollectionSubgroupType.ACTIVE));
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getMissiles()
                              .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getMissiles().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getMissiles().get(CollectionSubgroupType.ACTIVE).clear();
-        gameRessourceProvider.getEnemyMissiles()
+                             .addAll(gameRessourceProvider.getActiveGameEntityManager()
+                                                          .getMissiles().get(CollectionSubgroupType.ACTIVE));
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getMissiles().get(CollectionSubgroupType.ACTIVE).clear();
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getEnemyMissiles()
                              .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).clear();
+                             .addAll(gameRessourceProvider.getActiveGameEntityManager()
+                                                          .getEnemyMissiles().get(CollectionSubgroupType.ACTIVE));
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).clear();
         gameRessourceProvider.getGameEntitySupplier()
-                             .storeAll(gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getPowerUps().get(CollectionSubgroupType.ACTIVE).clear();
+                             .storeAll(gameRessourceProvider.getActiveGameEntityManager()
+                                                            .getPowerUps().get(CollectionSubgroupType.ACTIVE));
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getPowerUps().get(CollectionSubgroupType.ACTIVE).clear();
 
         if (Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))
         {
@@ -1210,13 +1230,15 @@ public class Events
 
     private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
     {
-        Queue<Enemy> activeEnemies = gameRessourceProvider.getEnemies()
+        Queue<Enemy> activeEnemies = gameRessourceProvider.getActiveGameEntityManager()
+                                                          .getEnemies()
                                                           .get(CollectionSubgroupType.ACTIVE);
         activeEnemies.stream()
                      .filter(Enemy::isDisappearingAfterEnteringRepairShop)
                      .forEach(gameRessourceProvider.getGameEntitySupplier()::store);
 
-        gameRessourceProvider.getEnemies()
+        gameRessourceProvider.getActiveGameEntityManager()
+                             .getEnemies()
                              .get(CollectionSubgroupType.ACTIVE)
                              .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
     }

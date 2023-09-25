@@ -165,7 +165,8 @@ public abstract class Barrier extends Enemy
                 shootingDirection.setLocation(shootingDirection.getX()/distance,
                     shootingDirection.getY()/distance);
             }
-            shoot(gameRessourceProvider.getEnemyMissiles(), shotType, shotSpeed);
+            shoot(gameRessourceProvider.getActiveGameEntityManager()
+                                       .getEnemyMissiles(), shotType, shotSpeed);
         }
         barrierShootTimer--;
     }

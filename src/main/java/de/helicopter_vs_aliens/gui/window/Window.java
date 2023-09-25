@@ -619,7 +619,7 @@ public abstract class Window implements Paintable
 		}
 		else if(WindowManager.window  == START_SCREEN)
 		{
-			updateStartScreen(helicopter, gameRessourceProvider.getFramesCounter());
+			updateStartScreen(helicopter, gameRessourceProvider.getGameLoopCount());
 		}
 		else if(WindowManager.window  == SCORE_SCREEN)
 		{

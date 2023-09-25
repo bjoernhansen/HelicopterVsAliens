@@ -13,8 +13,11 @@ public class Timer
     private static final Set<Timer>
         activeTimers = new HashSet<>();
 
+    // TODO DISABLED und EXPIRED später wieder löschen, wenn nicht mehr nötig
     public static final int
-        DISABLED = -1,    // TODO später wieder löschen, wenn nicht mehr nötig
+        DISABLED = -1;
+
+    public static final int
         EXPIRED = 0;
 
     private int

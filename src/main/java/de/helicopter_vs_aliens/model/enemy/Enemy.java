@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy;
 
+import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
@@ -159,7 +159,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		MAX_STARTING_Y = 220,
 		MIN_STARTING_Y = 90,
 		DODGE_BORDER_DISTANCE_LEFT = 90,
-		DODGE_BORDER_DISTANCE_RIGHT = Controller.VIRTUAL_DIMENSION.width - DODGE_BORDER_DISTANCE_LEFT,
+		DODGE_BORDER_DISTANCE_RIGHT = Main.VIRTUAL_DIMENSION.width - DODGE_BORDER_DISTANCE_LEFT,
 		DEFAULT_CALL_BACK_MINIMUM_FOR_TURN_AT_BARRIER = 0;
 	
 	protected static final int
@@ -227,7 +227,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	protected static final Rectangle
 		TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
 								   TURN_DISTANCE.y,
-								   Controller.VIRTUAL_DIMENSION.width
+								   Main.VIRTUAL_DIMENSION.width
 								   	- 2*TURN_DISTANCE.x,
 								   GROUND_Y 
 									- SAVE_ZONE_WIDTH
@@ -657,7 +657,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	protected double calculateInitialX()
 	{
-		return Controller.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE;
+		return Main.VIRTUAL_DIMENSION.width + APPEARANCE_DISTANCE;
 	}
 	
 	protected double calculateInitialY()
@@ -953,7 +953,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private boolean isTurningAroundEarly()
 	{
-		return isAbleToTurnAroundEarly && getMinX() < 0.85 * Controller.VIRTUAL_DIMENSION.width;
+		return isAbleToTurnAroundEarly && getMinX() < 0.85 * Main.VIRTUAL_DIMENSION.width;
 	}
 	
 	
@@ -1174,7 +1174,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if(hasHPsLeft())
 		{
 			performEmpWaveSurvivorActions();
-			Explosion.start(gameRessourceProvider.getExplosions(), pegasus,
+			Explosion.start(gameRessourceProvider.getActiveGameEntityManager()
+												 .getExplosions(), pegasus,
 							getCenterX(),
 							getCenterY(), ExplosionType.STUNNING, false);
 		}
@@ -1225,7 +1226,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			   && barrierTeleportTimer == DISABLED
 			   && !isDodging()
 			   && (callBack == 0 || !speed.equals(ZERO_SPEED))
-			   && (    (getMinX() > Controller.VIRTUAL_DIMENSION.width + DISAPPEARANCE_DISTANCE
+			   && (    (getMinX() > Main.VIRTUAL_DIMENSION.width + DISAPPEARANCE_DISTANCE
 					   	 && isFlyingRight())
 				    || (getMaxX() < -DISAPPEARANCE_DISTANCE));
 	}
@@ -1238,7 +1239,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public boolean isOnScreen()
 	{		
 		return getMaxX() > 0
-			   && getMinX() < Controller.VIRTUAL_DIMENSION.width;
+			   && getMinX() < Main.VIRTUAL_DIMENSION.width;
 	}
 	
 	protected void prepareRemoval()
@@ -1391,7 +1392,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 					Integer.MAX_VALUE/2f,
 					EnemyMissile.DIAMETER + 2*FIELD_OF_FIRE_TOLERANCE_Y)))))
 		{
-			shoot(gameRessourceProvider.getEnemyMissiles(),
+			shoot(gameRessourceProvider.getActiveGameEntityManager()
+									   .getEnemyMissiles(),
 						hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
 						shotSpeed + 3*Math.random()+5);
 			
@@ -1564,7 +1566,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			( totalStunningTime - 13 == stunningTimer
 			  || getMaxX()
 			  	 + 18 
-			  	 + missileDrive/2f > Controller.VIRTUAL_DIMENSION.width
+			  	 + missileDrive/2f > Main.VIRTUAL_DIMENSION.width
 			  	 								+ 2 * getWidth()/3
 			  || getMinX()
 			  	 - 18 
@@ -1640,10 +1642,12 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Enemy> iterator = gameRessourceProvider.getEnemies().get(CollectionSubgroupType.DESTROYED).iterator(); iterator.hasNext();)
+		for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveGameEntityManager()
+															.getEnemies().get(CollectionSubgroupType.DESTROYED).iterator(); iterator.hasNext();)
 		{
 			Enemy enemy = iterator.next();
-			enemy.updateDead(gameRessourceProvider.getExplosions());
+			enemy.updateDead(gameRessourceProvider.getActiveGameEntityManager()
+												  .getExplosions());
 			
 			Helicopter helicopter = gameRessourceProvider.getHelicopter();
 			if(	helicopter.basicCollisionRequirementsSatisfied(enemy)
@@ -1959,7 +1963,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		// TODO refactoring
 		if(explodingTimer == 0){explodingTimer = 7;}
-		Explosion.start(gameRessourceProvider.getExplosions(),
+		Explosion.start(gameRessourceProvider.getActiveGameEntityManager()
+											 .getExplosions(),
 						gameRessourceProvider.getHelicopter(),
 						getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
 							? (missileSpeed < 0 ? 2 : 1) * getWidth()/3
@@ -2256,7 +2261,8 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 
 	public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Enemy e : gameRessourceProvider.getEnemies().get(CollectionSubgroupType.ACTIVE))
+		for(Enemy e : gameRessourceProvider.getActiveGameEntityManager()
+										   .getEnemies().get(CollectionSubgroupType.ACTIVE))
 		{
 			if (e.getModel() == EnemyModelType.BARRIER && e.isOnScreen())
 			{

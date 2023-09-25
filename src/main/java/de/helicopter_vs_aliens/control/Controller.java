@@ -1,10 +1,10 @@
 package de.helicopter_vs_aliens.control;
 
+import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
@@ -15,45 +15,22 @@ import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.GameEntity;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
-import de.helicopter_vs_aliens.model.missile.EnemyMissile;
-import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Shape;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
-
-import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
 public final class Controller extends JPanel implements Runnable, GameRessourceProvider
 {
-    public static final Dimension
-        VIRTUAL_DIMENSION = new Dimension(1024, 461);
-
     private static final int
         BACKGROUND_PAINT_DISABLED = -1;
 
@@ -70,11 +47,6 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
         STANDARD_RESOLUTION.height,
         32, 60);
 
-
-    private static Controller
-        instance;
-
-
     private static final long
         DELAY = 16;
 
@@ -90,32 +62,14 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     private boolean
         isAntialiasingActivated = true;
 
-    private boolean
-        isFpsDisplayVisible = false;
-
-    private int
-        framesCount;
-
-    private int
-        gameLoopCount = 0;
-
     private int
         backgroundRepaintTimer = 0;
 
     private long
         timeMillis;
 
-    private long
-        fpsStartTime;
-
     private FrameSkipStatusType
         frameSkipStatus = FrameSkipStatusType.DISABLED;
-
-    private Savegame
-        saveGame;
-
-    private transient Helicopter
-        helicopter = HelicopterType.getDefault().makeInstance();
 
     private transient GraphicsAdapter
         graphicsAdapter;
@@ -129,8 +83,6 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     private transient Rectangle2D
         wholeScreenClip;
 
-    private final transient Scenery
-        scenery = new Scenery(this);
 
     private final transient WindowManager
         windowManager = new WindowManager();
@@ -140,9 +92,6 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
 
     private final transient GameStatisticsCalculator
         gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
-
-    private final transient ActiveGameEntityManager
-        activeGameEntityManager = ActiveGameEntityManager.getInstance();
 
 
     private transient GraphicsDevice
@@ -157,20 +106,16 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     private final transient EventListener
         eventListener = new EventListener(this);
 
+    private final transient GameProgress
+        gameProgress;
 
-    private Controller()
-    {
-    }
+    private final transient FpsCalculator
+        fpsCalculator = new FpsCalculator();
 
-    public static Controller getInstance()
-    // TODO Aufrufe kontrollieren und ggf. ersetzen durch intern genutzte Variable plus "Dependency Injection"
+
+    public Controller()
     {
-        if (Optional.ofNullable(instance).isEmpty())
-        {
-            instance = new Controller();
-            GameResources.setGameResources(instance);
-        }
-        return instance;
+        this.gameProgress = new GameProgress(this, fpsCalculator);
     }
 
     public void init()
@@ -192,14 +137,14 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
 
         this.setLayout(null);
 
-        device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        device = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                                    .getDefaultScreenDevice();
         if (!device.isFullScreenSupported())
         {
             isFullScreen = false;
         }
         originalDisplayMode = device.getDisplayMode();
 
-        this.setSaveGame(Savegame.initialize());
 
         frame.setUndecorated(true);
         device.setFullScreenWindow(frame);
@@ -213,25 +158,23 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
 
         Dimension offDimension = getSize();
         wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
-        offImage = new BufferedImage((int) VIRTUAL_DIMENSION.getWidth(), (int) VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
+        offImage = new BufferedImage((int) Main.VIRTUAL_DIMENSION.getWidth(), (int) Main.VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
         graphicsAdapter = Graphics2DAdapter.of(offImage);
         graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphicsAdapter.fillRectangle(wholeScreenClip);
 
         Shape offscreenClip = new Rectangle2D.Double(0,
             0,
-            VIRTUAL_DIMENSION.getWidth(),
-            VIRTUAL_DIMENSION.getHeight());
+            Main.VIRTUAL_DIMENSION.getWidth(),
+            Main.VIRTUAL_DIMENSION.getHeight());
         graphicsAdapter.setClip(offscreenClip);
 
         add(Window.label);
-        // TODO herausfinden, wieso die Listener nicht klappen
         addMouseListener(eventListener);
         addMouseMotionListener(eventListener);
 
-        Window.initialize();
-        Window.updateButtonLabels(helicopter);
-        scenery.createInitialSceneryObjects();
+
+        gameProgress.init();
     }
 
     public void start()
@@ -263,8 +206,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
                 {
                     Thread.sleep(pauseTime);
                 }
-            }
-            catch (InterruptedException e)
+            } catch (InterruptedException e)
             {
                 e.printStackTrace();
                 break;
@@ -297,7 +239,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
 
             if (isFullScreen || isMouseCursorInWindow())
             {
-                updateGame();
+                gameProgress.updateGame();
             }
 
             if (this.frameSkipStatus == FrameSkipStatusType.ACTIVE)
@@ -330,84 +272,31 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
             currentDisplayMode.getHeight());
     }
 
-    private void updateGame()
-    {
-        this.gameLoopCount++;
-        Timer.countDownActiveTimers();
-        if (WindowManager.window == GAME)
-        {
-            calculateFps();
-            if (!Window.isMenuVisible)
-            {
-                Colorations.calculateVariableGameColors(gameLoopCount);
-
-                scenery.update(this);
-                Events.updateTimer();
-                Window.updateDisplays(this);
-                Enemy.updateAllDestroyed(this);
-                Missile.updateAll(this);
-                EnemyController.updateAllActive(this);
-                EnemyMissile.updateAll(this);
-                Events.checkForLevelUp(this);
-                EnemyController.generateNewEnemies(this);
-                this.helicopter.update(this);
-                Explosion.updateAll(this);
-                PowerUp.updateAll(this);
-            }
-        }
-        else
-        {
-            Colorations.calculateVariableMenuColors(gameLoopCount);
-            Window.update(this);
-        }
-    }
 
     private void paintFrame(GraphicsAdapter graphicsAdapter)
     {
-        GraphicsManager.getInstance().setGraphics(graphicsAdapter);
+        GraphicsManager.getInstance()
+                       .setGraphics(graphicsAdapter);
         windowManager.paintWindow(graphicsAdapter);
     }
 
-    private void calculateFps()
-    {
-        if (isFpsDisplayVisible)
-        {
-            long timeDiff = System.currentTimeMillis() - fpsStartTime;
-            framesCount++;
-            if (timeDiff > 3000)
-            {
-                Window.fps = Math.round(1000f * framesCount / timeDiff);
-                fpsStartTime = System.currentTimeMillis();
-                framesCount = 0;
-            }
-        }
-    }
 
     @Override
     public void switchFpsVisibleState()
     {
-        if (WindowManager.window == GAME)
-        {
-            isFpsDisplayVisible = !isFpsDisplayVisible;
-            if (isFpsDisplayVisible)
-            {
-                fpsStartTime = System.currentTimeMillis();
-                framesCount = 0;
-            }
-        }
+        fpsCalculator.switchFpsVisibleState();
     }
 
     @Override
     public Helicopter getHelicopter()
     {
-        return helicopter;
+        return gameProgress.getHelicopter();
     }
 
     @Override
     public void setHelicopter(Helicopter helicopter)
     {
-        this.helicopter = helicopter;
-        Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
+        gameProgress.setHelicopter(helicopter);
     }
 
     @Override
@@ -419,18 +308,13 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     @Override
     public Scenery getScenery()
     {
-        return this.scenery;
+        return gameProgress.getScenery();
     }
 
     @Override
     public Savegame getSaveGame()
     {
-        return saveGame;
-    }
-
-    public void setSaveGame(Savegame saveGame)
-    {
-        this.saveGame = saveGame;
+        return gameProgress.getSaveGame();
     }
 
     @Override
@@ -440,16 +324,16 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     }
 
     @Override
-    public int getFramesCounter()
+    public int getGameLoopCount()
     {
-        return gameLoopCount;
+        return gameProgress.getGameLoopCount();
     }
 
 
     @Override
     public boolean isFpsDisplayVisible()
     {
-        return isFpsDisplayVisible;
+        return fpsCalculator.isFpsDisplayVisible();
     }
 
     @Override
@@ -470,41 +354,6 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
         return gameStatisticsCalculator;
     }
 
-    @Override
-    public Map<CollectionSubgroupType, Queue<Enemy>> getEnemies()
-    {
-        return activeGameEntityManager.getEnemies();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<Missile>> getMissiles()
-    {
-        return activeGameEntityManager.getMissiles();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<Explosion>> getExplosions()
-    {
-        return activeGameEntityManager.getExplosions();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects()
-    {
-        return activeGameEntityManager.getSceneryObjects();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<EnemyMissile>> getEnemyMissiles()
-    {
-        return activeGameEntityManager.getEnemyMissiles();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<PowerUp>> getPowerUps()
-    {
-        return activeGameEntityManager.getPowerUps();
-    }
 
     @Override
     public <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory)
@@ -515,7 +364,7 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     @Override
     public ActiveGameEntityManager getActiveGameEntityManager()
     {
-        return activeGameEntityManager;
+        return gameProgress.getActiveGameEntityManager();
     }
 
     @Override
@@ -569,8 +418,8 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
             : standardDisplayMode;
         device.setDisplayMode(currentDisplayMode);
 
-        displayShift = new Dimension((currentDisplayMode.getWidth() - VIRTUAL_DIMENSION.width) / 2,
-            (currentDisplayMode.getHeight() - VIRTUAL_DIMENSION.height) / 2);
+        displayShift = new Dimension((currentDisplayMode.getWidth() - Main.VIRTUAL_DIMENSION.width) / 2,
+            (currentDisplayMode.getHeight() - Main.VIRTUAL_DIMENSION.height) / 2);
         if (Window.label == null)
         {
             Window.label = new Label();

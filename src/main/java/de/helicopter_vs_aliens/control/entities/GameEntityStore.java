@@ -8,7 +8,7 @@ import java.util.Queue;
 
 final class GameEntityStore<T extends GameEntity>
 {
-    private final static DependencyInjector
+    private static final DependencyInjector
         dependencyInjector = DependencyInjector.getInstance();
     
     private final Queue<T>

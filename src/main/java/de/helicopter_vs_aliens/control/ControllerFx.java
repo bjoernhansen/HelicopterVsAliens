@@ -24,7 +24,6 @@ import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
 import javafx.animation.AnimationTimer;
@@ -42,58 +41,58 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Map;
-import java.util.Queue;
 
-import static de.helicopter_vs_aliens.control.Controller.VIRTUAL_DIMENSION;
+import static de.helicopter_vs_aliens.Main.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
 public class ControllerFx extends Application implements GameRessourceProvider
 {
     private final Button
-        button = new Button("Werkstatt");
+            button = new Button("Werkstatt");
 
     private Savegame
-        saveGame;
+            saveGame;
 
     private Helicopter
-        helicopter = HelicopterType.getDefault().makeInstance();
+            helicopter = HelicopterType.getDefault()
+                                       .makeInstance();
 
     private final Scenery
-        scenery = new Scenery(this);
+            scenery = new Scenery(this);
 
     private final WindowManager
-        windowManager = new WindowManager();
+            windowManager = new WindowManager();
 
     private final GameEntitySupplier
-        gameEntitySupplier = new GameEntitySupplier();
+            gameEntitySupplier = new GameEntitySupplier();
 
     private final GameStatisticsCalculator
-        gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
+            gameStatisticsCalculator = GameStatisticsCalculator.getInstance();
 
     private final ActiveGameEntityManager
-        activeGameEntityManager = ActiveGameEntityManager.getInstance();
+            activeGameEntityManager = ActiveGameEntityManager.getInstance();
+
+
+    /*private final GameProgress
+        gameProgress;*/
 
     private GraphicsAdapter
-        graphicsAdapter;
+            graphicsAdapter;
 
     private GraphicsAdapter
-        graphicsFxAdapter;
+            graphicsFxAdapter;
 
     private Image
-        offImage;
+            offImage;
 
     private int
-        framesCounter = 0;
+            framesCounter = 0;
 
     private final Dimension
-        displayShift = new Dimension();
+            displayShift = new Dimension();
 
 
     public ControllerFx()
@@ -120,8 +119,10 @@ public class ControllerFx extends Application implements GameRessourceProvider
 
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY))); // Setze den Hintergrund auf Rot
-        anchorPane.getChildren().add(canvas);
-        anchorPane.getChildren().add(button);
+        anchorPane.getChildren()
+                  .add(canvas);
+        anchorPane.getChildren()
+                  .add(button);
 
         // Set the anchorPane to be focusable
         canvas.setFocusTraversable(true);
@@ -141,8 +142,8 @@ public class ControllerFx extends Application implements GameRessourceProvider
         primaryStage.show();
 
         var canvasShift = new Dimension(
-            (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),
-            (int) ((primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0));
+                (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),
+                (int) ((primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0));
 
 
         double verticalAnchorDistance = canvasShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
@@ -211,42 +212,6 @@ public class ControllerFx extends Application implements GameRessourceProvider
     }
 
     @Override
-    public Map<CollectionSubgroupType, Queue<Enemy>> getEnemies()
-    {
-        return activeGameEntityManager.getEnemies();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<Missile>> getMissiles()
-    {
-        return activeGameEntityManager.getMissiles();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<Explosion>> getExplosions()
-    {
-        return activeGameEntityManager.getExplosions();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects()
-    {
-        return activeGameEntityManager.getSceneryObjects();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<EnemyMissile>> getEnemyMissiles()
-    {
-        return activeGameEntityManager.getEnemyMissiles();
-    }
-
-    @Override
-    public Map<CollectionSubgroupType, Queue<PowerUp>> getPowerUps()
-    {
-        return activeGameEntityManager.getPowerUps();
-    }
-
-    @Override
     public GameStatisticsCalculator getGameStatisticsCalculator()
     {
         return gameStatisticsCalculator;
@@ -310,7 +275,7 @@ public class ControllerFx extends Application implements GameRessourceProvider
     }
 
     @Override
-    public int getFramesCounter()
+    public int getGameLoopCount()
     {
         // TODO not necessary
         return 0;
@@ -399,7 +364,8 @@ public class ControllerFx extends Application implements GameRessourceProvider
 
     private void paintFrame(GraphicsAdapter graphicsAdapter)
     {
-        GraphicsManager.getInstance().setGraphics(graphicsAdapter);
+        GraphicsManager.getInstance()
+                       .setGraphics(graphicsAdapter);
         windowManager.paintWindow(graphicsAdapter);
     }
 }
