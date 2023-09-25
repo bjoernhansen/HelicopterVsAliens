@@ -43,7 +43,7 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
     
         graphicsAdapter.setColor(Colorations.golden);
         graphicsAdapter.drawString(
-            Window.dictionary.displayMode() + (gameRessourceProvider.isFullScreen() ? getResolutionString() : ""),
+            Window.dictionary.displayMode() + (gameRessourceProvider.getGuiStateProvider().isFullScreen() ? getResolutionString() : ""),
             LEFT + COLUMN_SPACING,
             TOP);
     
@@ -73,7 +73,9 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
 
     private static String getResolution() {
 
-        DisplayMode currentDisplayMode = GameResources.getProvider().getCurrentDisplayMode();
+        DisplayMode currentDisplayMode = GameResources.getProvider()
+                                                      .getGuiStateProvider()
+                                                      .getCurrentDisplayMode();
         return Window.hasOriginalResolution
                 ? currentDisplayMode.getWidth() + "x" + currentDisplayMode.getHeight()
                 : "1280x720";

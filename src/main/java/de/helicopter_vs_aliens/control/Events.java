@@ -195,7 +195,7 @@ public class Events
         }
         else if (keyEvent.isKeyEqualTo('f'))
         {
-            gameRessourceProvider.switchFpsVisibleState();
+            gameRessourceProvider.getGuiStateProvider().switchFpsVisibleState();
         }
         else if (keyEvent.isKeyEqualTo('p'))
         {
@@ -407,11 +407,11 @@ public class Events
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (mouseEvent.isLeftButtonClicked())
         {
-            Dimension displayShift = gameRessourceProvider.getDisplayShift();
+            Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
             cursor.setLocation(
                 mouseEvent.getX() - displayShift.width,
                 mouseEvent.getY() - displayShift.height);
-            gameRessourceProvider.resetBackgroundRepaintTimer();
+            gameRessourceProvider.getGuiStateProvider().resetBackgroundRepaintTimer();
             mousePressedLeft(gameRessourceProvider);
         }
         // TODO in Methode auslagern
@@ -919,7 +919,7 @@ public class Events
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
-                Dimension displayShift = gameRessourceProvider.getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
                 Window.label.setBounds( displayShift.width + 42,
                                         displayShift.height + 83, 940, 240);
             }
@@ -969,7 +969,7 @@ public class Events
                 (Window.page != buttonSpecifier || WindowManager.window == SETTINGS))
             {
                 StartScreenMenuButtonType oldPage = Window.page;
-                Dimension displayShift = gameRessourceProvider.getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
                     Window.label.setBounds(
@@ -1025,11 +1025,11 @@ public class Events
         Savegame savegame = gameRessourceProvider.getSaveGame();
         if (Window.page == StartScreenMenuButtonType.BUTTON_1)
         {
-            gameRessourceProvider.switchDisplayMode(currentButton);
+            gameRessourceProvider.getGuiStateProvider().switchDisplayMode(currentButton);
         }
         else if (Window.page == StartScreenMenuButtonType.BUTTON_2)
         {
-            gameRessourceProvider.switchAntialiasingActivationState(currentButton);
+            gameRessourceProvider.getGuiStateProvider().switchAntialiasingActivationState(currentButton);
         }
         else if (Window.page == StartScreenMenuButtonType.BUTTON_3)
         {
@@ -1074,7 +1074,7 @@ public class Events
         {
             if (!helicopter.isSearchingForTeleportDestination)
             {
-                Dimension displayShift = gameRessourceProvider.getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
                 helicopter.destination.setLocation(
                     mouseEvent.getX() - displayShift.width,
                     mouseEvent.getY() - displayShift.height);

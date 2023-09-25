@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.PriceLevel;
@@ -236,6 +237,7 @@ public final class Dictionary
     private boolean isFullScreen()
     {
         return Optional.ofNullable(GameResources.getProvider())
+                       .map(GameRessourceProvider::getGuiStateProvider)
                        .map(GuiStateProvider::isFullScreen)
                        .orElse(false);
     }
@@ -243,6 +245,7 @@ public final class Dictionary
     private boolean isAntialiasingActivated()
     {
         return Optional.ofNullable(GameResources.getProvider())
+                       .map(GameRessourceProvider::getGuiStateProvider)
                        .map(GuiStateProvider::isAntialiasingActivated)
                        .orElse(false);
     }

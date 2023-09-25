@@ -14,7 +14,7 @@ public class Label extends JTextPane
     
     public Label()
     {
-        Dimension displayShift = GameResources.getProvider().getDisplayShift();
+        Dimension displayShift = GameResources.getProvider().getGuiStateProvider().getDisplayShift();
         setBounds(displayShift.width  + 42,
             displayShift.height + 83, 940, 240);
         setEditable(false);
@@ -31,7 +31,7 @@ public class Label extends JTextPane
         //TODO funktioniert so nicht für javafx
         final var g2d = (Graphics2D) g;
         g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
-            GameResources.getProvider().isAntialiasingActivated()
+            GameResources.getProvider().getGuiStateProvider().isAntialiasingActivated()
                 ? RenderingHints.VALUE_ANTIALIAS_ON
                 : RenderingHints.VALUE_ANTIALIAS_OFF);
         super.paintComponent(g2d);

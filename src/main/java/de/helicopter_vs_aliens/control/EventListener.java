@@ -71,7 +71,7 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
             this.isMouseCursorInWindow = true;
             Events.lastCurrentTime = System.currentTimeMillis();
         }
-        gameRessourceProvider.resetBackgroundRepaintTimer();
+        gameRessourceProvider.getGuiStateProvider().resetBackgroundRepaintTimer();
     }
 
     @Override

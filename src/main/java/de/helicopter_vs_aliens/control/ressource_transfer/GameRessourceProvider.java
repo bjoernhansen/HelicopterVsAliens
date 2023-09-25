@@ -8,7 +8,7 @@ import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.Savegame;
 
-public interface GameRessourceProvider extends HelicopterAccessor, GuiStateProvider
+public interface GameRessourceProvider extends HelicopterAccessor
 {
     GameStatisticsCalculator getGameStatisticsCalculator();
     
@@ -19,6 +19,8 @@ public interface GameRessourceProvider extends HelicopterAccessor, GuiStateProvi
     GameEntitySupplier getGameEntitySupplier();
     
     ActiveGameEntityManager getActiveGameEntityManager();
+
+    GuiStateProvider getGuiStateProvider();
     
     <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory);
 }

@@ -8,6 +8,7 @@ import de.helicopter_vs_aliens.control.events.EventFactory;
 import de.helicopter_vs_aliens.control.events.SpecialKey;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -48,7 +49,7 @@ import static de.helicopter_vs_aliens.Main.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
-public class ControllerFx extends Application implements GameRessourceProvider
+public class ControllerFx extends Application implements GameRessourceProvider, GuiStateProvider
 {
     private final Button
             button = new Button("Werkstatt");
@@ -239,6 +240,12 @@ public class ControllerFx extends Application implements GameRessourceProvider
     public ActiveGameEntityManager getActiveGameEntityManager()
     {
         return activeGameEntityManager;
+    }
+
+    @Override
+    public GuiStateProvider getGuiStateProvider()
+    {
+        return this;
     }
 
     @Override

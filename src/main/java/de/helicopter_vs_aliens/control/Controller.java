@@ -6,6 +6,7 @@ import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -29,7 +30,7 @@ import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 
-public final class Controller extends JPanel implements Runnable, GameRessourceProvider
+public final class Controller extends JPanel implements Runnable, GameRessourceProvider, GuiStateProvider
 {
     private static final int
         BACKGROUND_PAINT_DISABLED = -1;
@@ -365,6 +366,12 @@ public final class Controller extends JPanel implements Runnable, GameRessourceP
     public ActiveGameEntityManager getActiveGameEntityManager()
     {
         return gameProgress.getActiveGameEntityManager();
+    }
+
+    @Override
+    public GuiStateProvider getGuiStateProvider()
+    {
+        return this;
     }
 
     @Override

@@ -38,7 +38,7 @@ public abstract class WindowPainter extends Painter<Window>
         gameRessourceProvider = GameResources.getProvider();
     
     protected static final GuiStateProvider
-        guiStateProvider = gameRessourceProvider;
+        guiStateProvider = GameResources.getProvider().getGuiStateProvider();
     
     protected static Helicopter
         helicopter;
