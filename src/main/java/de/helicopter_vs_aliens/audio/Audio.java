@@ -7,11 +7,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -24,22 +20,22 @@ public class Audio
 {
     public static final boolean
         MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
-    
+
     private static final int
-        NUMBER_OF_ANNOUNCERS = 6;
-    
+        NUMBER_OF_ANNOUNCERS = PowerUpType.valueCount();
+
     public static boolean
         isSoundOn = true,            // = true: Hintergrundmusik wird abgespielt
         standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
-    
+
     public static Clip
         currentBg,        // Die aktuell abgespielte Hintergrund-Musik
-    
+
     // Menü-Sounds
     block,
         cash,
         choose,
-    
+
     // Game-Sounds
     cloak,
         emp,
@@ -65,7 +61,7 @@ public class Audio
         teleport1,
         teleport2,
         tractorBeam,
-    
+
     // Announcer
     applause1,
         applause2,
@@ -75,12 +71,12 @@ public class Audio
         multiKill,
         megaKill,
         monsterKill,
-    
+
     // Hintergrundmusik für den Standard-Modus
     bgMusic1,
         bgMusic2,
         bgMusic3,
-    
+
     // Hintergrundmusik für Michael-Modus
     mainMenu,
         repairShop,
@@ -94,10 +90,15 @@ public class Audio
         bossLevel,
         finalBossLevel,
         victory;
-    
+
     public static Clip[]
         powerAnnouncer;
-    
+
+    private Audio()
+    {
+        throw new UnsupportedOperationException();
+    }
+
     private static Clip getAudioClip(String audioFileName)
     {
         try
@@ -105,7 +106,7 @@ public class Audio
             String filePath = "/sounds/" + audioFileName;
             InputStream inputStream = Audio.class.getResourceAsStream(filePath);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Objects.requireNonNull(inputStream));
-            
+
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             return clip;
@@ -115,7 +116,7 @@ public class Audio
             throw new RuntimeException(e);
         }
     }
-    
+
     public static void initialize()
     {
         launch1 = getAudioClip("launch1.wav");
@@ -156,7 +157,7 @@ public class Audio
         powerUpFade1 = getAudioClip("pu_fade1.wav");
         powerUpFade2 = getAudioClip("pu_fade2.wav");
         stunActivated = getAudioClip("stun_activated.wav");
-        
+
         powerAnnouncer = new Clip[NUMBER_OF_ANNOUNCERS];
         powerAnnouncer[PowerUpType.TRIPLE_DAMAGE.ordinal()] = getAudioClip("announcer_triple_dmg.wav");
         powerAnnouncer[PowerUpType.INVINCIBLE.ordinal()] = getAudioClip("announcer_invincible.wav");
@@ -164,7 +165,7 @@ public class Audio
         powerAnnouncer[PowerUpType.BOOSTED_FIRE_RATE.ordinal()] = getAudioClip("announcer_fire_rate_boosted.wav");
         powerAnnouncer[PowerUpType.REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
         powerAnnouncer[PowerUpType.BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");
-        
+
         if(MICHAEL_MODE)
         {
             mainMenu = getAudioClip("main_menu.wav");
@@ -181,7 +182,7 @@ public class Audio
             victory = getAudioClip("victory.wav");
         }
     }
-    
+
     public static void refreshBackgroundMusic()
     {
         if(currentBg != null)
@@ -194,7 +195,7 @@ public class Audio
             currentBg.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
-    
+
     public static void changeBgMusicMode(Savegame savegame)
     {
         standardBackgroundMusic = !standardBackgroundMusic;
@@ -202,7 +203,7 @@ public class Audio
         refreshBackgroundMusic();
         Events.settingsChanged = true;
     }
-    
+
     // Rückgabe der aktuell zu spielenden Hintergrundmusik
     private static Clip getBgMusic()
     {
@@ -280,7 +281,7 @@ public class Audio
         }
         return victory;
     }
-    
+
     public static void play(Clip clip)
     {
         clip.setFramePosition(0);
@@ -289,7 +290,7 @@ public class Audio
             clip.start();
         }
     }
-    
+
     public static void loop(Clip clip)
     {
         if(isSoundOn)
@@ -297,7 +298,7 @@ public class Audio
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
-    
+
     // Abspielen eines Lob-Sounds entsprechend der Anzahl mit einem Mal besiegter Gegner
     public static void praise(int nr)
     {
@@ -334,38 +335,38 @@ public class Audio
             }
         }
     }
-    
+
     private static void stopApplause()
     {
         applause1.stop();
         applause2.stop();
     }
-    
+
     public static void playSpecialSound(HelicopterType helicopterType)
     {
         play(helicopterType.getSpecialSound());
     }
-    
+
     public static Clip getEmp()
     {
         return emp;
     }
-    
+
     public static Clip getPlasmaOn()
     {
         return plasmaOn;
     }
-    
+
     public static Clip getShieldUp()
     {
         return shieldUp;
     }
-    
+
     public static Clip getStunActivated()
     {
         return stunActivated;
     }
-    
+
     public static Clip getTeleport1()
     {
         return teleport1;

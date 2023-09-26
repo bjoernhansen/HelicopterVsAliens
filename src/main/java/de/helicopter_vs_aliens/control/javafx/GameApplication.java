@@ -10,7 +10,6 @@ import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.JavaFxAdapter;
-import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.util.Colorations;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -37,9 +36,6 @@ public class GameApplication extends Application implements GuiStateProvider
 {
     private final Button
         button = new Button("Werkstatt");
-
-    private final WindowManager
-        windowManager = new WindowManager();
 
     private final GameProgress
         gameProgress;
@@ -174,21 +170,13 @@ public class GameApplication extends Application implements GuiStateProvider
     @Override
     public boolean isMouseCursorInWindow()
     {
-        // TODO not necessary
         return true;
     }
 
     @Override
     public void resetBackgroundRepaintTimer()
     {
-        // TODO not necessary
-    }
-
-    @Override
-    public boolean isFpsDisplayVisible()
-    {
-        // TODO not necessary
-        return true;
+        // not necessary
     }
 
     @Override
@@ -235,12 +223,6 @@ public class GameApplication extends Application implements GuiStateProvider
         return null;
     }
 
-    @Override
-    public void switchFpsVisibleState()
-    {
-        // TODO not necessary
-    }
-
     private void updateGame()
     {
         gameProgress.updateGame();
@@ -250,6 +232,7 @@ public class GameApplication extends Application implements GuiStateProvider
     {
         GraphicsManager.getInstance()
                        .setGraphics(graphicsAdapter);
-        windowManager.paintWindow(graphicsAdapter);
+        gameProgress.getWindowManager()
+                    .paintWindow(graphicsAdapter);
     }
 }

@@ -23,4 +23,8 @@ public interface GameRessourceProvider extends HelicopterAccessor
     GuiStateProvider getGuiStateProvider();
     
     <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory);
+
+    boolean isFpsDisplayVisible();
+
+    void switchFpsVisibleState();
 }

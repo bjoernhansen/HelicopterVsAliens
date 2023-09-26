@@ -195,7 +195,7 @@ public class Events
         }
         else if (keyEvent.isKeyEqualTo('f'))
         {
-            gameRessourceProvider.getGuiStateProvider().switchFpsVisibleState();
+            gameRessourceProvider.switchFpsVisibleState();
         }
         else if (keyEvent.isKeyEqualTo('p'))
         {

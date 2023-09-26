@@ -264,14 +264,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
                     .paintWindow(graphicsAdapter);
     }
 
-
-    @Override
-    public void switchFpsVisibleState()
-    {
-        gameProgress.getFpsCalculator().switchFpsVisibleState();
-    }
-
-
     @Override
     public boolean isAntialiasingActivated()
     {
@@ -282,13 +274,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
     public int getGameLoopCount()
     {
         return gameProgress.getGameLoopCount();
-    }
-
-
-    @Override
-    public boolean isFpsDisplayVisible()
-    {
-        return gameProgress.getFpsCalculator().isFpsDisplayVisible();
     }
 
     @Override

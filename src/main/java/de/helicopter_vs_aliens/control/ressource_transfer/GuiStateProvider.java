@@ -12,8 +12,6 @@ public interface GuiStateProvider
 
     void resetBackgroundRepaintTimer();
     
-    boolean isFpsDisplayVisible();
-    
     boolean isAntialiasingActivated();
     
     int getGameLoopCount();
@@ -27,6 +25,4 @@ public interface GuiStateProvider
     boolean isFullScreen();
 
     DisplayMode getCurrentDisplayMode();
-
-    void switchFpsVisibleState();
 }

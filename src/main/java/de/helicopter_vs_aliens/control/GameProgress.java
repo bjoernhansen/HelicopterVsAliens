@@ -130,6 +130,18 @@ public final class GameProgress implements GameRessourceProvider
         return getGameEntitySupplier().retrieve(factory);
     }
 
+    @Override
+    public boolean isFpsDisplayVisible()
+    {
+        return fpsCalculator.isFpsDisplayVisible();
+    }
+
+    @Override
+    public void switchFpsVisibleState()
+    {
+        fpsCalculator.switchFpsVisibleState();
+    }
+
     int getGameLoopCount ()
     {
         return gameLoopCount;
@@ -182,10 +194,5 @@ public final class GameProgress implements GameRessourceProvider
     public WindowManager getWindowManager()
     {
         return windowManager;
-    }
-
-    public FpsCalculator getFpsCalculator()
-    {
-        return fpsCalculator;
     }
 }

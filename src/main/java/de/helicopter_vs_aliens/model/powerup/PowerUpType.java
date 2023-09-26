@@ -29,7 +29,9 @@ public enum PowerUpType implements GameEntityFactory<PowerUp>
         menuPosition;
     
     private final Color
-        surfaceColor,
+        surfaceColor;
+
+    private final Color
         crossColor;
     
     PowerUpType(int menuPosition, Color surfaceColor, Color crossColor)

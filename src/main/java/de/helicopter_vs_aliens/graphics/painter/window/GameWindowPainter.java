@@ -158,7 +158,7 @@ public class GameWindowPainter extends WindowPainter
         paintHealthBar(graphicsAdapter, helicopter);
         paintCollectedPowerUps(graphicsAdapter);
         
-        if (guiStateProvider.isFpsDisplayVisible())
+        if (gameRessourceProvider.isFpsDisplayVisible())
         {
             paintFpsDisplay(graphicsAdapter);
         }
