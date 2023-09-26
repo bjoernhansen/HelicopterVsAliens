@@ -15,15 +15,8 @@ public final class GameStatisticsCalculator
         numberOfRepairs,                    // Anzahl der Reparaturen
         numberOfCrashes;                    // Anzahl der Abstürze
 
-
-    private static final GameStatisticsCalculator
-        instance = new GameStatisticsCalculator();
-    
-    public static GameStatisticsCalculator getInstance(){
-        return instance;
-    }
  
-    private GameStatisticsCalculator() {}
+    public GameStatisticsCalculator() {}
     
     public void restoreFrom(Savegame savegame)
     {

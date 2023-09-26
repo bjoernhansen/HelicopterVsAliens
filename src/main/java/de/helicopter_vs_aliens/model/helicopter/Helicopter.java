@@ -185,7 +185,7 @@ public abstract class Helicopter extends RectangularGameEntity
 	private boolean
 		isCrashing;            // Helikopter befindet sich im Sturzflug
 
-	public Helicopter()
+	protected Helicopter()
 	{
 		this.paintBounds.setSize(HELICOPTER_SIZE);
 		this.powerUpController.turnOfAllBoosters();

@@ -1253,7 +1253,7 @@ public class Events
         lastBonus = 0;
     }
 
-    static private void startNewGame(HelicopterType nextHelicopterType, GameRessourceProvider gameRessourceProvider)
+    private static void startNewGame(HelicopterType nextHelicopterType, GameRessourceProvider gameRessourceProvider)
     {
         Audio.play(Audio.applause1);
         Helicopter newHelicopter = HelicopterFactory.createForNewGame(nextHelicopterType);
@@ -1266,7 +1266,7 @@ public class Events
         performGeneralActionsBeforeGameStart();
     }
 
-    static private void startSavedGame(GameRessourceProvider gameRessourceProvider)
+    private static void startSavedGame(GameRessourceProvider gameRessourceProvider)
     {
         Helicopter savedHelicopter = HelicopterFactory.createFromSavegame(gameRessourceProvider.getSaveGame());
         gameRessourceProvider.setHelicopter(savedHelicopter);

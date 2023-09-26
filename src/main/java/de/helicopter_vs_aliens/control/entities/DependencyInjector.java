@@ -4,27 +4,33 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceAcceptor;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 
+import java.util.Objects;
+import java.util.Optional;
+
+
 public final class DependencyInjector
 {
-    private static final DependencyInjector
-        instance = new DependencyInjector();
-    
+    private static DependencyInjector
+        instance;
+
     private final GameRessourceProvider
         gameRessourceProvider;
-    
-    
+
+
     private DependencyInjector()
     {
-        this.gameRessourceProvider = GameResources.getProvider();
+        this.gameRessourceProvider = Objects.requireNonNull(GameResources.getProvider());
     }
-    
+
     public void injectDependenciesFor(GameRessourceAcceptor gameRessourceAcceptor)
     {
         gameRessourceAcceptor.setGameRessourceProvider(gameRessourceProvider);
     }
-    
+
     public static DependencyInjector getInstance()
     {
+        instance = Optional.ofNullable(instance)
+                           .orElseGet(DependencyInjector::new);
         return instance;
     }
 }

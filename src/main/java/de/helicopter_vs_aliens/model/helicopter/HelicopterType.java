@@ -152,10 +152,10 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
         fifthSpecialDictionaryKey;
     
     private final Supplier<? extends Helicopter>
-        instance;
+        instanceSupplier;
     
     private final Supplier<? extends Painter<? extends Helicopter>>
-        painterInstance;
+        painterInstanceSupplier;
     
     private final Class<? extends Helicopter>
         helicopterClass;
@@ -168,15 +168,15 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
        
     
     HelicopterType(Class<? extends Helicopter> helicopterClass,
-                   Supplier<? extends Helicopter> instance,
-                   Supplier<? extends Painter<? extends Helicopter>> painterInstance,
+                   Supplier<? extends Helicopter> instanceSupplier,
+                   Supplier<? extends Painter<? extends Helicopter>> painterInstanceSupplier,
                    Supplier<List<HelicopterType>> unlockerTypes,
                    Supplier<Clip> specialSound)
     {
         this.number = ordinal()+1;
         this.helicopterClass = helicopterClass;
-        this.instance = instance;
-        this.painterInstance = painterInstance;
+        this.instanceSupplier = instanceSupplier;
+        this.painterInstanceSupplier = painterInstanceSupplier;
         this.fifthSpecialDictionaryKey = FIFTH_SPECIAL_KEY_PREFIX + this.getDesignation();
         this.unlockerTypes = unlockerTypes;
         this.specialSound = specialSound;
@@ -316,7 +316,7 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
     @Override
     public Helicopter makeInstance()
     {
-        return instance.get();
+        return instanceSupplier.get();
     }
     
     @Override
@@ -329,7 +329,7 @@ public enum HelicopterType implements GameEntityFactory<Helicopter>
     // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Painter<? extends Helicopter> makePainterInstance()
     {
-        return painterInstance.get();
+        return painterInstanceSupplier.get();
     }
     
     public boolean hasDefeatedFinalBoss()

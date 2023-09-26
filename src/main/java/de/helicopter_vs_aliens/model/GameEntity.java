@@ -6,7 +6,8 @@ import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
-abstract public class GameEntity implements Paintable, GameRessourceAcceptor
+
+public abstract class GameEntity implements Paintable, GameRessourceAcceptor
 {
     private GameRessourceProvider gameRessourceProvider;
     
