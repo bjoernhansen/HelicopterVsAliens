@@ -9,8 +9,8 @@ import java.util.function.Supplier;
 
 public enum GraphicsApiType
 {
-    GRAPHICS_2D(AwtController::getDisplayShift2),
-    JAVAFX(GameApplication::getDisplayShift2);
+    GRAPHICS_2D(AwtController::getDisplayShift),
+    JAVAFX(GameApplication::getDisplayShift);
 
 
     private final Supplier<Dimension>

@@ -21,6 +21,7 @@ import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
@@ -63,7 +64,8 @@ public final class GameProgress implements GameRessourceProvider
     private GuiStateProvider
         guiStateProvider;
 
-
+    private boolean
+        isMouseCursorInWindow = true;
 
 
     public GameProgress(GraphicsApiType graphicsApiType)
@@ -151,6 +153,30 @@ public final class GameProgress implements GameRessourceProvider
     public int getGameLoopCount()
     {
         return gameLoopCount;
+    }
+
+    @Override
+    public Dimension getDisplayShift()
+    {
+        return graphicsApiType.getDisplayShift();
+    }
+
+    @Override
+    public void notifyMousePointerLeftWindow()
+    {
+        isMouseCursorInWindow = false;
+    }
+
+    @Override
+    public void notifyMousePointerEnteredWindow()
+    {
+        isMouseCursorInWindow = true;
+    }
+
+    @Override
+    public boolean isMouseCursorInWindow()
+    {
+        return isMouseCursorInWindow;
     }
 
     @Override

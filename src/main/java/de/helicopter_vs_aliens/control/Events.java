@@ -408,7 +408,7 @@ public class Events
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (mouseEvent.isLeftButtonClicked())
         {
-            Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
+            Dimension displayShift = gameRessourceProvider.getDisplayShift();
             cursor.setLocation(
                 mouseEvent.getX() - displayShift.getWidth(),
                 mouseEvent.getY() - displayShift.getHeight());
@@ -920,7 +920,7 @@ public class Events
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
-                Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 Window.label.setBounds( displayShift.getWidth() + 42,
                                         displayShift.getHeight() + 83, 940, 240);
             }
@@ -970,7 +970,7 @@ public class Events
                 (Window.page != buttonSpecifier || WindowManager.window == SETTINGS))
             {
                 StartScreenMenuButtonType oldPage = Window.page;
-                Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
                     Window.label.setBounds(
@@ -1064,7 +1064,7 @@ public class Events
         {
             if (!helicopter.isSearchingForTeleportDestination)
             {
-                Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
+                Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 helicopter.destination.setLocation(
                     mouseEvent.getX() - displayShift.getWidth(),
                     mouseEvent.getY() - displayShift.getHeight());

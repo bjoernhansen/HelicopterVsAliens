@@ -19,7 +19,6 @@ public class Label extends JTextPane
     public Label()
     {
         Dimension displayShift = GameResources.getProvider()
-                                              .getGuiStateProvider()
                                               .getDisplayShift();
         setBounds(displayShift.getWidth() + 42,
             displayShift.getHeight() + 83, 940, 240);

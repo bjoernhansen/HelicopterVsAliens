@@ -24,9 +24,6 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     private final GameRessourceProvider
         gameRessourceProvider;
 
-    private boolean
-        isMouseCursorInWindow = true;
-
 
     public EventListener(GameRessourceProvider gameRessourceProvider)
     {
@@ -69,7 +66,7 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     {
         if (WindowManager.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
         {
-            this.isMouseCursorInWindow = true;
+            gameRessourceProvider.notifyMousePointerEnteredWindow();
             Events.lastCurrentTime = System.currentTimeMillis();
         }
         gameRessourceProvider.getGuiStateProvider().resetBackgroundRepaintTimer();
@@ -80,14 +77,9 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
     {
         if (WindowManager.window == GAME && STOP_GAME_WHEN_MOUSE_OUTSIDE_WINDOW)
         {
-            this.isMouseCursorInWindow = false;
+            gameRessourceProvider.notifyMousePointerLeftWindow();
             Events.playingTime += System.currentTimeMillis() - Events.lastCurrentTime;
         }
-    }
-
-    public boolean isMouseCursorInWindow()
-    {
-        return isMouseCursorInWindow;
     }
 
     private Helicopter getHelicopter()

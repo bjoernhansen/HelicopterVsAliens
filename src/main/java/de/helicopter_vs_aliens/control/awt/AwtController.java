@@ -228,7 +228,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
                     DISPLAY_SHIFT.getHeight());
             }
 
-            if(isMouseCursorInWindow())
+            if(gameProgress.isMouseCursorInWindow())
             {
                 gameProgress.updateGame();
             }
@@ -277,19 +277,8 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         backgroundRepaintTimer = 0;
     }
 
-    @Override
-    public boolean isMouseCursorInWindow()
-    {
-        return eventListener.isMouseCursorInWindow();
-    }
 
-    @Override
-    public Dimension getDisplayShift()
-    {
-        return DISPLAY_SHIFT;
-    }
-
-    public static Dimension getDisplayShift2()
+    public static Dimension getDisplayShift()
     {
         return DISPLAY_SHIFT;
     }

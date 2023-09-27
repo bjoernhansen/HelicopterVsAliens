@@ -170,22 +170,11 @@ public class GameApplication extends Application implements GuiStateProvider
     }
 
 
-    @Override
-    public boolean isMouseCursorInWindow()
-    {
-        return true;
-    }
 
     @Override
     public void resetBackgroundRepaintTimer()
     {
         // not necessary
-    }
-
-    @Override
-    public Dimension getDisplayShift()
-    {
-        return DISPLAY_SHIFT;
     }
 
     private void updateGame()
@@ -201,7 +190,7 @@ public class GameApplication extends Application implements GuiStateProvider
                     .paintWindow(graphicsAdapter);
     }
 
-    public static Dimension getDisplayShift2()
+    public static Dimension getDisplayShift()
     {
         return DISPLAY_SHIFT;
     }

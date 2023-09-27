@@ -225,8 +225,7 @@ public final class Phoenix extends Helicopter
     @Override
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
     {
-        Dimension displayShift = getGameRessourceProvider().getGuiStateProvider()
-                                                           .getDisplayShift();
+        Dimension displayShift = getGameRessourceProvider().getDisplayShift();
         this.tryToTeleportTo(
             mouseEvent.getX() - displayShift.getWidth(),
             mouseEvent.getY() - displayShift.getHeight());

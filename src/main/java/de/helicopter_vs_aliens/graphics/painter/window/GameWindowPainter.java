@@ -165,7 +165,7 @@ public class GameWindowPainter extends WindowPainter
         
         if (helicopter.isOnTheGround())
         {
-            if (!Window.isMenuVisible && guiStateProvider.isMouseCursorInWindow())
+            if (!Window.isMenuVisible && gameRessourceProvider.isMouseCursorInWindow())
             {
                 paintTimeDisplay(graphicsAdapter, Events.playingTime
                     + System.currentTimeMillis()
