@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.control;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
+import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
@@ -32,8 +33,11 @@ public final class GameProgress implements GameRessourceProvider
     private int
         gameLoopCount = 0;
 
-
     // TODO ... eigentlich sollte Helicopter hier noch gar nicht initialisiert werden müssen, muss er aber -> Checken
+
+    private final GraphicsApiType
+        graphicsApiType;
+
     private Helicopter
         helicopter = HelicopterType.getDefault()
                                    .makeInstance();
@@ -62,9 +66,10 @@ public final class GameProgress implements GameRessourceProvider
 
 
 
-    public GameProgress()
+    public GameProgress(GraphicsApiType graphicsApiType)
     {
         GameResources.setGameResources(this);
+        this.graphicsApiType = graphicsApiType;
         scenery = new Scenery(this);
     }
 
@@ -142,7 +147,8 @@ public final class GameProgress implements GameRessourceProvider
         fpsCalculator.switchFpsVisibleState();
     }
 
-    int getGameLoopCount ()
+    @Override
+    public int getGameLoopCount()
     {
         return gameLoopCount;
     }
@@ -194,5 +200,10 @@ public final class GameProgress implements GameRessourceProvider
     public WindowManager getWindowManager()
     {
         return windowManager;
+    }
+
+    public GraphicsApiType getGraphicsApiType()
+    {
+        return graphicsApiType;
     }
 }

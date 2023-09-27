@@ -1,5 +1,6 @@
-package de.helicopter_vs_aliens.control;
+package de.helicopter_vs_aliens.control.awt;
 
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.events.EventFactory;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.WindowManager;

@@ -27,4 +27,6 @@ public interface GameRessourceProvider extends HelicopterAccessor
     boolean isFpsDisplayVisible();
 
     void switchFpsVisibleState();
+
+    int getGameLoopCount();
 }

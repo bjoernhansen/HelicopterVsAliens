@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.control.ressource_transfer;
 
-import java.awt.Dimension;
+
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 
 public interface GuiStateProvider
@@ -8,8 +9,6 @@ public interface GuiStateProvider
     boolean isMouseCursorInWindow();
 
     void resetBackgroundRepaintTimer();
-
-    int getGameLoopCount();
 
     Dimension getDisplayShift();
 }

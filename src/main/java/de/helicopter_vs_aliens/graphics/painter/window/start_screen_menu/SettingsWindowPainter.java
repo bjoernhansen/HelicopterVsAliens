@@ -56,7 +56,7 @@ public class SettingsWindowPainter extends StartScreenMenuWindowPainter
         }
         graphicsAdapter.drawString(Events.currentPlayerName, LEFT + COLUMN_SPACING, TOP + 2 * LINE_SPACING);
 
-        if(Window.page == StartScreenMenuButtonType.BUTTON_3 && (guiStateProvider.getGameLoopCount() / 30) % 2 == 0)
+        if(Window.page == StartScreenMenuButtonType.BUTTON_3 && (gameRessourceProvider.getGameLoopCount() / 30) % 2 == 0)
         {
             graphicsAdapter.drawString("|", LEFT + COLUMN_SPACING + graphicsAdapter.getStringWidth(Events.currentPlayerName), TOP + 2 * LINE_SPACING);
         }

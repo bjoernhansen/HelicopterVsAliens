@@ -1,7 +1,10 @@
-package de.helicopter_vs_aliens.control;
+package de.helicopter_vs_aliens.control.awt;
 
 import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.Controller;
+import de.helicopter_vs_aliens.control.FrameSkipStatusType;
+import de.helicopter_vs_aliens.control.GameProgress;
 import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
@@ -10,11 +13,11 @@ import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
@@ -33,18 +36,21 @@ public final class AwtController extends JPanel implements Controller, Runnable,
     private static final int
         BACKGROUND_PAINT_DISABLED = -1;
 
-    private static final Dimension
-        STANDARD_RESOLUTION = new Dimension(1280, 720);
-
-    private static final Dimension
-        WINDOW_SIZE = new Dimension(STANDARD_RESOLUTION.width + 6,
-                                    STANDARD_RESOLUTION.height + 29);
-
     private static final long
         DELAY = 16;
 
-    private Dimension
-        displayShift = new Dimension();
+    private static final Dimension
+        STANDARD_RESOLUTION = Dimension.newInstance(1280, 720);
+
+    private static final Dimension
+        WINDOW_SIZE = Dimension.newInstance(
+                        STANDARD_RESOLUTION.getWidth() + 6,
+                        STANDARD_RESOLUTION.getHeight() + 29);
+
+    private static final Dimension
+        DISPLAY_SHIFT = Dimension.newInstance(
+            (STANDARD_RESOLUTION.getWidth() - Main.VIRTUAL_DIMENSION.width - 10) / 2,
+            (STANDARD_RESOLUTION.getHeight() - Main.VIRTUAL_DIMENSION.height - 10) / 2);
 
     private int
         backgroundRepaintTimer = 0;
@@ -66,12 +72,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
     private transient Rectangle2D
         wholeScreenClip;
-
-    private transient GraphicsDevice
-        device;
-
-    private JFrame
-        frame;
 
     private transient DisplayMode
         originalDisplayMode;
@@ -100,9 +100,10 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         Audio.refreshBackgroundMusic();
     }
 
+    // TODO Refactoring dieser Methode
     private void init()
     {
-        frame = new JFrame("Helicopter vs. Aliens");
+        JFrame frame = new JFrame("Helicopter vs. Aliens");
         frame.setBackground(Color.black);
         frame.add("Center", this);
 
@@ -119,7 +120,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
         this.setLayout(null);
 
-        device = GraphicsEnvironment.getLocalGraphicsEnvironment()
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment()
                                     .getDefaultScreenDevice();
 
         originalDisplayMode = device.getDisplayMode();
@@ -127,15 +128,34 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
         frame.setUndecorated(true);
         device.setFullScreenWindow(frame);
-        activateDisplayMode();
-        switchDisplayMode();
+        device.setDisplayMode(originalDisplayMode);
 
+        if(Window.label == null)
+        {
+            Window.label = new Label();
+        }
+        else
+        {
+            Window.label.setBounds(
+                DISPLAY_SHIFT.getWidth() + 42,
+                DISPLAY_SHIFT.getHeight() + 83,
+                940,
+                240);
+        }
+        resetBackgroundRepaintTimer();
+        frame.dispose();
+        frame.setUndecorated(false);
+        device.setFullScreenWindow(null);
+        frame.setSize(WINDOW_SIZE.getWidth(), WINDOW_SIZE.getHeight());
+        frame.setLocation(
+            (originalDisplayMode.getWidth() - WINDOW_SIZE.getWidth()) / 2,
+            (originalDisplayMode.getHeight() - WINDOW_SIZE.getHeight()) / 2);
         frame.setVisible(true);
 
 
         Audio.initialize();
 
-        Dimension offDimension = getSize();
+        Dimension offDimension = Dimension.of(getSize());
         wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
         offImage = new BufferedImage((int) Main.VIRTUAL_DIMENSION.getWidth(), (int) Main.VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
         graphicsAdapter = Graphics2DAdapter.of(offImage);
@@ -151,8 +171,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         add(Window.label);
         addMouseListener(eventListener);
         addMouseMotionListener(eventListener);
-
-
     }
 
     @Override
@@ -206,8 +224,8 @@ public final class AwtController extends JPanel implements Controller, Runnable,
                 }
                 graphicsAdapter.drawImage(
                     this.offImage,
-                    displayShift.width,
-                    displayShift.height);
+                    DISPLAY_SHIFT.getWidth(),
+                    DISPLAY_SHIFT.getHeight());
             }
 
             if(isMouseCursorInWindow())
@@ -254,12 +272,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
     }
 
     @Override
-    public int getGameLoopCount()
-    {
-        return gameProgress.getGameLoopCount();
-    }
-
-    @Override
     public void resetBackgroundRepaintTimer()
     {
         backgroundRepaintTimer = 0;
@@ -271,45 +283,14 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         return eventListener.isMouseCursorInWindow();
     }
 
-    public void switchDisplayMode()
-    {
-        frame.dispose();
-        frame.setUndecorated(false);
-        device.setFullScreenWindow(null);
-        frame.setSize(WINDOW_SIZE);
-        frame.setLocation((int) ((originalDisplayMode.getWidth()
-                - WINDOW_SIZE.getWidth()) / 2),
-            (int) ((originalDisplayMode.getHeight()
-                - WINDOW_SIZE.getHeight()) / 2));
-        frame.setVisible(true);
-    }
-
-    private void activateDisplayMode()
-    {
-        device.setDisplayMode(originalDisplayMode);
-
-        displayShift = new Dimension(
-            ((int)STANDARD_RESOLUTION.getWidth() - Main.VIRTUAL_DIMENSION.width) / 2 - 5,
-            ((int)STANDARD_RESOLUTION.getHeight() - Main.VIRTUAL_DIMENSION.height) / 2 - 5);
-
-        if(Window.label == null)
-        {
-            Window.label = new Label();
-        }
-        else
-        {
-            Window.label.setBounds(
-                displayShift.width + 42,
-                displayShift.height + 83,
-                940,
-                240);
-        }
-        resetBackgroundRepaintTimer();
-    }
-
     @Override
     public Dimension getDisplayShift()
     {
-        return displayShift;
+        return DISPLAY_SHIFT;
+    }
+
+    public static Dimension getDisplayShift2()
+    {
+        return DISPLAY_SHIFT;
     }
 }

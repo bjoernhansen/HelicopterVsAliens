@@ -35,9 +35,9 @@ import de.helicopter_vs_aliens.score.RecordTimeManager;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.util.EnumSet;
 import java.util.Queue;
@@ -155,7 +155,7 @@ public class Events
         recordTimeManager = new RecordTimeManager();
 
 
-    static void keyTyped(KeyEvent keyEvent, GameRessourceProvider gameRessourceProvider)
+    public static void keyTyped(KeyEvent keyEvent, GameRessourceProvider gameRessourceProvider)
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (keyEvent.isKeyEqualTo(SpecialKey.ESCAPE) && !helicopter.isDamaged)
@@ -410,8 +410,8 @@ public class Events
         {
             Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
             cursor.setLocation(
-                mouseEvent.getX() - displayShift.width,
-                mouseEvent.getY() - displayShift.height);
+                mouseEvent.getX() - displayShift.getWidth(),
+                mouseEvent.getY() - displayShift.getHeight());
             gameRessourceProvider.getGuiStateProvider().resetBackgroundRepaintTimer();
             mousePressedLeft(gameRessourceProvider);
         }
@@ -921,8 +921,8 @@ public class Events
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
                 Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
-                Window.label.setBounds( displayShift.width + 42,
-                                        displayShift.height + 83, 940, 240);
+                Window.label.setBounds( displayShift.getWidth() + 42,
+                                        displayShift.getHeight() + 83, 940, 240);
             }
             newStartScreenSubWindow(INFORMATION, false);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
@@ -974,8 +974,8 @@ public class Events
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
                     Window.label.setBounds(
-                        displayShift.width + 42,
-                        displayShift.height + 83, 940, 240);
+                        displayShift.getWidth() + 42,
+                        displayShift.getHeight() + 83, 940, 240);
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
@@ -985,8 +985,8 @@ public class Events
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
                     Window.label.setBounds(
-                        displayShift.width + 92,
-                        displayShift.height + 83, 890, 240);
+                        displayShift.getWidth() + 92,
+                        displayShift.getHeight() + 83, 890, 240);
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
@@ -1066,8 +1066,8 @@ public class Events
             {
                 Dimension displayShift = gameRessourceProvider.getGuiStateProvider().getDisplayShift();
                 helicopter.destination.setLocation(
-                    mouseEvent.getX() - displayShift.width,
-                    mouseEvent.getY() - displayShift.height);
+                    mouseEvent.getX() - displayShift.getWidth(),
+                    mouseEvent.getY() - displayShift.getHeight());
             }
             else
             {

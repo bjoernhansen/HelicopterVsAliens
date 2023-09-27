@@ -11,6 +11,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.JavaFxAdapter;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -26,7 +27,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import static de.helicopter_vs_aliens.Main.VIRTUAL_DIMENSION;
@@ -34,6 +36,9 @@ import static de.helicopter_vs_aliens.Main.VIRTUAL_DIMENSION;
 
 public class GameApplication extends Application implements GuiStateProvider
 {
+    private static final Dimension
+        DISPLAY_SHIFT = Dimension.newInstance(0, 0);
+
     private final Button
         button = new Button("Werkstatt");
 
@@ -49,8 +54,6 @@ public class GameApplication extends Application implements GuiStateProvider
     private Image
         offImage;
 
-    private final Dimension
-        displayShift = new Dimension();
 
 
     public GameApplication()
@@ -100,7 +103,7 @@ public class GameApplication extends Application implements GuiStateProvider
         primaryStage.setFullScreen(true);
         primaryStage.show();
 
-        var canvasShift = new Dimension(
+        var canvasShift = Dimension.newInstance(
             (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),
             (int) ((primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0));
 
@@ -111,8 +114,8 @@ public class GameApplication extends Application implements GuiStateProvider
         AnchorPane.setLeftAnchor(button, horizontalAnchorDistance);
         AnchorPane.setRightAnchor(button, horizontalAnchorDistance);
 
-        AnchorPane.setLeftAnchor(canvas, canvasShift.getWidth());
-        AnchorPane.setTopAnchor(canvas, canvasShift.getHeight());
+        AnchorPane.setLeftAnchor(canvas, (double) canvasShift.getWidth());
+        AnchorPane.setTopAnchor(canvas, (double) canvasShift.getHeight());
 
 
         // primaryStage.setResizable(false);
@@ -179,21 +182,11 @@ public class GameApplication extends Application implements GuiStateProvider
         // not necessary
     }
 
-
-
-    @Override
-    public int getGameLoopCount()
-    {
-        // TODO not necessary
-        return 0;
-    }
-
     @Override
     public Dimension getDisplayShift()
     {
-        return displayShift;
+        return DISPLAY_SHIFT;
     }
-
 
     private void updateGame()
     {
@@ -206,5 +199,10 @@ public class GameApplication extends Application implements GuiStateProvider
                        .setGraphics(graphicsAdapter);
         gameProgress.getWindowManager()
                     .paintWindow(graphicsAdapter);
+    }
+
+    public static Dimension getDisplayShift2()
+    {
+        return DISPLAY_SHIFT;
     }
 }

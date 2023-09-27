@@ -1,19 +1,16 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import javax.sound.sampled.Clip;
-
-import java.awt.Dimension;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
@@ -66,7 +63,7 @@ public final class Phoenix extends Helicopter
     void updateTimer()
     {
         super.updateTimer();
-        if (this.enhancedRadiationTimer > 0)
+        if(this.enhancedRadiationTimer > 0)
         {
             this.enhancedRadiationTimer--;
         }
@@ -75,10 +72,10 @@ public final class Phoenix extends Helicopter
 
     private void evaluateBonusKills()
     {
-        if (this.bonusKillsTimer > 0)
+        if(this.bonusKillsTimer > 0)
         {
             this.bonusKillsTimer--;
-            if (this.bonusKillsTimer == NICE_CATCH_TIME - TELEPORT_KILL_TIME
+            if(this.bonusKillsTimer == NICE_CATCH_TIME - TELEPORT_KILL_TIME
                 && this.bonusKills > 1)
             {
                 Events.extraReward(
@@ -123,7 +120,7 @@ public final class Phoenix extends Helicopter
     @Override
     public void updateUnlockedHelicopters()
     {
-        if (!PEGASUS.hasReachedLevel20())
+        if(!PEGASUS.hasReachedLevel20())
         {
             Window.unlock(OROCHI);
         }
@@ -132,7 +129,7 @@ public final class Phoenix extends Helicopter
     @Override
     public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        if (this.isEnergyAbilityActivatable())
+        if(this.isEnergyAbilityActivatable())
         {
             useEnergyAbility(gameRessourceProvider);
         }
@@ -160,7 +157,7 @@ public final class Phoenix extends Helicopter
                                           boolean playCollisionSound)
     {
         super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
-        if (this.hasShortRangeRadiation)
+        if(this.hasShortRangeRadiation)
         {
             enemy.reactToRadiation(gameRessourceProvider);
         }
@@ -169,7 +166,7 @@ public final class Phoenix extends Helicopter
     @Override
     void startRecentDamageTimer()
     {
-        if (this.enhancedRadiationTimer == 0)
+        if(this.enhancedRadiationTimer == 0)
         {
             super.startRecentDamageTimer();
         }
@@ -228,9 +225,11 @@ public final class Phoenix extends Helicopter
     @Override
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
     {
-        Dimension displayShift = getGameRessourceProvider().getGuiStateProvider().getDisplayShift();
-        this.tryToTeleportTo(   mouseEvent.getX() - displayShift.width,
-                                mouseEvent.getY() - displayShift.height);
+        Dimension displayShift = getGameRessourceProvider().getGuiStateProvider()
+                                                           .getDisplayShift();
+        this.tryToTeleportTo(
+            mouseEvent.getX() - displayShift.getWidth(),
+            mouseEvent.getY() - displayShift.getHeight());
     }
 
     public void tryToTeleportTo(int x, int y)
@@ -238,7 +237,7 @@ public final class Phoenix extends Helicopter
         this.isSearchingForTeleportDestination = false;
         this.destination.setLocation(x, y);
 
-        if (this.canTeleportTo(x, y))
+        if(this.canTeleportTo(x, y))
         {
             Audio.play(Audio.teleport1);
 
@@ -248,11 +247,11 @@ public final class Phoenix extends Helicopter
             this.nextLocation.setLocation(x, y);
             this.correctAndSetCoordinates();
 
-            if (!this.isActive || !this.isRotorSystemActive)
+            if(!this.isActive || !this.isRotorSystemActive)
             {
                 this.activate();
             }
-            if (this.tractor != null)
+            if(this.tractor != null)
             {
                 this.stopTractor();
             }
@@ -292,7 +291,7 @@ public final class Phoenix extends Helicopter
     @Override
     void startRecentDamageEffect(Enemy enemy)
     {
-        if (this.enhancedRadiationApproved(enemy))
+        if(this.enhancedRadiationApproved(enemy))
         {
             this.enhancedRadiationTimer = NO_COLLISION_DAMAGE_TIME;
         }
@@ -316,7 +315,7 @@ public final class Phoenix extends Helicopter
     @Override
     public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
     {
-        if (beamKill)
+        if(beamKill)
         {
             this.bonusKills++;
             this.bonusKillsMoney += Events.lastBonus;
