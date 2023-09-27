@@ -179,12 +179,7 @@ public class GameApplication extends Application implements GuiStateProvider
         // not necessary
     }
 
-    @Override
-    public boolean isAntialiasingActivated()
-    {
-        // TODO not necessary
-        return false;
-    }
+
 
     @Override
     public int getGameLoopCount()
@@ -199,29 +194,6 @@ public class GameApplication extends Application implements GuiStateProvider
         return displayShift;
     }
 
-    @Override
-    public void switchDisplayMode(de.helicopter_vs_aliens.gui.button.Button currentButton)
-    {
-        // TODO not necessary
-    }
-
-    @Override
-    public void switchAntialiasingActivationState(de.helicopter_vs_aliens.gui.button.Button currentButton)
-    {
-        // TODO not necessary
-    }
-
-    @Override
-    public boolean isFullScreen()
-    {
-        return false;
-    }
-
-    @Override
-    public DisplayMode getCurrentDisplayMode()
-    {
-        return null;
-    }
 
     private void updateGame()
     {

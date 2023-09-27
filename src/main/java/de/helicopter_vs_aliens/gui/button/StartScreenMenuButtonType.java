@@ -26,7 +26,9 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
         ROW_COUNT = 2;
     
     private static final Point
-        OFFSET = new Point( 23, 370),
+        OFFSET = new Point( 23, 370);
+
+    private static final Point
         BUTTON_DISTANCE = new Point(160,  40);
     
     private static final Set<StartScreenMenuButtonType>
@@ -58,13 +60,11 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
         this.buttonLabelKeyPostfix = Integer.toString(index);
         this.indizes = new Point(index/ROW_COUNT, index%ROW_COUNT);
     }
-    
 
     public static List<ButtonSpecifier> getValues()
     {
         return VALUES;
     }
-    
     
     @Override
     public ButtonCategory getCategory()
@@ -89,8 +89,7 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
     {
         return "";
     }
-    
-    
+
     public String getButtonLabelKey(WindowType associatedWindow)
     {
         return associatedWindow.getButtonLabelKeyPrefix() + buttonLabelKeyPostfix;

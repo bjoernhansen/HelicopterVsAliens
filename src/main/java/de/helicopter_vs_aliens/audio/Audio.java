@@ -19,14 +19,14 @@ import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
 public class Audio
 {
     public static final boolean
-        MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
+        MICHAEL_MODE = true;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
 
     private static final int
         NUMBER_OF_ANNOUNCERS = PowerUpType.valueCount();
 
     public static boolean
         isSoundOn = true,            // = true: Hintergrundmusik wird abgespielt
-        standardBackgroundMusic = false;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
+        standardBackgroundMusic = true;    // = true: Verwenden der Standard-Hintergrund-Musikauswahl
 
     public static Clip
         currentBg,        // Die aktuell abgespielte Hintergrund-Musik
@@ -166,7 +166,7 @@ public class Audio
         powerAnnouncer[PowerUpType.REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
         powerAnnouncer[PowerUpType.BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");
 
-        if(MICHAEL_MODE)
+        if(false && MICHAEL_MODE)
         {
             mainMenu = getAudioClip("main_menu.wav");
             repairShop = getAudioClip("repair_shop.wav");
@@ -207,8 +207,8 @@ public class Audio
     // Rückgabe der aktuell zu spielenden Hintergrundmusik
     private static Clip getBgMusic()
     {
-        if(!standardBackgroundMusic)
-        {
+        /*if(standardBackgroundMusic)
+        {*/
             if(WindowManager.window == WindowType.GAME && !Events.isCurrentLevelBossLevel())
             {
                 return bgMusic2;
@@ -218,7 +218,7 @@ public class Audio
                 return bgMusic1;
             }
             return bgMusic3;
-        }
+        /*}
         else if(WindowManager.window == REPAIR_SHOP)
         {
             return repairShop;
@@ -279,7 +279,7 @@ public class Audio
         {
             return finalBossLevel;
         }
-        return victory;
+        return victory;*/
     }
 
     public static void play(Clip clip)

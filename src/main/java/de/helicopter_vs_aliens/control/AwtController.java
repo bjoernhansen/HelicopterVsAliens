@@ -8,17 +8,24 @@ import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.Label;
-import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Optional;
 
 
 public final class AwtController extends JPanel implements Controller, Runnable, GuiStateProvider
@@ -31,28 +38,13 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
     private static final Dimension
         WINDOW_SIZE = new Dimension(STANDARD_RESOLUTION.width + 6,
-        STANDARD_RESOLUTION.height + 29);
-
-    private static final DisplayMode
-        standardDisplayMode = new DisplayMode(
-        STANDARD_RESOLUTION.width,
-        STANDARD_RESOLUTION.height,
-        32, 60);
+                                    STANDARD_RESOLUTION.height + 29);
 
     private static final long
         DELAY = 16;
 
-    private boolean
-        isFullScreen = true;
-
-    private transient DisplayMode
-        currentDisplayMode;
-
     private Dimension
         displayShift = new Dimension();
-
-    private boolean
-        isAntialiasingActivated = true;
 
     private int
         backgroundRepaintTimer = 0;
@@ -129,17 +121,14 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
         device = GraphicsEnvironment.getLocalGraphicsEnvironment()
                                     .getDefaultScreenDevice();
-        if(!device.isFullScreenSupported())
-        {
-            isFullScreen = false;
-        }
+
         originalDisplayMode = device.getDisplayMode();
 
 
         frame.setUndecorated(true);
         device.setFullScreenWindow(frame);
         activateDisplayMode();
-        switchDisplayMode(null);
+        switchDisplayMode();
 
         frame.setVisible(true);
 
@@ -215,12 +204,13 @@ public final class AwtController extends JPanel implements Controller, Runnable,
                 {
                     this.clearBackground(graphicsAdapter);
                 }
-                graphicsAdapter.drawImage(this.offImage,
+                graphicsAdapter.drawImage(
+                    this.offImage,
                     displayShift.width,
                     displayShift.height);
             }
 
-            if(isFullScreen || isMouseCursorInWindow())
+            if(isMouseCursorInWindow())
             {
                 gameProgress.updateGame();
             }
@@ -251,10 +241,9 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         graphicsAdapter.setColor(Color.black);
         graphicsAdapter.fillRect(0,
             0,
-            currentDisplayMode.getWidth(),
-            currentDisplayMode.getHeight());
+            originalDisplayMode.getWidth(),
+            originalDisplayMode.getHeight());
     }
-
 
     private void paintFrame(GraphicsAdapter graphicsAdapter)
     {
@@ -262,12 +251,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
                        .setGraphics(graphicsAdapter);
         gameProgress.getWindowManager()
                     .paintWindow(graphicsAdapter);
-    }
-
-    @Override
-    public boolean isAntialiasingActivated()
-    {
-        return isAntialiasingActivated;
     }
 
     @Override
@@ -288,60 +271,27 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         return eventListener.isMouseCursorInWindow();
     }
 
-
-    @Override
-    public void switchAntialiasingActivationState(Button currentButton)
+    public void switchDisplayMode()
     {
-        isAntialiasingActivated = !isAntialiasingActivated;
-        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, isAntialiasingActivated
-            ? RenderingHints.VALUE_ANTIALIAS_ON
-            : RenderingHints.VALUE_ANTIALIAS_OFF);
-        Window.dictionary.updateAntialiasing();
-        currentButton.setPrimaryLabel(Window.dictionary.antialiasing());
-    }
-
-    @Override
-    public void switchDisplayMode(Button currentButton)
-    {
-        isFullScreen = !isFullScreen;
-
-        Window.dictionary.updateDisplayMode();
-        Optional.ofNullable(currentButton)
-                .ifPresent(button -> button.setPrimaryLabel(Window.dictionary.oppositeDisplayMode()));
-
         frame.dispose();
-        frame.setUndecorated(isFullScreen);
-
-        if(isFullScreen)
-        {
-            device.setFullScreenWindow(frame);
-            activateDisplayMode();
-        }
-        else
-        {
-            device.setFullScreenWindow(null);
-            if(currentButton != null)
-            {
-                Window.adaptToWindowMode(displayShift);
-            }
-            frame.setSize(WINDOW_SIZE);
-            frame.setLocation((int) ((originalDisplayMode.getWidth()
-                    - WINDOW_SIZE.getWidth()) / 2),
-                (int) ((originalDisplayMode.getHeight()
-                    - WINDOW_SIZE.getHeight()) / 2));
-            frame.setVisible(true);
-        }
+        frame.setUndecorated(false);
+        device.setFullScreenWindow(null);
+        frame.setSize(WINDOW_SIZE);
+        frame.setLocation((int) ((originalDisplayMode.getWidth()
+                - WINDOW_SIZE.getWidth()) / 2),
+            (int) ((originalDisplayMode.getHeight()
+                - WINDOW_SIZE.getHeight()) / 2));
+        frame.setVisible(true);
     }
 
     private void activateDisplayMode()
     {
-        currentDisplayMode = Window.hasOriginalResolution
-            ? originalDisplayMode
-            : standardDisplayMode;
-        device.setDisplayMode(currentDisplayMode);
+        device.setDisplayMode(originalDisplayMode);
 
-        displayShift = new Dimension((currentDisplayMode.getWidth() - Main.VIRTUAL_DIMENSION.width) / 2,
-            (currentDisplayMode.getHeight() - Main.VIRTUAL_DIMENSION.height) / 2);
+        displayShift = new Dimension(
+            ((int)STANDARD_RESOLUTION.getWidth() - Main.VIRTUAL_DIMENSION.width) / 2 - 5,
+            ((int)STANDARD_RESOLUTION.getHeight() - Main.VIRTUAL_DIMENSION.height) / 2 - 5);
+
         if(Window.label == null)
         {
             Window.label = new Label();
@@ -358,20 +308,8 @@ public final class AwtController extends JPanel implements Controller, Runnable,
     }
 
     @Override
-    public boolean isFullScreen()
-    {
-        return isFullScreen;
-    }
-
-    @Override
     public Dimension getDisplayShift()
     {
         return displayShift;
-    }
-
-    @Override
-    public DisplayMode getCurrentDisplayMode()
-    {
-        return currentDisplayMode;
     }
 }

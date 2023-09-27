@@ -68,7 +68,7 @@ public abstract class Window implements Paintable
 		DEFAULT_PLAYER_NAME = "John Doe";
 		
 	public static final int
-        NUMBER_OF_SETTING_OPTIONS = 5,	    
+        NUMBER_OF_SETTING_OPTIONS = 3,
 		POWER_UP_SIZE = 23,
 		NUMBER_OF_START_SCREEN_HELICOPTERS = 4,
 		MESSAGE_LINE_COUNT = 4,
@@ -629,14 +629,6 @@ public abstract class Window implements Paintable
 		{
 			identifyHighlightedButtons(helicopter, ButtonGroup.START_SCREEN_MENU);
 		}
-	}
-
-	public static void adaptToWindowMode(Dimension displayShift)
-	{
-		label.setBounds(	displayShift.width  + 42,
-  						   	displayShift.height + 83,
-							940,
-							240);
 	}
 	
 	public static void reset()

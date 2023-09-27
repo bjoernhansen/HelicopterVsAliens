@@ -205,61 +205,15 @@ public final class Dictionary
     private void updateSettingsLabels()
     {
         Map<StartScreenMenuButtonType, String> settingsLabels = new EnumMap<>(StartScreenMenuButtonType.class);
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, audioActivation());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_4, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_4.getButtonLabelKey(WindowType.SETTINGS)));
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_5, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_5.getButtonLabelKey(WindowType.SETTINGS)));
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_6, changeMusicModeLabel());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_1,  audioActivation());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_2.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_3.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_4, changeMusicModeLabel());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_5, "");
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_6, "");
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_7, "");
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_8, "");
         startScreenSubButtonName.put(WindowType.SETTINGS, settingsLabels);
-    }
-
-    public void updateDisplayMode()
-    {
-        startScreenSubButtonName.get(WindowType.SETTINGS)
-                                .put(StartScreenMenuButtonType.BUTTON_1, oppositeDisplayMode());
-    }
-
-    public String displayMode()
-    {
-        String key = "displayMode." + (isFullScreen() ? "fullscreen" : "window");
-        return this.languageProperties.getProperty(key);
-    }
-
-    public String oppositeDisplayMode()
-    {
-        String key = "displayMode." + (isFullScreen() ? "window" : "fullscreen");
-        return this.languageProperties.getProperty(key);
-    }
-
-    private boolean isFullScreen()
-    {
-        return Optional.ofNullable(GameResources.getProvider())
-                       .map(GameRessourceProvider::getGuiStateProvider)
-                       .map(GuiStateProvider::isFullScreen)
-                       .orElse(false);
-    }
-
-    private boolean isAntialiasingActivated()
-    {
-        return Optional.ofNullable(GameResources.getProvider())
-                       .map(GameRessourceProvider::getGuiStateProvider)
-                       .map(GuiStateProvider::isAntialiasingActivated)
-                       .orElse(false);
-    }
-
-    public void updateAntialiasing()
-    {
-        startScreenSubButtonName.get(WindowType.SETTINGS)
-                                .put(StartScreenMenuButtonType.BUTTON_2, antialiasing());
-    }
-
-    public String antialiasing()
-    {
-        String key = "antialiasing." + (isAntialiasingActivated() ? "off" : "on");
-        return this.languageProperties.getProperty(key);
     }
 
     public void updateAudioActivation()
@@ -287,16 +241,16 @@ public final class Dictionary
 
     private List<String> determineEnergyAbility()
     {
-        String dictionaryKeyPraefix = String.format("%s.%s.", StandardUpgradeType.ENERGY_ABILITY.getDictionaryKey(), helicopterType.getDesignation());
-        return getImprovementsStringList(dictionaryKeyPraefix);
+        String dictionaryKeyPrefix = String.format("%s.%s.", StandardUpgradeType.ENERGY_ABILITY.getDictionaryKey(), helicopterType.getDesignation());
+        return getImprovementsStringList(dictionaryKeyPrefix);
     }
 
-    private List<String> getImprovementsStringList(String dictionaryKeyPraefix)
+    private List<String> getImprovementsStringList(String dictionaryKeyPrefix)
     {
         List<String> improvements = new ArrayList<>();
         for (int i = 1; i <= 2; i++)
         {
-            improvements.add(this.languageProperties.getProperty(dictionaryKeyPraefix + i));
+            improvements.add(this.languageProperties.getProperty(dictionaryKeyPrefix + i));
         }
         return improvements;
     }
@@ -474,7 +428,7 @@ public final class Dictionary
 
     public String changeMusicModeLabel()
     {
-        return Audio.MICHAEL_MODE ? this.languageProperties.getProperty("buttonLabel.startScreenSub.settings.5") : "";
+        return Audio.MICHAEL_MODE ? this.languageProperties.getProperty("buttonLabel.startScreenSub.settings.3") : "";
     }
 
     public String helicopterSelectionRequest()

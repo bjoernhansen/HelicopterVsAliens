@@ -173,7 +173,7 @@ public class Events
                 cancel(gameRessourceProvider);
             }
         }
-        else if (WindowManager.window == SETTINGS && Window.page == StartScreenMenuButtonType.BUTTON_5)
+        else if (WindowManager.window == SETTINGS && Window.page == StartScreenMenuButtonType.BUTTON_3)
         {
             int nameLength = currentPlayerName.length();
             if (keyEvent.isKeyEqualTo(SpecialKey.ENTER))
@@ -381,6 +381,7 @@ public class Events
         }
     }
 
+    // TODO der ganze Code im Zusammenhang mit der Namensänderung gehört in eine eigene Klasse
     private static void checkName(Savegame savegame)
     {
         if (!currentPlayerName.equals(savegame.getCurrentPlayerName()))
@@ -392,7 +393,7 @@ public class Events
             else
             {
                 boolean isDefaultPlayerNameSet = currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME);
-                Window.buttons.get(StartScreenMenuButtonType.BUTTON_5)
+                Window.buttons.get(StartScreenMenuButtonType.BUTTON_3)
                               .setMarked(isDefaultPlayerNameSet);
                 Window.buttons.get(StartScreenButtonType.SETTINGS)
                               .setMarked(isDefaultPlayerNameSet);
@@ -882,7 +883,7 @@ public class Events
             newStartScreenSubWindow(SETTINGS, true);
             if (currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
             {
-                Window.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(true);
+                Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
             }
         }
         else if (Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).getBounds().contains(cursor))
@@ -1004,9 +1005,7 @@ public class Events
                 }
                 else if (WindowManager.window == SETTINGS)
                 {
-                    settingsMousePressedLeft(gameRessourceProvider,
-                        currentButton,
-                        oldPage);
+                    settingsMousePressedLeft(gameRessourceProvider, oldPage);
                 }
                 else
                 {
@@ -1019,33 +1018,24 @@ public class Events
     }
 
     private static void settingsMousePressedLeft(GameRessourceProvider gameRessourceProvider,
-                                                 Button currentButton,
                                                  StartScreenMenuButtonType oldPage)
     {
         Savegame savegame = gameRessourceProvider.getSaveGame();
         if (Window.page == StartScreenMenuButtonType.BUTTON_1)
         {
-            gameRessourceProvider.getGuiStateProvider().switchDisplayMode(currentButton);
+            switchAudioActivationState(savegame);
         }
         else if (Window.page == StartScreenMenuButtonType.BUTTON_2)
         {
-            gameRessourceProvider.getGuiStateProvider().switchAntialiasingActivationState(currentButton);
-        }
-        else if (Window.page == StartScreenMenuButtonType.BUTTON_3)
-        {
-            switchAudioActivationState(savegame);
+            Window.changeLanguage(gameRessourceProvider);
         }
         else if (Window.page == StartScreenMenuButtonType.BUTTON_4)
         {
-            Window.changeLanguage(gameRessourceProvider);
-        }
-        else if (Window.page == StartScreenMenuButtonType.BUTTON_7)
-        {
             Audio.changeBgMusicMode(savegame);
         }
-        if (oldPage == StartScreenMenuButtonType.BUTTON_5)
+        if (oldPage == StartScreenMenuButtonType.BUTTON_3)
         {
-            if (Window.page == StartScreenMenuButtonType.BUTTON_5)
+            if (Window.page == StartScreenMenuButtonType.BUTTON_3)
             {
                 Window.page = StartScreenMenuButtonType.BUTTON_1;
             }
@@ -1467,7 +1457,7 @@ public class Events
         Audio.refreshBackgroundMusic();
         Window.dictionary.updateAudioActivation();
         Window.buttons.get(MainMenuButtonType.STOP_MUSIC).setPrimaryLabel(Window.dictionary.audioActivation());
-        Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setPrimaryLabel(Window.dictionary.audioActivation());
+        Window.buttons.get(StartScreenMenuButtonType.BUTTON_1).setPrimaryLabel(Window.dictionary.audioActivation());
     }
 
     public static void determineHighscoreTimes(Helicopter helicopter)

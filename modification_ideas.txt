@@ -1,6 +1,11 @@
-Bug-Report:
+
+config.properties erstellen und verwenden für Wahl JavaFX oder AWT, weitere Einstellungen, die Hart codiert sind
 
 evtl. ThreadLocalRandom.current().nextInt(set.size()) verwenden, soll effizienter sein
+
+
+
+Bug-Report:
 
 Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kehrtwende unterbinden innerhalb gewisser
 Zeit, wenn gedreht an Barrier.
