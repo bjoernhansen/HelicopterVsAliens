@@ -6,7 +6,6 @@ import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.FrameSkipStatusType;
 import de.helicopter_vs_aliens.control.GameProgress;
 import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
-import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -33,9 +32,6 @@ import java.awt.image.BufferedImage;
 
 public final class AwtController extends JPanel implements Controller, Runnable, GuiStateProvider
 {
-    private static final int
-        BACKGROUND_PAINT_DISABLED = -1;
-
     private static final long
         DELAY = 16;
 
@@ -44,16 +40,16 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
     private static final Dimension
         WINDOW_SIZE = Dimension.newInstance(
-                        STANDARD_RESOLUTION.getWidth() + 6,
-                        STANDARD_RESOLUTION.getHeight() + 29);
+        STANDARD_RESOLUTION.getWidth() + 6,
+        STANDARD_RESOLUTION.getHeight() + 29);
 
     private static final Dimension
         DISPLAY_SHIFT = Dimension.newInstance(
-            (STANDARD_RESOLUTION.getWidth() - Main.VIRTUAL_DIMENSION.width - 10) / 2,
-            (STANDARD_RESOLUTION.getHeight() - Main.VIRTUAL_DIMENSION.height - 10) / 2);
+        (STANDARD_RESOLUTION.getWidth() - Main.VIRTUAL_DIMENSION.width - 10) / 2,
+        (STANDARD_RESOLUTION.getHeight() - Main.VIRTUAL_DIMENSION.height - 10) / 2);
 
-    private int
-        backgroundRepaintTimer = 0;
+    private final BackgroundRepaintTimer
+        backgroundRepaintTimer = new BackgroundRepaintTimer();
 
     private long
         timeMillis;
@@ -121,7 +117,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         this.setLayout(null);
 
         GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                                    .getDefaultScreenDevice();
+                                                   .getDefaultScreenDevice();
 
         originalDisplayMode = device.getDisplayMode();
 
@@ -208,7 +204,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
     @Override
     protected void paintComponent(Graphics g)
     {
-        // TODO kontrollieren warum hier ein Feld versteckt wird
+        // TODO kontrollieren, warum hier ein Feld versteckt wird
         GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(g);
         if(this.graphicsAdapter != null)
         {
@@ -218,7 +214,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
             }
             else
             {
-                if(this.backgroundRepaintTimer != BACKGROUND_PAINT_DISABLED)
+                if(backgroundRepaintTimer.isActive())
                 {
                     this.clearBackground(graphicsAdapter);
                 }
@@ -248,14 +244,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
     private void clearBackground(GraphicsAdapter graphicsAdapter)
     {
-        if(backgroundRepaintTimer > 1)
-        {
-            backgroundRepaintTimer = Timer.DISABLED;
-        }
-        else
-        {
-            backgroundRepaintTimer++;
-        }
+        backgroundRepaintTimer.proceed();
         graphicsAdapter.setColor(Color.black);
         graphicsAdapter.fillRect(0,
             0,
@@ -274,7 +263,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
     @Override
     public void resetBackgroundRepaintTimer()
     {
-        backgroundRepaintTimer = 0;
+        backgroundRepaintTimer.reset();
     }
 
 

@@ -34,12 +34,13 @@ public final class GameProgress implements GameRessourceProvider
     private int
         gameLoopCount = 0;
 
-    // TODO ... eigentlich sollte Helicopter hier noch gar nicht initialisiert werden müssen, muss er aber -> Checken
+
 
     private final GraphicsApiType
         graphicsApiType;
 
     private Helicopter
+        // TODO ... eigentlich sollte Helicopter hier noch gar nicht initialisiert werden müssen, muss er aber -> Checken
         helicopter = HelicopterType.getDefault()
                                    .makeInstance();
 
