@@ -70,7 +70,7 @@ public final class GameProgress implements GameRessourceProvider
 
     public GameProgress(GraphicsApiType graphicsApiType)
     {
-        GameResources.setGameResources(this);
+
         this.graphicsApiType = graphicsApiType;
         scenery = new Scenery(this);
     }

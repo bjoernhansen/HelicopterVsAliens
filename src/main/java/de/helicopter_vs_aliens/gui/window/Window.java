@@ -1,16 +1,10 @@
 package de.helicopter_vs_aliens.gui.window;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
-import de.helicopter_vs_aliens.model.helicopter.Roch;
-import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.model.powerup.PowerUpType;
-import de.helicopter_vs_aliens.util.Calculations;
-import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.BlockMessage;
@@ -30,13 +24,18 @@ import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.model.Paintable;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.model.helicopter.Roch;
+import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
+import de.helicopter_vs_aliens.util.Calculations;
+import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 import de.helicopter_vs_aliens.util.geometry.Point;
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -45,7 +44,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-// TODO statische importe entfernen und stattdessen direct PriceLevel.CHEAP, ... ansprechen
 import static de.helicopter_vs_aliens.gui.PriceLevel.CHEAP;
 import static de.helicopter_vs_aliens.gui.PriceLevel.EXPENSIVE;
 import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
