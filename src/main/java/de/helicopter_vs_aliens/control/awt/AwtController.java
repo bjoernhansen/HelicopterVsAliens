@@ -48,8 +48,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         (STANDARD_RESOLUTION.getWidth() - Main.VIRTUAL_DIMENSION.width - 10) / 2,
         (STANDARD_RESOLUTION.getHeight() - Main.VIRTUAL_DIMENSION.height - 10) / 2);
 
-    private final BackgroundRepaintTimer
-        backgroundRepaintTimer = new BackgroundRepaintTimer();
 
     private long
         timeMillis;
@@ -138,7 +136,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
                 940,
                 240);
         }
-        resetBackgroundRepaintTimer();
+        gameProgress.resetBackgroundRepaintTimer();
         frame.dispose();
         frame.setUndecorated(false);
         device.setFullScreenWindow(null);
@@ -214,7 +212,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
             }
             else
             {
-                if(backgroundRepaintTimer.isActive())
+                if(gameProgress.getBackgroundRepaintTimer().isActive())
                 {
                     this.clearBackground(graphicsAdapter);
                 }
@@ -244,7 +242,7 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
     private void clearBackground(GraphicsAdapter graphicsAdapter)
     {
-        backgroundRepaintTimer.proceed();
+        gameProgress.getBackgroundRepaintTimer().proceed();
         graphicsAdapter.setColor(Color.black);
         graphicsAdapter.fillRect(0,
             0,
@@ -259,13 +257,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
         gameProgress.getWindowManager()
                     .paintWindow(graphicsAdapter);
     }
-
-    @Override
-    public void resetBackgroundRepaintTimer()
-    {
-        backgroundRepaintTimer.reset();
-    }
-
 
     public static Dimension getDisplayShift()
     {

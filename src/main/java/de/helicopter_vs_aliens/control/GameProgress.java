@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.control;
 
+import de.helicopter_vs_aliens.control.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
@@ -67,6 +68,10 @@ public final class GameProgress implements GameRessourceProvider
 
     private boolean
         isMouseCursorInWindow = true;
+
+    private final BackgroundRepaintTimer
+        backgroundRepaintTimer = new BackgroundRepaintTimer();
+
 
 
     public GameProgress(GraphicsApiType graphicsApiType)
@@ -232,5 +237,16 @@ public final class GameProgress implements GameRessourceProvider
     public GraphicsApiType getGraphicsApiType()
     {
         return graphicsApiType;
+    }
+
+    public BackgroundRepaintTimer getBackgroundRepaintTimer()
+    {
+        return backgroundRepaintTimer;
+    }
+
+    @Override
+    public void resetBackgroundRepaintTimer()
+    {
+        backgroundRepaintTimer.reset();
     }
 }

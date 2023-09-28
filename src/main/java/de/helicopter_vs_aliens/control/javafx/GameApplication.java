@@ -169,14 +169,6 @@ public class GameApplication extends Application implements GuiStateProvider
         System.out.println("keyEvent - ende!");
     }
 
-
-
-    @Override
-    public void resetBackgroundRepaintTimer()
-    {
-        // not necessary
-    }
-
     private void updateGame()
     {
         gameProgress.updateGame();

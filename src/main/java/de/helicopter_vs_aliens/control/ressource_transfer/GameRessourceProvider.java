@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.control.ressource_transfer;
 
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
+import de.helicopter_vs_aliens.control.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
@@ -39,4 +40,6 @@ public interface GameRessourceProvider extends HelicopterAccessor
     void notifyMousePointerEnteredWindow();
 
     boolean isMouseCursorInWindow();
+
+    void resetBackgroundRepaintTimer();
 }

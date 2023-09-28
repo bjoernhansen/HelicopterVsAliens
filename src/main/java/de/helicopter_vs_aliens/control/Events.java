@@ -412,7 +412,7 @@ public class Events
             cursor.setLocation(
                 mouseEvent.getX() - displayShift.getWidth(),
                 mouseEvent.getY() - displayShift.getHeight());
-            gameRessourceProvider.getGuiStateProvider().resetBackgroundRepaintTimer();
+            gameRessourceProvider.resetBackgroundRepaintTimer();
             mousePressedLeft(gameRessourceProvider);
         }
         // TODO in Methode auslagern
