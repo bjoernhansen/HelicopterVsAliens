@@ -5,7 +5,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.FrameSkipStatusType;
 import de.helicopter_vs_aliens.control.GameProgress;
-import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -30,7 +29,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 
-public final class AwtController extends JPanel implements Controller, Runnable, GuiStateProvider
+public final class AwtController extends JPanel implements Controller, Runnable
 {
     private static final long
         DELAY = 16;
@@ -79,7 +78,6 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
     public AwtController(GameProgress gameProgress)
     {
-        gameProgress.setGuiStateProvider(this);
         this.gameProgress = gameProgress;
         eventListener = new EventListener(gameProgress);
     }
@@ -212,7 +210,8 @@ public final class AwtController extends JPanel implements Controller, Runnable,
             }
             else
             {
-                if(gameProgress.getBackgroundRepaintTimer().isActive())
+                if(gameProgress.getBackgroundRepaintTimer()
+                               .isActive())
                 {
                     this.clearBackground(graphicsAdapter);
                 }
@@ -242,7 +241,8 @@ public final class AwtController extends JPanel implements Controller, Runnable,
 
     private void clearBackground(GraphicsAdapter graphicsAdapter)
     {
-        gameProgress.getBackgroundRepaintTimer().proceed();
+        gameProgress.getBackgroundRepaintTimer()
+                    .proceed();
         graphicsAdapter.setColor(Color.black);
         graphicsAdapter.fillRect(0,
             0,

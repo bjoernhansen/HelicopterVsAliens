@@ -4,11 +4,10 @@ import de.helicopter_vs_aliens.control.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
-import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.GameEntity;
@@ -34,7 +33,6 @@ public final class GameProgress implements GameRessourceProvider
 
     private int
         gameLoopCount = 0;
-
 
 
     private final GraphicsApiType
@@ -63,15 +61,11 @@ public final class GameProgress implements GameRessourceProvider
     private final GameStatisticsCalculator
         gameStatisticsCalculator = new GameStatisticsCalculator();
 
-    private GuiStateProvider
-        guiStateProvider;
-
     private boolean
         isMouseCursorInWindow = true;
 
     private final BackgroundRepaintTimer
         backgroundRepaintTimer = new BackgroundRepaintTimer();
-
 
 
     public GameProgress(GraphicsApiType graphicsApiType)
@@ -124,17 +118,6 @@ public final class GameProgress implements GameRessourceProvider
     public ActiveGameEntityManager getActiveGameEntityManager()
     {
         return activeGameEntityManager;
-    }
-
-    @Override
-    public GuiStateProvider getGuiStateProvider()
-    {
-        return guiStateProvider;
-    }
-
-    public void setGuiStateProvider(GuiStateProvider guiStateProvider)
-    {
-        this.guiStateProvider = guiStateProvider;
     }
 
     @Override

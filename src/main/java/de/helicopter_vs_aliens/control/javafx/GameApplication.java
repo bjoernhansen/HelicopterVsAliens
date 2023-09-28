@@ -5,7 +5,6 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameProgress;
 import de.helicopter_vs_aliens.control.events.EventFactory;
 import de.helicopter_vs_aliens.control.events.SpecialKey;
-import de.helicopter_vs_aliens.control.ressource_transfer.GuiStateProvider;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -34,7 +33,7 @@ import java.awt.image.BufferedImage;
 import static de.helicopter_vs_aliens.Main.VIRTUAL_DIMENSION;
 
 
-public class GameApplication extends Application implements GuiStateProvider
+public class GameApplication extends Application
 {
     private static final Dimension
         DISPLAY_SHIFT = Dimension.newInstance(0, 0);
@@ -59,7 +58,6 @@ public class GameApplication extends Application implements GuiStateProvider
     public GameApplication()
     {
         gameProgress = JavaFxController.gameProgress;
-        gameProgress.setGuiStateProvider(this);
     }
 
     @Override

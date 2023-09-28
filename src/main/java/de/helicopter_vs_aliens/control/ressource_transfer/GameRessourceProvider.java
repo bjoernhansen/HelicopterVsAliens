@@ -22,8 +22,6 @@ public interface GameRessourceProvider extends HelicopterAccessor
     GameEntitySupplier getGameEntitySupplier();
     
     ActiveGameEntityManager getActiveGameEntityManager();
-
-    GuiStateProvider getGuiStateProvider();
     
     <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory);
 
