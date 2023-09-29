@@ -16,12 +16,14 @@ public class Label extends JTextPane
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public Label()
+    public Label(Dimension displayShift)
     {
-        Dimension displayShift = GameResources.getProvider()
-                                              .getDisplayShift();
-        setBounds(displayShift.getWidth() + 42,
-            displayShift.getHeight() + 83, 940, 240);
+        setBounds(
+            displayShift.getWidth() + 42,
+            displayShift.getHeight() + 83,
+            940,
+            240);
+
         setEditable(false);
         setEnabled(true);
         setBackground(Color.black);

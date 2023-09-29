@@ -8,7 +8,6 @@ import de.helicopter_vs_aliens.control.GameProgress;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
-import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
@@ -22,7 +21,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
@@ -92,15 +90,66 @@ public final class AwtController extends JPanel implements Controller, Runnable
         Audio.refreshBackgroundMusic();
     }
 
-    // TODO Refactoring dieser Methode
     private void init()
+    {
+        Audio.initialize();
+        initializeFrame();
+        addListener();
+        initAndAddLabel();
+
+        originalDisplayMode = getDisplayMode();
+        wholeScreenClip = createWholeScreenClip();
+        offImage = createOffImage();
+        graphicsAdapter = createGraphicsAdapterFrom(offImage);
+    }
+
+    private static DisplayMode getDisplayMode()
+    {
+        return GraphicsEnvironment.getLocalGraphicsEnvironment()
+                                  .getDefaultScreenDevice()
+                                  .getDisplayMode();
+    }
+
+    private void addListener()
+    {
+        addMouseListener(eventListener);
+        addMouseMotionListener(eventListener);
+    }
+
+    private void initAndAddLabel()
+    {
+        setLayout(null);
+        Window.initLabel(DISPLAY_SHIFT);
+        add(Window.label);
+    }
+
+    private Rectangle2D createWholeScreenClip()
+    {
+        Dimension offDimension = Dimension.of(getSize());
+        return new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
+    }
+
+    private GraphicsAdapter createGraphicsAdapterFrom(Image offImage)
+    {
+        GraphicsAdapter newGraphicsAdapter = Graphics2DAdapter.of(offImage);
+        newGraphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        return newGraphicsAdapter;
+    }
+
+    private BufferedImage createOffImage()
+    {
+        return new BufferedImage(
+            (int) Main.VIRTUAL_DIMENSION.getWidth(),
+            (int) Main.VIRTUAL_DIMENSION.getHeight(),
+            BufferedImage.TYPE_INT_RGB);
+    }
+
+    private void initializeFrame()
     {
         JFrame frame = new JFrame("Helicopter vs. Aliens");
         frame.setBackground(Color.black);
         frame.add("Center", this);
-
         frame.addKeyListener(eventListener);
-        frame.setResizable(false);
         frame.addWindowListener(new WindowAdapter()
         {
             @Override
@@ -109,60 +158,9 @@ public final class AwtController extends JPanel implements Controller, Runnable
                 System.exit(0);
             }
         });
-
-        this.setLayout(null);
-
-        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                                                   .getDefaultScreenDevice();
-
-        originalDisplayMode = device.getDisplayMode();
-
-
-        frame.setUndecorated(true);
-        device.setFullScreenWindow(frame);
-        device.setDisplayMode(originalDisplayMode);
-
-        if(Window.label == null)
-        {
-            Window.label = new Label();
-        }
-        else
-        {
-            Window.label.setBounds(
-                DISPLAY_SHIFT.getWidth() + 42,
-                DISPLAY_SHIFT.getHeight() + 83,
-                940,
-                240);
-        }
-        gameProgress.resetBackgroundRepaintTimer();
-        frame.dispose();
-        frame.setUndecorated(false);
-        device.setFullScreenWindow(null);
-        frame.setSize(WINDOW_SIZE.getWidth(), WINDOW_SIZE.getHeight());
-        frame.setLocation(
-            (originalDisplayMode.getWidth() - WINDOW_SIZE.getWidth()) / 2,
-            (originalDisplayMode.getHeight() - WINDOW_SIZE.getHeight()) / 2);
+        frame.setSize(WINDOW_SIZE.asAwtDimension());
+        frame.setResizable(false);
         frame.setVisible(true);
-
-
-        Audio.initialize();
-
-        Dimension offDimension = Dimension.of(getSize());
-        wholeScreenClip = new Rectangle2D.Double(0, 0, offDimension.getWidth(), offDimension.getHeight());
-        offImage = new BufferedImage((int) Main.VIRTUAL_DIMENSION.getWidth(), (int) Main.VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
-        graphicsAdapter = Graphics2DAdapter.of(offImage);
-        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphicsAdapter.fillRectangle(wholeScreenClip);
-
-        Shape offscreenClip = new Rectangle2D.Double(0,
-            0,
-            Main.VIRTUAL_DIMENSION.getWidth(),
-            Main.VIRTUAL_DIMENSION.getHeight());
-        graphicsAdapter.setClip(offscreenClip);
-
-        add(Window.label);
-        addMouseListener(eventListener);
-        addMouseMotionListener(eventListener);
     }
 
     @Override

@@ -33,6 +33,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Language;
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 import de.helicopter_vs_aliens.util.geometry.Point;
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 
@@ -106,8 +107,6 @@ public abstract class Window implements Paintable
 	public static HelicopterType
 		unlockedType;					// Typ des freigeschalteten Helicopters
 
-	
-	
 	public static boolean
 		isMenuVisible,					// = true: Spielmenü ist sichtbar
 		hasOriginalResolution = false;
@@ -181,8 +180,12 @@ public abstract class Window implements Paintable
 							 .setAlpha(Colorations.MAX_VALUE - alphaStepSize);
 		}
 	}
-	
-	
+
+	public static void initLabel(Dimension displayShift)
+	{
+		label = new Label(displayShift);
+	}
+
 	/** Paint-Methoden **/
 	@Override
 	public void paint(GraphicsAdapter graphicsAdapter)
