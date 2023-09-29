@@ -614,13 +614,18 @@ public abstract class Window implements Paintable
 	public static void update(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		updateWindow(helicopter, gameRessourceProvider.getGameLoopCount());
+	}
+
+	protected static void updateWindow(Helicopter helicopter, int gameLoopCount)
+	{
 		if(WindowManager.window  == REPAIR_SHOP)
 		{
 			updateRepairShop(helicopter);
 		}
 		else if(WindowManager.window  == START_SCREEN)
 		{
-			updateStartScreen(helicopter, gameRessourceProvider.getGameLoopCount());
+			updateStartScreen(helicopter, gameLoopCount);
 		}
 		else if(WindowManager.window  == SCORE_SCREEN)
 		{
@@ -631,7 +636,7 @@ public abstract class Window implements Paintable
 			identifyHighlightedButtons(helicopter, ButtonGroup.START_SCREEN_MENU);
 		}
 	}
-	
+
 	public static void reset()
 	{
 		stopButtonHighlighting();

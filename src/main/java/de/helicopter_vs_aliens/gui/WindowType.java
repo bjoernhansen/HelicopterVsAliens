@@ -105,13 +105,13 @@ public enum WindowType
        
     private final Class<? extends Window>
         menuClass;
-    
+
+
     WindowType(Class<? extends Window> menuClass,
                Supplier<? extends Window> menuInstance,
                Supplier<? extends Painter<? extends Paintable>> painterInstance,
                String endOfButtonLabelPrefix)
     {
-
         this.menuClass = menuClass;
         this.menuInstance = menuInstance;
         this.painterInstance = painterInstance;

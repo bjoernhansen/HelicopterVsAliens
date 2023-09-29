@@ -114,7 +114,7 @@ public class Savegame implements Serializable
 				Events.currentPlayerName = savegame.currentPlayerName;
 				Window.setLanguage(savegame.language);
 				Window.hasOriginalResolution = savegame.originalResolution;
-				Audio.standardBackgroundMusic = savegame.standardBackgroundMusic && Audio.MICHAEL_MODE;
+				Audio.standardBackgroundMusic = savegame.standardBackgroundMusic || !Audio.MICHAEL_MODE;
 				Audio.isSoundOn = savegame.isSoundOn;
 				Events.highScore = savegame.highScore;
 				Events.recordTimeManager = savegame.recordTimeManager;

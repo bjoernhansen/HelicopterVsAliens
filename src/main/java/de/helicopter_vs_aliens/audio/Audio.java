@@ -19,7 +19,7 @@ import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
 public class Audio
 {
     public static final boolean
-        MICHAEL_MODE = true;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
+        MICHAEL_MODE = false;        // Legt fest, ob der Michael-Modus bei der Hintergrundmusikauswahl verfügbar ist
 
     private static final int
         NUMBER_OF_ANNOUNCERS = PowerUpType.valueCount();
@@ -207,8 +207,8 @@ public class Audio
     // Rückgabe der aktuell zu spielenden Hintergrundmusik
     private static Clip getBgMusic()
     {
-        /*if(standardBackgroundMusic)
-        {*/
+        if(standardBackgroundMusic)
+        {
             if(WindowManager.window == WindowType.GAME && !Events.isCurrentLevelBossLevel())
             {
                 return bgMusic2;
@@ -218,7 +218,7 @@ public class Audio
                 return bgMusic1;
             }
             return bgMusic3;
-        /*}
+        }
         else if(WindowManager.window == REPAIR_SHOP)
         {
             return repairShop;
@@ -279,7 +279,7 @@ public class Audio
         {
             return finalBossLevel;
         }
-        return victory;*/
+        return victory;
     }
 
     public static void play(Clip clip)
