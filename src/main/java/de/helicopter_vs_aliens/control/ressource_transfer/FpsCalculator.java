@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control;
+package de.helicopter_vs_aliens.control.ressource_transfer;
 
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.gui.window.WindowManager;
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
 
-public class FpsCalculator
+class FpsCalculator
 {
     private int
         framesCount;
@@ -33,7 +33,7 @@ public class FpsCalculator
         }
     }
 
-    public void switchFpsVisibleState()
+    void switchFpsVisibleState()
     {
         if (WindowManager.window == GAME)
         {
@@ -46,7 +46,7 @@ public class FpsCalculator
         }
     }
 
-    public boolean isFpsDisplayVisible()
+    boolean isFpsDisplayVisible()
     {
         return isFpsDisplayVisible;
     }

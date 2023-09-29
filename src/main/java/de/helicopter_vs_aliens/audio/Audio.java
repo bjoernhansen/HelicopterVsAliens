@@ -166,7 +166,7 @@ public class Audio
         powerAnnouncer[PowerUpType.REPARATION.ordinal()] = getAudioClip("announcer_reparation.wav");
         powerAnnouncer[PowerUpType.BONUS_INCOME.ordinal()] = getAudioClip("announcer_bonus_credit.wav");
 
-        if(false && MICHAEL_MODE)
+        if(MICHAEL_MODE)
         {
             mainMenu = getAudioClip("main_menu.wav");
             repairShop = getAudioClip("repair_shop.wav");
@@ -181,6 +181,7 @@ public class Audio
             finalBossLevel = getAudioClip("final_boss_level.wav");
             victory = getAudioClip("victory.wav");
         }
+        Audio.refreshBackgroundMusic();
     }
 
     public static void refreshBackgroundMusic()

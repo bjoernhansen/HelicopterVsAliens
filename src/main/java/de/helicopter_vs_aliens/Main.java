@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens;
 
-import de.helicopter_vs_aliens.control.GameProgress;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
 import de.helicopter_vs_aliens.control.factory.ControllerFactory;
 import de.helicopter_vs_aliens.control.factory.ParameterProvider;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
@@ -19,8 +19,7 @@ public class Main
     {
         var parameterProvider = new ParameterProvider();
         GraphicsApiType graphicsApiType = parameterProvider.getGraphicsApiType();
-        var gameProgress = new GameProgress(graphicsApiType);
-        GameResources.setGameResources(gameProgress);
+        GameProgress gameProgress = GameResources.getGameProgressInstance(graphicsApiType);
         var controllerFactory = new ControllerFactory(gameProgress);
 
         controllerFactory.makeInstance()

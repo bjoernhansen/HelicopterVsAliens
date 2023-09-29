@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.FrameSkipStatusType;
-import de.helicopter_vs_aliens.control.GameProgress;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -83,14 +82,12 @@ public final class AwtController extends JPanel implements Controller, Runnable
     @Override
     public void start()
     {
-        gameProgress.init();
-        init();
+        initialize();
         animator = new Thread(this);
         animator.start();
-        Audio.refreshBackgroundMusic();
     }
 
-    private void init()
+    private void initialize()
     {
         Audio.initialize();
         initializeFrame();

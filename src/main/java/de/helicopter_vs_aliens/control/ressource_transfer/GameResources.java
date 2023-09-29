@@ -1,10 +1,15 @@
 package de.helicopter_vs_aliens.control.ressource_transfer;
 
 
+import de.helicopter_vs_aliens.graphics.GraphicsApiType;
+
+import java.util.Objects;
+
+
 public final class GameResources
 {
-    private static GameRessourceProvider
-        gameRessourceProvider;
+    private static GameProgress
+        gameProgress;
 
 
     private GameResources()
@@ -12,13 +17,18 @@ public final class GameResources
         throw new UnsupportedOperationException();
     }
 
-    public static void setGameResources(GameRessourceProvider gameRessourceProvider)
-    {
-        GameResources.gameRessourceProvider = gameRessourceProvider;
-    }
-
     public static GameRessourceProvider getProvider()
     {
-        return gameRessourceProvider;
+        return Objects.requireNonNull(gameProgress);
+    }
+
+    public static GameProgress getGameProgressInstance(GraphicsApiType graphicsApiType)
+    {
+        if(gameProgress == null)
+        {
+            GameResources.gameProgress = new GameProgress(graphicsApiType);
+            GameResources.gameProgress.initialize();
+        }
+        return gameProgress;
     }
 }

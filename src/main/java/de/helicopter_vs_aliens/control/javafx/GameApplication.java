@@ -2,13 +2,14 @@ package de.helicopter_vs_aliens.control.javafx;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.GameProgress;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
 import de.helicopter_vs_aliens.control.events.EventFactory;
 import de.helicopter_vs_aliens.control.events.SpecialKey;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.JavaFxAdapter;
+import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
 import javafx.animation.AnimationTimer;
@@ -63,6 +64,9 @@ public class GameApplication extends Application
     @Override
     public void start(final Stage primaryStage)
     {
+        Audio.initialize();
+        Window.initLabel(DISPLAY_SHIFT);
+
         button.setOnAction(event -> primaryStage.close());
         button.setFocusTraversable(false);
 
@@ -121,21 +125,15 @@ public class GameApplication extends Application
 
 
         GraphicsContext graphicsContext2D = canvas.getGraphicsContext2D();
-
         graphicsFxAdapter = new JavaFxAdapter(graphicsContext2D);
 
 
-        Audio.initialize();
-
-
         offImage = new BufferedImage((int) VIRTUAL_DIMENSION.getWidth(), (int) VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-
         graphicsAdapter = Graphics2DAdapter.of(offImage);
         graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 
-        Audio.refreshBackgroundMusic();
+
 
 
         new AnimationTimer()

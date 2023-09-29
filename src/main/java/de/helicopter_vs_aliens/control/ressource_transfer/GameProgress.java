@@ -1,11 +1,12 @@
-package de.helicopter_vs_aliens.control;
+package de.helicopter_vs_aliens.control.ressource_transfer;
 
+import de.helicopter_vs_aliens.control.EnemyController;
+import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -68,16 +69,15 @@ public final class GameProgress implements GameRessourceProvider
         backgroundRepaintTimer = new BackgroundRepaintTimer();
 
 
-    public GameProgress(GraphicsApiType graphicsApiType)
+    GameProgress(GraphicsApiType graphicsApiType)
     {
-
         this.graphicsApiType = graphicsApiType;
         scenery = new Scenery(this);
     }
 
-    public void init()
+    void initialize()
     {
-        setSaveGame(Savegame.initialize());
+        this.saveGame = Savegame.makeInstance();
         Window.initialize();
         Window.updateButtonLabels(helicopter);
         scenery.createInitialSceneryObjects();
@@ -181,11 +181,6 @@ public final class GameProgress implements GameRessourceProvider
     public Helicopter getHelicopter()
     {
         return helicopter;
-    }
-
-    public void setSaveGame(Savegame saveGame)
-    {
-        this.saveGame = saveGame;
     }
 
     @Override

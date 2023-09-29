@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.control.javafx;
 
 import de.helicopter_vs_aliens.control.Controller;
-import de.helicopter_vs_aliens.control.GameProgress;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
 import javafx.application.Application;
 
 

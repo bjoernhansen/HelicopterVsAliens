@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.score;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
@@ -8,7 +7,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -105,7 +103,7 @@ public class Savegame implements Serializable
 		this.currentPlayerName = Events.currentPlayerName;
 	}
 	
-	public static Savegame initialize()
+	public static Savegame makeInstance()
 	{
 		if((new File(FILENAME)).exists())
 		{			
@@ -133,9 +131,9 @@ public class Savegame implements Serializable
 			try
 			{
 				Object obj = ois.readObject();				
-				if(obj instanceof Savegame)
+				if(obj instanceof Savegame savegame)
 				{
-					return Optional.of((Savegame)obj);
+					return Optional.of(savegame);
 				}	
 			}
 			catch(InvalidClassException e)
