@@ -1,13 +1,16 @@
-package de.helicopter_vs_aliens.control.events;
+package de.helicopter_vs_aliens.control.awt;
 
 
-class AwtBasedMouseEvent implements MouseEvent
+import de.helicopter_vs_aliens.control.events.MouseEvent;
+
+
+public class AwtBasedMouseEvent implements MouseEvent
 {
     private final java.awt.event.MouseEvent
         mouseEvent;
 
 
-    AwtBasedMouseEvent(java.awt.event.MouseEvent mouseEvent)
+    public AwtBasedMouseEvent(java.awt.event.MouseEvent mouseEvent)
     {
         this.mouseEvent = mouseEvent;
     }

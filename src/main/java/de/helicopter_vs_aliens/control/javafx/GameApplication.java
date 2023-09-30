@@ -4,7 +4,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
 import de.helicopter_vs_aliens.control.events.EventFactory;
-import de.helicopter_vs_aliens.control.events.SpecialKey;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -17,14 +16,14 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
+// import javafx.scene.control.Button;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 import java.awt.Image;
@@ -39,8 +38,8 @@ public class GameApplication extends Application
     private static final Dimension
         DISPLAY_SHIFT = Dimension.newInstance(0, 0);
 
-    private final Button
-        button = new Button("Werkstatt");
+/*    private final Button
+        button = new Button("Werkstatt");*/
 
     private final GameProgress
         gameProgress;
@@ -55,7 +54,6 @@ public class GameApplication extends Application
         offImage;
 
 
-
     public GameApplication()
     {
         gameProgress = JavaFxController.gameProgress;
@@ -65,19 +63,20 @@ public class GameApplication extends Application
     public void start(final Stage primaryStage)
     {
         Audio.initialize();
-        Window.initLabel(DISPLAY_SHIFT);
 
-        button.setOnAction(event -> primaryStage.close());
-        button.setFocusTraversable(false);
+
+
+
+
+
+        /*button.setOnAction(event -> primaryStage.close());
+        button.setFocusTraversable(false);*/
 
         Canvas canvas = new Canvas(VIRTUAL_DIMENSION.width, VIRTUAL_DIMENSION.height);
 
         canvas.setOnMousePressed(e -> Events.mousePressed(EventFactory.makeMouseEvent(e), gameProgress));
-
         canvas.setOnMouseReleased(e -> Events.mouseReleased(EventFactory.makeMouseEvent(e), gameProgress.getHelicopter()));
-
         canvas.setOnMouseDragged(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), gameProgress));
-
         canvas.setOnMouseMoved(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), gameProgress));
 
 
@@ -85,16 +84,20 @@ public class GameApplication extends Application
         anchorPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY))); // Setze den Hintergrund auf Rot
         anchorPane.getChildren()
                   .add(canvas);
-        anchorPane.getChildren()
-                  .add(button);
+/*        anchorPane.getChildren()
+                  .add(button);*/
+
+
+
 
         // Set the anchorPane to be focusable
         canvas.setFocusTraversable(true);
         canvas.requestFocus();
 
 
-        anchorPane.setOnKeyPressed(this::keyEvent);
+        anchorPane.setOnKeyPressed(e -> Events.keyTyped(EventFactory.makeKeyEvent(e), gameProgress));
         // canvas.setOnKeyPressed(this::keyEvent);
+
 
 
         var scene = new Scene(anchorPane);
@@ -109,12 +112,22 @@ public class GameApplication extends Application
             (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),
             (int) ((primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0));
 
+        var htmlViewer = JavaFxBasedHtmlViewer.makeInstance(canvasShift);
+        Window.setHtmlViewer(htmlViewer);
+        WebView webView = htmlViewer.getComponent();
 
-        double verticalAnchorDistance = canvasShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
+        anchorPane.getChildren()
+                  .add(webView);
+
+       /* double verticalAnchorDistance = canvasShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
         AnchorPane.setTopAnchor(button, verticalAnchorDistance);
         double horizontalAnchorDistance = canvasShift.getWidth() + VIRTUAL_DIMENSION.width / 2.0 - 60;
         AnchorPane.setLeftAnchor(button, horizontalAnchorDistance);
-        AnchorPane.setRightAnchor(button, horizontalAnchorDistance);
+        AnchorPane.setRightAnchor(button, horizontalAnchorDistance);*/
+
+        AnchorPane.setLeftAnchor(webView, webView.getLayoutX());
+        AnchorPane.setTopAnchor(webView, webView.getLayoutY());
+
 
         AnchorPane.setLeftAnchor(canvas, (double) canvasShift.getWidth());
         AnchorPane.setTopAnchor(canvas, (double) canvasShift.getHeight());
@@ -150,19 +163,6 @@ public class GameApplication extends Application
                 paintFrame(graphicsAdapter);
             }
         }.start();
-    }
-
-    private void keyEvent(KeyEvent keyEvent)
-    {
-        de.helicopter_vs_aliens.control.events.KeyEvent javaFxEvent = EventFactory.makeKeyEvent(keyEvent);
-
-        System.out.println("keyEvent - start!");
-        System.out.println("equal to a: " + javaFxEvent.isKeyEqualTo('a'));
-        System.out.println("isLetterKey: " + javaFxEvent.isLetterKey());
-        System.out.println("isKeyAllowedForPlayerName: " + javaFxEvent.isKeyAllowedForPlayerName());
-        System.out.println("equal to ESCAPE: " + javaFxEvent.isKeyEqualTo(SpecialKey.ESCAPE));
-        System.out.println("getKey: " + javaFxEvent.getKey());
-        System.out.println("keyEvent - ende!");
     }
 
     private void updateGame()

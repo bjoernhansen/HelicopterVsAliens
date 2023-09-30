@@ -1,12 +1,14 @@
-package de.helicopter_vs_aliens.control.events;
+package de.helicopter_vs_aliens.control.javafx;
 
+import de.helicopter_vs_aliens.control.events.KeyEvent;
+import de.helicopter_vs_aliens.control.events.SpecialKey;
 import javafx.scene.input.KeyCode;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 
-class JavaFxBasedKeyEvent implements KeyEvent
+public class JavaFxBasedKeyEvent implements KeyEvent
 {
     private static final Map<SpecialKey, KeyCode>
         keyMap = new EnumMap<>(SpecialKey.class);

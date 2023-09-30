@@ -1,15 +1,16 @@
-package de.helicopter_vs_aliens.control.events;
+package de.helicopter_vs_aliens.control.javafx;
 
+import de.helicopter_vs_aliens.control.events.MouseEvent;
 import javafx.scene.input.MouseButton;
 
 
-class JavaFxBasedMouseEvent implements MouseEvent
+public class JavaFxBasedMouseEvent implements MouseEvent
 {
     private final javafx.scene.input.MouseEvent
         mouseEvent;
 
 
-    JavaFxBasedMouseEvent(javafx.scene.input.MouseEvent mouseEvent)
+    public JavaFxBasedMouseEvent(javafx.scene.input.MouseEvent mouseEvent)
     {
         this.mouseEvent = mouseEvent;
     }

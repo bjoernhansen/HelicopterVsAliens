@@ -920,9 +920,7 @@ public class Events
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
-                Dimension displayShift = gameRessourceProvider.getDisplayShift();
-                Window.label.setBounds( displayShift.getWidth() + 42,
-                                        displayShift.getHeight() + 83, 940, 240);
+                Window.htmlViewer.setWide();
             }
             newStartScreenSubWindow(INFORMATION, false);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
@@ -932,7 +930,7 @@ public class Events
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_2)
             {
-                Window.label.setVisible(true);
+                Window.htmlViewer.show();
             }
             newStartScreenSubWindow(DESCRIPTION, false);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
@@ -953,7 +951,7 @@ public class Events
                     settingsChanged = false;
                 }
             }
-            Window.label.setVisible(false);
+            Window.htmlViewer.hide();
             Window.stopButtonHighlighting();
             WindowManager.window = START_SCREEN;
         }
@@ -970,27 +968,22 @@ public class Events
                 (Window.page != buttonSpecifier || WindowManager.window == SETTINGS))
             {
                 StartScreenMenuButtonType oldPage = Window.page;
-                Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
-                    Window.label.setBounds(
-                        displayShift.getWidth() + 42,
-                        displayShift.getHeight() + 83, 940, 240);
+                    Window.htmlViewer.setWide();
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
-                    Window.label.setVisible(true);
+                    Window.htmlViewer.show();
                 }
                 Window.page = (StartScreenMenuButtonType) buttonSpecifier;
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
-                    Window.label.setBounds(
-                        displayShift.getWidth() + 92,
-                        displayShift.getHeight() + 83, 890, 240);
+                    Window.htmlViewer.setNarrow();
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
-                    Window.label.setVisible(false);
+                    Window.htmlViewer.hide();
                 }
                 if (WindowManager.window == INFORMATION && Window.page == StartScreenMenuButtonType.BUTTON_3)
                 {

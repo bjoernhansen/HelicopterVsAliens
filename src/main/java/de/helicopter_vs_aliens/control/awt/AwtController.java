@@ -116,8 +116,9 @@ public final class AwtController extends JPanel implements Controller, Runnable
     private void initAndAddLabel()
     {
         setLayout(null);
-        Window.initLabel(DISPLAY_SHIFT);
-        add(Window.label);
+        var htmlViewer = SwingBasedHtmlViewer.makeInstance(DISPLAY_SHIFT);
+        Window.setHtmlViewer(htmlViewer);
+        add(htmlViewer.getComponent());
     }
 
     private Rectangle2D createWholeScreenClip()
@@ -196,22 +197,22 @@ public final class AwtController extends JPanel implements Controller, Runnable
     protected void paintComponent(Graphics g)
     {
         // TODO kontrollieren, warum hier ein Feld versteckt wird
-        GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(g);
-        if(this.graphicsAdapter != null)
+        GraphicsAdapter localGraphicsAdapter = Graphics2DAdapter.of(g);
+        if(graphicsAdapter != null)
         {
-            if(this.frameSkipStatus == FrameSkipStatusType.INACTIVE)
+            if(frameSkipStatus == FrameSkipStatusType.INACTIVE)
             {
-                this.frameSkipStatus = FrameSkipStatusType.DISABLED;
+                frameSkipStatus = FrameSkipStatusType.DISABLED;
             }
             else
             {
                 if(gameProgress.getBackgroundRepaintTimer()
                                .isActive())
                 {
-                    this.clearBackground(graphicsAdapter);
+                    clearBackground(localGraphicsAdapter);
                 }
-                graphicsAdapter.drawImage(
-                    this.offImage,
+                localGraphicsAdapter.drawImage(
+                    offImage,
                     DISPLAY_SHIFT.getWidth(),
                     DISPLAY_SHIFT.getHeight());
             }
@@ -221,15 +222,15 @@ public final class AwtController extends JPanel implements Controller, Runnable
                 gameProgress.updateGame();
             }
 
-            if(this.frameSkipStatus == FrameSkipStatusType.ACTIVE)
+            if(frameSkipStatus == FrameSkipStatusType.ACTIVE)
             {
-                this.frameSkipStatus = FrameSkipStatusType.INACTIVE;
+                frameSkipStatus = FrameSkipStatusType.INACTIVE;
             }
             else
             {
-                this.graphicsAdapter.setColor(Colorations.bg);
-                this.graphicsAdapter.fillRectangle(this.wholeScreenClip);
-                paintFrame(this.graphicsAdapter);
+                graphicsAdapter.setColor(Colorations.bg);
+                graphicsAdapter.fillRectangle(wholeScreenClip);
+                paintFrame(graphicsAdapter);
             }
         }
     }

@@ -9,7 +9,6 @@ import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.FontProvider;
-import de.helicopter_vs_aliens.gui.Label;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.button.ButtonGroup;
 import de.helicopter_vs_aliens.gui.button.ButtonSpecifier;
@@ -33,7 +32,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Language;
-import de.helicopter_vs_aliens.util.geometry.Dimension;
 import de.helicopter_vs_aliens.util.geometry.Point;
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 
@@ -133,8 +131,8 @@ public abstract class Window implements Paintable
 	public static final Map<ButtonSpecifier, Button>
 		buttons = new HashMap<>();
 		
-    public static Label
-		label;
+    public static HtmlViewer
+		htmlViewer;
 		
 	public static final Map<PowerUpType, PowerUp>
 		collectedPowerUps = new EnumMap<>(PowerUpType.class);
@@ -181,9 +179,9 @@ public abstract class Window implements Paintable
 		}
 	}
 
-	public static void initLabel(Dimension displayShift)
+	public static void setHtmlViewer(HtmlViewer htmlViewer)
 	{
-		label = new Label(displayShift);
+		Window.htmlViewer = htmlViewer;
 	}
 
 	/** Paint-Methoden **/
@@ -509,19 +507,23 @@ public abstract class Window implements Paintable
 	
 	public static void updateStartScreenSubLabelText()
 	{
-		label.setText(labelTextProvider.getLabel(language, WindowManager.window, page));
+		htmlViewer.setText(labelTextProvider.getLabel(language, WindowManager.window, page));
 	}
-	
+
 	public static void adaptToNewWindow(boolean justEntered)
 	{
 		page = StartScreenMenuButtonType.BUTTON_1;
-		if(WindowManager.window  != HIGH_SCORE && WindowManager.window  != SETTINGS){
-			label.setVisible(true);}
+		if(WindowManager.window != HIGH_SCORE && WindowManager.window != SETTINGS)
+		{
+			htmlViewer.show();
+		}
 		updateStartScreenSubLabelText();
 		crossTimer = 0;
 		messageTimer = 0;
-		if(justEntered){
-			stopButtonHighlighting();}
+		if(justEntered)
+		{
+			stopButtonHighlighting();
+		}
 	}
 	
 	public static void stopButtonHighlighting()

@@ -1,10 +1,13 @@
-package de.helicopter_vs_aliens.control.events;
+package de.helicopter_vs_aliens.control.awt;
+
+import de.helicopter_vs_aliens.control.events.KeyEvent;
+import de.helicopter_vs_aliens.control.events.SpecialKey;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 
-class AwtBasedKeyEvent implements KeyEvent
+public class AwtBasedKeyEvent implements KeyEvent
 {
     private static final Map<SpecialKey, Integer>
         keyMap = new EnumMap<>(SpecialKey.class);
@@ -23,7 +26,7 @@ class AwtBasedKeyEvent implements KeyEvent
         keyEvent;
 
 
-    AwtBasedKeyEvent(java.awt.event.KeyEvent keyEvent)
+    public AwtBasedKeyEvent(java.awt.event.KeyEvent keyEvent)
     {
         this.keyEvent = keyEvent;
     }
