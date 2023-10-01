@@ -9,30 +9,21 @@ import java.util.function.Supplier;
 
 public enum GraphicsApiType
 {
-    GRAPHICS_2D(AwtController::getDisplayShift, 12),
-    JAVAFX(GameApplication::getDisplayShift, 17);
+    GRAPHICS_2D(AwtController::getDisplayShift),
+    JAVAFX(GameApplication::getDisplayShift);
 
 
     private final Supplier<Dimension>
         displayShiftSupplier;
 
-    private final int
-        boldThreshold;
 
-
-    GraphicsApiType(Supplier<Dimension> displayShiftSupplier, int boldThreshold)
+    GraphicsApiType(Supplier<Dimension> displayShiftSupplier)
     {
         this.displayShiftSupplier = displayShiftSupplier;
-        this.boldThreshold = boldThreshold;
     }
 
     public Dimension getDisplayShift()
     {
         return displayShiftSupplier.get();
-    }
-
-    public int getBoldThreshold()
-    {
-        return boldThreshold;
     }
 }
