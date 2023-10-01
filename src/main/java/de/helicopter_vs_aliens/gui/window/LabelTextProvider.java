@@ -1,9 +1,11 @@
 package de.helicopter_vs_aliens.gui.window;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
+import de.helicopter_vs_aliens.util.dictionary.FontSpecification;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import static de.helicopter_vs_aliens.gui.WindowType.CONTACT;
@@ -23,13 +25,15 @@ import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
 class LabelTextProvider
 {
-    // TODO möglichst alle längeren Texte innerhalb dieser Klasse ins Dictionary überführen
-    
-    private static final int
-        HTML_SIZE = 5;    // Standard-Schriftgröße der StartScreen-Menü-Texte
-    
+    // TODO möglichst alle längeren Texte innerhalb dieser Klasse in die property datei überführen und über das Dictionary aufrufen
+    // zum Aufbau der String eine StringBuilder verwenden um die einheitlich und HTML spezifisdcjhen ELemente zu Ergänzen
+
     String getLabel(Language language, WindowType window, StartScreenMenuButtonType page)
     {
+        // GameResources.getProvider().getFontSpecification(language, window, page)
+
+        FontSpecification fontSpecification = language.getFontSpecification(window, page);
+
         if(language == ENGLISH)
         {
             if(window  == INFORMATION)
@@ -38,12 +42,15 @@ class LabelTextProvider
                 {
                     // Handlung
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog\"" +
-                            " color=\"#D2D2D2\">It is the year 2371. Since the Mars " +
-                            "colinies' War of Independence a hundred years in the " +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
+                            "It is the year 2371. Since the Mars " +
+                            "colonies' War of Independence a hundred years in the " +
                             "past, there were no military conflicts among humans and " +
-                            "thus spendings for military purposes had been reduced " +
-                            "to a minimum. But now thousands of hostile flying " +
+                            "thus expenditures for military purposes had been " +
+                            "minimized. But now thousands of hostile flying " +
                             "vessels of unknown origin have been spotted on the " +
                             "northern Sahara and along the African Mediterranean " +
                             "coast. Some of these flying vessels already started " +
@@ -52,45 +59,54 @@ class LabelTextProvider
                             "World Government, has declared a state of emergency " +
                             "and is now asking reservists and volunteers from all " +
                             "over the world for help. You are one of them." +
-                            "</b></font></html>";
+
+                            "<body></html>";
                 }
                 else if(page == BUTTON_2)
                 {
                     // Änderungen seit 1.0
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog\"" +
-                            " color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "- To make the start of play easier for beginners, the " +
                             "first levels' difficulty was<br>" +
                             "&nbsp reduced significantly. Additionally, the game " +
-                            "manual is now much more detailed. <br>- " +
-                            "The rather unpopular <font color=\"#FFFFD2\">Phoenix" +
+                            "manual is now much more detailed.<br>" +
+                            "- The rather unpopular <font color=\"#FFFFD2\">Phoenix" +
                             "<font color=\"#D2D2D2\">, <font color=\"#FFFFD2\">" +
                             "Orochi<font color=\"#D2D2D2\"> and " +
                             "<font color=\"#FFFFD2\">Kamaitachi type" +
-                            "<font color=\"#D2D2D2\"> helicopters are now " +
-                            "considerably more powerful.<br>- Moving backgrounds " +
+                            "<font color=\"#D2D2D2\"> helicopters are now<br>" +
+                            "&nbsp considerably more powerful.<br>- Moving backgrounds " +
                             "have been implemented.<br>- There are now \"save " +
                             "states\" every five levels. Once reached, the player " +
-                            "can no longer fall back in a level below." +
+                            "can no<br>" +
+                            "&nbsp longer fall back in a level below." +
                             "<br>- Many other changes affecting game " +
-                            "balance, graphics or the upgrade system were made." +
-                            "</b></font></html>";
+                            "balance, graphics or the upgrade system<br>" +
+                            "&nbsp were made." +
+
+                            "</font></html>";
                 }
                 else if(page == BUTTON_4)
                 {
                     // Änderungen seit 1.1
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" face=\"" +
-                            "Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "- To improve the game's graphics, antialiasing and " +
                             "gradient colors were used.<br>" +
                             "- Each <font color=\"#FFFFD2\">helicopter type" +
                             "<font color=\"#D2D2D2\"> now has its own energy " +
                             "consuming " +
-                            "<font color=\"#FFFFD2\">standard upgarde" +
+                            "<font color=\"#FFFFD2\">standard upgrade" +
                             "<font color=\"#D2D2D2\"> and " +
-                            "at least one unique<br>&nbsp <font color=\"#FFFFD2\">" +
+                            "at least one unique<br>" +
+                            "&nbsp <font color=\"#FFFFD2\">" +
                             "special upgrade<font color=\"#D2D2D2\">. Thus, the " +
                             "different helicopter types " +
                             "differ from each other much more clearly now." +
@@ -103,8 +119,8 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> helicopters are " +
                             "now available. Helios type helicopters can only be played in special mode." +
                             "<br>- Also in non-boss levels, " +
-                            "ocasionally uncommon strong enemies " +
-                            "can now occour.<br>&nbsp These <font color=\"#FFFFD2\">" +
+                            "occasionally uncommon strong enemies " +
+                            "can now occur.<br>&nbsp These <font color=\"#FFFFD2\">" +
                             "minor boss enemies<font color=\"#D2D2D2\"> (see section " +
                             "<font color=\"#FFFFFF\">\"Enemies\"" +
                             "<font color=\"#D2D2D2\">) can lose " +
@@ -112,22 +128,25 @@ class LabelTextProvider
                             "power-ups<font color=\"#D2D2D2\"> (see section " +
                             "<font color=\"#FFFFFF\">\"Power-ups\"" +
                             "<font color=\"#D2D2D2\">)" +
-                            "<br> &nbsp which temporarly " +
+                            "<br> &nbsp which temporarily " +
                             "improve the helicopter.<br>- The game is now a real " +
                             "application and does no longer " +
-                            "depent on the explorer. <br>- A save function as well as a <font color=\"#FFFFD2\">" +
-                            "highscore<font color=\"#D2D2D2\"> is now available."+
+                            "depend on the explorer. <br>- A save function as well as a <font color=\"#FFFFD2\">" +
+                            "high-score<font color=\"#D2D2D2\"> is now available."+
                             "<br>- Lots of new enemy classes have been implemented." +
                             "<br>- Many other changes affecting controls, game balance, " +
                             "graphics or the upgrade system were made." +
+
                             "</b></font></span></html>";
                 }
                 else if(page == BUTTON_5)
                 {
                     // Credits
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) +
-                            "\" face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                        "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Special thanks to all my beta testers, who extensively " +
                             "played HelicopterDefence 1.0 and supported me with " +
                             "valuable improvement suggestions:<br>" +
@@ -170,14 +189,17 @@ class LabelTextProvider
                             "a beta tester? No problem! Send your improvement " +
                             "suggestions to: <font color=\"#FFFFD2\">" +
                             "info@HelicopterDefence.de<font color=\"#D2D2D2\">" +
+
                             "</font></b></html>";
                 }
                 else if(page == BUTTON_6)
                 {
                     // Copyright
                     return
-                        "<html><font size = \"" + HTML_SIZE +
-                            "\" face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "This is a freeware game. The passing on of this game " +
                             "to others is therefore explicitly allowed and you can " +
                             "feel encouraged to do so! However, program changes of " +
@@ -192,8 +214,10 @@ class LabelTextProvider
                 {
                     // Spielbeschreibung
                     return
-                        "<html><font size = \"" + HTML_SIZE +
-                            "\" face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Before the game starts, you can select from " + HelicopterType.count() + " " +
                             "<font color=\"#FFFFD2\">helicopter types" +
                             "<font color=\"#D2D2D2\"> which differ in their starting " +
@@ -202,10 +226,10 @@ class LabelTextProvider
                             "as many enemies as possible. Each successful " +
                             "destruction of a hostile flying vessels is financially rewarded. " +
                             "After a certain number of " +
-                            "desroyed enemies, you will proceed to higher levels " +
+                            "destroyed enemies, you will proceed to higher levels " +
                             "where you " +
                             "have to face more and more powerful enemies. The more " +
-                            "difficult it is to elminate an opponent, the more " +
+                            "difficult it is to eliminate an opponent, the more " +
                             "generously the destruction is rewarded. You can spend " +
                             "your earned money in the <font color=\"#FFFFD2\">repair " +
                             "shop<font color=\"#D2D2D2\"> on repairs or on " +
@@ -216,8 +240,10 @@ class LabelTextProvider
                 {
                     // Finanzen/Reparatur
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) +
-                            "\" face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "After a crash, your helicopter must be repaired before " +
                             "you can start a new mission. If you can't afford the " +
                             "repairs, the game is over. Of course, you can request " +
@@ -257,8 +283,10 @@ class LabelTextProvider
                 {
                     // Upgrades
                     return
-                        "<html><font size = \"" + HTML_SIZE +
-                            "\" face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "There are two types of upgrades: " +
                             "<font color=\"#FFFFD2\">Standard upgrades<font " +
                             "color=\"#D2D2D2\"> and <font " +
@@ -296,7 +324,7 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> " +
                             "(simultaneous launch of two missiles). There are some " +
                             "other special upgrades only available for a particular " +
-                            "helicoper type (see section " +
+                            "helicopter type (see section " +
                             "<font color=\"#FFFFFF\">\"Helicopter types\"" +
                             "<font color=\"#D2D2D2\">)." +
                             "</b></font></html>";
@@ -305,8 +333,10 @@ class LabelTextProvider
                 {
                     // Boss-Gegner
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
-                            "\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Every 10 levels, the player encounters a " +
                             "<font color=\"#FFFFD2\">boss enemy" +
                             "<font color=\"#D2D2D2\"> " +
@@ -329,10 +359,12 @@ class LabelTextProvider
                 {
                     // Bedienung
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "HelicopterDefence is exclusively mouse controlled:<br>" +
-                            "Your Helicopter always moves towards the mouse cursor. " +
+                            "Your helicopter always moves towards the mouse cursor. " +
                             "Press the left mouse button to launch missiles. " +
                             "You can turn around your helicopter by pressing the middle mouse button (scroll wheel). " +
                             "This enables you to shoot in the opposite direction.<br>" +
@@ -360,7 +392,7 @@ class LabelTextProvider
                             "<font color=\"#FFFFD2\">Kamaitachi " +
                             "class<font color=\"#D2D2D2\">): Press the right mouse " +
                             "button.<br>- Triggering an <font " +
-                            "color=\"#FFFFD2\">electro magnetic " +
+                            "color=\"#FFFFD2\">electromagnetic " +
                             "pulse<font color=\"#D2D2D2\"> (" +
                             "<font color=\"#FFFFD2\">Pegasus-class" +
                             "<font color=\"#D2D2D2\">): Press the right mouse button." +
@@ -378,38 +410,43 @@ class LabelTextProvider
                 {
                     // PowerUps
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                        "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            ".line-distance {font-size: " + 6 + "px;}" +
+                            ".heading-margin {font-size: " + 4 + "px;}" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "After destruction, some opponents drop one of the 6 " +
                             "following <font color=\"#FFFFD2\">power-ups" +
-                            "<font color=\"#D2D2D2\">: " +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br>" +
-                            "<br><font size = \"" + (HTML_SIZE-1) + "\">" +
+                            "<font color=\"#D2D2D2\">:" +
+
+                            wrapWithDivClass("<br><br>", "heading-margin") +
                             "Bonus credit" +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
                             "Unlimited energy for 15 seconds" +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            "Partial repairs " +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Indestructibility " +
-                            "for 15 seconds " +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
+                            "Partial repairs" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
+                            Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Indestructibility " + "for 15 seconds" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
                             "Triple damage for 15 seconds" +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
                             "Increased fire rate for 15 seconds" +
-                            "</b></font></html>";
+                            "</font></html>";
                 }
                 else if(page == BUTTON_8)
                 {
                     // Spezial-Modus
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
-                            "\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "In <font color=\"#FFFFD2\">special mode<font color=\"#D2D2D2\">, players do not receive any "
                             + "financial reward for the "
                             + "destruction of a hostile flying vessel. Instead, "
@@ -436,8 +473,10 @@ class LabelTextProvider
                 {
                     // Allgemein
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "You can choose from " + HelicopterType.count() + " different " +
                             "<font color=\"#FFFFD2\">helicopter types" +
                             "<font color=\"#D2D2D2\">. Each " +
@@ -447,7 +486,7 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\">, which can " +
                             "only be purchased by this helicopter type. Furthermore, " +
                             "the helicopter types differ in terms of price and " +
-                            "upgradeability of the individual " +
+                            "upgrade ability of the individual " +
                             "<font color=\"#FFFFD2\">standard upgrades" +
                             "<font color=\"#D2D2D2\"> " +
                             "(see section <font color=\"#FFFFFF\">\"Finances & " +
@@ -469,8 +508,10 @@ class LabelTextProvider
                 {
                     // Phönix
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "<font color=\"#FFFFD2\">Phoenix type helicopters" +
                             "<font color=\"#D2D2D2\"> are the best armor-plated " +
                             "from all helicopter types since all plating-related " +
@@ -512,8 +553,10 @@ class LabelTextProvider
                 {
                     // Roch
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "For all <font color=\"#FFFFD2\">Roch type helicopters" +
                             "<font color=\"#D2D2D2\">, the <font color=\"#FFFFD2\">" +
                             "firepower standard upgrades<font color=\"#D2D2D2\"> as " +
@@ -541,15 +584,17 @@ class LabelTextProvider
                 {
                     // Orochi
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "<font color=\"#FFFFD2\">Orochi type helicopters" +
                             "<font color=\"#D2D2D2\"> are true all-rounder: They fly " +
                             "pretty fast, have missiles with excellent drive and are " +
                             "still properly armor-plated. The " +
                             "<font color=\"#FFFFD2\">fire rate" +
                             "<font color=\"#D2D2D2\"> of " +
-                            "Orchi type helicopters is limited, but only they can " +
+                            "Orochi type helicopters is limited, but only they can " +
                             "purchase a <font color=\"#FFFFD2\">third cannon<font " +
                             "color=\"#D2D2D2\"> and install a " +
                             "<font color=\"#FFFFD2\">radar device" +
@@ -575,8 +620,10 @@ class LabelTextProvider
                 {
                     // Kamaitachi
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "<font color=\"#FFFFD2\">Kamaitachi type helicopters" +
                             "<font color=\"#D2D2D2\"> have weak " +
                             "<font color=\"#FFFFD2\">firepower" +
@@ -601,15 +648,17 @@ class LabelTextProvider
                             "destroy " +
                             "multiple enemies within a very short period of time, he " +
                             "will be rewarded for his brave actions with generous " +
-                            "<font color=\"#FFFFD2\">bonus credit" +
+                            "<font color=\"#FFFFD2\">bonus credit." +
                             "</font></html>";
                 }
                 else if(page == BUTTON_7)
                 {
                     // Pegasus
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "<font color=\"#FFFFD2\">Pegasus type helicopters" +
                             "<font color=\"#D2D2D2\"> would be at a serious " +
                             "disadvantage if they had to rely on their missiles " +
@@ -645,9 +694,10 @@ class LabelTextProvider
                 {
                     // Helios
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
-                        
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Upgraded with alien technology collected from crashed "
                             + "alien vessels, <font color=\"#FFFFD2\">Helios type "
                             + "helicopters<font color=\"#D2D2D2\"> are a powerful "
@@ -678,8 +728,10 @@ class LabelTextProvider
                 if(page == BUTTON_1)
                 {
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "You have some new ideas or want to provide suggestions " +
                             "for improvements for HelicopterDefence?<br> Then don't " +
                             "hesitate to write me an email: " +
@@ -703,8 +755,10 @@ class LabelTextProvider
                 {
                     // Handlung
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Wir schreiben das Jahr 2371. Seit dem " +
                             "Unabh\u00E4ngigkeitskrieg der Mars-Kolonien, der nun schon " +
                             "\u00FCber 100 Jahre zur\u00FCck liegt, hat es keine " +
@@ -727,8 +781,10 @@ class LabelTextProvider
                 {
                     // Änderungen seit 1.0
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "- Zu Gunsten einer gr\u00F6\u00DFeren Einsteigerfreundlichkeit " +
                             "wurde der Schwierigkeitsgrad der<br>" +
                             "&nbsp ersten Levels deutlich gesenkt und die " +
@@ -754,8 +810,10 @@ class LabelTextProvider
                 {
                     // Änderungen seit 1.1
                     return
-                        "<html><font = \"" + (HTML_SIZE-1) + "\" face=\"Dialog\" " +
-                            "color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "- Zur Verbesserung der Grafik kommen Gradientenfarben " +
                             "und Antialiasing zum Einsatz.<br>" +
                             "- Jede Helikopter-Klasse verf\u00FCgt nun \u00FCber ein eigenes, " +
@@ -788,8 +846,10 @@ class LabelTextProvider
                 {
                     // Credits
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Besonderer Dank gilt allen meinen Beta-Testern, die " +
                             "HelikopterDefence 1.0 " +
                             "ausf\u00FChrlich gespielt und mich mit hilfreichen Tipps " +
@@ -830,8 +890,10 @@ class LabelTextProvider
                 {
                     // Copyright
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Dies ist ein Freeware-Spiel. Die Weitergabe ist also " +
                             "ausdr\u00FCcklich erlaubt und auch erw\u00FCnscht! " +
                             "Programm\u00E4nderungen jeglicher Art sind allerdings dem " +
@@ -845,8 +907,10 @@ class LabelTextProvider
                 {
                     // Spielbeschreibung
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Zu Beginn des Spiels stehen Ihnen " + HelicopterType.count() + " verschiedene " +
                             "<font color=\"#FFFFD2\">Helikopter-Klassen" +
                             "<font color=\"#D2D2D2\"> mit unterschiedlichen " +
@@ -874,8 +938,10 @@ class LabelTextProvider
                 {
                     // Finanzen/Reparatur
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Nach dem Absturz des Helikopters (Totalschaden) muss " +
                             "in der <font color=\"#FFFFD2\">Werkstatt" +
                             "<font color=\"#D2D2D2\"> eine <font color=\"#FFFFD2\">" +
@@ -921,8 +987,10 @@ class LabelTextProvider
                 {
                     // Upgrades
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Die Helikopter-Upgrades unterteilen sich in " +
                             "<font color=\"#FFFFD2\">Standard-" +
                             "<font color=\"#D2D2D2\"> und <font color=\"#FFFFD2\">" +
@@ -968,8 +1036,10 @@ class LabelTextProvider
                 {
                     // Boss-Gegner
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Alle 10 Level trifft der Spieler auf einen besonders " +
                             "schwer zu besiegenden <font color=\"#FFFFD2\">Boss-" +
                             "Gegner<font color=\"#D2D2D2\">, " +
@@ -990,8 +1060,10 @@ class LabelTextProvider
                 {
                     // Bedienung
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Die Steuerung des Helikopters erfolgt ausschlie\u00DFlich mit der Maus:<br>" +
                             "Der Helikopter bewegt sich immer auf den Maus-Cursor " +
                             "zu. " +
@@ -1040,38 +1112,43 @@ class LabelTextProvider
                 {
                     // PowerUps
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                        "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            ".line-distance {font-size: " + 6 + "px;}" +
+                            ".heading-margin {font-size: " + 4 + "px;}" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Einige Gegner verlieren nach Ihrem Abschuss eines der " +
                             "6 folgenden <font color=\"#FFFFD2\">PowerUps" +
                             "<font color=\"#D2D2D2\">: " +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            "Geld (<font color=\"#FFFFD2\">Extra-Bonus<font color=\"#D2D2D2\">)" +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
+
+                            wrapWithDivClass("<br><br>", "heading-margin") +
+                            "Extra-Bonus" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
                             "unendlich Energie f\u00FCr 15 Sekunden" +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            "Teil-Reparatur " +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
-                            Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Unverwundbarkeit " +
-                            "f\u00FCr 15 Sekunden " +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
+                            "Teil-Reparatur" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
+                            Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Unverwundbarkeit f\u00FCr 15 Sekunden " +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
                             "3-fache Feuerkraft f\u00FCr 15 " + "Sekunden" +
-                            "<font size = \"" + (HTML_SIZE-2) + "\"><br><br>" +
-                            "<font size = \"" + (HTML_SIZE-1) + "\">" +
+
+                            wrapWithDivClass("<br><br>", "line-distance") +
                             "erh\u00F6hte Schussrate f\u00FCr 15 Sekunden " +
-                            "</b></font></html>";
+                            "</font></html>";
                 }
                 else if(page == BUTTON_8)
                 {
                     // Spezial-Modus
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" face=\"Dialog" +
-                            "\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Im <font color=\"#FFFFD2\">Spezial-Modus"
                             + "<font color=\"#D2D2D2\"> erh\u00E4lt der Spieler keine "
                             + "Belohnung f\u00FCr "
@@ -1096,8 +1173,10 @@ class LabelTextProvider
                 {
                     // Allgemein
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Der Spieler hat die Wahl zwischen " + HelicopterType.count() + " verschiedenen " +
                             "Helikopter-Klassen. " +
                             "Jede dieser 5 Klassen verf\u00FCgt \u00FCber eine einzigartige, " +
@@ -1126,8 +1205,10 @@ class LabelTextProvider
                 {
                     // Phönix
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Die <font color=\"#FFFFD2\">Ph\u00F6nix-Klasse" +
                             "<font color=\"#D2D2D2\"> ist die robusteste der 5 " +
                             "Helikopter-Klassen, denn f\u00FCr keine andere " +
@@ -1176,8 +1257,10 @@ class LabelTextProvider
                 {
                     // Roch
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "F\u00FCr die  <font color=\"#FFFFD2\">Roch-Klasse " +
                             "<font color=\"#D2D2D2\"> kann die " +
                             "<font color=\"#FFFFD2\">Feuerkraft" +
@@ -1214,8 +1297,10 @@ class LabelTextProvider
                 {
                     // Orochi
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Helikopter der <font color=\"#FFFFD2\">Orochi-Klasse" +
                             "<font color=\"#D2D2D2\"> sind wahre \"Allrounder\": " +
                             "Sie sind sehr schnell, verf\u00FCgen " +
@@ -1250,8 +1335,10 @@ class LabelTextProvider
                 {
                     // Kamaitachi
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Die reine Feuerkraft der <font color=\"#FFFFD2\">" +
                             "Kamaitachi-Klasse<font color=\"#D2D2D2\"> ist sehr " +
                             "gering. Dank der preiswerten " +
@@ -1284,8 +1371,10 @@ class LabelTextProvider
                 {
                     // Pegasus
                     return
-                        "<html><font size = \"" + (HTML_SIZE-1) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\"><b>" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Helikopter der <font color=\"#FFFFD2\">Pegasus-Klasse" +
                             "<font color=\"#D2D2D2\"> w\u00E4ren stark benachteiligt, " +
                             "wenn sie sich allein auf ihre " +
@@ -1328,8 +1417,10 @@ class LabelTextProvider
                 {
                     // Helios
                     return
-                        "<html><font size = \"" + (HTML_SIZE) + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Mit dem Ziel eine besonders schlagfertige Helikopter-"
                             + "Klasse zu erschaffen, haben die Konstrukteure der "
                             + "<font color=\"#FFFFD2\">Helios-Klasse<font color=\"#D2D2D2\"> ihre Upgrade-Erfahrung mit allen anderen "
@@ -1353,8 +1444,10 @@ class LabelTextProvider
                 if(page == BUTTON_1)
                 {
                     return
-                        "<html><font size = \"" + HTML_SIZE + "\" " +
-                            "face=\"Dialog\" color=\"#D2D2D2\">" +
+                            "<html><head><style>" +
+                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "</style></head><body>" + fontSpecification.boldString() +
+
                             "Du hast neue Ideen oder Verbesserungsvorschl\u00E4ge f\u00FCr " +
                             "HelikopterDefence?<br> Dann schreibe eine E-Mail an: " +
                             "<font color=\"#FFFFD2\">info@HelicopterDefence.de" +
@@ -1370,5 +1463,9 @@ class LabelTextProvider
             }
         }
         return "";
+    }
+
+    private static String wrapWithDivClass(String text, String className) {
+        return "<div class=\"" + className + "\">" + text + "</div>";
     }
 }
