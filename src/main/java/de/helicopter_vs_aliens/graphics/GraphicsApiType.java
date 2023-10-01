@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics;
 
-import de.helicopter_vs_aliens.control.awt.AwtController;
-import de.helicopter_vs_aliens.control.javafx.GameApplication;
+import de.helicopter_vs_aliens.platform_specific.awt.AwtController;
+import de.helicopter_vs_aliens.platform_specific.javafx.GameApplication;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import java.util.function.Supplier;

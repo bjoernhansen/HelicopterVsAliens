@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.control.ressource_transfer;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.awt.BackgroundRepaintTimer;
+import de.helicopter_vs_aliens.platform_specific.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
@@ -212,6 +212,7 @@ public final class GameProgress implements GameRessourceProvider
         return windowManager;
     }
 
+    @Override
     public GraphicsApiType getGraphicsApiType()
     {
         return graphicsApiType;

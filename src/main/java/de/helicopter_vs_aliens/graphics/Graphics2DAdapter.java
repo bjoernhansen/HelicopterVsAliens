@@ -42,7 +42,14 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     {
         super(graphics2D);
     }
-    
+
+    @Override
+    public void drawImage(Image image, int x, int y, int scaleWidth, int scaleHeight)
+    {
+        // scaling is not used
+        drawImage(image, x, y);
+    }
+
     @Override
     public void setColor(Color c)
     {

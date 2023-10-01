@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control.awt;
+package de.helicopter_vs_aliens.platform_specific.awt;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.events.EventFactory;

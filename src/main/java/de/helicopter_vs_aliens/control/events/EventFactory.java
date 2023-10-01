@@ -1,9 +1,9 @@
 package de.helicopter_vs_aliens.control.events;
 
-import de.helicopter_vs_aliens.control.awt.AwtBasedKeyEvent;
-import de.helicopter_vs_aliens.control.awt.AwtBasedMouseEvent;
-import de.helicopter_vs_aliens.control.javafx.JavaFxBasedKeyEvent;
-import de.helicopter_vs_aliens.control.javafx.JavaFxBasedMouseEvent;
+import de.helicopter_vs_aliens.platform_specific.awt.AwtBasedKeyEvent;
+import de.helicopter_vs_aliens.platform_specific.awt.AwtBasedMouseEvent;
+import de.helicopter_vs_aliens.platform_specific.javafx.JavaFxBasedKeyEvent;
+import de.helicopter_vs_aliens.platform_specific.javafx.JavaFxBasedMouseEvent;
 
 
 public final class EventFactory

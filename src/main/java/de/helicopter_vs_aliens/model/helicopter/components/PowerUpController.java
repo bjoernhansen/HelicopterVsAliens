@@ -15,12 +15,6 @@ import java.util.Queue;
 
 public class PowerUpController
 {
-    private static final int
-        // TODO einstellen auf 60 Frames per Second
-        POWER_UP_DURATION = 930,                // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
-        POWER_UP_FADE_TIME = POWER_UP_DURATION / 4;
-    
-    
     private final Map<PowerUpType, Integer>
         powerUpTimers = new EnumMap<>(PowerUpType.class); // Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
     
@@ -182,7 +176,7 @@ public class PowerUpController
     
     private void startPowerUpDecay(PowerUpType powerUpType)
     {
-        int duration = Math.min(POWER_UP_FADE_TIME + 1, getRemainingTimeBoosted(powerUpType));
+        int duration = Math.min(Helicopter.POWER_UP_FADE_TIME + 1, getRemainingTimeBoosted(powerUpType));
         powerUpTimers.put(powerUpType, duration);
     }
     
@@ -198,12 +192,12 @@ public class PowerUpController
     
     private boolean isBoosterStartingToFadeRightNow(PowerUpType powerUpType)
     {
-        return powerUpTimers.get(powerUpType) == POWER_UP_FADE_TIME;
+        return powerUpTimers.get(powerUpType) == Helicopter.POWER_UP_FADE_TIME;
     }
     
     private boolean isBoosterFading(PowerUpType powerUpType)
     {
-        return getRemainingTimeBoosted(powerUpType) < POWER_UP_FADE_TIME;
+        return getRemainingTimeBoosted(powerUpType) < Helicopter.POWER_UP_FADE_TIME;
     }
     
     private void countDownPowerUpTimer(PowerUpType powerUpType)

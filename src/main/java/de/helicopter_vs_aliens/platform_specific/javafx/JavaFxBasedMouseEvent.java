@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control.javafx;
+package de.helicopter_vs_aliens.platform_specific.javafx;
 
 import de.helicopter_vs_aliens.control.events.MouseEvent;
 import javafx.scene.input.MouseButton;

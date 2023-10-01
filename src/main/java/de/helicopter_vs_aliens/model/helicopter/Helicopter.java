@@ -47,16 +47,23 @@ public abstract class Helicopter extends RectangularGameEntity
 {
 	// TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit Setter-Methoden arbeiten, sonst private
 	public static final int
-		// TODO einstellen auf 60 Frames per Second
-		POWER_UP_DURATION = 930,                // Zeit [frames] welche ein eingesammeltes PowerUp aktiv bleibt
-		NO_COLLISION_DAMAGE_TIME = 20,        // Zeitrate, mit der Helicopter Schaden durch Kollisionen mit Gegnern nehmen kann
-		INVULNERABILITY_DAMAGE_REDUCTION = 80,    // %-Wert der Schadensreduzierung bei Unverwundbarkeit
-		STANDARD_SPECIAL_COSTS = 125000,
-		CHEAP_SPECIAL_COSTS = 10000;
-	
+		POWER_UP_DURATION = 900;
+
 	public static final int
 		POWER_UP_FADE_TIME = POWER_UP_DURATION / 4;
-	
+
+	public static final int
+		NO_COLLISION_DAMAGE_TIME = 20;
+
+	public static final int
+		INVULNERABILITY_DAMAGE_REDUCTION = 80;
+
+	public static final int
+		STANDARD_SPECIAL_COSTS = 125000;
+
+	public static final int
+		CHEAP_SPECIAL_COSTS = 10000;
+
 	public static final double
         FOCAL_POINT_X_LEFT = 39,
 		FOCAL_POINT_X_RIGHT = 83,

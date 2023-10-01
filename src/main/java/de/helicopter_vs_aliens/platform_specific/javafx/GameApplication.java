@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control.javafx;
+package de.helicopter_vs_aliens.platform_specific.javafx;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
@@ -107,6 +107,10 @@ public class GameApplication extends Application
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setFullScreen(true);
         primaryStage.show();
+
+        double scalingFactor = primaryStage.getWidth() / VIRTUAL_DIMENSION.width;
+        Dimension scaledDimension = Dimension.newInstance(VIRTUAL_DIMENSION.width, (int) (scalingFactor * VIRTUAL_DIMENSION.height));
+
 
         var canvasShift = Dimension.newInstance(
             (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),

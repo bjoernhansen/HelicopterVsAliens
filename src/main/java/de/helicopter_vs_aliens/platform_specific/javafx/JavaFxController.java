@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control.javafx;
+package de.helicopter_vs_aliens.platform_specific.javafx;
 
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
