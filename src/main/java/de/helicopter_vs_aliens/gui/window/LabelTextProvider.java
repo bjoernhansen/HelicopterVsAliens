@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.gui.window;
 
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
@@ -31,10 +32,13 @@ class LabelTextProvider
 
     String getLabel(Language language, WindowType window, StartScreenMenuButtonType page)
     {
-        GraphicsApiType graphicsApiType = GameResources.getProvider()
-                                                       .getGraphicsApiType();
-
+        GameRessourceProvider ressourceProvider = GameResources.getProvider();
+        GraphicsApiType graphicsApiType = ressourceProvider.getGraphicsApiType();
         FontSpecification fontSpecification = language.getFontSpecification(window, page, graphicsApiType);
+        double scalingFactor = ressourceProvider.getScalingFactor();
+        int size = (int)(scalingFactor * fontSpecification.getSize());
+        int lineDistance = (int)(scalingFactor * (graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 3 : 7));
+        int headingMargin = (int)(scalingFactor * (graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 1 : 5));
 
         if(language == ENGLISH)
         {
@@ -45,7 +49,7 @@ class LabelTextProvider
                     // Handlung
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "It is the year 2371. Since the Mars " +
@@ -69,7 +73,7 @@ class LabelTextProvider
                     // Änderungen seit 1.0
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "- To make the start of play easier for beginners, the " +
@@ -97,7 +101,7 @@ class LabelTextProvider
                     // Änderungen seit 1.1
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "- To improve the game's graphics, antialiasing and " +
@@ -146,7 +150,7 @@ class LabelTextProvider
                     // Credits
                     return
                         "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Special thanks to all my beta testers, who extensively " +
@@ -199,7 +203,7 @@ class LabelTextProvider
                     // Copyright
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "This is a freeware game. The passing on of this game " +
@@ -217,7 +221,7 @@ class LabelTextProvider
                     // Spielbeschreibung
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Before the game starts, you can select from " + HelicopterType.count() + " " +
@@ -243,7 +247,7 @@ class LabelTextProvider
                     // Finanzen/Reparatur
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "After a crash, your helicopter must be repaired before " +
@@ -286,7 +290,7 @@ class LabelTextProvider
                     // Upgrades
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "There are two types of upgrades: " +
@@ -336,7 +340,7 @@ class LabelTextProvider
                     // Boss-Gegner
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Every 10 levels, the player encounters a " +
@@ -362,7 +366,7 @@ class LabelTextProvider
                     // Bedienung
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "HelicopterDefence is exclusively mouse controlled:<br>" +
@@ -411,12 +415,9 @@ class LabelTextProvider
                 else if(page == BUTTON_6)
                 {
                     // PowerUps
-                    int lineDistance = graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 3 : 6;
-                    int headingMargin = graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 1 : 4;
-
                     return
                         "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             ".line-distance {font-size: " + lineDistance + "px;}" +
                             ".heading-margin {font-size: " + headingMargin + "px;}" +
                             "</style></head><body>" + fontSpecification.boldString() +
@@ -449,7 +450,7 @@ class LabelTextProvider
                     // Spezial-Modus
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "In <font color=\"#FFFFD2\">special mode<font color=\"#D2D2D2\">, players do not receive any "
@@ -479,7 +480,7 @@ class LabelTextProvider
                     // Allgemein
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "You can choose from " + HelicopterType.count() + " different " +
@@ -514,7 +515,7 @@ class LabelTextProvider
                     // Phönix
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "<font color=\"#FFFFD2\">Phoenix type helicopters" +
@@ -559,7 +560,7 @@ class LabelTextProvider
                     // Roch
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "For all <font color=\"#FFFFD2\">Roch type helicopters" +
@@ -590,7 +591,7 @@ class LabelTextProvider
                     // Orochi
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "<font color=\"#FFFFD2\">Orochi type helicopters" +
@@ -626,7 +627,7 @@ class LabelTextProvider
                     // Kamaitachi
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "<font color=\"#FFFFD2\">Kamaitachi type helicopters" +
@@ -661,7 +662,7 @@ class LabelTextProvider
                     // Pegasus
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "<font color=\"#FFFFD2\">Pegasus type helicopters" +
@@ -700,7 +701,7 @@ class LabelTextProvider
                     // Helios
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Upgraded with alien technology collected from crashed "
@@ -734,7 +735,7 @@ class LabelTextProvider
                 {
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "You have some new ideas or want to provide suggestions " +
@@ -761,7 +762,7 @@ class LabelTextProvider
                     // Handlung
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Wir schreiben das Jahr 2371. Seit dem " +
@@ -787,7 +788,7 @@ class LabelTextProvider
                     // Änderungen seit 1.0
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "- Zu Gunsten einer gr\u00F6\u00DFeren Einsteigerfreundlichkeit " +
@@ -816,7 +817,7 @@ class LabelTextProvider
                     // Änderungen seit 1.1
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "- Zur Verbesserung der Grafik kommen Gradientenfarben " +
@@ -852,7 +853,7 @@ class LabelTextProvider
                     // Credits
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Besonderer Dank gilt allen meinen Beta-Testern, die " +
@@ -896,7 +897,7 @@ class LabelTextProvider
                     // Copyright
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Dies ist ein Freeware-Spiel. Die Weitergabe ist also " +
@@ -913,7 +914,7 @@ class LabelTextProvider
                     // Spielbeschreibung
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Zu Beginn des Spiels stehen Ihnen " + HelicopterType.count() + " verschiedene " +
@@ -944,7 +945,7 @@ class LabelTextProvider
                     // Finanzen/Reparatur
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Nach dem Absturz des Helikopters (Totalschaden) muss " +
@@ -993,7 +994,7 @@ class LabelTextProvider
                     // Upgrades
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Die Helikopter-Upgrades unterteilen sich in " +
@@ -1042,7 +1043,7 @@ class LabelTextProvider
                     // Boss-Gegner
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Alle 10 Level trifft der Spieler auf einen besonders " +
@@ -1066,7 +1067,7 @@ class LabelTextProvider
                     // Bedienung
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Die Steuerung des Helikopters erfolgt ausschlie\u00DFlich mit der Maus:<br>" +
@@ -1116,12 +1117,9 @@ class LabelTextProvider
                 else if(page == BUTTON_6)
                 {
                     // PowerUps
-                    int lineDistance = graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 3 : 6;
-                    int headingMargin = graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 1 : 4;
-
                     return
                         "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             ".line-distance {font-size: " + lineDistance + "px;}" +
                             ".heading-margin {font-size: " + headingMargin + "px;}" +
                             "</style></head><body>" + fontSpecification.boldString() +
@@ -1154,7 +1152,7 @@ class LabelTextProvider
                     // Spezial-Modus
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Im <font color=\"#FFFFD2\">Spezial-Modus"
@@ -1182,7 +1180,7 @@ class LabelTextProvider
                     // Allgemein
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Der Spieler hat die Wahl zwischen " + HelicopterType.count() + " verschiedenen " +
@@ -1214,7 +1212,7 @@ class LabelTextProvider
                     // Phönix
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Die <font color=\"#FFFFD2\">Ph\u00F6nix-Klasse" +
@@ -1266,7 +1264,7 @@ class LabelTextProvider
                     // Roch
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "F\u00FCr die  <font color=\"#FFFFD2\">Roch-Klasse " +
@@ -1306,7 +1304,7 @@ class LabelTextProvider
                     // Orochi
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Helikopter der <font color=\"#FFFFD2\">Orochi-Klasse" +
@@ -1344,7 +1342,7 @@ class LabelTextProvider
                     // Kamaitachi
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Die reine Feuerkraft der <font color=\"#FFFFD2\">" +
@@ -1380,7 +1378,7 @@ class LabelTextProvider
                     // Pegasus
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Helikopter der <font color=\"#FFFFD2\">Pegasus-Klasse" +
@@ -1426,7 +1424,7 @@ class LabelTextProvider
                     // Helios
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Mit dem Ziel eine besonders schlagfertige Helikopter-"
@@ -1453,7 +1451,7 @@ class LabelTextProvider
                 {
                     return
                             "<html><head><style>" +
-                            "body { font-size: " + fontSpecification.getSize() + "px; font-family: Dialog; color: #D2D2D2; }" +
+                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
                             "</style></head><body>" + fontSpecification.boldString() +
 
                             "Du hast neue Ideen oder Verbesserungsvorschl\u00E4ge f\u00FCr " +

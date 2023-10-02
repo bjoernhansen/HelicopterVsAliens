@@ -42,4 +42,6 @@ public interface GameRessourceProvider extends HelicopterAccessor
     GraphicsApiType getGraphicsApiType();
 
     void resetBackgroundRepaintTimer();
+
+    double getScalingFactor();
 }

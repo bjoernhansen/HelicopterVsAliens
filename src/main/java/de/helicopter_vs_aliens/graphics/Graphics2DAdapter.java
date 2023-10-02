@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics;
 
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 
 import java.awt.Color;
@@ -44,10 +45,10 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
 
     @Override
-    public void drawImage(Image image, int x, int y, int scaleWidth, int scaleHeight)
+    public void drawImage(Image image, Dimension displayShift, Dimension scaledDimension)
     {
         // scaling is not used
-        drawImage(image, x, y);
+        drawImage(image, displayShift.getHeight(), displayShift.getWidth());
     }
 
     @Override

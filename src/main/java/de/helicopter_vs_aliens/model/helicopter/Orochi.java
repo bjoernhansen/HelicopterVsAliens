@@ -165,7 +165,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
+    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent, double scalingFactor)
     {
         this.isNextMissileStunner = false;
     }

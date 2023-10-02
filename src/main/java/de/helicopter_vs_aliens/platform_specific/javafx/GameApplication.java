@@ -16,7 +16,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-// import javafx.scene.control.Button;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -38,9 +37,6 @@ public class GameApplication extends Application
     private static final Dimension
         DISPLAY_SHIFT = Dimension.newInstance(0, 0);
 
-/*    private final Button
-        button = new Button("Werkstatt");*/
-
     private final GameProgress
         gameProgress;
 
@@ -61,107 +57,76 @@ public class GameApplication extends Application
 
     @Override
     public void start(final Stage primaryStage)
+    // TODO Refactoring dieser Methode
     {
         Audio.initialize();
 
-
-
-
-
-
-        /*button.setOnAction(event -> primaryStage.close());
-        button.setFocusTraversable(false);*/
-
-        Canvas canvas = new Canvas(VIRTUAL_DIMENSION.width, VIRTUAL_DIMENSION.height);
-
-        canvas.setOnMousePressed(e -> Events.mousePressed(EventFactory.makeMouseEvent(e), gameProgress));
-        canvas.setOnMouseReleased(e -> Events.mouseReleased(EventFactory.makeMouseEvent(e), gameProgress.getHelicopter()));
-        canvas.setOnMouseDragged(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), gameProgress));
-        canvas.setOnMouseMoved(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), gameProgress));
-
-
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY))); // Setze den Hintergrund auf Rot
-        anchorPane.getChildren()
-                  .add(canvas);
-/*        anchorPane.getChildren()
-                  .add(button);*/
-
-
-
-
-        // Set the anchorPane to be focusable
-        canvas.setFocusTraversable(true);
-        canvas.requestFocus();
-
-
-        anchorPane.setOnKeyPressed(e -> Events.keyTyped(EventFactory.makeKeyEvent(e), gameProgress));
-        // canvas.setOnKeyPressed(this::keyEvent);
-
-
 
         var scene = new Scene(anchorPane);
         primaryStage.setScene(scene);
-
 
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setFullScreen(true);
         primaryStage.show();
 
-        double scalingFactor = primaryStage.getWidth() / VIRTUAL_DIMENSION.width;
-        Dimension scaledDimension = Dimension.newInstance(VIRTUAL_DIMENSION.width, (int) (scalingFactor * VIRTUAL_DIMENSION.height));
+        final double scalingFactor = primaryStage.getWidth() / VIRTUAL_DIMENSION.width;
+        gameProgress.setScalingFactor(scalingFactor);
 
+        Dimension scaledDimension = Dimension.newInstance(
+                                        (int) (scalingFactor * VIRTUAL_DIMENSION.width),
+                                        (int) (scalingFactor * VIRTUAL_DIMENSION.height));
+
+        Canvas canvas = new Canvas(scaledDimension.getWidth(), scaledDimension.getHeight());
+
+        canvas.setOnMousePressed(e -> Events.mousePressed(EventFactory.makeMouseEvent(e), gameProgress, scalingFactor));
+        canvas.setOnMouseReleased(e -> Events.mouseReleased(EventFactory.makeMouseEvent(e), gameProgress.getHelicopter(), scalingFactor));
+        canvas.setOnMouseDragged(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), gameProgress, scalingFactor));
+        canvas.setOnMouseMoved(e -> Events.mouseMovedOrDragged(EventFactory.makeMouseEvent(e), gameProgress, scalingFactor));
+        anchorPane.getChildren()
+                  .add(canvas);
+
+        // Set the anchorPane to be focusable
+        canvas.setFocusTraversable(true);
+        canvas.requestFocus();
+
+        anchorPane.setOnKeyPressed(e -> Events.keyTyped(EventFactory.makeKeyEvent(e), gameProgress));
 
         var canvasShift = Dimension.newInstance(
-            (int) ((primaryStage.getWidth() - VIRTUAL_DIMENSION.width) / 2.0),
-            (int) ((primaryStage.getHeight() - VIRTUAL_DIMENSION.height) / 2.0));
+            (int) ((primaryStage.getWidth() - scaledDimension.getWidth()) / 2.0),
+            (int) ((primaryStage.getHeight() - scaledDimension.getHeight()) / 2.0));
 
-        var htmlViewer = JavaFxBasedHtmlViewer.makeInstance(canvasShift);
+        var htmlViewer = JavaFxBasedHtmlViewer.makeInstance(canvasShift, scalingFactor);
         Window.setHtmlViewer(htmlViewer);
         WebView webView = htmlViewer.getComponent();
 
         anchorPane.getChildren()
                   .add(webView);
 
-       /* double verticalAnchorDistance = canvasShift.getHeight() + VIRTUAL_DIMENSION.height - 10 - 25;
-        AnchorPane.setTopAnchor(button, verticalAnchorDistance);
-        double horizontalAnchorDistance = canvasShift.getWidth() + VIRTUAL_DIMENSION.width / 2.0 - 60;
-        AnchorPane.setLeftAnchor(button, horizontalAnchorDistance);
-        AnchorPane.setRightAnchor(button, horizontalAnchorDistance);*/
+        System.out.println(scalingFactor);
+        System.out.println(webView.getLayoutX());
+        System.out.println(webView.getLayoutY());
 
         AnchorPane.setLeftAnchor(webView, webView.getLayoutX());
         AnchorPane.setTopAnchor(webView, webView.getLayoutY());
 
-
         AnchorPane.setLeftAnchor(canvas, (double) canvasShift.getWidth());
         AnchorPane.setTopAnchor(canvas, (double) canvasShift.getHeight());
 
-
-        // primaryStage.setResizable(false);
-        // primaryStage.setOpacity(0.5);
-
-
         GraphicsContext graphicsContext2D = canvas.getGraphicsContext2D();
         graphicsFxAdapter = new JavaFxAdapter(graphicsContext2D);
-
-
         offImage = new BufferedImage((int) VIRTUAL_DIMENSION.getWidth(), (int) VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
         graphicsAdapter = Graphics2DAdapter.of(offImage);
         graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-
-
-
 
         new AnimationTimer()
         {
             @Override
             public void handle(long now)
             {
-                graphicsFxAdapter.drawImage(offImage, 0, 0);
-
+                graphicsFxAdapter.drawImage(offImage, DISPLAY_SHIFT, scaledDimension);
                 updateGame();
-
                 graphicsAdapter.setColor(Colorations.bg);
                 graphicsAdapter.fillRect(0, 0, VIRTUAL_DIMENSION.width, VIRTUAL_DIMENSION.height);
                 paintFrame(graphicsAdapter);

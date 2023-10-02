@@ -223,12 +223,12 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent)
+    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent, double scalingFactor)
     {
         Dimension displayShift = getGameRessourceProvider().getDisplayShift();
         this.tryToTeleportTo(
-            mouseEvent.getX() - displayShift.getWidth(),
-            mouseEvent.getY() - displayShift.getHeight());
+            (int)(mouseEvent.getX()/scalingFactor) - displayShift.getWidth(),
+            (int)(mouseEvent.getY()/scalingFactor) - displayShift.getHeight());
     }
 
     public void tryToTeleportTo(int x, int y)
@@ -345,6 +345,4 @@ public final class Phoenix extends Helicopter
             ? TELEPORT_DAMAGE_FACTOR
             : RADIATION_DAMAGE_FACTOR));
     }
-
-
 }

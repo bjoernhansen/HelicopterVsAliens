@@ -27,7 +27,7 @@ public class EnglishFontSpecificationProviderForJavaFx extends AbstractFontSpeci
                         .put(INFORMATION, BUTTON_1, getFontSpecificationForSize(22))
                         .put(INFORMATION, BUTTON_2, getFontSpecificationForSize(22))
                         .put(INFORMATION, BUTTON_4, getFontSpecificationForSize(15))
-                        .put(INFORMATION, BUTTON_5, getFontSpecificationForSize(18))
+                        .put(INFORMATION, BUTTON_5, getFontSpecificationForSize(17))
                         .put(INFORMATION, BUTTON_6, getFontSpecificationForSize(22))
                         .put(DESCRIPTION, BUTTON_1, getFontSpecificationForSize(22))
                         .put(DESCRIPTION, BUTTON_2, getFontSpecificationForSize(18))

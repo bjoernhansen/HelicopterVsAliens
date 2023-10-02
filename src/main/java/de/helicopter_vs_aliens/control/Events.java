@@ -403,15 +403,15 @@ public class Events
         }
     }
 
-    public static void mousePressed(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider)
+    public static void mousePressed(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider, double scalingFactor)
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (mouseEvent.isLeftButtonClicked())
         {
             Dimension displayShift = gameRessourceProvider.getDisplayShift();
             cursor.setLocation(
-                mouseEvent.getX() - displayShift.getWidth(),
-                mouseEvent.getY() - displayShift.getHeight());
+                mouseEvent.getX()/scalingFactor - displayShift.getWidth(),
+                mouseEvent.getY()/scalingFactor - displayShift.getHeight());
             gameRessourceProvider.resetBackgroundRepaintTimer();
             mousePressedLeft(gameRessourceProvider);
         }
@@ -1037,7 +1037,7 @@ public class Events
         Window.updateStartScreenSubLabelText();
     }
 
-    public static void mouseReleased(MouseEvent mouseEvent, Helicopter helicopter)
+    public static void mouseReleased(MouseEvent mouseEvent, Helicopter helicopter, double scalingFactor)
     {
         if (mouseEvent.isLeftButtonClicked())
         {
@@ -1045,12 +1045,12 @@ public class Events
         }
         else if (WindowManager.window == GAME && mouseEvent.isRightButtonClicked() && !helicopter.isDamaged)
         {
-            helicopter.rightMouseButtonReleaseAction(mouseEvent);
+            helicopter.rightMouseButtonReleaseAction(mouseEvent, scalingFactor);
         }
     }
 
     // Aktualisierung der Ziel-Koordinaten, auf welche der Helikopter zu fliegt
-    public static void mouseMovedOrDragged(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider)
+    public static void mouseMovedOrDragged(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider, double scalingFactor)
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (!helicopter.isDamaged || WindowManager.window == REPAIR_SHOP)
@@ -1059,8 +1059,8 @@ public class Events
             {
                 Dimension displayShift = gameRessourceProvider.getDisplayShift();
                 helicopter.destination.setLocation(
-                    mouseEvent.getX() - displayShift.getWidth(),
-                    mouseEvent.getY() - displayShift.getHeight());
+                    mouseEvent.getX()/scalingFactor - displayShift.getWidth(),
+                    mouseEvent.getY()/scalingFactor - displayShift.getHeight());
             }
             else
             {

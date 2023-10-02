@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.graphics;
 
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -135,12 +136,17 @@ public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
     }
 
     @Override
-    public void drawImage(java.awt.Image image, int x, int y, int scaleWidth, int scaleHeight)
+    public void drawImage(java.awt.Image image, Dimension displayShift, Dimension scaledDimension)
     {
         var bufferedImage = (BufferedImage) image;
         // Image imageFx = SwingFXUtils.toFXImage(bufferedImage, null); // ist um die Faktor 2 bis 3 langsamer
         Image imageFx = getImage(bufferedImage);
-        graphics.drawImage(imageFx, x, y, scaleWidth, scaleHeight);
+        graphics.drawImage(
+            imageFx,
+            displayShift.getWidth(),
+            displayShift.getHeight(),
+            scaledDimension.getWidth(),
+            scaledDimension.getHeight());
     }
     
     private javafx.scene.image.Image getImage(BufferedImage image)

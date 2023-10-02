@@ -17,26 +17,30 @@ public class JavaFxBasedHtmlViewer extends AbstractHtmlViewer<WebView>
     private final Dimension
         displayShift;
 
+    private final double
+        scalingFactor;
 
-    public static JavaFxBasedHtmlViewer makeInstance(Dimension displayShift)
+
+    public static JavaFxBasedHtmlViewer makeInstance(Dimension displayShift, double scalingFactor)
     {
-        var htmlViewer = new JavaFxBasedHtmlViewer(displayShift);
+        var htmlViewer = new JavaFxBasedHtmlViewer(displayShift, scalingFactor);
         htmlViewer.setWide();
         htmlViewer.hide();
         return htmlViewer;
     }
 
-    private JavaFxBasedHtmlViewer(Dimension displayShift)
+    private JavaFxBasedHtmlViewer(Dimension displayShift, double scalingFactor)
     {
         this.displayShift = displayShift;
+        this.scalingFactor = scalingFactor;
         webView = getConfiguredWebView();
     }
 
     private WebView getConfiguredWebView()
     {
         WebView localWebView = new WebView();
-        localWebView.setLayoutY(displayShift.getHeight() + VERTICAL_BOUNDS.y());
-        localWebView.setPrefHeight(VERTICAL_BOUNDS.height());
+        localWebView.setLayoutY(displayShift.getHeight() + scalingFactor*(VERTICAL_BOUNDS.y()));
+        localWebView.setPrefHeight(scalingFactor * VERTICAL_BOUNDS.height());
         localWebView.setMouseTransparent(true);
         localWebView.setPageFill(Color.BLACK);
 
@@ -75,8 +79,8 @@ public class JavaFxBasedHtmlViewer extends AbstractHtmlViewer<WebView>
     @Override
     protected void setHorizontalBounds(HorizontalBounds horizontalBounds)
     {
-        webView.setLayoutX(displayShift.getWidth() + horizontalBounds.x());
-        webView.setPrefWidth(horizontalBounds.width());
+        webView.setLayoutX(scalingFactor * (displayShift.getWidth() + horizontalBounds.x()));
+        webView.setPrefWidth(scalingFactor * horizontalBounds.width());
         AnchorPane.setLeftAnchor(webView, webView.getLayoutX());
     }
 }

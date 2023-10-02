@@ -1126,7 +1126,7 @@ public abstract class Helicopter extends RectangularGameEntity
         return this.currentBaseFirepower;
     }
     
-    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent){}
+    public void rightMouseButtonReleaseAction(MouseEvent mouseEvent, double scalingFactor){}
     
     public boolean canObtainCollisionReward()
     {

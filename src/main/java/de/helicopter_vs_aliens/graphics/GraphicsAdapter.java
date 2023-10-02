@@ -1,8 +1,17 @@
 package de.helicopter_vs_aliens.graphics;
 
+import de.helicopter_vs_aliens.util.geometry.Dimension;
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Paint;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -53,6 +62,8 @@ public interface GraphicsAdapter
     void drawImage(Image img, int x, int y);
     
     void drawImage(BufferedImage img, BufferedImageOp op, int x, int y);
+
+    void drawImage(java.awt.Image image, Dimension displayShift, Dimension scaledDimension);
     
     int getStringWidth(String text);
     

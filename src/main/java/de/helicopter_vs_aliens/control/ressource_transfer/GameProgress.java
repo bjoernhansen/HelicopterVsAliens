@@ -35,7 +35,6 @@ public final class GameProgress implements GameRessourceProvider
     private int
         gameLoopCount = 0;
 
-
     private final GraphicsApiType
         graphicsApiType;
 
@@ -67,6 +66,9 @@ public final class GameProgress implements GameRessourceProvider
 
     private final BackgroundRepaintTimer
         backgroundRepaintTimer = new BackgroundRepaintTimer();
+
+    private double
+        scalingFactor = 1.0;
 
 
     GameProgress(GraphicsApiType graphicsApiType)
@@ -227,5 +229,16 @@ public final class GameProgress implements GameRessourceProvider
     public void resetBackgroundRepaintTimer()
     {
         backgroundRepaintTimer.reset();
+    }
+
+    @Override
+    public double getScalingFactor()
+    {
+        return scalingFactor;
+    }
+
+    public void setScalingFactor(double scalingFactor)
+    {
+        this.scalingFactor = scalingFactor;
     }
 }

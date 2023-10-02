@@ -10,6 +10,4 @@ public abstract class AbstractGraphicsAdapter<E> implements GraphicsAdapter
     {
         this.graphics = Objects.requireNonNull(graphics);
     }
-
-    public abstract void drawImage(java.awt.Image image, int x, int y, int scaleWidth, int scaleHeight);
 }
