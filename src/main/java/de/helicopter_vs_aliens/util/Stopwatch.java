@@ -2,26 +2,34 @@ package de.helicopter_vs_aliens.util;
 
 public class Stopwatch
 {
-    private static final boolean
-        USE_NANO_TIME = true;
+    private final boolean
+            useNanoTime;
 
     private long
-        startTime = 0;
+            startTime = 0;
 
-    boolean
-        started = false;
+    private boolean
+            started = false;
 
 
-    public static Stopwatch make()
+    public static Stopwatch withMillisecondPrecision()
     {
-        return new Stopwatch();
+        return new Stopwatch(false);
     }
 
-    private Stopwatch(){}
+    public static Stopwatch withNanosecondPrecision()
+    {
+        return new Stopwatch(true);
+    }
+
+    private Stopwatch(boolean useNanoTime)
+    {
+        this.useNanoTime = useNanoTime;
+    }
 
     public void startClock()
     {
-        startTime = USE_NANO_TIME ? System.nanoTime() : System.currentTimeMillis();
+        startTime = getCurrentTime();
         started = true;
     }
 
@@ -29,9 +37,18 @@ public class Stopwatch
     {
         if(started)
         {
-            long stopTime = USE_NANO_TIME ? System.nanoTime() : System.currentTimeMillis();
-            System.out.println("Zeit: " + (stopTime - startTime));
+            System.out.println("elapsed time: " + getElapsedTimeUntilNow());
             started = false;
         }
+    }
+
+    private long getElapsedTimeUntilNow()
+    {
+        return getCurrentTime() - startTime;
+    }
+
+    private long getCurrentTime()
+    {
+        return useNanoTime ? System.nanoTime() : System.currentTimeMillis();
     }
 }
