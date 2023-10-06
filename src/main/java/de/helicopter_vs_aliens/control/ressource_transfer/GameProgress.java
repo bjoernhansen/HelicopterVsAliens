@@ -79,7 +79,8 @@ public final class GameProgress implements GameRessourceProvider
 
     void initialize()
     {
-        this.saveGame = Savegame.makeInstance();
+        Window.initializeLabelTextProvider();
+        saveGame = Savegame.makeInstance();
         Window.initialize();
         Window.updateButtonLabels(helicopter);
         scenery.createInitialSceneryObjects();
@@ -240,5 +241,6 @@ public final class GameProgress implements GameRessourceProvider
     public void setScalingFactor(double scalingFactor)
     {
         this.scalingFactor = scalingFactor;
+        Window.resetLabelTextProvider();
     }
 }

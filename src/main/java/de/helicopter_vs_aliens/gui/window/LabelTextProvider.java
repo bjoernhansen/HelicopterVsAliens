@@ -1,13 +1,10 @@
 package de.helicopter_vs_aliens.gui.window;
 
 import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
-import de.helicopter_vs_aliens.util.font.FontSpecification;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import static de.helicopter_vs_aliens.gui.WindowType.CONTACT;
@@ -27,18 +24,36 @@ import static de.helicopter_vs_aliens.util.dictionary.Language.GERMAN;
 
 class LabelTextProvider
 {
+    private HtmlSnippetProvider
+        htmlSnippetProvider;
+
+
+    public LabelTextProvider()
+    {
+        setNewHtmlSnippetProvider(Language.getDefault());
+    }
+
+    public void initialize(Language language)
+    {
+        switchLanguage(language);
+    }
+
+    public void switchLanguage(Language language)
+    {
+        setNewHtmlSnippetProvider(language);
+    }
+
+    private void setNewHtmlSnippetProvider(Language language)
+    {
+        htmlSnippetProvider = new HtmlSnippetProvider(GameResources.getProvider(), language);
+    }
+
     // TODO möglichst alle längeren Texte innerhalb dieser Klasse in die property datei überführen und über das Dictionary aufrufen
     // zum Aufbau der String eine StringBuilder verwenden um die einheitlich und HTML spezifisdcjhen ELemente zu Ergänzen
 
     String getLabel(Language language, WindowType window, StartScreenMenuButtonType page)
     {
-        GameRessourceProvider ressourceProvider = GameResources.getProvider();
-        GraphicsApiType graphicsApiType = ressourceProvider.getGraphicsApiType();
-        FontSpecification fontSpecification = language.getFontSpecification(window, page, graphicsApiType);
-        double scalingFactor = ressourceProvider.getScalingFactor();
-        int size = (int)(scalingFactor * fontSpecification.getSize());
-        int lineDistance = (int)(scalingFactor * (graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 3 : 7));
-        int headingMargin = (int)(scalingFactor * (graphicsApiType == GraphicsApiType.GRAPHICS_2D ? 1 : 5));
+        htmlSnippetProvider.setPage(window, page);
 
         if(language == ENGLISH)
         {
@@ -48,9 +63,7 @@ class LabelTextProvider
                 {
                     // Handlung
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "It is the year 2371. Since the Mars " +
                             "colonies' War of Independence a hundred years in the " +
@@ -66,15 +79,13 @@ class LabelTextProvider
                             "and is now asking reservists and volunteers from all " +
                             "over the world for help. You are one of them." +
 
-                            "<body></html>";
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_2)
                 {
                     // Änderungen seit 1.0
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "- To make the start of play easier for beginners, the " +
                             "first levels' difficulty was<br>" +
@@ -94,15 +105,13 @@ class LabelTextProvider
                             "balance, graphics or the upgrade system<br>" +
                             "&nbsp were made." +
 
-                            "</font></html>";
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_4)
                 {
                     // Änderungen seit 1.1
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "- To improve the game's graphics, antialiasing and " +
                             "gradient colors were used.<br>" +
@@ -143,15 +152,13 @@ class LabelTextProvider
                             "<br>- Many other changes affecting controls, game balance, " +
                             "graphics or the upgrade system were made." +
 
-                            "</b></font></span></html>";
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_5)
                 {
                     // Credits
                     return
-                        "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Special thanks to all my beta testers, who extensively " +
                             "played HelicopterDefence 1.0 and supported me with " +
@@ -169,7 +176,7 @@ class LabelTextProvider
                             "<font color=\"#FFFFD2\">Henner Holm<font " +
                             "color=\"#D2D2D2\">, <font color=\"#FFFFD2\">Michael " +
                             "Sujatta<font color=\"#D2D2D2\">, " +
-                            "<font color=\"#FFFFD2\"><br>Sascha Degener" +
+                            "<font color=\"#FFFFD2\">Sascha Degener" +
                             "<font color=\"#D2D2D2\">, " +
                             "<font color=\"#FFFFD2\">Thorsten " +
                             "Rueckert<font color=\"#D2D2D2\">, " +
@@ -196,22 +203,21 @@ class LabelTextProvider
                             "suggestions to: <font color=\"#FFFFD2\">" +
                             "info@HelicopterDefence.de<font color=\"#D2D2D2\">" +
 
-                            "</font></b></html>";
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_6)
                 {
                     // Copyright
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "This is a freeware game. The passing on of this game " +
                             "to others is therefore explicitly allowed and you can " +
                             "feel encouraged to do so! However, program changes of " +
                             "any kind may only be carried out by the developer of " +
                             "this game." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
             else if(window  == DESCRIPTION)
@@ -220,9 +226,7 @@ class LabelTextProvider
                 {
                     // Spielbeschreibung
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Before the game starts, you can select from " + HelicopterType.count() + " " +
                             "<font color=\"#FFFFD2\">helicopter types" +
@@ -240,15 +244,14 @@ class LabelTextProvider
                             "your earned money in the <font color=\"#FFFFD2\">repair " +
                             "shop<font color=\"#D2D2D2\"> on repairs or on " +
                             "new upgrades which improve your helicopter." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_2)
                 {
                     // Finanzen/Reparatur
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "After a crash, your helicopter must be repaired before " +
                             "you can start a new mission. If you can't afford the " +
@@ -283,15 +286,14 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> - expansive; " +
                             "<font color=\"#FF7369" +
                             "\">red<font color=\"#D2D2D2\"> - extortionate" +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_3)
                 {
                     // Upgrades
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "There are two types of upgrades: " +
                             "<font color=\"#FFFFD2\">Standard upgrades<font " +
@@ -333,15 +335,14 @@ class LabelTextProvider
                             "helicopter type (see section " +
                             "<font color=\"#FFFFFF\">\"Helicopter types\"" +
                             "<font color=\"#D2D2D2\">)." +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_4)
                 {
                     // Boss-Gegner
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Every 10 levels, the player encounters a " +
                             "<font color=\"#FFFFD2\">boss enemy" +
@@ -359,15 +360,14 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> " +
                             "(see section <font color=\"#FFFFFF\">\"Power-ups\"" +
                             "<font color=\"#D2D2D2\">)." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_5)
                 {
                     // Bedienung
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "HelicopterDefence is exclusively mouse controlled:<br>" +
                             "Your helicopter always moves towards the mouse cursor. " +
@@ -410,67 +410,58 @@ class LabelTextProvider
                             "<font color=\"#FFFFD2\">" +
                             "repair shop<font color=\"#D2D2D2\"> button becomes " +
                             "visible. Press this button to enter the repair shop." +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_6)
                 {
                     // PowerUps
                     return
-                        "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            ".line-distance {font-size: " + lineDistance + "px;}" +
-                            ".heading-margin {font-size: " + headingMargin + "px;}" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContentForPowerUpPage() +
 
                             "After destruction, some opponents drop one of the 6 " +
                             "following <font color=\"#FFFFD2\">power-ups" +
                             "<font color=\"#D2D2D2\">:" +
-
-                            wrapWithDivClass("<br><br>", "heading-margin") +
+                            htmlSnippetProvider.getFormattedLineBreakAfterHeading() +
                             "Bonus credit" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "Unlimited energy for 15 seconds" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "Partial repairs" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Indestructibility " + "for 15 seconds" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "Triple damage for 15 seconds" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "Increased fire rate for 15 seconds" +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_8)
                 {
                     // Spezial-Modus
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
-                            "In <font color=\"#FFFFD2\">special mode<font color=\"#D2D2D2\">, players do not receive any "
-                            + "financial reward for the "
-                            + "destruction of a hostile flying vessel. Instead, "
-                            + "every level up is generously rewarded. The more "
-                            + "successful you played with the other helicopter "
-                            + "classes, the more money you can make."
-                            + "<br><br>Background: The world government leaded by "
-                            + "President Karanijem Su has no trust in the loyalty "
-                            + "of <font color=\"#FFFFD2\">Helios type<font color=\"#D2D2D2\"> helicopter "
-                            + "constructors. 'Where did they get the knowledge to "
-                            + "use alien technology?' Therefore, he excluded them "
-                            + "from the reservist program and denies them his "
-                            + "support. Fortunately, in a moment of despair, a "
-                            + "league of helicopter pilots formed, willing to "
-                            + "spend a part of their income to pilots of Helios "
-                            + "type helicopters."
-                            + "<font color=\"#D2D2D2\">" +
-                            "</font></html>";
+                            "In <font color=\"#FFFFD2\">special mode<font color=\"#D2D2D2\">, players do not receive any " +
+                            "financial reward for the " +
+                            "destruction of a hostile flying vessel. Instead, " +
+                            "every level up is generously rewarded. The more " +
+                            "successful you played with the other helicopter " +
+                            "classes, the more money you can make." +
+                            "<br><br>Background: The world government leaded by " +
+                            "President Karanijem Su has no trust in the loyalty " +
+                            "of <font color=\"#FFFFD2\">Helios type<font color=\"#D2D2D2\"> helicopter " +
+                            "constructors. 'Where did they get the knowledge to " +
+                            "use alien technology?' Therefore, he excluded them " +
+                            "from the reservist program and denies them his " +
+                            "support. Fortunately, in a moment of despair, a " +
+                            "league of helicopter pilots formed, willing to " +
+                            "spend a part of their income to pilots of Helios " +
+                            "type helicopters." +
+                            "<font color=\"#D2D2D2\">" +
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
             else if(window  == HELICOPTER_TYPES)
@@ -479,9 +470,7 @@ class LabelTextProvider
                 {
                     // Allgemein
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "You can choose from " + HelicopterType.count() + " different " +
                             "<font color=\"#FFFFD2\">helicopter types" +
@@ -508,15 +497,14 @@ class LabelTextProvider
                             "performance. " +
                             "For more details, have a look at the detailed " +
                             "descriptions of each helicopter type." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_3)
                 {
                     // Phönix
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "<font color=\"#FFFFD2\">Phoenix type helicopters" +
                             "<font color=\"#D2D2D2\"> are the best armor-plated " +
@@ -553,15 +541,14 @@ class LabelTextProvider
                             "receive a bonus credit is to eliminate a hostile flying " +
                             "vessel by missile attack immediately after using the " +
                             "teleporting device. " +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_4)
                 {
                     // Roch
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "For all <font color=\"#FFFFD2\">Roch type helicopters" +
                             "<font color=\"#D2D2D2\">, the <font color=\"#FFFFD2\">" +
@@ -584,15 +571,14 @@ class LabelTextProvider
                             "helicopter manages to destroy multiple flying vessels " +
                             "with the same missile, he will be rewarded with " +
                             "<font color=\"#FFFFD2\">bonus credit." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_5)
                 {
                     // Orochi
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "<font color=\"#FFFFD2\">Orochi type helicopters" +
                             "<font color=\"#D2D2D2\"> are true all-rounder: They fly " +
@@ -620,15 +606,14 @@ class LabelTextProvider
                             "the helicopter's pilot will be rewarded with a " +
                             "<font color=\"#FFFFD2\">bonus " +
                             "credit<font color=\"#D2D2D2\">." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_6)
                 {
                     // Kamaitachi
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "<font color=\"#FFFFD2\">Kamaitachi type helicopters" +
                             "<font color=\"#D2D2D2\"> have weak " +
@@ -655,15 +640,14 @@ class LabelTextProvider
                             "multiple enemies within a very short period of time, he " +
                             "will be rewarded for his brave actions with generous " +
                             "<font color=\"#FFFFD2\">bonus credit." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_7)
                 {
                     // Pegasus
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "<font color=\"#FFFFD2\">Pegasus type helicopters" +
                             "<font color=\"#D2D2D2\"> would be at a serious " +
@@ -694,39 +678,39 @@ class LabelTextProvider
                             "therefore easily penetrate the enemy's plating " +
                             "resulting in severe damage. After launching a missile, " +
                             "the helicopter shifts back into its original state." +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_8)
                 {
                     // Helios
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
-                            "Upgraded with alien technology collected from crashed "
-                            + "alien vessels, <font color=\"#FFFFD2\">Helios type "
-                            + "helicopters<font color=\"#D2D2D2\"> are a powerful "
-                            + "weapon against the alien invasion. With their "
-                            + "installed <font color=\"#FFFFD2\">PU Generator"
-                            + "<font color=\"#D2D2D2\">, they can use energy to "
-                            + "generate <font color=\"#FFFFD2\">power-ups"
-                            + "<font color=\"#D2D2D2\"> and they "
-                            + "can even control PowerUp movement: with a "
-                            + "<font color=\"#FFFFD2\">power-up immobilizer "
-                            + "<font color=\"#D2D2D2\">installed, "
-                            + "power-ups can be forced to the ground where they can be "
-                            + "collected more easily. Helios type Helicopters are "
-                            + "heavily supported by the league of Helicopter pilots "
-                            + "who are willing to share their individually upgrade "
-                            + "knowledge. So the more successful you played with the "
-                            + "other helicopter classes, the less you will suffer "
-                            + "from high <font color=\"#FFFFD2\">upgrade costs. "
-                            + "<br><font color=\"#D2D2D2\">Helios-type helicopters can "
-                            + "only be played in <font color=\"#FFFFD2\">"
-                            + "special mode.<font color=\"#D2D2D2\">" +
+                            "Upgraded with alien technology collected from crashed "+
+                            "alien vessels, <font color=\"#FFFFD2\">Helios type "+
+                            "helicopters<font color=\"#D2D2D2\"> are a powerful "+
+                            "weapon against the alien invasion. With their "+
+                            "installed <font color=\"#FFFFD2\">PU Generator"+
+                            "<font color=\"#D2D2D2\">, they can use energy to "+
+                            "generate <font color=\"#FFFFD2\">power-ups"+
+                            "<font color=\"#D2D2D2\"> and they "+
+                            "can even control PowerUp movement: with a "+
+                            "<font color=\"#FFFFD2\">power-up immobilizer "+
+                            "<font color=\"#D2D2D2\">installed, "+
+                            "power-ups can be forced to the ground where they can be "+
+                            "collected more easily. Helios type Helicopters are "+
+                            "heavily supported by the league of Helicopter pilots "+
+                            "who are willing to share their individually upgrade "+
+                            "knowledge. So the more successful you played with the "+
+                            "other helicopter classes, the less you will suffer "+
+                            "from high <font color=\"#FFFFD2\">upgrade costs. "+
+                            "<br><font color=\"#D2D2D2\">Helios-type helicopters can "+
+                            "only be played in <font color=\"#FFFFD2\">"+
+                            "special mode.<font color=\"#D2D2D2\">" +
                             "<font color=\"#D2D2D2\">" +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
             else if(window  == CONTACT)
@@ -734,9 +718,7 @@ class LabelTextProvider
                 if(page == BUTTON_1)
                 {
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "You have some new ideas or want to provide suggestions " +
                             "for improvements for HelicopterDefence?<br> Then don't " +
@@ -749,7 +731,8 @@ class LabelTextProvider
                             "hearing from you!" +
                             "<br><br>Best regards," +
                             "<br>Bj\u00F6rn Hansen" +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
         }
@@ -761,9 +744,7 @@ class LabelTextProvider
                 {
                     // Handlung
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Wir schreiben das Jahr 2371. Seit dem " +
                             "Unabh\u00E4ngigkeitskrieg der Mars-Kolonien, der nun schon " +
@@ -781,15 +762,14 @@ class LabelTextProvider
                             "den Ausnahmezustand verh\u00E4ngt und bittet " +
                             "Reservisten und Freiwillige aus aller Welt um Hilfe. " +
                             "Sie sind einer davon." +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_2)
                 {
                     // Änderungen seit 1.0
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "- Zu Gunsten einer gr\u00F6\u00DFeren Einsteigerfreundlichkeit " +
                             "wurde der Schwierigkeitsgrad der<br>" +
@@ -810,15 +790,14 @@ class LabelTextProvider
                             "- Viele \u00C4nderungen, die unter anderem Spielbalance, " +
                             "Grafik<br>	&nbsp oder das Upgrade-System betreffen, " +
                             "wurden vorgenommen." +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_4)
                 {
                     // Änderungen seit 1.1
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "- Zur Verbesserung der Grafik kommen Gradientenfarben " +
                             "und Antialiasing zum Einsatz.<br>" +
@@ -846,15 +825,14 @@ class LabelTextProvider
                             "- Viele weitere \u00C4nderungen, welche die Bedienung, das " +
                             "Upgrade-System, <br>	&nbsp die Grafik oder die " +
                             "Spielbalance betreffen wurden vorgenommen." +
-                            "</b></font></span></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_5)
                 {
                     // Credits
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Besonderer Dank gilt allen meinen Beta-Testern, die " +
                             "HelikopterDefence 1.0 " +
@@ -890,21 +868,21 @@ class LabelTextProvider
                             "gelegt.<br><br>Du m\u00F6chtest auch Beta-Tester werden? " +
                             "Kein Problem! Schicke Deine Verbesserungsvorschl\u00E4ge an: " +
                             "<font color=\"#FFFFD2\">info@HelicopterDefence.de" +
-                            "</font></b></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_6)
                 {
                     // Copyright
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Dies ist ein Freeware-Spiel. Die Weitergabe ist also " +
                             "ausdr\u00FCcklich erlaubt und auch erw\u00FCnscht! " +
                             "Programm\u00E4nderungen jeglicher Art sind allerdings dem " +
                             "Programmierer vorbehalten!" +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
             else if(window  == DESCRIPTION)
@@ -913,9 +891,7 @@ class LabelTextProvider
                 {
                     // Spielbeschreibung
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Zu Beginn des Spiels stehen Ihnen " + HelicopterType.count() + " verschiedene " +
                             "<font color=\"#FFFFD2\">Helikopter-Klassen" +
@@ -938,15 +914,14 @@ class LabelTextProvider
                             "reparieren lassen sowie neue " +
                             "Upgrades erwerben, mit denen ihr Helikopter noch " +
                             "schlagfertiger wird." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_2)
                 {
                     // Finanzen/Reparatur
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Nach dem Absturz des Helikopters (Totalschaden) muss " +
                             "in der <font color=\"#FFFFD2\">Werkstatt" +
@@ -987,15 +962,14 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> - hoher Preis; " +
                             "<font color=\"#FF7369\">rot<font color=\"#D2D2D2\"> - " +
                             "Wucher" +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_3)
                 {
                     // Upgrades
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Die Helikopter-Upgrades unterteilen sich in " +
                             "<font color=\"#FFFFD2\">Standard-" +
@@ -1036,15 +1010,14 @@ class LabelTextProvider
                             "einzige Helicoper-Klasse verf\u00FCgbar sind (siehe " +
                             "Abschnitt <font color=\"#FFFFFF\">\"Helikopter-" +
                             "Klassen\"<font color=\"#D2D2D2\">). " +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_4)
                 {
                     // Boss-Gegner
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Alle 10 Level trifft der Spieler auf einen besonders " +
                             "schwer zu besiegenden <font color=\"#FFFFD2\">Boss-" +
@@ -1060,15 +1033,14 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> (siehe Abschitt " +
                             "<font color=\"#FFFFFF\">\"PowerUps\"" +
                             "<font color=\"#D2D2D2\">)." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_5)
                 {
                     // Bedienung
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Die Steuerung des Helikopters erfolgt ausschlie\u00DFlich mit der Maus:<br>" +
                             "Der Helikopter bewegt sich immer auf den Maus-Cursor " +
@@ -1112,65 +1084,56 @@ class LabelTextProvider
                             "<font color=\"#FFFFD2\">Werkstatt" +
                             "<font color=\"#D2D2D2\"> " +
                             "zur\u00FCckkehren kann." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_6)
                 {
                     // PowerUps
                     return
-                        "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            ".line-distance {font-size: " + lineDistance + "px;}" +
-                            ".heading-margin {font-size: " + headingMargin + "px;}" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContentForPowerUpPage() +
 
                             "Einige Gegner verlieren nach Ihrem Abschuss eines der " +
                             "6 folgenden <font color=\"#FFFFD2\">PowerUps" +
                             "<font color=\"#D2D2D2\">: " +
-
-                            wrapWithDivClass("<br><br>", "heading-margin") +
+                            htmlSnippetProvider.getFormattedLineBreakAfterHeading() +
                             "Extra-Bonus" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "unendlich Energie f\u00FCr 15 Sekunden" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "Teil-Reparatur" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Unverwundbarkeit f\u00FCr 15 Sekunden " +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "3-fache Feuerkraft f\u00FCr 15 " + "Sekunden" +
-
-                            wrapWithDivClass("<br><br>", "line-distance") +
+                            htmlSnippetProvider.getFormattedLineBreak() +
                             "erh\u00F6hte Schussrate f\u00FCr 15 Sekunden " +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_8)
                 {
                     // Spezial-Modus
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
-                            "Im <font color=\"#FFFFD2\">Spezial-Modus"
-                            + "<font color=\"#D2D2D2\"> erh\u00E4lt der Spieler keine "
-                            + "Belohnung f\u00FCr "
-                            + "abgeschossene Gegner. Stattdessen wird in diesem "
-                            + "Spielmodus jeder Levelaufstieg belohnt. Je "
-                            + "erfolgreicher Sie mit den anderen Helikopter-Klassen "
-                            + "gespielt haben, desto mehr Geld erhalten Sie. "
-                            + "<br><br>Hintergrund: Die Weltregierung unter "
-                            + "President Kranijem Su steht der Helios-Klasse sehr "
-                            + "skeptisch gegen\u00FCber. 'Woher haben die Konstrukteure "
-                            + "ihr Wissen \u00FCber die Verwendung au\u00DFerirdischer "
-                            + "Technologie?' Daher wurden alle Piloten von "
-                            + "Helikoptern der Helios-Klasse vom "
-                            + "Reservisten-Programm ausgeschlossen."
-                            + "<font color=\"#D2D2D2\">)." +
-                            "</font></html>";
+                            "Im <font color=\"#FFFFD2\">Spezial-Modus" +
+                            "<font color=\"#D2D2D2\"> erh\u00E4lt der Spieler keine " +
+                            "Belohnung f\u00FCr " +
+                            "abgeschossene Gegner. Stattdessen wird in diesem " +
+                            "Spielmodus jeder Levelaufstieg belohnt. Je " +
+                            "erfolgreicher Sie mit den anderen Helikopter-Klassen " +
+                            "gespielt haben, desto mehr Geld erhalten Sie. " +
+                            "<br><br>Hintergrund: Die Weltregierung unter " +
+                            "President Kranijem Su steht der Helios-Klasse sehr " +
+                            "skeptisch gegen\u00FCber. 'Woher haben die Konstrukteure " +
+                            "ihr Wissen \u00FCber die Verwendung au\u00DFerirdischer " +
+                            "Technologie?' Daher wurden alle Piloten von " +
+                            "Helikoptern der Helios-Klasse vom " +
+                            "Reservisten-Programm ausgeschlossen." +
+                            "<font color=\"#D2D2D2\">)." +
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
             else if(window  == HELICOPTER_TYPES)
@@ -1179,9 +1142,7 @@ class LabelTextProvider
                 {
                     // Allgemein
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Der Spieler hat die Wahl zwischen " + HelicopterType.count() + " verschiedenen " +
                             "Helikopter-Klassen. " +
@@ -1205,15 +1166,14 @@ class LabelTextProvider
                             "Abwehrleistungen ausgezahlt. N\u00E4heres hierzu " +
                             "finden Sie in den detaillierten " +
                             "Beschreibungen zu den einzelnen Helikopter-Klassen." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_3)
                 {
                     // Phönix
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Die <font color=\"#FFFFD2\">Ph\u00F6nix-Klasse" +
                             "<font color=\"#D2D2D2\"> ist die robusteste der 5 " +
@@ -1257,15 +1217,14 @@ class LabelTextProvider
                             "<font color=\"#D2D2D2\"> belohnt. Auch f\u00FCr das " +
                             "unmittelbare Abschie\u00DFen eines Gegners nach Nutzung des " +
                             "Teleporters erh\u00E4lt der Spieler einen Extra-Bonus." +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_4)
                 {
                     // Roch
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "F\u00FCr die  <font color=\"#FFFFD2\">Roch-Klasse " +
                             "<font color=\"#D2D2D2\"> kann die " +
@@ -1297,15 +1256,14 @@ class LabelTextProvider
                             "diese glorreiche Tat mit " +
                             "einem  <font color=\"#FFFFD2\">Extra-Bonus" +
                             "<font color=\"#D2D2D2\"> belohnt." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_5)
                 {
                     // Orochi
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Helikopter der <font color=\"#FFFFD2\">Orochi-Klasse" +
                             "<font color=\"#D2D2D2\"> sind wahre \"Allrounder\": " +
@@ -1335,15 +1293,14 @@ class LabelTextProvider
                             "ausschalten, dann wird dies mit einem " +
                             "<font color=\"#FFFFD2\">Extra-Bonus" +
                             "<font color=\"#D2D2D2\"> belohnt." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_6)
                 {
                     // Kamaitachi
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Die reine Feuerkraft der <font color=\"#FFFFD2\">" +
                             "Kamaitachi-Klasse<font color=\"#D2D2D2\"> ist sehr " +
@@ -1371,15 +1328,14 @@ class LabelTextProvider
                             "einem gro\u00DFz\u00FCgigen <font color=\"#FFFFD2\">Extra-Bonus" +
                             "<font color=\"#D2D2D2\"> " +
                             "belohnt." +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_7)
                 {
                     // Pegasus
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Helikopter der <font color=\"#FFFFD2\">Pegasus-Klasse" +
                             "<font color=\"#D2D2D2\"> w\u00E4ren stark benachteiligt, " +
@@ -1417,32 +1373,32 @@ class LabelTextProvider
                             "schweren Schaden beim Gegner anrichten. Nach Abschuss " +
                             "einer Rakete f\u00FCllt der Helikopter allerdings wieder in " +
                             "seinen Normalzustand zur\u00FCck." +
-                            "</b></font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
                 else if(page == BUTTON_8)
                 {
                     // Helios
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
-                            "Mit dem Ziel eine besonders schlagfertige Helikopter-"
-                            + "Klasse zu erschaffen, haben die Konstrukteure der "
-                            + "<font color=\"#FFFFD2\">Helios-Klasse<font color=\"#D2D2D2\"> ihre Upgrade-Erfahrung mit allen anderen "
-                            + "Helikopter-Klassen genutzt. Je erfolgreicher Sie also "
-                            + "mit den anderen Helikopter-Klassen gespielt haben, "
-                            + "desto geringer fallen die <font color=\"#FFFFD2\">Upgrade-Kosten<font color=\"#D2D2D2\"> f\u00FCr die "
-                            + "Helios-Klasse aus. Die Konstrukteure "
-                            + "haben nicht einmal davor Halt gemacht, au\u00DFerirdische "
-                            + "Technologie aus abgest\u00FCrzten Flugobjekten zu verbauen: "
-                            + "Ein <font color=\"#FFFFD2\">PowerUp-Stopper<font color=\"#D2D2D2\"> hilft dabei, die Bewegung von "
-                            + "PowerUps zu kontrollieren, was ihr Einsammeln "
-                            + "erleichtert. Unter gro\u00DFem Energieaufwand k\u00F6nnen diese "
-                            + "Helikopter au\u00DFerdem einen <font color=\"#FFFFD2\">PU-Generator<font color=\"#D2D2D2\"> zur Erzeugung "
-                            + "von PowerUps nutzen. Die Helios-Klasse l\u00E4sst sich nur "
-                            + "im <font color=\"#FFFFD2\">Spezial-Modus<font color=\"#D2D2D2\"> spielen."
-                            + "</font></html>";
+                            "Mit dem Ziel eine besonders schlagfertige Helikopter-" +
+                            "Klasse zu erschaffen, haben die Konstrukteure der " +
+                            "<font color=\"#FFFFD2\">Helios-Klasse<font color=\"#D2D2D2\"> ihre Upgrade-Erfahrung mit allen anderen " +
+                            "Helikopter-Klassen genutzt. Je erfolgreicher Sie also " +
+                            "mit den anderen Helikopter-Klassen gespielt haben, " +
+                            "desto geringer fallen die <font color=\"#FFFFD2\">Upgrade-Kosten<font color=\"#D2D2D2\"> f\u00FCr die " +
+                            "Helios-Klasse aus. Die Konstrukteure " +
+                            "haben nicht einmal davor Halt gemacht, au\u00DFerirdische " +
+                            "Technologie aus abgest\u00FCrzten Flugobjekten zu verbauen: " +
+                            "Ein <font color=\"#FFFFD2\">PowerUp-Stopper<font color=\"#D2D2D2\"> hilft dabei, die Bewegung von " +
+                            "PowerUps zu kontrollieren, was ihr Einsammeln " +
+                            "erleichtert. Unter gro\u00DFem Energieaufwand k\u00F6nnen diese " +
+                            "Helikopter au\u00DFerdem einen <font color=\"#FFFFD2\">PU-Generator<font color=\"#D2D2D2\"> zur Erzeugung " +
+                            "von PowerUps nutzen. Die Helios-Klasse l\u00E4sst sich nur " +
+                            "im <font color=\"#FFFFD2\">Spezial-Modus<font color=\"#D2D2D2\"> spielen." +
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
             else if(window  == CONTACT)
@@ -1450,9 +1406,7 @@ class LabelTextProvider
                 if(page == BUTTON_1)
                 {
                     return
-                            "<html><head><style>" +
-                            "body { font-size: " + size + "px; font-family: Dialog; color: #D2D2D2; }" +
-                            "</style></head><body>" + fontSpecification.boldString() +
+                            htmlSnippetProvider.getHtmlBeforeBodyTextContent() +
 
                             "Du hast neue Ideen oder Verbesserungsvorschl\u00E4ge f\u00FCr " +
                             "HelikopterDefence?<br> Dann schreibe eine E-Mail an: " +
@@ -1464,14 +1418,11 @@ class LabelTextProvider
                             "m\u00F6chtest. <br><br>Ich freue mich darauf, von dir zu " +
                             "h\u00F6ren. <br><br>Viele Gr\u00FC\u00DFe" +
                             "<br>Bj\u00F6rn Hansen" +
-                            "</font></html>";
+
+                            htmlSnippetProvider.getClosingTags();
                 }
             }
         }
         return "";
-    }
-
-    private static String wrapWithDivClass(String text, String className) {
-        return "<div class=\"" + className + "\">" + text + "</div>";
     }
 }

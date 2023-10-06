@@ -98,9 +98,10 @@ public abstract class Window implements Paintable
 	 
 	public static StartScreenMenuButtonType
 		page = StartScreenMenuButtonType.BUTTON_1; // ausgewählte Seite im StartScreen-Menü
-	
+
+	// TODO gehört langfristig wahrscheinlich ins Dictionary und sollte dann auch nicht mehr statisch abrufbar sein
 	public static Language
-		language = ENGLISH;
+		language = Language.getDefault();
 
 	public static HelicopterType
 		unlockedType;					// Typ des freigeschalteten Helicopters
@@ -143,8 +144,8 @@ public abstract class Window implements Paintable
     public static final FontProvider
 		fontProvider = new FontProvider();
 	
-	public static final LabelTextProvider
-		labelTextProvider = new LabelTextProvider();
+	private static LabelTextProvider
+		labelTextProvider;
 
 	public static final Dictionary
 		dictionary = new Dictionary();
@@ -182,6 +183,16 @@ public abstract class Window implements Paintable
 	public static void setHtmlViewer(HtmlViewer htmlViewer)
 	{
 		Window.htmlViewer = htmlViewer;
+	}
+
+	public static void initializeLabelTextProvider()
+	{
+		labelTextProvider = new LabelTextProvider();
+	}
+
+	public static void resetLabelTextProvider()
+	{
+		labelTextProvider.initialize(language);
 	}
 
 	/** Paint-Methoden **/
@@ -390,6 +401,7 @@ public abstract class Window implements Paintable
 	{
 		Window.language = language;
 		Window.dictionary.switchLanguageTo(language);
+		Window.labelTextProvider.switchLanguage(language);
 	}
 	
 	public static void updateStartScreenSubButtons()

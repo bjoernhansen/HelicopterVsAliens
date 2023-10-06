@@ -32,8 +32,13 @@ public class FontSpecification
         return size;
     }
 
-    public String boldString()
+    public String openingTags()
     {
         return size <= boldThreshold ? "<b>" : "";
+    }
+
+    public String closingTags()
+    {
+        return size <= boldThreshold ? "<\\b>" : "";
     }
 }
