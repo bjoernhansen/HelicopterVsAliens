@@ -104,10 +104,6 @@ public class GameApplication extends Application
         anchorPane.getChildren()
                   .add(webView);
 
-        System.out.println(scalingFactor);
-        System.out.println(webView.getLayoutX());
-        System.out.println(webView.getLayoutY());
-
         AnchorPane.setLeftAnchor(webView, webView.getLayoutX());
         AnchorPane.setTopAnchor(webView, webView.getLayoutY());
 

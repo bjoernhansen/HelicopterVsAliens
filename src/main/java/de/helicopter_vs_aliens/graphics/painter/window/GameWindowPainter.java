@@ -442,7 +442,7 @@ public class GameWindowPainter extends WindowPainter
             }
             if (Window.moneyDisplayTimer <= 23)
             {
-                graphicsAdapter.setFont(new Font("Dialog", Font.PLAIN, Window.moneyDisplayTimer));
+                graphicsAdapter.setFont(fontProvider.getPlain(Window.moneyDisplayTimer));
             }
             if (Window.moneyDisplayTimer > 23 && Window.moneyDisplayTimer < 77)
             {
@@ -450,7 +450,7 @@ public class GameWindowPainter extends WindowPainter
             }
             if (Window.moneyDisplayTimer >= Window.BONUS_DISPLAY_TIME - 23)
             {
-                graphicsAdapter.setFont(new Font("Dialog", Font.PLAIN, Window.BONUS_DISPLAY_TIME - Window.moneyDisplayTimer));
+                graphicsAdapter.setFont(fontProvider.getPlain(Window.BONUS_DISPLAY_TIME - Window.moneyDisplayTimer));
             }
             graphicsAdapter.drawString("+" + Events.getLastBonusWithCurrency(), 20, 60);
             if (Events.lastExtraBonus > 0)

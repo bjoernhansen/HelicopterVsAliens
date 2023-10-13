@@ -85,8 +85,12 @@ public enum WindowType
         VALUES = List.of(values());
     
     public static final String
-        START_OF_START_SCREEN_MENU_BUTTON_LABEL_PREFIX = "buttonLabel.startScreenSub.";
-    
+        START_OF_START_SCREEN_MENU_BUTTON_LABEL_KEY_PREFIX = "buttonLabel.startScreenSub.";
+
+    public static final String
+        START_OF_START_SCREEN_MENU_TEXT_KEY_PREFIX = "menuText.startScreenSub.";
+
+
     private static final Set<WindowType>
         MAIN_WINDOWS = Collections.unmodifiableSet(EnumSet.complementOf(EnumSet.of(GAME, REPAIR_SHOP, SCORE_SCREEN)));
     
@@ -96,6 +100,9 @@ public enum WindowType
     
     private final String
         buttonLabelKeyPrefix;
+
+    private final String
+        startScreenMenuTextKeyPrefix;
     
     private final Supplier<? extends Window>
         menuInstance;
@@ -110,12 +117,13 @@ public enum WindowType
     WindowType(Class<? extends Window> menuClass,
                Supplier<? extends Window> menuInstance,
                Supplier<? extends Painter<? extends Paintable>> painterInstance,
-               String endOfButtonLabelPrefix)
+               String endOfKeyPrefix)
     {
         this.menuClass = menuClass;
         this.menuInstance = menuInstance;
         this.painterInstance = painterInstance;
-        this.buttonLabelKeyPrefix = START_OF_START_SCREEN_MENU_BUTTON_LABEL_PREFIX + endOfButtonLabelPrefix;
+        this.buttonLabelKeyPrefix = START_OF_START_SCREEN_MENU_BUTTON_LABEL_KEY_PREFIX + endOfKeyPrefix;
+        this.startScreenMenuTextKeyPrefix = START_OF_START_SCREEN_MENU_TEXT_KEY_PREFIX + endOfKeyPrefix;
     }
     
     public static List<WindowType> getValues()
@@ -135,6 +143,10 @@ public enum WindowType
     
     public String getButtonLabelKeyPrefix(){
         return buttonLabelKeyPrefix;
+    }
+
+    public String getStartScreenMenuTextKeyPrefix(){
+        return startScreenMenuTextKeyPrefix;
     }
     
     public Window getMenuInstance()

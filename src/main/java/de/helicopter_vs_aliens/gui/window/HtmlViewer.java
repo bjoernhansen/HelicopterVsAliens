@@ -7,8 +7,4 @@ public interface HtmlViewer
      void show();
 
      void hide();
-
-     void setWide();
-
-     void setNarrow();
 }

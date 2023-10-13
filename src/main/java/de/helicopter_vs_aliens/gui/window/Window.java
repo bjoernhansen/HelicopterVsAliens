@@ -519,7 +519,7 @@ public abstract class Window implements Paintable
 	
 	public static void updateStartScreenSubLabelText()
 	{
-		htmlViewer.setText(labelTextProvider.getLabel(language, WindowManager.window, page));
+		htmlViewer.setText(labelTextProvider.getLabel(WindowManager.window, page));
 	}
 
 	public static void adaptToNewWindow(boolean justEntered)

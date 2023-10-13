@@ -24,7 +24,7 @@ public class JavaFxBasedHtmlViewer extends AbstractHtmlViewer<WebView>
     public static JavaFxBasedHtmlViewer makeInstance(Dimension displayShift, double scalingFactor)
     {
         var htmlViewer = new JavaFxBasedHtmlViewer(displayShift, scalingFactor);
-        htmlViewer.setWide();
+        htmlViewer.setHorizontalBounds(HORIZONTAL_BOUNDS);
         htmlViewer.hide();
         return htmlViewer;
     }

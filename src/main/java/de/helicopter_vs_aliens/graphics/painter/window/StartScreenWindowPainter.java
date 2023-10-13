@@ -82,7 +82,7 @@ public class StartScreenWindowPainter extends WindowPainter
                 30 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE + (206-stringWidth)/2,
                 225 + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
             
-            graphicsAdapter.setFont(new Font("Dialog", Font.BOLD, 15));
+            graphicsAdapter.setFont(fontProvider.getBold(15));
             
             HelicopterType type = HelicopterType.getValues().get((Window.helicopterSelection +i)% HelicopterType.count());
             for(int j = 0; j < 3; j++)

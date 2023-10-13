@@ -49,8 +49,8 @@ public class HelicopterTypesWindowPainter extends StartScreenMenuWindowPainter
                         graphicsAdapter.setColor(upgradeCosts.getColor());
                         tempString = Window.dictionary.priceLevel(upgradeCosts);
                     }
-                    if(tempString == null) tempString = "Erwischt!";
                     graphicsAdapter.drawString(tempString, 200 + (j-1) * 135, 140 + (i == 0 ? 0 : 5) + (i-1) * 32);
+
                 }
             }
         }

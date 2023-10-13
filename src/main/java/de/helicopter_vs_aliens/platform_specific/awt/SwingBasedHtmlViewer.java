@@ -19,7 +19,7 @@ class SwingBasedHtmlViewer extends AbstractHtmlViewer<JTextPane>
     public static SwingBasedHtmlViewer makeInstance(Dimension displayShift)
     {
         var htmlViewer = new SwingBasedHtmlViewer(displayShift);
-        htmlViewer.setWide();
+        htmlViewer.setHorizontalBounds(HORIZONTAL_BOUNDS);
         htmlViewer.hide();
         return htmlViewer;
     }

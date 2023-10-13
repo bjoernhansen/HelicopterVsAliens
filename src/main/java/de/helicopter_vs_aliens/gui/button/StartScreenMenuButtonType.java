@@ -52,11 +52,14 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
     
     private final Point
         indizes;
+
+    private final int
+        index;
         
     
     StartScreenMenuButtonType()
     {
-        int index = ordinal();
+        index = ordinal();
         this.buttonLabelKeyPostfix = Integer.toString(index);
         this.indizes = new Point(index/ROW_COUNT, index%ROW_COUNT);
     }
@@ -98,5 +101,10 @@ public enum StartScreenMenuButtonType implements ButtonSpecifier
     public boolean isFarRightButton()
     {
         return FAR_RIGHT_BUTTONS.contains(this);
+    }
+
+    public int getIndex()
+    {
+        return index;
     }
 }

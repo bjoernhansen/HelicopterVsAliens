@@ -920,7 +920,7 @@ public class Events
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
-                Window.htmlViewer.setWide();
+                Window.htmlViewer.show();
             }
             newStartScreenSubWindow(INFORMATION, false);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
@@ -970,7 +970,7 @@ public class Events
                 StartScreenMenuButtonType oldPage = Window.page;
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
-                    Window.htmlViewer.setWide();
+                    Window.htmlViewer.show();
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
@@ -979,7 +979,7 @@ public class Events
                 Window.page = (StartScreenMenuButtonType) buttonSpecifier;
                 if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
-                    Window.htmlViewer.setNarrow();
+                    Window.htmlViewer.hide();
                 }
                 else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {

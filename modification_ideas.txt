@@ -1,4 +1,9 @@
 
+Dictionary sollte den LabelTextProvider verwenden, dieser sollte die anderen Klassen nutzen (StartScreenMenuTextProvider, MenuTextRevision)
+Hier ggf. die Klassenaufteilung überarbeiten
+MenuTextRevision implementieren --> Ersetzungen
+
+
 config.properties erstellen und verwenden für Wahl JavaFX oder AWT, weitere Einstellungen, die Hart codiert sind
 
 evtl. ThreadLocalRandom.current().nextInt(set.size()) verwenden, soll effizienter sein

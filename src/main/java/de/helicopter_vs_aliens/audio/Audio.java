@@ -7,11 +7,16 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
+import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
 import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
 
@@ -288,6 +293,17 @@ public class Audio
         clip.setFramePosition(0);
         if(isSoundOn)
         {
+            if(!WindowManager.window.isMainWindow())
+            {
+                try
+                {
+                    Thread.sleep(1);
+                }
+                catch(InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
             clip.start();
         }
     }

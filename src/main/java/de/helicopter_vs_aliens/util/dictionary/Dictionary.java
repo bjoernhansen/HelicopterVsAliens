@@ -14,6 +14,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.score.HighScoreColumnType;
+import de.helicopter_vs_aliens.util.EnumTable;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +34,7 @@ public final class Dictionary
 
     private static final String
         FILENAME_EXTENSION = ".properties";
+
 
     private final Properties
         defaultLanguageProperties = new Properties();
@@ -70,6 +72,9 @@ public final class Dictionary
     private final List<String>
         settingOptions = new ArrayList<>();
 
+    private final StartScreenMenuTextProvider
+        startScreenMenuTextProvider = new StartScreenMenuTextProvider();
+
 
     public Dictionary()
     {
@@ -102,7 +107,7 @@ public final class Dictionary
             properties.load(Objects.requireNonNull(url)
                                    .openStream());
         }
-        catch (IOException e)
+        catch(IOException e)
         {
             e.printStackTrace();
         }
@@ -115,7 +120,7 @@ public final class Dictionary
 
     public void switchLanguageTo(Language language)
     {
-        if (this.language != language)
+        if(this.language != language)
         {
             this.language = language;
             reloadLanguageProperties();
@@ -125,7 +130,7 @@ public final class Dictionary
 
     public void switchHelicopterTypeTo(HelicopterType helicopterType)
     {
-        if (this.helicopterType != helicopterType)
+        if(this.helicopterType != helicopterType)
         {
             this.helicopterType = helicopterType;
             accountForHelicopterChange();
@@ -134,18 +139,18 @@ public final class Dictionary
 
     private void accountForLanguageChange()
     {
-        for (SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
+        for(SpecialUpgradeType specialUpgradeType : SpecialUpgradeType.getValues())
         {
-            if (specialUpgradeType == SpecialUpgradeType.FIFTH_SPECIAL)
+            if(specialUpgradeType == SpecialUpgradeType.FIFTH_SPECIAL)
             {
                 break;
             }
             specialUpgrades.put(specialUpgradeType, this.languageProperties.getProperty(specialUpgradeType.getDictionaryKey()));
         }
 
-        for (StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
+        for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
         {
-            if (standardUpgradeType == StandardUpgradeType.ENERGY_ABILITY)
+            if(standardUpgradeType == StandardUpgradeType.ENERGY_ABILITY)
             {
                 break;
             }
@@ -153,35 +158,36 @@ public final class Dictionary
             standardUpgradesImprovements.put(standardUpgradeType, getImprovementsStringList(dictionaryKeyPrefix));
         }
 
-        for (HelicopterType type : HelicopterType.getValues())
+        for(HelicopterType type : HelicopterType.getValues())
         {
             helicopterNames.put(type, this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".name"));
             List<String> infos = new ArrayList<>();
-            for (int i = 1; i <= 3; i++)
+            for(int i = 1; i <= 3; i++)
             {
                 infos.add(this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".infos." + i));
             }
             helicopterInfos.put(type, infos);
         }
 
-        for (BlockMessage blockMessage : BlockMessage.getValues())
+        for(BlockMessage blockMessage : BlockMessage.getValues())
         {
             String[] message = new String[4];
-            for (int i = 1; i <= 4; i++)
+            for(int i = 1; i <= 4; i++)
             {
                 message[i - 1] = this.languageProperties.getProperty(blockMessage.getKey() + i);
             }
             blockMessages.put(blockMessage, message);
         }
 
-        for (WindowType windowType : WindowType.getNonSettingsStartScreenSubWindows())
+        for(WindowType windowType : WindowType.getNonSettingsStartScreenSubWindows())
         {
             Map<StartScreenMenuButtonType, String> buttonLabels = new EnumMap<>(StartScreenMenuButtonType.class);
-            StartScreenMenuButtonType.getValues().forEach(buttonSpecifier -> {
-                StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType) buttonSpecifier;
-                String buttonLabelKey = buttonType.getButtonLabelKey(windowType);
-                buttonLabels.put(buttonType, this.languageProperties.getProperty(buttonLabelKey));
-            });
+            StartScreenMenuButtonType.getValues()
+                                     .forEach(buttonSpecifier -> {
+                                         StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType) buttonSpecifier;
+                                         String buttonLabelKey = buttonType.getButtonLabelKey(windowType);
+                                         buttonLabels.put(buttonType, this.languageProperties.getProperty(buttonLabelKey));
+                                     });
             startScreenSubButtonName.put(windowType, buttonLabels);
         }
 
@@ -192,10 +198,12 @@ public final class Dictionary
                            .forEach(highScoreColumnType -> highScoreColumnNames.put(highScoreColumnType, this.languageProperties.getProperty(highScoreColumnType.getKey())));
 
         settingOptions.clear();
-        for (int i = 1; i <= Window.NUMBER_OF_SETTING_OPTIONS; i++)
+        for(int i = 1; i <= Window.NUMBER_OF_SETTING_OPTIONS; i++)
         {
             settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
         }
+
+        startScreenMenuTextProvider.reload(languageProperties);
 
         accountForHelicopterChange();
     }
@@ -203,7 +211,7 @@ public final class Dictionary
     private void updateSettingsLabels()
     {
         Map<StartScreenMenuButtonType, String> settingsLabels = new EnumMap<>(StartScreenMenuButtonType.class);
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_1,  audioActivation());
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_1, audioActivation());
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_2.getButtonLabelKey(WindowType.SETTINGS)));
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_3.getButtonLabelKey(WindowType.SETTINGS)));
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_4, changeMusicModeLabel());
@@ -246,7 +254,7 @@ public final class Dictionary
     private List<String> getImprovementsStringList(String dictionaryKeyPrefix)
     {
         List<String> improvements = new ArrayList<>();
-        for (int i = 1; i <= 2; i++)
+        for(int i = 1; i <= 2; i++)
         {
             improvements.add(this.languageProperties.getProperty(dictionaryKeyPrefix + i));
         }
@@ -502,7 +510,7 @@ public final class Dictionary
 
     public String standardUpgradeName(StandardUpgradeType standardUpgradeType)
     {
-        if (WindowManager.window == WindowType.HELICOPTER_TYPES && standardUpgradeType == StandardUpgradeType.ENERGY_ABILITY)
+        if(WindowManager.window == WindowType.HELICOPTER_TYPES && standardUpgradeType == StandardUpgradeType.ENERGY_ABILITY)
         {
             return genericEnergyAbility();
         }
@@ -518,7 +526,7 @@ public final class Dictionary
     public String[] helicopterNotAvailable(HelicopterType helicopterType)
     {
         String[] message = {"", "", "", ""};
-        switch (helicopterType)
+        switch(helicopterType)
         {
             case HELIOS ->
             {
@@ -570,5 +578,10 @@ public final class Dictionary
     public String currencySymbol()
     {
         return this.languageProperties.getProperty("currencySymbol");
+    }
+
+    public String getStartScreenMenuText(WindowType window, StartScreenMenuButtonType page)
+    {
+        return startScreenMenuTextProvider.getText(window, page);
     }
 }
