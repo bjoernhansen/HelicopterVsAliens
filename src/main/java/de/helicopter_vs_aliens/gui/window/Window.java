@@ -143,12 +143,9 @@ public abstract class Window implements Paintable
 	
     public static final FontProvider
 		fontProvider = new FontProvider();
-	
-	private static LabelTextProvider
-		labelTextProvider;
 
-	public static final Dictionary
-		dictionary = new Dictionary();
+	public static Dictionary
+		dictionary;
 		
 	public static final Timer
 		levelDisplayTimer = new Timer(LEVEL_DISPLAY_TIME);			// reguliert die Anzeigezeit der Level-Anzeige nach einem Level-Up
@@ -183,16 +180,6 @@ public abstract class Window implements Paintable
 	public static void setHtmlViewer(HtmlViewer htmlViewer)
 	{
 		Window.htmlViewer = htmlViewer;
-	}
-
-	public static void initializeLabelTextProvider()
-	{
-		labelTextProvider = new LabelTextProvider();
-	}
-
-	public static void resetLabelTextProvider()
-	{
-		labelTextProvider.initialize(language);
 	}
 
 	/** Paint-Methoden **/
@@ -401,7 +388,6 @@ public abstract class Window implements Paintable
 	{
 		Window.language = language;
 		Window.dictionary.switchLanguageTo(language);
-		Window.labelTextProvider.switchLanguage(language);
 	}
 	
 	public static void updateStartScreenSubButtons()
@@ -519,7 +505,7 @@ public abstract class Window implements Paintable
 	
 	public static void updateStartScreenSubLabelText()
 	{
-		htmlViewer.setText(labelTextProvider.getLabel(WindowManager.window, page));
+		htmlViewer.setText(dictionary.getLabelText(WindowManager.window, page));
 	}
 
 	public static void adaptToNewWindow(boolean justEntered)
@@ -734,5 +720,10 @@ public abstract class Window implements Paintable
 		buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(dictionary.mission());
 		buttons.get(LeftSideRepairShopButtonType.MISSION).updateSecondaryLabel();
 		buttons.get(SpecialUpgradeButtonType.SPOTLIGHT).adjustCostsToZero();
+	}
+
+	public static void initializeDictionary()
+	{
+		dictionary = new Dictionary();
 	}
 }

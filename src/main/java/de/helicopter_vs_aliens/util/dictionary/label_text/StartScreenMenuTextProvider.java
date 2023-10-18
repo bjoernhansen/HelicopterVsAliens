@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.util.dictionary;
+package de.helicopter_vs_aliens.util.dictionary.label_text;
 
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
@@ -22,7 +22,7 @@ import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTO
 import static de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType.BUTTON_8;
 
 
-public class StartScreenMenuTextProvider
+class StartScreenMenuTextProvider
 {
     private static final Set<StartScreenMenuPage> START_SCREEN_MENU_TEXT_SPACES
         = Set.of(

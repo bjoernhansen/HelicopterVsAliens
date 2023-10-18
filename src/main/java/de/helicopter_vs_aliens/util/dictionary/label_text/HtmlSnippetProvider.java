@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.gui.window;
+package de.helicopter_vs_aliens.util.dictionary.label_text;
 
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
@@ -8,7 +8,7 @@ import de.helicopter_vs_aliens.util.dictionary.Language;
 import de.helicopter_vs_aliens.util.font.FontSpecification;
 
 
-public class HtmlSnippetProvider
+class HtmlSnippetProvider
 {
     private static final String
         OPENING_TAGS = "<html><head>";
@@ -35,7 +35,7 @@ public class HtmlSnippetProvider
         size ;
 
 
-    public HtmlSnippetProvider(GameRessourceProvider ressourceProvider, Language language)
+    HtmlSnippetProvider(GameRessourceProvider ressourceProvider, Language language)
     {
         graphicsApiType = ressourceProvider.getGraphicsApiType();
         scalingFactor = ressourceProvider.getScalingFactor();
@@ -43,13 +43,13 @@ public class HtmlSnippetProvider
         setPage(WindowType.START_SCREEN, StartScreenMenuButtonType.BUTTON_1);
     }
 
-    public void setPage(WindowType window, StartScreenMenuButtonType page)
+    void setPage(WindowType window, StartScreenMenuButtonType page)
     {
         fontSpecification = language.getFontSpecification(window, page, graphicsApiType);
         size = (int)(scalingFactor * fontSpecification.getSize());
     }
 
-    public String getHtmlBeforeBodyTextContent()
+    String getHtmlBeforeBodyTextContent()
     {
         return getHtmlBeforeBodyTextContentWith(getStyleElement(), fontSpecification.openingTags());
     }
@@ -59,7 +59,7 @@ public class HtmlSnippetProvider
         return OPENING_TAGS + styleElement + INTERMEDIATE_TAGS + boldString;
     }
 
-    public String getClosingTags()
+    String getClosingTags()
     {
         return fontSpecification.closingTags() + CLOSING_TAGS;
     }

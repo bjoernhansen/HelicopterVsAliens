@@ -14,7 +14,7 @@ import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.SpecialUpgradeType;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.score.HighScoreColumnType;
-import de.helicopter_vs_aliens.util.EnumTable;
+import de.helicopter_vs_aliens.util.dictionary.label_text.LabelTextProvider;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,21 +48,22 @@ public final class Dictionary
     private HelicopterType
         helicopterType = HelicopterType.getDefault();
 
-    private final EnumMap<SpecialUpgradeType, String>
+    private final Map<SpecialUpgradeType, String>
         specialUpgrades = new EnumMap<>(SpecialUpgradeType.class);
 
-    private final EnumMap<StandardUpgradeType, List<String>>
+    private final Map<StandardUpgradeType, List<String>>
         standardUpgradesImprovements = new EnumMap<>(StandardUpgradeType.class);
 
-    private final EnumMap<HelicopterType, String>
+    private final Map<HelicopterType, String>
         helicopterNames = new EnumMap<>(HelicopterType.class);
 
-    private final EnumMap<HelicopterType, List<String>>
+    private final Map<HelicopterType, List<String>>
         helicopterInfos = new EnumMap<>(HelicopterType.class);
 
-    private final EnumMap<BlockMessage, String[]>
+    private final Map<BlockMessage, String[]>
         blockMessages = new EnumMap<>(BlockMessage.class);
 
+    // TODO hier EnumTable verwenden
     private final Map<WindowType, Map<StartScreenMenuButtonType, String>>
         startScreenSubButtonName = new EnumMap<>(WindowType.class);
 
@@ -72,8 +73,8 @@ public final class Dictionary
     private final List<String>
         settingOptions = new ArrayList<>();
 
-    private final StartScreenMenuTextProvider
-        startScreenMenuTextProvider = new StartScreenMenuTextProvider();
+    private final LabelTextProvider
+        labelTextProvider = new LabelTextProvider();
 
 
     public Dictionary()
@@ -86,6 +87,11 @@ public final class Dictionary
         loadDefaultLanguageProperties();
         this.switchLanguageTo(language);
         this.switchHelicopterTypeTo(helicopterType);
+    }
+
+    public String getLabelText(WindowType window, StartScreenMenuButtonType page)
+    {
+        return labelTextProvider.getLabel(window, page);
     }
 
     private void loadDefaultLanguageProperties()
@@ -125,6 +131,7 @@ public final class Dictionary
             this.language = language;
             reloadLanguageProperties();
             accountForLanguageChange();
+            labelTextProvider.switchLanguage(language);
         }
     }
 
@@ -203,7 +210,7 @@ public final class Dictionary
             settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
         }
 
-        startScreenMenuTextProvider.reload(languageProperties);
+        labelTextProvider.reload(languageProperties);
 
         accountForHelicopterChange();
     }
@@ -580,8 +587,8 @@ public final class Dictionary
         return this.languageProperties.getProperty("currencySymbol");
     }
 
-    public String getStartScreenMenuText(WindowType window, StartScreenMenuButtonType page)
+    public void resetLabelTextProvider()
     {
-        return startScreenMenuTextProvider.getText(window, page);
+        labelTextProvider.switchLanguage(language);
     }
 }
