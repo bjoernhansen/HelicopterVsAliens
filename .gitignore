@@ -5,3 +5,7 @@ HelicopterVsAliens.iml
 savegame
 /.gradle/
 /build/
+/.project
+/.classpath
+/.settings/org.eclipse.buildship.core.prefs
+/bin/.gitignore
