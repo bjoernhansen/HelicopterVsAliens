@@ -42,7 +42,7 @@ class HtmlSnippetProvider
         this.language = language;
         setPage(WindowType.START_SCREEN, StartScreenMenuButtonType.BUTTON_1);
     }
-
+    
     void setPage(WindowType window, StartScreenMenuButtonType page)
     {
         fontSpecification = language.getFontSpecification(window, page, graphicsApiType);

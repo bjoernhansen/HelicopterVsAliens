@@ -26,8 +26,8 @@ public final class GameResources
     {
         if(gameProgress == null)
         {
-            GameResources.gameProgress = new GameProgress(graphicsApiType);
-            GameResources.gameProgress.initialize();
+            gameProgress = new GameProgress(graphicsApiType);
+            gameProgress.initialize();
         }
         return gameProgress;
     }

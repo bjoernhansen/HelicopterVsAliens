@@ -99,11 +99,6 @@ public final class Dictionary
         loadLanguageProperties(Language.ENGLISH, defaultLanguageProperties);
     }
 
-    private void reloadLanguageProperties()
-    {
-        loadLanguageProperties(this.language, languageProperties);
-    }
-
     private void loadLanguageProperties(Language language, Properties properties)
     {
         try
@@ -129,9 +124,8 @@ public final class Dictionary
         if(this.language != language)
         {
             this.language = language;
-            reloadLanguageProperties();
+            loadLanguageProperties(language, languageProperties);
             accountForLanguageChange();
-            labelTextProvider.switchLanguage(language);
         }
     }
 
@@ -210,6 +204,7 @@ public final class Dictionary
             settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
         }
 
+        labelTextProvider.switchLanguage(language);
         labelTextProvider.reload(languageProperties);
 
         accountForHelicopterChange();

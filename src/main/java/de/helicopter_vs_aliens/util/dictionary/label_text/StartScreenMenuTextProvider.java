@@ -1,8 +1,10 @@
 package de.helicopter_vs_aliens.util.dictionary.label_text;
 
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.util.EnumTable;
+import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import java.util.Objects;
 import java.util.Properties;
@@ -49,7 +51,16 @@ class StartScreenMenuTextProvider
     private final EnumTable<WindowType, StartScreenMenuButtonType, String>
         startScreenMenuTexts = new EnumTable<>(WindowType.class, StartScreenMenuButtonType.class);
 
-    public String getText(WindowType window, StartScreenMenuButtonType page)
+    private HtmlSnippetProvider
+    	htmlSnippetProvider;
+
+
+    void setNewHtmlSnippetProvider(Language language)
+    {
+        htmlSnippetProvider = new HtmlSnippetProvider(GameResources.getProvider(), language);
+    }
+    
+    String getText(WindowType window, StartScreenMenuButtonType page)
     {
         return startScreenMenuTexts.get(window, page);
     }
@@ -57,16 +68,25 @@ class StartScreenMenuTextProvider
     public void reload(Properties languageProperties)
     {
         START_SCREEN_MENU_TEXT_SPACES.forEach(textSpace -> {
-            String key = textSpace.window.getStartScreenMenuTextKeyPrefix() + textSpace.page.getIndex();
+            String key = textSpace.window().getStartScreenMenuTextKeyPrefix() + textSpace.page().getIndex();
             String text = Objects.requireNonNull(languageProperties.getProperty(key));
-            startScreenMenuTexts.put(textSpace.window, textSpace.page, revise(text));
+            htmlSnippetProvider.setPage(textSpace.window(), textSpace.page());
+            startScreenMenuTexts.put(textSpace.window(), textSpace.page(), revise(text));
         });
     }
 
-    private static String revise(String text)
+    private String revise(String text)
     {
-        return MenuTextRevision.rework(text);
+        String reworkedText = MenuTextRevision.rework(text);        
+        return convertToHtml(reworkedText);
     }
+
+    private String convertToHtml(String text)
+    {		
+    	return htmlSnippetProvider.getHtmlBeforeBodyTextContent()
+               + text
+               + htmlSnippetProvider.getClosingTags();
+	}
 
     private record StartScreenMenuPage(WindowType window, StartScreenMenuButtonType page) {}
 }
