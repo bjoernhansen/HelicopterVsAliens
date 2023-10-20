@@ -135,6 +135,7 @@ public class GameApplication extends Application
         gameProgress.updateGame();
     }
 
+    // TODO dieselbe Methode ist auch in AwtController
     private void paintFrame(GraphicsAdapter graphicsAdapter)
     {
         GraphicsManager.getInstance()

@@ -176,6 +176,7 @@ public final class Orochi extends Helicopter
         this.isNextMissileStunner = false;
     }
 
+    // TODO redundanter Code in Roch-Klasse
     @Override
     public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
     {
@@ -208,7 +209,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    // TODO Großteil des Codes nach Missile und redudanzen damit auflösen Subklassenspezischen Code in eigene Methode
+    // TODO Großteil des Codes nach Missile und Redundanzen damit auflösen subklassenspezischen Code in eigene Methode -> vgl. Klasse Roch
     public void inactivate(Map<CollectionSubgroupType, Queue<Missile>> missiles, Missile missile)
     {
         if(missile.sister[0] == null && missile.sister[1] == null)

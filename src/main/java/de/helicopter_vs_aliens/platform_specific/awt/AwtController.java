@@ -246,6 +246,7 @@ public final class AwtController extends JPanel implements Controller, Runnable
             originalDisplayMode.getHeight());
     }
 
+    // TODO dieselbe Methode ist auch in GameApplication
     private void paintFrame(GraphicsAdapter graphicsAdapter)
     {
         GraphicsManager.getInstance()
