@@ -241,6 +241,6 @@ public final class GameProgress implements GameRessourceProvider
     public void setScalingFactor(double scalingFactor)
     {
         this.scalingFactor = scalingFactor;
-        Window.dictionary.resetLabelTextProvider();
+        Window.dictionary.updateLabelTextProvider();
     }
 }

@@ -72,9 +72,9 @@ public final class Dictionary
 
     private final List<String>
         settingOptions = new ArrayList<>();
-
+    
     private final LabelTextProvider
-        labelTextProvider = new LabelTextProvider();
+    	labelTextProvider = new LabelTextProvider();
 
 
     public Dictionary()
@@ -91,7 +91,7 @@ public final class Dictionary
 
     public String getLabelText(WindowType window, StartScreenMenuButtonType page)
     {
-        return labelTextProvider.getLabel(window, page);
+        return labelTextProvider.getText(window, page);
     }
 
     private void loadDefaultLanguageProperties()
@@ -204,8 +204,7 @@ public final class Dictionary
             settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
         }
 
-        labelTextProvider.switchLanguage(language);
-        labelTextProvider.reload(languageProperties);
+        labelTextProvider.update(language, languageProperties);
 
         accountForHelicopterChange();
     }
@@ -547,6 +546,7 @@ public final class Dictionary
                     this.typeName(helicopterType.getUnlockerTypes()
                                                 .get(1)));
             }
+            default -> {}
         }
         return message;
     }
@@ -582,8 +582,8 @@ public final class Dictionary
         return this.languageProperties.getProperty("currencySymbol");
     }
 
-    public void resetLabelTextProvider()
+    public void updateLabelTextProvider()
     {
-        labelTextProvider.switchLanguage(language);
+        labelTextProvider.update(language, languageProperties);
     }
 }

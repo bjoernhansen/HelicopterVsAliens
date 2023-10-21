@@ -155,18 +155,6 @@ public class Savegame implements Serializable
 		return Optional.empty();
 	}
 	
-	public void writeToFile()
-	{
-		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILENAME)))
-		{
-			oos.writeObject(this);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
 	public void saveWithoutValidity(GameRessourceProvider gameRessourceProvider)
 	{
 		saveInHighscore();
@@ -182,36 +170,11 @@ public class Savegame implements Serializable
 	
 	public void saveToFile(GameRessourceProvider gameRessourceProvider)
 	{
-		this.save(gameRessourceProvider);
-		Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(this.isValid);
+		save(gameRessourceProvider);
+		Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(isValid);
 		writeToFile();
 	}
-	
-	public void becomeValid()
-	{
-		this.isValid = true;
-	}
-	
-	public void loseValidity()
-	{
-		this.isValid = false;
-	}
-	
-	public boolean isValid()
-	{
-		return isValid;
-	}
-	
-	public String getCurrentPlayerName()
-	{
-		return currentPlayerName;
-	}
-	
-	public void setCurrentPlayerName(String currentPlayerName)
-	{
-		this.currentPlayerName = currentPlayerName;
-	}
-	
+
 	private void save(GameRessourceProvider gameRessourceProvider)
 	{
 		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
@@ -221,7 +184,7 @@ public class Savegame implements Serializable
 		this.originalResolution = Window.hasOriginalResolution;
 
 		this.currentPlayerName = Events.currentPlayerName;
-		this.money = Events.money;	
+		this.money = Events.money;
 		this.killsAfterLevelUp = Events.killsAfterLevelUp;
 		this.level = Events.level;
 		this.maxLevel = Events.maxLevel;
@@ -255,6 +218,43 @@ public class Savegame implements Serializable
 		this.numberOfRepairs = gameStatisticsCalculator.getNumberOfRepairs();
 		this.missileCounter = gameStatisticsCalculator.getMissileCounter();
 		this.hitCounter = gameStatisticsCalculator.getHitCounter();
+	}
+
+	private void writeToFile()
+	{
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILENAME)))
+		{
+			oos.writeObject(this);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void becomeValid()
+	{
+		this.isValid = true;
+	}
+	
+	public void loseValidity()
+	{
+		this.isValid = false;
+	}
+	
+	public boolean isValid()
+	{
+		return isValid;
+	}
+	
+	public String getCurrentPlayerName()
+	{
+		return currentPlayerName;
+	}
+	
+	public void setCurrentPlayerName(String currentPlayerName)
+	{
+		this.currentPlayerName = currentPlayerName;
 	}
 		
     boolean isWorthyForHighscore()

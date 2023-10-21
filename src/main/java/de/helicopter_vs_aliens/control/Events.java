@@ -947,7 +947,7 @@ public class Events
                 checkName(savegame);
                 if (settingsChanged)
                 {
-                    savegame.writeToFile();
+                    savegame.saveToFile(gameRessourceProvider);
                     settingsChanged = false;
                 }
             }
