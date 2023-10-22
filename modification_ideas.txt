@@ -2,7 +2,8 @@ config.properties erstellen und verwenden für Wahl JavaFX oder AWT, weitere Ein
 
 evtl. ThreadLocalRandom.current().nextInt(set.size()) verwenden, soll effizienter sein
 
-
+Die E-Mail-Adresse info@helicopter-vs-aliens.de in Betrieb nehmen oder hansen_bjoern@web.de verwenden.
+--> oder eine andere Adresse anlegen
 
 Bug-Report:
 
