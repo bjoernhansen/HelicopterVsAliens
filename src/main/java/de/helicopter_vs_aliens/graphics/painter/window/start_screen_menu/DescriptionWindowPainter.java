@@ -9,6 +9,7 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import java.awt.Point;
@@ -37,39 +38,18 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
     void paintStartScreenMenu(GraphicsAdapter graphicsAdapter)
     {
         super.paintStartScreenMenu(graphicsAdapter);
-    
+        
         if(Window.page == StartScreenMenuButtonType.BUTTON_6)
         {
             graphicsAdapter.setFont(fontProvider.getBold(17));
             graphicsAdapter.setColor(Colorations.lightestGray);
             String firstLine = getFirstLine();
             graphicsAdapter.drawString(firstLine, POSITION.x, POSITION.y - Y_OFFSET + TEXT_OFFSET);
-
-            List<String> powerUpTextLines = null;
-            if(language == Language.ENGLISH)
-            {
-                powerUpTextLines = List.of(
-                    "Bonus credit",
-                    "Unlimited energy for " + POWER_UP_DURATION_IN_SECONDS + " seconds",
-                    "Partial repairs",
-                    Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Indestructibility " + "for " + POWER_UP_DURATION_IN_SECONDS + " seconds",
-                    "Triple damage for " + POWER_UP_DURATION_IN_SECONDS + " seconds",
-                    "Increased fire rate for " + POWER_UP_DURATION_IN_SECONDS + " seconds");
-            }
-            else if(language == Language.GERMAN)
-            {
-                powerUpTextLines = List.of(
-                    "Extra-Bonus",
-                    "unendlich Energie f\u00FCr " + POWER_UP_DURATION_IN_SECONDS + " Sekunden",
-                    "Teil-Reparatur",
-                    Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% Unverwundbarkeit f\u00FCr " + POWER_UP_DURATION_IN_SECONDS + " Sekunden",
-                    "3-fache Feuerkraft f\u00FCr " + POWER_UP_DURATION_IN_SECONDS + " Sekunden",
-                    "erh\u00F6hte Schussrate f\u00FCr " + POWER_UP_DURATION_IN_SECONDS + " Sekunden");
-            }
-
+            
             PowerUpPainter powerUpPainter = GraphicsManager.getInstance()
                                                            .getPainter(PowerUp.class);
-
+            List<String> powerUpTextLines = getPowerUpTextLines();
+            
             for (PowerUpType powerUpType : PowerUpType.getValues())
             {
                 int positionY = POSITION.y + powerUpType.getMenuPosition() * Y_OFFSET;
@@ -91,7 +71,21 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
             }
         }
     }
-
+    
+    private static List<String> getPowerUpTextLines()
+    {
+        Dictionary dictionary = Window.dictionary;
+        String prepositionFor = dictionary.prepositionFor();
+        
+        return List.of(
+            dictionary.bonusCredit(),
+            dictionary.unlimitedEnergy() + " " + prepositionFor + " " + POWER_UP_DURATION_IN_SECONDS + " " + dictionary.seconds(),
+            dictionary.partialRepairs(),
+            Helicopter.INVULNERABILITY_DAMAGE_REDUCTION + "% " + dictionary.indestructibility() + " " + prepositionFor + " " + POWER_UP_DURATION_IN_SECONDS + " " + dictionary.seconds(),
+            dictionary.tripleDamage() + " " + prepositionFor + " " + POWER_UP_DURATION_IN_SECONDS + " " + dictionary.seconds(),
+            dictionary.increasedFireRate() + " " + prepositionFor + " " + POWER_UP_DURATION_IN_SECONDS + " " + dictionary.seconds());
+    }
+    
     private String getFirstLine()
     {
         if(language == Language.ENGLISH)

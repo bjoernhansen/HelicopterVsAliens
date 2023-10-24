@@ -27,7 +27,7 @@ import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
-import java.awt.Font;
+import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,11 +45,11 @@ public class GameWindowPainter extends WindowPainter
 {
     private static final int
         HEALTH_BAR_LENGTH = 150;
-
+    
     private static final int
         ENEMY_HEALTH_BAR_WIDTH = 206;
-
-
+    
+    
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Window window)
     {
@@ -94,13 +94,13 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintAllActiveEnemies(GraphicsAdapter graphicsAdapter)
     {
-        for (int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
+        for(int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        for (Enemy enemy : gameRessourceProvider.getActiveGameEntityManager()
-                                                .getEnemies()
-                                                .get(CollectionSubgroupType.ACTIVE))
+        for(Enemy enemy : gameRessourceProvider.getActiveGameEntityManager()
+                                               .getEnemies()
+                                               .get(CollectionSubgroupType.ACTIVE))
         {
             if(enemy.isVisibleNonBarricadeVessel())
             {
@@ -151,37 +151,38 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintForegroundDisplays(GraphicsAdapter graphicsAdapter)
     {
-        if (showBossHealthBar())
+        if(showBossHealthBar())
         {
             paintBossHealthBar(graphicsAdapter);
         }
         paintHealthBar(graphicsAdapter, helicopter);
         paintCollectedPowerUps(graphicsAdapter);
         
-        if (gameRessourceProvider.isFpsDisplayVisible())
+        if(gameRessourceProvider.isFpsDisplayVisible())
         {
             paintFpsDisplay(graphicsAdapter);
         }
         
-        if (helicopter.isOnTheGround())
+        if(helicopter.isOnTheGround())
         {
-            if (!Window.isMenuVisible && gameRessourceProvider.isMouseCursorInWindow())
+            if(!Window.isMenuVisible && gameRessourceProvider.isMouseCursorInWindow())
             {
                 paintTimeDisplay(graphicsAdapter, Events.playingTime
                     + System.currentTimeMillis()
                     - Events.lastCurrentTime);
-            } else
+            }
+            else
             {
                 paintTimeDisplay(graphicsAdapter, Events.playingTime);
             }
         }
         
-        if (Window.unlockedTimer > 0)
+        if(Window.unlockedTimer > 0)
         {
             paintHelicopterDisplay(graphicsAdapter,
-                Window.helicopterDummies.get(Window.unlockedType),
-                unlockedDisplayPosition(Window.unlockedTimer),
-                -50);
+                                   Window.helicopterDummies.get(Window.unlockedType),
+                                   unlockedDisplayPosition(Window.unlockedTimer),
+                                   -50);
         }
     }
     
@@ -192,10 +193,11 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintBossHealthBar(GraphicsAdapter graphicsAdapter)
     {
-        if (EnemyController.currentMiniBoss != null)
+        if(EnemyController.currentMiniBoss != null)
         {
             paintBossHealthBar(graphicsAdapter, EnemyController.currentMiniBoss);
-        } else
+        }
+        else
         {
             paintBossHealthBar(graphicsAdapter, Events.boss);
         }
@@ -205,18 +207,23 @@ public class GameWindowPainter extends WindowPainter
     {
         graphicsAdapter.setColor(Colorations.hitPoints);
         graphicsAdapter.fillRect(813, 5, (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints, 10);
-        if (Events.timeOfDay == NIGHT)
+        if(Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.red);
-        } else
+        }
+        else
         {
             graphicsAdapter.setColor(Colorations.red);
         }
-        graphicsAdapter.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints, 5, ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints, 10);
-        if (Events.timeOfDay == NIGHT)
+        graphicsAdapter.fillRect(813 + (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints,
+                                 5,
+                                 ENEMY_HEALTH_BAR_WIDTH - (ENEMY_HEALTH_BAR_WIDTH * boss.getHitPoints()) / boss.startingHitPoints,
+                                 10);
+        if(Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.white);
-        } else
+        }
+        else
         {
             graphicsAdapter.setColor(Color.black);
         }
@@ -225,7 +232,12 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintHealthBar(GraphicsAdapter graphicsAdapter, Helicopter helicopter)
     {
-        paintHealthBar(graphicsAdapter, helicopter, HEALTH_BAR_POSITION.x, HEALTH_BAR_POSITION.y, HEALTH_BAR_LENGTH, true);
+        paintHealthBar(graphicsAdapter,
+                       helicopter,
+                       HEALTH_BAR_POSITION.x,
+                       HEALTH_BAR_POSITION.y,
+                       HEALTH_BAR_LENGTH,
+                       true);
     }
     
     private void paintCollectedPowerUps(GraphicsAdapter graphicsAdapter)
@@ -254,7 +266,9 @@ public class GameWindowPainter extends WindowPainter
     {
         graphicsAdapter.setColor(Color.white);
         graphicsAdapter.setFont(fontProvider.getPlain(18));
-        String outputString = String.format("%s: %s", Window.dictionary.playingTime(), Window.returnTimeDisplayText(time));
+        String outputString = String.format("%s: %s",
+                                            Window.dictionary.playingTime(),
+                                            Window.returnTimeDisplayText(time));
         // TODO besser lösen -> String abmessen
         graphicsAdapter.drawString(outputString, Window.language == ENGLISH ? 646 : 661, 450);
     }
@@ -262,21 +276,22 @@ public class GameWindowPainter extends WindowPainter
     private void paintGui(GraphicsAdapter graphicsAdapter)
     {
         // Werkstatt-Button
-        if (Events.isRestartWindowVisible)
+        if(Events.isRestartWindowVisible)
         {
             boolean gameOver;
             gameOver = Events.money <= Events.repairFee(helicopter, helicopter.isDamaged) || Events.level >= 51;
             paintRestartWindow(graphicsAdapter, helicopter, gameOver);
-        } else
+        }
+        else
         {
-            if (helicopter.isOnTheGround())
+            if(helicopter.isOnTheGround())
             {
                 Window.buttons.get(GroundButtonType.REPAIR_SHOP)
                               .paint(graphicsAdapter);
                 Window.buttons.get(GroundButtonType.MAIN_MENU)
                               .paint(graphicsAdapter);
             }
-            if (Window.isMenuVisible)
+            if(Window.isMenuVisible)
             {
                 paintInGameMenu(graphicsAdapter);
             }
@@ -287,51 +302,57 @@ public class GameWindowPainter extends WindowPainter
                                     Helicopter helicopter,
                                     boolean gameOver)
     {
-        if (!gameOver)
+        if(!gameOver)
         {
             GraphicalEntities.paintFrame(graphicsAdapter, 363, 147, 256, 111, Colorations.golden);
-        } else if (Events.level < 51 || helicopter.getType() == HELIOS)
+        }
+        else if(Events.level < 51 || helicopter.getType() == HELIOS)
         {
             GraphicalEntities.paintFrame(graphicsAdapter, 363, 112, 256, 146, Colorations.golden);
-        } else if (Window.language == ENGLISH)
+        }
+        else if(Window.language == ENGLISH)
         {
             GraphicalEntities.paintFrame(graphicsAdapter, 363, 100, 256, 158, Colorations.golden);
-        } else
+        }
+        else
         {
             GraphicalEntities.paintFrame(graphicsAdapter, 363, 64, 256, 194, Colorations.golden);
         }
         
         graphicsAdapter.setFont(fontProvider.getPlain(18));
         graphicsAdapter.setColor(Colorations.red);
-        if (!gameOver)
+        if(!gameOver)
         {
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "Your helicopter was" : "Ihr Helikopter wurde"), 410, 179);
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "severely damaged!" : "schwer besch\u00E4digt!"), 410, 197);
-        } else if (Events.level < 51)
+            List<String> crashMessages = Window.dictionary.getCrashMessages();
+            graphicsAdapter.drawString(crashMessages.get(0), 410, 179);
+            graphicsAdapter.drawString(crashMessages.get(1), 410, 197);
+        }
+        else if(Events.level < 51)
         {
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "Your helicopter was" : "Ihr Helikopter wurde"), 390, 137);
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "severely damaged!" : "schwer besch\u00E4digt!"), 390, 155);
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "Unfortunately, you " : "Leider reicht ihr Guthaben"), 390, 179);
-            graphicsAdapter.drawString((Window.language == ENGLISH ? "cannot afford the repairs." : "nicht f\u00FCr eine Reparatur."), 390, 197);
-        } else
+            List<String> crashMessages = Window.dictionary.getCrashMessages();
+            graphicsAdapter.drawString(crashMessages.get(0), 390, 137);
+            graphicsAdapter.drawString(crashMessages.get(1), 390, 155);
+            graphicsAdapter.drawString(crashMessages.get(2), 390, 179);
+            graphicsAdapter.drawString(crashMessages.get(3), 390, 197);
+        }
+        else
         {
-            if (helicopter.getType() == HELIOS)
+            if(helicopter.getType() == HELIOS)
             {
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "Congratulations!" : "Herzlichen Gl\u00FCckwunsch!"), 390, 137);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "The attack was repulsed." : "Der Angriff wurde abgewehrt."), 390, 155);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "Once again, mankind" : "Wieder einmal lebt die"), 390, 179);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "lives in peace!" : "Menschheit in Frieden!"), 390, 197);
-            } else
+                List<String> victoryMessages = Window.dictionary.getHeliosVictoryMessages();
+                graphicsAdapter.drawString(victoryMessages.get(0), 390, 137);
+                graphicsAdapter.drawString(victoryMessages.get(1), 390, 155);
+                graphicsAdapter.drawString(victoryMessages.get(2), 390, 179);
+                graphicsAdapter.drawString(victoryMessages.get(3), 390, 197);
+            }
+            else
             {
-                int i = Window.language == ENGLISH ? 0 : 36;
-                
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "You won a great victory," : "Sie haben einen gro\u00DFen"), 390, 124 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "but the war isn't over yet." : "Sieg errungen, aber der"), 390, 142 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "Rumor has it only helios" : "Krieg ist noch nicht vorbei."), 390, 160 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "type helicopters can" : "Ger\u00FCchten zufolge k\u00F6nnen "), 390, 178 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "finally stop the invasion." : "nur Helikopter der Helios-"), 390, 196 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "" : "Klasse die Alien-Invasion"), 390, 214 - i);
-                graphicsAdapter.drawString((Window.language == ENGLISH ? "" : "endg\u00FCltig stoppen."), 390, 232 - i);
+                List<String> victoryMessages = Window.dictionary.getDefaultVictoryMessages();
+                int shiftY = Window.language.getVictoryMessageShiftY();
+                for(int i = 0; i < 7; i++)
+                {
+                    graphicsAdapter.drawString(victoryMessages.get(i), 390, 124 + i * 18 - shiftY);
+                }
             }
         }
         Button newGameButton2 = Window.buttons.get(MainMenuButtonType.NEW_GAME_2);
@@ -357,22 +378,22 @@ public class GameWindowPainter extends WindowPainter
     private void paintBackgroundDisplays(GraphicsAdapter graphicsAdapter)
     {
         updateDependencies();
-        if (helicopter.isOnTheGround() || Window.levelDisplayTimer.isActive())
+        if(helicopter.isOnTheGround() || Window.levelDisplayTimer.isActive())
         {
             paintLevelDisplay(graphicsAdapter);
         }
-        if (Events.commendationTimer > 0)
+        if(Events.commendationTimer > 0)
         {
             paintPraiseDisplay(graphicsAdapter);
         }
-        if (Window.moneyDisplayTimer != Timer.DISABLED
+        if(Window.moneyDisplayTimer != Timer.DISABLED
             || helicopter.isDamaged
             || (helicopter.isOnTheGround()
             && !Events.isRestartWindowVisible))
         {
             paintCreditDisplay(graphicsAdapter);
         }
-        if (Window.specialInfoSelection != 0)
+        if(Window.specialInfoSelection != 0)
         {
             paintSpecialInfoDisplay(graphicsAdapter);
         }
@@ -380,21 +401,23 @@ public class GameWindowPainter extends WindowPainter
     
     private static void paintLevelDisplay(GraphicsAdapter graphicsAdapter)
     {
-        if (Events.timeOfDay == NIGHT)
+        if(Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.white);
-        } else
+        }
+        else
         {
             graphicsAdapter.setColor(Color.black);
         }
         graphicsAdapter.setFont(fontProvider.getPlain(36));
         String levelString = "";
-        if (Events.level < 51)
+        if(Events.level < 51)
         {
-            if (Events.level % 10 == 0)
+            if(Events.level % 10 == 0)
             {
                 levelString = "Boss Level " + (Events.level / 10);
-            } else
+            }
+            else
             {
                 levelString = "Level " + Events.level;
             }
@@ -405,7 +428,7 @@ public class GameWindowPainter extends WindowPainter
     
     private static void paintPraiseDisplay(GraphicsAdapter graphicsAdapter)
     {
-        if (Events.timeOfDay == NIGHT)
+        if(Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.red);
         }
@@ -422,43 +445,48 @@ public class GameWindowPainter extends WindowPainter
     
     private static void paintCreditDisplay(GraphicsAdapter graphicsAdapter)
     {
-        if (Events.timeOfDay == NIGHT)
+        if(Events.timeOfDay == NIGHT)
         {
             graphicsAdapter.setColor(Color.red);
-        } else
+        }
+        else
         {
             graphicsAdapter.setColor(Colorations.red);
         }
         graphicsAdapter.setFont(fontProvider.getPlain(22));
-        graphicsAdapter.drawString(String.format("%s: %s", Window.dictionary.credit(), Events.getMoneyWithCurrency()), 20, 35);
-        if (Events.lastBonus > 0)
+        graphicsAdapter.drawString(String.format("%s: %s", Window.dictionary.credit(), Events.getMoneyWithCurrency()),
+                                   20,
+                                   35);
+        if(Events.lastBonus > 0)
         {
-            if (Events.timeOfDay == NIGHT)
+            if(Events.timeOfDay == NIGHT)
             {
                 graphicsAdapter.setColor(Colorations.MONEY_DISPLAY_NIGHT_RED);
-            } else
+            }
+            else
             {
                 graphicsAdapter.setColor(Colorations.darkerOrange);
             }
-            if (Window.moneyDisplayTimer <= 23)
+            if(Window.moneyDisplayTimer <= 23)
             {
                 graphicsAdapter.setFont(fontProvider.getPlain(Window.moneyDisplayTimer));
             }
-            if (Window.moneyDisplayTimer > 23 && Window.moneyDisplayTimer < 77)
+            if(Window.moneyDisplayTimer > 23 && Window.moneyDisplayTimer < 77)
             {
                 graphicsAdapter.setFont(fontProvider.getPlain(22));
             }
-            if (Window.moneyDisplayTimer >= Window.BONUS_DISPLAY_TIME - 23)
+            if(Window.moneyDisplayTimer >= Window.BONUS_DISPLAY_TIME - 23)
             {
                 graphicsAdapter.setFont(fontProvider.getPlain(Window.BONUS_DISPLAY_TIME - Window.moneyDisplayTimer));
             }
             graphicsAdapter.drawString("+" + Events.getLastBonusWithCurrency(), 20, 60);
-            if (Events.lastExtraBonus > 0)
+            if(Events.lastExtraBonus > 0)
             {
-                if (Events.timeOfDay == NIGHT)
+                if(Events.timeOfDay == NIGHT)
                 {
                     graphicsAdapter.setColor(Color.yellow);
-                } else
+                }
+                else
                 {
                     graphicsAdapter.setColor(Colorations.darkYellow);
                 }
@@ -473,13 +501,14 @@ public class GameWindowPainter extends WindowPainter
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
         String infoString = "";
-        if (Window.specialInfoSelection == 1)
+        if(Window.specialInfoSelection == 1)
         {
             infoString = "Kills bis LevelUp: "
                 + Events.killsAfterLevelUp
                 + "/"
                 + Events.numberOfKillsNecessaryForNextLevelUp();
-        } else if (Window.specialInfoSelection == 2)
+        }
+        else if(Window.specialInfoSelection == 2)
         {
             infoString = "Aktive PowerUps: "
                 + gameRessourceProvider.getActiveGameEntityManager()
@@ -489,7 +518,8 @@ public class GameWindowPainter extends WindowPainter
                 + ";   Inaktive PowerUps: "
                 + gameRessourceProvider.getGameEntitySupplier()
                                        .sizeOf(PowerUp.class);
-        } else if (Window.specialInfoSelection == 3)
+        }
+        else if(Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
                 + gameRessourceProvider.getActiveGameEntityManager()
@@ -501,7 +531,8 @@ public class GameWindowPainter extends WindowPainter
                                        .getExplosions()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
-        } else if (Window.specialInfoSelection == 4)
+        }
+        else if(Window.specialInfoSelection == 4)
         {
             infoString = "Aktive Gegner: "
                 + (gameRessourceProvider.getActiveGameEntityManager()
@@ -517,7 +548,8 @@ public class GameWindowPainter extends WindowPainter
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
                 + countInactiveNonBarrierEnemies();
-        } else if (Window.specialInfoSelection == 5)
+        }
+        else if(Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
                 + gameRessourceProvider.getActiveGameEntityManager()
@@ -529,7 +561,8 @@ public class GameWindowPainter extends WindowPainter
                                        .getMissiles()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
-        } else if (Window.specialInfoSelection == 6)
+        }
+        else if(Window.specialInfoSelection == 6)
         {
             infoString = "Aktive gegnerische Geschosse: "
                 + gameRessourceProvider.getActiveGameEntityManager()
@@ -541,7 +574,8 @@ public class GameWindowPainter extends WindowPainter
                                        .getEnemyMissiles()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
-        } else if (Window.specialInfoSelection == 7)
+        }
+        else if(Window.specialInfoSelection == 7)
         {
             infoString = "Aktive Hintergrundobjekte: "
                 + gameRessourceProvider.getActiveGameEntityManager()
@@ -553,19 +587,23 @@ public class GameWindowPainter extends WindowPainter
                                        .getSceneryObjects()
                                        .get(CollectionSubgroupType.INACTIVE)
                                        .size();
-        } else if (Window.specialInfoSelection == 8)
+        }
+        else if(Window.specialInfoSelection == 8)
         {
             infoString = "Speed level: "
                 + helicopter.getUpgradeLevelOf(ROTOR_SYSTEM)
                 + " +   Speed: " + helicopter.rotorSystem;
-        } else if (Window.specialInfoSelection == 9)
+        }
+        else if(Window.specialInfoSelection == 9)
         {
             infoString = "Bonus: " + Events.overallEarnings
                 + "   Extra-Bonus: " + Events.extraBonusCounter;
-        } else if (Window.specialInfoSelection == 10)
+        }
+        else if(Window.specialInfoSelection == 10)
         {
             infoString = "Men\u00FC sichtbar: " + Window.isMenuVisible;
-        } else if (Window.specialInfoSelection == 11)
+        }
+        else if(Window.specialInfoSelection == 11)
         {
             infoString = (Window.language == ENGLISH
                 ? "Defeated enemies: "
@@ -576,7 +614,8 @@ public class GameWindowPainter extends WindowPainter
                 + " ("
                 + gameStatisticsCalculator.getKillRate()
                 + "%)";
-        } else if (Window.specialInfoSelection == 12)
+        }
+        else if(Window.specialInfoSelection == 12)
         {
             int percentage = gameStatisticsCalculator.getMissileHitRate();
             infoString = "Missile counter: "
@@ -585,19 +624,22 @@ public class GameWindowPainter extends WindowPainter
                 + gameStatisticsCalculator.getHitCounter()
                 + "; Hit rate: "
                 + percentage;
-        } else if (Window.specialInfoSelection == 13)
+        }
+        else if(Window.specialInfoSelection == 13)
         {
             infoString = Window.dictionary.typeName();
-        } else if (Window.specialInfoSelection == 14)
+        }
+        else if(Window.specialInfoSelection == 14)
         {
             infoString = helicopter.getTypeSpecificDebuggingOutput();
-        } else if (Window.specialInfoSelection == 15)
+        }
+        else if(Window.specialInfoSelection == 15)
         {
             infoString = String.format("Hit points: %.2f/%.2f; Energie: %.2f/%.2f",
-                helicopter.getCurrentPlating(),
-                helicopter.getMaximumPlating(),
-                helicopter.getCurrentEnergy(),
-                helicopter.getMaximumEnergy());
+                                       helicopter.getCurrentPlating(),
+                                       helicopter.getMaximumPlating(),
+                                       helicopter.getCurrentEnergy(),
+                                       helicopter.getMaximumEnergy());
         }
         graphicsAdapter.drawString("Info: " + infoString, 20, 155);
     }

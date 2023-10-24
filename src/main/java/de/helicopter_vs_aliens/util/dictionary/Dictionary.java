@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
+import com.google.common.collect.ImmutableList;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
@@ -75,8 +76,17 @@ public final class Dictionary
     
     private final LabelTextProvider
     	labelTextProvider = new LabelTextProvider();
+    
+    private List<String>
+        crashMessages = List.of();
 
+    private List<String>
+        defaultVictoryMessages = List.of();
 
+    private List<String>
+        heliosVictoryMessages = List.of();
+
+    
     public Dictionary()
     {
         this(Language.getDefault(), HelicopterType.getDefault());
@@ -172,6 +182,7 @@ public final class Dictionary
 
         for(BlockMessage blockMessage : BlockMessage.getValues())
         {
+            // TODO ArrayList erstellen
             String[] message = new String[4];
             for(int i = 1; i <= 4; i++)
             {
@@ -179,7 +190,11 @@ public final class Dictionary
             }
             blockMessages.put(blockMessage, message);
         }
-
+    
+        crashMessages = consecutiveReadIn("message.crash.", 4);
+        defaultVictoryMessages = consecutiveReadIn("message.victory.default.", 7);
+        heliosVictoryMessages = consecutiveReadIn("message.victory.helios.", 4);
+        
         for(WindowType windowType : WindowType.getNonSettingsStartScreenSubWindows())
         {
             Map<StartScreenMenuButtonType, String> buttonLabels = new EnumMap<>(StartScreenMenuButtonType.class);
@@ -191,7 +206,7 @@ public final class Dictionary
                                      });
             startScreenSubButtonName.put(windowType, buttonLabels);
         }
-
+  
         updateSettingsLabels();
 
         highScoreColumnNames.clear();
@@ -201,14 +216,28 @@ public final class Dictionary
         settingOptions.clear();
         for(int i = 1; i <= Window.NUMBER_OF_SETTING_OPTIONS; i++)
         {
-            settingOptions.add(this.languageProperties.getProperty("settingOption." + i));
+            settingOptions.add(languageProperties.getProperty("settingOption." + i));
         }
 
         labelTextProvider.update(language, languageProperties);
 
         accountForHelicopterChange();
     }
-
+    
+    private List<String> consecutiveReadIn(String keyPrefix, int lineCount)
+    {
+        ArrayList<String> lines = new ArrayList<>();
+        
+        for(int i = 1; i <= lineCount; i++)
+        {
+            String key = keyPrefix + i;
+            String line = languageProperties.getProperty(key);
+            lines.add(line);
+        }
+        
+        return List.copyOf(lines);
+    }
+    
     private void updateSettingsLabels()
     {
         Map<StartScreenMenuButtonType, String> settingsLabels = new EnumMap<>(StartScreenMenuButtonType.class);
@@ -447,7 +476,47 @@ public final class Dictionary
     {
         return this.languageProperties.getProperty("settings");
     }
-
+    
+    public String seconds()
+    {
+        return this.languageProperties.getProperty("time.seconds");
+    }
+    
+    public String prepositionFor()
+    {
+        return this.languageProperties.getProperty("preposition.for");
+    }
+    
+    public String bonusCredit()
+    {
+        return this.languageProperties.getProperty("bonusCredit");
+    }
+    
+    public String unlimitedEnergy()
+    {
+        return this.languageProperties.getProperty("unlimitedEnergy");
+    }
+    
+    public String partialRepairs()
+    {
+        return this.languageProperties.getProperty("partialRepairs");
+    }
+    
+    public String indestructibility()
+    {
+        return this.languageProperties.getProperty("indestructibility");
+    }
+    
+    public String tripleDamage()
+    {
+        return this.languageProperties.getProperty("tripleDamage");
+    }
+    
+    public String increasedFireRate()
+    {
+        return this.languageProperties.getProperty("increasedFireRate");
+    }
+    
     public String stateCondition(boolean damaged)
     {
         return this.languageProperties.getProperty(damaged ? "state.damaged" : "state.ready");
@@ -585,5 +654,21 @@ public final class Dictionary
     public void updateLabelTextProvider()
     {
         labelTextProvider.update(language, languageProperties);
+    }
+    
+    
+    public List<String> getCrashMessages()
+    {
+        return crashMessages;
+    }
+    
+    public List<String> getDefaultVictoryMessages()
+    {
+        return defaultVictoryMessages;
+    }
+    
+    public List<String> getHeliosVictoryMessages()
+    {
+        return heliosVictoryMessages;
     }
 }

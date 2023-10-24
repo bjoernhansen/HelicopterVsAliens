@@ -374,20 +374,21 @@ public abstract class Window implements Paintable
 	public static void changeLanguage(GameRessourceProvider gameRessourceProvider)
 	{
 		Events.settingsChanged = true;
-		setLanguage(getNextLanguage());
+		switchToNextLanguage();
 		gameRessourceProvider.getSaveGame().language = language;
 		
 		updateButtonLabels(gameRessourceProvider.getHelicopter());
 	}
-
-	private static Language getNextLanguage() {
-		return Language.values()[(language.ordinal()+1)% Language.values().length];
+	
+	private static void switchToNextLanguage()
+	{
+		setLanguage(language.getNextLanguage());
 	}
-
+	
 	public static void setLanguage(Language language)
 	{
 		Window.language = language;
-		Window.dictionary.switchLanguageTo(language);
+		dictionary.switchLanguageTo(language);
 	}
 	
 	public static void updateStartScreenSubButtons()
