@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.util.dictionary;
 
-import com.google.common.collect.ImmutableList;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;

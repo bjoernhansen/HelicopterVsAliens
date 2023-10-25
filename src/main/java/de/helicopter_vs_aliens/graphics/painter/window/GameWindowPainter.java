@@ -49,6 +49,12 @@ public class GameWindowPainter extends WindowPainter
     private static final int
         ENEMY_HEALTH_BAR_WIDTH = 206;
     
+    public static final int
+        IN_GAME_MENU_LEFT = 363;
+    
+    public static final int
+        IN_GAME_MENU_WIDTH = 256;
+    
     
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Window window)
@@ -270,7 +276,7 @@ public class GameWindowPainter extends WindowPainter
                                             Window.dictionary.playingTime(),
                                             Window.returnTimeDisplayText(time));
         // TODO besser lösen -> String abmessen
-        graphicsAdapter.drawString(outputString, Window.language == ENGLISH ? 646 : 661, 450);
+        graphicsAdapter.drawString(outputString, Window.language.getTimeDisplayPositionX(), 450);
     }
     
     private void paintGui(GraphicsAdapter graphicsAdapter)
@@ -278,9 +284,16 @@ public class GameWindowPainter extends WindowPainter
         // Werkstatt-Button
         if(Events.isRestartWindowVisible)
         {
-            boolean gameOver;
-            gameOver = Events.money <= Events.repairFee(helicopter, helicopter.isDamaged) || Events.level >= 51;
-            paintRestartWindow(graphicsAdapter, helicopter, gameOver);
+            boolean gameOver = Events.money <= Events.repairFee(helicopter, helicopter.isDamaged) || Events.level >= 51;
+            
+            if(gameOver)
+            {
+                paintGameOverPopupWindow(graphicsAdapter);
+            }
+            else
+            {
+                paintDefaultRestartPopupWindow(graphicsAdapter);
+            }
         }
         else
         {
@@ -298,36 +311,20 @@ public class GameWindowPainter extends WindowPainter
         }
     }
     
-    private void paintRestartWindow(GraphicsAdapter graphicsAdapter,
-                                    Helicopter helicopter,
-                                    boolean gameOver)
+    private void paintGameOverPopupWindow(GraphicsAdapter graphicsAdapter)
     {
-        if(!gameOver)
+        if(Events.level < 51 || helicopter.getType() == HELIOS)
         {
-            GraphicalEntities.paintFrame(graphicsAdapter, 363, 147, 256, 111, Colorations.golden);
-        }
-        else if(Events.level < 51 || helicopter.getType() == HELIOS)
-        {
-            GraphicalEntities.paintFrame(graphicsAdapter, 363, 112, 256, 146, Colorations.golden);
-        }
-        else if(Window.language == ENGLISH)
-        {
-            GraphicalEntities.paintFrame(graphicsAdapter, 363, 100, 256, 158, Colorations.golden);
+            paintInGamePopupWindow(graphicsAdapter, PopupWindowType.TOTAL_CRASH_OR_FINAL_VICTORY);
         }
         else
         {
-            GraphicalEntities.paintFrame(graphicsAdapter, 363, 64, 256, 194, Colorations.golden);
+            paintInGamePopupWindow(graphicsAdapter, PopupWindowType.TEMPORARILY_VICTORY);
         }
         
-        graphicsAdapter.setFont(fontProvider.getPlain(18));
-        graphicsAdapter.setColor(Colorations.red);
-        if(!gameOver)
-        {
-            List<String> crashMessages = Window.dictionary.getCrashMessages();
-            graphicsAdapter.drawString(crashMessages.get(0), 410, 179);
-            graphicsAdapter.drawString(crashMessages.get(1), 410, 197);
-        }
-        else if(Events.level < 51)
+        setFontForRestartWindow(graphicsAdapter);
+        
+        if(Events.level < 51)
         {
             List<String> crashMessages = Window.dictionary.getCrashMessages();
             graphicsAdapter.drawString(crashMessages.get(0), 390, 137);
@@ -335,34 +332,67 @@ public class GameWindowPainter extends WindowPainter
             graphicsAdapter.drawString(crashMessages.get(2), 390, 179);
             graphicsAdapter.drawString(crashMessages.get(3), 390, 197);
         }
+        else if(helicopter.getType() == HELIOS)
+        {
+            List<String> victoryMessages = Window.dictionary.getHeliosVictoryMessages();
+            graphicsAdapter.drawString(victoryMessages.get(0), 390, 137);
+            graphicsAdapter.drawString(victoryMessages.get(1), 390, 155);
+            graphicsAdapter.drawString(victoryMessages.get(2), 390, 179);
+            graphicsAdapter.drawString(victoryMessages.get(3), 390, 197);
+        }
         else
         {
-            if(helicopter.getType() == HELIOS)
+            List<String> victoryMessages = Window.dictionary.getDefaultVictoryMessages();
+            int shiftY = Window.language.getVictoryMessageShiftY();
+            for(int i = 0; i < 7; i++)
             {
-                List<String> victoryMessages = Window.dictionary.getHeliosVictoryMessages();
-                graphicsAdapter.drawString(victoryMessages.get(0), 390, 137);
-                graphicsAdapter.drawString(victoryMessages.get(1), 390, 155);
-                graphicsAdapter.drawString(victoryMessages.get(2), 390, 179);
-                graphicsAdapter.drawString(victoryMessages.get(3), 390, 197);
-            }
-            else
-            {
-                List<String> victoryMessages = Window.dictionary.getDefaultVictoryMessages();
-                int shiftY = Window.language.getVictoryMessageShiftY();
-                for(int i = 0; i < 7; i++)
-                {
-                    graphicsAdapter.drawString(victoryMessages.get(i), 390, 124 + i * 18 - shiftY);
-                }
+                graphicsAdapter.drawString(victoryMessages.get(i), 390, 124 + i * 18 - shiftY);
             }
         }
+        
+        paintSecondNewGameButton(graphicsAdapter, true);
+    }
+    
+    private void paintDefaultRestartPopupWindow(GraphicsAdapter graphicsAdapter)
+    {
+        paintInGamePopupWindow(graphicsAdapter, PopupWindowType.REPAIRABLE_CRASH);
+        
+        setFontForRestartWindow(graphicsAdapter);
+        
+        List<String> crashMessages = Window.dictionary.getCrashMessages();
+        graphicsAdapter.drawString(crashMessages.get(0), 410, 179);
+        graphicsAdapter.drawString(crashMessages.get(1), 410, 197);
+        
+        paintSecondNewGameButton(graphicsAdapter, false);
+    }
+    
+    private static void paintInGamePopupWindow(GraphicsAdapter graphicsAdapter, PopupWindowType popupWindowType)
+    {
+        VerticalBoundaries verticalBoundaries = popupWindowType.getVerticalBoundaries();
+        
+        GraphicalEntities.paintFrame(graphicsAdapter,
+                                     IN_GAME_MENU_LEFT, verticalBoundaries.top(),
+                                     IN_GAME_MENU_WIDTH, verticalBoundaries.height(),
+                                     Colorations.golden);
+    }
+    
+    private static void paintSecondNewGameButton(GraphicsAdapter graphicsAdapter, boolean gameOver)
+    {
         Button newGameButton2 = Window.buttons.get(MainMenuButtonType.NEW_GAME_2);
         newGameButton2.setPrimaryLabel(Window.dictionary.messageAfterCrash(gameOver));
         newGameButton2.paint(graphicsAdapter);
     }
     
+    private static void setFontForRestartWindow(GraphicsAdapter graphicsAdapter)
+    {
+        graphicsAdapter.setFont(fontProvider.getPlain(18));
+        graphicsAdapter.setColor(Colorations.red);
+    }
+    
+    
     private void paintInGameMenu(GraphicsAdapter graphicsAdapter)
     {
-        GraphicalEntities.paintFrame(graphicsAdapter, 363, 77, 256, 231, Colorations.golden);
+        paintInGamePopupWindow(graphicsAdapter, PopupWindowType.DEFAULT);
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(25));
         graphicsAdapter.drawString(Window.dictionary.mainMenu(), 422 + (Window.language == ENGLISH ? 6 : 0), 106);
@@ -432,10 +462,9 @@ public class GameWindowPainter extends WindowPainter
         {
             graphicsAdapter.setColor(Color.red);
         }
-        // TODO wirklich 2 mal Color.RED? Funktion in Events zur Farbrückgabe verwenden
         else
         {
-            graphicsAdapter.setColor(Color.red);
+            graphicsAdapter.setColor(Colorations.red);
         }
         MultiKillType multiKillType = MultiKillType.getMultiKillType(Events.lastMultiKill);
         graphicsAdapter.setFont(fontProvider.getPlain(multiKillType.getTextSize()));

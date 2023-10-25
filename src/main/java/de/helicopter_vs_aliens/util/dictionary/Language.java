@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.util.dictionary;
 
 
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
+import de.helicopter_vs_aliens.graphics.painter.window.VerticalBoundaries;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.platform_specific.awt.font.EnglishFontSpecificationProviderForSwing;
@@ -23,8 +24,10 @@ public enum Language
         0,
         1,
         0,
+        646,
         EnglishFontSpecificationProviderForSwing::new,
-        EnglishFontSpecificationProviderForJavaFx::new),
+        EnglishFontSpecificationProviderForJavaFx::new,
+        new VerticalBoundaries(100, 158)),
 
     GERMAN(
         "Deutsch",
@@ -32,8 +35,10 @@ public enum Language
         1,
         0,
         36,
+        661,
         GermanFontSpecificationProviderForSwing::new,
-        GermanFontSpecificationProviderForJavaFx::new);
+        GermanFontSpecificationProviderForJavaFx::new,
+        new VerticalBoundaries(64, 194));
     
     
     private static final List<Language>
@@ -53,12 +58,18 @@ public enum Language
     
     private final int
         victoryMessageShiftY;
+    
+    private final int
+        timeDisplayPositionX;
 
     private final FontSpecificationProvider
         fontSpecificationProviderForSwing;
 
     private final FontSpecificationProvider
         fontSpecificationProviderForJavaFx;
+    
+    private final VerticalBoundaries
+        verticalBoundaries;
 
 
     public static Language getDefault()
@@ -69,16 +80,19 @@ public enum Language
     Language(String nativeName,
              String code,
              int id, int objectPosition,
-             int victoryMessageShiftY, Supplier<FontSpecificationProvider> fontSizeProviderSupplierForSwing,
-             Supplier<FontSpecificationProvider> fontSizeProviderSupplierForJavaFx)
+             int victoryMessageShiftY, int timeDisplayPositionX, Supplier<FontSpecificationProvider> fontSizeProviderSupplierForSwing,
+             Supplier<FontSpecificationProvider> fontSizeProviderSupplierForJavaFx,
+             VerticalBoundaries verticalBoundaries)
     {
         this.nativeName = nativeName;
         this.code = code;
         this.id = id;
         this.objectPosition = objectPosition;
         this.victoryMessageShiftY = victoryMessageShiftY;
+        this.timeDisplayPositionX = timeDisplayPositionX;
         fontSpecificationProviderForSwing = fontSizeProviderSupplierForSwing.get();
         fontSpecificationProviderForJavaFx = fontSizeProviderSupplierForJavaFx.get();
+        this.verticalBoundaries = verticalBoundaries;
     }
 
     public String getNativeName()
@@ -113,5 +127,15 @@ public enum Language
     public Language getNextLanguage()
     {
         return VALUES.get((this.id + 1) % VALUES.size());
+    }
+    
+    public int getTimeDisplayPositionX()
+    {
+        return timeDisplayPositionX;
+    }
+    
+    public VerticalBoundaries getVerticalBoundariesOfPopupWindowForTemporarilyVictory()
+    {
+        return verticalBoundaries;
     }
 }
