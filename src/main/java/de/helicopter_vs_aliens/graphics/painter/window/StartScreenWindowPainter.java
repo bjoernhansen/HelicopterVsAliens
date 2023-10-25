@@ -136,7 +136,6 @@ public class StartScreenWindowPainter extends WindowPainter
             int alpha = (int)(255*(((double)CROSS_MAX_DISPLAY_TIME- Window.crossTimer)/(CROSS_MAX_DISPLAY_TIME/2)));
             if(Window.crossTimer < CROSS_MAX_DISPLAY_TIME/2){graphicsAdapter.setColor(Color.red);}
             else{graphicsAdapter.setColor(Colorations.setAlpha(Color.red, alpha));}
-            // graphicsAdapter.fill(Window.cross);
             graphicsAdapter.fillPolygon(Window.cross);
             if(Window.crossTimer < CROSS_MAX_DISPLAY_TIME/2){graphicsAdapter.setColor(Colorations.red);}
             else{graphicsAdapter.setColor(Colorations.setAlpha(Colorations.red, alpha));}

@@ -637,9 +637,21 @@ public final class Dictionary
         boolean hasSpotlights = GameResources.getProvider()
                                              .getHelicopter().hasSpotlights;
         String key = "sold." + (hasSpotlights ? "highSalary" : "lowSalary");
-        return this.languageProperties.getProperty(key);
+        return languageProperties.getProperty(key);
     }
-
+    
+    public String missionCompletedIn(Long totalPlayingTime)
+    {
+        String missionCompleted = languageProperties.getProperty("mission.completed");
+        return String.format(missionCompleted, Window.minutes(totalPlayingTime));
+    }
+    
+    public String missionFailedIn(Long totalPlayingTime)
+    {
+        String missionCompleted = languageProperties.getProperty("mission.failed");
+        return String.format(missionCompleted, Window.minutes(totalPlayingTime), Events.level );
+    }
+    
     public String startScreenButtonLabel(String dictionaryKey)
     {
         return this.languageProperties.getProperty(dictionaryKey);
@@ -649,7 +661,62 @@ public final class Dictionary
     {
         return this.languageProperties.getProperty("currencySymbol");
     }
-
+    
+    public String boss()
+    {
+        return this.languageProperties.getProperty("boss");
+    }
+    
+    public String playingTimePerBoss()
+    {
+        return this.languageProperties.getProperty("playingTimePerBoss");
+    }
+    
+    public String undefeated()
+    {
+        return this.languageProperties.getProperty("undefeated");
+    }
+    
+    public String crashLandings()
+    {
+        return this.languageProperties.getProperty("crashLandings");
+    }
+    
+    public String repairs()
+    {
+        return this.languageProperties.getProperty("repairs");
+    }
+    
+    public String overallEarnings()
+    {
+        return this.languageProperties.getProperty("overallEarnings");
+    }
+    
+    public String additionalIncomeDueToExtraBoni()
+    {
+        return this.languageProperties.getProperty("additionalIncomeDueToExtraBoni");
+    }
+    
+    public String defeatedEnemies()
+    {
+        return this.languageProperties.getProperty("defeatedEnemies");
+    }
+    
+    public String defeatedMiniBosses()
+    {
+        return this.languageProperties.getProperty("defeatedMiniBosses");
+    }
+    
+    public String hitRate()
+    {
+        return this.languageProperties.getProperty("hitRate");
+    }
+    
+    public String prepositionOf()
+    {
+        return this.languageProperties.getProperty("preposition.of");
+    }
+    
     public void updateLabelTextProvider()
     {
         labelTextProvider.update(language, languageProperties);
@@ -670,4 +737,6 @@ public final class Dictionary
     {
         return heliosVictoryMessages;
     }
+    
+
 }
