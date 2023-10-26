@@ -43,16 +43,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static de.helicopter_vs_aliens.gui.PriceLevel.CHEAP;
-import static de.helicopter_vs_aliens.gui.PriceLevel.EXPENSIVE;
-import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
-import static de.helicopter_vs_aliens.gui.PriceLevel.VERY_CHEAP;
-import static de.helicopter_vs_aliens.gui.WindowType.HIGH_SCORE;
-import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
-import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
-import static de.helicopter_vs_aliens.gui.WindowType.SETTINGS;
-import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
-import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
+import static de.helicopter_vs_aliens.gui.PriceLevel.*;
+import static de.helicopter_vs_aliens.gui.WindowType.*;
 
 
 public abstract class Window implements Paintable
@@ -307,12 +299,6 @@ public abstract class Window implements Paintable
 		Button cancelButton = buttons.get(StartScreenSubCancelButtonType.CANCEL);
 		boolean isHighlighted = cancelButton.getBounds().contains(helicopter.destination);
 		cancelButton.setHighlighted(isHighlighted);
-	}
-	
-	public static String minutes(long spielzeit)
-	{
-		if(spielzeit == 1) return Window.language == ENGLISH ? "1 minute" : "1 Minute";
-		return spielzeit + (Window.language == ENGLISH ? " minutes" : " Minuten");
 	}
 	
 	/** Displays **/

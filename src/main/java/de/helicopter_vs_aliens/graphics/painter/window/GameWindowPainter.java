@@ -634,11 +634,9 @@ public class GameWindowPainter extends WindowPainter
         }
         else if(Window.specialInfoSelection == 11)
         {
-            infoString = (Window.language == ENGLISH
-                ? "Defeated enemies: "
-                : "Besiegte Gegner: ")
+            infoString = Window.dictionary.defeatedEnemies() + ": "
                 + gameStatisticsCalculator.getNumberOfEnemiesKilled()
-                + (Window.language == ENGLISH ? " of " : " von ")
+                + " " + Window.dictionary.prepositionOf() + " "
                 + gameStatisticsCalculator.getNumberOfEnemiesSeen()
                 + " ("
                 + gameStatisticsCalculator.getKillRate()

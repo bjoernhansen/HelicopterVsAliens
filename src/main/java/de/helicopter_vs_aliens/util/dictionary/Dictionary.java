@@ -94,8 +94,8 @@ public final class Dictionary
     public Dictionary(Language language, HelicopterType helicopterType)
     {
         loadDefaultLanguageProperties();
-        this.switchLanguageTo(language);
-        this.switchHelicopterTypeTo(helicopterType);
+        switchLanguageTo(language);
+        switchHelicopterTypeTo(helicopterType);
     }
 
     public String getLabelText(WindowType window, StartScreenMenuButtonType page)
@@ -105,7 +105,7 @@ public final class Dictionary
 
     private void loadDefaultLanguageProperties()
     {
-        loadLanguageProperties(Language.ENGLISH, defaultLanguageProperties);
+        loadLanguageProperties(Language.getDefault(), defaultLanguageProperties);
     }
 
     private void loadLanguageProperties(Language language, Properties properties)
@@ -130,9 +130,9 @@ public final class Dictionary
 
     public void switchLanguageTo(Language language)
     {
-        if(this.language != language)
+        if(language != language)
         {
-            this.language = language;
+            language = language;
             loadLanguageProperties(language, languageProperties);
             accountForLanguageChange();
         }
@@ -140,9 +140,9 @@ public final class Dictionary
 
     public void switchHelicopterTypeTo(HelicopterType helicopterType)
     {
-        if(this.helicopterType != helicopterType)
+        if(helicopterType != helicopterType)
         {
-            this.helicopterType = helicopterType;
+            helicopterType = helicopterType;
             accountForHelicopterChange();
         }
     }
@@ -155,7 +155,7 @@ public final class Dictionary
             {
                 break;
             }
-            specialUpgrades.put(specialUpgradeType, this.languageProperties.getProperty(specialUpgradeType.getDictionaryKey()));
+            specialUpgrades.put(specialUpgradeType, languageProperties.getProperty(specialUpgradeType.getDictionaryKey()));
         }
 
         for(StandardUpgradeType standardUpgradeType : StandardUpgradeType.getValues())
@@ -170,11 +170,11 @@ public final class Dictionary
 
         for(HelicopterType type : HelicopterType.getValues())
         {
-            helicopterNames.put(type, this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".name"));
+            helicopterNames.put(type, languageProperties.getProperty("helicopter." + type.getDesignation() + ".name"));
             List<String> infos = new ArrayList<>();
             for(int i = 1; i <= 3; i++)
             {
-                infos.add(this.languageProperties.getProperty("helicopter." + type.getDesignation() + ".infos." + i));
+                infos.add(languageProperties.getProperty("helicopter." + type.getDesignation() + ".infos." + i));
             }
             helicopterInfos.put(type, infos);
         }
@@ -185,7 +185,7 @@ public final class Dictionary
             String[] message = new String[4];
             for(int i = 1; i <= 4; i++)
             {
-                message[i - 1] = this.languageProperties.getProperty(blockMessage.getKey() + i);
+                message[i - 1] = languageProperties.getProperty(blockMessage.getKey() + i);
             }
             blockMessages.put(blockMessage, message);
         }
@@ -201,7 +201,7 @@ public final class Dictionary
                                      .forEach(buttonSpecifier -> {
                                          StartScreenMenuButtonType buttonType = (StartScreenMenuButtonType) buttonSpecifier;
                                          String buttonLabelKey = buttonType.getButtonLabelKey(windowType);
-                                         buttonLabels.put(buttonType, this.languageProperties.getProperty(buttonLabelKey));
+                                         buttonLabels.put(buttonType, languageProperties.getProperty(buttonLabelKey));
                                      });
             startScreenSubButtonName.put(windowType, buttonLabels);
         }
@@ -210,7 +210,7 @@ public final class Dictionary
 
         highScoreColumnNames.clear();
         HighScoreColumnType.getValues()
-                           .forEach(highScoreColumnType -> highScoreColumnNames.put(highScoreColumnType, this.languageProperties.getProperty(highScoreColumnType.getKey())));
+                           .forEach(highScoreColumnType -> highScoreColumnNames.put(highScoreColumnType, languageProperties.getProperty(highScoreColumnType.getKey())));
 
         settingOptions.clear();
         for(int i = 1; i <= Window.NUMBER_OF_SETTING_OPTIONS; i++)
@@ -241,8 +241,8 @@ public final class Dictionary
     {
         Map<StartScreenMenuButtonType, String> settingsLabels = new EnumMap<>(StartScreenMenuButtonType.class);
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_1, audioActivation());
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_2.getButtonLabelKey(WindowType.SETTINGS)));
-        settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, this.languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_3.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_2, languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_2.getButtonLabelKey(WindowType.SETTINGS)));
+        settingsLabels.put(StartScreenMenuButtonType.BUTTON_3, languageProperties.getProperty(StartScreenMenuButtonType.BUTTON_3.getButtonLabelKey(WindowType.SETTINGS)));
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_4, changeMusicModeLabel());
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_5, "");
         settingsLabels.put(StartScreenMenuButtonType.BUTTON_6, "");
@@ -260,7 +260,7 @@ public final class Dictionary
     public String audioActivation()
     {
         String key = "music." + (Audio.isSoundOn ? "off" : "on");
-        return this.languageProperties.getProperty(key);
+        return languageProperties.getProperty(key);
     }
 
     private void accountForHelicopterChange()
@@ -271,7 +271,7 @@ public final class Dictionary
 
     private String getFifthSpecial()
     {
-        return this.languageProperties.getProperty(this.helicopterType.getFifthSpecialDictionaryKey());
+        return languageProperties.getProperty(helicopterType.getFifthSpecialDictionaryKey());
     }
 
     private List<String> determineEnergyAbility()
@@ -285,7 +285,7 @@ public final class Dictionary
         List<String> improvements = new ArrayList<>();
         for(int i = 1; i <= 2; i++)
         {
-            improvements.add(this.languageProperties.getProperty(dictionaryKeyPrefix + i));
+            improvements.add(languageProperties.getProperty(dictionaryKeyPrefix + i));
         }
         return improvements;
     }
@@ -307,107 +307,107 @@ public final class Dictionary
 
     public String thirdCannon()
     {
-        return this.languageProperties.getProperty("thirdCannon");
+        return languageProperties.getProperty("thirdCannon");
     }
 
     public String secondAndThirdCannon()
     {
-        return this.languageProperties.getProperty("secondAndThirdCannon");
+        return languageProperties.getProperty("secondAndThirdCannon");
     }
 
     public String playingTime()
     {
-        return this.languageProperties.getProperty("playingTime");
+        return languageProperties.getProperty("playingTime");
     }
 
     public String level()
     {
-        return this.languageProperties.getProperty("level");
+        return languageProperties.getProperty("level");
     }
 
     public String repair()
     {
-        return this.languageProperties.getProperty("repair");
+        return languageProperties.getProperty("repair");
     }
 
     public String price()
     {
-        return this.languageProperties.getProperty("price");
+        return languageProperties.getProperty("price");
     }
 
     public String repairShop()
     {
-        return this.languageProperties.getProperty("repairShop");
+        return languageProperties.getProperty("repairShop");
     }
 
     public String toTheRepairShop()
     {
-        return this.languageProperties.getProperty("toTheRepairShop");
+        return languageProperties.getProperty("toTheRepairShop");
     }
 
     public String goToRepairShop()
     {
-        return this.languageProperties.getProperty("goToRepairShow");
+        return languageProperties.getProperty("goToRepairShow");
     }
 
     public String mainMenu()
     {
-        return this.languageProperties.getProperty("mainMenu");
+        return languageProperties.getProperty("mainMenu");
     }
 
     public String startNewGame()
     {
-        return this.languageProperties.getProperty("startNewGame");
+        return languageProperties.getProperty("startNewGame");
     }
 
     public String messageAfterCrash(boolean isGameOver)
     {
-        return isGameOver ? this.startNewGame() : this.goToRepairShop();
+        return isGameOver ? startNewGame() : goToRepairShop();
     }
 
     public String quit()
     {
-        return this.languageProperties.getProperty("quit");
+        return languageProperties.getProperty("quit");
     }
 
     public String cancel()
     {
-        return this.languageProperties.getProperty("cancel");
+        return languageProperties.getProperty("cancel");
     }
 
     public String credit()
     {
-        return this.languageProperties.getProperty("credit");
+        return languageProperties.getProperty("credit");
     }
 
     public String state()
     {
-        return this.languageProperties.getProperty("state");
+        return languageProperties.getProperty("state");
     }
 
     public String damaged()
     {
-        return this.languageProperties.getProperty("state.damaged");
+        return languageProperties.getProperty("state.damaged");
     }
 
     public String developedBy()
     {
-        return this.languageProperties.getProperty("developedBy");
+        return languageProperties.getProperty("developedBy");
     }
 
     public String unavailable()
     {
-        return this.languageProperties.getProperty("unavailable");
+        return languageProperties.getProperty("unavailable");
     }
 
     public String unlocked()
     {
-        return this.languageProperties.getProperty("unlocked");
+        return languageProperties.getProperty("unlocked");
     }
 
     public String pleaseWait()
     {
-        return this.languageProperties.getProperty("pleaseWait");
+        return languageProperties.getProperty("pleaseWait");
     }
 
     public String settingOption(int optionNumber)
@@ -417,118 +417,118 @@ public final class Dictionary
 
     public String recordTime()
     {
-        return this.languageProperties.getProperty("recordTime");
+        return languageProperties.getProperty("recordTime");
     }
 
     public String specialMode()
     {
-        return this.languageProperties.getProperty("specialMode");
+        return languageProperties.getProperty("specialMode");
     }
 
     public String modeSuffix()
     {
-        return this.languageProperties.getProperty("modeSuffix");
+        return languageProperties.getProperty("modeSuffix");
     }
 
     public String statusBar()
     {
-        return this.languageProperties.getProperty("headline.statusBar");
+        return languageProperties.getProperty("headline.statusBar");
     }
 
     public String headlineMission()
     {
-        return this.languageProperties.getProperty("headline.mission");
+        return languageProperties.getProperty("headline.mission");
     }
 
     public String standardUpgrades()
     {
-        return this.languageProperties.getProperty("headline.standardUpgrades");
+        return languageProperties.getProperty("headline.standardUpgrades");
     }
 
     public String specialUpgrades()
     {
-        return this.languageProperties.getProperty("headline.specialUpgrades");
+        return languageProperties.getProperty("headline.specialUpgrades");
     }
 
     public String gameStatistics()
     {
-        return this.languageProperties.getProperty("headline.gameStatistics");
+        return languageProperties.getProperty("headline.gameStatistics");
     }
 
     public String activationState(boolean on)
     {
         String key = on ? "activationState.on" : "activationState.off";
-        return this.languageProperties.getProperty(key);
+        return languageProperties.getProperty(key);
     }
 
     public String changeMusicModeLabel()
     {
-        return Audio.MICHAEL_MODE ? this.languageProperties.getProperty("buttonLabel.startScreenSub.settings.3") : "";
+        return Audio.MICHAEL_MODE ? languageProperties.getProperty("buttonLabel.startScreenSub.settings.3") : "";
     }
 
     public String helicopterSelectionRequest()
     {
-        return this.languageProperties.getProperty("helicopterSelectionRequest");
+        return languageProperties.getProperty("helicopterSelectionRequest");
     }
 
     public String settings()
     {
-        return this.languageProperties.getProperty("settings");
+        return languageProperties.getProperty("settings");
     }
     
     public String seconds()
     {
-        return this.languageProperties.getProperty("time.seconds");
+        return languageProperties.getProperty("time.seconds");
     }
     
     public String prepositionFor()
     {
-        return this.languageProperties.getProperty("preposition.for");
+        return languageProperties.getProperty("preposition.for");
     }
     
     public String bonusCredit()
     {
-        return this.languageProperties.getProperty("bonusCredit");
+        return languageProperties.getProperty("bonusCredit");
     }
     
     public String unlimitedEnergy()
     {
-        return this.languageProperties.getProperty("unlimitedEnergy");
+        return languageProperties.getProperty("unlimitedEnergy");
     }
     
     public String partialRepairs()
     {
-        return this.languageProperties.getProperty("partialRepairs");
+        return languageProperties.getProperty("partialRepairs");
     }
     
     public String indestructibility()
     {
-        return this.languageProperties.getProperty("indestructibility");
+        return languageProperties.getProperty("indestructibility");
     }
     
     public String tripleDamage()
     {
-        return this.languageProperties.getProperty("tripleDamage");
+        return languageProperties.getProperty("tripleDamage");
     }
     
     public String increasedFireRate()
     {
-        return this.languageProperties.getProperty("increasedFireRate");
+        return languageProperties.getProperty("increasedFireRate");
     }
     
     public String stateCondition(boolean damaged)
     {
-        return this.languageProperties.getProperty(damaged ? "state.damaged" : "state.ready");
+        return languageProperties.getProperty(damaged ? "state.damaged" : "state.ready");
     }
 
     public String currentLevel()
     {
-        return this.languageProperties.getProperty("currentLevel");
+        return languageProperties.getProperty("currentLevel");
     }
 
     public List<String> helicopterInfos(HelicopterType type)
     {
-        return this.helicopterInfos.get(type);
+        return helicopterInfos.get(type);
     }
 
     public String typeName()
@@ -538,27 +538,27 @@ public final class Dictionary
 
     public String typeName(HelicopterType type)
     {
-        return this.helicopterName(type) + this.languageProperties.getProperty("type");
+        return helicopterName(type) + languageProperties.getProperty("type");
     }
 
     public String helicopterName()
     {
-        return this.helicopterName(this.helicopterType);
+        return helicopterName(helicopterType);
     }
 
     public String helicopterName(HelicopterType type)
     {
-        return this.helicopterNames.get(type);
+        return helicopterNames.get(type);
     }
 
     public String priceLevel(PriceLevel priceLevel)
     {
-        return this.languageProperties.getProperty(priceLevel.getDictionaryKey());
+        return languageProperties.getProperty(priceLevel.getDictionaryKey());
     }
 
     public String highScoreColumnName(HighScoreColumnType highScoreColumnType)
     {
-        return this.highScoreColumnNames.get(highScoreColumnType);
+        return highScoreColumnNames.get(highScoreColumnType);
     }
 
     public String standardUpgradesImprovements(StandardUpgradeType standardUpgradeType)
@@ -574,7 +574,7 @@ public final class Dictionary
     public String genericEnergyAbility()
     {
         String dictionaryKey = "upgrades.standard.energyAbility." + (language.getObjectPosition() + 1);
-        return this.languageProperties.getProperty(dictionaryKey);
+        return languageProperties.getProperty(dictionaryKey);
     }
 
     public String standardUpgradeName(StandardUpgradeType standardUpgradeType)
@@ -599,19 +599,19 @@ public final class Dictionary
         {
             case HELIOS ->
             {
-                return this.blockMessage(BlockMessage.HELIOS_NOT_AVAILABLE);
+                return blockMessage(BlockMessage.HELIOS_NOT_AVAILABLE);
             }
             case OROCHI, KAMAITACHI, PEGASUS ->
             {
                 message[0] = String.format(
                     blockMessages.get(BlockMessage.HELICOPTER_NOT_AVAILABLE)[0],
-                    this.typeName(helicopterType));
+                    typeName(helicopterType));
                 message[1] = blockMessages.get(BlockMessage.HELICOPTER_NOT_AVAILABLE)[1];
                 message[2] = String.format(
                     blockMessages.get(BlockMessage.HELICOPTER_NOT_AVAILABLE)[2],
-                    this.helicopterName(helicopterType.getUnlockerTypes()
+                    helicopterName(helicopterType.getUnlockerTypes()
                                                       .get(0)),
-                    this.typeName(helicopterType.getUnlockerTypes()
+                    typeName(helicopterType.getUnlockerTypes()
                                                 .get(1)));
             }
             default -> {}
@@ -629,7 +629,7 @@ public final class Dictionary
     public String mission()
     {
         String key = "mission." + (Events.timeOfDay == TimeOfDay.DAY ? "daytime" : "overnight");
-        return this.languageProperties.getProperty(key);
+        return languageProperties.getProperty(key);
     }
 
     public String sold()
@@ -643,78 +643,78 @@ public final class Dictionary
     public String missionCompletedIn(Long totalPlayingTime)
     {
         String missionCompleted = languageProperties.getProperty("mission.completed");
-        return String.format(missionCompleted, Window.minutes(totalPlayingTime));
+        return String.format(missionCompleted, minutes(totalPlayingTime));
     }
     
     public String missionFailedIn(Long totalPlayingTime)
     {
         String missionCompleted = languageProperties.getProperty("mission.failed");
-        return String.format(missionCompleted, Window.minutes(totalPlayingTime), Events.level );
+        return String.format(missionCompleted, minutes(totalPlayingTime), Events.level );
     }
     
     public String startScreenButtonLabel(String dictionaryKey)
     {
-        return this.languageProperties.getProperty(dictionaryKey);
+        return languageProperties.getProperty(dictionaryKey);
     }
 
     public String currencySymbol()
     {
-        return this.languageProperties.getProperty("currencySymbol");
+        return languageProperties.getProperty("currencySymbol");
     }
     
     public String boss()
     {
-        return this.languageProperties.getProperty("boss");
+        return languageProperties.getProperty("boss");
     }
     
     public String playingTimePerBoss()
     {
-        return this.languageProperties.getProperty("playingTimePerBoss");
+        return languageProperties.getProperty("playingTimePerBoss");
     }
     
     public String undefeated()
     {
-        return this.languageProperties.getProperty("undefeated");
+        return languageProperties.getProperty("undefeated");
     }
     
     public String crashLandings()
     {
-        return this.languageProperties.getProperty("crashLandings");
+        return languageProperties.getProperty("crashLandings");
     }
     
     public String repairs()
     {
-        return this.languageProperties.getProperty("repairs");
+        return languageProperties.getProperty("repairs");
     }
     
     public String overallEarnings()
     {
-        return this.languageProperties.getProperty("overallEarnings");
+        return languageProperties.getProperty("overallEarnings");
     }
     
     public String additionalIncomeDueToExtraBoni()
     {
-        return this.languageProperties.getProperty("additionalIncomeDueToExtraBoni");
+        return languageProperties.getProperty("additionalIncomeDueToExtraBoni");
     }
     
     public String defeatedEnemies()
     {
-        return this.languageProperties.getProperty("defeatedEnemies");
+        return languageProperties.getProperty("defeatedEnemies");
     }
     
     public String defeatedMiniBosses()
     {
-        return this.languageProperties.getProperty("defeatedMiniBosses");
+        return languageProperties.getProperty("defeatedMiniBosses");
     }
     
     public String hitRate()
     {
-        return this.languageProperties.getProperty("hitRate");
+        return languageProperties.getProperty("hitRate");
     }
     
     public String prepositionOf()
     {
-        return this.languageProperties.getProperty("preposition.of");
+        return languageProperties.getProperty("preposition.of");
     }
     
     public void updateLabelTextProvider()
@@ -738,5 +738,9 @@ public final class Dictionary
         return heliosVictoryMessages;
     }
     
-
+    public String minutes(long spielzeit)
+    {
+        String key = "time." + (spielzeit == 1 ? "minute" : "minutes");
+        return spielzeit + " " + languageProperties.getProperty(key);
+    }
 }

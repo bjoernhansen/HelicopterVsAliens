@@ -8,6 +8,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
+import de.helicopter_vs_aliens.util.dictionary.Dictionary;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -259,7 +260,7 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
             graphicsAdapter.setFont(Window.fontProvider.getBold(12));
             graphicsAdapter.setColor(Color.yellow);
             graphicsAdapter.drawString(Window.dictionary.recordTime(), left-27, top+67);
-            graphicsAdapter.drawString(Window.minutes(helicopter.getType().getRecordTime(BossLevel.FINAL_BOSS)),left-27, top+80);
+            graphicsAdapter.drawString(Window.dictionary.minutes(helicopter.getType().getRecordTime(BossLevel.FINAL_BOSS)), left-27, top+80);
         }
         
         if(helicopter.getType() == HELIOS && WindowManager.window == START_SCREEN)

@@ -1,9 +1,9 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
@@ -11,11 +11,10 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
-import java.awt.*;
+import java.awt.Color;
 
 import static de.helicopter_vs_aliens.control.Events.MAXIMUM_LEVEL;
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
-import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 public class ScoreScreenWindowPainter extends WindowPainter
 {
@@ -76,7 +75,7 @@ public class ScoreScreenWindowPainter extends WindowPainter
                      if(bossLevel.completed())
                      {
                          graphicsAdapter.setColor(Color.green);
-                         graphicsAdapter.drawString(Window.minutes(helicopter.scoreScreenTimes.get(bossLevel)) + " (" + boss + " " + bossLevel.getBossNr() + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * bossLevel.getBossNr());
+                         graphicsAdapter.drawString(Window.dictionary.minutes(helicopter.scoreScreenTimes.get(bossLevel)) + " (" + boss + " " + bossLevel.getBossNr() + ")", X_POS_1, Y_POS - 9 + SPACE_BETWEEN_ROWS * bossLevel.getBossNr());
                      }
                      else
                      {
@@ -99,20 +98,27 @@ public class ScoreScreenWindowPainter extends WindowPainter
                 + Events.getLastOverallEarningsWithCurrency(),
             X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 3 + 11);
 
-        int percentage = Events.bonusIncomePercentage();
+        int percentage;
+        String outputString;
+        
         graphicsAdapter.setColor(Colorations.scoreScreen[0]);
-        graphicsAdapter.drawString(Window.dictionary.additionalIncomeDueToExtraBoni() + ": +" + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 5);
-
-        percentage = gameStatisticsCalculator.getKillRate();
+        percentage = Events.bonusIncomePercentage();
+        outputString = Window.dictionary.additionalIncomeDueToExtraBoni() + ": +" + percentage + "%";
+        graphicsAdapter.drawString(outputString, X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 5);
+        
         graphicsAdapter.setColor(Colorations.scoreScreen[1]);
-        graphicsAdapter.drawString(Window.dictionary.defeatedEnemies() + ": " + gameStatisticsCalculator.getNumberOfEnemiesKilled() + " " + Window.dictionary.prepositionOf() + " " + gameStatisticsCalculator.getNumberOfEnemiesSeen() + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 6);
-
-        percentage = gameStatisticsCalculator.getMiniBossKillRate();
+        percentage = gameStatisticsCalculator.getKillRate();
+        outputString = Window.dictionary.defeatedEnemies() + ": " + gameStatisticsCalculator.getNumberOfEnemiesKilled() + " " + Window.dictionary.prepositionOf() + " " + gameStatisticsCalculator.getNumberOfEnemiesSeen() + " (" + percentage + "%";
+        graphicsAdapter.drawString(outputString + ")", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 6);
+        
         graphicsAdapter.setColor(Colorations.scoreScreen[2]);
-        graphicsAdapter.drawString(Window.dictionary.defeatedMiniBosses() + ": " + gameStatisticsCalculator.getNumberOfMiniBossKilled() + (Window.language == ENGLISH ? " of " : " von ") + gameStatisticsCalculator.getNumberOfMiniBossSeen() + " (" + percentage + "%)", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 7);
-
-        percentage = gameStatisticsCalculator.getMissileHitRate();
+        percentage = gameStatisticsCalculator.getMiniBossKillRate();
+        outputString = Window.dictionary.defeatedMiniBosses() + ": " + gameStatisticsCalculator.getNumberOfMiniBossKilled() + " " + Window.dictionary.prepositionOf() + " " + gameStatisticsCalculator.getNumberOfMiniBossSeen() + " (" + percentage + "%)";
+        graphicsAdapter.drawString(outputString, X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 7);
+        
         graphicsAdapter.setColor(Colorations.scoreScreen[3]);
-        graphicsAdapter.drawString(Window.dictionary.hitRate() + ": " + percentage + "%", X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 8); //Zielsicherheit
+        percentage = gameStatisticsCalculator.getMissileHitRate();
+        outputString = Window.dictionary.hitRate() + ": " + percentage + "%";
+        graphicsAdapter.drawString(outputString, X_POS_2, Y_POS + SPACE_BETWEEN_ROWS * 8);
     }
 }
