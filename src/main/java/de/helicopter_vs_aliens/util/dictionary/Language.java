@@ -18,12 +18,15 @@ import java.util.function.Supplier;
 
 public enum Language
 {
+    // TODO Die Positions und Shift-Angaben sollten durch Schriftabmessungen ersetzt werden
+    
     ENGLISH(
         "English",
         "en",
         0,
         1,
         0,
+        6,
         646,
         EnglishFontSpecificationProviderForSwing::new,
         EnglishFontSpecificationProviderForJavaFx::new,
@@ -35,6 +38,7 @@ public enum Language
         1,
         0,
         36,
+        0,
         661,
         GermanFontSpecificationProviderForSwing::new,
         GermanFontSpecificationProviderForJavaFx::new,
@@ -60,6 +64,9 @@ public enum Language
         victoryMessageShiftY;
     
     private final int
+        mainMenuHeadlineShiftX;
+    
+    private final int
         timeDisplayPositionX;
 
     private final FontSpecificationProvider
@@ -80,7 +87,7 @@ public enum Language
     Language(String nativeName,
              String code,
              int id, int objectPosition,
-             int victoryMessageShiftY, int timeDisplayPositionX, Supplier<FontSpecificationProvider> fontSizeProviderSupplierForSwing,
+             int victoryMessageShiftY, int mainMenuHeadlineShiftX, int timeDisplayPositionX, Supplier<FontSpecificationProvider> fontSizeProviderSupplierForSwing,
              Supplier<FontSpecificationProvider> fontSizeProviderSupplierForJavaFx,
              VerticalBoundaries verticalBoundaries)
     {
@@ -89,6 +96,7 @@ public enum Language
         this.id = id;
         this.objectPosition = objectPosition;
         this.victoryMessageShiftY = victoryMessageShiftY;
+        this.mainMenuHeadlineShiftX = mainMenuHeadlineShiftX;
         this.timeDisplayPositionX = timeDisplayPositionX;
         fontSpecificationProviderForSwing = fontSizeProviderSupplierForSwing.get();
         fontSpecificationProviderForJavaFx = fontSizeProviderSupplierForJavaFx.get();
@@ -137,5 +145,10 @@ public enum Language
     public VerticalBoundaries getVerticalBoundariesOfPopupWindowForTemporarilyVictory()
     {
         return verticalBoundaries;
+    }
+    
+    public int getMainMenuHeadlineShiftX()
+    {
+        return mainMenuHeadlineShiftX;
     }
 }

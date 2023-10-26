@@ -130,9 +130,9 @@ public final class Dictionary
 
     public void switchLanguageTo(Language language)
     {
-        if(language != language)
+        if(this.language != language)
         {
-            language = language;
+            this.language = language;
             loadLanguageProperties(language, languageProperties);
             accountForLanguageChange();
         }
@@ -140,9 +140,9 @@ public final class Dictionary
 
     public void switchHelicopterTypeTo(HelicopterType helicopterType)
     {
-        if(helicopterType != helicopterType)
+        if(this.helicopterType != helicopterType)
         {
-            helicopterType = helicopterType;
+            this.helicopterType = helicopterType;
             accountForHelicopterChange();
         }
     }
@@ -717,11 +717,15 @@ public final class Dictionary
         return languageProperties.getProperty("preposition.of");
     }
     
+    public String descriptionPowerUp()
+    {
+        return languageProperties.getProperty("menuText.startScreenSub.description.powerUp");
+    }
+    
     public void updateLabelTextProvider()
     {
         labelTextProvider.update(language, languageProperties);
     }
-    
     
     public List<String> getCrashMessages()
     {

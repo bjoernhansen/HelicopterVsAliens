@@ -38,7 +38,6 @@ import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 import static de.helicopter_vs_aliens.model.RectangularGameEntity.GROUND_Y;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.ROTOR_SYSTEM;
-import static de.helicopter_vs_aliens.util.dictionary.Language.ENGLISH;
 
 
 public class GameWindowPainter extends WindowPainter
@@ -395,7 +394,7 @@ public class GameWindowPainter extends WindowPainter
         paintInGamePopupWindow(graphicsAdapter, PopupWindowType.DEFAULT);
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(25));
-        graphicsAdapter.drawString(Window.dictionary.mainMenu(), 422 + (Window.language == ENGLISH ? 6 : 0), 106);
+        graphicsAdapter.drawString(Window.dictionary.mainMenu(), 422 + Window.language.getMainMenuHeadlineShiftX(), 106);
         
         MainMenuButtonType.getValues()
                           .forEach(buttonType -> Window.buttons.get(buttonType)

@@ -10,30 +10,28 @@ import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.dictionary.Dictionary;
-import de.helicopter_vs_aliens.util.dictionary.Language;
 
 import java.awt.Point;
 import java.util.List;
 
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
-import static de.helicopter_vs_aliens.gui.window.Window.language;
 
 
 public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
 {
     private static final int
         Y_OFFSET = 35;
-
+    
     private static final int
         TEXT_OFFSET = 18;
-
+    
     private static final Point
         POSITION = new Point(52, 120);
-
+    
     public static final int
         POWER_UP_DURATION_IN_SECONDS = Helicopter.POWER_UP_DURATION / 60;
-
-
+    
+    
     @Override
     void paintStartScreenMenu(GraphicsAdapter graphicsAdapter)
     {
@@ -50,7 +48,7 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
                                                            .getPainter(PowerUp.class);
             List<String> powerUpTextLines = getPowerUpTextLines();
             
-            for (PowerUpType powerUpType : PowerUpType.getValues())
+            for(PowerUpType powerUpType : PowerUpType.getValues())
             {
                 int positionY = POSITION.y + powerUpType.getMenuPosition() * Y_OFFSET;
                 powerUpPainter.paint(
@@ -61,9 +59,9 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
                     Window.POWER_UP_SIZE,
                     powerUpType.getSurfaceColor(),
                     powerUpType.getCrossColor());
-
+                
                 graphicsAdapter.setColor(Colorations.lightestGray);
-
+                
                 graphicsAdapter.drawString(
                     powerUpTextLines.get(powerUpType.getMenuPosition()),
                     POSITION.x + 50,
@@ -88,10 +86,6 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
     
     private String getFirstLine()
     {
-        if(language == Language.ENGLISH)
-        {
-            return "After destruction, some opponents drop one of the " + PowerUpType.valueCount() + " following power-ups:";
-        }
-        return "Einige Gegner verlieren nach Ihrem Abschuss eines der " + PowerUpType.valueCount() + " folgenden PowerUps:";
+        return String.format(Window.dictionary.descriptionPowerUp(), PowerUpType.valueCount());
     }
 }
