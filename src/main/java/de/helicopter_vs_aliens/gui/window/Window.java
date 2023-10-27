@@ -99,8 +99,7 @@ public abstract class Window implements Paintable
 		unlockedType;					// Typ des freigeschalteten Helicopters
 
 	public static boolean
-		isMenuVisible,					// = true: Spielmenü ist sichtbar
-		hasOriginalResolution = false;
+		isMenuVisible;					// = true: Spielmenü ist sichtbar
 	
     // Auf dem StartScreen gezeichnete Polygone
     public static Polygon

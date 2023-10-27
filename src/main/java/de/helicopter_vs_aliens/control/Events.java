@@ -468,8 +468,9 @@ public class Events
             {
                 if (Window.buttons.get(MainMenuButtonType.NEW_GAME_1).getBounds().contains(cursor))
                 {
+                    // 'Start a new game' selected in in-game menu --> return to start screen menu
                     savegame.becomeValid();
-                    savegame.saveToFile(gameRessourceProvider);
+                    savegame.saveAndWriteToFile(gameRessourceProvider);
                     conditionalReset(gameRessourceProvider, true);
                     restartGame(gameRessourceProvider);
                     Audio.applause1.stop();
@@ -481,8 +482,9 @@ public class Events
                 }
                 else if (Window.buttons.get(MainMenuButtonType.NEW_GAME_2).getBounds().contains(cursor))
                 {
+                    // 'Quit' selected in in-game menu --> quitting the game
                     savegame.becomeValid();
-                    savegame.saveToFile(gameRessourceProvider);
+                    savegame.saveAndWriteToFile(gameRessourceProvider);
                     System.exit(0);
                 }
                 else if ((Window.buttons.get(GroundButtonType.MAIN_MENU).getBounds().contains(cursor)
@@ -536,8 +538,9 @@ public class Events
                 changeWindow(SCORE_SCREEN);
 
                 helicopter.isDamaged = false;
+                // go to score screen menu due to lack of money for the repairs -> game over so savegame becomes invalid
                 savegame.becomeValid();
-                savegame.saveToFile(gameRessourceProvider);
+                savegame.saveAndWriteToFile(gameRessourceProvider);
                 Colorations.updateScoreScreenColors(gameRessourceProvider.getGameStatisticsCalculator());
             }
             else
@@ -607,6 +610,7 @@ public class Events
             }
             else
             {
+                // pressing "Start mission" in repair shop menu
                 Window.stopButtonHighlighting();
                 Window.messageTimer = 0;
                 startMission(gameRessourceProvider);
@@ -886,6 +890,7 @@ public class Events
                 Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
             }
         }
+        // TODO ggf. Law of Demeter einhalten und (getBounds intern aufrufen)
         else if (Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).getBounds().contains(cursor))
         {
             if (gameRessourceProvider.getSaveGame().isValid())
@@ -910,10 +915,11 @@ public class Events
         Savegame savegame = gameRessourceProvider.getSaveGame();
         if (WindowManager.window == SCORE_SCREEN)
         {
+            // leaving score screen by pressing "Cancel" -> to start screen menu
             savegame.saveInHighscore();
             restartGame(gameRessourceProvider);
             savegame.loseValidity();
-            savegame.saveToFile(gameRessourceProvider);
+            savegame.saveAndWriteToFile(gameRessourceProvider);
             Window.buttons.get(StartScreenSubCancelButtonType.CANCEL).setHighlighted(false);
         }
         else if (WindowManager.window == DESCRIPTION)
@@ -947,7 +953,8 @@ public class Events
                 checkName(savegame);
                 if (settingsChanged)
                 {
-                    savegame.saveToFile(gameRessourceProvider);
+                    // saving when pressing "Cancel" after changing settings
+                    savegame.saveAndWriteToFile(gameRessourceProvider);
                     settingsChanged = false;
                 }
             }
@@ -1110,7 +1117,7 @@ public class Events
     }
 
     // Wiederherstellen einiger Variablen anhand eines gespeicherten Spielstandes
-    private static void restore(Savegame savegame)
+    public static void restore(Savegame savegame)
     {
         money = savegame.money;
         killsAfterLevelUp = savegame.killsAfterLevelUp;
@@ -1238,24 +1245,24 @@ public class Events
 
     private static void startNewGame(HelicopterType nextHelicopterType, GameRessourceProvider gameRessourceProvider)
     {
+        // start by selecting helicopter at StartScreenMenu
         Audio.play(Audio.applause1);
-        Helicopter newHelicopter = HelicopterFactory.createForNewGame(nextHelicopterType);
-        gameRessourceProvider.setHelicopter(newHelicopter);
+        gameRessourceProvider.setNewHelicopter(nextHelicopterType);
         Savegame savegame = gameRessourceProvider.getSaveGame();
         savegame.saveInHighscore();
         initializeForNewGame();
         savegame.becomeValid();
-        savegame.saveToFile(gameRessourceProvider);
+        savegame.saveAndWriteToFile(gameRessourceProvider);
         performGeneralActionsBeforeGameStart();
     }
 
     private static void startSavedGame(GameRessourceProvider gameRessourceProvider)
     {
-        Helicopter savedHelicopter = HelicopterFactory.createFromSavegame(gameRessourceProvider.getSaveGame());
-        gameRessourceProvider.setHelicopter(savedHelicopter);
+        gameRessourceProvider.restoreHelicopter();
         initializeFromSaveGame(gameRessourceProvider);
         performGeneralActionsBeforeGameStart();
-        Window.updateRepairShopButtons(savedHelicopter);
+        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Window.updateRepairShopButtons(helicopter);
     }
 
     private static void performGeneralActionsBeforeGameStart()
@@ -1281,7 +1288,7 @@ public class Events
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         helicopter.prepareForMission();
         gameRessourceProvider.getSaveGame().becomeValid();
-        gameRessourceProvider.getSaveGame().saveToFile(gameRessourceProvider);
+        gameRessourceProvider.getSaveGame().saveAndWriteToFile(gameRessourceProvider);
     }
 
     private static void enterRepairShop(Helicopter helicopter)

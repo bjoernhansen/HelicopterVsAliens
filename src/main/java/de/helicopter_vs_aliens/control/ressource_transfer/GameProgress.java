@@ -3,7 +3,6 @@ package de.helicopter_vs_aliens.control.ressource_transfer;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.platform_specific.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
 import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
 import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
@@ -15,14 +14,18 @@ import de.helicopter_vs_aliens.model.GameEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.platform_specific.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
+
+import java.util.Objects;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
@@ -81,6 +84,11 @@ public final class GameProgress implements GameRessourceProvider
     {
         Window.initializeDictionary();
         saveGame = Savegame.makeInstance();
+        if(saveGame.isValid())
+        {
+            restoreHelicopter();
+            Events.restore(saveGame);
+        }
         Window.initialize();
         Window.updateButtonLabels(helicopter);
         scenery.createInitialSceneryObjects();
@@ -172,21 +180,6 @@ public final class GameProgress implements GameRessourceProvider
     }
 
     @Override
-    public void setHelicopter(Helicopter helicopter)
-    {
-        this.helicopter = helicopter;
-        // TODO nicht mehr nötig, wenn Helicopter über den InstanceSupplier bezogen wird (wie Enemy)
-        helicopter.setGameRessourceProvider(this);
-        Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
-    }
-
-    @Override
-    public Helicopter getHelicopter()
-    {
-        return helicopter;
-    }
-
-    @Override
     public GameStatisticsCalculator getGameStatisticsCalculator()
     {
         return gameStatisticsCalculator;
@@ -237,10 +230,39 @@ public final class GameProgress implements GameRessourceProvider
     {
         return scalingFactor;
     }
-
+    
     public void setScalingFactor(double scalingFactor)
     {
         this.scalingFactor = scalingFactor;
         Window.dictionary.updateLabelTextProvider();
+    }
+    
+    @Override
+    public Helicopter getHelicopter()
+    {
+        return helicopter;
+    }
+    
+    @Override
+    public void restoreHelicopter()
+    {
+        Objects.requireNonNull(saveGame);
+        Helicopter savedHelicopter = HelicopterFactory.createFromSavegame(saveGame);
+        setHelicopter(savedHelicopter);
+    }
+    
+    @Override
+    public void setNewHelicopter(HelicopterType nextHelicopterType)
+    {
+        Helicopter newHelicopter = HelicopterFactory.createForNewGame(nextHelicopterType);
+        setHelicopter(newHelicopter);
+    }
+    
+    private void setHelicopter(Helicopter helicopter)
+    {
+        this.helicopter = helicopter;
+        // TODO nicht mehr nötig, wenn Helicopter über den InstanceSupplier bezogen wird (wie Enemy)
+        helicopter.setGameRessourceProvider(this);
+        Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
     }
 }

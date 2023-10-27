@@ -21,7 +21,6 @@ public class Main
         GraphicsApiType graphicsApiType = parameterProvider.getGraphicsApiType();
         GameProgress gameProgress = GameResources.getGameProgressInstance(graphicsApiType);
         var controllerFactory = new ControllerFactory(gameProgress);
-
         controllerFactory.makeInstance()
                          .start();
     }

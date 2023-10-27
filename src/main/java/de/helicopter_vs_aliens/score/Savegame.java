@@ -32,7 +32,6 @@ public class Savegame implements Serializable
 		FILENAME = "savegame";
 
 	public boolean
-		originalResolution,
 		standardBackgroundMusic,
 		isSoundOn,
 		spotlight,
@@ -75,7 +74,9 @@ public class Savegame implements Serializable
 		recordTimeManager;
 	
 	public float
-		currentPlating,
+		currentPlating;
+	
+	public float
 		currentEnergy;
 	
 	public Map<StandardUpgradeType, Integer>
@@ -99,8 +100,9 @@ public class Savegame implements Serializable
 
 	private Savegame()
 	{
-		this.isValid = false;
-		this.currentPlayerName = Events.currentPlayerName;
+		isValid = false;
+		currentPlayerName = Events.currentPlayerName;
+		// helicopterType = HelicopterType.getDefault();
 	}
 	
 	public static Savegame makeInstance()
@@ -111,7 +113,6 @@ public class Savegame implements Serializable
 			loadedSavegame.ifPresent(savegame -> {
 				Events.currentPlayerName = savegame.currentPlayerName;
 				Window.setLanguage(savegame.language);
-				Window.hasOriginalResolution = savegame.originalResolution;
 				Audio.standardBackgroundMusic = savegame.standardBackgroundMusic || !Audio.MICHAEL_MODE;
 				Audio.isSoundOn = savegame.isSoundOn;
 				Events.highScore = savegame.highScore;
@@ -157,9 +158,10 @@ public class Savegame implements Serializable
 	
 	public void saveWithoutValidity(GameRessourceProvider gameRessourceProvider)
 	{
+		// from start screen menu save current game in high score and forcing game over -> savegame becomes in valid
 		saveInHighscore();
 		loseValidity();
-		saveToFile(gameRessourceProvider);
+		saveAndWriteToFile(gameRessourceProvider);
 		Audio.play(Audio.emp);
 	}
 	
@@ -168,7 +170,7 @@ public class Savegame implements Serializable
 		Events.highScore.saveEntryFor(this);
 	}
 	
-	public void saveToFile(GameRessourceProvider gameRessourceProvider)
+	public void saveAndWriteToFile(GameRessourceProvider gameRessourceProvider)
 	{
 		save(gameRessourceProvider);
 		Window.buttons.get(StartScreenButtonType.RESUME_LAST_GAME).setEnabled(isValid);
@@ -177,47 +179,45 @@ public class Savegame implements Serializable
 
 	private void save(GameRessourceProvider gameRessourceProvider)
 	{
-		this.standardBackgroundMusic = Audio.standardBackgroundMusic;
-		this.isSoundOn = Audio.isSoundOn;
-
-		this.language = Window.language;
-		this.originalResolution = Window.hasOriginalResolution;
-
-		this.currentPlayerName = Events.currentPlayerName;
-		this.money = Events.money;
-		this.killsAfterLevelUp = Events.killsAfterLevelUp;
-		this.level = Events.level;
-		this.maxLevel = Events.maxLevel;
-		this.timeOfDay = Events.timeOfDay;
-		this.bonusCounter = Events.overallEarnings;
-		this.extraBonusCounter = Events.extraBonusCounter;
-		this.playingTime = Events.playingTime;
-		this.recordTimeManager = Events.recordTimeManager;
-		this.helicoptersThatReachedLevel20 = Events.helicoptersThatReachedLevel20;
-		this.highScore = Events.highScore;
+		standardBackgroundMusic = Audio.standardBackgroundMusic;
+		isSoundOn = Audio.isSoundOn;
+		language = Window.language;
+		currentPlayerName = Events.currentPlayerName;
+		
+		money = Events.money;
+		killsAfterLevelUp = Events.killsAfterLevelUp;
+		level = Events.level;
+		maxLevel = Events.maxLevel;
+		timeOfDay = Events.timeOfDay;
+		bonusCounter = Events.overallEarnings;
+		extraBonusCounter = Events.extraBonusCounter;
+		playingTime = Events.playingTime;
+		recordTimeManager = Events.recordTimeManager;
+		helicoptersThatReachedLevel20 = Events.helicoptersThatReachedLevel20;
+		highScore = Events.highScore;
 
 		var helicopter = gameRessourceProvider.getHelicopter();
-		this.scoreScreenTimes = helicopter.scoreScreenTimes;
-		this.helicopterType = helicopter.getType();
-		this.levelsOfStandardUpgrades = helicopter.getLevelsOfStandardUpgrades();
-		this.spotlight = helicopter.hasSpotlights;
-		this.platingDurabilityFactor = helicopter.platingDurabilityFactor;
-		this.hasPiercingWarheads = helicopter.hasPiercingWarheads;
-		this.numberOfCannons = helicopter.numberOfCannons;
-		this.hasFifthSpecial = helicopter.hasFifthSpecial();
-		this.currentPlating = helicopter.getCurrentPlating();
-		this.currentEnergy = helicopter.getCurrentEnergy();
-		this.wasCreatedThroughCheating = helicopter.isPlayedWithCheats;
+		scoreScreenTimes = helicopter.scoreScreenTimes;
+		helicopterType = helicopter.getType();
+		levelsOfStandardUpgrades = helicopter.getLevelsOfStandardUpgrades();
+		spotlight = helicopter.hasSpotlights;
+		platingDurabilityFactor = helicopter.platingDurabilityFactor;
+		hasPiercingWarheads = helicopter.hasPiercingWarheads;
+		numberOfCannons = helicopter.numberOfCannons;
+		hasFifthSpecial = helicopter.hasFifthSpecial();
+		currentPlating = helicopter.getCurrentPlating();
+		currentEnergy = helicopter.getCurrentEnergy();
+		wasCreatedThroughCheating = helicopter.isPlayedWithCheats;
 
 		GameStatisticsCalculator gameStatisticsCalculator = gameRessourceProvider.getGameStatisticsCalculator();
-		this.enemiesSeen = gameStatisticsCalculator.getNumberOfEnemiesSeen();
-		this.enemiesKilled = gameStatisticsCalculator.getNumberOfEnemiesKilled();
-		this.miniBossSeen = gameStatisticsCalculator.getNumberOfMiniBossSeen();
-		this.miniBossKilled = gameStatisticsCalculator.getNumberOfMiniBossKilled();
-		this.numberOfCrashes = gameStatisticsCalculator.getNumberOfCrashes();
-		this.numberOfRepairs = gameStatisticsCalculator.getNumberOfRepairs();
-		this.missileCounter = gameStatisticsCalculator.getMissileCounter();
-		this.hitCounter = gameStatisticsCalculator.getHitCounter();
+		enemiesSeen = gameStatisticsCalculator.getNumberOfEnemiesSeen();
+		enemiesKilled = gameStatisticsCalculator.getNumberOfEnemiesKilled();
+		miniBossSeen = gameStatisticsCalculator.getNumberOfMiniBossSeen();
+		miniBossKilled = gameStatisticsCalculator.getNumberOfMiniBossKilled();
+		numberOfCrashes = gameStatisticsCalculator.getNumberOfCrashes();
+		numberOfRepairs = gameStatisticsCalculator.getNumberOfRepairs();
+		missileCounter = gameStatisticsCalculator.getMissileCounter();
+		hitCounter = gameStatisticsCalculator.getHitCounter();
 	}
 
 	private void writeToFile()
@@ -234,12 +234,12 @@ public class Savegame implements Serializable
 	
 	public void becomeValid()
 	{
-		this.isValid = true;
+		isValid = true;
 	}
 	
 	public void loseValidity()
 	{
-		this.isValid = false;
+		isValid = false;
 	}
 	
 	public boolean isValid()
@@ -259,6 +259,6 @@ public class Savegame implements Serializable
 		
     boolean isWorthyForHighscore()
     {
-        return this.isValid && (!this.wasCreatedThroughCheating || Events.IS_SAVE_GAME_SAVED_ANYWAY);
+        return isValid && (!wasCreatedThroughCheating || Events.IS_SAVE_GAME_SAVED_ANYWAY);
     }
 }
