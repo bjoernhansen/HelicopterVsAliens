@@ -66,8 +66,11 @@ public class ButtonPainter extends Painter<Button>
                     graphicsAdapter.setFont(Window.fontProvider.getPlain(18));
                     graphicsAdapter.setColor(Color.black);
                 }
-                int stringWidth = graphicsAdapter.getStringWidth(button.getPrimaryLabel());
-                graphicsAdapter.drawString(button.getPrimaryLabel(), (int)(button.getBounds().getX() + (button.getBounds().getWidth()-stringWidth)/2), (int)(button.getBounds().getY() + button.getBounds().getHeight() - button.getBounds().getHeight()/2+6));
+                
+                int y = (int)(button.getBounds().getY()
+                        + button.getBounds().getHeight() / 2
+                        + 6);
+                graphicsAdapter.drawHorizontallyCenteredString(button.getPrimaryLabel(), (int)button.getBounds().getX(), (int)button.getBounds().getWidth(), y);
             }
             graphicsAdapter.setColor(Color.white);
             if(button.hasSecondaryLabel()){
@@ -75,7 +78,6 @@ public class ButtonPainter extends Painter<Button>
                                 (int)button.getBounds().getX() + LABEL_OFFSET_X,
                                 (int)button.getBounds().getY() + SECONDARY_LABEL_OFFSET_Y);
             }
-            
         }
     }
 }

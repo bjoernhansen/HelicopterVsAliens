@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.scenery;
 
-import de.helicopter_vs_aliens.Main;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
 import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
@@ -96,7 +96,7 @@ public class SceneryObject extends RectangularGameEntity implements GroupTypeOwn
 	
     void preset()
     {        
-    	this.x = Main.VIRTUAL_DIMENSION.width + 25;
+    	this.x = GraphicsAdapter.VIRTUAL_DIMENSION.getWidth() + 25;
     	
     	// Sicherstellen, dass zwischen dem Erscheinen von zwei Kakteen bzw. 
     	// zwei Steinen eine gewisse Mindestzeit vergangen ist

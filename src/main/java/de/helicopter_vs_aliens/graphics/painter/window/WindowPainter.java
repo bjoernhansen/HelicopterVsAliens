@@ -72,7 +72,7 @@ public abstract class WindowPainter extends Painter<Window>
         graphicsAdapter.setColor(Color.white);
         graphicsAdapter.setFont(fontProvider.getBold(20));
         String typeName = Window.dictionary.typeName(helicopter.getType());
-        graphicsAdapter.drawString(typeName, 28 + x + (196-graphicsAdapter.getStringWidth(typeName))/2, 113 + y);
+        graphicsAdapter.drawHorizontallyCenteredString(typeName, 28 + x, 196, 113 + y);
         
         HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(helicopter.getClass());
         helicopterPainter.displayPaint(graphicsAdapter, helicopter, 59 + x, 141 + y);
@@ -97,7 +97,7 @@ public abstract class WindowPainter extends Painter<Window>
                 graphicsAdapter.setColor(Colorations.darkArrowGreen);
                 typeName = Window.dictionary.unlocked();
             }
-            graphicsAdapter.drawString(typeName, 28 + x + (196-graphicsAdapter.getStringWidth(typeName))/2, 249 + y);
+            graphicsAdapter.drawHorizontallyCenteredString(typeName, 28 + x, 196, 249 + y);
         }
         
         if(WindowManager.window  == REPAIR_SHOP)

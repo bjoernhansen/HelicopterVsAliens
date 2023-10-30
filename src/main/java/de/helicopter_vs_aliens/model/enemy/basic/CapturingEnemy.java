@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.enemy.basic;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
@@ -54,7 +54,7 @@ public class CapturingEnemy extends BasicEnemy
         return tractorDeviceActivityStatus == AbilityStatusType.READY
                 && !isEmpSlowed()
                 && !getCloakingDevice().isActive()
-                && getMaxX() < Main.VIRTUAL_DIMENSION.width;
+                && getMaxX() < GraphicsAdapter.VIRTUAL_DIMENSION.getWidth();
     }
     
     private void startTractor()

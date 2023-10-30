@@ -44,8 +44,7 @@ public class RepairShopWindowPainter extends WindowPainter
         // allgemeine Anzeigen
         graphicsAdapter.setPaint(Colorations.gradientVariableWhite);
         graphicsAdapter.setFont(fontProvider.getPlain(52));
-        String inputString = Window.dictionary.repairShop();
-        graphicsAdapter.drawString(inputString, 251 + (285 - graphicsAdapter.getStringWidth(inputString))/2, 65);
+        graphicsAdapter.drawHorizontallyCenteredString(Window.dictionary.repairShop(), 251, 285, 65);
         graphicsAdapter.setColor(Colorations.lightOrange);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
         graphicsAdapter.drawString(String.format("%s: %s", Window.dictionary.credit(), Events.getMoneyWithCurrency()), 27, 35);

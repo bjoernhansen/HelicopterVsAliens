@@ -160,12 +160,6 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void setClip(Shape clip)
-    {
-        graphics.setClip(clip);
-    }
-    
-    @Override
     public void setComposite(Composite comp)
     {
         graphics.setComposite(comp);

@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.platform_specific.awt;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Controller;
 import de.helicopter_vs_aliens.control.FrameSkipStatusType;
@@ -41,8 +40,8 @@ public final class AwtController extends JPanel implements Controller, Runnable
 
     private static final Dimension
         DISPLAY_SHIFT = Dimension.newInstance(
-        (STANDARD_RESOLUTION.getWidth() - Main.VIRTUAL_DIMENSION.width - 10) / 2,
-        (STANDARD_RESOLUTION.getHeight() - Main.VIRTUAL_DIMENSION.height - 10) / 2);
+        (STANDARD_RESOLUTION.getWidth() - GraphicsAdapter.VIRTUAL_DIMENSION.getWidth() - 10) / 2,
+        (STANDARD_RESOLUTION.getHeight() - GraphicsAdapter.VIRTUAL_DIMENSION.getHeight() - 10) / 2);
 
 
     private long
@@ -137,8 +136,8 @@ public final class AwtController extends JPanel implements Controller, Runnable
     private BufferedImage createOffImage()
     {
         return new BufferedImage(
-            (int) Main.VIRTUAL_DIMENSION.getWidth(),
-            (int) Main.VIRTUAL_DIMENSION.getHeight(),
+            (int) GraphicsAdapter.VIRTUAL_DIMENSION.getWidth(),
+            (int) GraphicsAdapter.VIRTUAL_DIMENSION.getHeight(),
             BufferedImage.TYPE_INT_RGB);
     }
 

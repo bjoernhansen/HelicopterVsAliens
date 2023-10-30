@@ -13,8 +13,8 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 
+import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 
 
@@ -39,7 +39,7 @@ public class StartScreenWindowPainter extends WindowPainter
     {
         graphicsAdapter.setPaint(Colorations.gradientVariableWhite);
         graphicsAdapter.setFont(fontProvider.getPlain(80));
-        graphicsAdapter.drawString(GAME_NAME, 512 - graphicsAdapter.getStringWidth(GAME_NAME)/2, 85);
+        graphicsAdapter.drawWholeScreenHorizontallyCenteredString(GAME_NAME, 85);
         
         graphicsAdapter.setColor(Color.yellow);
         graphicsAdapter.setFont(fontProvider.getBold(16));
@@ -52,17 +52,21 @@ public class StartScreenWindowPainter extends WindowPainter
         {
             graphicsAdapter.setColor(Colorations.variableYellow);
             graphicsAdapter.setFont(fontProvider.getPlain(29));
-            String tempString = Window.dictionary.helicopterSelectionRequest();
-            graphicsAdapter.drawString(tempString, (512 - graphicsAdapter.getStringWidth(tempString)/2), 185);
+            graphicsAdapter.drawHorizontallyCenteredString(
+                Window.dictionary.helicopterSelectionRequest(),
+                0,
+                VIRTUAL_DIMENSION.getWidth(),
+                185);
         }
         else
         {
             graphicsAdapter.setColor(Colorations.golden);
             graphicsAdapter.setFont(fontProvider.getBold(16));
-            
-            graphicsAdapter.drawString(Window.message[0], (512 - graphicsAdapter.getStringWidth(Window.message[0])/2), 160);
-            graphicsAdapter.drawString(Window.message[1], (512 - graphicsAdapter.getStringWidth(Window.message[1])/2), 185);
-            graphicsAdapter.drawString(Window.message[2], (512 - graphicsAdapter.getStringWidth(Window.message[2])/2), 210);
+            for(int i = 0; i < 3; i++)
+            {
+                int y = 160 + i * 25;
+                graphicsAdapter.drawWholeScreenHorizontallyCenteredString(Window.message[i], y);
+            }
         }
         
         for(int i = 0; i < Window.NUMBER_OF_START_SCREEN_HELICOPTERS; i++)
@@ -76,10 +80,10 @@ public class StartScreenWindowPainter extends WindowPainter
             graphicsAdapter.setFont(fontProvider.getBold(20));
             
             String className = Window.dictionary.typeName(HelicopterType.getValues().get((Window.helicopterSelection +i)% HelicopterType.count()));
-            int stringWidth = graphicsAdapter.getStringWidth(className);
-            graphicsAdapter.drawString(
+            graphicsAdapter.drawHorizontallyCenteredString(
                 className,
-                30 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE + (206-stringWidth)/2,
+                30 + Window.START_SCREEN_OFFSET_X + i * Window.HELICOPTER_DISTANCE,
+                206,
                 225 + Window.START_SCREEN_HELICOPTER_OFFSET_Y);
             
             graphicsAdapter.setFont(fontProvider.getBold(15));

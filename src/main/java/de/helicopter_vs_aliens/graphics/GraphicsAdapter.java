@@ -10,7 +10,6 @@ import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -20,6 +19,10 @@ import java.awt.image.BufferedImageOp;
 
 public interface GraphicsAdapter
 {
+    Dimension
+        VIRTUAL_DIMENSION = Dimension.newInstance(1024, 461);
+    
+    
     default void drawPoint(int x, int y)
     {
         drawLine(x, y, x, y);
@@ -56,7 +59,18 @@ public interface GraphicsAdapter
     void fillRectangle(Rectangle2D rectangle);
 
     void drawEllipse(Ellipse2D ellipse);
-
+    
+    default void drawWholeScreenHorizontallyCenteredString(String str, int y)
+    {
+        drawHorizontallyCenteredString(str, 0, VIRTUAL_DIMENSION.getWidth(), y);
+    }
+    
+    default void drawHorizontallyCenteredString(String str, int left, int width, int y)
+    {
+        int x = left + (width - getStringWidth(str)) / 2;
+        drawString(str, x, y);
+    }
+    
     void drawString(String str, int x, int y);
     
     void drawImage(Image img, int x, int y);
@@ -77,8 +91,6 @@ public interface GraphicsAdapter
     void setFont(Font font);
     
     void setRenderingHint(RenderingHints.Key hintKey, Object hintValue);
-    
-    void setClip(Shape clip);
     
     void setComposite(Composite comp);
 }

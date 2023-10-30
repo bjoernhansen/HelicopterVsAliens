@@ -29,7 +29,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-import static de.helicopter_vs_aliens.Main.VIRTUAL_DIMENSION;
+import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
 
 
 public class GameApplication extends Application
@@ -71,12 +71,12 @@ public class GameApplication extends Application
         primaryStage.setFullScreen(true);
         primaryStage.show();
 
-        final double scalingFactor = primaryStage.getWidth() / VIRTUAL_DIMENSION.width;
+        final double scalingFactor = primaryStage.getWidth() / VIRTUAL_DIMENSION.getWidth();
         gameProgress.setScalingFactor(scalingFactor);
 
         Dimension scaledDimension = Dimension.newInstance(
-                                        (int) (scalingFactor * VIRTUAL_DIMENSION.width),
-                                        (int) (scalingFactor * VIRTUAL_DIMENSION.height));
+                                        (int) (scalingFactor * VIRTUAL_DIMENSION.getWidth()),
+                                        (int) (scalingFactor * VIRTUAL_DIMENSION.getHeight()));
 
         Canvas canvas = new Canvas(scaledDimension.getWidth(), scaledDimension.getHeight());
 
@@ -124,7 +124,7 @@ public class GameApplication extends Application
                 graphicsFxAdapter.drawImage(offImage, DISPLAY_SHIFT, scaledDimension);
                 updateGame();
                 graphicsAdapter.setColor(Colorations.bg);
-                graphicsAdapter.fillRect(0, 0, VIRTUAL_DIMENSION.width, VIRTUAL_DIMENSION.height);
+                graphicsAdapter.fillRect(0, 0, VIRTUAL_DIMENSION.getWidth(), VIRTUAL_DIMENSION.getHeight());
                 paintFrame(graphicsAdapter);
             }
         }.start();

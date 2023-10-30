@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
-import de.helicopter_vs_aliens.Main;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
@@ -33,7 +32,11 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
+import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.gui.button.ButtonCategory.GROUND;
+import static de.helicopter_vs_aliens.gui.button.GroundButtonType.MAIN_MENU;
+import static de.helicopter_vs_aliens.gui.button.GroundButtonType.REPAIR_SHOP;
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 import static de.helicopter_vs_aliens.model.RectangularGameEntity.GROUND_Y;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
@@ -142,7 +145,7 @@ public class GameWindowPainter extends WindowPainter
     {
         // der Boden
         graphicsAdapter.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
-        graphicsAdapter.fillRect(0, GROUND_Y, Main.VIRTUAL_DIMENSION.width, 35);
+        graphicsAdapter.fillRect(0, GROUND_Y, VIRTUAL_DIMENSION.getWidth(), 35);
         
         // Objekte vor dem Helikopter
         Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getActiveGameEntityManager()
@@ -274,8 +277,9 @@ public class GameWindowPainter extends WindowPainter
         String outputString = String.format("%s: %s",
                                             Window.dictionary.playingTime(),
                                             Window.returnTimeDisplayText(time));
-        // TODO besser lösen -> String abmessen
-        graphicsAdapter.drawString(outputString, Window.language.getTimeDisplayPositionX(), 450);
+        int left = REPAIR_SHOP.getX() + GROUND.getWidth();
+        int width = MAIN_MENU.getX() - left;
+        graphicsAdapter.drawHorizontallyCenteredString(outputString, left, width, 450);
     }
     
     private void paintGui(GraphicsAdapter graphicsAdapter)
@@ -298,7 +302,7 @@ public class GameWindowPainter extends WindowPainter
         {
             if(helicopter.isOnTheGround())
             {
-                Window.buttons.get(GroundButtonType.REPAIR_SHOP)
+                Window.buttons.get(REPAIR_SHOP)
                               .paint(graphicsAdapter);
                 Window.buttons.get(GroundButtonType.MAIN_MENU)
                               .paint(graphicsAdapter);
@@ -394,8 +398,8 @@ public class GameWindowPainter extends WindowPainter
         paintInGamePopupWindow(graphicsAdapter, PopupWindowType.DEFAULT);
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(25));
-        graphicsAdapter.drawString(Window.dictionary.mainMenu(), 422 + Window.language.getMainMenuHeadlineShiftX(), 106);
-        
+        String headline = Window.dictionary.mainMenu();
+        graphicsAdapter.drawHorizontallyCenteredString(headline, IN_GAME_MENU_LEFT, IN_GAME_MENU_WIDTH, 106);
         MainMenuButtonType.getValues()
                           .forEach(buttonType -> Window.buttons.get(buttonType)
                                                                .paint(graphicsAdapter));
@@ -451,8 +455,8 @@ public class GameWindowPainter extends WindowPainter
                 levelString = "Level " + Events.level;
             }
         }
-        int stringWidth = graphicsAdapter.getStringWidth(levelString);
-        graphicsAdapter.drawString(levelString, (981 - stringWidth) / 2, 55);
+        
+        graphicsAdapter.drawWholeScreenHorizontallyCenteredString(levelString, 55);
     }
     
     private static void paintPraiseDisplay(GraphicsAdapter graphicsAdapter)
@@ -467,8 +471,7 @@ public class GameWindowPainter extends WindowPainter
         }
         MultiKillType multiKillType = MultiKillType.getMultiKillType(Events.lastMultiKill);
         graphicsAdapter.setFont(fontProvider.getPlain(multiKillType.getTextSize()));
-        int stringWidth = graphicsAdapter.getStringWidth(multiKillType.getDesignation());
-        graphicsAdapter.drawString(multiKillType.getDesignation(), (981 - stringWidth) / 2, 130);
+        graphicsAdapter.drawWholeScreenHorizontallyCenteredString(multiKillType.getDesignation(), 130);
     }
     
     private static void paintCreditDisplay(GraphicsAdapter graphicsAdapter)

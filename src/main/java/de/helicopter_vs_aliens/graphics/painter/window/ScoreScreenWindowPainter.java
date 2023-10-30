@@ -13,6 +13,7 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 
+import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.control.Events.MAXIMUM_LEVEL;
 import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 
@@ -38,9 +39,8 @@ public class ScoreScreenWindowPainter extends WindowPainter
 
         graphicsAdapter.setPaint(Colorations.gradientVariableWhite);
         graphicsAdapter.setFont(fontProvider.getPlain(60));
-        String temporaryString = Window.dictionary.gameStatistics();
-        graphicsAdapter.drawString((temporaryString), (981 - graphicsAdapter.getStringWidth(temporaryString)) / 2, 65);
-
+        graphicsAdapter.drawHorizontallyCenteredString(Window.dictionary.gameStatistics(), 0, VIRTUAL_DIMENSION.getWidth(), 65);
+        
         GraphicalEntities.paintFrame(graphicsAdapter, 619, 90, 376, 298);
         GraphicalEntities.paintFrameLine(graphicsAdapter, 621, 140, 372);
         GraphicalEntities.paintFrameLine(graphicsAdapter, 621, 249, 372);

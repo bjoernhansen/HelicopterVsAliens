@@ -224,12 +224,6 @@ public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
     }
     
     @Override
-    public void setClip(Shape clip)
-    {
-        // TODO implementieren
-    }
-    
-    @Override
     public void setComposite(Composite comp)
     {
         // probably not necessary
