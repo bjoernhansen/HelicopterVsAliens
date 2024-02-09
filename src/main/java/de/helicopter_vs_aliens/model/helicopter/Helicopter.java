@@ -44,6 +44,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 
 
 public abstract class Helicopter extends RectangularGameEntity
+// TODO Klasse zerschlagen
 {
     // TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit Setter-Methoden arbeiten, sonst private
     public static final int

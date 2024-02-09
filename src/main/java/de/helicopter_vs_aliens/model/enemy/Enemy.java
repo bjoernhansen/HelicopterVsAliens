@@ -46,6 +46,7 @@ import java.util.Queue;
 
 
 public abstract class Enemy extends RectangularGameEntity implements GroupTypeOwner
+// TODO Klasse zerschlagen
 {
 	public static final int KAMIKAZE_RANGE = 620;
 	public static final int FIELD_OF_FIRE_TOLERANCE_Y = 15;
@@ -700,7 +701,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private void placeNearHelicopter()
 	{
 		Helicopter helicopter = getHelicopter();
-		boolean isLeftOfHelicopter = !(helicopter.getMaxX() + (0.5f * getWidth() + BARRIER_DISTANCE) < 1024);
+		boolean isLeftOfHelicopter = helicopter.getMaxX() + 0.5f * getWidth() + BARRIER_DISTANCE >= 1024;
 					
 		int x, 
 			y = (int)(helicopter.getY()
@@ -740,7 +741,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	private void initializeShootDirectionOfDefaultEnemies()
 	{
-		float shootingDirectionX = (float) navigationDevice.getDirectionX();
+		float shootingDirectionX = navigationDevice.getDirectionX();
 		shootingDirection.setLocation( shootingDirectionX, 0f);
 	}
 	

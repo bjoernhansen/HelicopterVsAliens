@@ -77,6 +77,7 @@ import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITED_ENERGY
 
 // TODO Klasse sollte nicht rein statisch sein
 public class Events
+// TODO Klasse zerschlagen
 {
     // Konstanten zur Berechnung der Reparaturkosten und der Boni bei Abschuss von Gegnern
     public static final int
