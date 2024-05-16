@@ -4,7 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 
-public class EnumTable<C extends Enum<C>, R extends Enum<R>, V>
+public final class EnumTable<C extends Enum<C>, R extends Enum<R>, V>
 {
     private final Map<C, Map<R, V>>
         columns;

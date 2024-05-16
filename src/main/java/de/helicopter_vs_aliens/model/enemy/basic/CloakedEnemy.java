@@ -68,14 +68,14 @@ public class CloakedEnemy extends BasicEnemy
     }
     
     @Override
-    protected void calculateFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
         if(isLearningKamikazeOn(gameRessourceProvider.getHelicopter()))
         {
             startKamikazeMode();
             getNavigationDevice().turnLeft();
         }
-        super.calculateFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver(gameRessourceProvider);
     }
     
     private boolean isLearningKamikazeOn(Helicopter helicopter)

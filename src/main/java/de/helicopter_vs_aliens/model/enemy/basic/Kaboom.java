@@ -64,4 +64,22 @@ public class Kaboom extends BasicEnemy
     {
         return Y_TURN_LINE;
     }
+    
+    @Override
+    protected boolean grantsCollisionReward()
+    {
+        return false;
+    }
+    
+    @Override
+    protected boolean dealsExtraCollisionDamage()
+    {
+        return true;
+    }
+    
+    @Override
+    public boolean isKaboomDamageDealer()
+    {
+        return isIntact();
+    }
 }

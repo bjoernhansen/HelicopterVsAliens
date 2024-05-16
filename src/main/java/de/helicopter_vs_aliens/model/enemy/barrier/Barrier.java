@@ -1,17 +1,17 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.TimeOfDay;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
-import de.helicopter_vs_aliens.model.helicopter.Phoenix;
-import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.helicopter.Phoenix;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -21,14 +21,21 @@ import java.awt.Color;
 public abstract class Barrier extends Enemy
 {
     private static final int
-        WIDTH_VARIANCE_DIVISOR = 5,
-        TOP_BOUNDARY = 0,
-        BORROW_TIME = 65,
+        WIDTH_VARIANCE_DIVISOR = 5;
+    
+    private static final int
+        TOP_BOUNDARY = 0;
+    
+    private static final int
+        BORROW_TIME = 65;
+    
+    private static final int
         INACTIVATION_TIME = 150;
     
     private static final float
-        SECONDARY_COLOR_BRIGHTNESS_FACTOR = 0.75f,
-        EXTRA_INACTIVE_TIME_FACTOR 	= 0.65f;
+        SECONDARY_COLOR_BRIGHTNESS_FACTOR = 0.75f;
+    private static final float
+        EXTRA_INACTIVE_TIME_FACTOR = 0.65f;
     
     protected int
         snoozeTimer;
@@ -52,8 +59,8 @@ public abstract class Barrier extends Enemy
     @Override
     protected void finalizeInitialization()
     {
-        EnemyController.barrierTimer = (int)((getHelicopter().getWidth() + getWidth())/2);
- 
+        EnemyController.barrierTimer = (int)((getHelicopter().getWidth() + getWidth()) / 2);
+        
         super.finalizeInitialization();
         
         if(isShootingBarrier())
@@ -63,12 +70,12 @@ public abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void calculateFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        super.calculateFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver(gameRessourceProvider);
         
         // Vergraben
-        if(burrowTimer != DISABLED && !(snoozeTimer > 0))
+        if(burrowTimer != DISABLED && snoozeTimer <= 0)
         {
             evaluateBorrowProcedure();
         }
@@ -87,7 +94,7 @@ public abstract class Barrier extends Enemy
         
         // Barrier-Teleport
         if(barrierTeleportTimer != DISABLED
-            && !(snoozeTimer > 0))
+            && snoozeTimer <= 0)
         {
             evaluateBarrierTeleport();
         }
@@ -95,7 +102,10 @@ public abstract class Barrier extends Enemy
     
     private void evaluateBorrowProcedure()
     {
-        if(burrowTimer > 0){burrowTimer--;}
+        if(burrowTimer > 0)
+        {
+            burrowTimer--;
+        }
         if(burrowTimer == BORROW_TIME + shootingRate * shotsPerCycle)
         {
             barrierShootTimer = shootingRate * shotsPerCycle;
@@ -112,16 +122,16 @@ public abstract class Barrier extends Enemy
             getSpeedLevel().setLocation(ZERO_SPEED);
         }
         else if(burrowTimer == READY
-            &&( (getType() != EnemyType.PROTECTOR
+            && ((getType() != EnemyType.PROTECTOR
             && Calculations.tossUp(0.004f))
             ||
             (getType() == EnemyType.PROTECTOR
-                && (getHelicopter().getX() > boss.getX() - 225) )))
+                && (getHelicopter().getX() > boss.getX() - 225))))
         {
             burrowTimer = 2 * BORROW_TIME
                 + shootingRate * shotsPerCycle
                 + (getY() == GROUND_Y
-                ? EnemyType.PROTECTOR.getWidth()/8
+                ? EnemyType.PROTECTOR.getWidth() / 8
                 : 0)
                 - 1;
             getSpeedLevel().setLocation(SLOW_VERTICAL_SPEED);
@@ -135,35 +145,35 @@ public abstract class Barrier extends Enemy
         if(barrierShootTimer == 0)
         {
             barrierShootTimer = shootingCycleLength;
-            if(	shotRotationSpeed == 0
-                &&	  (helicopter.getX()    < getX()         && shootingDirection.getX() > 0)
-                ||(helicopter.getMaxX() > getMaxX() && shootingDirection.getX() < 0) )
+            if(shotRotationSpeed == 0
+                && (helicopter.getX() < getX() && shootingDirection.getX() > 0)
+                || (helicopter.getMaxX() > getMaxX() && shootingDirection.getX() < 0))
             {
                 shootingDirection.setLocation(-shootingDirection.getX(), shootingDirection.getY());
             }
         }
-        if( barrierShootTimer <= shotsPerCycle * shootingRate
+        if(barrierShootTimer <= shotsPerCycle * shootingRate
             && getX() + getWidth() > 0
-            && barrierShootTimer %shootingRate == 0)
+            && barrierShootTimer % shootingRate == 0)
         {
             if(shotRotationSpeed != 0)
             {
                 float tempValue = 0.0005f * shotRotationSpeed * getLifetime();
                 shootingDirection.setLocation(
                     Math.sin(tempValue),
-                    Math.cos(tempValue) );
+                    Math.cos(tempValue));
             }
             if(burrowTimer != DISABLED || barrierTeleportTimer != DISABLED)
             {
                 // Schussrichtung wird auf Helicopter ausgerichtet
                 shootingDirection.setLocation(
-                    ( (helicopter.getX() + (helicopter.isMovingLeft ? Helicopter.FOCAL_POINT_X_LEFT : Helicopter.FOCAL_POINT_X_RIGHT))
-                        - (getX() +       getWidth()/2)),
+                    ((helicopter.getX() + (helicopter.isMovingLeft ? Helicopter.FOCAL_POINT_X_LEFT : Helicopter.FOCAL_POINT_X_RIGHT))
+                        - (getX() + getWidth() / 2)),
                     (helicopter.getY() + Helicopter.FOCAL_POINT_Y_EXP)
-                        - (getY() +       getHeight()/2)) ;
-                float distance = (float) Calculations.ZERO_POINT.distance(shootingDirection);
-                shootingDirection.setLocation(shootingDirection.getX()/distance,
-                    shootingDirection.getY()/distance);
+                        - (getY() + getHeight() / 2));
+                float distance = (float)Calculations.ZERO_POINT.distance(shootingDirection);
+                shootingDirection.setLocation(shootingDirection.getX() / distance,
+                                              shootingDirection.getY() / distance);
             }
             shoot(gameRessourceProvider.getActiveGameEntityManager()
                                        .getEnemyMissiles(), shotType, shotSpeed);
@@ -214,8 +224,10 @@ public abstract class Barrier extends Enemy
         {
             barrierShootTimer = DISABLED;
             getCloakingDevice().activate();
-            if(getMaxX() > 0){
-                Audio.play(Audio.cloak);}
+            if(getMaxX() > 0)
+            {
+                Audio.play(Audio.cloak);
+            }
         }
         else if(barrierTeleportTimer == READY && Calculations.tossUp(0.004f))
         {
@@ -231,7 +243,10 @@ public abstract class Barrier extends Enemy
                 {
                     placeCloakingBarrierAtPausePosition();
                 }
-                else{isMarkedForRemoval = true;}
+                else
+                {
+                    isMarkedForRemoval = true;
+                }
             }
         }
     }
@@ -257,14 +272,14 @@ public abstract class Barrier extends Enemy
     private void initializeShootDirectionOfBarriers()
     {
         double randomAngle
-            = Math.PI * (1 + Math.random()/2)
-                + (this.getCenterY() < GROUND_Y/2f
-                    ? Math.PI/2
-                    : 0);
+            = Math.PI * (1 + Math.random() / 2)
+            + (this.getCenterY() < GROUND_Y / 2f
+            ? Math.PI / 2
+            : 0);
         
         this.shootingDirection.setLocation(
             Math.sin(randomAngle),
-            Math.cos(randomAngle) );
+            Math.cos(randomAngle));
     }
     
     @Override
@@ -316,7 +331,7 @@ public abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider){}
+    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider) {}
     
     @Override
     public Color getBarColor(boolean isImagePaint)
@@ -357,7 +372,7 @@ public abstract class Barrier extends Enemy
     {
         return false;
     }
-  
+    
     @Override
     protected void performStoppableActions(GameRessourceProvider gameRessourceProvider)
     {
@@ -367,7 +382,10 @@ public abstract class Barrier extends Enemy
     
     private void updateStoppableTimer()
     {
-        if(snoozeTimer > 0){snoozeTimer--;}
+        if(snoozeTimer > 0)
+        {
+            snoozeTimer--;
+        }
     }
     
     @Override
@@ -395,9 +413,9 @@ public abstract class Barrier extends Enemy
     {
         super.hitByMissile(gameRessourceProvider, missile);
         if(missile.hasGreatExplosivePower()
-            && Calculations.tossUp(	0.5f
-            * deactivationProbability
-            * (missile.hasGreatExplosivePower() ? 2 : 1)))
+            && Calculations.tossUp(0.5f
+                                       * deactivationProbability
+                                       * (missile.hasGreatExplosivePower() ? 2 : 1)))
         {
             setHitPoints(0);
         }
@@ -410,22 +428,22 @@ public abstract class Barrier extends Enemy
     private boolean isToBeInactivatedBy(Missile missile)
     {
         return Calculations.tossUp(deactivationProbability
-            * missile.typeOfExplosion.getBarrierDeactivationProbabilityFactor());
+                                       * missile.typeOfExplosion.getBarrierDeactivationProbabilityFactor());
     }
     
     @Override
     protected void takeCollisionDamage(Helicopter helicopter)
     {
-        if(	helicopter.hasTripleDamage()
-            &&  Calculations.tossUp(
+        if(helicopter.hasTripleDamage()
+            && Calculations.tossUp(
             deactivationProbability
-                *(helicopter.bonusKillsTimer
+                * (helicopter.bonusKillsTimer
                 > Phoenix.NICE_CATCH_TIME
                 - Phoenix.TELEPORT_KILL_TIME ? 2 : 1)))
         {
             setHitPoints(0);
         }
-        else if(Calculations.tossUp(deactivationProbability *(helicopter.bonusKillsTimer > Phoenix.NICE_CATCH_TIME - Phoenix.TELEPORT_KILL_TIME ? 4 : 2)))
+        else if(Calculations.tossUp(deactivationProbability * (helicopter.bonusKillsTimer > Phoenix.NICE_CATCH_TIME - Phoenix.TELEPORT_KILL_TIME ? 4 : 2)))
         {
             snooze(true);
         }
@@ -435,12 +453,12 @@ public abstract class Barrier extends Enemy
     {
         // TODO Code Leserlichkeit erhöhen, ggf. in Methoden Teile auslagern
         snoozeTimer
-            = Math.max(	snoozeTimer,
-            SNOOZE_TIME
-                + (inactivation
-                ? INACTIVATION_TIME
-                + Calculations.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
-                :0));
+            = Math.max(snoozeTimer,
+                       SNOOZE_TIME
+                           + (inactivation
+                           ? INACTIVATION_TIME
+                           + Calculations.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
+                           : 0));
         getSpeedLevel().setLocation(ZERO_SPEED);
         if(targetSpeedLevel.getY() != 0 && getMaxY() + 1.5 * getSpeedY() > GROUND_Y)
         {

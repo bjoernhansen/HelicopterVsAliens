@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.model.helicopter.Phoenix;
 import de.helicopter_vs_aliens.util.Colorations;
 
 
-public class PhoenixPainter extends HelicopterPainter
+public final class PhoenixPainter extends HelicopterPainter
 {
     @Override
     void paintComponents(GraphicsAdapter graphicsAdapter, int left, int top)

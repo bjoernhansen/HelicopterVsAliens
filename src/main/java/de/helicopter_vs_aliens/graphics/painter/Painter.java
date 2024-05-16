@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.Paintable;
 
 
-abstract public class Painter<E extends Paintable>
+public abstract class Painter<E extends Paintable>
 {
-     abstract public void paint(GraphicsAdapter graphicsAdapter, E gameEntity);
+     public abstract void paint(GraphicsAdapter graphicsAdapter, E gameEntity);
 }

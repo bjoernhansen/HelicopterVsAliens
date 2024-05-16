@@ -11,7 +11,7 @@ import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
 
 
-public class PegasusPainter extends HelicopterPainter
+public final class PegasusPainter extends HelicopterPainter
 {
     private static final int[]
         INTERPHASE_GENERATOR_ALPHA = {110, 70}; // Alpha-Wert zum Zeichnen des Helikopters bei Tag- und Nachtzeit nach einem Dimensionssprung

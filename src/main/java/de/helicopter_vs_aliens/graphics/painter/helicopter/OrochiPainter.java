@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 
-public class OrochiPainter extends HelicopterPainter
+public final class OrochiPainter extends HelicopterPainter
 {
     @Override
     Color getInputColorCannon()

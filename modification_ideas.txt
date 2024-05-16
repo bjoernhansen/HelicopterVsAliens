@@ -1,4 +1,5 @@
-config.properties erstellen und verwenden für Wahl JavaFX oder AWT, weitere Einstellungen, die Hart codiert sind
+Jira: https://bjoern-hansen.atlassian.net/jira/software/projects/KAN/boards/1
+
 
 evtl. ThreadLocalRandom.current().nextInt(set.size()) verwenden, soll effizienter sein
 
@@ -19,7 +20,7 @@ Design Idee:
 4. Generischen ObjectRecycler (zum Beispiel für Missiles verschiedener Subklassen)
 Abstract Factory HelicopterEquipmentFactory, für Helicopter selbst, und Raketen, evtl. ObjectRecycler und ähnliches
 
-1. Dictionary abschließen
+
 Helicopter Class Inheritance abschließen
 3. Timer Klasse konsequent verwenden (ggf. mit Bindung/Listeners arbeiten)
 Inheritance für Enemy
@@ -27,16 +28,6 @@ Inheritance für Enemy
 
 Generics: http://www.angelikalanger.com/Articles/EffectiveJava/30.GenericsIntro/30.GenericsIntro.html
 
-
-
-
-
-
-UnitTests (JUnit5) einführen, zunächst für kleine Klassen
-
-
-
-Ggf. auch manche Konstanten in Enum (oder besser über Vererbung?)
 
 
 zuerst: die JavaFX-Sachen ausprobieren (zuerst evtl. in einem Testprojekt)
@@ -127,7 +118,7 @@ Vermutlich müssen alle Timer Zeitabhängig werden
 	Explosionen
 
 
-System nanos verwenden, um Länge der Schritte für alle Objekte zu bestimmen
+System nanos verwenden, um Länge der Schritte für alle Objekte zu bestimmen,
 Thread-Pause nicht mehr verwenden, sondern immer Zeitdistanz berechnen!
 60 frames per seconds später so einstellen
 
@@ -138,10 +129,10 @@ Suchen, wo implizit floats für Doubles oder doubles für Floats eingegeben werd
 
 Balancing:
 Sind die blauen Speedup-Flitzer noch so treffsicher wie vorher?
-Fronter Speed auf 0 bei Turn, evtl zurücksetzen.
+Fronter Speed auf 0 bei Turn, eventuell zurücksetzen.
 Schnelle Gegner langsamer: Boss 2 servants, gelbe Zitterer, graue Flitzer, blaue Flitzer
 EMP_SLOW_TIME balancen
-EMP zu starker Stun bei Endgegnern … gewollt, früher auch so? evtl abschwächen
+EMP zu starker Stun bei Endgegnern … gewollt, früher auch so? eventuell abschwächen
 
 
 

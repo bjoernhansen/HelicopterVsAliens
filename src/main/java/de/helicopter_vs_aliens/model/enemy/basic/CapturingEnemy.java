@@ -21,9 +21,9 @@ public class CapturingEnemy extends BasicEnemy
     }
     
     @Override
-    protected void calculateFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        super.calculateFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver(gameRessourceProvider);
  				
         if(isAbleToStopHelicopterByTractorBeam())
         {

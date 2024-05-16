@@ -7,7 +7,7 @@ import de.helicopter_vs_aliens.util.Colorations;
 import java.awt.*;
 
 
-public class KamaitachiPainter extends HelicopterPainter
+public final class KamaitachiPainter extends HelicopterPainter
 {
     @Override
     Color getInputColorCannon()

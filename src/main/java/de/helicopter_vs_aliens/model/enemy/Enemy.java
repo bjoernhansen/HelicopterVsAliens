@@ -798,17 +798,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		setPaintBounds();
 	}
 	
-	protected void performStoppableActions(GameRessourceProvider gameRessourceProvider)
-	{
-		performFlightManeuver(gameRessourceProvider);
-		validateTurns();
-	}
-	
-	protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
-	{
-		calculateFlightManeuver(gameRessourceProvider);
-	}
-	
 	public boolean isStunned()
 	{
 		return stunningTimer > READY;
@@ -857,21 +846,25 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if( turnTimer > 0) {turnTimer--;}
 		if( isStunned()) {stunningTimer--;}
 	}
-
-	protected void calculateFlightManeuver(GameRessourceProvider gameRessourceProvider)
+	
+	protected void performStoppableActions(GameRessourceProvider gameRessourceProvider)
 	{
-		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		
+		performFlightManeuver(gameRessourceProvider);
+		validateTurns();
+	}
+	
+	protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+	{
 		// Beschleunigung
 		if(speedup != DISABLED || canFrontalSpeedup)
 		{
 			evaluateSpeedup();
-		}	
-				
+		}
+		
 		// Schubweises Fliegen
 		if(batchWiseMove != 0){
 			evaluateBatchWiseMove();}
-					
+		
 		// Chaos-Flug
 		if(    canMoveChaotic
 			&& chaosTimer == READY
@@ -884,7 +877,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			if( Calculations.tossUp(0.2f))
 			{
 				navigationDevice.switchDirectionY();
-			}			
+			}
 			chaosTimer = 5;
 		}
 		
@@ -894,7 +887,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			isAbleToTurnAroundEarly = false;
 			navigationDevice.turnRight();
 		}
-							
+		
 		// Frontal-Angriff
 		if(isAbleToMakeKamikaze())
 		{
@@ -914,6 +907,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		}
 		
 		//Chaos-SpeedUp
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(	canChaosSpeedup
 			&& speedLevel.getX() <= targetSpeedLevel.getX()
 			&& helicopter.getX() - getX() > -350	)
@@ -921,23 +915,23 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			setSpeedLevelX(targetSpeedLevel.getX() + 6);
 		}
 		if(canChaosSpeedup && (helicopter.getX() - getX()) > -160)
-		{			
+		{
 			canMoveChaotic = true;
 			setSpeedLevelY(9 + 4.5*Math.random());
 		}
-				
+		
 		// Ausweichen
 		if(dodgeTimer > 0){
 			evaluateDodge();}
 		
 		// Teleportieren
 		if(teleportTimer > 0)
-		{	
+		{
 			teleportTimer--;
 			if(	teleportTimer == READY)
 			{
 				speedLevel.setLocation(targetSpeedLevel);
-			}				
+			}
 		}
 	}
 	
@@ -955,10 +949,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		return isAbleToTurnAroundEarly && getMinX() < 0.85 * GraphicsAdapter.VIRTUAL_DIMENSION.getWidth();
 	}
-	
-	
-	
-
 
 	private void validateTurns()
 	{
@@ -1739,10 +1729,10 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			explode( gameRessourceProvider,
 						  0, 
 						  getExplosionType(),
-						  type == EnemyType.KABOOM);
+					 dealsExtraCollisionDamage());
 			
 			if(	helicopter.canObtainCollisionReward()
-				&& !(type == EnemyType.KABOOM))
+				&& grantsCollisionReward())
 			{
 				grantRewards(gameRessourceProvider, null, helicopter.hasPerformedTeleportKill());
 			}
@@ -1753,7 +1743,17 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			helicopter.crash();
 		}		
 	}
-
+	
+	protected boolean dealsExtraCollisionDamage()
+	{
+		return false;
+	}
+	
+	protected boolean grantsCollisionReward()
+	{
+		return true;
+	}
+	
 	private void grantRewards(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
 	{
 		gameRessourceProvider.getHelicopter().receiveRewardFor(this, missile, beamKill);
@@ -2083,9 +2083,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		evaluateBossDestructionEffect(gameRessourceProvider);
 		if(missile != null){missile.hits.remove(hashCode());}
 	}	
-
-
-
+	
     public boolean canCountForKillsAfterLevelUp()
     {
         return true;
@@ -2310,7 +2308,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public boolean isKaboomDamageDealer()
 	{
-		return type == EnemyType.KABOOM && isIntact();
+		return false;
 	}
 
 	public void grantGeneralRewards(GameRessourceProvider gameRessourceProvider)
@@ -2326,8 +2324,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		return type == EnemyType.ROCK;
 	}
-	
-	
 	
 	public int getBounty()
 	{
@@ -2358,8 +2354,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		return lifetime;
 	}
-	
-	
 	
 	public BufferedImage getStandardImage()
 	{
@@ -2496,7 +2490,6 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		return Colorations.INACTIVE_NOZZLE;
 	}
-	
 	
 	// Methoden für Richtungsänderungen und -abfragen
 	// TODO dies sollte ggf. in eigene Klasse ausgelagert werden, nur die Methoden, die außerhalb von Enemy genutzt werden müssen weitergeleitet werden z.B NavigationDevice

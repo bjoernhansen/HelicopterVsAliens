@@ -10,7 +10,7 @@ import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
 import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 
 
-public class RochPainter extends HelicopterPainter
+public final class RochPainter extends HelicopterPainter
 {
     @Override
     void paintComponents(GraphicsAdapter graphicsAdapter, int left, int top)
