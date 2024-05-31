@@ -1,5 +1,6 @@
-package de.helicopter_vs_aliens.graphics;
+package de.helicopter_vs_aliens.platform_specific.javafx;
 
+import de.helicopter_vs_aliens.graphics.AbstractGraphicsAdapter;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
 import de.helicopter_vs_aliens.util.geometry.Polygon;
 import javafx.scene.canvas.GraphicsContext;
@@ -157,9 +158,9 @@ public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
               .drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
         
         //converting the BufferedImage to an IntBuffer
-        int[] type_int_agrb = ((DataBufferInt) newImg.getRaster()
+        int[] typeIntAgrb = ((DataBufferInt) newImg.getRaster()
                                                      .getDataBuffer()).getData();
-        IntBuffer buffer = IntBuffer.wrap(type_int_agrb);
+        IntBuffer buffer = IntBuffer.wrap(typeIntAgrb);
         
         //converting the IntBuffer to an Image, read more about it here: https://openjfx.io/javadoc/13/javafx.graphics/javafx/scene/image/PixelBuffer.html
         PixelFormat<IntBuffer> pixelFormat = PixelFormat.getIntArgbPreInstance();
