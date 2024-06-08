@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HeliosPainter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.KamaitachiPainter;
@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 
-public enum HelicopterType implements GameEntityFactory<Helicopter>
+public enum HelicopterType implements PaintableEntityFactory<Helicopter>
 {
     PHOENIX(
         Phoenix.class,

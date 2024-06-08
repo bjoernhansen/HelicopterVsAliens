@@ -8,9 +8,9 @@ import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
@@ -21,7 +21,7 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 
 
-public class Missile extends RectangularGameEntity implements GroupTypeOwner
+public class Missile extends RectangularPaintableEntity implements GroupTypeOwner
 {	
 	private static final float
 		STANDARD_DAMAGE_FACTOR = 1.0f,
@@ -111,7 +111,7 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Missile> i = gameRessourceProvider.getActiveGameEntityManager()
+		for(Iterator<Missile> i = gameRessourceProvider.getActivePaintableEntityManager()
 													   .getMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			Missile missile = i.next();
@@ -138,7 +138,7 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 		if(!this.flying)
 		{
 			i.remove();
-			helicopter.inactivate(gameRessourceProvider.getActiveGameEntityManager()
+			helicopter.inactivate(gameRessourceProvider.getActivePaintableEntityManager()
 													   .getMissiles(), this);
 		}
 		this.setPaintBounds();
@@ -163,7 +163,7 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
 	private void checkIfMissileHitEnemy(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		for(Enemy enemy : gameRessourceProvider.getActiveGameEntityManager()
+		for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
 											   .getEnemies().get(CollectionSubgroupType.ACTIVE))
 		{
 			if (enemy.isHittable(this))
@@ -282,9 +282,9 @@ public class Missile extends RectangularGameEntity implements GroupTypeOwner
     }
 	
 	@Override
-	public GameEntityGroupType getGroupType()
+	public PaintableEntityGroupType getGroupType()
 	{
-		return GameEntityGroupType.MISSILE;
+		return PaintableEntityGroupType.MISSILE;
 	}
     
     public boolean isStunning()

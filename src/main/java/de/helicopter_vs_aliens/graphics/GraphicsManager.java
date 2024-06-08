@@ -101,17 +101,17 @@ public class GraphicsManager
         return instance;
     }
     
-    public <E extends Paintable> void paint(E gameEntity)
+    public <E extends Paintable> void paint(E paintableEntity)
     {
-        Painter<E> painter = getPainter(gameEntity.getClass());
-        painter.paint(graphicsAdapter, gameEntity);
+        Painter<E> painter = getPainter(paintableEntity.getClass());
+        painter.paint(graphicsAdapter, paintableEntity);
     }
     
     // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     // TODO unchecked Cast beseitigen
-    public <E extends Painter<? extends Paintable>> E getPainter(Class<? extends Paintable> classOfGameEntity)
+    public <E extends Painter<? extends Paintable>> E getPainter(Class<? extends Paintable> classOfPaintableEntity)
     {
-        return (E) PAINTERS.get(classOfGameEntity);
+        return (E) PAINTERS.get(classOfPaintableEntity);
     }
 
     public void setGraphics(GraphicsAdapter graphicsAdapter)

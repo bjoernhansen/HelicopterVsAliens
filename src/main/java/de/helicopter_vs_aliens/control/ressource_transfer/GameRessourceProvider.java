@@ -1,11 +1,11 @@
 package de.helicopter_vs_aliens.control.ressource_transfer;
 
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
-import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
-import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
+import de.helicopter_vs_aliens.control.entities.ActivePaintableEntityManager;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.entities.PaintableEntitySupplier;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
@@ -21,11 +21,11 @@ public interface GameRessourceProvider
     
     Savegame getSaveGame();
     
-    GameEntitySupplier getGameEntitySupplier();
+    PaintableEntitySupplier getPaintableEntitySupplier();
     
-    ActiveGameEntityManager getActiveGameEntityManager();
+    ActivePaintableEntityManager getActivePaintableEntityManager();
     
-    <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory);
+    <T extends PaintableEntity> T getNewPaintableEntityInstance(PaintableEntityFactory<T> factory);
 
     boolean isFpsDisplayVisible();
 

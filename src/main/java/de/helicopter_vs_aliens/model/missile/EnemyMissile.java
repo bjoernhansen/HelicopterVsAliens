@@ -8,9 +8,9 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
@@ -25,7 +25,7 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 
 
-public class EnemyMissile extends GameEntity implements GroupTypeOwner
+public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
@@ -72,7 +72,7 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-    		Explosion.start(GameResources.getProvider().getActiveGameEntityManager()
+    		Explosion.start(GameResources.getProvider().getActivePaintableEntityManager()
 										 .getExplosions(),
     						helicopter,
 							(int)(helicopter.getX()
@@ -145,7 +145,7 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<EnemyMissile> i = gameRessourceProvider.getActiveGameEntityManager()
+		for(Iterator<EnemyMissile> i = gameRessourceProvider.getActivePaintableEntityManager()
 															.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			EnemyMissile em = i.next();	    			
@@ -157,7 +157,7 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
 				|| em.hasHit)
 			{
 				i.remove();					
-				gameRessourceProvider.getActiveGameEntityManager()
+				gameRessourceProvider.getActivePaintableEntityManager()
 									 .getEnemyMissiles().get(CollectionSubgroupType.INACTIVE).add(em);
 			}
 		}		
@@ -184,8 +184,8 @@ public class EnemyMissile extends GameEntity implements GroupTypeOwner
 	}
 	
 	@Override
-	public GameEntityGroupType getGroupType()
+	public PaintableEntityGroupType getGroupType()
 	{
-		return GameEntityGroupType.ENEMY_MISSILE;
+		return PaintableEntityGroupType.ENEMY_MISSILE;
 	}
 }

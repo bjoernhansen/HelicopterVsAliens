@@ -12,7 +12,7 @@ import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
-import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
@@ -43,7 +43,7 @@ import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 
 
-public abstract class Helicopter extends RectangularGameEntity
+public abstract class Helicopter extends RectangularPaintableEntity
 // TODO Klasse zerschlagen
 {
     // TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit Setter-Methoden arbeiten, sonst private
@@ -265,7 +265,7 @@ public abstract class Helicopter extends RectangularGameEntity
         boolean stunningMissile = isShootingStunningMissile();
         Missile sister = null;
         
-        Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getActiveGameEntityManager()
+        Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getActivePaintableEntityManager()
                                                                                     .getMissiles();
         if(numberOfCannons >= 1)
         {
@@ -441,7 +441,7 @@ public abstract class Helicopter extends RectangularGameEntity
             }
             else if(isInTheAir && location.getY() == 407d)
             {
-                crashed(gameRessourceProvider.getActiveGameEntityManager()
+                crashed(gameRessourceProvider.getActivePaintableEntityManager()
                                              .getExplosions());
             }
         }
@@ -791,7 +791,7 @@ public abstract class Helicopter extends RectangularGameEntity
         if(location.getY() == 407d)
         {
             crashed(GameResources.getProvider()
-                                 .getActiveGameEntityManager()
+                                 .getActivePaintableEntityManager()
                                  .getExplosions());
         }
         else

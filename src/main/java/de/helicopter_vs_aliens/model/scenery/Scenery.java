@@ -2,9 +2,9 @@ package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityActivation;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import static de.helicopter_vs_aliens.model.RectangularGameEntity.GROUND_Y;
+import static de.helicopter_vs_aliens.model.RectangularPaintableEntity.GROUND_Y;
 
 // TODO es sollte nicht alles static sein, sondern über eine Scenery Instanz laufen
-public class Scenery extends GameEntity
+public class Scenery extends PaintableEntity
 {
     private static final int
         NR_OF_STARS = 60,
@@ -118,7 +118,7 @@ public class Scenery extends GameEntity
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         return helicopter.isRotorSystemActive
-            && !isMajorBossActive(gameRessourceProvider.getActiveGameEntityManager()
+            && !isMajorBossActive(gameRessourceProvider.getActivePaintableEntityManager()
                                                        .getEnemies())
             && helicopter.tractor == null;
     }
@@ -133,8 +133,8 @@ public class Scenery extends GameEntity
     private boolean arePrerequisitesForSceneryObjectsCreationMet()
     {
         return areSceneryObjectsMissing()
-            && GameEntityActivation.isApproved( numberOfMissingSceneryObjects(),
-            SceneryObject.probabilityReductionFactor)
+            && PaintableEntityActivation.isApproved(numberOfMissingSceneryObjects(),
+                                                    SceneryObject.probabilityReductionFactor)
             && SceneryObject.generalObjectTimer == 0
             && backgroundMoves;
     }
@@ -186,7 +186,7 @@ public class Scenery extends GameEntity
     
     public Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects()
     {
-        return getGameRessourceProvider().getActiveGameEntityManager()
+        return getGameRessourceProvider().getActivePaintableEntityManager()
                                          .getSceneryObjects();
     }
 }

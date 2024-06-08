@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.control.entities;
 
-public enum GameEntityGroupType
+public enum PaintableEntityGroupType
 {
     ENEMY,
     MISSILE,

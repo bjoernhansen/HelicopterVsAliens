@@ -5,9 +5,9 @@ import de.helicopter_vs_aliens.util.Calculations;
 import java.util.List;
 
 
-public final class GameEntityActivation
+public final class PaintableEntityActivation
 {
-    private GameEntityActivation() throws Exception
+    private PaintableEntityActivation() throws Exception
     {
         throw new Exception();
     }

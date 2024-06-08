@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
-import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -30,11 +30,11 @@ public abstract class WindowPainter extends Painter<Window>
     
     public static final Point
         HELICOPTER_START_SCREEN_OFFSET = new Point(66, 262),
-        HEALTH_BAR_POSITION = new Point(5, RectangularGameEntity.GROUND_Y + 5);
+        HEALTH_BAR_POSITION = new Point(5, RectangularPaintableEntity.GROUND_Y + 5);
     
     protected static final GameRessourceProvider
         // TODO DependencyInjection verwenden, ggf. alle Painter von Entity erben lassen, eine neue Superklasse
-        //  von der dann auch GameEntity erbt --> Code verschieben aus GameEntity
+        //  von der dann auch PaintableEntity erbt --> Code verschieben aus PaintableEntity
         gameRessourceProvider = GameResources.getProvider();
 
     protected static Helicopter

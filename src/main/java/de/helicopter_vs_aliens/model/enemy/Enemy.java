@@ -5,17 +5,18 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.enemy.EnemyPainter;
-import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
+import de.helicopter_vs_aliens.model.enemy.maneuver.ManeuverManger;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -45,7 +46,7 @@ import java.util.Map;
 import java.util.Queue;
 
 
-public abstract class Enemy extends RectangularGameEntity implements GroupTypeOwner
+public abstract class Enemy extends RectangularPaintableEntity implements GroupTypeOwner, MovingObject
 // TODO Klasse zerschlagen
 {
 	public static final int KAMIKAZE_RANGE = 620;
@@ -178,39 +179,55 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	private static final float
 		RADAR_DETECTABILITY = 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
 	
-	protected static final float POWER_UP_PROB				= 0.02f;
-	protected static final float SPIN_SHOOTER_RATE 		   	= 0.55f;
+	protected static final float
+		POWER_UP_PROB = 0.02f;
+	
+	protected static final float
+		SPIN_SHOOTER_RATE = 0.55f;
 	
 	public static final float
 		REPARATION_POWER_UP_DROP_RATE = 0.14f;
 	
 	// Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
-	private static final float EMP_DAMAGE_FACTOR_BOSS = 1.5f;            // Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
-	private static final float EMP_DAMAGE_FACTOR_ORDINARY = 2.5f;        // Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
+	private static final float
+		EMP_DAMAGE_FACTOR_BOSS = 1.5f;            // Pegasus-Klasse: Schaden einer EMP-Welle im Verhältnis zum normalen Raketenschaden gegenüber von Boss-Gegnern // 1.5
+	
+	private static final float
+		EMP_DAMAGE_FACTOR_ORDINARY = 2.5f;        // Pegasus-Klasse: wie EMP_DAMAGE_FACTOR_BOSS, nur für Nicht-Boss-Gegner // 3
 
 	private static final int
 		// Raum-Konstanten
 		SAVE_ZONE_WIDTH = 116;
-	protected static final int APPEARANCE_DISTANCE = 10;
 	
-	private static final int DISAPPEARANCE_DISTANCE = 100;
-	private static final int BARRIER_DISTANCE = 100;
+	protected static final int
+		APPEARANCE_DISTANCE = 10;
+	
+	private static final int
+		DISAPPEARANCE_DISTANCE = 100;
+	private static final int
+		BARRIER_DISTANCE = 100;
 
 
 	// Zeit-Konstanten
-	protected static final int EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
+	protected static final int
+		EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
 	
-	private static final int STUNNING_TIME_BASIS = 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
+	private static final int
+		STUNNING_TIME_BASIS = 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
 
-	private static final int MIN_TURN_TIME = 31;
-	private static final int MIN_TURN_NOISELESS_TIME = 15;
+	private static final int
+		MIN_TURN_TIME = 31;
+	private static final int
+		MIN_TURN_NOISELESS_TIME = 15;
 	
 	public static final int
 		MIN_POWER_UP_LEVEL = 3;
 	
-	private static final int STANDARD_REWARD_FACTOR = 1;
+	private static final int
+		STANDARD_REWARD_FACTOR = 1;
 	
-	public static final int READY = 0;
+	public static final int
+		READY = 0;
 	
 	private static final int
 		MAX_IMAGE_COUNT = 4;
@@ -387,12 +404,19 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	protected final Point2D
 		shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
 	
+	private final ManeuverManger maneuverManger = new ManeuverManger();
+	
+
 	
 	public void reset()
 	{
 		lifetime = 0;
 		targetSpeedLevel.setLocation(ZERO_SPEED);
 		initializeMovingDirection();
+		
+		maneuverManger.initializeFor(this);
+		
+		
 		callBack = 0;
 		shield = 0;
 		operator = null;
@@ -667,6 +691,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	// TODO Methode überarbeiten und Teile in kleinere Methoden auslagern
 	// TODO Raw use beseitigen
+	// TODO gehört das nicht in eine andere Klasse? EnemyPainter oder ähnliches?
 	private void assignImage()
 	{
 		for(int i = 0; i < 2; i++)
@@ -1164,7 +1189,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		if(hasHPsLeft())
 		{
 			performEmpWaveSurvivorActions();
-			Explosion.start(gameRessourceProvider.getActiveGameEntityManager()
+			Explosion.start(gameRessourceProvider.getActivePaintableEntityManager()
 												 .getExplosions(), pegasus,
 							getCenterX(),
 							getCenterY(), ExplosionType.STUNNING, false);
@@ -1382,7 +1407,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 					Integer.MAX_VALUE/2f,
 					EnemyMissile.DIAMETER + 2*FIELD_OF_FIRE_TOLERANCE_Y)))))
 		{
-			shoot(gameRessourceProvider.getActiveGameEntityManager()
+			shoot(gameRessourceProvider.getActivePaintableEntityManager()
 									   .getEnemyMissiles(),
 						hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
 						shotSpeed + 3*Math.random()+5);
@@ -1632,11 +1657,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	
 	public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveGameEntityManager()
+		for(Iterator<Enemy> iterator = gameRessourceProvider.getActivePaintableEntityManager()
 															.getEnemies().get(CollectionSubgroupType.DESTROYED).iterator(); iterator.hasNext();)
 		{
 			Enemy enemy = iterator.next();
-			enemy.updateDead(gameRessourceProvider.getActiveGameEntityManager()
+			enemy.updateDead(gameRessourceProvider.getActivePaintableEntityManager()
 												  .getExplosions());
 			
 			Helicopter helicopter = gameRessourceProvider.getHelicopter();
@@ -1649,7 +1674,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 			{
 				enemy.clearImage();
 				iterator.remove();
-				gameRessourceProvider.getGameEntitySupplier().store(enemy);
+				gameRessourceProvider.getPaintableEntitySupplier().store(enemy);
 			}				
 		}
 	}
@@ -1963,7 +1988,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	{
 		// TODO refactoring
 		if(explodingTimer == 0){explodingTimer = 7;}
-		Explosion.start(gameRessourceProvider.getActiveGameEntityManager()
+		Explosion.start(gameRessourceProvider.getActivePaintableEntityManager()
 											 .getExplosions(),
 						gameRessourceProvider.getHelicopter(),
 						getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
@@ -2259,7 +2284,7 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 
 	public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Enemy e : gameRessourceProvider.getActiveGameEntityManager()
+		for(Enemy e : gameRessourceProvider.getActivePaintableEntityManager()
 										   .getEnemies().get(CollectionSubgroupType.ACTIVE))
 		{
 			if (e.getModel() == EnemyModelType.BARRIER && e.isOnScreen())
@@ -2527,9 +2552,9 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	}
 	
 	@Override
-	public GameEntityGroupType getGroupType()
+	public PaintableEntityGroupType getGroupType()
 	{
-		return GameEntityGroupType.ENEMY;
+		return PaintableEntityGroupType.ENEMY;
 	}
 	
 	protected boolean isMovingAwayFromHelicopter()
@@ -2553,16 +2578,16 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 		return isWithinKamikazeRangeOf(getHelicopter());
 	}
 	
-	private boolean isWithinKamikazeRangeOf(RectangularGameEntity gameEntity)
+	private boolean isWithinKamikazeRangeOf(RectangularPaintableEntity paintableEntity)
 	{
-		return getDistanceOfMaxX(gameEntity) < KAMIKAZE_RANGE
-		       && (   (!isLeftOf(gameEntity) && isFlyingLeft())
-			       || (!isRightOf(gameEntity) && isFlyingRight()));
+		return getDistanceOfMaxX(paintableEntity) < KAMIKAZE_RANGE
+		       && (   (!isLeftOf(paintableEntity) && isFlyingLeft())
+			       || (!isRightOf(paintableEntity) && isFlyingRight()));
 	}
 	
-	private double getDistanceOfMaxX(RectangularGameEntity gameEntity)
+	private double getDistanceOfMaxX(RectangularPaintableEntity paintableEntity)
 	{
-		return Math.abs(getMaxX() - gameEntity.getMaxX());
+		return Math.abs(getMaxX() - paintableEntity.getMaxX());
 	}
 	
 	protected void setCloakingDeviceReadyForUse()
@@ -2588,5 +2613,11 @@ public abstract class Enemy extends RectangularGameEntity implements GroupTypeOw
 	public EnemyType getType()
 	{
 		return type;
+	}
+	
+	@Override
+	public void doSomeMove()
+	{
+		// TODO to implement
 	}
 }

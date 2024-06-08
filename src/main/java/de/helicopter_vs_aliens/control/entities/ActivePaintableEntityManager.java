@@ -22,10 +22,11 @@ import java.util.stream.Collectors;
 
 // TODO finish implementation
 
-public final class ActiveGameEntityManager implements ActiveGameEntitiesProvider
+public final class ActivePaintableEntityManager implements ActiveGameEntitiesProvider
 {
     // TODO Verwaltung anders lösen, vermutlich mit den erstellten Klassen im Packet control/entities
     // TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
+    // TODO das lässt sich vielleicht auch über eine Map abbilden , eine EnumMap (PaintableEntityGroupType) von EnumMaps (Collection Subgroup)
     
     private final Map<CollectionSubgroupType, Queue<Enemy>>
         enemies = new EnumMap<>(CollectionSubgroupType.class);
@@ -46,25 +47,25 @@ public final class ActiveGameEntityManager implements ActiveGameEntitiesProvider
         powerUps = new EnumMap<>(CollectionSubgroupType.class);
     
     
-    private static ActiveGameEntityManager
+    private static ActivePaintableEntityManager
         instance;
     
     
-    public static ActiveGameEntityManager getInstance()
+    public static ActivePaintableEntityManager getInstance()
     {
         instance = Optional.ofNullable(instance)
-                           .orElseGet(ActiveGameEntityManager::new);
+                           .orElseGet(ActivePaintableEntityManager::new);
         return instance;
     }
     
-    private ActiveGameEntityManager()
+    private ActivePaintableEntityManager()
     {
         initializeLists();
     }
     
     private void initializeLists()
     {
-        // TODO alle Listen von inaktivierten überführen in GameEntityRecycler, auch die BackgroundObjects berücksichtigen
+        // TODO alle Listen von inaktivierten überführen in PaintableEntityRecycler, auch die BackgroundObjects berücksichtigen
         // TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
         // TODO keine LinkedList verwenden, lieber ArrayDeque
         CollectionSubgroupType.getStandardSubgroupTypes()
@@ -81,32 +82,32 @@ public final class ActiveGameEntityManager implements ActiveGameEntitiesProvider
     
     
     
-    private final Map<GameEntityGroupType, Queue<GroupTypeOwner>>
-        gameEntityQueues = Arrays.stream(GameEntityGroupType.values())
+    private final Map<PaintableEntityGroupType, Queue<GroupTypeOwner>>
+        paintableEntityQueues = Arrays.stream(PaintableEntityGroupType.values())
                                  .collect(Collectors.toUnmodifiableMap(Function.identity(), groupType -> new ArrayDeque<>()));
     
     public void add(GroupTypeOwner groupTypeOwner)
     {
-        gameEntityQueues.get(groupTypeOwner.getGroupType())
-                        .add(groupTypeOwner);
+        paintableEntityQueues.get(groupTypeOwner.getGroupType())
+                             .add(groupTypeOwner);
     }
     
-    public void forEachOfGroupType(GameEntityGroupType gameEntityGroupType, Consumer<? super GroupTypeOwner> action)
+    public void forEachOfGroupType(PaintableEntityGroupType paintableEntityGroupType, Consumer<? super GroupTypeOwner> action)
     {
-        gameEntityQueues.get(gameEntityGroupType)
-                        .forEach(action);
+        paintableEntityQueues.get(paintableEntityGroupType)
+                             .forEach(action);
     }
     
     public void remove(GroupTypeOwner groupTypeOwner)
     {
-        gameEntityQueues.get(groupTypeOwner.getGroupType())
-                        .remove(groupTypeOwner);
+        paintableEntityQueues.get(groupTypeOwner.getGroupType())
+                             .remove(groupTypeOwner);
     }
     
     public void removeEachOfGroupTypeIf(GroupTypeOwner groupTypeOwner, Predicate<? super GroupTypeOwner> filter)
     {
-        gameEntityQueues.get(groupTypeOwner.getGroupType())
-                        .removeIf(filter);
+        paintableEntityQueues.get(groupTypeOwner.getGroupType())
+                             .removeIf(filter);
     }
     
     @Override

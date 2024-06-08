@@ -4,10 +4,10 @@ import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
@@ -26,7 +26,7 @@ import static de.helicopter_vs_aliens.gui.window.Window.START_SCREEN_HELICOPTER_
 import static de.helicopter_vs_aliens.gui.window.Window.START_SCREEN_OFFSET_X;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
-public class Explosion extends GameEntity implements GroupTypeOwner
+public class Explosion extends PaintableEntity implements GroupTypeOwner
 {
     public int 
     	time,				// vergangene Zeit [frames] seit Starten der Explosion
@@ -73,7 +73,7 @@ public class Explosion extends GameEntity implements GroupTypeOwner
 	   
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<Explosion> i = gameRessourceProvider.getActiveGameEntityManager()
+    	for(Iterator<Explosion> i = gameRessourceProvider.getActivePaintableEntityManager()
 														 .getExplosions().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
 		{
 			Explosion exp = i.next();
@@ -91,7 +91,7 @@ public class Explosion extends GameEntity implements GroupTypeOwner
 						Events.extraReward(exp.kills, exp.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
-				gameRessourceProvider.getActiveGameEntityManager()
+				gameRessourceProvider.getActivePaintableEntityManager()
 									 .getExplosions().get(CollectionSubgroupType.INACTIVE).add(exp);
 	        }
 		}		
@@ -233,8 +233,8 @@ public class Explosion extends GameEntity implements GroupTypeOwner
 	}
 	
 	@Override
-	public GameEntityGroupType getGroupType()
+	public PaintableEntityGroupType getGroupType()
 	{
-		return GameEntityGroupType.EXPLOSION;
+		return PaintableEntityGroupType.EXPLOSION;
 	}
 }

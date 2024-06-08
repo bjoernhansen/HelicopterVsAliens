@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.basic;
 
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
-import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 public class CloakedEnemy extends BasicEnemy
@@ -85,8 +85,8 @@ public class CloakedEnemy extends BasicEnemy
                 && getDistanceOfMinX(helicopter) < KAMIKAZE_RANGE;
     }
     
-    private double getDistanceOfMinX(RectangularGameEntity gameEntity)
+    private double getDistanceOfMinX(RectangularPaintableEntity paintableEntity)
     {
-        return Math.abs(getMinX() - gameEntity.getMinX());
+        return Math.abs(getMinX() - paintableEntity.getMinX());
     }
 }

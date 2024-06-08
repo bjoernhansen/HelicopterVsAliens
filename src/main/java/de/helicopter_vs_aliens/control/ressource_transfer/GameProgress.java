@@ -3,14 +3,14 @@ package de.helicopter_vs_aliens.control.ressource_transfer;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.entities.ActiveGameEntityManager;
-import de.helicopter_vs_aliens.control.entities.GameEntityFactory;
-import de.helicopter_vs_aliens.control.entities.GameEntitySupplier;
+import de.helicopter_vs_aliens.control.entities.ActivePaintableEntityManager;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.entities.PaintableEntitySupplier;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -52,14 +52,14 @@ public final class GameProgress implements GameRessourceProvider
     private Savegame
         saveGame;
 
-    private final ActiveGameEntityManager
-        activeGameEntityManager = ActiveGameEntityManager.getInstance();
+    private final ActivePaintableEntityManager
+        activePaintableEntityManager = ActivePaintableEntityManager.getInstance();
 
     private final WindowManager
         windowManager = new WindowManager();
 
-    private final GameEntitySupplier
-        gameEntitySupplier = new GameEntitySupplier();
+    private final PaintableEntitySupplier
+        paintableEntitySupplier = new PaintableEntitySupplier();
 
     private final GameStatisticsCalculator
         gameStatisticsCalculator = new GameStatisticsCalculator();
@@ -126,15 +126,15 @@ public final class GameProgress implements GameRessourceProvider
     }
 
     @Override
-    public ActiveGameEntityManager getActiveGameEntityManager()
+    public ActivePaintableEntityManager getActivePaintableEntityManager()
     {
-        return activeGameEntityManager;
+        return activePaintableEntityManager;
     }
 
     @Override
-    public <T extends GameEntity> T getNewGameEntityInstance(GameEntityFactory<T> factory)
+    public <T extends PaintableEntity> T getNewPaintableEntityInstance(PaintableEntityFactory<T> factory)
     {
-        return getGameEntitySupplier().retrieve(factory);
+        return getPaintableEntitySupplier().retrieve(factory);
     }
 
     @Override
@@ -198,9 +198,9 @@ public final class GameProgress implements GameRessourceProvider
     }
 
     @Override
-    public GameEntitySupplier getGameEntitySupplier()
+    public PaintableEntitySupplier getPaintableEntitySupplier()
     {
-        return gameEntitySupplier;
+        return paintableEntitySupplier;
     }
 
     public WindowManager getWindowManager()

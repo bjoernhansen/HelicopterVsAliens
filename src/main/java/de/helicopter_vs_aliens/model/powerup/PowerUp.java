@@ -4,11 +4,11 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.GameEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
-import de.helicopter_vs_aliens.model.RectangularGameEntity;
+import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Queue;
 
 
-public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
+public class PowerUp extends RectangularPaintableEntity implements GroupTypeOwner
 {
     private static final int
         SIZE = 30,
@@ -50,7 +50,7 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 		
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getActiveGameEntityManager()
+    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getActivePaintableEntityManager()
 															  .getPowerUps().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
 		{
 			PowerUp powerUp = iterator.next();
@@ -58,7 +58,7 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 			if(powerUp.wasCollected)
 			{
 				iterator.remove();
-				gameRessourceProvider.getGameEntitySupplier().store(powerUp);
+				gameRessourceProvider.getPaintableEntitySupplier().store(powerUp);
 			}
 		}		
 	}
@@ -232,14 +232,14 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
 		int powerUpDirection = PowerUp.getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
 		PowerUp powerUp = PowerUp.getInstance(powerUpType);
 		powerUp.initialize(enemy, powerUpDirection);
-		gameRessourceProvider.getActiveGameEntityManager()
+		gameRessourceProvider.getActivePaintableEntityManager()
 							 .getPowerUps().get(CollectionSubgroupType.ACTIVE).add(powerUp);
 	}
 
 	public static PowerUp getInstance(PowerUpType powerUpType)
 	{
 		PowerUp powerUp = GameResources.getProvider()
-									   .getNewGameEntityInstance(powerUpType);
+									   .getNewPaintableEntityInstance(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;
 	}
@@ -288,8 +288,8 @@ public class PowerUp extends RectangularGameEntity implements GroupTypeOwner
     }
 	
 	@Override
-	public GameEntityGroupType getGroupType()
+	public PaintableEntityGroupType getGroupType()
 	{
-		return GameEntityGroupType.POWER_UP;
+		return PaintableEntityGroupType.POWER_UP;
 	}
 }

@@ -1,12 +1,12 @@
 package de.helicopter_vs_aliens.control.entities;
 
-import de.helicopter_vs_aliens.model.GameEntity;
+import de.helicopter_vs_aliens.model.PaintableEntity;
 
 import java.util.ArrayDeque;
 import java.util.Optional;
 import java.util.Queue;
 
-final class GameEntityStore<T extends GameEntity>
+final class PaintableEntityStore<T extends PaintableEntity>
 {
     private static final DependencyInjector
         dependencyInjector = DependencyInjector.getInstance();
@@ -15,22 +15,22 @@ final class GameEntityStore<T extends GameEntity>
         entities = new ArrayDeque<>();
     
     
-    public T retrieve(GameEntityFactory<? extends T> factory)
+    public T retrieve(PaintableEntityFactory<? extends T> factory)
     {
         return Optional.ofNullable(entities.poll())
                        .orElseGet(() -> makeInstanceWithDependenciesUsing(factory));
     }
     
-    private T makeInstanceWithDependenciesUsing(GameEntityFactory<? extends T> factory)
+    private T makeInstanceWithDependenciesUsing(PaintableEntityFactory<? extends T> factory)
     {
-        T gameEntity = factory.makeInstance();
-        dependencyInjector.injectDependenciesFor(gameEntity);
-        return gameEntity;
+        T paintableEntity = factory.makeInstance();
+        dependencyInjector.injectDependenciesFor(paintableEntity);
+        return paintableEntity;
     }
     
-    public void store(T gameEntity)
+    public void store(T paintableEntity)
     {
-        entities.add(gameEntity);
+        entities.add(paintableEntity);
     }
     
     public int size()

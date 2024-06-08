@@ -4,10 +4,10 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 
-public abstract class RectangularGameEntity extends GameEntity
+public abstract class RectangularPaintableEntity extends PaintableEntity
 {
 	public static final  int
-        // TODO diese Kontante sollte nicht in GameEntity sein
+        // TODO diese Kontante sollte nicht in PaintableEntity sein
 		GROUND_Y = 426;
 		
 	// TODO paintBound sind vermutlich nur da, da in floats gerechnet aber in int gezeichnet wird, diese Funktionalität in eigene Klasse auslagern
@@ -42,14 +42,14 @@ public abstract class RectangularGameEntity extends GameEntity
 		return bounds;
 	}
 	
-	public boolean isLeftOf(RectangularGameEntity rectangularGameEntity)
+	public boolean isLeftOf(RectangularPaintableEntity rectangularPaintableEntity)
 	{
-		return getMaxX() < rectangularGameEntity.getMinX();
+		return getMaxX() < rectangularPaintableEntity.getMinX();
 	}
 	
-	public boolean isRightOf(RectangularGameEntity gameEntity)
+	public boolean isRightOf(RectangularPaintableEntity paintableEntityEntity)
 	{
-		return getMinX() > gameEntity.getMaxX();
+		return getMinX() > paintableEntityEntity.getMaxX();
 	}
 	
 	protected final void setBounds(Rectangle2D rectangle)
@@ -120,9 +120,9 @@ public abstract class RectangularGameEntity extends GameEntity
 		return bounds.intersects(rectangle);
 	}
 	
-	public final boolean intersects(RectangularGameEntity rectangularGameEntity)
+	public final boolean intersects(RectangularPaintableEntity rectangularPaintableEntity)
 	{
-		return bounds.intersects(rectangularGameEntity.getBounds());
+		return bounds.intersects(rectangularPaintableEntity.getBounds());
 	}
 	
 	public final boolean intersectsLine(double x1, double y1, double x2, double y2)

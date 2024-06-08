@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.control;
 
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.entities.GameEntityActivation;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityActivation;
 import de.helicopter_vs_aliens.control.events.KeyEvent;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
 import de.helicopter_vs_aliens.control.events.SpecialKey;
@@ -25,7 +25,6 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.basic.BasicEnemy;
 import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
-import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
@@ -296,22 +295,22 @@ public class Events
                 // TODO übergabe von powerUps anders regeln
                 else if (keyEvent.isKeyEqualTo('d'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
                                                                                  .getPowerUps(), TRIPLE_DAMAGE);
                 }
                 else if (keyEvent.isKeyEqualTo('i'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
                                                                                  .getPowerUps(), INVINCIBLE);
                 }
                 else if (keyEvent.isKeyEqualTo('c'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
                                                                                  .getPowerUps(), UNLIMITED_ENERGY);
                 }
                 else if (keyEvent.isKeyEqualTo('y'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveGameEntityManager()
+                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
                                                                                  .getPowerUps(), BOOSTED_FIRE_RATE);
                 }
                 else if (keyEvent.isKeyEqualTo('a'))
@@ -646,12 +645,12 @@ public class Events
 
                 Window.updateRepairShopButtonsAfterSpotlightPurchase();
 
-                gameRessourceProvider.getActiveGameEntityManager()
+                gameRessourceProvider.getActivePaintableEntityManager()
                                      .getEnemies()
                                      .get(CollectionSubgroupType.DESTROYED)
                                      .forEach(Enemy::repaint);
 
-                gameRessourceProvider.getActiveGameEntityManager()
+                gameRessourceProvider.getActivePaintableEntityManager()
                                      .getEnemies()
                                      .get(CollectionSubgroupType.ACTIVE)
                                      .stream()
@@ -826,10 +825,10 @@ public class Events
 
     private static void storeAndClearEnemies(GameRessourceProvider gameRessourceProvider, CollectionSubgroupType collectionSubgroupType)
     {
-        Queue<Enemy> enemies = gameRessourceProvider.getActiveGameEntityManager()
+        Queue<Enemy> enemies = gameRessourceProvider.getActivePaintableEntityManager()
                                                     .getEnemies()
                                                     .get(collectionSubgroupType);
-        gameRessourceProvider.getGameEntitySupplier()
+        gameRessourceProvider.getPaintableEntitySupplier()
                              .storeAll(enemies);
         enemies.clear();
     }
@@ -1148,9 +1147,9 @@ public class Events
         Window.conditionalReset();
 
         // kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-        if (!gameRessourceProvider.getActiveGameEntityManager()
+        if (!gameRessourceProvider.getActivePaintableEntityManager()
                                   .getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
-            && !(!totalReset && gameRessourceProvider.getActiveGameEntityManager()
+            && !(!totalReset && gameRessourceProvider.getActivePaintableEntityManager()
                                                      .getEnemies()
                                                      .get(CollectionSubgroupType.ACTIVE)
                                                      .element()
@@ -1183,33 +1182,33 @@ public class Events
                 gameRessourceProvider.getScenery().reset();
             }
         }
-        // TODO vereinfachen und in die neuen Klassen (ActiveGameEntityManager und GameEntitySupplier
-        // gameRessourceProvider.getActiveGameEntityManager().clearExplosions();
-        gameRessourceProvider.getActiveGameEntityManager()
+        // TODO vereinfachen und in die neuen Klassen (ActivePaintableEntityManager und PaintableEntitySupplier
+        // gameRessourceProvider.getActivePaintableEntityManager().clearExplosions();
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getExplosions()
                              .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getActiveGameEntityManager()
+                             .addAll(gameRessourceProvider.getActivePaintableEntityManager()
                                                           .getExplosions().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
-        gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getMissiles()
                              .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getActiveGameEntityManager()
+                             .addAll(gameRessourceProvider.getActivePaintableEntityManager()
                                                           .getMissiles().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getMissiles().get(CollectionSubgroupType.ACTIVE).clear();
-        gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getEnemyMissiles()
                              .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getActiveGameEntityManager()
+                             .addAll(gameRessourceProvider.getActivePaintableEntityManager()
                                                           .getEnemyMissiles().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).clear();
-        gameRessourceProvider.getGameEntitySupplier()
-                             .storeAll(gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getPaintableEntitySupplier()
+                             .storeAll(gameRessourceProvider.getActivePaintableEntityManager()
                                                             .getPowerUps().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getPowerUps().get(CollectionSubgroupType.ACTIVE).clear();
 
         if (Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))
@@ -1221,14 +1220,14 @@ public class Events
 
     private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
     {
-        Queue<Enemy> activeEnemies = gameRessourceProvider.getActiveGameEntityManager()
+        Queue<Enemy> activeEnemies = gameRessourceProvider.getActivePaintableEntityManager()
                                                           .getEnemies()
                                                           .get(CollectionSubgroupType.ACTIVE);
         activeEnemies.stream()
                      .filter(Enemy::isDisappearingAfterEnteringRepairShop)
-                     .forEach(gameRessourceProvider.getGameEntitySupplier()::store);
+                     .forEach(gameRessourceProvider.getPaintableEntitySupplier()::store);
 
-        gameRessourceProvider.getActiveGameEntityManager()
+        gameRessourceProvider.getActivePaintableEntityManager()
                              .getEnemies()
                              .get(CollectionSubgroupType.ACTIVE)
                              .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
@@ -1533,9 +1532,9 @@ public class Events
     {
         if (isCurrentLevelBossLevel())
         {
-            return GameEntityActivation.isQuicklyApproved();
+            return PaintableEntityActivation.isQuicklyApproved();
         }
-        return GameEntityActivation.isApproved(numberOfMissingEnemies);
+        return PaintableEntityActivation.isApproved(numberOfMissingEnemies);
     }
 
     public static boolean wasMaximumLevelExceeded()
