@@ -17,6 +17,7 @@ import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
 import de.helicopter_vs_aliens.model.enemy.maneuver.ManeuverManger;
+import de.helicopter_vs_aliens.model.enemy.maneuver.MovingObject;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -404,9 +405,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	protected final Point2D
 		shootingDirection = new Point2D.Float();   	// Schussrichtung von schießenden Barrier-Gegnern
 	
-	private final ManeuverManger maneuverManger = new ManeuverManger();
+	private final ManeuverManger
+		maneuverManger = new ManeuverManger();
 	
-
 	
 	public void reset()
 	{
@@ -880,6 +881,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	
 	protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
 	{
+		
+		
+		maneuverManger.performAll();
+		
 		// Beschleunigung
 		if(speedup != DISABLED || canFrontalSpeedup)
 		{
@@ -2618,6 +2623,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	@Override
 	public void doSomeMove()
 	{
-		// TODO to implement
+		System.out.println("Ich performe!");
 	}
 }

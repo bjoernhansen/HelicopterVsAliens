@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.model.enemy;
+package de.helicopter_vs_aliens.model.enemy.maneuver;
 
 public interface MovingObject
 {

@@ -1,10 +1,9 @@
 package de.helicopter_vs_aliens.model.enemy.maneuver;
 
 import de.helicopter_vs_aliens.control.ressource_transfer.AbstractGameRessourceAcceptor;
-import de.helicopter_vs_aliens.model.enemy.MovingObject;
 
 
-public class AbstractManeuver extends AbstractGameRessourceAcceptor implements Maneuver
+public abstract class AbstractManeuver extends AbstractGameRessourceAcceptor implements Maneuver
 {
     private final MovingObject target;
     
