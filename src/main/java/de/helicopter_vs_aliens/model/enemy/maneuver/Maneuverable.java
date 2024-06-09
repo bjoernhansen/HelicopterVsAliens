@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.maneuver;
 
-public interface MovingObject
+public interface Maneuverable
 {
     void doSomeMove();
 }

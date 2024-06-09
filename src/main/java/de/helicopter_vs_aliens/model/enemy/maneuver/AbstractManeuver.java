@@ -5,14 +5,14 @@ import de.helicopter_vs_aliens.control.ressource_transfer.AbstractGameRessourceA
 
 public abstract class AbstractManeuver extends AbstractGameRessourceAcceptor implements Maneuver
 {
-    private final MovingObject target;
+    private final Maneuverable target;
     
-    AbstractManeuver(MovingObject movingObject)
+    AbstractManeuver(Maneuverable maneuverable)
     {
-        target = movingObject;
+        target = maneuverable;
     }
     
-    protected final MovingObject getTarget()
+    protected final Maneuverable getTarget()
     {
         return target;
     }

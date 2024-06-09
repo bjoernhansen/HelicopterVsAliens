@@ -8,15 +8,15 @@ public enum ManeuverType implements ManeuverFactory
     SIMPLE(SimpleManeuver::new);
     
     
-    Function<MovingObject, Maneuver> maneuverProvider;
+    Function<Maneuverable, Maneuver> maneuverProvider;
     
     
-    ManeuverType(Function<MovingObject, Maneuver> maneuverProvider) {
+    ManeuverType(Function<Maneuverable, Maneuver> maneuverProvider) {
         this.maneuverProvider = maneuverProvider;
     }
     
     @Override
-    public Maneuver makeInstanceFor(MovingObject target)
+    public Maneuver makeInstanceFor(Maneuverable target)
     {
         return maneuverProvider.apply(target);
     }

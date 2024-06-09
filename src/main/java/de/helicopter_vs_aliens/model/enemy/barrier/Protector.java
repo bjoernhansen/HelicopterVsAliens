@@ -75,7 +75,7 @@ public class Protector extends BurrowingBarrier
     }
     
     @Override
-    public boolean isStunable()
+    public boolean isStunnable()
     {
         return false;
     }

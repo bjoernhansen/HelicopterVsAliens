@@ -42,7 +42,7 @@ public class FinalBoss extends BossEnemy
     }
     
     @Override
-    public boolean isStunable()
+    public boolean isStunnable()
     {
         return false;
     }

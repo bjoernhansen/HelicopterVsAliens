@@ -3,9 +3,9 @@ package de.helicopter_vs_aliens.model.enemy.maneuver;
 
 public class SimpleManeuver extends AbstractManeuver
 {
-    SimpleManeuver(MovingObject movingObject)
+    SimpleManeuver(Maneuverable maneuverable)
     {
-        super(movingObject);
+        super(maneuverable);
     }
     
     @Override

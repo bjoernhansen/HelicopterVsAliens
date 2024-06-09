@@ -17,7 +17,7 @@ import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
 import de.helicopter_vs_aliens.model.enemy.maneuver.ManeuverManger;
-import de.helicopter_vs_aliens.model.enemy.maneuver.MovingObject;
+import de.helicopter_vs_aliens.model.enemy.maneuver.Maneuverable;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Queue;
 
 
-public abstract class Enemy extends RectangularPaintableEntity implements GroupTypeOwner, MovingObject
+public abstract class Enemy extends RectangularPaintableEntity implements GroupTypeOwner, Maneuverable
 // TODO Klasse zerschlagen
 {
 	public static final int KAMIKAZE_RANGE = 620;
@@ -347,7 +347,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	protected int shotRotationSpeed;
 	
 	private int// Regulation des Stun-Effektes nach Treffer durch Stopp-Rakete der Orochi-Klasse
-		nonStunableTimer;
+		nonStunnableTimer;
 	private int totalStunningTime;
 	private int knockBackDirection;
 		
@@ -364,9 +364,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         protected boolean canFrontalSpeedup;        // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
         protected boolean canLoop;                // = true: Gegner fliegt Loopings
         protected boolean canChaosSpeedup;        // erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
-     
 		private boolean isDestroyed;            // = true: Gegner wurde vernichtet
-        protected boolean hasHeightSet;            // = false --> height = height_factor * width; = true --> height wurde manuell festgelegt
         private boolean hasCrashed;            // = true: Gegner ist abgestürzt
         private boolean isEmpShocked;            // = true: Gegner steht unter EMP-Schock --> ist verlangsamt
         public boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
@@ -414,9 +412,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		lifetime = 0;
 		targetSpeedLevel.setLocation(ZERO_SPEED);
 		initializeMovingDirection();
-		
 		maneuverManger.initializeFor(this);
-		
 		
 		callBack = 0;
 		shield = 0;
@@ -441,9 +437,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		hasCrashed = false;
 		canInstantlyTurnAround = false;
 		isRecoveringSpeed = false;
-		hasHeightSet = false;
 		isEmpShocked = false;
-		
 		collisionDamageTimer = READY;
 		collisionTimer = READY;
 		turnAudioTimer = READY;
@@ -453,7 +447,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		empSlowedTimer = READY;
 		invincibleTimer = READY;
 		chaosTimer = READY;
-		nonStunableTimer = READY;
+		nonStunnableTimer = READY;
 		cloakingDevice.reset();
 		teleportTimer = DISABLED;
 		shieldMakerTimer = DISABLED;
@@ -713,9 +707,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		}		
 	}
 	
-	
-	
-	
 	private BufferedImage getBufferedImage()
 	{
 		return new BufferedImage((int) (1.028f * paintBounds.width),
@@ -868,7 +859,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		if(	empSlowedTimer > 0) {empSlowedTimer--;}
 		if(	invincibleTimer > 0) {invincibleTimer--;}
 		if(	chaosTimer > 0) {chaosTimer--;}
-		if(	nonStunableTimer > 0) {nonStunableTimer--;}
+		if(	nonStunnableTimer > 0) {
+			nonStunnableTimer--;}
 		if( turnTimer > 0) {turnTimer--;}
 		if( isStunned()) {stunningTimer--;}
 	}
@@ -1225,7 +1217,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	
 	protected boolean isAbleToBeSlowedDownByEmp()
 	{
-		return isStunable();
+		return isStunnable();
 	}
 	
 	protected int getEmpSlowTime()
@@ -1867,15 +1859,15 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	private boolean areStunningRequirementsMet(Missile missile)
 	{
 		return missile.typeOfExplosion == ExplosionType.STUNNING
-				&& isStunable()
-				&& nonStunableTimer == READY;
+				&& isStunnable()
+				&& nonStunnableTimer == READY;
 	}
 	
 	private void stun(GameRessourceProvider gameRessourceProvider, Missile missile)
 	{
 		if(hasHPsLeft()){Audio.play(Audio.stun);}
 		explode(gameRessourceProvider, missile);
-		nonStunableTimer = (int)(type.isMainBoss() || type.isFinalBossServant()
+		nonStunnableTimer = (int)(type.isMainBoss() || type.isFinalBossServant()
 										  ? 2.25f*Events.level 
 										  : 0);
 		knockBackDirection = missile.speed > 0 ? 1 : -1;
@@ -2451,7 +2443,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	}
 	
 	// bestimmt, ob ein Gegner von Stopp-Raketen (Orochi-Klasse) oder EMP-Schockwellen (Pegasus) "betäubt" werden kann
-	public boolean isStunable()
+	public boolean isStunnable()
 	{
 		return true;
 	}
