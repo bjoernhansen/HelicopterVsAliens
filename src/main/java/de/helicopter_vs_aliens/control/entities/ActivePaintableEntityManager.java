@@ -67,7 +67,6 @@ public final class ActivePaintableEntityManager implements ActiveGameEntitiesPro
     {
         // TODO alle Listen von inaktivierten überführen in PaintableEntityRecycler, auch die BackgroundObjects berücksichtigen
         // TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
-        // TODO keine LinkedList verwenden, lieber ArrayDeque
         CollectionSubgroupType.getStandardSubgroupTypes()
                               .forEach(standardSubgroupTypes -> {
             this.enemies.put(		   				standardSubgroupTypes, new ArrayDeque<>());

@@ -28,22 +28,29 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 public class Explosion extends PaintableEntity implements GroupTypeOwner
 {
-    public int 
-    	time,				// vergangene Zeit [frames] seit Starten der Explosion
-		maxTime,			// maximale Dauer einer Explosion / eines EMP
-		// TODO was nur für die Pegasus-Klasse relevant ist, sollte nicht hier sein, eventuell EMP-Klasse, die von Explosion erbt
-    	kills,				// nur für Pegasus-Klasse: mit diesem EMP vernichtete Gegner
-    	earnedMoney;		// nur für Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
+    private int
+		time;
+		
+	private int
+		maxTime;
+	
+	private int
+		kills;
+	
+	private int
+		earnedMoney;		// nur für Pegasus-Klasse: dabei (kills, s.o.) verdientes Geld
   
-	public final Ellipse2D
+	private final Ellipse2D
 		ellipse = new Ellipse2D.Float();	// Einflussbereich der Explosion
 	
 	private Enemy
 		source;
 	
     private int
-		maxRadius,	// maximaler Explosionsradius
-   		broadness;	// breite des animierten Explosionsringes
+		maxRadius;
+	
+	private int
+		broadness;	// breite des animierten Explosionsringes
 	
     private final float[]
     	progress = new float[2];	// reguliert das Fortschreiten der Explosionsanimation       
@@ -232,9 +239,34 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 		return center;
 	}
 	
+	public int getTime()
+	{
+		return time;
+	}
+	
+	public int getMaxTime()
+	{
+		return maxTime;
+	}
+	
+	public Ellipse2D getEllipse()
+	{
+		return ellipse;
+	}
+	
 	@Override
 	public PaintableEntityGroupType getGroupType()
 	{
 		return PaintableEntityGroupType.EXPLOSION;
+	}
+	
+	public void countKill()
+	{
+		kills++;
+	}
+	
+	public void increaseRewardBy(int reward)
+	{
+		earnedMoney += reward;
 	}
 }

@@ -63,7 +63,6 @@ public final class Dictionary
     private final Map<BlockMessage, String[]>
         blockMessages = new EnumMap<>(BlockMessage.class);
 
-    // TODO hier EnumTable verwenden
     private final Map<WindowType, Map<StartScreenMenuButtonType, String>>
         startScreenSubButtonName = new EnumMap<>(WindowType.class);
 

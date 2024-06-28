@@ -109,17 +109,17 @@ public abstract class Barrier extends Enemy
         if(burrowTimer == BORROW_TIME + shootingRate * shotsPerCycle)
         {
             barrierShootTimer = shootingRate * shotsPerCycle;
-            getSpeedLevel().setLocation(ZERO_SPEED);
+            stopMoving();
         }
         else if(burrowTimer == BORROW_TIME)
         {
             barrierShootTimer = DISABLED;
-            getSpeedLevel().setLocation(SLOW_VERTICAL_SPEED);
+            moveWithSlowVerticalSpeed();
             getNavigationDevice().flyDown();
         }
         else if(burrowTimer == 1)
         {
-            getSpeedLevel().setLocation(ZERO_SPEED);
+            stopMoving();
         }
         else if(burrowTimer == READY
             && ((getType() != EnemyType.PROTECTOR
@@ -134,7 +134,7 @@ public abstract class Barrier extends Enemy
                 ? EnemyType.PROTECTOR.getWidth() / 8
                 : 0)
                 - 1;
-            getSpeedLevel().setLocation(SLOW_VERTICAL_SPEED);
+            moveWithSlowVerticalSpeed();
             getNavigationDevice().flyUp();
         }
     }
@@ -185,7 +185,7 @@ public abstract class Barrier extends Enemy
     {
         if(burrowTimer == DISABLED)
         {
-            getSpeedLevel().setLocation(targetSpeedLevel);
+            reachTargetSpeedLevel();
         }
         else
         {
@@ -210,6 +210,11 @@ public abstract class Barrier extends Enemy
             burrowTimer = BORROW_TIME;
         }
         getNavigationDevice().flyDown();
+        moveWithSlowVerticalSpeed();
+    }
+    
+    private void moveWithSlowVerticalSpeed()
+    {
         getSpeedLevel().setLocation(SLOW_VERTICAL_SPEED);
     }
     
@@ -459,7 +464,7 @@ public abstract class Barrier extends Enemy
                            ? INACTIVATION_TIME
                            + Calculations.random((int)(EXTRA_INACTIVE_TIME_FACTOR * INACTIVATION_TIME))
                            : 0));
-        getSpeedLevel().setLocation(ZERO_SPEED);
+        stopMoving();
         if(targetSpeedLevel.getY() != 0 && getMaxY() + 1.5 * getSpeedY() > GROUND_Y)
         {
             setY(GROUND_Y - getHeight());

@@ -62,7 +62,7 @@ public class Healer extends FinalBossServant
                 
                 if(stop >= 2)
                 {
-                    getSpeedLevel().setLocation(ZERO_SPEED);
+                    stopMoving();
                     getNavigationDevice().turnLeft();
                     canDodge = true;
                 }
@@ -74,7 +74,7 @@ public class Healer extends FinalBossServant
         }
         else
         {
-            getSpeedLevel().setLocation(targetSpeedLevel);
+            reachTargetSpeedLevel();
         }
     }
     
@@ -90,8 +90,6 @@ public class Healer extends FinalBossServant
     {
         return LEFT_BOUNDARY;
     }
-    
-    
     
     @Override
     public boolean isReadyToDodge()

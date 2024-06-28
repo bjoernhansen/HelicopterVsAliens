@@ -1007,7 +1007,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
     
     public void becomesCenterOf(Explosion exp)
     {
-        exp.ellipse.setFrameFromCenter(
+        exp.getEllipse().setFrameFromCenter(
             getX() + (isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),
             getY() + FOCAL_POINT_Y_EXP,
             getX() + (isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),

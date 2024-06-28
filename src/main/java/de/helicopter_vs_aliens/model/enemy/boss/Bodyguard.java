@@ -34,7 +34,7 @@ public class Bodyguard extends FinalBossServant
         else
         {
             canKamikaze = false;
-            getSpeedLevel().setLocation(targetSpeedLevel);
+            reachTargetSpeedLevel();
         }
     }
     

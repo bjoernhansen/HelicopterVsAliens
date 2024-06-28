@@ -41,7 +41,7 @@ public abstract class StandardEnemy extends Enemy
             if(    getMinY() > TURN_FRAME.getMinY()
                 && getMaxY() < bottomTurnLine)
             {
-                getSpeedLevel().setLocation(targetSpeedLevel);
+                reachTargetSpeedLevel();
                 isSpeedBoosted = false;
             }
         }

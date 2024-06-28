@@ -115,7 +115,7 @@ public abstract class ShieldMaker extends FinalBossServant
     private void startShielding()
     {
         Audio.play(Audio.shieldUp);
-        getSpeedLevel().setLocation(ZERO_SPEED);
+        stopMoving();
         getNavigationDevice().turnLeft();
         isShielding = true;
         Events.boss.shield++;

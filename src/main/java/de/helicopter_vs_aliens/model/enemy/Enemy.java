@@ -110,6 +110,16 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		return cloakingDevice.isAlmostWorkingAtMaximumEfficiency();
 	}
 	
+	public boolean isMovingX()
+	{
+		return getSpeedLevel().getX() != 0;
+	}
+	
+	public boolean isMovingY()
+	{
+		return getSpeedLevel().getY() != 0;
+	}
+	
 	public static class FinalEnemyOperator
 	{
 		private final EnumMap<FinalBossServantType, Enemy>
@@ -233,7 +243,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	private static final int
 		MAX_IMAGE_COUNT = 4;
 	
-	public static final Point2D
+	private static final Point2D
 		ZERO_SPEED = new Point2D.Float(0, 0);
 	
 	protected static final Point2D
@@ -324,8 +334,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		chaosTimer;
 	protected int
 		speedup;
-	protected int
-		batchWiseMove;
+
 	protected int
 		shootTimer;
 
@@ -410,9 +419,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	public void reset()
 	{
 		lifetime = 0;
-		targetSpeedLevel.setLocation(ZERO_SPEED);
+		stopMoving();
 		initializeMovingDirection();
-		maneuverManger.initializeFor(this);
+		maneuverManger.initializeManeuversFor(this);
 		
 		callBack = 0;
 		shield = 0;
@@ -456,10 +465,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		barrierTeleportTimer = DISABLED;
 		burrowTimer = DISABLED;
 		speedup = DISABLED;
-		
-		
-		batchWiseMove = 0;
-		
 		shootingDirection.setLocation(0, 0);
 		shootPause = 0;
 		shootingRate = 0;
@@ -593,7 +598,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	{
 		setInitialLocation();
 		
-		speedLevel.setLocation(targetSpeedLevel);
+		reachTargetSpeedLevel();
 		setPaintBounds((int)getWidth(),
 							(int)getHeight());
 		assignImage();
@@ -873,8 +878,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	
 	protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
 	{
-		
-		
 		maneuverManger.performAll();
 		
 		// Beschleunigung
@@ -882,10 +885,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		{
 			evaluateSpeedup();
 		}
-		
-		// Schubweises Fliegen
-		if(batchWiseMove != 0){
-			evaluateBatchWiseMove();}
 		
 		// Chaos-Flug
 		if(    canMoveChaotic
@@ -931,7 +930,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		//Chaos-SpeedUp
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(	canChaosSpeedup
-			&& speedLevel.getX() <= targetSpeedLevel.getX()
+			&& !isTargetSpeedExceededX()
 			&& helicopter.getX() - getX() > -350	)
 		{
 			setSpeedLevelX(targetSpeedLevel.getX() + 6);
@@ -952,7 +951,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 			teleportTimer--;
 			if(	teleportTimer == READY)
 			{
-				speedLevel.setLocation(targetSpeedLevel);
+				reachTargetSpeedLevel();
 			}
 		}
 	}
@@ -1194,8 +1193,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		else
 		{
 			Audio.play(Audio.explosion2);
-			pegasus.empWave.kills++;
-			pegasus.empWave.earnedMoney += calculateReward();
+			int reward = calculateReward();
+			pegasus.rewardAndCountEmpKill(reward);
 			dieFromEmpWave(gameRessourceProvider);
 		}
     }
@@ -1265,7 +1264,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 				&& isIntact()
 				&& !isInvincible()
 				&& !(barrierTeleportTimer != DISABLED && barrierShootTimer == DISABLED)
-				&& pegasus.empWave.ellipse.intersects(getBounds());
+				&& pegasus.empWave.getEllipse().intersects(getBounds());
 	}	
 
 	private void evaluateSpeedup()
@@ -1302,19 +1301,17 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 							getHelicopter().getHeight());
 	}
 	
-	private void evaluateBatchWiseMove()
+	@Override
+	public boolean isTargetSpeedReachedOrExceededX()
 	{
-		if(batchWiseMove == 1)
-		{
-			increaseSpeedLevelX(0.5);
-		}
-		else if(batchWiseMove == -1)
-		{
-			increaseSpeedLevelX(-0.5);
-		}
-		if(speedLevel.getX() <= 0){batchWiseMove = 1;}
-		if(speedLevel.getX() >= targetSpeedLevel.getX()){batchWiseMove = -1;}
+		return getSpeedLevel().getX() >= targetSpeedLevel.getX();
 	}
+	
+	private boolean isTargetSpeedExceededX()
+	{
+		return getSpeedLevel().getX() > targetSpeedLevel.getX();
+	}
+	
 	
 	protected void startKamikazeMode()
 	{
@@ -1336,7 +1333,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 			}
 			else
 			{
-				speedLevel.setLocation(targetSpeedLevel);
+				reachTargetSpeedLevel();
 			}
 		}
     }
@@ -1482,8 +1479,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	{
 		dodgeTimer--;
 		if(dodgeTimer == READY)
-		{				
-			speedLevel.setLocation(targetSpeedLevel);
+		{
+			reachTargetSpeedLevel();
 			navigationDevice.turnLeft();
 		}		
 	}
@@ -1573,7 +1570,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 
 	private void adjustSpeedTo(int missileDrive)
 	{
-		if( !speedLevel.equals(ZERO_SPEED)
+		if( isMoving()
 			&& 
 			( totalStunningTime - 13 == stunningTimer
 			  || getMaxX()
@@ -1584,9 +1581,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 			  	 - 18 
 			  	 - missileDrive/2f < - 2 * getWidth()/3))
 		{
-			speedLevel.setLocation(ZERO_SPEED);
+			stopMoving();
 		}
-	}	
+	}
+	
+	public boolean isMoving()
+	{
+		return !speedLevel.equals(ZERO_SPEED);
+	}
 	
 	protected void evaluateSpeedBoost(){}
 	
@@ -1600,9 +1602,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 			{
 				speedLevel.setLocation(SLOW_VERTICAL_SPEED);
 			}
-			else{speedLevel.setLocation(targetSpeedLevel);}
+			else{
+				reachTargetSpeedLevel();}
 		}		
-		else if(speedLevel.getX() < targetSpeedLevel.getX())
+		else if(!isTargetSpeedReachedOrExceededX())
 		{
 			increaseSpeedLevelX(0.025);
 		}
@@ -1614,7 +1617,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 
 	private boolean hasReachedTargetSpeed()
 	{		
-		return    speedLevel.getX() >= targetSpeedLevel.getX()
+		return    isTargetSpeedReachedOrExceededX()
 			   && speedLevel.getY() >= targetSpeedLevel.getY();
 	}
 
@@ -1695,7 +1698,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	private void handleCrashToTheGround(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
 	{
 		hasCrashed = true;
-		speedLevel.setLocation(ZERO_SPEED);
+		stopMoving();
 		setY(crashPositionY - getHeight());
 		if(type.isServant()){isMarkedForRemoval = true;}
 		Audio.play(getCrashToTheGroundSound());
@@ -2227,7 +2230,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		Audio.play(Audio.teleport2);		
 		setLocation(260.0 + Math.random()*(660.0 - getWidth()),
 						   20.0 + Math.random()*(270.0 - getHeight()));
-		speedLevel.setLocation(ZERO_SPEED);
+		stopMoving();
 		teleportTimer = 60;
 		invincibleTimer = 40;
 	}
@@ -2367,6 +2370,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		return operator.getServant(servantType);
 	}
 	
+	@Override
 	public Point2D getSpeedLevel()
 	{
 		return speedLevel;
@@ -2516,7 +2520,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	// Methoden für Richtungsänderungen und -abfragen
 	// TODO dies sollte ggf. in eigene Klasse ausgelagert werden, nur die Methoden, die außerhalb von Enemy genutzt werden müssen weitergeleitet werden z.B NavigationDevice
 	
-	private void increaseSpeedLevelX(double increment)
+	@Override
+	public void increaseSpeedLevelX(double increment)
 	{
 		setSpeedLevelX(speedLevel.getX() + increment);
 	}
@@ -2616,5 +2621,15 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	public void doSomeMove()
 	{
 		System.out.println("Ich performe!");
+	}
+	
+	protected void stopMoving()
+	{
+		getSpeedLevel().setLocation(ZERO_SPEED);
+	}
+	
+	protected void reachTargetSpeedLevel()
+	{
+		getSpeedLevel().setLocation(targetSpeedLevel);
 	}
 }

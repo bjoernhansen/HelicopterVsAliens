@@ -4,7 +4,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
 
 
 public class CapturingEnemy extends BasicEnemy
@@ -61,7 +60,7 @@ public class CapturingEnemy extends BasicEnemy
     {
         Audio.loop(Audio.tractorBeam);
         tractorDeviceActivityStatus = AbilityStatusType.ACTIVE;
-        getSpeedLevel().setLocation(Enemy.ZERO_SPEED);
+        stopMoving();
         getHelicopter().tractor = this;
         getNavigationDevice().turnLeft();
     }
@@ -69,7 +68,7 @@ public class CapturingEnemy extends BasicEnemy
     public void stopTractor()
     {
         removeTractorDeviceIfPresent();
-        getSpeedLevel().setLocation(targetSpeedLevel);
+        reachTargetSpeedLevel();
     }
     
     public boolean isTractorBeamActive()

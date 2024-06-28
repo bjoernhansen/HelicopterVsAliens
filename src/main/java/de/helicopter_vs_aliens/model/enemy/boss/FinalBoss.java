@@ -61,8 +61,7 @@ public class FinalBoss extends BossEnemy
             if(getSpeedLevel()
                    .getX() - 0.5 <= 0)
             {
-                getSpeedLevel()
-                    .setLocation(ZERO_SPEED);
+                stopMoving();
                 boss.setLocation(getCenterX(),
                     getCenterY());
                 EnemyController.makeAllBoss5Servants = true;

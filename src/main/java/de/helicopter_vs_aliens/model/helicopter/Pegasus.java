@@ -267,4 +267,10 @@ public final class Pegasus extends Helicopter
     {
         enemy.checkForEmpStrike(gameRessourceProvider, this);
     }
+    
+    public void rewardAndCountEmpKill(int reward)
+    {
+        empWave.countKill();
+        empWave.increaseRewardBy(reward);
+    }
 }

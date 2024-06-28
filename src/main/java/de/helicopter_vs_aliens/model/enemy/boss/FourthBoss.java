@@ -75,7 +75,7 @@ public class FourthBoss extends BossEnemy
             }
             else if(spawningHornetTimer == SECOND_SERVANT_CREATION_TIME)
             {
-                getSpeedLevel().setLocation(ZERO_SPEED);
+                stopMoving();
             }
             if(enemies.get(CollectionSubgroupType.ACTIVE).size() < 15
                 && (    spawningHornetTimer == FIRST_SERVANT_CREATION_TIME

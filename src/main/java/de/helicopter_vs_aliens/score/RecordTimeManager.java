@@ -10,7 +10,6 @@ import java.util.Map;
 
 public class RecordTimeManager implements Serializable
 {
-    // TODO hier EnumTable verwenden
     private Map<HelicopterType, Map<BossLevel, Long>>
         recordTimes = getEmptyRecordTimesMap();
     

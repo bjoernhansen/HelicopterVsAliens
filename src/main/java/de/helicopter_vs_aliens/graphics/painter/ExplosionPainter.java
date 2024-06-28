@@ -13,11 +13,13 @@ public class ExplosionPainter extends Painter<Explosion>
     {
         graphicsAdapter.setPaint(explosion.getColor());
         graphicsAdapter.setStroke(new BasicStroke((int)(1+(explosion.getBroadness()-1)*(1-explosion.getProgress()[0]))));
-        explosion.ellipse.setFrameFromCenter(explosion.getCenter().getX(),
+        // TODO hier eine Methode in explosion erstellen. ... Ist dass ein Update in der PaintMethode?
+        explosion.getEllipse().setFrameFromCenter(
+                                             explosion.getCenter().getX(),
                                              explosion.getCenter().getY(),
                                       explosion.getCenter().getX() - (explosion.getProgress()[1] * explosion.getMaxRadius()),
                                       explosion.getCenter().getY() - (explosion.getProgress()[1] * explosion.getMaxRadius()));
-        graphicsAdapter.drawEllipse(explosion.ellipse);
+        graphicsAdapter.drawEllipse(explosion.getEllipse());
         graphicsAdapter.setStroke(new BasicStroke(1));
     }
 }

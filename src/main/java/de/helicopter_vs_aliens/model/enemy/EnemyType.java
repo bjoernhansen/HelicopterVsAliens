@@ -115,7 +115,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                130,
                TargetSpeedLevelProvider.ofVariableSpeed(7.0, 1.0, 4.0, 0.5),
                CollisionEffect.NO_EFFECT,
-               EnumSet.noneOf(ManeuverType.class)),
+               EnumSet.of(ManeuverType.BATCH_WISE_MOVE)),
     
     SINUS( // ab Level 13
            SinusoidallyFlyingEnemy::new,

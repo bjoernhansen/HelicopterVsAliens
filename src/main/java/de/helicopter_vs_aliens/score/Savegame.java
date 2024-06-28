@@ -63,7 +63,6 @@ public class Savegame implements Serializable
 	private HighScore
 		highScore;
 	
-	// TODO es sollte kein Array verwendet werden
 	public ScoreScreenTimes
 		scoreScreenTimes;
 

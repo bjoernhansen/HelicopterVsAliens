@@ -10,8 +10,9 @@ public class ManeuverManger
 {
     private final List<Maneuver> maneuvers = new ArrayList<>();
     
-    public void initializeFor(Enemy enemy)
+    public void initializeManeuversFor(Enemy enemy)
     {
+        // TODO vielleicht könnte auch mit einem Reset gearbeitet werden, wenn die Manöver schon da sind
         maneuvers.clear();
         enemy.getType()
              .getManeuverTypes()

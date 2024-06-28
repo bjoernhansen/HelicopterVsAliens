@@ -47,7 +47,7 @@ public final class PegasusPainter extends HelicopterPainter
             && Window.effectTimer[PEGASUS.ordinal()] > 0
             && pegasus.empWave != null)
         {
-            if(pegasus.empWave.time >= pegasus.empWave.maxTime)
+            if(pegasus.empWave.getTime() >= pegasus.empWave.getMaxTime())
             {
                 pegasus.empWave = null;
             }

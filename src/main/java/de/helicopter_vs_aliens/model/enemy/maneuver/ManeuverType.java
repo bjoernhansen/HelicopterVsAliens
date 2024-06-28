@@ -5,8 +5,9 @@ import java.util.function.Function;
 
 public enum ManeuverType implements ManeuverFactory
 {
-    SIMPLE(SimpleManeuver::new);
+    SIMPLE(SimpleManeuver::new),
     
+    BATCH_WISE_MOVE(BatchWiseMoveManeuver::new);
     
     Function<Maneuverable, Maneuver> maneuverProvider;
     

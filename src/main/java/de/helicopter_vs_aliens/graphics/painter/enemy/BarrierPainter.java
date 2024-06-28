@@ -75,7 +75,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
             barrier.isIntact()
                 ?(Colorations.setAlpha(Colorations.barrierColor[barrier.getRotorColor()][Events.timeOfDay.ordinal()], barrier.getAlpha()))
                 : Colorations.adjustBrightness(Colorations.barrierColor[barrier.getRotorColor()][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
-            x, y, barrier.getPaintBounds().width, barrier.getPaintBounds().height, 5, (barrier.getSpeedLevel().equals(Enemy.ZERO_SPEED) ? (barrier.getSnoozeTimer() <= Enemy.SNOOZE_TIME ? 3 : 0) : 8) * (barrier.isClockwiseBarrier() ? -1 : 1) * barrier.getLifetime()%360,
+            x, y, barrier.getPaintBounds().width, barrier.getPaintBounds().height, 5, (!barrier.isMoving() ? (barrier.getSnoozeTimer() <= Enemy.SNOOZE_TIME ? 3 : 0) : 8) * (barrier.isClockwiseBarrier() ? -1 : 1) * barrier.getLifetime()%360,
             24, BORDER_SIZE, barrier.getSnoozeTimer() == 0);
         paintCannon(graphicsAdapter, x, y);
     }
@@ -180,7 +180,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
             yCenterShift = (int) (centerShift * enemy.getPaintBounds().height);
         
         
-        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.isFlyingLeft()))
+        if(imagePaint || (enemy.isMovingX() && enemy.isFlyingLeft()))
         {
             paintBar(
                 graphicsAdapter,
@@ -194,7 +194,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
                 false,
                 inputColor);
         }
-        if(imagePaint || (enemy.getSpeedLevel().getX() != 0 && enemy.isFlyingRight()))
+        if(imagePaint || (enemy.isMovingX() && enemy.isFlyingRight()))
         {
             paintBar(
                 graphicsAdapter,
@@ -208,7 +208,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
                 false,
                 inputColor);
         }
-        if(imagePaint || (enemy.getSpeedLevel().getY() != 0 && enemy.isFlyingDown()))
+        if(imagePaint || (enemy.isMovingY() && enemy.isFlyingDown()))
         {
             paintBar(
                 graphicsAdapter,
@@ -222,7 +222,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
                 true,
                 inputColor);
         }
-        if(imagePaint || (enemy.getSpeedLevel().getY() != 0 && enemy.isFlyingUp()))
+        if(imagePaint || (enemy.isMovingY() && enemy.isFlyingUp()))
         {
             paintBar(
                 graphicsAdapter,

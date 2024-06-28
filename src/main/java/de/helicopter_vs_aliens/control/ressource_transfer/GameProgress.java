@@ -7,6 +7,7 @@ import de.helicopter_vs_aliens.control.entities.ActivePaintableEntityManager;
 import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
 import de.helicopter_vs_aliens.control.entities.PaintableEntitySupplier;
 import de.helicopter_vs_aliens.control.timer.Timer;
+import de.helicopter_vs_aliens.control.timer.TimerManager;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
@@ -72,6 +73,8 @@ public final class GameProgress implements GameRessourceProvider
 
     private double
         scalingFactor = 1.0;
+    
+    private final TimerManager timerManager = TimerManager.getInstance();
 
 
     GameProgress(GraphicsApiType graphicsApiType)
@@ -97,7 +100,7 @@ public final class GameProgress implements GameRessourceProvider
     public void updateGame()
     {
         gameLoopCount++;
-        Timer.countDownActiveTimers();
+        timerManager.countDownActiveTimers();
         if(WindowManager.window == GAME)
         {
             fpsCalculator.calculateFps();
