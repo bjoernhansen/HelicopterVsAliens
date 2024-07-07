@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.barrier;
 
 import de.helicopter_vs_aliens.util.Calculations;
 
-public class DiggerBarrier extends BurrowingBarrier
+public final class DiggerBarrier extends BurrowingBarrier
 {
     @Override
     protected int calculateShootingRate()

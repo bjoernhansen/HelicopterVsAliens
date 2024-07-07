@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.audio.Audio;
 import java.util.Map;
 import java.util.Queue;
 
-public class StunningBarrier extends Barrier
+public final class StunningBarrier extends Barrier
 {
     private static final int
         STATIC_CHARGE_TIME = 110;

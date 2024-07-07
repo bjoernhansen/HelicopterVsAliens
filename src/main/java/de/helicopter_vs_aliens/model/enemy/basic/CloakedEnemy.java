@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
-public class CloakedEnemy extends BasicEnemy
+public final class CloakedEnemy extends BasicEnemy
 {
     private static final int
         CLOAKING_SPEED = 2;

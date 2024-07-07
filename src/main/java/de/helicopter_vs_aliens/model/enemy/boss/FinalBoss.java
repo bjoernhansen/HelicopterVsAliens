@@ -11,7 +11,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.function.Predicate;
 
-public class FinalBoss extends BossEnemy
+public final class FinalBoss extends BossEnemy
 {
     private static final int
         FINAL_BOSS_POSITION_Y = 98;

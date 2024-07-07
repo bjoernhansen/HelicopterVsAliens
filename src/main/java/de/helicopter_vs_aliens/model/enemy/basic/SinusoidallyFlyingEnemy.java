@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.basic;
 
-public class SinusoidallyFlyingEnemy extends BasicEnemy
+public final class SinusoidallyFlyingEnemy extends BasicEnemy
 {
     @Override
     protected void doTypeSpecificInitialization()

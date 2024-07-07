@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.basic;
 
 import de.helicopter_vs_aliens.control.EnemyController;
 
-public class Rock extends BasicEnemy
+public final class Rock extends BasicEnemy
 {
     private static final int
         BURIAL_DEPTH = 15;

@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
-public class ThirdBoss extends BossEnemy
+public final class ThirdBoss extends BossEnemy
 {
     @Override
     protected void doTypeSpecificInitialization()

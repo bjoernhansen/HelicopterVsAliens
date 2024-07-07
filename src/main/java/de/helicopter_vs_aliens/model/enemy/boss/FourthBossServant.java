@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.util.Calculations;
 
-public class FourthBossServant extends BossServant
+public final class FourthBossServant extends BossServant
 {
     private static final int
         WIDTH_VARIANCE = 15;

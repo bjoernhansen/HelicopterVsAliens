@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.basic;
 
-public class Shooter extends BasicEnemy
+public final class Shooter extends BasicEnemy
 {
     @Override
     protected void doTypeSpecificInitialization()

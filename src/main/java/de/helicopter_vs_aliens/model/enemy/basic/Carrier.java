@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
-public class Carrier extends BasicEnemy
+public final class Carrier extends BasicEnemy
 {
     public static final float
         CARRIER_TURN_PROBABILITY_FACTOR = 0.4f;

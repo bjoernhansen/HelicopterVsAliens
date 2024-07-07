@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 
-public class CloakedBarrier extends ArmedBarrier
+public final class CloakedBarrier extends ArmedBarrier
 {
     // TODO CLOAKED_BARRIER  überarbeiten, wie oft soll er wiederkommen? manchmal schießt er nicht,
     

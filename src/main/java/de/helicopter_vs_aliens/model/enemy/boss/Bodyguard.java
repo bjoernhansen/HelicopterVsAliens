@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 
-public class Bodyguard extends FinalBossServant
+public final class Bodyguard extends FinalBossServant
 {
     private static final int
         RIGHT_BOUNDARY = 660;

@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.barrier;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBossServant;
 
-public class Protector extends BurrowingBarrier
+public final class Protector extends BurrowingBarrier
 {
     private static final int
         POSITION_X = 919,

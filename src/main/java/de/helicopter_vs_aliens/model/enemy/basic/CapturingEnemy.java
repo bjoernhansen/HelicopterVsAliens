@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.AbilityStatusType;
 
 
-public class CapturingEnemy extends BasicEnemy
+public final class CapturingEnemy extends BasicEnemy
 {
     private AbilityStatusType
         tractorDeviceActivityStatus; // = DISABLED (Gegner ohne Traktor); = READY (Traktor nicht aktiv); = ACTIVE (Traktor aktiv)

@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
-public class Healer extends FinalBossServant
+public final class Healer extends FinalBossServant
 {
     private static final int
         LEFT_BOUNDARY = 563;

@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.util.Calculations;
 
-public class BigShieldMaker extends ShieldMaker
+public final class BigShieldMaker extends ShieldMaker
 {
     @Override
     protected void doTypeSpecificInitialization()

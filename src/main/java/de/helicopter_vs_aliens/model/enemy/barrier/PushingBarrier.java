@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.barrier;
 
 import de.helicopter_vs_aliens.util.Calculations;
 
-public class PushingBarrier extends Barrier
+public final class PushingBarrier extends Barrier
 {
     @Override
     protected void doTypeSpecificInitialization()

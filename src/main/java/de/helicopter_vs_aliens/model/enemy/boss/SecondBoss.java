@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 
-public class SecondBoss extends BossEnemy
+public final class SecondBoss extends BossEnemy
 {
     @Override
     protected void doTypeSpecificInitialization()

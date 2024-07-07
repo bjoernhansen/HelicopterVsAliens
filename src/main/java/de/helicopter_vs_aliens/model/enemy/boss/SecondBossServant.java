@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-public class SecondBossServant extends BossServant
+public final class SecondBossServant extends BossServant
 {
     @Override
     protected void doTypeSpecificInitialization()

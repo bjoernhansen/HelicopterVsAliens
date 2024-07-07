@@ -3,7 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.barrier;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.util.Calculations;
 
-public class ShootingBarrier extends ArmedBarrier
+public final class ShootingBarrier extends ArmedBarrier
 {
     public static final int
         MIN_SPIN_SHOOTER_LEVEL = 23;

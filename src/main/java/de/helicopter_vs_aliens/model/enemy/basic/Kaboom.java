@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
 import javax.sound.sampled.Clip;
 
-public class Kaboom extends BasicEnemy
+public final class Kaboom extends BasicEnemy
 {
     private static final int
         Y_TURN_LINE = GROUND_Y - (int) (EnemyType.KABOOM.getModel().getHeightFactor() * EnemyType.KABOOM.getWidth());

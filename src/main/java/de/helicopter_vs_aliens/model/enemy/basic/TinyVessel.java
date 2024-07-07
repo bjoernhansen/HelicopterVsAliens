@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.basic;
 
-public class TinyVessel extends BasicEnemy
+public final class TinyVessel extends BasicEnemy
 {
     public static final float
         SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.2f;

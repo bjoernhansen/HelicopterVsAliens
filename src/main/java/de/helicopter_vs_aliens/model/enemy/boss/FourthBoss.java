@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Queue;
 
 
-public class FourthBoss extends BossEnemy
+public final class FourthBoss extends BossEnemy
 {
     private static final int
         FIRST_SERVANT_CREATION_TIME = 60,
