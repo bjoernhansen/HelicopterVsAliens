@@ -9,6 +9,7 @@ import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
+import java.util.EnumMap;
 import java.util.function.Predicate;
 
 public final class FinalBoss extends BossEnemy
@@ -22,8 +23,8 @@ public final class FinalBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        LevelManager.maxNr = 5; // TODO diese Zuweisung gehört hier nicht her oder?
-        operator = new Enemy.FinalEnemyOperator();
+        LevelManager.maxNr = 5; // TODO diese Zuweisung gehört hier nicht her
+        operator = new FinalBossOperator();
         Events.boss = this;
     
         super.doTypeSpecificInitialization();
@@ -113,5 +114,51 @@ public final class FinalBoss extends BossEnemy
         // TODO Konstanten definieren
         helicopter.destination.setLocation(helicopter.getX()+40,520.0);
         Events.determineHighscoreTimes(helicopter);
+    }
+
+    public static class FinalBossOperator
+    {
+        private final EnumMap<FinalBossServantType, Enemy>
+                servants = new EnumMap<>(FinalBossServantType.class);
+
+        private final EnumMap<FinalBossServantType, Integer>
+                timeSinceDeath = new EnumMap<>(FinalBossServantType.class);
+
+        public boolean hasMinimumTimeBeforeRecreationElapsed(FinalBossServantType servantType)
+        {
+            return timeSinceDeath.get(servantType) > servantType.getMinimumTimeBeforeRecreation();
+        }
+
+        public void incrementTimeSinceDeathCounter(FinalBossServantType servantType)
+        {
+            Integer timeSinceDeathCounter = timeSinceDeath.get(servantType);
+            timeSinceDeath.put(servantType, timeSinceDeathCounter + 1);
+        }
+
+        public boolean containsServant(FinalBossServantType servantType)
+        {
+            return servants.containsKey(servantType);
+        }
+
+        public void remove(FinalBossServantType servantType)
+        {
+            servants.remove(servantType);
+        }
+
+        public void resetTimeSinceDeath(FinalBossServantType servantType)
+        {
+            timeSinceDeath.put(servantType, 0);
+        }
+
+        public Enemy getServant(FinalBossServantType servantType)
+        {
+            return servants.get(servantType);
+        }
+
+        public void putServant(Enemy enemy)
+        {
+            FinalBossServantType.of(enemy.type)
+                    .ifPresent(servantType -> servants.put(servantType, enemy));
+        }
     }
 }

@@ -6,13 +6,16 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.util.Calculations;
 
+
 public abstract class BossEnemy extends StandardEnemy
 {
-    protected static final int
+    static final int
         INCREASED_KAMIKAZE_SPEED_UP_X = 12;
     
     private static final int
-        HEALED_HIT_POINTS = 11,
+        HEALED_HIT_POINTS = 11;
+    
+    private static final int
         EMP_SLOW_TIME_BOSS = 110;
     
     private static final float
@@ -36,11 +39,11 @@ public abstract class BossEnemy extends StandardEnemy
     {
         return 0;
     }
-   
+    
     protected void healHitPoints()
     {
         int newHitPoints = Math.min(Events.boss.getHitPoints() + HEALED_HIT_POINTS,
-            Events.boss.startingHitPoints);
+                                    Events.boss.startingHitPoints);
         setHitPoints(newHitPoints);
     }
     
@@ -51,7 +54,7 @@ public abstract class BossEnemy extends StandardEnemy
         bossInactivationEvent();
     }
     
-    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider){}
+    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider) {}
     
     protected void bossInactivationEvent()
     {

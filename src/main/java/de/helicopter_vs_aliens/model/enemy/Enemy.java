@@ -14,6 +14,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.enemy.EnemyPainter;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
+import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
 import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
 import de.helicopter_vs_aliens.model.enemy.maneuver.ManeuverManger;
@@ -41,7 +42,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
@@ -120,51 +120,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		return getSpeedLevel().getY() != 0;
 	}
 	
-	public static class FinalEnemyOperator
-	{
-		private final EnumMap<FinalBossServantType, Enemy>
-			servants = new EnumMap<>(FinalBossServantType.class);
-		
-		private final EnumMap<FinalBossServantType, Integer>
-			timeSinceDeath = new EnumMap<>(FinalBossServantType.class);
-		
-		public boolean hasMinimumTimeBeforeRecreationElapsed(FinalBossServantType servantType)
-		{
-			return timeSinceDeath.get(servantType) > servantType.getMinimumTimeBeforeRecreation();
-		}
-		
-		public void incrementTimeSinceDeathCounter(FinalBossServantType servantType)
-		{
-			Integer timeSinceDeathCounter = timeSinceDeath.get(servantType);
-			timeSinceDeath.put(servantType, timeSinceDeathCounter + 1);
-		}
-		
-		public boolean containsServant(FinalBossServantType servantType)
-		{
-			return servants.containsKey(servantType);
-		}
-		
-		public void remove(FinalBossServantType servantType)
-		{
-			servants.remove(servantType);
-		}
-		
-		public void resetTimeSinceDeath(FinalBossServantType servantType)
-		{
-			timeSinceDeath.put(servantType, 0);
-		}
-		
-		public Enemy getServant(FinalBossServantType servantType)
-		{
-			return servants.get(servantType);
-		}
-		
-		public void putServant(Enemy enemy)
-		{
-			FinalBossServantType.of(enemy.type)
-								.ifPresent(servantType -> servants.put(servantType, enemy));
-		}
-	}
 	
 	private static final int
 		WIDTH_VARIANCE_DIVISOR = 10,
@@ -388,7 +343,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	private final GraphicsAdapter []
 		graphicsAdapters = new GraphicsAdapter[2];
 	
-	public FinalEnemyOperator
+	// TODO sollte in andere Klasse umziehen --> nur der FinalBoss braucht den FinalBossOperator
+	public FinalBoss.FinalBossOperator
 		operator;
 	
 	private final CloakingDevice
@@ -729,14 +685,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 			y = (int)(helicopter.getY()
 				+ helicopter.getHeight()/2
 				- getWidth()
-				+ Math.random()*getWidth());
+				+ Calculations.random()*getWidth());
 		
 		if(isLeftOfHelicopter)
 		{
 			x = (int)(helicopter.getX()
 				-3*getWidth()/2
 				- 10
-				+ Math.random()*(getWidth()/3));
+				+ Calculations.random()*(getWidth()/3.0));
 		}
 		else
 		{
@@ -1394,12 +1350,12 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 					Integer.MAX_VALUE/2f,
 					EnemyMissile.DIAMETER + 2*FIELD_OF_FIRE_TOLERANCE_Y))
 				||
-				((isFlyingRight()
+				(isFlyingRight()
 				  && gameRessourceProvider.getHelicopter().intersects(
 					getX() + 0,
 					getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth()/2) - FIELD_OF_FIRE_TOLERANCE_Y,
 					Integer.MAX_VALUE/2f,
-					EnemyMissile.DIAMETER + 2*FIELD_OF_FIRE_TOLERANCE_Y)))))
+					EnemyMissile.DIAMETER + 2*FIELD_OF_FIRE_TOLERANCE_Y))))
 		{
 			shoot(gameRessourceProvider.getActivePaintableEntityManager()
 									   .getEnemyMissiles(),
@@ -2043,7 +1999,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		empSlowedTimer = READY;
 		crashPositionY = (int)(isIntersectingGroundLine()
 								? getMaxY()
-								: GROUND_Y + 1 + Math.random() * 0.25 * getHeight());
+								: GROUND_Y + 1 + Calculations.random() * 0.25 * getHeight());
 	}
 	
 	private void adjustBrightnessOfColors(float dimFactor)

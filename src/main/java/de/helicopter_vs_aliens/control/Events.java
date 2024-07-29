@@ -136,7 +136,7 @@ public class Events
         cheatString = "";
 
     private static final String
-        cheatCode = "+cheats";            // Code, mit welchem Cheats aktiviert werden können
+        CHEAT_CODE = "+cheats";            // Code, mit welchem Cheats aktiviert werden können
 
     public static BossEnemy
         boss;                            // Referenz auf den aktuellen Endgegner
@@ -366,7 +366,7 @@ public class Events
         }
         else if (IS_CHEATING_MODE_ACTIVATABLE)
         {
-            if (keyEvent.isKeyEqualTo(cheatCode.charAt(cheatString.length())))
+            if (keyEvent.isKeyEqualTo(CHEAT_CODE.charAt(cheatString.length())))
             {
                 cheatString += keyEvent.getKey();
             }
@@ -374,7 +374,7 @@ public class Events
             {
                 cheatString = "";
             }
-            if (cheatString.equals(cheatCode))
+            if (cheatString.equals(CHEAT_CODE))
             {
                 cheatingMode = true;
             }

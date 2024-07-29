@@ -6,10 +6,10 @@ import java.util.Random;
 
 public final class Calculations
 {
-    public final static double
+	public static final double
 		ROOT05 = Math.sqrt(2)/2.0;
 	
-	public final static Point2D 
+	public static final Point2D
 		ZERO_POINT = new Point2D.Float(0,0);
   
 	private static final int []
@@ -46,6 +46,11 @@ public final class Calculations
     {
         return random.nextInt(valueRange);
     }
+	
+	public static double random()
+	{
+		return random.nextDouble();
+	}
 	
 	public static boolean tossUp()
     {
