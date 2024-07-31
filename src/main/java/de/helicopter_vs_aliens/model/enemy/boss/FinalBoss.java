@@ -65,7 +65,7 @@ public final class FinalBoss extends BossEnemy
                 stopMoving();
                 boss.setLocation(getCenterX(),
                     getCenterY());
-                EnemyController.makeAllBoss5Servants = true;
+                EnemyController.makeAllFinalBossServants = true;
             }
             else
             {
@@ -82,7 +82,7 @@ public final class FinalBoss extends BossEnemy
                                 .forEach(servantType -> {
                                     if (isFinalBossServantCreationAllowedFor(servantType))
                                     {
-                                        EnemyController.makeFinalBossServant.add(servantType);
+                                        EnemyController.missingFinalBossServants.add(servantType);
                                     }
                                     else
                                     {

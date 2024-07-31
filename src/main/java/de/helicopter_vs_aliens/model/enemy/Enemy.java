@@ -241,7 +241,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		untouchedCounter,
 		stunningTimer,
 		empSlowedTimer,			// reguliert die Länge der Verlangsamung nach EMP-Treffer (Pegasus-Klasse)
-		collisionDamageTimer;			// Timer zur überwachung der Zeit zwischen zwei Helikopter-HP-Abzügen;
+		collisionDamageTimer;	// Timer zur überwachung der Zeit zwischen zwei Helikopter-HP-Abzügen;
 	
 	public boolean
 		isTouchingHelicopter,
@@ -681,8 +681,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		Helicopter helicopter = getHelicopter();
 		boolean isLeftOfHelicopter = helicopter.getMaxX() + 0.5f * getWidth() + BARRIER_DISTANCE >= 1024;
 					
-		int x, 
-			y = (int)(helicopter.getY()
+		int x;
+		int y = (int)(helicopter.getY()
 				+ helicopter.getHeight()/2
 				- getWidth()
 				+ Calculations.random()*getWidth());
@@ -919,7 +919,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	
 	private boolean isAbleToMakeKamikaze()
 	{
-		return canKamikaze && !(teleportTimer > 0);
+		return canKamikaze && teleportTimer <= 0;
 	}
 	
 	private boolean isTurningAroundEarly()
@@ -2571,12 +2571,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	public EnemyType getType()
 	{
 		return type;
-	}
-	
-	@Override
-	public void doSomeMove()
-	{
-		System.out.println("Ich performe!");
 	}
 	
 	protected void stopMoving()

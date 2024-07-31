@@ -6,6 +6,8 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 
 public abstract class FinalBossServant extends BossServant
 {
+    protected FinalBoss finalBoss;
+    
     @Override
     protected void doTypeSpecificInitialization()
     {
@@ -13,7 +15,7 @@ public abstract class FinalBossServant extends BossServant
     
         super.doTypeSpecificInitialization();
     }
-    
+     
     public static void selectAsFinalBossServant(Enemy enemy)
     {
         Events.boss.operator.putServant(enemy);

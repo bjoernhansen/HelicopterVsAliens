@@ -3,16 +3,14 @@ package de.helicopter_vs_aliens.model.enemy.maneuver;
 import java.util.function.Function;
 
 
-public enum ManeuverType implements ManeuverFactory
+public enum StandardManeuverType implements ManeuverFactory
 {
-    SIMPLE(SimpleManeuver::new),
-    
     BATCH_WISE_MOVE(BatchWiseMoveManeuver::new);
     
     Function<Maneuverable, Maneuver> maneuverProvider;
     
     
-    ManeuverType(Function<Maneuverable, Maneuver> maneuverProvider) {
+    StandardManeuverType(Function<Maneuverable, Maneuver> maneuverProvider) {
         this.maneuverProvider = maneuverProvider;
     }
     

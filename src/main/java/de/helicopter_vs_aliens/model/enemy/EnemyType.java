@@ -42,7 +42,7 @@ import de.helicopter_vs_aliens.model.enemy.boss.SecondBoss;
 import de.helicopter_vs_aliens.model.enemy.boss.SecondBossServant;
 import de.helicopter_vs_aliens.model.enemy.boss.SmallShieldMaker;
 import de.helicopter_vs_aliens.model.enemy.boss.ThirdBoss;
-import de.helicopter_vs_aliens.model.enemy.maneuver.ManeuverType;
+import de.helicopter_vs_aliens.model.enemy.maneuver.StandardManeuverType;
 import de.helicopter_vs_aliens.util.ColorRange;
 import de.helicopter_vs_aliens.util.Colorations;
 
@@ -67,7 +67,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
           110,
           TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5, 1, 1),
           CollisionEffect.EXPLOSION,
-          EnumSet.of(ManeuverType.SIMPLE)),
+          EnumSet.noneOf(StandardManeuverType.class)),
     
     SMALL( // ab Level 3
            SmallCruiser::new,
@@ -79,7 +79,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
            125,
            TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0, 1.5, 0.5),
            CollisionEffect.EXPLOSION,
-           EnumSet.noneOf(ManeuverType.class)),
+           EnumSet.noneOf(StandardManeuverType.class)),
     
     RUNABOUT( // level 5
               Runabout::new,
@@ -91,7 +91,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
               100,
               TargetSpeedLevelProvider.ofVariableSpeed(2.0, 2.5, 2.0, 1.5),
               CollisionEffect.EXPLOSION,
-              EnumSet.noneOf(ManeuverType.class)),
+              EnumSet.noneOf(StandardManeuverType.class)),
     
     FREIGHTER( // ab Level 7
                Freighter::new,
@@ -103,7 +103,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                145,
                TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 1.0, 0.5),
                CollisionEffect.NO_EFFECT,
-               EnumSet.noneOf(ManeuverType.class)),
+               EnumSet.noneOf(StandardManeuverType.class)),
     
     BATCHWISE( // ab Level 11
                BatchwiseFlyingEnemy::new,
@@ -115,7 +115,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                130,
                TargetSpeedLevelProvider.ofVariableSpeed(7.0, 1.0, 4.0, 0.5),
                CollisionEffect.NO_EFFECT,
-               EnumSet.of(ManeuverType.BATCH_WISE_MOVE)),
+               EnumSet.of(StandardManeuverType.BATCH_WISE_MOVE)),
     
     SINUS( // ab Level 13
            SinusoidallyFlyingEnemy::new,
@@ -127,7 +127,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
            110,
            TargetSpeedLevelProvider.ofVariableSpeed(2.5, 11.0, 2.5, 0.0),
            CollisionEffect.EXPLOSION,
-           EnumSet.noneOf(ManeuverType.class)),
+           EnumSet.noneOf(StandardManeuverType.class)),
     
     DODGER( // ab Level 16
             Dodger::new,
@@ -139,7 +139,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
             170,
             TargetSpeedLevelProvider.ofVariableSpeed(1.5, 0.0, 1.5, 0.5),
             CollisionEffect.NO_EFFECT,
-            EnumSet.noneOf(ManeuverType.class)),
+            EnumSet.noneOf(StandardManeuverType.class)),
     
     CHAOTIC( // ab Level 21
              ChaoticallyFlyingEnemy::new,
@@ -151,7 +151,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
              125,
              TargetSpeedLevelProvider.ofVariableSpeed(3.5, 6.5, 1.5, 2.0),
              CollisionEffect.EXPLOSION,
-             EnumSet.noneOf(ManeuverType.class)),
+             EnumSet.noneOf(StandardManeuverType.class)),
     
     CALLBACK( // ab Level 24
               CallbackEnemy::new,
@@ -163,7 +163,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
               95,
               TargetSpeedLevelProvider.ofVariableSpeed(5.5, 5.0, 2.5, 2.0),
               CollisionEffect.EXPLOSION,
-              EnumSet.noneOf(ManeuverType.class)),
+              EnumSet.noneOf(StandardManeuverType.class)),
     
     SHOOTER( // ab Level 26
              Shooter::new,
@@ -175,7 +175,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
              80,
              TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5, 1.0, 1.0),
              CollisionEffect.NO_EFFECT,
-             EnumSet.noneOf(ManeuverType.class)),
+             EnumSet.noneOf(StandardManeuverType.class)),
     
     CLOAK( // ab Level 31
            CloakedEnemy::new,
@@ -187,7 +187,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
            85,
            TargetSpeedLevelProvider.ofVariableSpeed(0.5, 1.0, 1.0, 0.5),
            CollisionEffect.EXPLOSION,
-           EnumSet.noneOf(ManeuverType.class)),
+           EnumSet.noneOf(StandardManeuverType.class)),
     
     LONELY_SPEEDER( // ab Level 35
                     LonelySpeeder::new,
@@ -199,7 +199,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                     70,
                     TargetSpeedLevelProvider.ofVariableSpeed(12.0, 0.5, 3.5, 3.0),
                     CollisionEffect.EXPLOSION,
-                    EnumSet.noneOf(ManeuverType.class)),
+                    EnumSet.noneOf(StandardManeuverType.class)),
     
     CARRIER( // ab Level 36
              Carrier::new,
@@ -211,7 +211,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
              165,
              TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.5, 1.0, 1.0),
              CollisionEffect.NO_EFFECT,
-             EnumSet.noneOf(ManeuverType.class)),
+             EnumSet.noneOf(StandardManeuverType.class)),
     
     CRAZY( // ab Level 37
            CrazyEnemy::new,
@@ -223,7 +223,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
            115,
            TargetSpeedLevelProvider.ofVariableSpeed(4.0, 0.5, 2.5, 1.0),
            CollisionEffect.EXPLOSION,
-           EnumSet.noneOf(ManeuverType.class)),
+           EnumSet.noneOf(StandardManeuverType.class)),
     
     AMBUSH( // ab Level 41
             AmbushingEnemy::new,
@@ -235,7 +235,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
             95,
             TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0, 1.5, 0.0),
             CollisionEffect.EXPLOSION,
-            EnumSet.noneOf(ManeuverType.class)),
+            EnumSet.noneOf(StandardManeuverType.class)),
     
     LOOPING( // ab Level 43
              LoopingEnemy::new,
@@ -247,7 +247,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
              105,
              TargetSpeedLevelProvider.ofFixedSpeed(9.0, 11.0),
              CollisionEffect.NO_EFFECT,
-             EnumSet.noneOf(ManeuverType.class)),
+             EnumSet.noneOf(StandardManeuverType.class)),
     
     CAPTURING( // ab Level 45
                CapturingEnemy::new,
@@ -259,7 +259,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                115,
                TargetSpeedLevelProvider.ofVariableSpeed(2.5, 4.5, 2.0, 1.5),
                CollisionEffect.EXPLOSION,
-               EnumSet.noneOf(ManeuverType.class)),
+               EnumSet.noneOf(StandardManeuverType.class)),
     
     TELEPORTING( // ab Level 46
                  TeleportingEnemy::new,
@@ -271,7 +271,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                  130,
                  TargetSpeedLevelProvider.ofVariableSpeed(1.0, 0.0, 0.0, 0.5),
                  CollisionEffect.NO_EFFECT,
-                 EnumSet.noneOf(ManeuverType.class)),
+                 EnumSet.noneOf(StandardManeuverType.class)),
     
     // Boss-Gegner
     BOSS_1(
@@ -284,7 +284,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         275,
         TargetSpeedLevelProvider.ofFixedSpeed(2.0, 0.5),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     BOSS_2(
         SecondBoss::new,
@@ -296,7 +296,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         250,
         TargetSpeedLevelProvider.ofFixedSpeed(7.0, 8.0),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     BOSS_2_SERVANT(
         SecondBossServant::new,
@@ -308,7 +308,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         65,
         TargetSpeedLevelProvider.ofVariableSpeed(3.0, 3.0, 10.5, 10.5),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     BOSS_3(
         ThirdBoss::new,
@@ -320,7 +320,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         250,
         TargetSpeedLevelProvider.ofFixedSpeed(5.0, 4.0),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     BOSS_4(
         FourthBoss::new,
@@ -332,7 +332,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         250,
         TargetSpeedLevelProvider.ofFixedSpeed(10.0, 10.0),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     BOSS_4_SERVANT(
         FourthBossServant::new,
@@ -344,7 +344,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         85,
         TargetSpeedLevelProvider.ofVariableSpeed(6.0, 6.0, 2.5, 2.5),
         CollisionEffect.EXPLOSION,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     FINAL_BOSS(
         FinalBoss::new,
@@ -356,7 +356,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         450,
         TargetSpeedLevelProvider.ofFixedSpeed(23.5, 0.0),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     SMALL_SHIELD_MAKER(
         SmallShieldMaker::new,
@@ -368,7 +368,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         125,
         TargetSpeedLevelProvider.ofFixedSpeed(7.0, 6.5),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     BIG_SHIELD_MAKER(
         BigShieldMaker::new,
@@ -380,7 +380,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         145,
         TargetSpeedLevelProvider.ofFixedSpeed(6.5, 7.0),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     BODYGUARD(
         Bodyguard::new,
@@ -392,7 +392,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         225,
         TargetSpeedLevelProvider.ofFixedSpeed(1.0, 2.0),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     HEALER(
         Healer::new,
@@ -404,7 +404,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         115,
         TargetSpeedLevelProvider.ofFixedSpeed(2.5, 3.0),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     PROTECTOR(
         Protector::new,
@@ -416,7 +416,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         90,
         TargetSpeedLevelProvider.ofZeroSpeed(),
         CollisionEffect.NO_EFFECT,
-        EnumSet.noneOf(ManeuverType.class)),
+        EnumSet.noneOf(StandardManeuverType.class)),
     
     // Hindernisse (Barrier)
     SMALL_BARRIER( // ab Level 2
@@ -429,7 +429,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                    65,
                    TargetSpeedLevelProvider.ofZeroSpeed(),
                    CollisionEffect.NO_EFFECT,
-                   EnumSet.noneOf(ManeuverType.class)),
+                   EnumSet.noneOf(StandardManeuverType.class)),
     
     BIG_BARRIER( // ab Level 6
                  BigBarrier::new,
@@ -441,7 +441,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                  150,
                  TargetSpeedLevelProvider.ofZeroSpeed(),
                  CollisionEffect.NO_EFFECT,
-                 EnumSet.noneOf(ManeuverType.class)),
+                 EnumSet.noneOf(StandardManeuverType.class)),
     
     STUNNING_BARRIER( // ab Level 12
                       StunningBarrier::new,
@@ -453,7 +453,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                       65,
                       TargetSpeedLevelProvider.ofVariableSpeed(0.0, 1.0, 0.0, 2.0),
                       CollisionEffect.NO_EFFECT,
-                      EnumSet.noneOf(ManeuverType.class)),
+                      EnumSet.noneOf(StandardManeuverType.class)),
     
     PUSHING_BARRIER( // ab Level 15
                      PushingBarrier::new,
@@ -465,7 +465,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                      105,
                      TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 2.0, 0.0),
                      CollisionEffect.NO_EFFECT,
-                     EnumSet.noneOf(ManeuverType.class)),
+                     EnumSet.noneOf(StandardManeuverType.class)),
     
     SHOOTING_BARRIER( // ab Level 18
                       ShootingBarrier::new,
@@ -477,7 +477,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                       85,
                       TargetSpeedLevelProvider.ofZeroSpeed(),
                       CollisionEffect.NO_EFFECT,
-                      EnumSet.noneOf(ManeuverType.class)),
+                      EnumSet.noneOf(StandardManeuverType.class)),
     
     BURROWING_BARRIER( // ab Level 32
                        DiggerBarrier::new,
@@ -489,7 +489,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                        80,
                        TargetSpeedLevelProvider.ofZeroSpeed(),
                        CollisionEffect.NO_EFFECT,
-                       EnumSet.noneOf(ManeuverType.class)),
+                       EnumSet.noneOf(StandardManeuverType.class)),
     
     SHIELDING_BARRIER( // ab Level 42
                        ShieldingBarrier::new,
@@ -501,7 +501,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                        80,
                        TargetSpeedLevelProvider.ofZeroSpeed(),
                        CollisionEffect.NO_EFFECT,
-                       EnumSet.noneOf(ManeuverType.class)),
+                       EnumSet.noneOf(StandardManeuverType.class)),
     
     CLOAKED_BARRIER( // ab Level 44
                      CloakedBarrier::new,
@@ -513,7 +513,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                      100,
                      TargetSpeedLevelProvider.ofZeroSpeed(),
                      CollisionEffect.NO_EFFECT,
-                     EnumSet.noneOf(ManeuverType.class)),
+                     EnumSet.noneOf(StandardManeuverType.class)),
     
     // Hindernis (Rock-Enemy)
     ROCK( // ab Level 27
@@ -526,7 +526,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
           300,
           TargetSpeedLevelProvider.ofZeroSpeed(),
           CollisionEffect.NO_EFFECT,
-          EnumSet.noneOf(ManeuverType.class)),
+          EnumSet.noneOf(StandardManeuverType.class)),
     
     // sonstige Gegner
     KABOOM( // ab Level 12
@@ -539,7 +539,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
             120,
             TargetSpeedLevelProvider.ofVariableSpeed(0.5, 0.0, 0.5, 0.0),
             CollisionEffect.EXPLOSION,
-            EnumSet.noneOf(ManeuverType.class)),
+            EnumSet.noneOf(StandardManeuverType.class)),
     
     ESCAPED_SPEEDER( // ab Level 36
                      EscapedSpeeder::new,
@@ -551,7 +551,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                      70,
                      TargetSpeedLevelProvider.ofVariableSpeed(10.0, 0.5, 7.5, 3.0),
                      CollisionEffect.EXPLOSION,
-                     EnumSet.noneOf(ManeuverType.class)),
+                     EnumSet.noneOf(StandardManeuverType.class)),
     ;
     
     private static final List<EnemyType>
@@ -616,7 +616,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
     private final boolean
         isExplodingOnCollisions;    // = true: explodiert bei Kollisionen mit dem Helikopter
     
-    private final Set<ManeuverType> maneuverTypes;
+    private final Set<StandardManeuverType> maneuverTypes;
     
     
     EnemyType(Supplier<? extends Enemy> instanceSupplier,
@@ -628,7 +628,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
               int width,
               TargetSpeedLevelProvider targetSpeedLevelProvider,
               CollisionEffect collisionEffect,
-              Set<ManeuverType> maneuverTypes)
+              Set<StandardManeuverType> maneuverTypes)
     {
         this.instanceSupplier = instanceSupplier;
         this.enemyClass = enemyClass;
@@ -747,7 +747,7 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         return isExplodingOnCollisions;
     }
     
-    public Set<ManeuverType> getManeuverTypes()
+    public Set<StandardManeuverType> getManeuverTypes()
     {
         return maneuverTypes;
     }

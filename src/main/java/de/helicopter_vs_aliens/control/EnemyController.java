@@ -37,10 +37,10 @@ public class EnemyController
     public static boolean
         makeBossTwoServants = false,    // make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
         makeBoss4Servant = false,
-        makeAllBoss5Servants = false;
+        makeAllFinalBossServants = false;
     
     public static final EnumSet<FinalBossServantType>
-        makeFinalBossServant = EnumSet.noneOf(FinalBossServantType.class);
+        missingFinalBossServants = EnumSet.noneOf(FinalBossServantType.class);
     
     public static int barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
     
@@ -117,15 +117,8 @@ public class EnemyController
     {
         return makeBossTwoServants
             || makeBoss4Servant
-            || makeAllBoss5Servants
-            || hasToMakeBoss5Servants();
-    }
-    
-    private static boolean hasToMakeBoss5Servants()
-    {
-        return FinalBossServantType.getValues()
-                                   .stream()
-                                   .anyMatch(makeFinalBossServant::contains);
+            || makeAllFinalBossServants
+            || !missingFinalBossServants.isEmpty();
     }
     
     private static void createBossServant(GameRessourceProvider gameRessourceProvider)
@@ -140,7 +133,7 @@ public class EnemyController
             makeBoss4Servant = false;
             creation(gameRessourceProvider);
         }
-        else if(makeAllBoss5Servants)
+        else if(makeAllFinalBossServants)
         {
             createAllBoss5Servants(gameRessourceProvider);
         }
@@ -148,9 +141,9 @@ public class EnemyController
         {
             FinalBossServantType.getValues()
                                 .forEach(servantType -> {
-                                    if (makeFinalBossServant.contains(servantType))
+                                    if (missingFinalBossServants.contains(servantType))
                                     {
-                                        makeFinalBossServant.remove(servantType);
+                                        missingFinalBossServants.remove(servantType);
                                         LevelManager.nextBossEnemyType = servantType.getEnemyType();
                                         creation(gameRessourceProvider);
                                     }
@@ -195,7 +188,7 @@ public class EnemyController
     
     private static void createAllBoss5Servants(GameRessourceProvider gameRessourceProvider)
     {
-        makeAllBoss5Servants = false;
+        makeAllFinalBossServants = false;
         FinalBossServantType.getValues().forEach(servantType -> {
             LevelManager.nextBossEnemyType = servantType.getEnemyType();
             creation(gameRessourceProvider);
