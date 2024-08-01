@@ -7,6 +7,9 @@ import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.enemy.basic.Carrier;
+import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
+import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
+import de.helicopter_vs_aliens.model.enemy.boss.FinalBossAcquaintance;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.util.Calculations;
 
@@ -135,19 +138,11 @@ public class EnemyController
         }
         else if(makeAllFinalBossServants)
         {
-            createAllBoss5Servants(gameRessourceProvider);
+            createAllFinalBossServants(gameRessourceProvider);
         }
         else
         {
-            FinalBossServantType.getValues()
-                                .forEach(servantType -> {
-                                    if (missingFinalBossServants.contains(servantType))
-                                    {
-                                        missingFinalBossServants.remove(servantType);
-                                        LevelManager.nextBossEnemyType = servantType.getEnemyType();
-                                        creation(gameRessourceProvider);
-                                    }
-                                });
+            createMissingFinalBossServants(gameRessourceProvider);
         }
     }
     
@@ -186,7 +181,7 @@ public class EnemyController
         LevelManager.maxNr = 3;
     }
     
-    private static void createAllBoss5Servants(GameRessourceProvider gameRessourceProvider)
+    private static void createAllFinalBossServants(GameRessourceProvider gameRessourceProvider)
     {
         makeAllFinalBossServants = false;
         FinalBossServantType.getValues().forEach(servantType -> {
@@ -195,6 +190,18 @@ public class EnemyController
         });
     }
     
+    private static void createMissingFinalBossServants(GameRessourceProvider gameRessourceProvider)
+    {
+        FinalBossServantType.getValues()
+                            .forEach(servantType -> {
+                                if (missingFinalBossServants.contains(servantType))
+                                {
+                                    missingFinalBossServants.remove(servantType);
+                                    LevelManager.nextBossEnemyType = servantType.getEnemyType();
+                                    creation(gameRessourceProvider);
+                                }
+                            });
+    }
     
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {

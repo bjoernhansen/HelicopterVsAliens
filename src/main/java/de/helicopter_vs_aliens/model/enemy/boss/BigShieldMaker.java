@@ -1,5 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
+import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.util.Calculations;
 
 public final class BigShieldMaker extends ShieldMaker
@@ -12,6 +13,12 @@ public final class BigShieldMaker extends ShieldMaker
         shotSpeed = 1;
         
         super.doTypeSpecificInitialization();
+    }
+    
+    @Override
+    FinalBossServantType shieldingBrother()
+    {
+        return FinalBossServantType.SMALL_SHIELD_MAKER;
     }
     
     @Override

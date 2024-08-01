@@ -1,9 +1,13 @@
 package de.helicopter_vs_aliens.model.enemy.barrier;
 
+import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
+import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
+import de.helicopter_vs_aliens.model.enemy.boss.FinalBossAcquaintance;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBossServant;
 
-public final class Protector extends BurrowingBarrier
+public final class Protector extends BurrowingBarrier implements FinalBossAcquaintance
 {
     private static final int
         POSITION_X = 919,
@@ -11,12 +15,11 @@ public final class Protector extends BurrowingBarrier
         SHOOTING_RATE = 25,
         SHOTS_PER_CYCLE = 5,
         SHOOT_SPEED = 10;
-    
+        
     @Override
     protected void doTypeSpecificInitialization()
     {
-        FinalBossServant.selectAsFinalBossServant(this);
-    
+        getFinalBoss().registerServant(this);
         super.doTypeSpecificInitialization();
     }
     
@@ -90,5 +93,17 @@ public final class Protector extends BurrowingBarrier
     protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
     {
         finalBossServantRemoval();
+    }
+    
+    @Override
+    public FinalBoss getFinalBoss()
+    {
+        return (FinalBoss)Events.boss;
+    }
+    
+    @Override
+    public void finalBossServantRemoval()
+    {
+        getFinalBoss().removeServant(getType());
     }
 }

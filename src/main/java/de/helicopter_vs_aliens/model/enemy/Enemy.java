@@ -332,7 +332,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         private boolean hasCrashed;            // = true: Gegner ist abgestürzt
         private boolean isEmpShocked;            // = true: Gegner steht unter EMP-Schock --> ist verlangsamt
         public boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
-        protected boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
+        public boolean isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
         protected boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
         protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
         protected boolean isRecoveringSpeed;
@@ -342,10 +342,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		
 	private final GraphicsAdapter []
 		graphicsAdapters = new GraphicsAdapter[2];
-	
-	// TODO sollte in andere Klasse umziehen --> nur der FinalBoss braucht den FinalBossOperator
-	public FinalBoss.FinalBossOperator
-		operator;
 	
 	private final CloakingDevice
 		cloakingDevice = new CloakingDevice();
@@ -381,7 +377,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		
 		callBack = 0;
 		shield = 0;
-		operator = null;
 		isDestroyed = false;
 		isMarkedForRemoval = false;
 		hasUnresolvedIntersection = false;
@@ -2161,25 +2156,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	
 
 
-	protected void setShieldingPosition()
-	{
-		if(!Events.boss.operator.containsServant(shieldingBrother()))
-		{
-			isUpperShieldMaker = Calculations.tossUp();
-		}
-		else
-		{
-			isUpperShieldMaker
-				= !Events.boss.getOperatorServant(shieldingBrother()).isUpperShieldMaker;
-		}		
-	}
 
-	private FinalBossServantType shieldingBrother()
-	{		
-		return type == EnemyType.SMALL_SHIELD_MAKER
-							 ? FinalBossServantType.BIG_SHIELD_MAKER
-							 : FinalBossServantType.SMALL_SHIELD_MAKER;
-	}
 
 	public void teleport()
 	{
@@ -2321,11 +2298,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 		return !isDestroyed();
 	}
 	
-	public Enemy getOperatorServant(FinalBossServantType servantType)
-	{
-		return operator.getServant(servantType);
-	}
-	
 	@Override
 	public Point2D getSpeedLevel()
 	{
@@ -2421,14 +2393,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
 	public boolean canCollide()
 	{
 		return true;
-	}
-	
-	protected void finalBossServantRemoval()
-	{
-		FinalBossServantType.of(type).ifPresent(servantType -> {
-			Events.boss.operator.remove(servantType);
-			Events.boss.operator.resetTimeSinceDeath(servantType);
-		});
 	}
 	
 	public Color getBarColor(boolean isImagePaint)

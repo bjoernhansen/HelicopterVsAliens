@@ -17,7 +17,7 @@ public class FinalBossPainter extends TitPainter<FinalBoss>
         super.paintAnimatedElements(graphicsAdapter);
         FinalBossServantType.getShieldMaker()
                             .stream()
-                            .map(getEnemy()::getOperatorServant)
+                            .map(getEnemy()::getServant)
                             .filter(Objects::nonNull)
                             .filter(Enemy::isShielding)
                             .forEach(servant -> this.paintShieldBeam(graphicsAdapter, servant));
