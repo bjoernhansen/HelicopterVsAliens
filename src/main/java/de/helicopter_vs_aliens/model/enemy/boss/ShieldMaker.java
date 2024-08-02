@@ -4,7 +4,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
 
@@ -23,6 +22,10 @@ public abstract class ShieldMaker extends FinalBossServant
     private static final Point
         SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10);
     
+    private boolean
+        isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
+    
+    
     @Override
     protected void doTypeSpecificInitialization()
     {
@@ -34,18 +37,10 @@ public abstract class ShieldMaker extends FinalBossServant
     
     private void setShieldingPosition()
     {
-        if(!getFinalBoss().hasServant(shieldingBrother()))
-        {
-            isUpperShieldMaker = Calculations.tossUp();
-        }
-        else
-        {
-            isUpperShieldMaker
-                = !getFinalBoss().getServant(shieldingBrother()).isUpperShieldMaker;
-        }
+        isUpperShieldMaker = getFinalBoss().isUpperShieldPositionAvailableFor(this);
     }
     
-    abstract FinalBossServantType shieldingBrother();
+    abstract FinalBossServantType getShieldingBrotherServantType();
     
     @Override
     protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
@@ -197,5 +192,10 @@ public abstract class ShieldMaker extends FinalBossServant
     protected boolean isAbleToBeSlowedDownByEmp()
     {
         return !isShielding && super.isAbleToBeSlowedDownByEmp();
+    }
+    
+    boolean isUpperShieldMaker()
+    {
+        return isUpperShieldMaker;
     }
 }

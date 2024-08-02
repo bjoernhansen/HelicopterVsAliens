@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 public final class SmallShieldMaker extends ShieldMaker
 {
     @Override
-    FinalBossServantType shieldingBrother()
+    FinalBossServantType getShieldingBrotherServantType()
     {
         return FinalBossServantType.BIG_SHIELD_MAKER;
     }

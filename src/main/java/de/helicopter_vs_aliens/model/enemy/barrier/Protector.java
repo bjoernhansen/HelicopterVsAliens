@@ -104,6 +104,6 @@ public final class Protector extends BurrowingBarrier implements FinalBossAcquai
     @Override
     public void finalBossServantRemoval()
     {
-        getFinalBoss().removeServant(getType());
+        getFinalBoss().removeServant(FinalBossServantType.PROTECTOR);
     }
 }

@@ -5,28 +5,30 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.EnumMap;
+import java.util.Optional;
 import java.util.function.Predicate;
+
 
 public final class FinalBoss extends BossEnemy
 {
     private static final int
         FINAL_BOSS_POSITION_Y = 98;
     
-    public static final float
+    private static final float
         SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.3f;
-
+    
     private final EnumMap<FinalBossServantType, Enemy>
         servants = new EnumMap<>(FinalBossServantType.class);
     
     private final EnumMap<FinalBossServantType, Integer>
         timeSinceServantDeath = new EnumMap<>(FinalBossServantType.class);
-        
+    
     @Override
     protected void doTypeSpecificInitialization()
     {
@@ -42,7 +44,7 @@ public final class FinalBoss extends BossEnemy
         timeSinceServantDeath.clear();
         super.reset();
     }
-
+    
     @Override
     protected double calculateInitialY()
     {
@@ -67,24 +69,26 @@ public final class FinalBoss extends BossEnemy
         finalBossAction();
         super.performFlightManeuver(gameRessourceProvider);
     }
+    
     private void finalBossAction()
     {
+        // TODO eventuell auslagern in eigene Flugmanöver-Klasse
         if(getSpeedLevel()
-               .getX() > 0)
+            .getX() > 0)
         {
             if(getSpeedLevel()
-                   .getX() - 0.5 <= 0)
+                .getX() - 0.5 <= 0)
             {
                 stopMoving();
                 boss.setLocation(getCenterX(),
-                    getCenterY());
+                                 getCenterY());
                 EnemyController.makeAllFinalBossServants = true;
             }
             else
             {
                 getSpeedLevel()
                     .setLocation(getSpeedLevel()
-                                     .getX()-0.5,	0);
+                                     .getX() - 0.5, 0);
             }
         }
         else
@@ -93,7 +97,7 @@ public final class FinalBoss extends BossEnemy
                                 .stream()
                                 .filter(Predicate.not(servants::containsKey))
                                 .forEach(servantType -> {
-                                    if (isFinalBossServantCreationAllowedFor(servantType))
+                                    if(isFinalBossServantCreationAllowedFor(servantType))
                                     {
                                         EnemyController.missingFinalBossServants.add(servantType);
                                     }
@@ -112,7 +116,7 @@ public final class FinalBoss extends BossEnemy
     }
     
     @Override
-    protected void bossInactivationEvent(){}
+    protected void bossInactivationEvent() {}
     
     @Override
     protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider)
@@ -121,30 +125,23 @@ public final class FinalBoss extends BossEnemy
         
         Events.isRestartWindowVisible = true;
         Events.level = Events.maxLevel = 51;
-    
+        
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         helicopter.isDamaged = true;
         // TODO Konstanten definieren
-        helicopter.destination.setLocation(helicopter.getX()+40,520.0);
+        helicopter.destination.setLocation(helicopter.getX() + 40, 520.0);
         Events.determineHighscoreTimes(helicopter);
     }
     
-    public void removeServant(EnemyType type)
+    public void removeServant(FinalBossServantType servantType)
     {
-        FinalBossServantType.of(type).ifPresent(servantType -> {
-            servants.remove(servantType);
-            resetTimeSinceDeath(servantType);
-        });
+        servants.remove(servantType);
+        resetTimeSinceDeath(servantType);
     }
     
     private void resetTimeSinceDeath(FinalBossServantType servantType)
     {
         timeSinceServantDeath.put(servantType, 0);
-    }
-    
-    public boolean hasServant(FinalBossServantType finalBossServantType)
-    {
-        return servants.containsKey(finalBossServantType);
     }
     
     public void registerServant(Enemy enemy)
@@ -167,5 +164,19 @@ public final class FinalBoss extends BossEnemy
     {
         Integer timeSinceDeathCounter = timeSinceServantDeath.get(servantType);
         timeSinceServantDeath.put(servantType, timeSinceDeathCounter + 1);
+    }
+    
+    public boolean isUpperShieldPositionAvailableFor(ShieldMaker shieldMaker)
+    {
+        return getShieldingBrother(shieldMaker).map(ShieldMaker::isUpperShieldMaker)
+                                               .map(BooleanUtils::negate)
+                                               .orElseGet(Calculations::tossUp);
+    }
+    
+    private Optional<ShieldMaker> getShieldingBrother(ShieldMaker shieldMaker)
+    {
+        FinalBossServantType shieldingBrotherServantType = shieldMaker.getShieldingBrotherServantType();
+        ShieldMaker shieldingBrother = (ShieldMaker)getServant(shieldingBrotherServantType);
+        return Optional.ofNullable(shieldingBrother);
     }
 }

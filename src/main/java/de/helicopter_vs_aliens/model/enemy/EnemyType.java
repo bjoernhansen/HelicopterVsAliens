@@ -48,11 +48,15 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 public enum EnemyType implements PaintableEntityFactory<Enemy>
@@ -557,7 +561,6 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
     private static final List<EnemyType>
         VALUES = List.of(values());
     
-    
     private static class Constants
     {
         public static final int
@@ -575,15 +578,25 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         }
     }
     
-    private final static List<EnemyType>
+    private static final List<EnemyType>
         RANDOM_SELECTION_TYPES = List.copyOf(EnumSet.range(TINY, TELEPORTING));
     
-    private final static Set<EnemyType>
-        BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOSS_1, PROTECTOR)),
-    // TODO prüfen wo anstelle dessen mit den FinalBossServantTypes gearbeitet werden kann
-    FINAL_BOSS_SERVANT_TYPES = Collections.unmodifiableSet(EnumSet.range(SMALL_SHIELD_MAKER, PROTECTOR)),
-        BARRIERS = Collections.unmodifiableSet(EnumSet.range(SMALL_BARRIER, CLOAKED_BARRIER)),
+    private static final Set<EnemyType>
+        BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(BOSS_1, PROTECTOR));
+    
+    private static final Set<EnemyType>
+        FINAL_BOSS_SERVANT_TYPES = Collections.unmodifiableSet(EnumSet.range(SMALL_SHIELD_MAKER, PROTECTOR));
+    
+    private static final Set<EnemyType>
+        BARRIERS = Collections.unmodifiableSet(EnumSet.range(SMALL_BARRIER, CLOAKED_BARRIER));
+    
+    private static final Set<EnemyType>
         CLOAKABLE_AS_MINI_BOSS_TYPES = Collections.unmodifiableSet(EnumSet.range(LONELY_SPEEDER, TELEPORTING));
+    
+    private static final Map<Class<? extends Enemy>, EnemyType>
+        ENEMY_TYPE_MAP = Arrays.stream(EnemyType.values())
+                               .collect(Collectors.toUnmodifiableMap(EnemyType::getCorrespondingClass,
+                                                                     Function.identity()));
     
     private static final float
         BOUNTY_MULTIPLIER = 7.5f;
@@ -642,6 +655,16 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         this.maneuverTypes = Collections.unmodifiableSet(maneuverTypes);
     }
     
+    public static List<EnemyType> getValues()
+    {
+        return VALUES;
+    }
+    
+    public static EnemyType getTypeFromClass(Class<? extends Enemy> enemyClass)
+    {
+        return ENEMY_TYPE_MAP.get(enemyClass);
+    }
+    
     public static List<EnemyType> getRandomSelectionTypes()
     {
         return RANDOM_SELECTION_TYPES;
@@ -692,17 +715,10 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
         return strength;
     }
     
-    public static List<EnemyType> getValues()
-    {
-        return VALUES;
-    }
-    
     @Override
     public Enemy makeInstance()
     {
-        Enemy enemy = instanceSupplier.get();
-        enemy.type = this;
-        return enemy;
+        return instanceSupplier.get();
     }
     
     @Override

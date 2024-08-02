@@ -16,7 +16,7 @@ public final class BigShieldMaker extends ShieldMaker
     }
     
     @Override
-    FinalBossServantType shieldingBrother()
+    FinalBossServantType getShieldingBrotherServantType()
     {
         return FinalBossServantType.SMALL_SHIELD_MAKER;
     }
