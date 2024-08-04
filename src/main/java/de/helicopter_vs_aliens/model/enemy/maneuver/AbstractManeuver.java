@@ -1,18 +1,15 @@
 package de.helicopter_vs_aliens.model.enemy.maneuver;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.AbstractGameRessourceAcceptor;
-
-
-public abstract class AbstractManeuver extends AbstractGameRessourceAcceptor implements Maneuver
+public abstract class AbstractManeuver<T> implements Maneuver
 {
-    private final Maneuverable target;
+    private final T target;
     
-    AbstractManeuver(Maneuverable maneuverable)
+    AbstractManeuver(T target)
     {
-        target = maneuverable;
+        this.target = target;
     }
     
-    protected final Maneuverable getTarget()
+    protected final T getTarget()
     {
         return target;
     }

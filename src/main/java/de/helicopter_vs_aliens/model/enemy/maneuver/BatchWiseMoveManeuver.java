@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy.maneuver;
 
-public class BatchWiseMoveManeuver extends AbstractManeuver
+public class BatchWiseMoveManeuver extends AbstractManeuver<Maneuverable>
 {
     private boolean isInSpeedUpPhase = true;
     

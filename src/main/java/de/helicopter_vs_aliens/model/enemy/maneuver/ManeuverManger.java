@@ -25,4 +25,9 @@ public class ManeuverManger
     {
         maneuvers.forEach(Maneuver::perform);
     }
+    
+    public void addManeuver(Maneuver maneuver)
+    {
+        maneuvers.add(maneuver);
+    }
 }

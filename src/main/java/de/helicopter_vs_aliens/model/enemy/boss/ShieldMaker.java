@@ -17,10 +17,14 @@ public abstract class ShieldMaker extends FinalBossServant
         TARGET_DISTANCE_VARIANCE = new Point(10, 3);
     
     private static final Point
-        SHIELD_MAKER_CALM_DOWN_SPEED = new Point(3, 3);
+        CALM_DOWN_SPEED = new Point(3, 3);
     
     private static final Point
-        SHIELD_MAKER_STAMPEDE_SPEED = new Point(10, 10);
+        STAMPEDE_SPEED = new Point(10, 10);
+    
+    
+    private int
+        stampedeTimer;
     
     private boolean
         isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
@@ -34,13 +38,14 @@ public abstract class ShieldMaker extends FinalBossServant
     {
         super.reset();
         isShielding = false;
+        stampedeTimer = DISABLED;
     }
     
     @Override
     protected void doTypeSpecificInitialization()
     {
         getNavigationDevice().setRandomDirectionX();
-        shieldMakerTimer = READY;
+        stampedeTimer = READY;
         setShieldingPosition();
         super.doTypeSpecificInitialization();
     }
@@ -55,23 +60,23 @@ public abstract class ShieldMaker extends FinalBossServant
     @Override
     protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
-        if(this.shieldMakerTimer != DISABLED)
+        if(this.stampedeTimer != DISABLED)
         {
-            this.shieldMakerAction();
+            this.performStampede();
         }
         super.performFlightManeuver(gameRessourceProvider);
     }
     
-    private void shieldMakerAction()
+    private void performStampede()
     {
-        this.shieldMakerTimer++;
-        if(this.shieldMakerTimer > 100)
+        this.stampedeTimer++;
+        if(this.stampedeTimer > 100)
         {
-            if(this.shieldMakerTimer == 101)
+            if(this.stampedeTimer == 101)
             {
                 this.calmDown();
             }
-            this.correctShieldMakerDirection();
+            this.correctDirection();
             if(this.canStartShielding())
             {
                 this.startShielding();
@@ -82,13 +87,13 @@ public abstract class ShieldMaker extends FinalBossServant
     private void calmDown()
     {
         this.getSpeedLevel()
-            .setLocation(SHIELD_MAKER_CALM_DOWN_SPEED);
-        this.targetSpeedLevel.setLocation(SHIELD_MAKER_CALM_DOWN_SPEED);
+            .setLocation(CALM_DOWN_SPEED);
+        this.targetSpeedLevel.setLocation(CALM_DOWN_SPEED);
         this.canMoveChaotic = false;
     }
     
     // TODO Bedingungen in Methoden auslagern
-    private void correctShieldMakerDirection()
+    private void correctDirection()
     {
         FinalBoss finalBoss = getFinalBoss();
         if(getX()
@@ -131,7 +136,7 @@ public abstract class ShieldMaker extends FinalBossServant
     private boolean canStartShielding()
     {
         FinalBoss finalBoss = getFinalBoss();
-        return this.shieldMakerTimer > 200
+        return this.stampedeTimer > 200
             && !isRecoveringSpeed
             && TARGET_DISTANCE_VARIANCE.x
             > Math.abs(finalBoss.getCenterX()
@@ -154,21 +159,21 @@ public abstract class ShieldMaker extends FinalBossServant
         isShielding = true;
         getFinalBoss().shield++;
         canDodge = true;
-        shieldMakerTimer = DISABLED;
+        stampedeTimer = DISABLED;
     }
     
     @Override
     public void dodge(Missile missile)
     {
         super.dodge(missile);
-        stampedeShieldMaker();
+        initiateStampede();
     }
     
-    private void stampedeShieldMaker()
+    private void initiateStampede()
     {
-        shieldMakerTimer = READY;
-        getSpeedLevel().setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
-        targetSpeedLevel.setLocation(SHIELD_MAKER_STAMPEDE_SPEED);
+        stampedeTimer = READY;
+        getSpeedLevel().setLocation(STAMPEDE_SPEED);
+        targetSpeedLevel.setLocation(STAMPEDE_SPEED);
         canMoveChaotic = true;
         canDodge = false;
         setShieldingPosition();

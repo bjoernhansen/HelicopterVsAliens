@@ -280,8 +280,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     private int
         explodingTimer;            // Timer zur überwachung der Zeit zwischen Abschuss und Absturz
     
-    protected int
-        shieldMakerTimer;
+
     protected int
         callBack;
     private int
@@ -410,7 +409,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         nonStunnableTimer = READY;
         cloakingDevice.reset();
         teleportTimer = DISABLED;
-        shieldMakerTimer = DISABLED;
         shootTimer = DISABLED;
         barrierShootTimer = DISABLED;
         barrierTeleportTimer = DISABLED;

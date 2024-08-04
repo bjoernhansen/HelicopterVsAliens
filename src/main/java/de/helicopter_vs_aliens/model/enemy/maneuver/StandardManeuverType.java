@@ -7,7 +7,8 @@ public enum StandardManeuverType implements ManeuverFactory
 {
     BATCH_WISE_MOVE(BatchWiseMoveManeuver::new);
     
-    Function<Maneuverable, Maneuver> maneuverProvider;
+    private final Function<Maneuverable, Maneuver>
+        maneuverProvider;
     
     
     StandardManeuverType(Function<Maneuverable, Maneuver> maneuverProvider) {
