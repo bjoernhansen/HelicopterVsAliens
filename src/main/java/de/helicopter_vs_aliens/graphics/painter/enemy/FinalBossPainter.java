@@ -6,6 +6,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
+import de.helicopter_vs_aliens.model.enemy.boss.ShieldMaker;
 
 import java.util.Objects;
 
@@ -19,7 +20,8 @@ public class FinalBossPainter extends TitPainter<FinalBoss>
                             .stream()
                             .map(getEnemy()::getServant)
                             .filter(Objects::nonNull)
-                            .filter(Enemy::isShielding)
+                            .map(ShieldMaker.class::cast)
+                            .filter(ShieldMaker::isShielding)
                             .forEach(servant -> this.paintShieldBeam(graphicsAdapter, servant));
     }
     

@@ -25,6 +25,16 @@ public abstract class ShieldMaker extends FinalBossServant
     private boolean
         isUpperShieldMaker;        // bestimmt die Position der Schild-Aufspannenden Servants von Boss 5
     
+    private boolean
+        isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
+    
+    
+    @Override
+    public void reset()
+    {
+        super.reset();
+        isShielding = false;
+    }
     
     @Override
     protected void doTypeSpecificInitialization()
@@ -197,5 +207,16 @@ public abstract class ShieldMaker extends FinalBossServant
     boolean isUpperShieldMaker()
     {
         return isUpperShieldMaker;
+    }
+    
+    public boolean isShielding()
+    {
+        return isShielding;
+    }
+    
+    @Override
+    protected boolean generatesEnergieBeam()
+    {
+        return isShielding();
     }
 }

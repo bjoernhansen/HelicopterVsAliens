@@ -100,6 +100,6 @@ public final class CapturingEnemy extends BasicEnemy
     @Override
     protected boolean generatesEnergieBeam()
     {
-        return getTractorDeviceActivityStatus() == AbilityStatusType.ACTIVE || super.generatesEnergieBeam();
+        return getTractorDeviceActivityStatus() == AbilityStatusType.ACTIVE;
     }
 }

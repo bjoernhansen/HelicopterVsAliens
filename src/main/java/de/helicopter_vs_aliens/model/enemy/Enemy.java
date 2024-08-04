@@ -331,7 +331,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     private boolean hasCrashed;            // = true: Gegner ist abgestürzt
     private boolean isEmpShocked;            // = true: Gegner steht unter EMP-Schock --> ist verlangsamt
     public boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
-    protected boolean isShielding;            // = true: Gegner spannt gerade ein Schutzschild für Boss 5 auf (nur für Schild-Generatoren von Boss 5)
     protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
     protected boolean isRecoveringSpeed;
     
@@ -390,7 +389,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         isTouchingHelicopter = false;
         canFrontalSpeedup = false;
         canSinusMove = false;
-        isShielding = false;
         canTurn = false;
         canLoop = false;
         isClockwiseBarrier = true;
@@ -2463,11 +2461,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         return rotorColor;
     }
     
-    public boolean isShielding()
-    {
-        return isShielding;
-    }
-    
     public int getBarrierShootTimer()
     {
         return barrierShootTimer;
@@ -2553,7 +2546,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     
     protected boolean generatesEnergieBeam()
     {
-        return isShielding();
+        return false;
     }
     
     protected Color getDefaultBarColor()
