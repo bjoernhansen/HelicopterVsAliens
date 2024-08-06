@@ -1,12 +1,12 @@
 package de.helicopter_vs_aliens.model.enemy.maneuver;
 
-public class BatchWiseMoveManeuver extends AbstractManeuver<Maneuverable>
+public class IntermittentFlightManeuver extends AbstractManeuver<IntermittentFlyable>
 {
     private boolean isInSpeedUpPhase = true;
     
-    BatchWiseMoveManeuver(Maneuverable maneuverable)
+    IntermittentFlightManeuver(IntermittentFlyable intermittentFlyable)
     {
-        super(maneuverable);
+        super(intermittentFlyable);
     }
     
     @Override
@@ -22,5 +22,12 @@ public class BatchWiseMoveManeuver extends AbstractManeuver<Maneuverable>
         }
         if(getTarget().getSpeedLevel().getX() <= 0){isInSpeedUpPhase = true;}
         if(getTarget().isTargetSpeedReachedOrExceededX()){isInSpeedUpPhase = false;}
+    }
+    
+    @Override
+    public void reset()
+    {
+        super.reset();
+        isInSpeedUpPhase = true;
     }
 }

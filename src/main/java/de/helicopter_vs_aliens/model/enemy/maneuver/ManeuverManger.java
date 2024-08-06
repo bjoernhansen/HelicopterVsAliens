@@ -2,13 +2,14 @@ package de.helicopter_vs_aliens.model.enemy.maneuver;
 
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
 
 
 public class ManeuverManger
 {
-    private final List<Maneuver> maneuvers = new ArrayList<>();
+    private final Map<ManeuverType, Maneuver> maneuvers = new EnumMap<>(ManeuverType.class);
     
     public void initializeManeuversFor(Enemy enemy)
     {
@@ -16,18 +17,37 @@ public class ManeuverManger
         maneuvers.clear();
         enemy.getType()
              .getManeuverTypes()
-             .stream()
-             .map(maneuverType -> maneuverType.makeInstanceFor(enemy))
-             .forEach(maneuvers::add);
+             .forEach(maneuverType -> maneuvers.put(maneuverType, maneuverType.makeInstanceFor(enemy)));
     }
     
     public void performAll()
     {
-        maneuvers.forEach(Maneuver::perform);
+        maneuvers.values()
+                 .stream()
+                 .filter(Maneuver::isEnabled)
+                 .forEach(Maneuver::perform);
     }
     
-    public void addManeuver(Maneuver maneuver)
+    public void putManeuver(ManeuverType maneuverType, Enemy enemy)
     {
-        maneuvers.add(maneuver);
+        maneuvers.put(maneuverType, maneuverType.makeInstanceFor(enemy));
+    }
+    
+    public void enableManeuver(ManeuverType maneuverType)
+    {
+        Optional.ofNullable(maneuvers.get(maneuverType))
+                .ifPresent(Maneuver::enable);
+    }
+    
+    public void disableManeuver(ManeuverType maneuverType)
+    {
+        Optional.ofNullable(maneuvers.get(maneuverType))
+                .ifPresent(Maneuver::disable);
+    }
+    
+    public void resetManeuvers()
+    {
+        maneuvers.values()
+                 .forEach(Maneuver::reset);
     }
 }

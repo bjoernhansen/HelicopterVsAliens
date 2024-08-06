@@ -8,7 +8,6 @@ public final class LoopingEnemy extends BasicEnemy
         getNavigationDevice().flyUp();
         setCloakingDeviceReadyForUse();
         canSinusMove = true;
-        canLoop = true;
     
         super.doTypeSpecificInitialization();
     }

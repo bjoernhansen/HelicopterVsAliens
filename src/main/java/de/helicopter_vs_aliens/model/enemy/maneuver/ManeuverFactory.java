@@ -1,8 +1,11 @@
 package de.helicopter_vs_aliens.model.enemy.maneuver;
 
 
-public interface ManeuverFactory
+import de.helicopter_vs_aliens.model.enemy.Enemy;
+
+
+interface ManeuverFactory
 {
-    Maneuver makeInstanceFor(Maneuverable target);
+    Maneuver makeInstanceFor(Enemy target);
 }
 

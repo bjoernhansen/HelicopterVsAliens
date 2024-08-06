@@ -217,7 +217,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     
     // für die Tarnung nötige Variablen
     public static final float[]
-        scales = {1f, 1f, 1f, RADAR_DETECTABILITY},
+        scales = {1f, 1f, 1f, RADAR_DETECTABILITY};
+    public static final float[]
         offsets = new float[4];
     
     private static final RescaleOp
@@ -324,7 +325,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     protected boolean canTurn;                // Gegner ändert bei Beschuss eventuell seine Flugrichtung in Richtung Helikopter
     protected boolean canInstantlyTurnAround;            // Gegner ändert bei Beschuss immer(!) seine Flugrichtung in Richtung Helikopter
     protected boolean canFrontalSpeedup;        // Gegner wird schneller, wenn Helikopter ihm zu Nahe kommt
-    protected boolean canLoop;                // = true: Gegner fliegt Loopings
     protected boolean canChaosSpeedup;        // erhöht die Geschwindigkeit, wenn in Helicopter-Nähe
     private boolean isDestroyed;            // = true: Gegner wurde vernichtet
     private boolean hasCrashed;            // = true: Gegner ist abgestürzt
@@ -363,9 +363,11 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     private final ManeuverManger
         maneuverManger = new ManeuverManger();
     
+    
     protected Enemy()
     {
-        this.type = EnemyType.getTypeFromClass(this.getClass());
+        type = EnemyType.getTypeFromClass(getClass());
+        maneuverManger.initializeManeuversFor(this);
     }
     
     public void reset()
@@ -373,7 +375,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         lifetime = 0;
         stopMoving();
         initializeMovingDirection();
-        maneuverManger.initializeManeuversFor(this);
+        maneuverManger.resetManeuvers();
         
         callBack = 0;
         shield = 0;
@@ -389,7 +391,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         canFrontalSpeedup = false;
         canSinusMove = false;
         canTurn = false;
-        canLoop = false;
         isClockwiseBarrier = true;
         stoppingBarrier = null;
         isPreviousStoppingBarrier = null;
@@ -2665,5 +2666,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     protected void reachTargetSpeedLevel()
     {
         getSpeedLevel().setLocation(targetSpeedLevel);
+    }
+    
+    protected final ManeuverManger getManeuverManger()
+    {
+        return maneuverManger;
     }
 }
