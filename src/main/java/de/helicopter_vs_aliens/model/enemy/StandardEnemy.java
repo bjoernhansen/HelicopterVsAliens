@@ -5,6 +5,12 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 public abstract class StandardEnemy extends Enemy
 {
+    private static final int
+        MIN_POWER_UP_LEVEL = 3;
+        
+    private static final float
+        POWER_UP_PROB = 0.02f;
+    
     private boolean
         isSpeedBoosted;
     

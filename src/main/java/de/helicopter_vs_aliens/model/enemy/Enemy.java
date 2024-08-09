@@ -49,78 +49,27 @@ import java.util.Queue;
 public abstract class Enemy extends RectangularPaintableEntity implements GroupTypeOwner, Maneuverable
     // TODO Klasse zerschlagen
 {
-    public static final int KAMIKAZE_RANGE = 620;
-    public static final int FIELD_OF_FIRE_TOLERANCE_Y = 15;
-    public static final int TIMER_ALMOST_OVER = 1;
-    public static final float STUNNING_BARRIER_ENERGY_CONSUMPTION_FACTOR = 2.5f;
+    public static final int
+        KAMIKAZE_RANGE = 620;
     
+    public static final int
+        TIMER_ALMOST_OVER = 1;
     
-    public boolean isCompletelyCloaked()
-    {
-        return cloakingDevice.isWorkingAtMaximumEfficiency();
-    }
+    public static final int
+        DISABLED = -1; // TODO unnötig machen
     
-    public boolean isCloakingDeviceActive()
-    {
-        return cloakingDevice.isActive();
-    }
+    public static final int
+        READY = 0;
     
-    protected NavigationDevice getNavigationDevice()
-    {
-        return navigationDevice;
-    }
-    
-    public boolean isFlyingLeft()
-    {
-        return navigationDevice.isFlyingLeft();
-    }
-    
-    public boolean isFlyingRight()
-    {
-        return navigationDevice.isFlyingRight();
-    }
-    
-    public int getNegativeDirectionX()
-    {
-        return -navigationDevice.getDirectionX();
-    }
-    
-    public boolean isFlyingDown()
-    {
-        return navigationDevice.isFlyingDown();
-    }
-    
-    public boolean isFlyingUp()
-    {
-        return navigationDevice.isFlyingUp();
-    }
-    
-    public int getDirectionX()
-    {
-        return navigationDevice.getDirectionX();
-    }
-    
-    public void performLocationAdaptionAction(GameRessourceProvider gameRessourceProvider)
-    {
-    }
-    
-    public boolean isAlmostCloaked()
-    {
-        return cloakingDevice.isAlmostWorkingAtMaximumEfficiency();
-    }
-    
-    public boolean isMovingX()
-    {
-        return getSpeedLevel().getX() != 0;
-    }
-    
-    public boolean isMovingY()
-    {
-        return getSpeedLevel().getY() != 0;
-    }
-    
-    
+    protected static final int
+        EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
+        
+    protected static final int
+        APPEARANCE_DISTANCE = 10;
+        
     private static final int
+        DEFAULT_KAMIKAZE_SPEED_UP_X = 8,
+        FIELD_OF_FIRE_TOLERANCE_Y = 15,
         WIDTH_VARIANCE_DIVISOR = 10,
         MAX_STARTING_Y = 220,
         MIN_STARTING_Y = 90,
@@ -128,29 +77,16 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         DODGE_BORDER_DISTANCE_RIGHT = GraphicsAdapter.VIRTUAL_DIMENSION.getWidth() - DODGE_BORDER_DISTANCE_LEFT,
         DEFAULT_CALL_BACK_MINIMUM_FOR_TURN_AT_BARRIER = 0;
     
-    protected static final int
-        DEFAULT_KAMIKAZE_SPEED_UP_X = 8;
-    
+
     private static final float
         PRIMARY_COLOR_BRIGHTNESS_FACTOR = 1.3f,
         SECONDARY_COLOR_BRIGHTNESS_FACTOR = 1.5f,
         DEFAULT_TURN_PROBABILITY = 0.25f;
     
-    // Konstanten
-    public static final int
-        SNOOZE_TIME = 100,    // Zeit, die vergeht, bis sich ein aktives Hindernis in Bewegung setzt
-        DISABLED = -1; // TODO unnötig machen
-    
     private static final float
         RADAR_DETECTABILITY = 0.2f;        // Alpha-Wert: legt fest, wie stark ein getarnter Gegner bei aktiviertem Radar noch zu sehen ist
     
-    protected static final float
-        POWER_UP_PROB = 0.02f;
-    
-    protected static final float
-        SPIN_SHOOTER_RATE = 0.55f;
-    
-    public static final float
+    private static final float
         REPARATION_POWER_UP_DROP_RATE = 0.14f;
     
     // Multiplikatoren, welche den Grundschaden von Raketen unter bestimmten Voraussetzungen erhöhen
@@ -164,18 +100,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         // Raum-Konstanten
         SAVE_ZONE_WIDTH = 116;
     
-    protected static final int
-        APPEARANCE_DISTANCE = 10;
-    
     private static final int
         DISAPPEARANCE_DISTANCE = 100;
     private static final int
         BARRIER_DISTANCE = 100;
-    
-    
-    // Zeit-Konstanten
-    protected static final int
-        EMP_SLOW_TIME = 175;    // Zeit, die von EMP getroffener Gegner verlangsamt bleibt // 113
     
     private static final int
         STUNNING_TIME_BASIS = 45;    // Basis-Wert zur Berechnung der Stun-Zeit nach Treffern von Stopp-Raketen
@@ -185,14 +113,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     private static final int
         MIN_TURN_NOISELESS_TIME = 15;
     
-    public static final int
-        MIN_POWER_UP_LEVEL = 3;
-    
     private static final int
         STANDARD_REWARD_FACTOR = 1;
-    
-    public static final int
-        READY = 0;
     
     private static final int
         MAX_IMAGE_COUNT = 4;
@@ -224,9 +146,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     private static final RescaleOp
         CLOAKED_ENEMY_RESCALE_OPERATOR = new RescaleOp(scales, offsets, null);
     
-    
-    public static final
-    Point2D boss = new Point2D.Float();    // Koordinaten vom aktuellen Boss; wichtig für Gegner-produzierende Boss-Gegner
+    public static final Point2D
+        boss = new Point2D.Float();    // Koordinaten vom aktuellen Boss; wichtig für Gegner-produzierende Boss-Gegner
     
     /*
      * 	Attribute der Enemy-Objekte
@@ -256,15 +177,21 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         lastTouchedSite;
     
     // Farben
-    public Color
-        primaryColor,
+    private Color
+        primaryColor;
+    
+    private Color
         secondaryColor;
+    
+
     
     // TODO is wird of -direction.x (minus) übergeben, unlogisch, implementieren hier verständlicher machen. ggf. enemy übergeben und dann isMovingLeft etc. aufrufen
     
     
     Enemy
-        stoppingBarrier,        // Hindernis-Gegner, der diesen Gegner aufgehalten hat
+        stoppingBarrier;
+    
+    Enemy
         isPreviousStoppingBarrier;
     
     private int
@@ -436,10 +363,74 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         knockBackDirection = 0;
     }
     
+    public boolean isCompletelyCloaked()
+    {
+        return cloakingDevice.isWorkingAtMaximumEfficiency();
+    }
+    
+    public boolean isCloakingDeviceActive()
+    {
+        return cloakingDevice.isActive();
+    }
+    
+    public boolean isAlmostCloaked()
+    {
+        return cloakingDevice.isAlmostWorkingAtMaximumEfficiency();
+    }
+    
+    protected NavigationDevice getNavigationDevice()
+    {
+        return navigationDevice;
+    }
+    
+    public boolean isFlyingLeft()
+    {
+        return navigationDevice.isFlyingLeft();
+    }
+    
+    public boolean isFlyingRight()
+    {
+        return navigationDevice.isFlyingRight();
+    }
+    
+    public int getNegativeDirectionX()
+    {
+        return -navigationDevice.getDirectionX();
+    }
+    
+    public boolean isFlyingDown()
+    {
+        return navigationDevice.isFlyingDown();
+    }
+    
+    public boolean isFlyingUp()
+    {
+        return navigationDevice.isFlyingUp();
+    }
+    
+    public int getDirectionX()
+    {
+        return navigationDevice.getDirectionX();
+    }
+    
     private void initializeMovingDirection()
     {
         navigationDevice.turnLeft();
         navigationDevice.setRandomDirectionY();
+    }
+    
+    public void performLocationAdaptionAction(GameRessourceProvider gameRessourceProvider)
+    {
+    }
+    
+    public boolean isMovingX()
+    {
+        return getSpeedLevel().getX() != 0;
+    }
+    
+    public boolean isMovingY()
+    {
+        return getSpeedLevel().getY() != 0;
     }
     
     public void dimmedRepaint()
@@ -2671,5 +2662,15 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     protected final ManeuverManger getManeuverManger()
     {
         return maneuverManger;
+    }
+    
+    public Color getPrimaryColor()
+    {
+        return primaryColor;
+    }
+    
+    public Color getSecondaryColor()
+    {
+        return secondaryColor;
     }
 }

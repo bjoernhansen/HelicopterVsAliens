@@ -210,7 +210,7 @@ public abstract class BasicEnemy extends StandardEnemy
     {
         if(isMiniBoss)
         {
-            return secondaryColor;
+            return getSecondaryColor();
         }
         return super.getDefaultBarColor();
     }

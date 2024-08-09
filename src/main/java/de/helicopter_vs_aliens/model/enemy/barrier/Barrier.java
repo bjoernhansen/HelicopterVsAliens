@@ -20,6 +20,10 @@ import java.awt.Color;
 
 public abstract class Barrier extends Enemy
 {
+    // Konstanten
+    public static final int
+        SNOOZE_TIME = 100;
+    
     private static final int
         WIDTH_VARIANCE_DIVISOR = 5;
     
@@ -34,6 +38,7 @@ public abstract class Barrier extends Enemy
     
     private static final float
         SECONDARY_COLOR_BRIGHTNESS_FACTOR = 0.75f;
+    
     private static final float
         EXTRA_INACTIVE_TIME_FACTOR = 0.65f;
     
@@ -121,22 +126,23 @@ public abstract class Barrier extends Enemy
         {
             stopMoving();
         }
-        else if(burrowTimer == READY
-            && ((getType() != EnemyType.PROTECTOR
-            && Calculations.tossUp(0.004f))
-            ||
-            (getType() == EnemyType.PROTECTOR
-                && (getHelicopter().getX() > boss.getX() - 225))))
+        else if(isBorrowingBarrierReadyToStartCycle()
+        )
         {
             burrowTimer = 2 * BORROW_TIME
                 + shootingRate * shotsPerCycle
                 + (getY() == GROUND_Y
-                ? EnemyType.PROTECTOR.getWidth() / 8
+                ? EnemyType.PROTECTOR.getWidth() / 8 // TODO Magic Number
                 : 0)
                 - 1;
             moveWithSlowVerticalSpeed();
             getNavigationDevice().flyUp();
         }
+    }
+    
+    protected boolean isBorrowingBarrierReadyToStartCycle()
+    {
+        return burrowTimer == READY && Calculations.tossUp(0.004f);
     }
     
     private void evaluateBarrierShooting(GameRessourceProvider gameRessourceProvider)

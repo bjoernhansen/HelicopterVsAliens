@@ -2,10 +2,13 @@ package de.helicopter_vs_aliens.model.enemy.barrier;
 
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBossAcquaintance;
 import de.helicopter_vs_aliens.model.enemy.boss.FinalBossServant;
+import de.helicopter_vs_aliens.util.Calculations;
+
 
 public final class Protector extends BurrowingBarrier implements FinalBossAcquaintance
 {
@@ -105,5 +108,11 @@ public final class Protector extends BurrowingBarrier implements FinalBossAcquai
     public void finalBossServantRemoval()
     {
         getFinalBoss().removeServant(FinalBossServantType.PROTECTOR);
+    }
+    
+    @Override
+    protected boolean isBorrowingBarrierReadyToStartCycle()
+    {
+        return burrowTimer == READY && getHelicopter().getX() > boss.getX() - 225;
     }
 }

@@ -14,6 +14,9 @@ public final class StunningBarrier extends Barrier
     private static final int
         STATIC_CHARGE_TIME = 110;
     
+    public static final float
+        ENERGY_CONSUMPTION_FACTOR = 2.5f;
+    
     private int
         staticChargeTimer;
     
@@ -59,7 +62,7 @@ public final class StunningBarrier extends Barrier
     private void startStaticDischarge(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
     {
         staticChargeTimer = STATIC_CHARGE_TIME;
-        getHelicopter().receiveStaticCharge(STUNNING_BARRIER_ENERGY_CONSUMPTION_FACTOR);
+        getHelicopter().receiveStaticCharge(ENERGY_CONSUMPTION_FACTOR);
         Audio.play(Audio.emp);
         Explosion.start(explosions, getHelicopter(), (int)getCenterX(), (int)getCenterY(), ExplosionType.STUNNING, false, this);
     }

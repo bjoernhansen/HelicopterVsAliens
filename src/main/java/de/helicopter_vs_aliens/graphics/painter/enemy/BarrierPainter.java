@@ -75,7 +75,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
             barrier.isIntact()
                 ?(Colorations.setAlpha(Colorations.barrierColor[barrier.getRotorColor()][Events.timeOfDay.ordinal()], barrier.getAlpha()))
                 : Colorations.adjustBrightness(Colorations.barrierColor[barrier.getRotorColor()][Events.timeOfDay.ordinal()], Colorations.DESTRUCTION_DIM_FACTOR),
-            x, y, barrier.getPaintBounds().width, barrier.getPaintBounds().height, 5, (!barrier.isMoving() ? (barrier.getSnoozeTimer() <= Enemy.SNOOZE_TIME ? 3 : 0) : 8) * (barrier.isClockwiseBarrier() ? -1 : 1) * barrier.getLifetime()%360,
+            x, y, barrier.getPaintBounds().width, barrier.getPaintBounds().height, 5, (!barrier.isMoving() ? (barrier.getSnoozeTimer() <= Barrier.SNOOZE_TIME ? 3 : 0) : 8) * (barrier.isClockwiseBarrier() ? -1 : 1) * barrier.getLifetime()%360,
             24, BORDER_SIZE, barrier.getSnoozeTimer() == 0);
         paintCannon(graphicsAdapter, x, y);
     }
@@ -333,7 +333,7 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
             y - borderDistance + getEnemy().getPaintBounds().height - eyeSize,
             eyeSize, eyeSize);
         
-        if(!imagePaint && !(getEnemy().getSnoozeTimer() > Enemy.SNOOZE_TIME))
+        if(!imagePaint && !(getEnemy().getSnoozeTimer() > Barrier.SNOOZE_TIME))
         {
             graphicsAdapter.setPaint(Colorations.reversedRandomRed(color));
         }

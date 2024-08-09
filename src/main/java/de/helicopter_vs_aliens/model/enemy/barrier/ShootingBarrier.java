@@ -8,6 +8,9 @@ public final class ShootingBarrier extends ArmedBarrier
     public static final int
         MIN_SPIN_SHOOTER_LEVEL = 23;
     
+    private static final float
+        SPIN_SHOOTER_RATE = 0.55f;
+    
     @Override
     protected void doTypeSpecificInitialization()
     {

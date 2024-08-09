@@ -73,13 +73,13 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         
         if(enemy.isDestroyed() && Events.timeOfDay == TimeOfDay.NIGHT)
         {
-            mainColorLight = Colorations.adjustBrightness(enemy.primaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
-            mainColorDark  = Colorations.adjustBrightness(enemy.secondaryColor, DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
+            mainColorLight = Colorations.adjustBrightness(enemy.getPrimaryColor(), DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
+            mainColorDark  = Colorations.adjustBrightness(enemy.getSecondaryColor(), DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
         }
         else
         {
-            mainColorLight = enemy.primaryColor;
-            mainColorDark  = enemy.secondaryColor;
+            mainColorLight = enemy.getPrimaryColor();
+            mainColorDark  = enemy.getSecondaryColor();
         }
         paintCorpus(graphicsAdapter, enemy, directionX, mainColorLight, mainColorDark, false, true);
     }

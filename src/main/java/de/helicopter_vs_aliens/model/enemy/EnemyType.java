@@ -109,17 +109,17 @@ public enum EnemyType implements PaintableEntityFactory<Enemy>
                CollisionEffect.NO_EFFECT,
                EnumSet.noneOf(ManeuverType.class)),
     
-    BATCHWISE( // ab Level 11
-               IntermittentFlyingEnemy::new,
-               IntermittentFlyingEnemy.class,
-               EnemyModelType.TIT,
-               ColorRange.of(new Color(135, 80, 85), 30, 20, 30),
-               6,
-               16,
-               130,
-               TargetSpeedLevelProvider.ofVariableSpeed(7.0, 1.0, 4.0, 0.5),
-               CollisionEffect.NO_EFFECT,
-               EnumSet.of(ManeuverType.BATCH_WISE_MOVE)),
+    INTERMITTENT( // ab Level 11
+                  IntermittentFlyingEnemy::new,
+                  IntermittentFlyingEnemy.class,
+                  EnemyModelType.TIT,
+                  ColorRange.of(new Color(135, 80, 85), 30, 20, 30),
+                  6,
+                  16,
+                  130,
+                  TargetSpeedLevelProvider.ofVariableSpeed(7.0, 1.0, 4.0, 0.5),
+                  CollisionEffect.NO_EFFECT,
+                  EnumSet.of(ManeuverType.BATCH_WISE_MOVE)),
     
     SINUS( // ab Level 13
            SinusoidallyFlyingEnemy::new,
