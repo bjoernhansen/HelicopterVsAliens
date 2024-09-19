@@ -250,6 +250,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
     void shoot(GameRessourceProvider gameRessourceProvider)
     {
         // TODO Code Duplizierungen auflösen
+        // TODO Großteil des Codes in die Klasse Missile
         if(hasPiercingWarheads)
         {
             Audio.play(Audio.launch2);
@@ -262,25 +263,13 @@ public abstract class Helicopter extends RectangularPaintableEntity
         gameRessourceProvider.getGameStatisticsCalculator()
                              .incrementMissileCounterBy(numberOfCannons);
         
-        boolean stunningMissile = isShootingStunningMissile();
         Missile sister = null;
         
         Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getActivePaintableEntityManager()
                                                                                     .getMissiles();
         if(numberOfCannons >= 1)
         {
-            Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
-                                                 .iterator();
-            Missile missile;
-            if(iterator.hasNext())
-            {
-                missile = iterator.next();
-                iterator.remove();
-            }
-            else
-            {
-                missile = new Missile();
-            }
+            Missile missile = getMissileInstance(missiles);
             if(getType() == ROCH || getType() == OROCHI)
             {
                 missile.sister[0] = null;
@@ -289,25 +278,12 @@ public abstract class Helicopter extends RectangularPaintableEntity
             }
             missiles.get(CollectionSubgroupType.ACTIVE)
                     .add(missile);
-            missile.launch(this, stunningMissile, 56);
+            missile.launch(this, 56);
         }
         if(numberOfCannons >= 2)
         {
-            Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
-                                                 .iterator();
-            Missile missile;
-            if(iterator.hasNext())
-            {
-                missile = iterator.next();
-                iterator.remove();
-            }
-            else
-            {
-                missile = new Missile();
-            }
-            // TODO warum immer true
-            if(sister != null && sister.sister != null &&
-                (getType() == ROCH || getType() == OROCHI))
+            Missile missile = getMissileInstance(missiles);
+            if(sister != null && (getType() == ROCH || getType() == OROCHI))
             {
                 missile.sister[0] = sister;
                 missile.sister[1] = null;
@@ -316,25 +292,12 @@ public abstract class Helicopter extends RectangularPaintableEntity
             }
             missiles.get(CollectionSubgroupType.ACTIVE)
                     .add(missile);
-            missile.launch(this, stunningMissile, 28);
+            missile.launch(this, 28);
         }
         if(numberOfCannons >= 3)
         {
-            Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
-                                                 .iterator();
-            Missile missile;
-            if(iterator.hasNext())
-            {
-                missile = iterator.next();
-                iterator.remove();
-            }
-            else
-            {
-                missile = new Missile();
-            }
-            // TODO warum immer true
-            if(sister != null && sister.sister != null &&
-                (getType() == ROCH || getType() == OROCHI))
+            Missile missile = getMissileInstance(missiles);
+            if(sister != null && (getType() == ROCH || getType() == OROCHI))
             {
                 missile.sister[0] = sister.sister[0];
                 missile.sister[1] = sister;
@@ -343,9 +306,30 @@ public abstract class Helicopter extends RectangularPaintableEntity
             }
             missiles.get(CollectionSubgroupType.ACTIVE)
                     .add(missile);
-            missile.launch(this, stunningMissile, 42);
+            missile.launch(this, 42);
         }
+        consumeEnergyForShoot();
     }
+    
+    private static Missile getMissileInstance(Map<CollectionSubgroupType, Queue<Missile>> missiles)
+    // TODO über die Instance-Provider-Klasse abwickeln wie bei Enemy
+    {
+        Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
+                                             .iterator();
+        Missile missile;
+        if(iterator.hasNext())
+        {
+            missile = iterator.next();
+            iterator.remove();
+        }
+        else
+        {
+            missile = new Missile();
+        }
+        return missile;
+    }
+    
+    protected void consumeEnergyForShoot() {}
     
     private void move(GameRessourceProvider gameRessourceProvider)
     {
@@ -354,9 +338,8 @@ public abstract class Helicopter extends RectangularPaintableEntity
             isRotorSystemActive = false;
         }
         
-        float
-            nextX = (float)location.getX(),
-            nextY = (float)location.getY();
+        float nextX = (float)location.getX();
+        float nextY = (float)location.getY();
         
         if(isCrashing)
         {
@@ -1089,7 +1072,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return STANDARD_MISSILE_DAMAGE_FACTOR;
     }
     
-    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
         return ExplosionType.ORDINARY;
     }
@@ -1371,10 +1354,12 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return false;
     }
     
-    public void inactivate(Map<CollectionSubgroupType, Queue<Missile>> missiles, Missile missile)
+    public void inactivate(Missile missile)
     {
-        missiles.get(CollectionSubgroupType.INACTIVE)
-                .add(missile);
+        getGameRessourceProvider().getActivePaintableEntityManager()
+                                  .getMissiles()
+                                  .get(CollectionSubgroupType.INACTIVE)
+                                  .add(missile);
     }
     
     public int getFifthSpecialCosts()

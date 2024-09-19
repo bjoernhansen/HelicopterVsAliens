@@ -37,7 +37,7 @@ public final class Kamaitachi extends Helicopter
     }
 
     @Override
-    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
         if(this.plasmaActivationTimer > 0){return PLASMA;}
         return ORDINARY;

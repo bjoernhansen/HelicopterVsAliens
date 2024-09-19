@@ -51,7 +51,7 @@ public final class Roch extends Helicopter
     }
 
     @Override
-    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
         if(this.hasJumboMissiles){return JUMBO;}
         else{return ORDINARY;}
@@ -299,30 +299,13 @@ public final class Roch extends Helicopter
     {
         this.isPowerShieldActivated = false;
     }
-
+    
     @Override
     public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
     {
         if(missile != null)
         {
-            if(missile.kills > 0
-                    && this.hasPiercingWarheads
-                    && (     Missile.canTakeCredit(missile.sister[0], enemy)
-                            || Missile.canTakeCredit(missile.sister[1], enemy)))
-            {
-                if(Missile.canTakeCredit(missile.sister[0], enemy))
-                {
-                    missile.sister[0].credit();
-                }
-                else if(Missile.canTakeCredit(missile.sister[1], enemy))
-                {
-                    missile.sister[1].credit();
-                }
-            }
-            else
-            {
-                missile.credit();
-            }
+            missile.creditItselfOrSisterOn(enemy, hasPiercingWarheads);
         }
     }
     
@@ -333,24 +316,25 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void inactivate(Map<CollectionSubgroupType, Queue<Missile>> missiles, Missile missile)
+    // TODO Großteil des Codes nach Missile und Redundanzen damit auflösen subklassenspezischen Code in eigene Methode -> vgl. Klasse Orochi
+    public void inactivate(Missile missile)
     {
         if(missile.sister[0] == null && missile.sister[1] == null)
         {
-            if(missile.kills + missile.sisterKills > 1)
+            if(missile.numberOfClusterKills() > 1)
             {
-                Events.extraReward(missile.kills + missile.sisterKills, missile.earnedMoney, 0.5f, 0.75f, 3.0f);
+                Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 0.5f, 0.75f, 3.0f);
             }
         }
-        else if(missile.kills + missile.sisterKills > 0)
+        else if(missile.numberOfClusterKills() > 0)
         {
             for(int j = 0; true; j++)
             {
                 if(missile.sister[j] != null)
                 {
                     missile.sister[j].earnedMoney += missile.earnedMoney;
-                    missile.sister[j].sisterKills += missile.kills + missile.sisterKills;
-                    missile.sister[j].nrOfHittingSisters += ((missile.kills > 0 ? 1 : 0) + missile.nrOfHittingSisters);
+                    missile.sister[j].sisterKills += missile.numberOfClusterKills();
+                    missile.sister[j].nrOfHittingSisters += missile.getNonFailedShots();
                     break;
                 }
             }
@@ -366,7 +350,7 @@ public final class Roch extends Helicopter
                 else assert false;
             }
         }
-        missiles.get(CollectionSubgroupType.INACTIVE).add(missile);
+        super.inactivate(missile);
     }
     
     public boolean isPowerShieldActivated()

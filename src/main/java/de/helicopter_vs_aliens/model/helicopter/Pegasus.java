@@ -128,9 +128,9 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
-        if(stunningMissile){return ExplosionType.PHASE_SHIFT;}
+        if(isShootingStunningMissile()){return ExplosionType.PHASE_SHIFT;}
         return ExplosionType.ORDINARY;
     }
 

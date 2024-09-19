@@ -6,7 +6,6 @@ import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.ActivePaintableEntityManager;
 import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
 import de.helicopter_vs_aliens.control.entities.PaintableEntitySupplier;
-import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.control.timer.TimerManager;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;

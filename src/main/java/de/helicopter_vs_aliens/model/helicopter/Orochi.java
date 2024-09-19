@@ -25,7 +25,9 @@ public final class Orochi extends Helicopter
         EXTRA_MISSILE_DAMAGE_FACTOR = 1.03f;    // Orochi-Klasse: Faktor, um den sich die Schadenswirkung von Raketen erhöht wird
     
     private boolean
-        hasRadarDevice,         // = true: Helikopter verfügt über eine Radar-Vorrichtung
+        hasRadarDevice;         // = true: Helikopter verfügt über eine Radar-Vorrichtung
+    
+    private boolean
         isNextMissileStunner;   // = true: die nächste abgeschossene Rakete wird eine Stopp-Rakete
     
     
@@ -36,9 +38,9 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public ExplosionType getCurrentExplosionTypeOfMissiles(boolean stunningMissile)
+    public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
-        if (stunningMissile)
+        if (isShootingStunningMissile())
         {
             return STUNNING;
         }
@@ -124,13 +126,16 @@ public final class Orochi extends Helicopter
     @Override
     boolean isShootingStunningMissile()
     {
-        // TODO boolsche Methode, die mehr macht als einen boolean zu berechnen --> ändern
+        return this.isNextMissileStunner && this.hasEnoughEnergyForAbility();
+    }
+    
+    @Override
+    protected void consumeEnergyForShoot()
+    {
         if (this.isNextMissileStunner && this.hasEnoughEnergyForAbility())
         {
             this.consumeSpellCosts();
-            return true;
         }
-        return false;
     }
     
     @Override
@@ -175,33 +180,16 @@ public final class Orochi extends Helicopter
     {
         this.isNextMissileStunner = false;
     }
-
-    // TODO redundanter Code in Roch-Klasse
+    
     @Override
     public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
     {
         if(missile != null)
         {
-            if(missile.kills > 0
-                    && this.hasPiercingWarheads
-                    && (     Missile.canTakeCredit(missile.sister[0], enemy)
-                    || Missile.canTakeCredit(missile.sister[1], enemy)))
-            {
-                if(Missile.canTakeCredit(missile.sister[0], enemy))
-                {
-                    missile.sister[0].credit();
-                }
-                else if(Missile.canTakeCredit(missile.sister[1], enemy))
-                {
-                    missile.sister[1].credit();
-                }
-            }
-            else
-            {
-                missile.credit();
-            }
+            missile.creditItselfOrSisterOn(enemy, hasPiercingWarheads);
         }
     }
+    
     @Override
     public boolean hasKillCountingMissiles()
     {
@@ -210,37 +198,37 @@ public final class Orochi extends Helicopter
     
     @Override
     // TODO Großteil des Codes nach Missile und Redundanzen damit auflösen subklassenspezischen Code in eigene Methode -> vgl. Klasse Roch
-    public void inactivate(Map<CollectionSubgroupType, Queue<Missile>> missiles, Missile missile)
+    public void inactivate(Missile missile)
     {
         if(missile.sister[0] == null && missile.sister[1] == null)
         {
-            if(missile.kills + missile.sisterKills > 1)
+            if(missile.numberOfClusterKills() > 1)
             {
-                int nonFailedShots = (missile.kills > 0 ? 1 : 0) + missile.nrOfHittingSisters;
+                int nonFailedShots = missile.getNonFailedShots();
                 if(nonFailedShots == 1)
                 {
-                    Events.extraReward(missile.kills + missile.sisterKills, missile.earnedMoney, 0.25f, 0.0f, 0.25f);
+                    Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 0.25f, 0.0f, 0.25f);
                 }
                 if(nonFailedShots == 2)
                 {
-                    Events.extraReward(missile.kills + missile.sisterKills, missile.earnedMoney, 1.5f, 0.0f, 1.5f);
+                    Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 1.5f, 0.0f, 1.5f);
                 }
                 else if(nonFailedShots == 3)
                 {
-                    Events.extraReward(missile.kills + missile.sisterKills, missile.earnedMoney, 4f, 0.0f, 4f);
+                    Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 4f, 0.0f, 4f);
                 }
                 else assert false;
             }
         }
-        else if(missile.kills + missile.sisterKills > 0)
+        else if(missile.numberOfClusterKills() > 0)
         {
             for(int j = 0; true; j++)
             {
                 if(missile.sister[j] != null)
                 {
                     missile.sister[j].earnedMoney += missile.earnedMoney;
-                    missile.sister[j].sisterKills += missile.kills + missile.sisterKills;
-                    missile.sister[j].nrOfHittingSisters += ((missile.kills > 0 ? 1 : 0) + missile.nrOfHittingSisters);
+                    missile.sister[j].sisterKills += missile.numberOfClusterKills();
+                    missile.sister[j].nrOfHittingSisters += missile.getNonFailedShots();
                     break;
                 }
             }
@@ -256,7 +244,7 @@ public final class Orochi extends Helicopter
                 else assert false;
             }
         }
-        super.inactivate(missiles, missile);
+        super.inactivate(missile);
     }
     
     public boolean isNextMissileStunner()

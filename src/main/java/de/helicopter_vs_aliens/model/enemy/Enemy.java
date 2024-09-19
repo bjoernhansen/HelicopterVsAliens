@@ -1894,7 +1894,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
             Audio.play(Audio.explosion2);
         }
         missile.hits.put(hashCode(), this);
-        takeDamage(missile.dmg);
+        takeDamage(missile.getDamageEffect());
         if(areStunningRequirementsMet(missile))
         {
             stun(gameRessourceProvider, missile);

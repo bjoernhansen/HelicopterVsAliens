@@ -1,91 +1,104 @@
 package de.helicopter_vs_aliens.model.missile;
 
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
-import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
-import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 
 
 public class Missile extends RectangularPaintableEntity implements GroupTypeOwner
-{	
+{
 	private static final float
-		STANDARD_DAMAGE_FACTOR = 1.0f,
-		POWERUP_DAMAGE_FACTOR = 3.0f,	// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
+		STANDARD_DAMAGE_FACTOR = 1.0f;
+	
+	private static final float
+		POWERUP_DAMAGE_FACTOR = 3.0f;	// Faktor, um den sich die Schadenswirkung von Raketen erhöht, wenn das Bonus-Damage-PowerUp eingesammelt wurde
+	
+	private static final float
 		SHIFT_DAMAGE_FACTOR = 8.9f;		// Pegasus-Klasse: Faktor, um den sich die Schadenswirkung einer Rakete erhöht, wenn diese abgeschossen wird, während der Interphasen-Generator aktiviert ist
 
+	private int
+		damageEffect;
+	
+	private int
+		kills;
+	
 	public int
-		dmg,			// Schaden, den die Rakete beim Gegner anrichtet, wenn sie trifft
-		kills, 			// nur für Roch- und Orochi Klasse: mit dieser Rakete vernichtete Gegner
 		earnedMoney;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
 	
-	public double 
+	public double
 		speed;			// Geschwindigkeit der Rakete
 	
 	public boolean
-		extraDamage,	// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
-		dangerous,		// = true: kann den Helicopter beschädigen
+		extraDamage;	// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
+	
+	public boolean
+		dangerous;		// = true: kann den Helicopter beschädigen
+	
+	public boolean
 		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
 	public final Missile []
 		sister = new Missile [2];	// nur für Roch- und Orochi Klasse: Schwesterraketen (werden gleichzeitig abgefeuert)
 	
-	public final HashMap<Integer, Enemy>
+	public final Map<Integer, Enemy>
 		hits = new HashMap<> ();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
 
 	public ExplosionType
 		typeOfExplosion;
 
 	public int
-		sisterKills,			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
+		sisterKills;			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
+	
+	public int
 		nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
 	
 	private long
 		launchingTime; 		// nur für Phönix-Klasse relevant
 	
-	private boolean 
+	private boolean
 		flying;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
 
-	public void launch(Helicopter helicopter, boolean stunningMissile, int y)
+	public void launch(Helicopter helicopter, int y)
 	{
-		this.speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
-		this.dangerous = false;
-		this.bounced = false;
-		this.flying = true;	
-		this.extraDamage = helicopter.hasTripleDamage();
-
-		this.typeOfExplosion = helicopter.getCurrentExplosionTypeOfMissiles(stunningMissile);
-
-		this.setBounds(helicopter, y);
-		this.setDmg(helicopter.getBaseDamage());
-		this.hits.clear();
+		speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
+		dangerous = false;
+		bounced = false;
+		flying = true;
+		extraDamage = helicopter.hasTripleDamage();
+		typeOfExplosion = helicopter.getCurrentExplosionTypeOfMissiles();
+		setBounds(helicopter, y);
+		setDamageEffect(helicopter.getBaseDamage());
+		hits.clear();
 		
 		if(helicopter.hasKillCountingMissiles())
 		{
-			this.kills = 0;
-			this.earnedMoney = 0;
-			this.sisterKills = 0;
-			this.nrOfHittingSisters = 0;
+			kills = 0;
+			earnedMoney = 0;
+			sisterKills = 0;
+			nrOfHittingSisters = 0;
 		}
 		else if(helicopter.hasTimeRecordingMissiles())
 		{
-			this.launchingTime = System.currentTimeMillis();
-		}		
+			launchingTime = System.currentTimeMillis();
+		}
 	}
 	
 	// TODO in Methoden auslagern
@@ -93,20 +106,20 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	{
 		setBounds(helicopter.location.getX()
 								- (helicopter.isMovingLeft
-									? (this.typeOfExplosion == ExplosionType.JUMBO ? 30 : 20)
-									: 0), 
+									? (typeOfExplosion == ExplosionType.JUMBO ? 30 : 20)
+									: 0),
 							helicopter.getY() + y,
-							this.typeOfExplosion == ExplosionType.JUMBO  ? 30 : 20,
-							this.typeOfExplosion == ExplosionType.JUMBO ? 6 : 4);
-		this.setPaintBounds((int)this.getWidth(),
-							  (int)this.getHeight());
+							typeOfExplosion == ExplosionType.JUMBO  ? 30 : 20,
+							typeOfExplosion == ExplosionType.JUMBO ? 6 : 4);
+		setPaintBounds((int)getWidth(),
+							  (int)getHeight());
 	}
 	
-	private void setDmg(float baseDamage)
+	private void setDamageEffect(float baseDamage)
 	{
-		this.dmg = 	(int) (	baseDamage
-							* (this.typeOfExplosion == ExplosionType.PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : STANDARD_DAMAGE_FACTOR)
-							* (this.extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
+		damageEffect = (int) (	baseDamage
+							* (typeOfExplosion == ExplosionType.PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : STANDARD_DAMAGE_FACTOR)
+							* (extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
@@ -122,40 +135,39 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	private void update(GameRessourceProvider gameRessourceProvider, Iterator<Missile> i)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		this.setX(this.getX()
-					+ this.speed
+		setX(getX()
+					+ speed
 					+ (Scenery.backgroundMoves ? - SceneryObject.BG_SPEED : 0));
 				
-		if(this.getX() > 1175 || this.getX() + 20 < 0)
+		if(getX() > 1175 || getX() + 20 < 0)
 		{
-			this.flying = false;
+			flying = false;
 		}
-		else if(this.canHit(helicopter))
+		else if(canHit(helicopter))
 		{
-			this.hit(helicopter);
+			hit(helicopter);
 		}
-		this.checkIfMissileHitEnemy(gameRessourceProvider);
-		if(!this.flying)
+		checkIfMissileHitEnemy(gameRessourceProvider);
+		if(!flying)
 		{
 			i.remove();
-			helicopter.inactivate(gameRessourceProvider.getActivePaintableEntityManager()
-													   .getMissiles(), this);
+			helicopter.inactivate(this);
 		}
-		this.setPaintBounds();
+		setPaintBounds();
 	}
 	
 	private boolean canHit(Helicopter helicopter)
 	{
-		return this.dangerous && this.intersects(helicopter);
+		return dangerous && intersects(helicopter);
 	}
 	
 	private void hit(Helicopter helicopter)
 	{
 		Audio.play(Audio.explosion2);
-		this.dangerous = false;
+		dangerous = false;
 		if(!helicopter.hasPiercingWarheads)
 		{
-			this.flying = false;
+			flying = false;
 		}
 		helicopter.takeMissileDamage();
 	}
@@ -178,14 +190,14 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 				{
 					enemy.hitByMissile(gameRessourceProvider, this);
 				}
-				else if (!this.bounced
+				else if (!bounced
 					&& enemy.teleportTimer < 1
 					&& enemy.getType() != BOSS_2_SERVANT)
 				{
 					Audio.play(Audio.rebound);
-					this.speed = -Math.signum(this.speed) * StandardUpgradeType.MISSILE_DRIVE.getMagnitude(1);
-					this.dangerous = true;
-					this.bounced = true;
+					speed = -Math.signum(speed) * StandardUpgradeType.MISSILE_DRIVE.getMagnitude(1);
+					dangerous = true;
+					bounced = true;
 				}
 				
 				if (enemy.hasHPsLeft())
@@ -199,7 +211,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 				{
 					enemy.dieByMissile(gameRessourceProvider, this);
 					
-					if (helicopter.deservesMantisReward(this.launchingTime))
+					if (helicopter.deservesMantisReward(launchingTime))
 					{
 						Events.extraReward(1,
 							enemy.getEffectiveStrength() * helicopter.getBonusFactor(),
@@ -212,73 +224,61 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 				if (!helicopter.hasPiercingWarheads
 					&& !enemy.isInvincible())
 				{
-					this.flying = false;
+					flying = false;
 					break;
 				}
 			}
-			if (this.couldHit(enemy) && enemy.isReadyToDodge())
+			if (couldHit(enemy) && enemy.isReadyToDodge())
 			{
 				enemy.dodge(this);
 			}
-		}	
+		}
 	}
 	
-	public boolean intersects(Enemy e)
+	public boolean intersects(Enemy enemy)
 	{
 		int intersectLineX
-			= (int)(this.getX()
-					+ (this.speed < 0 ? 0 : this.getWidth())
-					+ (this.speed < 0 
-						? e.getWidth()/7.5
-						: -(e.getModel() == TIT
-							? e.getWidth()/3.0
-							: e.getWidth()/7.5)));
+			= (int)(getX()
+					+ (speed < 0 ? 0 : getWidth())
+					+ (speed < 0
+						? enemy.getWidth()/7.5
+						: -(enemy.getModel() == TIT
+							? enemy.getWidth()/3.0
+							: enemy.getWidth()/7.5)));
 		
-		return e.intersectsLine(	intersectLineX,
-									this.getMinY(),
+		return enemy.intersectsLine(	intersectLineX,
+									getMinY(),
 									intersectLineX,
-									this.getMaxY());
-	}
-	
-	public static boolean canTakeCredit(Missile missile, Enemy enemy)
-	{		
-		return missile != null 
-			   && missile.intersects(enemy);
-	}
-	
-	public void credit()
-	{
-		this.kills++;
-		this.earnedMoney += Events.lastBonus;
+									getMaxY());
 	}
 
 	private boolean couldHit(Enemy enemy)
-	{		
-		return 	  (this.speed > 0 
-				   && enemy.intersects(	this.getX(),
-					   							this.getY()-1,
-					   							20 * this.speed, 
-					   							this.getWidth()+2))
-				||(this.speed < 0 
-				   && enemy.intersects(	this.getMaxX() + 20 * this.speed,
-												this.getY()-1,
-												-20 * this.speed,
-												this.getWidth()+2));
+	{
+		return 	  (speed > 0
+				   && enemy.intersects(	getX(),
+					   							getY()-1,
+					   							20 * speed,
+					   							getWidth()+2))
+				||(speed < 0
+				   && enemy.intersects(	getMaxX() + 20 * speed,
+												getY()-1,
+												-20 * speed,
+												getWidth()+2));
 	}
 	
 	public boolean isFlyingRight()
 	{
-		return this.speed > 0;
+		return speed > 0;
 	}
 	
 	public boolean isFlyingLeft()
 	{
-		return this.speed < 0;
+		return speed < 0;
 	}
     
     public boolean hasGreatExplosivePower()
     {
-		return this.typeOfExplosion.isBigExplosion() || this.extraDamage;
+		return typeOfExplosion.isBigExplosion() || extraDamage;
     }
 	
 	@Override
@@ -291,4 +291,82 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
     {
 		return typeOfExplosion == ExplosionType.STUNNING;
     }
+	
+	public boolean atLeastOneSisterHasQualifiedForFirstCreditOn(Enemy enemy)
+	{
+		return hasFirstSisterQualifiedForFirstCreditOn(enemy)
+			|| hasSecondSisterQualifiedForFirstCreditOn(enemy);
+	}
+	
+	public boolean hasFirstSisterQualifiedForFirstCreditOn(Enemy enemy)
+	{
+		return sister[0] != null && sister[0].hasQualifiedForFirstCreditOn(enemy);
+	}
+	
+	public boolean hasSecondSisterQualifiedForFirstCreditOn(Enemy enemy)
+	{
+		return sister[1] != null && sister[1].hasQualifiedForFirstCreditOn(enemy);
+	}
+	
+	public boolean hasQualifiedForFirstCreditOn(Enemy enemy)
+	{
+		return intersects(enemy) && !hasKilled();
+	}
+	
+	public void creditFirstSister()
+	{
+		sister[0].credit();
+	}
+	
+	public void creditSecondSister()
+	{
+		sister[1].credit();
+	}
+	
+	private void credit()
+	{
+		kills++;
+		earnedMoney += Events.lastBonus;
+	}
+	
+	public boolean hasKilled()
+	{
+		return kills > 0;
+	}
+	
+	public void creditItselfOrSisterOn(Enemy enemy, boolean hasPiercingWarheads)
+	{
+		if(hasKilled()
+			&& hasPiercingWarheads
+			&& atLeastOneSisterHasQualifiedForFirstCreditOn(enemy))
+		{
+			if(hasFirstSisterQualifiedForFirstCreditOn(enemy))
+			{
+				creditFirstSister();
+			}
+			else if(hasSecondSisterQualifiedForFirstCreditOn(enemy))
+			{
+				creditSecondSister();
+			}
+		}
+		else
+		{
+			credit();
+		}
+	}
+	
+	public int getDamageEffect()
+	{
+		return damageEffect;
+	}
+	
+	public int numberOfClusterKills()
+	{
+		return kills + sisterKills;
+	}
+	
+	public int getNonFailedShots()
+	{
+		return (hasKilled() ? 1 : 0) + nrOfHittingSisters;
+	}
 }

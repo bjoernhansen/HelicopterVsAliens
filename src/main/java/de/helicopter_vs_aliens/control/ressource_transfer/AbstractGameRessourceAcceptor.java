@@ -11,6 +11,7 @@ public abstract class AbstractGameRessourceAcceptor implements GameRessourceAcce
     }
     
     protected GameRessourceProvider getGameRessourceProvider()
+    // TODO alle Übergaben von gameRessourceProvider entfernen und über die Methode direkt zugreifen
     {
         return gameRessourceProvider;
     }
