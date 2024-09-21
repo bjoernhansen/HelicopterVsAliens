@@ -76,6 +76,9 @@ public abstract class Helicopter extends RectangularPaintableEntity
         STANDARD_GOLIATH_COSTS = 75000,
         NO_COLLISION_HEIGHT = 6;
     
+    static final int[]
+        CANNON_Y_POSITIONS = {56, 28, 42};
+    
     static final float
         ENEMY_MISSILE_DAMAGE_FACTOR = 0.5f,
         STANDARD_MISSILE_DAMAGE_FACTOR = 1.0f;
@@ -264,7 +267,6 @@ public abstract class Helicopter extends RectangularPaintableEntity
                              .incrementMissileCounterBy(numberOfCannons);
         
         Missile sister = null;
-        
         Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getActivePaintableEntityManager()
                                                                                     .getMissiles();
         if(numberOfCannons >= 1)
@@ -278,7 +280,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
             }
             missiles.get(CollectionSubgroupType.ACTIVE)
                     .add(missile);
-            missile.launch(this, 56);
+            missile.launch(this, CANNON_Y_POSITIONS[0]);
         }
         if(numberOfCannons >= 2)
         {
@@ -292,7 +294,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
             }
             missiles.get(CollectionSubgroupType.ACTIVE)
                     .add(missile);
-            missile.launch(this, 28);
+            missile.launch(this, CANNON_Y_POSITIONS[1]);
         }
         if(numberOfCannons >= 3)
         {
@@ -306,7 +308,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
             }
             missiles.get(CollectionSubgroupType.ACTIVE)
                     .add(missile);
-            missile.launch(this, 42);
+            missile.launch(this, CANNON_Y_POSITIONS[2]);
         }
         consumeEnergyForShoot();
     }
@@ -417,7 +419,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
                 {
                     isRotorSystemActive = true;
                 }
-                if(isInTheAir && !(location.getY() != 407d))
+                if(isInTheAir && location.getY() == 407d)
                 {
                     Audio.play(Audio.landing);
                 }
@@ -692,9 +694,9 @@ public abstract class Helicopter extends RectangularPaintableEntity
         }
     }
     
-    abstract public boolean hasFifthSpecial();
+    public abstract boolean hasFifthSpecial();
     
-    abstract public void obtainFifthSpecial();
+    public abstract void obtainFifthSpecial();
     
     private boolean hasAllSpecialUpgrades()
     {
@@ -1116,7 +1118,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         }
     }
     
-    abstract public void stopMenuEffect();
+    public abstract void stopMenuEffect();
     
     public boolean isTakingKaboomDamageFrom(Enemy enemy)
     {

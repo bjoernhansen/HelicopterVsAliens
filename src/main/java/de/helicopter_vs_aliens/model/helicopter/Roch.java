@@ -1,22 +1,17 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
-import java.util.Map;
-import java.util.Queue;
-
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.KAMAITACHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+
 
 public final class Roch extends Helicopter
 {
@@ -24,19 +19,30 @@ public final class Roch extends Helicopter
         ROCH_SECOND_CANNON_COSTS = 225000;
     
     private static final int
-        JUMBO_MISSILE_COSTS = 25000,
-        POWER_SHIELD_ACTIVATION_THRESHOLD = 75,
+        JUMBO_MISSILE_COSTS = 25000;
+    
+    private static final int
+        POWER_SHIELD_ACTIVATION_THRESHOLD = 75;
+    
+    private static final int
         REDUCED_ENERGY_DRAIN = 10;
-
+    
     private static final float
-        JUMBO_MISSILE_DAMAGE_FACTOR = 2.36363637f,	// Faktor, um den sich die Schadenswirkung der Raketen erhöht, nachdem das Jumbo-Raketen-Spezial-Upgrade erworben wurde
-        POWER_SHIELD_E_LOSS_RATE = -0.06f,
+        JUMBO_MISSILE_DAMAGE_FACTOR = 2.36363637f;
+    
+    private static final float
+        POWER_SHIELD_E_LOSS_RATE = -0.06f;
+    
+    private static final float
         REDUCED_BASE_PROTECTION_FACTOR = 0.65f;
-        
+    
+    
     private boolean
-        hasJumboMissiles,	        // = true: Helikopter verschießt Jumbo-Raketen
-        isPowerShieldActivated;	    // = true: Power-Shield ist aktiviert
-
+        hasJumboMissiles;
+    
+    private boolean
+        isPowerShieldActivated;        // = true: Power-Shield ist aktiviert
+    
     
     @Override
     public HelicopterType getType()
@@ -47,36 +53,42 @@ public final class Roch extends Helicopter
     @Override
     public int getPiercingWarheadsCosts()
     {
-         return CHEAP_SPECIAL_COSTS;
+        return CHEAP_SPECIAL_COSTS;
     }
-
+    
     @Override
     public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
-        if(this.hasJumboMissiles){return JUMBO;}
-        else{return ORDINARY;}
+        if(hasJumboMissiles)
+        {
+            return JUMBO;
+        }
+        else
+        {
+            return ORDINARY;
+        }
     }
     
     @Override
     public void obtainSomeUpgrades()
     {
-        this.hasPiercingWarheads = true;
+        hasPiercingWarheads = true;
         super.obtainSomeUpgrades();
     }
     
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasJumboMissiles;
+        return hasJumboMissiles;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.hasJumboMissiles = true;
-        this.setCurrentBaseFirepower();
+        hasJumboMissiles = true;
+        setCurrentBaseFirepower();
     }
-
+    
     @Override
     public void updateUnlockedHelicopters()
     {
@@ -85,110 +97,121 @@ public final class Roch extends Helicopter
             Window.unlock(KAMAITACHI);
         }
     }
-
+    
     @Override
     public boolean isEnergyAbilityActivatable()
     {
-        return this.battery.getCurrentCharge() >= POWER_SHIELD_ACTIVATION_THRESHOLD && this.hasEnoughEnergyForAbility();
+        return battery.getCurrentCharge() >= POWER_SHIELD_ACTIVATION_THRESHOLD && hasEnoughEnergyForAbility();
     }
-
+    
     @Override
     public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        if(this.isPowerShieldActivated)
+        if(isPowerShieldActivated)
         {
-            this.shutDownPowerShield();
+            shutDownPowerShield();
         }
         else
         {
             super.tryToUseEnergyAbility(gameRessourceProvider);
         }
     }
-
+    
     @Override
     public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        this.turnOnPowerShield();
+        turnOnPowerShield();
     }
-
+    
     private void turnOnPowerShield()
     {
         Audio.play(Audio.shieldUp);
-        this.isPowerShieldActivated = true;
+        isPowerShieldActivated = true;
     }
-
+    
     @Override
     public void beAffectedByCollisionWith(Enemy enemy,
                                           GameRessourceProvider gameRessourceProvider,
                                           boolean playCollisionSound)
     {
-        if(!this.isPowerShieldProtected(enemy))
+        if(!isPowerShieldProtected(enemy))
         {
             super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
-            if(this.isPowerShieldActivated)
+            if(isPowerShieldActivated)
             {
-                this.shutDownPowerShield();
-                this.battery.discharge();
+                shutDownPowerShield();
+                battery.discharge();
             }
         }
         else
         {
-            float energyConsumption = this.collisionPowerShieldConsumption(enemy);
-            this.battery.drain(energyConsumption);
+            float energyConsumption = collisionPowerShieldConsumption(enemy);
+            battery.drain(energyConsumption);
             
-            if(this.isInvincible())
+            if(isInvincible())
             {
-                if(playCollisionSound){Audio.play(Audio.shieldUp);}
+                if(playCollisionSound)
+                {
+                    Audio.play(Audio.shieldUp);
+                }
             }
-            else if(playCollisionSound){Audio.play(Audio.explosion1);}
+            else if(playCollisionSound)
+            {
+                Audio.play(Audio.explosion1);
+            }
         }
     }
     
     private float collisionPowerShieldConsumption(Enemy enemy)
     {
-        return this.hasUnlimitedEnergy()
-                ? 0.0f
-                : this.spellCosts * enemy.collisionDamage();
+        return hasUnlimitedEnergy()
+            ? 0.0f
+            : spellCosts * enemy.collisionDamage();
     }
     
     @Override
     float getRegenerationRate()
     {
-        return this.isPowerShieldActivated
-                ? this.hasUnlimitedEnergy()
-                    ? 0
-                    : POWER_SHIELD_E_LOSS_RATE
-                : super.getRegenerationRate();
+        return isPowerShieldActivated
+            ? powerShieldEnergyConsumptionRate()
+            : super.getRegenerationRate();
+    }
+    
+    private float powerShieldEnergyConsumptionRate()
+    {
+        return hasUnlimitedEnergy()
+            ? 0
+            : POWER_SHIELD_E_LOSS_RATE;
     }
     
     @Override
     void resetFifthSpecial()
     {
-        this.hasJumboMissiles = false;
+        hasJumboMissiles = false;
     }
     
     @Override
     public float getMissileDamageFactor()
     {
-        return this.hasJumboMissiles
-                ? JUMBO_MISSILE_DAMAGE_FACTOR
-                : STANDARD_MISSILE_DAMAGE_FACTOR;
+        return hasJumboMissiles
+            ? JUMBO_MISSILE_DAMAGE_FACTOR
+            : STANDARD_MISSILE_DAMAGE_FACTOR;
     }
     
     @Override
     public void takeMissileDamage()
     {
-        if(this.canAbsorbMissileDamage())
+        if(canAbsorbMissileDamage())
         {
             Audio.play(Audio.shieldUp);
-            this.battery.drain(this.missileDamagePowerShieldConsumption());
+            battery.drain(missileDamagePowerShieldConsumption());
         }
         else
         {
-            if(this.isPowerShieldActivated)
+            if(isPowerShieldActivated)
             {
-                this.shutDownPowerShield();
-                this.battery.discharge();
+                shutDownPowerShield();
+                battery.discharge();
             }
             super.takeMissileDamage();
         }
@@ -196,30 +219,33 @@ public final class Roch extends Helicopter
     
     private float missileDamagePowerShieldConsumption()
     {
-        return  this.hasUnlimitedEnergy()
-                ? 0.0f
-                : this.getProtectionFactor()
-                  * ENEMY_MISSILE_DAMAGE_FACTOR
-                  * this.spellCosts;
+        return hasUnlimitedEnergy()
+            ? 0.0f
+            : getProtectionFactor()
+            * ENEMY_MISSILE_DAMAGE_FACTOR
+            * spellCosts;
     }
     
     private boolean canAbsorbMissileDamage()
     {
-        return this.isPowerShieldActivated && this.hasEnoughEnergyForMissileDamageAbsorption();
+        return isPowerShieldActivated && hasEnoughEnergyForMissileDamageAbsorption();
     }
     
     private boolean hasEnoughEnergyForMissileDamageAbsorption()
     {
-        return this.battery.getCurrentCharge() >= this.getProtectionFactor()
-                                                * ENEMY_MISSILE_DAMAGE_FACTOR
-                                                * this.spellCosts
-                || this.hasUnlimitedEnergy();
+        return battery.getCurrentCharge() >= getProtectionFactor()
+            * ENEMY_MISSILE_DAMAGE_FACTOR
+            * spellCosts
+            || hasUnlimitedEnergy();
     }
     
     @Override
     public void crash()
     {
-        if(this.isPowerShieldActivated){this.shutDownPowerShield();}
+        if(isPowerShieldActivated)
+        {
+            shutDownPowerShield();
+        }
         super.crash();
     }
     
@@ -227,14 +253,14 @@ public final class Roch extends Helicopter
     public void initMenuEffect(int i)
     {
         super.initMenuEffect(i);
-        this.isPowerShieldActivated = true;
+        isPowerShieldActivated = true;
     }
     
     @Override
     public void updateMenuEffect()
     {
         super.updateMenuEffect();
-        if(Window.effectTimer[this.getType().ordinal()] == 30)
+        if(Window.effectTimer[getType().ordinal()] == 30)
         {
             Audio.play(Audio.plasmaOff);
         }
@@ -243,44 +269,44 @@ public final class Roch extends Helicopter
     @Override
     public void stopMenuEffect()
     {
-        this.isPowerShieldActivated = false;
+        isPowerShieldActivated = false;
     }
     
     @Override
     public void update(GameRessourceProvider gameRessourceProviderontroller)
     {
         super.update(gameRessourceProviderontroller);
-        if(this.isPowerShieldActivated && this.battery.isDischarged())
+        if(isPowerShieldActivated && battery.isDischarged())
         {
-            this.shutDownPowerShield();
+            shutDownPowerShield();
         }
     }
     
     void shutDownPowerShield()
     {
         Audio.play(Audio.plasmaOff);
-        this.isPowerShieldActivated = false;
+        isPowerShieldActivated = false;
     }
     
     public boolean isPowerShieldProtected(Enemy enemy)
     {
-        return this.isPowerShieldActivated
-            && (this.hasUnlimitedEnergy()
-                || this.battery.getCurrentCharge() >= this.spellCosts * enemy.collisionDamage());
+        return isPowerShieldActivated
+            && (hasUnlimitedEnergy()
+            || battery.getCurrentCharge() >= spellCosts * enemy.collisionDamage());
     }
     
     @Override
     float getStaticChargeEnergyDrain()
     {
-        return this.isPowerShieldActivated
-                ? REDUCED_ENERGY_DRAIN
-                : super.getStaticChargeEnergyDrain();
+        return isPowerShieldActivated
+            ? REDUCED_ENERGY_DRAIN
+            : super.getStaticChargeEnergyDrain();
     }
     
     @Override
     void slowDown()
     {
-        if(!this.isPowerShieldActivated)
+        if(!isPowerShieldActivated)
         {
             super.slowDown();
         }
@@ -289,15 +315,15 @@ public final class Roch extends Helicopter
     @Override
     public float getBaseProtectionFactor(boolean canExplode)
     {
-        return this.isPowerShieldActivated && canExplode
-                ? REDUCED_BASE_PROTECTION_FACTOR
-                : super.getBaseProtectionFactor(canExplode);
+        return isPowerShieldActivated && canExplode
+            ? REDUCED_BASE_PROTECTION_FACTOR
+            : super.getBaseProtectionFactor(canExplode);
     }
     
     @Override
     public void resetStateTypeSpecific()
     {
-        this.isPowerShieldActivated = false;
+        isPowerShieldActivated = false;
     }
     
     @Override
@@ -343,11 +369,18 @@ public final class Roch extends Helicopter
         {
             if(missile.sister[j] != null)
             {
-                if(missile.sister[j].sister[0] == missile){
-                    missile.sister[j].sister[0] = null;}
-                else if(missile.sister[j].sister[1] == missile){
-                    missile.sister[j].sister[1] = null;}
-                else assert false;
+                if(missile.sister[j].sister[0] == missile)
+                {
+                    missile.sister[j].sister[0] = null;
+                }
+                else if(missile.sister[j].sister[1] == missile)
+                {
+                    missile.sister[j].sister[1] = null;
+                }
+                else
+                {
+                    assert false;
+                }
             }
         }
         super.inactivate(missile);
@@ -368,7 +401,7 @@ public final class Roch extends Helicopter
     boolean canRegenerateEnergy()
     {
         return super.canRegenerateEnergy()
-                && !this.isPowerShieldActivated;
+            && !isPowerShieldActivated;
     }
     
     @Override

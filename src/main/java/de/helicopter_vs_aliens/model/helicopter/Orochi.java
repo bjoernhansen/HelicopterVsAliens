@@ -1,18 +1,13 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.missile.Missile;
-
-
-import java.util.Map;
-import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.STUNNING;
@@ -40,7 +35,7 @@ public final class Orochi extends Helicopter
     @Override
     public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
-        if (isShootingStunningMissile())
+        if(isShootingStunningMissile())
         {
             return STUNNING;
         }
@@ -50,13 +45,13 @@ public final class Orochi extends Helicopter
     @Override
     void setSpellCosts()
     {
-        this.spellCosts = OROCHI.getSpellCosts() - 2 * (this.getUpgradeLevelOf(StandardUpgradeType.ENERGY_ABILITY) - 1);
+        spellCosts = OROCHI.getSpellCosts() - 2 * (getUpgradeLevelOf(StandardUpgradeType.ENERGY_ABILITY) - 1);
     }
     
     @Override
     public void updateUnlockedHelicopters()
     {
-        if (!KAMAITACHI.hasReachedLevel20())
+        if(!KAMAITACHI.hasReachedLevel20())
         {
             Window.unlock(PEGASUS);
         }
@@ -65,15 +60,15 @@ public final class Orochi extends Helicopter
     @Override
     void getMaximumNumberOfCannons()
     {
-        this.numberOfCannons = 3;
+        numberOfCannons = 3;
     }
     
     @Override
     public void obtainSomeUpgrades()
     {
-        if (this.numberOfCannons < 3)
+        if(numberOfCannons < 3)
         {
-            this.numberOfCannons = 2;
+            numberOfCannons = 2;
         }
         super.obtainSomeUpgrades();
     }
@@ -81,104 +76,104 @@ public final class Orochi extends Helicopter
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasRadarDevice;
+        return hasRadarDevice;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.hasRadarDevice = true;
+        hasRadarDevice = true;
     }
     
     @Override
     public boolean hasAllCannons()
     {
-        return this.numberOfCannons == 3;
+        return numberOfCannons == 3;
     }
     
     @Override
     public void updateEnergyAbility()
     {
         super.updateEnergyAbility();
-        this.setSpellCosts();
+        setSpellCosts();
     }
     
     @Override
     public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        if (!this.isNextMissileStunner)
+        if(!isNextMissileStunner)
         {
             Audio.play(Audio.stunActivated);
-            this.isNextMissileStunner = true;
+            isNextMissileStunner = true;
         }
     }
     
     @Override
-    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider){}
+    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider) {}
     
     @Override
     boolean canRegenerateEnergy()
     {
         return super.canRegenerateEnergy()
-                && !this.isNextMissileStunner;
+            && !isNextMissileStunner;
     }
     
     @Override
     boolean isShootingStunningMissile()
     {
-        return this.isNextMissileStunner && this.hasEnoughEnergyForAbility();
+        return isNextMissileStunner && hasEnoughEnergyForAbility();
     }
     
     @Override
     protected void consumeEnergyForShoot()
     {
-        if (this.isNextMissileStunner && this.hasEnoughEnergyForAbility())
+        if(isNextMissileStunner && hasEnoughEnergyForAbility())
         {
-            this.consumeSpellCosts();
+            consumeSpellCosts();
         }
     }
     
     @Override
     void resetFifthSpecial()
     {
-        this.hasRadarDevice = false;
+        hasRadarDevice = false;
     }
     
     @Override
     public boolean canDetectCloakedVessels()
     {
-        return this.hasRadarDevice;
+        return hasRadarDevice;
     }
     
     @Override
     public float getMissileDamageFactor()
     {
-        return this.numberOfCannons == 3 ? EXTRA_MISSILE_DAMAGE_FACTOR : STANDARD_MISSILE_DAMAGE_FACTOR;
+        return numberOfCannons == 3 ? EXTRA_MISSILE_DAMAGE_FACTOR : STANDARD_MISSILE_DAMAGE_FACTOR;
     }
     
     @Override
     public void initMenuEffect(int i)
     {
         super.initMenuEffect(i);
-        this.isNextMissileStunner = true;
+        isNextMissileStunner = true;
     }
     
     @Override
     public void stopMenuEffect()
     {
-        this.isNextMissileStunner = false;
+        isNextMissileStunner = false;
     }
     
     @Override
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent, double scalingFactor)
     {
-        this.isNextMissileStunner = false;
+        isNextMissileStunner = false;
     }
     
     @Override
     public void resetStateTypeSpecific()
     {
-        this.isNextMissileStunner = false;
+        isNextMissileStunner = false;
     }
     
     @Override
@@ -217,7 +212,10 @@ public final class Orochi extends Helicopter
                 {
                     Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 4f, 0.0f, 4f);
                 }
-                else assert false;
+                else
+                {
+                    assert false;
+                }
             }
         }
         else if(missile.numberOfClusterKills() > 0)
@@ -237,11 +235,18 @@ public final class Orochi extends Helicopter
         {
             if(missile.sister[j] != null)
             {
-                if(missile.sister[j].sister[0] == missile){
-                    missile.sister[j].sister[0] = null;}
-                else if(missile.sister[j].sister[1] == missile){
-                    missile.sister[j].sister[1] = null;}
-                else assert false;
+                if(missile.sister[j].sister[0] == missile)
+                {
+                    missile.sister[j].sister[0] = null;
+                }
+                else if(missile.sister[j].sister[1] == missile)
+                {
+                    missile.sister[j].sister[1] = null;
+                }
+                else
+                {
+                    assert false;
+                }
             }
         }
         super.inactivate(missile);
