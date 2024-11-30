@@ -311,12 +311,16 @@ public abstract class Helicopter extends RectangularPaintableEntity
                                                                .getMissiles()
                                                                .get(CollectionSubgroupType.INACTIVE)
                                                                .iterator();
+        Missile missile;
         if(!iterator.hasNext())
         {
-            return new Missile();
+            missile = new Missile();
         }
-        Missile missile = iterator.next();
-        iterator.remove();
+        else
+        {
+            missile = iterator.next();
+            iterator.remove();
+        }
         resetMissile(missile);
         return missile;
     }

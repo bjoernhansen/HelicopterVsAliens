@@ -55,7 +55,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		typeOfExplosion;
 	
 	private boolean
-		flying;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
+		flying = true;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
 	
 	// nur für Roch- und Orochi-Klasse relevant
