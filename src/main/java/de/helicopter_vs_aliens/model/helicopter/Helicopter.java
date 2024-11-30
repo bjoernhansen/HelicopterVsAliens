@@ -34,17 +34,16 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
-
 
 public abstract class Helicopter extends RectangularPaintableEntity
-// TODO Klasse zerschlagen
+    // TODO Klasse zerschlagen
 {
     // TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit Setter-Methoden arbeiten, sonst private
     public static final int
@@ -252,8 +251,49 @@ public abstract class Helicopter extends RectangularPaintableEntity
     
     void shoot(GameRessourceProvider gameRessourceProvider)
     {
-        // TODO Code Duplizierungen auflösen
-        // TODO Großteil des Codes in die Klasse Missile
+        playShootingSound();
+        fireRateTimer = 0;
+        gameRessourceProvider.getGameStatisticsCalculator()
+                             .incrementMissileCounterBy(numberOfCannons);
+        consumeEnergyForShoot();
+        
+        List<Missile> launchedMissiles = new ArrayList<>();
+        for(int i = 0; i < numberOfCannons; i++)
+        {
+            Missile missile = getMissileInstance();
+            missile.launch(this, CANNON_Y_POSITIONS[i]);
+            launchedMissiles.add(missile);
+        }
+        
+        gameRessourceProvider.getActivePaintableEntityManager()
+                             .getMissiles()
+                             .get(CollectionSubgroupType.ACTIVE)
+                             .addAll(launchedMissiles);
+        
+        if(this.hasKillCountingMissiles())
+        {
+            clusterMissiles(launchedMissiles);
+        }
+    }
+    
+    private static void clusterMissiles(List<Missile> launchedMissiles)
+    {
+        if(launchedMissiles.size() > 1)
+        {
+            launchedMissiles.get(0)
+                            .joinClusterWith(launchedMissiles.get(1));
+        }
+        if(launchedMissiles.size() > 2)
+        {
+            launchedMissiles.get(0)
+                            .joinClusterWith(launchedMissiles.get(2));
+            launchedMissiles.get(1)
+                            .joinClusterWith(launchedMissiles.get(2));
+        }
+    }
+    
+    private void playShootingSound()
+    {
         if(hasPiercingWarheads)
         {
             Audio.play(Audio.launch2);
@@ -262,73 +302,28 @@ public abstract class Helicopter extends RectangularPaintableEntity
         {
             Audio.play(Audio.launch1);
         }
-        fireRateTimer = 0;
-        gameRessourceProvider.getGameStatisticsCalculator()
-                             .incrementMissileCounterBy(numberOfCannons);
-        
-        Missile sister = null;
-        Map<CollectionSubgroupType, Queue<Missile>> missiles = gameRessourceProvider.getActivePaintableEntityManager()
-                                                                                    .getMissiles();
-        if(numberOfCannons >= 1)
-        {
-            Missile missile = getMissileInstance(missiles);
-            if(getType() == ROCH || getType() == OROCHI)
-            {
-                missile.sister[0] = null;
-                missile.sister[1] = null;
-                sister = missile;
-            }
-            missiles.get(CollectionSubgroupType.ACTIVE)
-                    .add(missile);
-            missile.launch(this, CANNON_Y_POSITIONS[0]);
-        }
-        if(numberOfCannons >= 2)
-        {
-            Missile missile = getMissileInstance(missiles);
-            if(sister != null && (getType() == ROCH || getType() == OROCHI))
-            {
-                missile.sister[0] = sister;
-                missile.sister[1] = null;
-                sister.sister[0] = missile;
-                sister = missile;
-            }
-            missiles.get(CollectionSubgroupType.ACTIVE)
-                    .add(missile);
-            missile.launch(this, CANNON_Y_POSITIONS[1]);
-        }
-        if(numberOfCannons >= 3)
-        {
-            Missile missile = getMissileInstance(missiles);
-            if(sister != null && (getType() == ROCH || getType() == OROCHI))
-            {
-                missile.sister[0] = sister.sister[0];
-                missile.sister[1] = sister;
-                sister.sister[0].sister[1] = missile;
-                sister.sister[1] = missile;
-            }
-            missiles.get(CollectionSubgroupType.ACTIVE)
-                    .add(missile);
-            missile.launch(this, CANNON_Y_POSITIONS[2]);
-        }
-        consumeEnergyForShoot();
     }
     
-    private static Missile getMissileInstance(Map<CollectionSubgroupType, Queue<Missile>> missiles)
+    private Missile getMissileInstance()
     // TODO über die Instance-Provider-Klasse abwickeln wie bei Enemy
     {
-        Iterator<Missile> iterator = missiles.get(CollectionSubgroupType.INACTIVE)
-                                             .iterator();
-        Missile missile;
-        if(iterator.hasNext())
+        Iterator<Missile> iterator = getGameRessourceProvider().getActivePaintableEntityManager()
+                                                               .getMissiles()
+                                                               .get(CollectionSubgroupType.INACTIVE)
+                                                               .iterator();
+        if(!iterator.hasNext())
         {
-            missile = iterator.next();
-            iterator.remove();
+            return new Missile();
         }
-        else
-        {
-            missile = new Missile();
-        }
+        Missile missile = iterator.next();
+        iterator.remove();
+        resetMissile(missile);
         return missile;
+    }
+    
+    void resetMissile(Missile missile)
+    {
+        missile.reset();
     }
     
     protected void consumeEnergyForShoot() {}
@@ -992,11 +987,12 @@ public abstract class Helicopter extends RectangularPaintableEntity
     
     public void becomesCenterOf(Explosion exp)
     {
-        exp.getEllipse().setFrameFromCenter(
-            getX() + (isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),
-            getY() + FOCAL_POINT_Y_EXP,
-            getX() + (isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),
-            getY() + FOCAL_POINT_Y_EXP);
+        exp.getEllipse()
+           .setFrameFromCenter(
+               getX() + (isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),
+               getY() + FOCAL_POINT_Y_EXP,
+               getX() + (isMovingLeft ? FOCAL_POINT_X_LEFT : FOCAL_POINT_X_RIGHT),
+               getY() + FOCAL_POINT_Y_EXP);
     }
     
     public boolean isOnTheGround()
@@ -1344,11 +1340,6 @@ public abstract class Helicopter extends RectangularPaintableEntity
     public boolean isDestinedToCrash()
     {
         return hasDestroyedPlating() && !isDamaged;
-    }
-    
-    public boolean hasTimeRecordingMissiles()
-    {
-        return false;
     }
     
     public boolean hasKillCountingMissiles()

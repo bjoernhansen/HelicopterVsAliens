@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -192,63 +191,16 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    // TODO Großteil des Codes nach Missile und Redundanzen damit auflösen subklassenspezischen Code in eigene Methode -> vgl. Klasse Roch
+    void resetMissile(Missile missile)
+    {
+        super.resetMissile(missile);
+        missile.setBackKillCounter();
+    }
+    
+    @Override
     public void inactivate(Missile missile)
     {
-        if(missile.sister[0] == null && missile.sister[1] == null)
-        {
-            if(missile.numberOfClusterKills() > 1)
-            {
-                int nonFailedShots = missile.getNonFailedShots();
-                if(nonFailedShots == 1)
-                {
-                    Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 0.25f, 0.0f, 0.25f);
-                }
-                if(nonFailedShots == 2)
-                {
-                    Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 1.5f, 0.0f, 1.5f);
-                }
-                else if(nonFailedShots == 3)
-                {
-                    Events.extraReward(missile.numberOfClusterKills(), missile.earnedMoney, 4f, 0.0f, 4f);
-                }
-                else
-                {
-                    assert false;
-                }
-            }
-        }
-        else if(missile.numberOfClusterKills() > 0)
-        {
-            for(int j = 0; true; j++)
-            {
-                if(missile.sister[j] != null)
-                {
-                    missile.sister[j].earnedMoney += missile.earnedMoney;
-                    missile.sister[j].sisterKills += missile.numberOfClusterKills();
-                    missile.sister[j].nrOfHittingSisters += missile.getNonFailedShots();
-                    break;
-                }
-            }
-        }
-        for(int j = 0; j < 2; j++)
-        {
-            if(missile.sister[j] != null)
-            {
-                if(missile.sister[j].sister[0] == missile)
-                {
-                    missile.sister[j].sister[0] = null;
-                }
-                else if(missile.sister[j].sister[1] == missile)
-                {
-                    missile.sister[j].sister[1] = null;
-                }
-                else
-                {
-                    assert false;
-                }
-            }
-        }
+        missile.inactivateForOrochi();
         super.inactivate(missile);
     }
     

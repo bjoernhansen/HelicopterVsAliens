@@ -36,12 +36,6 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	private int
 		damageEffect;
 	
-	private int
-		kills;
-	
-	public int
-		earnedMoney;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
-	
 	public double
 		speed;			// Geschwindigkeit der Rakete
 	
@@ -54,51 +48,68 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	public boolean
 		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
-	public final Missile []
-		sister = new Missile [2];	// nur für Roch- und Orochi Klasse: Schwesterraketen (werden gleichzeitig abgefeuert)
-	
 	public final Map<Integer, Enemy>
 		hits = new HashMap<> ();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
-
+	
 	public ExplosionType
 		typeOfExplosion;
-
-	public int
-		sisterKills;			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
-	
-	public int
-		nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
-	
-	private long
-		launchingTime; 		// nur für Phönix-Klasse relevant
 	
 	private boolean
 		flying;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
-
+	
+	// nur für Roch- und Orochi-Klasse relevant
+	private int
+		kills;
+	
+	public int
+		earnedMoney;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
+	
+	private final Missile []
+		sister = new Missile [2];	// nur für Roch- und Orochi Klasse: Schwesterraketen (werden gleichzeitig abgefeuert)
+	
+	private int
+		sisterKills;			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
+	
+	private int
+		nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
+	
+	
+	// nur für Roch- und Orochi-Klasse relevant
+	private long
+		launchingTime; 		// nur für Phönix-Klasse relevant
+	
+	
 	public void launch(Helicopter helicopter, int y)
 	{
 		speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
-		dangerous = false;
-		bounced = false;
-		flying = true;
 		extraDamage = helicopter.hasTripleDamage();
 		typeOfExplosion = helicopter.getCurrentExplosionTypeOfMissiles();
 		setBounds(helicopter, y);
 		setDamageEffect(helicopter.getBaseDamage());
+	}
+	
+	public void reset()
+	{
+		dangerous = false;
+		bounced = false;
+		flying = true;
 		hits.clear();
-		
-		if(helicopter.hasKillCountingMissiles())
-		{
-			kills = 0;
-			earnedMoney = 0;
-			sisterKills = 0;
-			nrOfHittingSisters = 0;
-		}
-		else if(helicopter.hasTimeRecordingMissiles())
-		{
-			launchingTime = System.currentTimeMillis();
-		}
+	}
+	
+	public void setBackTimeRecorder()
+	{
+		launchingTime = System.currentTimeMillis();
+	}
+	
+	public void setBackKillCounter()
+	{
+		kills = 0;
+		earnedMoney = 0;
+		sisterKills = 0;
+		nrOfHittingSisters = 0;
+		sister[0] = null;
+		sister[1] = null;
 	}
 	
 	// TODO in Methoden auslagern
@@ -368,5 +379,132 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	public int getNonFailedShots()
 	{
 		return (hasKilled() ? 1 : 0) + nrOfHittingSisters;
+	}
+	
+	// TODO code duplizierungen zwischen inactivateForRoch und inactivateForOrochi auflösen
+	// TODO gemeinsame Methoden schaffen, code insgesamt refactorn und vereinfachenb, ggf. Logik in eigene Klasse auslagern
+	public void inactivateForRoch()
+	{
+		if(sister[0] == null && sister[1] == null)
+		{
+			if(numberOfClusterKills() > 1)
+			{
+				Events.extraReward(numberOfClusterKills(), earnedMoney, 0.5f, 0.75f, 3.0f);
+			}
+		}
+		else if(numberOfClusterKills() > 0)
+		{
+			for(int j = 0; true; j++)
+			{
+				if(sister[j] != null)
+				{
+					sister[j].earnedMoney += earnedMoney;
+					sister[j].sisterKills += numberOfClusterKills();
+					sister[j].nrOfHittingSisters += getNonFailedShots();
+					break;
+				}
+			}
+		}
+		for(int j = 0; j < 2; j++)
+		{
+			if(sister[j] != null)
+			{
+				if(sister[j].sister[0] == this)
+				{
+					sister[j].sister[0] = null;
+				}
+				else if(sister[j].sister[1] == this)
+				{
+					sister[j].sister[1] = null;
+				}
+				else
+				{
+					// TODO allenfalls Exception werfen, aber wahrscheinlich unnötig
+					assert false;
+				}
+			}
+		}
+	}
+	
+	public void inactivateForOrochi()
+	{
+		if(sister[0] == null && sister[1] == null)
+		{
+			if(numberOfClusterKills() > 1)
+			{
+				int nonFailedShots = getNonFailedShots();
+				if(nonFailedShots == 1)
+				{
+					Events.extraReward(numberOfClusterKills(), earnedMoney, 0.25f, 0.0f, 0.25f);
+				}
+				if(nonFailedShots == 2)
+				{
+					Events.extraReward(numberOfClusterKills(), earnedMoney, 1.5f, 0.0f, 1.5f);
+				}
+				else if(nonFailedShots == 3)
+				{
+					Events.extraReward(numberOfClusterKills(), earnedMoney, 4f, 0.0f, 4f);
+				}
+				else
+				{
+					assert false;
+				}
+			}
+		}
+		else if(numberOfClusterKills() > 0)
+		{
+			for(int j = 0; true; j++)
+			{
+				if(sister[j] != null)
+				{
+					sister[j].earnedMoney += earnedMoney;
+					sister[j].sisterKills += numberOfClusterKills();
+					sister[j].nrOfHittingSisters += getNonFailedShots();
+					break;
+				}
+			}
+		}
+		for(int j = 0; j < 2; j++)
+		{
+			if(sister[j] != null)
+			{
+				if(sister[j].sister[0] == this)
+				{
+					sister[j].sister[0] = null;
+				}
+				else if(sister[j].sister[1] == this)
+				{
+					sister[j].sister[1] = null;
+				}
+				else
+				{
+					// TODO allenfalls Exception werfen, aber wahrscheinlich unnötig
+					assert false;
+				}
+			}
+		}
+	}
+	
+	
+	
+	public void joinClusterWith(Missile missile)
+	{
+		addSister(missile);
+		missile.addSister(this);
+	}
+	
+	private void addSister(Missile missile)
+	{
+		if(sister[0] == null)
+		{
+			sister[0] = missile;
+		}
+		else if(sister[1] == null)
+		{
+			sister[1] = missile;
+		}
+		else {
+			throw new UnsupportedOperationException("Adding of more than 2 sisters is not supported!");
+		}
 	}
 }

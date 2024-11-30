@@ -13,9 +13,7 @@ import de.helicopter_vs_aliens.util.geometry.Dimension;
 import javax.sound.sampled.Clip;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.KABOOM;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PEGASUS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.PHOENIX;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
 import static de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType.FIREPOWER;
 
 
@@ -320,12 +318,14 @@ public final class Phoenix extends Helicopter
             this.bonusKillsMoney += Events.lastBonus;
         }
     }
-
+    
     @Override
-    public boolean hasTimeRecordingMissiles()
+    void resetMissile(Missile missile)
     {
-        return true;
+        super.resetMissile(missile);
+        missile.setBackTimeRecorder();
     }
+    
 
     public int getEnhancedRadiationTimer()
     {
