@@ -14,9 +14,9 @@ import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Set;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
@@ -33,25 +33,26 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	private static final float
 		SHIFT_DAMAGE_FACTOR = 8.9f;		// Pegasus-Klasse: Faktor, um den sich die Schadenswirkung einer Rakete erhöht, wenn diese abgeschossen wird, während der Interphasen-Generator aktiviert ist
 
+	
 	private int
 		damageEffect;
 	
-	public double
+	private double
 		speed;			// Geschwindigkeit der Rakete
 	
-	public boolean
-		extraDamage;	// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
+	private boolean
+		inflictsExtraDamage;	// = true: Rakete wurde abgeschossen während beim Helicopter das Extra-Feuerkraft-PowerUp aktiv ist
 	
-	public boolean
+	private boolean
 		dangerous;		// = true: kann den Helicopter beschädigen
 	
-	public boolean
+	private boolean
 		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
-	public final Map<Integer, Enemy>
-		hits = new HashMap<> ();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
+	private final Set<Enemy>
+		hits = new HashSet<>();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
 	
-	public ExplosionType
+	private ExplosionType
 		typeOfExplosion;
 	
 	private boolean
@@ -62,7 +63,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	private int
 		kills;
 	
-	public int
+	private int
 		earnedMoney;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
 	
 	private final Missile []
@@ -75,7 +76,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
 	
 	
-	// nur für Roch- und Orochi-Klasse relevant
+	// nur für Phönix-Klasse relevant
 	private long
 		launchingTime; 		// nur für Phönix-Klasse relevant
 	
@@ -83,7 +84,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	public void launch(Helicopter helicopter, int y)
 	{
 		speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
-		extraDamage = helicopter.hasTripleDamage();
+		inflictsExtraDamage = helicopter.hasTripleDamage();
 		typeOfExplosion = helicopter.getCurrentExplosionTypeOfMissiles();
 		setBounds(helicopter, y);
 		setDamageEffect(helicopter.getBaseDamage());
@@ -123,27 +124,27 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 							typeOfExplosion == ExplosionType.JUMBO  ? 30 : 20,
 							typeOfExplosion == ExplosionType.JUMBO ? 6 : 4);
 		setPaintBounds((int)getWidth(),
-							  (int)getHeight());
+					   (int)getHeight());
 	}
 	
 	private void setDamageEffect(float baseDamage)
 	{
 		damageEffect = (int) (	baseDamage
 							* (typeOfExplosion == ExplosionType.PHASE_SHIFT ? SHIFT_DAMAGE_FACTOR : STANDARD_DAMAGE_FACTOR)
-							* (extraDamage ? POWERUP_DAMAGE_FACTOR : 1));
+							* (inflictsExtraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Missile> i = gameRessourceProvider.getActivePaintableEntityManager()
-													   .getMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
+		for(Iterator<Missile> missileIterator = gameRessourceProvider.getActivePaintableEntityManager()
+													   .getMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); missileIterator.hasNext();)
 		{
-			Missile missile = i.next();
-			missile.update(gameRessourceProvider, i);
+			Missile missile = missileIterator.next();
+			missile.update(gameRessourceProvider, missileIterator);
 		}
 	}
 
-	private void update(GameRessourceProvider gameRessourceProvider, Iterator<Missile> i)
+	private void update(GameRessourceProvider gameRessourceProvider, Iterator<Missile> missileIterator)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		setX(getX()
@@ -161,10 +162,25 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		checkIfMissileHitEnemy(gameRessourceProvider);
 		if(!flying)
 		{
-			i.remove();
-			helicopter.inactivate(this);
+			missileIterator.remove();
+			inactivate(gameRessourceProvider);
+			
 		}
 		setPaintBounds();
+	}
+	
+	private void inactivate(GameRessourceProvider gameRessourceProvider)
+	{
+		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		if(helicopter.hasKillCountingMissiles())
+		{
+			Grantable typeSpecificReward = helicopter.getMultipleHitsExtraReward(this);
+			helicopterTypeSpecificInactivation(typeSpecificReward);
+		}
+		gameRessourceProvider.getActivePaintableEntityManager()
+							 .getMissiles()
+							 .get(CollectionSubgroupType.INACTIVE)
+							 .add(this);
 	}
 	
 	private boolean canHit(Helicopter helicopter)
@@ -289,7 +305,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
     
     public boolean hasGreatExplosivePower()
     {
-		return typeOfExplosion.isBigExplosion() || extraDamage;
+		return typeOfExplosion.isBigExplosion() || inflictsExtraDamage;
     }
 	
 	@Override
@@ -303,33 +319,33 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		return typeOfExplosion == ExplosionType.STUNNING;
     }
 	
-	public boolean atLeastOneSisterHasQualifiedForFirstCreditOn(Enemy enemy)
+	private boolean atLeastOneSisterHasQualifiedForFirstCreditOn(Enemy enemy)
 	{
 		return hasFirstSisterQualifiedForFirstCreditOn(enemy)
 			|| hasSecondSisterQualifiedForFirstCreditOn(enemy);
 	}
 	
-	public boolean hasFirstSisterQualifiedForFirstCreditOn(Enemy enemy)
+	private boolean hasFirstSisterQualifiedForFirstCreditOn(Enemy enemy)
 	{
 		return sister[0] != null && sister[0].hasQualifiedForFirstCreditOn(enemy);
 	}
 	
-	public boolean hasSecondSisterQualifiedForFirstCreditOn(Enemy enemy)
+	private boolean hasSecondSisterQualifiedForFirstCreditOn(Enemy enemy)
 	{
 		return sister[1] != null && sister[1].hasQualifiedForFirstCreditOn(enemy);
 	}
 	
-	public boolean hasQualifiedForFirstCreditOn(Enemy enemy)
+	private boolean hasQualifiedForFirstCreditOn(Enemy enemy)
 	{
 		return intersects(enemy) && !hasKilled();
 	}
 	
-	public void creditFirstSister()
+	private void creditFirstSister()
 	{
 		sister[0].credit();
 	}
 	
-	public void creditSecondSister()
+	private void creditSecondSister()
 	{
 		sister[1].credit();
 	}
@@ -340,7 +356,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		earnedMoney += Events.lastBonus;
 	}
 	
-	public boolean hasKilled()
+	private boolean hasKilled()
 	{
 		return kills > 0;
 	}
@@ -371,40 +387,48 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		return damageEffect;
 	}
 	
-	public int numberOfClusterKills()
+	private int numberOfCountedKills()
 	{
 		return kills + sisterKills;
 	}
 	
-	public int getNonFailedShots()
+	private int getNonFailedShots()
 	{
 		return (hasKilled() ? 1 : 0) + nrOfHittingSisters;
 	}
-	
-	// TODO code duplizierungen zwischen inactivateForRoch und inactivateForOrochi auflösen
-	// TODO gemeinsame Methoden schaffen, code insgesamt refactorn und vereinfachenb, ggf. Logik in eigene Klasse auslagern
-	public void inactivateForRoch()
+ 
+	private void helicopterTypeSpecificInactivation(Grantable typeSpecificReward)
 	{
-		if(sister[0] == null && sister[1] == null)
+		if(isOnlyChild())
 		{
-			if(numberOfClusterKills() > 1)
+			if(numberOfCountedKills() > 1)
 			{
-				Events.extraReward(numberOfClusterKills(), earnedMoney, 0.5f, 0.75f, 3.0f);
+				typeSpecificReward.grant();
 			}
 		}
-		else if(numberOfClusterKills() > 0)
+		else if(numberOfCountedKills() > 0)
 		{
-			for(int j = 0; true; j++)
+			transferAchievementsToAnyOtherSister();
+		}
+		disconnectFromSisters();
+	}
+	
+	private void transferAchievementsToAnyOtherSister()
+	{
+		for(int j = 0; true; j++)
+		{
+			if(sister[j] != null)
 			{
-				if(sister[j] != null)
-				{
-					sister[j].earnedMoney += earnedMoney;
-					sister[j].sisterKills += numberOfClusterKills();
-					sister[j].nrOfHittingSisters += getNonFailedShots();
-					break;
-				}
+				sister[j].earnedMoney += earnedMoney;
+				sister[j].sisterKills += numberOfCountedKills();
+				sister[j].nrOfHittingSisters += getNonFailedShots();
+				break;
 			}
 		}
+	}
+	
+	private void disconnectFromSisters()
+	{
 		for(int j = 0; j < 2; j++)
 		{
 			if(sister[j] != null)
@@ -419,72 +443,42 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 				}
 				else
 				{
-					// TODO allenfalls Exception werfen, aber wahrscheinlich unnötig
-					assert false;
+					throw new IllegalStateException("If a sister exists then it has to point to this missile.");
 				}
 			}
 		}
 	}
 	
-	public void inactivateForOrochi()
+	public void grantExtraRewardForMultipleKillsWithSingleShot()
 	{
-		if(sister[0] == null && sister[1] == null)
-		{
-			if(numberOfClusterKills() > 1)
-			{
-				int nonFailedShots = getNonFailedShots();
-				if(nonFailedShots == 1)
-				{
-					Events.extraReward(numberOfClusterKills(), earnedMoney, 0.25f, 0.0f, 0.25f);
-				}
-				if(nonFailedShots == 2)
-				{
-					Events.extraReward(numberOfClusterKills(), earnedMoney, 1.5f, 0.0f, 1.5f);
-				}
-				else if(nonFailedShots == 3)
-				{
-					Events.extraReward(numberOfClusterKills(), earnedMoney, 4f, 0.0f, 4f);
-				}
-				else
-				{
-					assert false;
-				}
-			}
-		}
-		else if(numberOfClusterKills() > 0)
-		{
-			for(int j = 0; true; j++)
-			{
-				if(sister[j] != null)
-				{
-					sister[j].earnedMoney += earnedMoney;
-					sister[j].sisterKills += numberOfClusterKills();
-					sister[j].nrOfHittingSisters += getNonFailedShots();
-					break;
-				}
-			}
-		}
-		for(int j = 0; j < 2; j++)
-		{
-			if(sister[j] != null)
-			{
-				if(sister[j].sister[0] == this)
-				{
-					sister[j].sister[0] = null;
-				}
-				else if(sister[j].sister[1] == this)
-				{
-					sister[j].sister[1] = null;
-				}
-				else
-				{
-					// TODO allenfalls Exception werfen, aber wahrscheinlich unnötig
-					assert false;
-				}
-			}
-		}
+		Events.extraReward(numberOfCountedKills(), earnedMoney, 0.5f, 0.75f, 3.0f);
 	}
 	
+	private boolean isOnlyChild()
+	{
+		return sister[0] == null && sister[1] == null;
+	}
+	
+	public void grantExtraRewardForNonFailedShots()
+	{
+		int nonFailedShots = getNonFailedShots();
+		if(nonFailedShots == 1)
+		{
+			Events.extraReward(numberOfCountedKills(), earnedMoney, 0.25f, 0.0f, 0.25f);
+		}
+		if(nonFailedShots == 2)
+		{
+			Events.extraReward(numberOfCountedKills(), earnedMoney, 1.5f, 0.0f, 1.5f);
+		}
+		else if(nonFailedShots == 3)
+		{
+			Events.extraReward(numberOfCountedKills(), earnedMoney, 4f, 0.0f, 4f);
+		}
+		else
+		{
+			throw new IllegalStateException("Number of non failed shots has to be between 1 and 3, but was " + nonFailedShots);
+		}
+	}
 	
 	
 	public void joinClusterWith(Missile missile)
@@ -506,5 +500,35 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		else {
 			throw new UnsupportedOperationException("Adding of more than 2 sisters is not supported!");
 		}
+	}
+	
+	public boolean inflictsExtraDamage()
+	{
+		return inflictsExtraDamage;
+	}
+	
+	public void rememberHitting(Enemy enemy)
+	{
+		hits.add(enemy);
+	}
+	
+	public void forgetHitting(Enemy enemy)
+	{
+		hits.remove(enemy);
+	}
+	
+	public boolean hasHit(Enemy enemy)
+	{
+		return hits.contains(enemy);
+	}
+	
+	public double getSpeed()
+	{
+		return speed;
+	}
+	
+	public ExplosionType getTypeOfExplosion()
+	{
+		return typeOfExplosion;
 	}
 }

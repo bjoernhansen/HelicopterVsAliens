@@ -1893,7 +1893,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         {
             Audio.play(Audio.explosion2);
         }
-        missile.hits.put(hashCode(), this);
+        missile.rememberHitting(this);
         takeDamage(missile.getDamageEffect());
         if(areStunningRequirementsMet(missile))
         {
@@ -1903,7 +1903,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     
     private boolean areStunningRequirementsMet(Missile missile)
     {
-        return missile.typeOfExplosion == ExplosionType.STUNNING
+        return missile.isStunning()
             && isStunnable()
             && nonStunnableTimer == READY;
     }
@@ -1918,7 +1918,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         nonStunnableTimer = (int)(type.isMainBoss() || type.isFinalBossServant()
             ? 2.25f * Events.level
             : 0);
-        knockBackDirection = missile.speed > 0 ? 1 : -1;
+        knockBackDirection = missile.getSpeed() > 0 ? 1 : -1;
         
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         // TODO in Methoden auslagern, Code verständlicher machen
@@ -2029,7 +2029,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     
     private void explode(GameRessourceProvider gameRessourceProvider, Missile missile)
     {
-        explode(gameRessourceProvider, missile.speed, missile.typeOfExplosion, missile.extraDamage);
+        explode(gameRessourceProvider, missile.getSpeed(), missile.getTypeOfExplosion(), missile.inflictsExtraDamage());
     }
     
     private void explode(GameRessourceProvider gameRessourceProvider,
@@ -2157,7 +2157,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         {
             explode(gameRessourceProvider);
         }
-        else if(missile.typeOfExplosion != ExplosionType.STUNNING)
+        else if(!missile.isStunning())
         {
             explode(gameRessourceProvider, missile);
         }
@@ -2165,7 +2165,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         evaluateBossDestructionEffect(gameRessourceProvider);
         if(missile != null)
         {
-            missile.hits.remove(hashCode());
+            missile.forgetHitting(this);
         }
     }
     
@@ -2284,9 +2284,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     public boolean isHittable(Missile missile)
     {
         return isIntact()
-            && !(barrierTeleportTimer != DISABLED && getAlpha() != 255)
+            && !(barrierTeleportTimer != DISABLED && getAlpha() != 255) // in die Enemy-Unterklassen auslagern
             && missile.intersects(this)
-            && !missile.hits.containsKey(hashCode());
+            && !missile.hasHit(this);
     }
     
     public boolean isReadyToDodge()

@@ -1428,8 +1428,8 @@ public class Events
         commendationTimer = 90 + (Math.max(kills, 6) - 2) * 25;
         Audio.praise(kills);
     }
-
-    static private void changeVisibilityOfInGameMenu(Helicopter helicopter)
+    
+    private static void changeVisibilityOfInGameMenu(Helicopter helicopter)
     {
         Audio.play(Audio.choose);
         if (!Window.isMenuVisible)

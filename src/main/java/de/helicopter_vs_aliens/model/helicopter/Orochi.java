@@ -6,6 +6,7 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
+import de.helicopter_vs_aliens.model.missile.Grantable;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.ORDINARY;
@@ -197,15 +198,14 @@ public final class Orochi extends Helicopter
         missile.setBackKillCounter();
     }
     
-    @Override
-    public void inactivate(Missile missile)
-    {
-        missile.inactivateForOrochi();
-        super.inactivate(missile);
-    }
-    
     public boolean isNextMissileStunner()
     {
         return isNextMissileStunner;
+    }
+    
+    @Override
+    public Grantable getMultipleHitsExtraReward(Missile missile)
+    {
+        return missile::grantExtraRewardForNonFailedShots;
     }
 }

@@ -20,6 +20,7 @@ import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.components.Battery;
 import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
+import de.helicopter_vs_aliens.model.missile.Grantable;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -1351,14 +1352,6 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return false;
     }
     
-    public void inactivate(Missile missile)
-    {
-        getGameRessourceProvider().getActivePaintableEntityManager()
-                                  .getMissiles()
-                                  .get(CollectionSubgroupType.INACTIVE)
-                                  .add(missile);
-    }
-    
     public int getFifthSpecialCosts()
     {
         return CHEAP_SPECIAL_COSTS;
@@ -1474,5 +1467,10 @@ public abstract class Helicopter extends RectangularPaintableEntity
     public int calculateCollisionDamage()
     {
         return 0;
+    }
+    
+    public Grantable getMultipleHitsExtraReward(Missile missile)
+    {
+        return () -> {};
     }
 }

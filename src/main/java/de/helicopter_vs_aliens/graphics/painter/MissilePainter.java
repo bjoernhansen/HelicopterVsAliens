@@ -18,43 +18,43 @@ public class MissilePainter extends Painter<Missile>
         
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.fillRect(
-                x + (missile.speed >= 0 ? 0 : width + 3),
+                x + (missile.getSpeed() >= 0 ? 0 : width + 3),
                 y - 2,
                 2,
                 height + 4);
         
         graphicsAdapter.fillRect(
-                x + (missile.speed >= 0 ? 2 : width + 1),
+                x + (missile.getSpeed() >= 0 ? 2 : width + 1),
                 y - 1,
                 2,
                 height + 2);
         
         graphicsAdapter.fillRect(
-                x + (missile.speed >= 0 ? 4 : 1),
+                x + (missile.getSpeed() >= 0 ? 4 : 1),
                 y,
                 width,
                 height);
         
         graphicsAdapter.setColor(Colorations.pink);
         graphicsAdapter.fillRect(
-                x + (missile.speed >= 0 ? 2 : 0),
+                x + (missile.getSpeed() >= 0 ? 2 : 0),
                 y + 1,
                 width + 3,
                 height - 2);
         
         graphicsAdapter.setColor(Color.yellow);
         graphicsAdapter.fillRect(
-                x + (missile.speed >= 0 ? -3 : width + 5),
+                x + (missile.getSpeed() >= 0 ? -3 : width + 5),
                 y,
                 3,
                 height);
         
         graphicsAdapter.setColor(Colorations.translucentWhite);
         graphicsAdapter.fillRect((int) (x + width
-                        * (missile.speed >= 0 ? -missile.speed / 5 : 1)
-                        + (missile.speed >= 0 ? -6 : 11)),
+                        * (missile.getSpeed() >= 0 ? -missile.getSpeed() / 5 : 1)
+                        + (missile.getSpeed() >= 0 ? -6 : 11)),
                 y,
-                (int) (0.2 * Math.abs(missile.speed) * width),
+                (int) (0.2 * Math.abs(missile.getSpeed()) * width),
                 height);
     }
 }

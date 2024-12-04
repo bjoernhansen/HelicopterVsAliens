@@ -439,7 +439,7 @@ public abstract class Barrier extends Enemy
     private boolean isToBeInactivatedBy(Missile missile)
     {
         return Calculations.tossUp(deactivationProbability
-                                       * missile.typeOfExplosion.getBarrierDeactivationProbabilityFactor());
+                                       * missile.getTypeOfExplosion().getBarrierDeactivationProbabilityFactor());
     }
     
     @Override

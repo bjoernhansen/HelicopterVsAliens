@@ -5,6 +5,7 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
+import de.helicopter_vs_aliens.model.missile.Grantable;
 import de.helicopter_vs_aliens.model.missile.Missile;
 
 import static de.helicopter_vs_aliens.model.explosion.ExplosionType.JUMBO;
@@ -347,13 +348,6 @@ public final class Roch extends Helicopter
         missile.setBackKillCounter();
     }
     
-    @Override
-    public void inactivate(Missile missile)
-    {
-        missile.inactivateForRoch();
-        super.inactivate(missile);
-    }
-    
     public boolean isPowerShieldActivated()
     {
         return isPowerShieldActivated;
@@ -376,5 +370,11 @@ public final class Roch extends Helicopter
     public int getLastCannonCost()
     {
         return Roch.ROCH_SECOND_CANNON_COSTS;
+    }
+    
+    @Override
+    public Grantable getMultipleHitsExtraReward(Missile missile)
+    {
+        return missile::grantExtraRewardForMultipleKillsWithSingleShot;
     }
 }

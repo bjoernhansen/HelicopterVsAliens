@@ -1,5 +1,10 @@
 Jira: https://bjoern-hansen.atlassian.net/jira/software/projects/KAN/boards/1
 
+nächste ToDos:
+Refactoring Missile abschließen
+getRessource() konsequent nutzen und auch die Creater für die Instanzen der GameENtities entsprechend erzeugen (dependency Injection nutzen)
+Manover für Enemies
+
 
 evtl. ThreadLocalRandom.current().nextInt(set.size()) verwenden, soll effizienter sein
 
