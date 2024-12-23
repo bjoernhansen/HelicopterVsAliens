@@ -345,7 +345,7 @@ public final class Roch extends Helicopter
     void resetMissile(Missile missile)
     {
         super.resetMissile(missile);
-        missile.setBackKillCounter();
+        missile.setBackStatistics();
     }
     
     public boolean isPowerShieldActivated()
