@@ -12,15 +12,16 @@ import java.util.Optional;
  * Diese Klasse dient der Verwaltung von gleichzeitig abgeschossenen Raketen. Sie ist ausschließlich für die Klassen
  * Roch und Orochi zur Ermittlung von Extra-Boni relevant.
  */
-public class MissileGroupCoordination
+public class MissileClusterManager
 {
     private int
         killCount; // Kills dieser Rakete
     
     private int
         earnedMoney; // mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
-        
-    private final List<MissileGroupCoordination> companions = new ArrayList<>();
+    
+    private final List<MissileClusterManager>
+        companions = new ArrayList<>();
     
     private int
         killsByCompanions; // Treffer durch eine andere, gleichzeitig abgefeuerte Rakete
@@ -32,7 +33,7 @@ public class MissileGroupCoordination
         missile;
     
     
-    public MissileGroupCoordination(Missile missile)
+    public MissileClusterManager(Missile missile)
     {
         this.missile = missile;
     }
@@ -77,7 +78,7 @@ public class MissileGroupCoordination
         if (hasKilled() && hasPiercingWarheads) {
             findAnyCompanionQualifiedForFirstCreditOn(killedEnemy)
                 .ifPresentOrElse(
-                    MissileGroupCoordination::assignKill, // Begleiter übernimmt den Kill
+                    MissileClusterManager::assignKill, // Begleiter übernimmt den Kill
                     this::assignKill // kein Begleiter qualifiziert: Kill selbst zuweisen
                 );
         } else {
@@ -85,7 +86,7 @@ public class MissileGroupCoordination
         }
     }
     
-    private Optional<MissileGroupCoordination> findAnyCompanionQualifiedForFirstCreditOn(Enemy enemy) {
+    private Optional<MissileClusterManager> findAnyCompanionQualifiedForFirstCreditOn(Enemy enemy) {
         return companions.stream()
                          .filter(companion -> companion.hasQualifiedForFirstCreditOn(enemy))
                          .findAny();
@@ -117,7 +118,7 @@ public class MissileGroupCoordination
         return killCount + killsByCompanions;
     }
     
-    private void receiveAchievementsFrom(MissileGroupCoordination companion)
+    private void receiveAchievementsFrom(MissileClusterManager companion)
     {
         earnedMoney += companion.earnedMoney;
         killsByCompanions += companion.numberOfClusterKills();
@@ -129,7 +130,7 @@ public class MissileGroupCoordination
         companions.forEach(companion -> companion.disconnectFrom(this));
     }
     
-    private void disconnectFrom(MissileGroupCoordination companion)
+    private void disconnectFrom(MissileClusterManager companion)
     {
         companions.remove(companion);
     }
@@ -160,15 +161,15 @@ public class MissileGroupCoordination
     
     /**
      * Beitreten zu dem Raketen-Verband einer anderen Rakete
-     * @param missileGroupCoordination Missile-Cluster-Verwalter-Instanz einer anderen Rakete
+     * @param missileClusterManager Missile-Cluster-Verwalter-Instanz einer anderen Rakete
      */
-    void joinClusterWith(MissileGroupCoordination missileGroupCoordination)
+    void joinClusterWith(MissileClusterManager missileClusterManager)
     {
-        addCompanion(missileGroupCoordination);
-        missileGroupCoordination.addCompanion(this);
+        addCompanion(missileClusterManager);
+        missileClusterManager.addCompanion(this);
     }
     
-    private void addCompanion(MissileGroupCoordination companion)
+    private void addCompanion(MissileClusterManager companion)
     {
         companions.add(companion);
     }

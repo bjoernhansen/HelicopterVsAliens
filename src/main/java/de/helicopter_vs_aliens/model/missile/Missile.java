@@ -59,8 +59,8 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		flying = true;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
 	// nur für Roch- und Orochi-Klasse relevant
-	private final MissileGroupCoordination
-		missileGroupCoordination = new MissileGroupCoordination(this);
+	private final MissileClusterManager
+		missileClusterManager = new MissileClusterManager(this);
 	
 	// nur für Phönix-Klasse relevant
 	private long
@@ -153,7 +153,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		if(helicopter.hasKillCountingMissiles())
 		{
 			Grantable reward = helicopter.getMultipleHitsExtraReward(this);
-			missileGroupCoordination.inactivateWith(reward);
+			missileClusterManager.inactivateWith(reward);
 		}
 		gameRessourceProvider.getActivePaintableEntityManager()
 							 .getMissiles()
@@ -304,27 +304,27 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	
 	public void setBackStatistics()
 	{
-		missileGroupCoordination.reset();
+		missileClusterManager.reset();
 	}
 	
 	public void creditItselfOrCompanionOn(Enemy enemy, boolean hasPiercingWarheads)
 	{
-		missileGroupCoordination.assignKillToSelfOrCompanion(enemy, hasPiercingWarheads);
+		missileClusterManager.assignKillToSelfOrCompanion(enemy, hasPiercingWarheads);
 	}
 	
 	public void grantExtraRewardForNonFailedShots()
 	{
-		missileGroupCoordination.grantExtraRewardForSuccessfulShots();
+		missileClusterManager.grantExtraRewardForSuccessfulShots();
 	}
 	
 	public void grantExtraRewardForMultipleKillsWithSingleShot()
 	{
-		missileGroupCoordination.grantExtraRewardForMultipleKillsWithSingleShot();
+		missileClusterManager.grantExtraRewardForMultipleKillsWithSingleShot();
 	}
 	
 	public void joinClusterWith(Missile missile)
 	{
-		missileGroupCoordination.joinClusterWith(missile.missileGroupCoordination);
+		missileClusterManager.joinClusterWith(missile.missileClusterManager);
 	}
 	
 	public boolean inflictsExtraDamage()
