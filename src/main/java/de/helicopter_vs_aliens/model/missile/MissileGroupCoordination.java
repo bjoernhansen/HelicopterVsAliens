@@ -3,6 +3,10 @@ package de.helicopter_vs_aliens.model.missile;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 /**
  * Diese Klasse dient der Verwaltung von gleichzeitig abgeschossenen Raketen. Sie ist ausschließlich für die Klassen
@@ -10,21 +14,19 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
  */
 public class MissileGroupCoordination
 {
-    // nur für Roch- und Orochi-Klasse relevant
     private int
-        kills;
+        killCount; // Kills dieser Rakete
     
     private int
-        earnedMoney;	// mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
-    
-    private final MissileGroupCoordination []
-        sister = new MissileGroupCoordination [2];	// nur für Roch- und Orochi Klasse: Schwesterraketen (werden gleichzeitig abgefeuert)
-    
-    private int
-        sisterKills;			// nur Orochi Klasse: Kills der (gleichzeitig abgefeuerten) Schwesterrakete(n)
+        earnedMoney; // mit dieser Rakete durch Gegner-Vernichtung verdientes Geld
+        
+    private final List<MissileGroupCoordination> companions = new ArrayList<>();
     
     private int
-        nrOfHittingSisters;	// Anzahl der Schwesterraketen, die wenigstens einen Gegner vernichtet haben
+        killsByCompanions; // Treffer durch eine andere, gleichzeitig abgefeuerte Rakete
+    
+    private int
+        successfulCompanionCount; // Anzahl anderer, gleichzeitig abgefeuerte Rakete, die wenigstens einen Gegner vernichtet haben
     
     private final Missile
         missile;
@@ -35,30 +37,16 @@ public class MissileGroupCoordination
         this.missile = missile;
     }
     
+    /**
+     * Zurücksetzen der Statistik für diese Instanz
+     */
     void reset()
     {
-        kills = 0;
+        killCount = 0;
         earnedMoney = 0;
-        sisterKills = 0;
-        nrOfHittingSisters = 0;
-        sister[0] = null;
-        sister[1] = null;
-    }
-    
-    private boolean atLeastOneSisterHasQualifiedForFirstCreditOn(Enemy enemy)
-    {
-        return hasFirstSisterQualifiedForFirstCreditOn(enemy)
-            || hasSecondSisterQualifiedForFirstCreditOn(enemy);
-    }
-    
-    private boolean hasFirstSisterQualifiedForFirstCreditOn(Enemy enemy)
-    {
-        return sister[0] != null && sister[0].hasQualifiedForFirstCreditOn(enemy);
-    }
-    
-    private boolean hasSecondSisterQualifiedForFirstCreditOn(Enemy enemy)
-    {
-        return sister[1] != null && sister[1].hasQualifiedForFirstCreditOn(enemy);
+        killsByCompanions = 0;
+        successfulCompanionCount = 0;
+        companions.clear();
     }
     
     private boolean hasQualifiedForFirstCreditOn(Enemy enemy)
@@ -66,159 +54,122 @@ public class MissileGroupCoordination
         return missile.intersects(enemy) && !hasKilled();
     }
     
-    private void creditFirstSister()
+    private void assignKill()
     {
-        sister[0].credit();
-    }
-    
-    private void creditSecondSister()
-    {
-        sister[1].credit();
-    }
-    
-    private void credit()
-    {
-        kills++;
+        killCount++;
         earnedMoney += Events.lastBonus;
     }
     
     private boolean hasKilled()
     {
-        return kills > 0;
+        return killCount > 0;
     }
     
-    void creditItselfOrSisterOn(Enemy enemy, boolean hasPiercingWarheads)
+    /**
+     * Wenn mehrere Raketen gleichzeitig einen Gegner treffen, der durch diese Treffer zerstört wird, dann soll
+     * dieser Kill bevorzugt der Rakete zugerechnet werden, die bisher noch keine eigenen tödlichen Treffer hatte.
+     *
+     * @param killedEnemy         der vernichtete Gegner, der für die Statistik berücksichtigt wird
+     * @param hasPiercingWarheads gibt an, ob es sich um eine Rakete mit Durchstoßsprengköpfen handelt
+     */
+    void assignKillToSelfOrCompanion(Enemy killedEnemy, boolean hasPiercingWarheads)
     {
-        if(hasKilled()
-            && hasPiercingWarheads
-            && atLeastOneSisterHasQualifiedForFirstCreditOn(enemy))
-        {
-            if(hasFirstSisterQualifiedForFirstCreditOn(enemy))
-            {
-                creditFirstSister();
-            }
-            else if(hasSecondSisterQualifiedForFirstCreditOn(enemy))
-            {
-                creditSecondSister();
-            }
+        if (hasKilled() && hasPiercingWarheads) {
+            findAnyCompanionQualifiedForFirstCreditOn(killedEnemy)
+                .ifPresentOrElse(
+                    MissileGroupCoordination::assignKill, // Begleiter übernimmt den Kill
+                    this::assignKill // kein Begleiter qualifiziert: Kill selbst zuweisen
+                );
+        } else {
+            assignKill();
         }
-        else
+    }
+    
+    private Optional<MissileGroupCoordination> findAnyCompanionQualifiedForFirstCreditOn(Enemy enemy) {
+        return companions.stream()
+                         .filter(companion -> companion.hasQualifiedForFirstCreditOn(enemy))
+                         .findAny();
+    }
+
+    private int getSuccessfulShots()
+    {
+        return (hasKilled() ? 1 : 0) + successfulCompanionCount;
+    }
+    
+    void inactivateWith(Grantable reward)
+    {
+        if(companions.isEmpty())
         {
-            credit();
-        }
-    }
-    
-    private int numberOfCountedKills()
-    {
-        return kills + sisterKills;
-    }
-    
-    private int getNonFailedShots()
-    {
-        return (hasKilled() ? 1 : 0) + nrOfHittingSisters;
-    }
-    
-    void helicopterTypeSpecificInactivation(Grantable typeSpecificReward)
-    {
-        if(isOnlyChild())
-        {
-            if(numberOfCountedKills() > 1)
+            if(numberOfClusterKills() > 1)
             {
-                typeSpecificReward.grant();
-            }
-        }
-        else if(numberOfCountedKills() > 0)
-        {
-            transferAchievementsToAnyOtherSister();
-        }
-        disconnectFromSisters();
-    }
-    
-    private void transferAchievementsToAnyOtherSister()
-    {
-        for(int j = 0; true; j++)
-        {
-            if(sister[j] != null)
-            {
-                sister[j].earnedMoney += earnedMoney;
-                sister[j].sisterKills += numberOfCountedKills();
-                sister[j].nrOfHittingSisters += getNonFailedShots();
-                break;
+                reward.grant();
             }
         }
-    }
-    
-    private void disconnectFromSisters()
-    {
-        for(int j = 0; j < 2; j++)
+        else if(numberOfClusterKills() > 0)
         {
-            if(sister[j] != null)
-            {
-                if(sister[j].sister[0] == this)
-                {
-                    sister[j].sister[0] = null;
-                }
-                else if(sister[j].sister[1] == this)
-                {
-                    sister[j].sister[1] = null;
-                }
-                else
-                {
-                    throw new IllegalStateException("If a sister exists then it has to point to this missile.");
-                }
-            }
+            companions.get(0).receiveAchievementsFrom(this);
         }
+        removeFromCluster();
     }
     
+    private int numberOfClusterKills()
+    {
+        return killCount + killsByCompanions;
+    }
+    
+    private void receiveAchievementsFrom(MissileGroupCoordination companion)
+    {
+        earnedMoney += companion.earnedMoney;
+        killsByCompanions += companion.numberOfClusterKills();
+        successfulCompanionCount += companion.getSuccessfulShots();
+    }
+    
+    private void removeFromCluster()
+    {
+        companions.forEach(companion -> companion.disconnectFrom(this));
+    }
+    
+    private void disconnectFrom(MissileGroupCoordination companion)
+    {
+        companions.remove(companion);
+    }
+    
+    /**
+     * Gewährung eines Extra-Belohnung entsprechend der Anzahl von vernichteten Gegner mit Raketen desselben Missile-Clusters
+     */
     void grantExtraRewardForMultipleKillsWithSingleShot()
     {
-        Events.extraReward(numberOfCountedKills(), earnedMoney, 0.5f, 0.75f, 3.0f);
+        Events.extraReward(numberOfClusterKills(), earnedMoney, 0.5f, 0.75f, 3.0f);
     }
     
-    private boolean isOnlyChild()
+    /**
+     * Gewährung einer Extra-Belohnung entsprechend der Anzahl von Raketen aus einem Missile-Cluster, die jeweils
+     * mindestens einen Gegner vernichtet haben
+     */
+    void grantExtraRewardForSuccessfulShots()
     {
-        return sister[0] == null && sister[1] == null;
-    }
-    
-    void grantExtraRewardForNonFailedShots()
-    {
-        int nonFailedShots = getNonFailedShots();
-        if(nonFailedShots == 1)
+        int successfulShots = getSuccessfulShots();
+        switch(successfulShots)
         {
-            Events.extraReward(numberOfCountedKills(), earnedMoney, 0.25f, 0.0f, 0.25f);
-        }
-        if(nonFailedShots == 2)
-        {
-            Events.extraReward(numberOfCountedKills(), earnedMoney, 1.5f, 0.0f, 1.5f);
-        }
-        else if(nonFailedShots == 3)
-        {
-            Events.extraReward(numberOfCountedKills(), earnedMoney, 4f, 0.0f, 4f);
-        }
-        else
-        {
-            throw new IllegalStateException("Number of non failed shots has to be between 1 and 3, but was " + nonFailedShots);
+            case 1 -> Events.extraReward(numberOfClusterKills(), earnedMoney, 0.25f, 0.0f, 0.25f);
+            case 2 -> Events.extraReward(numberOfClusterKills(), earnedMoney, 1.5f, 0.0f, 1.5f);
+            case 3 -> Events.extraReward(numberOfClusterKills(), earnedMoney, 4f, 0.0f, 4f);
+            default -> throw new IllegalStateException("Number of successful shots has to be between 1 and 3, but was " + successfulShots);
         }
     }
     
+    /**
+     * Beitreten zu dem Raketen-Verband einer anderen Rakete
+     * @param missileGroupCoordination Missile-Cluster-Verwalter-Instanz einer anderen Rakete
+     */
     void joinClusterWith(MissileGroupCoordination missileGroupCoordination)
     {
-        addSister(missileGroupCoordination);
-        missileGroupCoordination.addSister(this);
+        addCompanion(missileGroupCoordination);
+        missileGroupCoordination.addCompanion(this);
     }
     
-    private void addSister(MissileGroupCoordination missileGroupCoordination)
+    private void addCompanion(MissileGroupCoordination companion)
     {
-        if(sister[0] == null)
-        {
-            sister[0] = missileGroupCoordination;
-        }
-        else if(sister[1] == null)
-        {
-            sister[1] = missileGroupCoordination;
-        }
-        else {
-            throw new UnsupportedOperationException("Adding of more than 2 sisters is not supported!");
-        }
+        companions.add(companion);
     }
 }

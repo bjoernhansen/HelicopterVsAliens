@@ -331,7 +331,7 @@ public final class Roch extends Helicopter
     {
         if(missile != null)
         {
-            missile.creditItselfOrSisterOn(enemy, hasPiercingWarheads);
+            missile.creditItselfOrCompanionOn(enemy, hasPiercingWarheads);
         }
     }
     

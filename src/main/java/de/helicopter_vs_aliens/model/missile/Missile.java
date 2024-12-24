@@ -152,8 +152,8 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		if(helicopter.hasKillCountingMissiles())
 		{
-			Grantable typeSpecificReward = helicopter.getMultipleHitsExtraReward(this);
-			missileGroupCoordination.helicopterTypeSpecificInactivation(typeSpecificReward);
+			Grantable reward = helicopter.getMultipleHitsExtraReward(this);
+			missileGroupCoordination.inactivateWith(reward);
 		}
 		gameRessourceProvider.getActivePaintableEntityManager()
 							 .getMissiles()
@@ -307,14 +307,14 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		missileGroupCoordination.reset();
 	}
 	
-	public void creditItselfOrSisterOn(Enemy enemy, boolean hasPiercingWarheads)
+	public void creditItselfOrCompanionOn(Enemy enemy, boolean hasPiercingWarheads)
 	{
-		missileGroupCoordination.creditItselfOrSisterOn(enemy, hasPiercingWarheads);
+		missileGroupCoordination.assignKillToSelfOrCompanion(enemy, hasPiercingWarheads);
 	}
 	
 	public void grantExtraRewardForNonFailedShots()
 	{
-		missileGroupCoordination.grantExtraRewardForNonFailedShots();
+		missileGroupCoordination.grantExtraRewardForSuccessfulShots();
 	}
 	
 	public void grantExtraRewardForMultipleKillsWithSingleShot()
