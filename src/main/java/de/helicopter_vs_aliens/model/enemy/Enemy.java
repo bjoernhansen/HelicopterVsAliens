@@ -256,7 +256,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     private boolean isDestroyed;            // = true: Gegner wurde vernichtet
     private boolean hasCrashed;            // = true: Gegner ist abgestürzt
     private boolean isEmpShocked;            // = true: Gegner steht unter EMP-Schock --> ist verlangsamt
-    public boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
+    private boolean isMarkedForRemoval;        // = true --> Gegner nicht mehr zu sehen; kann entsorgt werden
     protected boolean isClockwiseBarrier;        // = true: der Rotor des Hindernisses dreht im Uhrzeigersinn
     protected boolean isRecoveringSpeed;
     
@@ -721,10 +721,24 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         shootingDirection.setLocation(shootingDirectionX, 0f);
     }
     
-    private static boolean turnaroundIsTurnAway(double directionX, double enemyCenter, double barrierCenter)
+    private boolean turnaroundIsTurnAwayX()
     {
-        return directionX == 1 && enemyCenter < barrierCenter
-            || directionX == -1 && enemyCenter > barrierCenter;
+        return turnaroundIsTurnAway(navigationDevice.getDirectionX(),
+                                    getCenterX(),
+                                    stoppingBarrier.getCenterX());
+    }
+    
+    private boolean turnaroundIsTurnAwayY()
+    {
+        return turnaroundIsTurnAway(navigationDevice.getDirectionY(),
+                                    getCenterY(),
+                                    stoppingBarrier.getCenterY());
+    }
+    
+    private static boolean turnaroundIsTurnAway(double direction, double enemyCenter, double barrierCenter)
+    {
+        return direction == 1 && enemyCenter < barrierCenter
+            || direction == -1 && enemyCenter > barrierCenter;
     }
     
     public boolean isVisibleNonBarricadeVessel()
@@ -742,6 +756,11 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         return getHelicopter().canDetectCloakedVessels();
     }
     
+    /**
+     * Regulation der Gegner-Bewegung:
+     * Unter Berücksichtigung jeglicher Eventualitäten (Spezial-Manöver, Ausweichbewegungen, ...)
+     * werden die neuen Koordinaten berechnet.
+     */
     public final void update(GameRessourceProvider gameRessourceProvider)
     {
         lifetime++;
@@ -769,7 +788,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         }
         if(isToBeRemoved())
         {
-            prepareRemoval();
+            markForRemoval();
         }
         setPaintBounds();
     }
@@ -993,23 +1012,16 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         
         if(hasLateralFaceTouchWith(stoppingBarrier))
         {
-            if(turnaroundIsTurnAway(navigationDevice.getDirectionX(),
-                                    getCenterX(),
-                                    stoppingBarrier.getCenterX())
+            if(turnaroundIsTurnAwayX()
                 // Gegner sollen nicht an Barriers abdrehen, bevor sie im Bild waren.
                 && isOnScreen())
             {
                 performXTurnAtBarrier();
             }
         }
-        else
+        else if(turnaroundIsTurnAwayY())
         {
-            if(turnaroundIsTurnAway(navigationDevice.getDirectionY(),
-                                    getCenterY(),
-                                    stoppingBarrier.getCenterY()))
-            {
-                navigationDevice.switchDirectionY();
-            }
+            navigationDevice.switchDirectionY();
         }
     }
     
@@ -1243,9 +1255,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
             && getMinX() < GraphicsAdapter.VIRTUAL_DIMENSION.getWidth();
     }
     
-    protected void prepareRemoval()
+    public void markForRemoval()
     {
         isMarkedForRemoval = true;
+    }
+    
+    public boolean isMarkedForRemoval()
+    {
+        return isMarkedForRemoval;
     }
     
     private boolean isEmpShockable(Pegasus pegasus)
@@ -1673,34 +1690,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         return otherEnemy.navigationDevice.getDirectionY() == navigationDevice.getDirectionY();
     }
     
-    public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
-    {
-        for(Iterator<Enemy> iterator = gameRessourceProvider.getActivePaintableEntityManager()
-                                                            .getEnemies()
-                                                            .get(CollectionSubgroupType.DESTROYED)
-                                                            .iterator(); iterator.hasNext(); )
-        {
-            Enemy enemy = iterator.next();
-            enemy.updateDead(gameRessourceProvider.getActivePaintableEntityManager()
-                                                  .getExplosions());
-            
-            Helicopter helicopter = gameRessourceProvider.getHelicopter();
-            if(helicopter.basicCollisionRequirementsSatisfied(enemy)
-                && !enemy.hasCrashed)
-            {
-                enemy.collision(gameRessourceProvider);
-            }
-            if(enemy.isMarkedForRemoval)
-            {
-                enemy.clearImage();
-                iterator.remove();
-                gameRessourceProvider.getPaintableEntitySupplier()
-                                     .store(enemy);
-            }
-        }
-    }
-    
-    private void updateDead(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
+    public void updateDead(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
     {
         if(collisionDamageTimer > 0)
         {
@@ -1767,7 +1757,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         return isBoss() && isIntact();
     }
     
-    private void collision(GameRessourceProvider gameRessourceProvider)
+    public void collision(GameRessourceProvider gameRessourceProvider)
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         boolean playCollisionSound = collisionTimer == READY;
@@ -2328,24 +2318,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         }
     }
     
-    public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
-    {
-        for(Enemy e : gameRessourceProvider.getActivePaintableEntityManager()
-                                           .getEnemies()
-                                           .get(CollectionSubgroupType.ACTIVE))
-        {
-            if(e.getModel() == EnemyModelType.BARRIER && e.isOnScreen())
-            {
-                e.explode(gameRessourceProvider);
-                e.destroyByHelicopter(gameRessourceProvider);
-            }
-            else if(!e.isOnScreen())
-            {
-                e.isMarkedForRemoval = true;
-            }
-        }
-    }
-    
     public boolean hasHPsLeft()
     {
         return hitPoints >= 1;
@@ -2672,5 +2644,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     public Color getSecondaryColor()
     {
         return secondaryColor;
+    }
+    
+    public boolean hasCrashed()
+    {
+        return hasCrashed;
     }
 }

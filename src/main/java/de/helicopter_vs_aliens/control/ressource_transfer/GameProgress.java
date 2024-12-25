@@ -109,7 +109,7 @@ public final class GameProgress implements GameRessourceProvider
                 scenery.update(this);
                 Events.updateTimer();
                 Window.updateDisplays(this);
-                Enemy.updateAllDestroyed(this);
+                EnemyController.updateAllDestroyed(this);
                 Missile.updateAll(this);
                 EnemyController.updateAllActive(this);
                 EnemyMissile.updateAll(this);

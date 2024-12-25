@@ -256,7 +256,7 @@ public abstract class Barrier extends Enemy
                 }
                 else
                 {
-                    isMarkedForRemoval = true;
+                    markForRemoval();
                 }
             }
         }

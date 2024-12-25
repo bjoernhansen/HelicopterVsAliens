@@ -1370,7 +1370,7 @@ public class Events
 
         if (isCurrentLevelBossLevel())
         {
-            Enemy.getRidOfSomeEnemies(gameRessourceProvider);
+            EnemyController.getRidOfSomeEnemies(gameRessourceProvider);
         }
 
         if (isCurrentLevelBossLevel() || isBossLevel(previousLevel) || level == 49)

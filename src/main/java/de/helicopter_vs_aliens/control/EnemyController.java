@@ -7,9 +7,7 @@ import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.enemy.basic.Carrier;
-import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
-import de.helicopter_vs_aliens.model.enemy.boss.FinalBoss;
-import de.helicopter_vs_aliens.model.enemy.boss.FinalBossAcquaintance;
+import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.util.Calculations;
 
@@ -271,8 +269,6 @@ public class EnemyController
             && Calculations.tossUp(KABOOM_PROB);
     }
     
-
-    
     private static boolean isBossEnemyToBeCreated()
     {
         return LevelManager.nextBossEnemyType != null;
@@ -283,13 +279,7 @@ public class EnemyController
         return ENEMY_SELECTOR.getType(Calculations.random(LevelManager.selection));
     }
     
-    
     // TODO gehört in eine eigene Klasse
-    /* Die folgende Funktion reguliert die Gegner-Bewegung:
-     * 1. Unter Berücksichtigung jeglicher Eventualitäten (specialManöver, ausweichen, etc.)
-     *	  werden die neuen Koordinaten berechnet.
-     * 2. Der Gegner wird an Stelle seiner neuen Koordinaten gemalt.
-     */
     public static void updateAllActive(GameRessourceProvider gameRessourceProvider)
     {
         if(rockTimer > 0){
@@ -303,7 +293,7 @@ public class EnemyController
                                                             .getEnemies().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
         {
             Enemy enemy = iterator.next();
-            if(enemy.isIntact() && !enemy.isMarkedForRemoval)
+            if(enemy.isIntact() && !enemy.isMarkedForRemoval())
             {
                 enemy.update(gameRessourceProvider);
             }
@@ -323,6 +313,51 @@ public class EnemyController
         }
     }
     
+    public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
+    {
+        for(Iterator<Enemy> iterator = gameRessourceProvider.getActivePaintableEntityManager()
+                                                            .getEnemies()
+                                                            .get(CollectionSubgroupType.DESTROYED)
+                                                            .iterator(); iterator.hasNext(); )
+        {
+            Enemy enemy = iterator.next();
+            enemy.updateDead(gameRessourceProvider.getActivePaintableEntityManager()
+                                                  .getExplosions());
+            
+            Helicopter helicopter = gameRessourceProvider.getHelicopter();
+            if(helicopter.basicCollisionRequirementsSatisfied(enemy)
+                && !enemy.hasCrashed())
+            {
+                enemy.collision(gameRessourceProvider);
+            }
+            if(enemy.isMarkedForRemoval())
+            {
+                enemy.clearImage();
+                iterator.remove();
+                gameRessourceProvider.getPaintableEntitySupplier()
+                                     .store(enemy);
+            }
+        }
+    }
+    
+    public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
+    {
+        for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
+                                               .getEnemies()
+                                               .get(CollectionSubgroupType.ACTIVE))
+        {
+            if(enemy.getModel() == EnemyModelType.BARRIER && enemy.isOnScreen())
+            {
+                enemy.explode(gameRessourceProvider);
+                enemy.destroyByHelicopter(gameRessourceProvider);
+            }
+            else if(!enemy.isOnScreen())
+            {
+                enemy.markForRemoval();
+            }
+        }
+    }
+    
     private static void countBarriers(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
     {
         Arrays.fill(livingBarrier, null);
@@ -331,7 +366,7 @@ public class EnemyController
         {
             if (enemy.getModel() == EnemyModelType.BARRIER
                 && enemy.isIntact()
-                && !enemy.isMarkedForRemoval)
+                && !enemy.isMarkedForRemoval())
             {
                 livingBarrier[currentNumberOfBarriers] = enemy;
                 currentNumberOfBarriers++;

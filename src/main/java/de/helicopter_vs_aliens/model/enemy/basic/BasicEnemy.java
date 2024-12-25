@@ -136,9 +136,9 @@ public abstract class BasicEnemy extends StandardEnemy
     }
     
     @Override
-    protected void prepareRemoval()
+    public void markForRemoval()
     {
-        super.prepareRemoval();
+        super.markForRemoval();
         if(isMiniBoss)
         {
             EnemyController.currentMiniBoss = null;

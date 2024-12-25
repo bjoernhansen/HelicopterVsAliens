@@ -52,9 +52,9 @@ public final class Rock extends BasicEnemy
     }
     
     @Override
-    protected void prepareRemoval()
+    public void markForRemoval()
     {
-        super.prepareRemoval();
+        super.markForRemoval();
         EnemyController.removeCurrentRock();
     }
     

@@ -80,11 +80,11 @@ public class PowerUp extends RectangularPaintableEntity implements GroupTypeOwne
 		{
 			if(!this.hasStopped)
 			{
-				double new_y_speed = 0.20 * this.direction * this.speed.getX();
+				double newSpeedY = 0.20 * this.direction * this.speed.getX();
 				this.speed.setLocation(0.25 * this.direction + this.speed.getX(), 
 										helicopter.canImmobilizePowerUp()
-											? Math.min(new_y_speed, 0.03*(this.getCenterY()-30))
-											: new_y_speed);
+											? Math.min(newSpeedY, 0.03*(this.getCenterY()-30))
+											: newSpeedY);
 			}	
 			else if(isAboveGround())
 			{
