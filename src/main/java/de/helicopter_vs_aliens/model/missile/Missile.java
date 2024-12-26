@@ -67,6 +67,8 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 		launchingTime; 		// nur für Phönix-Klasse relevant
 	
 	
+	Missile(){}
+	
 	public void launch(Helicopter helicopter, int y)
 	{
 		speed = helicopter.missileDrive * (helicopter.isMovingLeft ? -1 : 1);
@@ -88,8 +90,6 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	{
 		launchingTime = System.currentTimeMillis();
 	}
-	
-
 	
 	// TODO in Methoden auslagern
 	private void setBounds(Helicopter helicopter, int y)
@@ -115,7 +115,9 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
 		for(Iterator<Missile> missileIterator = gameRessourceProvider.getActivePaintableEntityManager()
-													   .getMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); missileIterator.hasNext();)
+																	 .getMissiles()
+																	 .get(CollectionSubgroupType.ACTIVE)
+																	 .iterator(); missileIterator.hasNext(); )
 		{
 			Missile missile = missileIterator.next();
 			missile.update(gameRessourceProvider, missileIterator);
@@ -155,10 +157,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 			Grantable reward = helicopter.getMultipleHitsExtraReward(this);
 			missileClusterManager.inactivateWith(reward);
 		}
-		gameRessourceProvider.getActivePaintableEntityManager()
-							 .getMissiles()
-							 .get(CollectionSubgroupType.INACTIVE)
-							 .add(this);
+		gameRessourceProvider.storePaintableEntity(this);
 	}
 	
 	private boolean canHit(Helicopter helicopter)

@@ -11,7 +11,6 @@ import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.PaintableEntity;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
@@ -26,6 +25,7 @@ import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import java.util.Objects;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
@@ -136,9 +136,27 @@ public final class GameProgress implements GameRessourceProvider
     @Override
     public <T extends PaintableEntity> T getNewPaintableEntityInstance(PaintableEntityFactory<T> factory)
     {
-        return getPaintableEntitySupplier().retrieve(factory);
+        return paintableEntitySupplier.retrieve(factory);
     }
-
+    
+    @Override
+    public void storePaintableEntity(PaintableEntity paintableEntity)
+    {
+        paintableEntitySupplier.store(paintableEntity);
+    }
+    
+    @Override
+    public <T extends PaintableEntity> void storeAllPaintableEntities(Queue<T> paintableEntities)
+    {
+        paintableEntitySupplier.storeAll(paintableEntities);
+    }
+    
+    @Override
+    public <T extends PaintableEntity> int numberOfInactivePaintableEntities(Class<T> classOfPaintableEntity)
+    {
+        return paintableEntitySupplier.sizeOf(classOfPaintableEntity);
+    }
+    
     @Override
     public boolean isFpsDisplayVisible()
     {
@@ -198,13 +216,7 @@ public final class GameProgress implements GameRessourceProvider
     {
         return saveGame;
     }
-
-    @Override
-    public PaintableEntitySupplier getPaintableEntitySupplier()
-    {
-        return paintableEntitySupplier;
-    }
-
+    
     public WindowManager getWindowManager()
     {
         return windowManager;

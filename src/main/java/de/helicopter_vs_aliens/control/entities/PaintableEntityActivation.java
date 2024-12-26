@@ -7,11 +7,6 @@ import java.util.List;
 
 public final class PaintableEntityActivation
 {
-    private PaintableEntityActivation() throws Exception
-    {
-        throw new Exception();
-    }
-    
     private static final int
         STANDARD_PROBABILITY_REDUCTION_FACTOR = 1;
     
@@ -33,5 +28,10 @@ public final class PaintableEntityActivation
     {
         int index = Calculations.constrainToRange(numberOfMissingEntities, 1, PROBABILITIES.size())-1;
         return Calculations.random(probabilityReductionFactor * PROBABILITIES.get(index)) == 0;
+    }
+    
+    private PaintableEntityActivation()
+    {
+        throw new UnsupportedOperationException("Utility-Klasse ist nicht für die Instanziierung vorgesehen.");
     }
 }

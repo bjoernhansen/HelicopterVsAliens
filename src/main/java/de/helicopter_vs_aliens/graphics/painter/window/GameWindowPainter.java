@@ -19,6 +19,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.SceneryLayer;
@@ -547,8 +548,7 @@ public class GameWindowPainter extends WindowPainter
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive PowerUps: "
-                + gameRessourceProvider.getPaintableEntitySupplier()
-                                       .sizeOf(PowerUp.class);
+                + gameRessourceProvider.numberOfInactivePaintableEntities(PowerUp.class);
         }
         else if(Window.specialInfoSelection == 3)
         {
@@ -588,10 +588,7 @@ public class GameWindowPainter extends WindowPainter
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Raketen: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .getMissiles()
-                                       .get(CollectionSubgroupType.INACTIVE)
-                                       .size();
+                + gameRessourceProvider.numberOfInactivePaintableEntities(Missile.class);
         }
         else if(Window.specialInfoSelection == 6)
         {
@@ -679,7 +676,7 @@ public class GameWindowPainter extends WindowPainter
                         .stream()
                         .filter(Predicate.not(EnemyType.getBarrierTypes()::contains))
                         .map(PaintableEntityFactory::getCorrespondingClass)
-                        .map(gameRessourceProvider.getPaintableEntitySupplier()::sizeOf)
+                        .map(gameRessourceProvider::numberOfInactivePaintableEntities)
                         .mapToInt(Integer::intValue)
                         .sum();
     }

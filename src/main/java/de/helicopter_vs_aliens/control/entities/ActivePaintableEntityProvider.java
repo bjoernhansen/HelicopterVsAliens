@@ -1,4 +1,4 @@
-package de.helicopter_vs_aliens.control.ressource_transfer;
+package de.helicopter_vs_aliens.control.entities;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -11,7 +11,7 @@ import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import java.util.Map;
 import java.util.Queue;
 
-public interface ActiveGameEntitiesProvider
+public interface ActivePaintableEntityProvider
 {
     Map<CollectionSubgroupType, Queue<Enemy>> getEnemies();
     

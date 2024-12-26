@@ -7,6 +7,8 @@ import de.helicopter_vs_aliens.control.events.KeyEvent;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
 import de.helicopter_vs_aliens.control.events.SpecialKey;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.gui.BlockMessage;
+import de.helicopter_vs_aliens.gui.PriceLevel;
 import de.helicopter_vs_aliens.gui.WindowType;
 import de.helicopter_vs_aliens.gui.button.Button;
 import de.helicopter_vs_aliens.gui.button.ButtonGroup;
@@ -22,12 +24,16 @@ import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.basic.BasicEnemy;
 import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
+import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScore;
 import de.helicopter_vs_aliens.score.RecordTimeManager;
@@ -42,37 +48,6 @@ import java.util.EnumSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import static de.helicopter_vs_aliens.control.TimeOfDay.DAY;
-import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
-import static de.helicopter_vs_aliens.gui.BlockMessage.HELICOPTER_ALREADY_REPAIRED;
-import static de.helicopter_vs_aliens.gui.BlockMessage.NOT_ENOUGH_MONEY_FOR_REPAIRS;
-import static de.helicopter_vs_aliens.gui.BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE;
-import static de.helicopter_vs_aliens.gui.BlockMessage.REACHED_MAXIMUM_LEVEL;
-import static de.helicopter_vs_aliens.gui.BlockMessage.UNREPAIRED_BEFORE_MISSION;
-import static de.helicopter_vs_aliens.gui.BlockMessage.UNREPAIRED_BEFORE_UPGRADE;
-import static de.helicopter_vs_aliens.gui.BlockMessage.UPGRADE_ALREADY_INSTALLED;
-import static de.helicopter_vs_aliens.gui.PriceLevel.REGULAR;
-import static de.helicopter_vs_aliens.gui.WindowType.CONTACT;
-import static de.helicopter_vs_aliens.gui.WindowType.DESCRIPTION;
-import static de.helicopter_vs_aliens.gui.WindowType.GAME;
-import static de.helicopter_vs_aliens.gui.WindowType.HELICOPTER_TYPES;
-import static de.helicopter_vs_aliens.gui.WindowType.HIGH_SCORE;
-import static de.helicopter_vs_aliens.gui.WindowType.INFORMATION;
-import static de.helicopter_vs_aliens.gui.WindowType.REPAIR_SHOP;
-import static de.helicopter_vs_aliens.gui.WindowType.SCORE_SCREEN;
-import static de.helicopter_vs_aliens.gui.WindowType.SETTINGS;
-import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_4;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.FINAL_BOSS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.HELIOS;
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.OROCHI;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.BOOSTED_FIRE_RATE;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.INVINCIBLE;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.TRIPLE_DAMAGE;
-import static de.helicopter_vs_aliens.model.powerup.PowerUpType.UNLIMITED_ENERGY;
-
 
 // TODO Klasse sollte nicht rein statisch sein
 public class Events
@@ -123,7 +98,7 @@ public class Events
         allPlayable = false;
 
     public static TimeOfDay
-        timeOfDay = DAY;        // Tageszeit [NIGHT, DAY]
+        timeOfDay = TimeOfDay.DAY;        // Tageszeit [NIGHT, DAY]
 
     // Variablen zur Nutzung von Cheats und Freischaltung von Helikoptern
     private static boolean
@@ -160,20 +135,20 @@ public class Events
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         if (keyEvent.isKeyEqualTo(SpecialKey.ESCAPE) && !helicopter.isDamaged)
         {
-            if (WindowManager.window == GAME)
+            if (WindowManager.window == WindowType.GAME)
             {
                 changeVisibilityOfInGameMenu(helicopter);
             }
-            else if (WindowManager.window == START_SCREEN)
+            else if (WindowManager.window == WindowType.START_SCREEN)
             {
                 System.exit(0);
             }
-            else if (WindowManager.window != REPAIR_SHOP)
+            else if (WindowManager.window != WindowType.REPAIR_SHOP)
             {
                 cancel(gameRessourceProvider);
             }
         }
-        else if (WindowManager.window == SETTINGS && Window.page == StartScreenMenuButtonType.BUTTON_3)
+        else if (WindowManager.window == WindowType.SETTINGS && Window.page == StartScreenMenuButtonType.BUTTON_3)
         {
             int nameLength = currentPlayerName.length();
             if (keyEvent.isKeyEqualTo(SpecialKey.ENTER))
@@ -199,14 +174,14 @@ public class Events
         }
         else if (keyEvent.isKeyEqualTo('p'))
         {
-            if (WindowManager.window == GAME && !helicopter.isDamaged)
+            if (WindowManager.window == WindowType.GAME && !helicopter.isDamaged)
             {
                 changeVisibilityOfInGameMenu(helicopter);
             }
         }
         else if (keyEvent.isKeyEqualTo(SpecialKey.SPACE))
         {
-            if (WindowManager.window == GAME
+            if (WindowManager.window == WindowType.GAME
                 && helicopter.isActive
                 && !helicopter.isDamaged
                 && !Window.isMenuVisible)
@@ -218,11 +193,11 @@ public class Events
         {
             if (keyEvent.isKeyEqualTo('e'))
             {
-                if (WindowManager.window == GAME || WindowManager.window == REPAIR_SHOP)
+                if (WindowManager.window == WindowType.GAME || WindowManager.window == WindowType.REPAIR_SHOP)
                 {
                     if (money == 0)
                     {
-                        if (WindowManager.window == GAME)
+                        if (WindowManager.window == WindowType.GAME)
                         {
                             lastBonus = MAX_MONEY - money;
                         }
@@ -239,7 +214,7 @@ public class Events
             }
             else if (keyEvent.isKeyEqualTo('u'))
             {
-                if (WindowManager.window == GAME || WindowManager.window == REPAIR_SHOP)
+                if (WindowManager.window == WindowType.GAME || WindowManager.window == WindowType.REPAIR_SHOP)
                 {
                     if (!helicopter.hasAllUpgrades())
                     {
@@ -259,7 +234,7 @@ public class Events
                     }
                 }
             }
-            else if (WindowManager.window == GAME)
+            else if (WindowManager.window == WindowType.GAME)
             {
                 if (keyEvent.isKeyEqualTo('l'))
                 {
@@ -296,22 +271,23 @@ public class Events
                 else if (keyEvent.isKeyEqualTo('d'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
-                                                                                 .getPowerUps(), TRIPLE_DAMAGE);
+                                                                                 .getPowerUps(),
+                                                            PowerUpType.TRIPLE_DAMAGE);
                 }
                 else if (keyEvent.isKeyEqualTo('i'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
-                                                                                 .getPowerUps(), INVINCIBLE);
+                                                                                 .getPowerUps(), PowerUpType.INVINCIBLE);
                 }
                 else if (keyEvent.isKeyEqualTo('c'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
-                                                                                 .getPowerUps(), UNLIMITED_ENERGY);
+                                                                                 .getPowerUps(), PowerUpType.UNLIMITED_ENERGY);
                 }
                 else if (keyEvent.isKeyEqualTo('y'))
                 {
                     helicopter.switchPowerUpActivationState(gameRessourceProvider.getActivePaintableEntityManager()
-                                                                                 .getPowerUps(), BOOSTED_FIRE_RATE);
+                                                                                 .getPowerUps(), PowerUpType.BOOSTED_FIRE_RATE);
                 }
                 else if (keyEvent.isKeyEqualTo('a'))
                 {
@@ -340,7 +316,7 @@ public class Events
                     playingTime += 60000;
                 }
             }
-            else if (WindowManager.window == START_SCREEN)
+            else if (WindowManager.window == WindowType.START_SCREEN)
             {
                 // Resetten der Helicopter-Bestzeiten
                 Savegame savegame = gameRessourceProvider.getSaveGame();
@@ -416,7 +392,7 @@ public class Events
             mousePressedLeft(gameRessourceProvider);
         }
         // TODO in Methode auslagern
-        else if (WindowManager.window == GAME
+        else if (WindowManager.window == WindowType.GAME
             && helicopter.isActive
             && !helicopter.isDamaged
             && !Window.isMenuVisible)
@@ -434,15 +410,15 @@ public class Events
 
     private static void mousePressedLeft(GameRessourceProvider gameRessourceProvider)
     {
-        if (WindowManager.window == GAME)
+        if (WindowManager.window == WindowType.GAME)
         {
             inGameMousePressedLeft(gameRessourceProvider);
         }
-        else if (WindowManager.window == REPAIR_SHOP)
+        else if (WindowManager.window == WindowType.REPAIR_SHOP)
         {
             repairShopMousePressedLeft(gameRessourceProvider);
         }
-        else if (WindowManager.window == START_SCREEN)
+        else if (WindowManager.window == WindowType.START_SCREEN)
         {
             startScreenMousePressedLeft(gameRessourceProvider);
         }
@@ -535,7 +511,7 @@ public class Events
                     helicopter.scoreScreenTimes.setTotalPlayingTime(playingTime / 60000);
                 }
 
-                changeWindow(SCORE_SCREEN);
+                changeWindow(WindowType.SCORE_SCREEN);
 
                 helicopter.isDamaged = false;
                 // go to score screen menu due to lack of money for the repairs -> game over so savegame becomes invalid
@@ -558,16 +534,16 @@ public class Events
         {
             if (helicopter.hasMaximumPlating())
             {
-                Window.block(HELICOPTER_ALREADY_REPAIRED);
+                Window.block(BlockMessage.HELICOPTER_ALREADY_REPAIRED);
             }
             else if (money < repairFee(helicopter, helicopter.isDamaged))
             {
-                Window.block(NOT_ENOUGH_MONEY_FOR_REPAIRS);
+                Window.block(BlockMessage.NOT_ENOUGH_MONEY_FOR_REPAIRS);
             }
             else
             {
                 money -= repairFee(helicopter, helicopter.isDamaged);
-                timeOfDay = (!helicopter.hasSpotlights || Calculations.tossUp(0.33f)) ? DAY : NIGHT;
+                timeOfDay = (!helicopter.hasSpotlights || Calculations.tossUp(0.33f)) ? TimeOfDay.DAY : TimeOfDay.NIGHT;
                 Window.buttons.get(LeftSideRepairShopButtonType.MISSION).setPrimaryLabel(Window.dictionary.mission());
 
                 if (!(level == 50 && helicopter.hasAllUpgrades()))
@@ -588,7 +564,7 @@ public class Events
                 }
                 else
                 {
-                    LevelManager.nextBossEnemyType = FINAL_BOSS;
+                    LevelManager.nextBossEnemyType = EnemyType.FINAL_BOSS;
                     LevelManager.maxNr = 1;
                     LevelManager.maxBarrierNr = 0;
                 }
@@ -606,7 +582,7 @@ public class Events
         {
             if (helicopter.isDamaged)
             {
-                Window.block(UNREPAIRED_BEFORE_MISSION);
+                Window.block(BlockMessage.UNREPAIRED_BEFORE_MISSION);
             }
             else
             {
@@ -626,22 +602,22 @@ public class Events
         {
             if (helicopter.isDamaged)
             {
-                Window.block(UNREPAIRED_BEFORE_UPGRADE);
+                Window.block(BlockMessage.UNREPAIRED_BEFORE_UPGRADE);
             }
             else if (helicopter.hasSpotlights)
             {
-                Window.block(UPGRADE_ALREADY_INSTALLED);
+                Window.block(BlockMessage.UPGRADE_ALREADY_INSTALLED);
             }
             else if (money < helicopter.getSpotlightCosts())
             {
-                Window.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
+                Window.block(BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE);
             }
             else
             {
                 Audio.play(Audio.cash);
                 money -= helicopter.getSpotlightCosts();
                 helicopter.hasSpotlights = true;
-                timeOfDay = NIGHT;
+                timeOfDay = TimeOfDay.NIGHT;
 
                 Window.updateRepairShopButtonsAfterSpotlightPurchase();
 
@@ -663,15 +639,15 @@ public class Events
         {
             if (helicopter.isDamaged)
             {
-                Window.block(UNREPAIRED_BEFORE_UPGRADE);
+                Window.block(BlockMessage.UNREPAIRED_BEFORE_UPGRADE);
             }
             else if (helicopter.hasGoliathPlating())
             {
-                Window.block(UPGRADE_ALREADY_INSTALLED);
+                Window.block(BlockMessage.UPGRADE_ALREADY_INSTALLED);
             }
             else if (money < helicopter.getGoliathCosts())
             {
-                Window.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
+                Window.block(BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE);
             }
             else
             {
@@ -686,15 +662,15 @@ public class Events
         {
             if (helicopter.isDamaged)
             {
-                Window.block(UNREPAIRED_BEFORE_UPGRADE);
+                Window.block(BlockMessage.UNREPAIRED_BEFORE_UPGRADE);
             }
             else if (helicopter.hasPiercingWarheads)
             {
-                Window.block(UPGRADE_ALREADY_INSTALLED);
+                Window.block(BlockMessage.UPGRADE_ALREADY_INSTALLED);
             }
             else if (money < helicopter.getPiercingWarheadsCosts())
             {
-                Window.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
+                Window.block(BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE);
             }
             else
             {
@@ -709,31 +685,31 @@ public class Events
         {
             if (helicopter.isDamaged)
             {
-                Window.block(UNREPAIRED_BEFORE_UPGRADE);
+                Window.block(BlockMessage.UNREPAIRED_BEFORE_UPGRADE);
             }
             else if (helicopter.hasAllCannons())
             {
-                Window.block(UPGRADE_ALREADY_INSTALLED);
+                Window.block(BlockMessage.UPGRADE_ALREADY_INSTALLED);
             }
             // TODO if Bedingung auslagern in Methode
             // TODO neue Helicopter Methoden: getNextCannonCost, getMaximumNumberOfCannons, ... je nach Bedarf
             else if ((money < helicopter.getLastCannonCost()) &&
-                !((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) && money >= Helicopter.CHEAP_SPECIAL_COSTS && helicopter.numberOfCannons == 1))
+                !((helicopter.getType() == HelicopterType.OROCHI || (helicopter.getType() == HelicopterType.HELIOS && HelicopterType.OROCHI.hasDefeatedFinalBoss())) && money >= Helicopter.CHEAP_SPECIAL_COSTS && helicopter.numberOfCannons == 1))
             {
-                Window.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
+                Window.block(BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE);
             }
             else
             {
                 Audio.play(Audio.cash);
                 Button extraCannonButton = Window.buttons.get(SpecialUpgradeButtonType.EXTRA_CANNONS);
-                if ((helicopter.getType() == OROCHI || (helicopter.getType() == HELIOS && OROCHI.hasDefeatedFinalBoss())) && helicopter.numberOfCannons == 1)
+                if ((helicopter.getType() == HelicopterType.OROCHI || (helicopter.getType() == HelicopterType.HELIOS && HelicopterType.OROCHI.hasDefeatedFinalBoss())) && helicopter.numberOfCannons == 1)
                 {
                     money -= Helicopter.CHEAP_SPECIAL_COSTS;
-                    if (helicopter.getType() == OROCHI)
+                    if (helicopter.getType() == HelicopterType.OROCHI)
                     {
                         extraCannonButton.adjustCostsTo(Helicopter.STANDARD_SPECIAL_COSTS);
                         extraCannonButton.setPrimaryLabel(Window.dictionary.thirdCannon());
-                        extraCannonButton.setCostColor(REGULAR.getColor());
+                        extraCannonButton.setCostColor(PriceLevel.REGULAR.getColor());
                     }
                     else
                     {
@@ -753,15 +729,15 @@ public class Events
         {
             if (helicopter.isDamaged)
             {
-                Window.block(UNREPAIRED_BEFORE_UPGRADE);
+                Window.block(BlockMessage.UNREPAIRED_BEFORE_UPGRADE);
             }
             else if (helicopter.hasFifthSpecial())
             {
-                Window.block(UPGRADE_ALREADY_INSTALLED);
+                Window.block(BlockMessage.UPGRADE_ALREADY_INSTALLED);
             }
             else if (money < helicopter.getFifthSpecialCosts())
             {
-                Window.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
+                Window.block(BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE);
             }
             else
             {
@@ -783,15 +759,15 @@ public class Events
                 {
                     if (helicopter.isDamaged)
                     {
-                        Window.block(UNREPAIRED_BEFORE_UPGRADE);
+                        Window.block(BlockMessage.UNREPAIRED_BEFORE_UPGRADE);
                     }
                     else if (helicopter.hasMaximumUpgradeLevelFor(standardUpgradeType))
                     {
-                        Window.block(REACHED_MAXIMUM_LEVEL);
+                        Window.block(BlockMessage.REACHED_MAXIMUM_LEVEL);
                     }
                     else if (money < helicopter.getUpgradeCostFor(standardUpgradeType))
                     {
-                        Window.block(NOT_ENOUGH_MONEY_FOR_UPGRADE);
+                        Window.block(BlockMessage.NOT_ENOUGH_MONEY_FOR_UPGRADE);
                     }
                     else
                     {
@@ -828,8 +804,7 @@ public class Events
         Queue<Enemy> enemies = gameRessourceProvider.getActivePaintableEntityManager()
                                                     .getEnemies()
                                                     .get(collectionSubgroupType);
-        gameRessourceProvider.getPaintableEntitySupplier()
-                             .storeAll(enemies);
+        gameRessourceProvider.storeAllPaintableEntities(enemies);
         enemies.clear();
     }
 
@@ -871,20 +846,20 @@ public class Events
         }
         else if (Window.buttons.get(StartScreenButtonType.INFORMATION).getBounds().contains(cursor))
         {
-            newStartScreenSubWindow(INFORMATION, true);
+            newStartScreenSubWindow(WindowType.INFORMATION, true);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
         }
         else if (Window.buttons.get(StartScreenButtonType.HIGH_SCORE).getBounds().contains(cursor))
         {
-            newStartScreenSubWindow(HIGH_SCORE, true);
+            newStartScreenSubWindow(WindowType.HIGH_SCORE, true);
         }
         else if (Window.buttons.get(StartScreenButtonType.CONTACT).getBounds().contains(cursor))
         {
-            newStartScreenSubWindow(CONTACT, true);
+            newStartScreenSubWindow(WindowType.CONTACT, true);
         }
         else if (Window.buttons.get(StartScreenButtonType.SETTINGS).getBounds().contains(cursor))
         {
-            newStartScreenSubWindow(SETTINGS, true);
+            newStartScreenSubWindow(WindowType.SETTINGS, true);
             if (currentPlayerName.equals(Window.DEFAULT_PLAYER_NAME))
             {
                 Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
@@ -913,7 +888,7 @@ public class Events
     {
         Audio.play(Audio.choose);
         Savegame savegame = gameRessourceProvider.getSaveGame();
-        if (WindowManager.window == SCORE_SCREEN)
+        if (WindowManager.window == WindowType.SCORE_SCREEN)
         {
             // leaving score screen by pressing "Cancel" -> to start screen menu
             savegame.saveInHighscore();
@@ -922,32 +897,32 @@ public class Events
             savegame.saveAndWriteToFile(gameRessourceProvider);
             Window.buttons.get(StartScreenSubCancelButtonType.CANCEL).setHighlighted(false);
         }
-        else if (WindowManager.window == DESCRIPTION)
+        else if (WindowManager.window == WindowType.DESCRIPTION)
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_6)
             {
                 Window.htmlViewer.show();
             }
-            newStartScreenSubWindow(INFORMATION, false);
+            newStartScreenSubWindow(WindowType.INFORMATION, false);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(true);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
         }
-        else if (WindowManager.window == HELICOPTER_TYPES)
+        else if (WindowManager.window == WindowType.HELICOPTER_TYPES)
         {
             if (Window.page == StartScreenMenuButtonType.BUTTON_2)
             {
                 Window.htmlViewer.show();
             }
-            newStartScreenSubWindow(DESCRIPTION, false);
+            newStartScreenSubWindow(WindowType.DESCRIPTION, false);
             Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
         }
         else
         {
-            if (WindowManager.window == INFORMATION)
+            if (WindowManager.window == WindowType.INFORMATION)
             {
                 Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
             }
-            else if (WindowManager.window == SETTINGS)
+            else if (WindowManager.window == WindowType.SETTINGS)
             {
                 Window.buttons.get(StartScreenMenuButtonType.BUTTON_5).setMarked(false);
                 checkName(savegame);
@@ -960,7 +935,7 @@ public class Events
             }
             Window.htmlViewer.hide();
             Window.stopButtonHighlighting();
-            WindowManager.window = START_SCREEN;
+            WindowManager.window = WindowType.START_SCREEN;
         }
     }
 
@@ -972,38 +947,40 @@ public class Events
             Button currentButton = Window.buttons.get(buttonSpecifier);
             if (currentButton.getBounds().contains(cursor) &&
                 currentButton.isVisible() &&
-                (Window.page != buttonSpecifier || WindowManager.window == SETTINGS))
+                (Window.page != buttonSpecifier || WindowManager.window == WindowType.SETTINGS))
             {
                 StartScreenMenuButtonType oldPage = Window.page;
-                if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
+                if (WindowManager.window == WindowType.DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
                     Window.htmlViewer.show();
                 }
-                else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
+                // TODO zwei mal gleiche Bedingung, prüfen (Part I)
+                else if (WindowManager.window == WindowType.HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
                     Window.htmlViewer.show();
                 }
                 Window.page = (StartScreenMenuButtonType) buttonSpecifier;
-                if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
+                if (WindowManager.window == WindowType.DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_6)
                 {
                     Window.htmlViewer.hide();
                 }
-                else if (WindowManager.window == HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
+                // TODO zwei mal gleiche Bedingung, prüfen (Part II)
+                else if (WindowManager.window == WindowType.HELICOPTER_TYPES && Window.page == StartScreenMenuButtonType.BUTTON_2)
                 {
                     Window.htmlViewer.hide();
                 }
-                if (WindowManager.window == INFORMATION && Window.page == StartScreenMenuButtonType.BUTTON_3)
+                if (WindowManager.window == WindowType.INFORMATION && Window.page == StartScreenMenuButtonType.BUTTON_3)
                 {
-                    newStartScreenSubWindow(DESCRIPTION, false);
+                    newStartScreenSubWindow(WindowType.DESCRIPTION, false);
                     Window.buttons.get(StartScreenMenuButtonType.BUTTON_3).setMarked(false);
                     Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(true);
                 }
-                else if (WindowManager.window == DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_7)
+                else if (WindowManager.window == WindowType.DESCRIPTION && Window.page == StartScreenMenuButtonType.BUTTON_7)
                 {
-                    newStartScreenSubWindow(HELICOPTER_TYPES, false);
+                    newStartScreenSubWindow(WindowType.HELICOPTER_TYPES, false);
                     Window.buttons.get(StartScreenMenuButtonType.BUTTON_7).setMarked(false);
                 }
-                else if (WindowManager.window == SETTINGS)
+                else if (WindowManager.window == WindowType.SETTINGS)
                 {
                     settingsMousePressedLeft(gameRessourceProvider, oldPage);
                 }
@@ -1050,7 +1027,7 @@ public class Events
         {
             helicopter.isContinuousFireEnabled = false;
         }
-        else if (WindowManager.window == GAME && mouseEvent.isRightButtonClicked() && !helicopter.isDamaged)
+        else if (WindowManager.window == WindowType.GAME && mouseEvent.isRightButtonClicked() && !helicopter.isDamaged)
         {
             helicopter.rightMouseButtonReleaseAction(mouseEvent, scalingFactor);
         }
@@ -1060,7 +1037,7 @@ public class Events
     public static void mouseMovedOrDragged(MouseEvent mouseEvent, GameRessourceProvider gameRessourceProvider, double scalingFactor)
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
-        if (!helicopter.isDamaged || WindowManager.window == REPAIR_SHOP)
+        if (!helicopter.isDamaged || WindowManager.window == WindowType.REPAIR_SHOP)
         {
             if (!helicopter.isSearchingForTeleportDestination)
             {
@@ -1100,7 +1077,7 @@ public class Events
 
     private static void generalInitialization()
     {
-        changeWindow(GAME);
+        changeWindow(WindowType.GAME);
         lastCurrentTime = System.currentTimeMillis();
     }
 
@@ -1110,7 +1087,7 @@ public class Events
         money = 0;
         level = 1;
         maxLevel = 1;
-        timeOfDay = DAY;
+        timeOfDay = TimeOfDay.DAY;
         overallEarnings = 0;
         extraBonusCounter = 0;
         playingTime = 0;
@@ -1153,12 +1130,12 @@ public class Events
                                                      .getEnemies()
                                                      .get(CollectionSubgroupType.ACTIVE)
                                                      .element()
-                                                     .getType() == BOSS_2_SERVANT))
+                                                     .getType() == EnemyType.BOSS_2_SERVANT))
         {
             // Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
             if (level == 40 || level == 50)
             {
-                LevelManager.nextBossEnemyType = level == 40 ? BOSS_4 : FINAL_BOSS;
+                LevelManager.nextBossEnemyType = level == 40 ? EnemyType.BOSS_4 : EnemyType.FINAL_BOSS;
                 LevelManager.maxNr = 1;
                 LevelManager.maxBarrierNr = 0;
             }
@@ -1184,6 +1161,8 @@ public class Events
         }
         // TODO vereinfachen und in die neuen Klassen (ActivePaintableEntityManager und PaintableEntitySupplier
         // gameRessourceProvider.getActivePaintableEntityManager().clearExplosions();
+        
+        // Explosions
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getExplosions()
                              .get(CollectionSubgroupType.INACTIVE)
@@ -1191,33 +1170,45 @@ public class Events
                                                           .getExplosions().get(CollectionSubgroupType.ACTIVE));
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .getMissiles()
-                             .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getActivePaintableEntityManager()
-                                                          .getMissiles().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .getMissiles().get(CollectionSubgroupType.ACTIVE).clear();
+        
+        // Missiles
+        storeAndClearActiveMissiles(gameRessourceProvider);
+        
+        // EnemyMissiles
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getEnemyMissiles()
                              .get(CollectionSubgroupType.INACTIVE)
                              .addAll(gameRessourceProvider.getActivePaintableEntityManager()
-                                                          .getEnemyMissiles().get(CollectionSubgroupType.ACTIVE));
+                                                          .getEnemyMissiles()
+                                                          .get(CollectionSubgroupType.ACTIVE));
         gameRessourceProvider.getActivePaintableEntityManager()
-                             .getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).clear();
-        gameRessourceProvider.getPaintableEntitySupplier()
-                             .storeAll(gameRessourceProvider.getActivePaintableEntityManager()
-                                                            .getPowerUps().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .getPowerUps().get(CollectionSubgroupType.ACTIVE).clear();
+                             .getEnemyMissiles()
+                             .get(CollectionSubgroupType.ACTIVE)
+                             .clear();
+        
+        // PowerUps
+        Queue<PowerUp> activePowerUps = gameRessourceProvider.getActivePaintableEntityManager()
+                                                             .getPowerUps()
+                                                             .get(CollectionSubgroupType.ACTIVE);
+        gameRessourceProvider.storeAllPaintableEntities(activePowerUps);
+        activePowerUps.clear();
 
-        if (Window.collectedPowerUps.containsKey(BOOSTED_FIRE_RATE))
+        if (Window.collectedPowerUps.containsKey(PowerUpType.BOOSTED_FIRE_RATE))
         {
             helicopter.adjustFireRate(false);
         }
         Window.collectedPowerUps.clear();
     }
-
+    
+    private static void storeAndClearActiveMissiles(GameRessourceProvider gameRessourceProvider)
+    {
+        Queue<Missile> activeMissiles = gameRessourceProvider.getActivePaintableEntityManager()
+                                                             .getMissiles()
+                                                             .get(CollectionSubgroupType.ACTIVE);
+        gameRessourceProvider.storeAllPaintableEntities(activeMissiles);
+        activeMissiles.clear();
+    }
+    
     private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
     {
         Queue<Enemy> activeEnemies = gameRessourceProvider.getActivePaintableEntityManager()
@@ -1225,8 +1216,8 @@ public class Events
                                                           .get(CollectionSubgroupType.ACTIVE);
         activeEnemies.stream()
                      .filter(Enemy::isDisappearingAfterEnteringRepairShop)
-                     .forEach(gameRessourceProvider.getPaintableEntitySupplier()::store);
-
+                     .forEach(gameRessourceProvider::storePaintableEntity);
+        
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getEnemies()
                              .get(CollectionSubgroupType.ACTIVE)
@@ -1275,14 +1266,14 @@ public class Events
     // TODO die sceneryObject-Liste sollte teil innerhalb von Scenery definiert werden
     private static void restartGame(GameRessourceProvider gameRessourceProvider)
     {
-        changeWindow(START_SCREEN);
+        changeWindow(WindowType.START_SCREEN);
         gameRessourceProvider.getHelicopter().reset();
         gameRessourceProvider.getScenery().reset();
     }
 
     private static void startMission(GameRessourceProvider gameRessourceProvider)
     {
-        changeWindow(GAME);
+        changeWindow(WindowType.GAME);
         Audio.play(Audio.choose);
         lastCurrentTime = System.currentTimeMillis();
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
@@ -1293,7 +1284,7 @@ public class Events
 
     private static void enterRepairShop(Helicopter helicopter)
     {
-        changeWindow(REPAIR_SHOP);
+        changeWindow(WindowType.REPAIR_SHOP);
 
         Audio.applause1.stop();
         playingTime += System.currentTimeMillis() - lastCurrentTime;
@@ -1324,7 +1315,7 @@ public class Events
     {
         WindowManager.window = newWindow;
         Audio.refreshBackgroundMusic();
-        Colorations.bg = newWindow == GAME && timeOfDay == DAY ? Colorations.sky : Color.black;
+        Colorations.bg = newWindow == WindowType.GAME && timeOfDay == TimeOfDay.DAY ? Colorations.sky : Color.black;
     }
 
     private static void newStartScreenSubWindow(WindowType newWindow, boolean hasJustEntered)

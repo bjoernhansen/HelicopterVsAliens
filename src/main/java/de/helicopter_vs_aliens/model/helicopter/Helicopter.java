@@ -22,6 +22,7 @@ import de.helicopter_vs_aliens.model.helicopter.components.Battery;
 import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
 import de.helicopter_vs_aliens.model.missile.Grantable;
 import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.missile.MissileFactory;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -37,7 +38,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -115,6 +115,8 @@ public abstract class Helicopter extends RectangularPaintableEntity
                                            - NO_COLLISION_HEIGHT,
                                        HELICOPTER_SIZE.width,
                                        HELICOPTER_SIZE.height);
+    
+    private static final MissileFactory missileFactory = new MissileFactory();
     
     public int
         missileDrive,                        // Geschwindigkeit [Pixel pro Frame] der Raketen
@@ -306,22 +308,8 @@ public abstract class Helicopter extends RectangularPaintableEntity
     }
     
     private Missile getMissileInstance()
-    // TODO über die Instance-Provider-Klasse abwickeln wie bei Enemy
     {
-        Iterator<Missile> iterator = getGameRessourceProvider().getActivePaintableEntityManager()
-                                                               .getMissiles()
-                                                               .get(CollectionSubgroupType.INACTIVE)
-                                                               .iterator();
-        Missile missile;
-        if(!iterator.hasNext())
-        {
-            missile = new Missile();
-        }
-        else
-        {
-            missile = iterator.next();
-            iterator.remove();
-        }
+        Missile missile = getGameRessourceProvider().getNewPaintableEntityInstance(missileFactory);
         resetMissile(missile);
         return missile;
     }

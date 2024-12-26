@@ -307,8 +307,7 @@ public class EnemyController
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.getPaintableEntitySupplier()
-                                     .store(enemy);
+                gameRessourceProvider.storePaintableEntity(enemy);
             }
         }
     }
@@ -334,8 +333,7 @@ public class EnemyController
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.getPaintableEntitySupplier()
-                                     .store(enemy);
+                gameRessourceProvider.storePaintableEntity(enemy);
             }
         }
     }

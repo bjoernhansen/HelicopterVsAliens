@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.control.entities;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.ActiveGameEntitiesProvider;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -11,6 +10,7 @@ import de.helicopter_vs_aliens.model.powerup.PowerUp;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,9 +22,12 @@ import java.util.stream.Collectors;
 
 // TODO finish implementation
 
-public final class ActivePaintableEntityManager implements ActiveGameEntitiesProvider
+public final class ActivePaintableEntityManager implements ActivePaintableEntityProvider
 {
-    // TODO Verwaltung anders lösen, vermutlich mit den erstellten Klassen im Packet control/entities
+    // TODO Verwaltung anders lösen, eventuell wie in der Klasse PaintableEntitySupplier
+    // ggf. ist auch eine Zusammenführung oder eine Verwaltung über eine übergeordnete Klasse denkbar
+    // TODO sobald die inaktiven hier nicht mehr nötig sind, kann der Umbau beginnen
+    // TODO die ungenutzten Methoden in dieser Klasse kommen dann ggf. zum Einsatz
     // TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
     // TODO das lässt sich vielleicht auch über eine Map abbilden , eine EnumMap (PaintableEntityGroupType) von EnumMaps (Collection Subgroup)
     
@@ -50,7 +53,6 @@ public final class ActivePaintableEntityManager implements ActiveGameEntitiesPro
     private static ActivePaintableEntityManager
         instance;
     
-    
     public static ActivePaintableEntityManager getInstance()
     {
         instance = Optional.ofNullable(instance)
@@ -69,44 +71,14 @@ public final class ActivePaintableEntityManager implements ActiveGameEntitiesPro
         // TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
         CollectionSubgroupType.getStandardSubgroupTypes()
                               .forEach(standardSubgroupTypes -> {
-            this.enemies.put(		   				standardSubgroupTypes, new ArrayDeque<>());
-            this.missiles.put(	   					standardSubgroupTypes, new ArrayDeque<>());
-            this.explosions.put(	   				standardSubgroupTypes, new ArrayDeque<>());
-            this.sceneryObjects.put(	            standardSubgroupTypes, new ArrayDeque<>());
-            this.enemyMissiles.put( 				standardSubgroupTypes, new ArrayDeque<>());
-            this.powerUps.put(	   					standardSubgroupTypes, new ArrayDeque<>());
-        });
-        this.enemies.put(CollectionSubgroupType.DESTROYED, new ArrayDeque<>());
-    }
-    
-    
-    
-    private final Map<PaintableEntityGroupType, Queue<GroupTypeOwner>>
-        paintableEntityQueues = Arrays.stream(PaintableEntityGroupType.values())
-                                 .collect(Collectors.toUnmodifiableMap(Function.identity(), groupType -> new ArrayDeque<>()));
-    
-    public void add(GroupTypeOwner groupTypeOwner)
-    {
-        paintableEntityQueues.get(groupTypeOwner.getGroupType())
-                             .add(groupTypeOwner);
-    }
-    
-    public void forEachOfGroupType(PaintableEntityGroupType paintableEntityGroupType, Consumer<? super GroupTypeOwner> action)
-    {
-        paintableEntityQueues.get(paintableEntityGroupType)
-                             .forEach(action);
-    }
-    
-    public void remove(GroupTypeOwner groupTypeOwner)
-    {
-        paintableEntityQueues.get(groupTypeOwner.getGroupType())
-                             .remove(groupTypeOwner);
-    }
-    
-    public void removeEachOfGroupTypeIf(GroupTypeOwner groupTypeOwner, Predicate<? super GroupTypeOwner> filter)
-    {
-        paintableEntityQueues.get(groupTypeOwner.getGroupType())
-                             .removeIf(filter);
+                                  enemies.put(standardSubgroupTypes, new ArrayDeque<>());
+                                  missiles.put(standardSubgroupTypes, new ArrayDeque<>());
+                                  explosions.put(standardSubgroupTypes, new ArrayDeque<>());
+                                  sceneryObjects.put(standardSubgroupTypes, new ArrayDeque<>());
+                                  enemyMissiles.put(standardSubgroupTypes, new ArrayDeque<>());
+                                  powerUps.put(standardSubgroupTypes, new ArrayDeque<>());
+                              });
+        enemies.put(CollectionSubgroupType.DESTROYED, new ArrayDeque<>());
     }
     
     @Override
@@ -150,5 +122,54 @@ public final class ActivePaintableEntityManager implements ActiveGameEntitiesPro
         // TODO Implementieren - vergleiche wie das bei Enemies gelöst wurde
         // gameRessourceProvider.getExplosions().get(CollectionSubgroupType.INACTIVE).addAll(gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE));
         // gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
+    }
+    
+    // nur Vorbereitung für späteren Umbau
+    private final Map<PaintableEntityGroupType, Queue<GroupTypeOwner>>
+        paintableEntityQueues = Arrays.stream(PaintableEntityGroupType.values())
+                                      .collect(Collectors.toUnmodifiableMap(Function.identity(),
+                                                                            groupType -> new ArrayDeque<>()));
+    
+    public void add(GroupTypeOwner groupTypeOwner)
+    // TODO verwenden oder entfernen
+    {
+        paintableEntityQueues.get(groupTypeOwner.getGroupType())
+                             .add(groupTypeOwner);
+    }
+    
+    public void forEachOfGroupType(PaintableEntityGroupType paintableEntityGroupType, Consumer<? super GroupTypeOwner> action)
+    // TODO verwenden oder entfernen
+    {
+        paintableEntityQueues.get(paintableEntityGroupType)
+                             .forEach(action);
+    }
+    
+    public void remove(GroupTypeOwner groupTypeOwner)
+    // TODO verwenden oder entfernen
+    {
+        paintableEntityQueues.get(groupTypeOwner.getGroupType())
+                             .remove(groupTypeOwner);
+    }
+    
+    public void removeEachOfGroupTypeIf(GroupTypeOwner groupTypeOwner, Predicate<? super GroupTypeOwner> filter)
+    // TODO verwenden oder entfernen
+    {
+        paintableEntityQueues.get(groupTypeOwner.getGroupType())
+                             .removeIf(filter);
+    }
+    
+    public Collection<GroupTypeOwner> getPaintableEntities(PaintableEntityGroupType groupType)
+    // TODO verwenden oder entfernen
+    {
+        return paintableEntityQueues.get(groupType);
+    }
+    
+    public Collection<GroupTypeOwner> getPaintableEntities(PaintableEntityGroupType groupType, Predicate<? super GroupTypeOwner> condition)
+    // TODO verwenden oder entfernen
+    {
+        return paintableEntityQueues.get(groupType)
+                                    .stream()
+                                    .filter(condition)
+                                    .toList();
     }
 }

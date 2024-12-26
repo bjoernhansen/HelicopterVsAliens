@@ -11,7 +11,7 @@ public final class PaintableEntitySupplier
     private final Map<Class<? extends PaintableEntity>, PaintableEntityStore<PaintableEntity>>
         entityStores = new HashMap<>();
     
-    public  <T extends PaintableEntity> T retrieve(PaintableEntityFactory<T> factory)
+    public <T extends PaintableEntity> T retrieve(PaintableEntityFactory<T> factory)
     {
         Class<? extends T> paintableEntityClass = factory.getCorrespondingClass();
         PaintableEntity paintableEntity = getPaintableEntityStore(paintableEntityClass).retrieve(factory);

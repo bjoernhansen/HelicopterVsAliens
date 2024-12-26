@@ -58,7 +58,7 @@ public class PowerUp extends RectangularPaintableEntity implements GroupTypeOwne
 			if(powerUp.wasCollected)
 			{
 				iterator.remove();
-				gameRessourceProvider.getPaintableEntitySupplier().store(powerUp);
+				gameRessourceProvider.storePaintableEntity(powerUp);
 			}
 		}		
 	}
