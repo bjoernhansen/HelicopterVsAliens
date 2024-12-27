@@ -24,6 +24,7 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
+import de.helicopter_vs_aliens.model.missile.EnemyMissileFactory;
 import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
@@ -148,6 +149,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     
     public static final Point2D
         boss = new Point2D.Float();    // Koordinaten vom aktuellen Boss; wichtig für Gegner-produzierende Boss-Gegner
+    
+    private static final EnemyMissileFactory
+        enemyMissileFactory = new EnemyMissileFactory();
     
     /*
      * 	Attribute der Enemy-Objekte
@@ -1416,9 +1420,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
                                             Integer.MAX_VALUE / 2f,
                                             EnemyMissile.DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))))
         {
-            shoot(gameRessourceProvider.getActivePaintableEntityManager()
-                                       .getEnemyMissiles(),
-                  hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
+            shoot(hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
                   shotSpeed + 3 * Math.random() + 5);
             
             shootTimer = shootingRate;
@@ -1435,24 +1437,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     }
     
     
-    public void shoot(Map<CollectionSubgroupType, Queue<EnemyMissile>> enemyMissiles,
-                      EnemyMissileType missileType,
+    public void shoot(EnemyMissileType missileType,
                       double missileSpeed)
     {
-        Iterator<EnemyMissile> iterator = enemyMissiles.get(CollectionSubgroupType.INACTIVE)
-                                                       .iterator();
-        EnemyMissile enemyMissile;
-        if(iterator.hasNext())
-        {
-            enemyMissile = iterator.next();
-            iterator.remove();
-        }
-        else
-        {
-            enemyMissile = new EnemyMissile();
-        }
-        enemyMissiles.get(CollectionSubgroupType.ACTIVE)
-                     .add(enemyMissile);
+        EnemyMissile enemyMissile = getGameRessourceProvider().getNewPaintableEntityInstance(enemyMissileFactory);
+        getGameRessourceProvider().getActivePaintableEntityManager()
+                                  .getEnemyMissiles()
+                                  .get(CollectionSubgroupType.ACTIVE)
+                                  .add(enemyMissile);
         enemyMissile.launch(this, missileType, missileSpeed, shootingDirection);
         Audio.play(Audio.launch3);
     }

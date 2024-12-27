@@ -19,6 +19,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -33,8 +34,8 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.control.TimeOfDay.NIGHT;
+import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
 import static de.helicopter_vs_aliens.gui.button.ButtonCategory.GROUND;
 import static de.helicopter_vs_aliens.gui.button.GroundButtonType.MAIN_MENU;
 import static de.helicopter_vs_aliens.gui.button.GroundButtonType.REPAIR_SHOP;
@@ -118,6 +119,7 @@ public class GameWindowPainter extends WindowPainter
         }
     }
     
+    // TODO für diese Methoden sollte es auch etwas passenderes geben, eine Aktion die übergeben und dann für alle ausgeführt wird
     private void paintAllEnemyMissiles(GraphicsAdapter graphicsAdapter)
     {
         gameRessourceProvider.getActivePaintableEntityManager()
@@ -528,7 +530,9 @@ public class GameWindowPainter extends WindowPainter
     }
     
     private static void paintSpecialInfoDisplay(GraphicsAdapter graphicsAdapter)
+    // TODO Erzeugung der SpezialInfo in eigene Klasse auslagern
     {
+        // TODO deutsche Strings eventuell auch in Dictionary überführen? Das wäre für UnitTests hilfreich.
         GameStatisticsCalculator gameStatisticsCalculator = gameRessourceProvider.getGameStatisticsCalculator();
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
@@ -553,6 +557,7 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
+                // TODO all diese Aufrufe sollen gekapselt werden z.B. gameRessourceProvider.getActiveEntities(Explosions.class).size()
                 + gameRessourceProvider.getActivePaintableEntityManager()
                                        .getExplosions()
                                        .get(CollectionSubgroupType.ACTIVE)
@@ -598,10 +603,7 @@ public class GameWindowPainter extends WindowPainter
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive gegnerische Geschosse: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .getEnemyMissiles()
-                                       .get(CollectionSubgroupType.INACTIVE)
-                                       .size();
+                + gameRessourceProvider.numberOfInactivePaintableEntities(EnemyMissile.class);
         }
         else if(Window.specialInfoSelection == 7)
         {

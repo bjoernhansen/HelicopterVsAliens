@@ -17,6 +17,7 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
@@ -50,8 +51,12 @@ public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
     private EnemyMissileType
 		type;				// Art des Geschosses
 	
-    
-    private void update(Helicopter helicopter)
+	
+	EnemyMissile()
+	{
+	}
+	
+	private void update(Helicopter helicopter)
     {    		
     	this.determineColor();
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
@@ -145,20 +150,21 @@ public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<EnemyMissile> i = gameRessourceProvider.getActivePaintableEntityManager()
-															.getEnemyMissiles().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
+		Queue<EnemyMissile> enemyMissiles = gameRessourceProvider.getActivePaintableEntityManager()
+																 .getEnemyMissiles()
+																 .get(CollectionSubgroupType.ACTIVE);
+		for(Iterator<EnemyMissile> enemyMissileIterator = enemyMissiles.iterator(); enemyMissileIterator.hasNext();)
 		{
-			EnemyMissile em = i.next();	    			
-			em.update(gameRessourceProvider.getHelicopter());
-			if(    em.location.getX() + 80 < 0 
-				|| em.location.getX() > 1050 
-				|| em.location.getY() + 20 < 0 
-				|| em.location.getY() > 515 
-				|| em.hasHit)
+			EnemyMissile enemyMissile = enemyMissileIterator.next();
+			enemyMissile.update(gameRessourceProvider.getHelicopter());
+			if(    enemyMissile.location.getX() + 80 < 0
+				|| enemyMissile.location.getX() > 1050
+				|| enemyMissile.location.getY() + 20 < 0
+				|| enemyMissile.location.getY() > 515
+				|| enemyMissile.hasHit)
 			{
-				i.remove();					
-				gameRessourceProvider.getActivePaintableEntityManager()
-									 .getEnemyMissiles().get(CollectionSubgroupType.INACTIVE).add(em);
+				enemyMissileIterator.remove();
+				gameRessourceProvider.storePaintableEntity(enemyMissile);
 			}
 		}		
 	}

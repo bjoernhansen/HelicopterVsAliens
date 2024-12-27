@@ -125,6 +125,7 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
     }
     
     // nur Vorbereitung für späteren Umbau
+    // TODO Umbau
     private final Map<PaintableEntityGroupType, Queue<GroupTypeOwner>>
         paintableEntityQueues = Arrays.stream(PaintableEntityGroupType.values())
                                       .collect(Collectors.toUnmodifiableMap(Function.identity(),

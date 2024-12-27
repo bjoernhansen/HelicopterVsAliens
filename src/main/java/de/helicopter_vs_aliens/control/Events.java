@@ -31,6 +31,7 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
+import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
@@ -1175,16 +1176,7 @@ public class Events
         storeAndClearActiveMissiles(gameRessourceProvider);
         
         // EnemyMissiles
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .getEnemyMissiles()
-                             .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getActivePaintableEntityManager()
-                                                          .getEnemyMissiles()
-                                                          .get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .getEnemyMissiles()
-                             .get(CollectionSubgroupType.ACTIVE)
-                             .clear();
+        storeAndClearActiveEnemyMissiles(gameRessourceProvider);
         
         // PowerUps
         Queue<PowerUp> activePowerUps = gameRessourceProvider.getActivePaintableEntityManager()
@@ -1198,6 +1190,15 @@ public class Events
             helicopter.adjustFireRate(false);
         }
         Window.collectedPowerUps.clear();
+    }
+    
+    private static void storeAndClearActiveEnemyMissiles(GameRessourceProvider gameRessourceProvider)
+    {
+        Queue<EnemyMissile> activeEnemyMissiles = gameRessourceProvider.getActivePaintableEntityManager()
+                                                                       .getEnemyMissiles()
+                                                                       .get(CollectionSubgroupType.ACTIVE);
+        gameRessourceProvider.storeAllPaintableEntities(activeEnemyMissiles);
+        activeEnemyMissiles.clear();
     }
     
     private static void storeAndClearActiveMissiles(GameRessourceProvider gameRessourceProvider)
