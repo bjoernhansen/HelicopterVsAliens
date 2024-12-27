@@ -73,6 +73,11 @@ public class SceneryObject extends RectangularPaintableEntity implements GroupTy
 		layer;	// Ebene, in welcher das Hintergrundobjekt gezeichnet wird
 	
 	
+	SceneryObject()
+	{
+	
+	}
+	
 	static void updateBackgroundTimer()
 	{
 		// TODO diese Methode gehört eher in die Scenery-Klasse

@@ -611,10 +611,7 @@ public class GameWindowPainter extends WindowPainter
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Hintergrundobjekte: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .getSceneryObjects()
-                                       .get(CollectionSubgroupType.INACTIVE)
-                                       .size();
+                + gameRessourceProvider.numberOfInactivePaintableEntities(SceneryObject.class);
         }
         else if(Window.specialInfoSelection == 8)
         {

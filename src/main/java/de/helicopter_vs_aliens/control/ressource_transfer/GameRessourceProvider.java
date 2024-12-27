@@ -24,6 +24,8 @@ public interface GameRessourceProvider
     
     ActivePaintableEntityManager getActivePaintableEntityManager();
     
+    // TODO denkbar wäre eine Methode activatePaintableEntityInstance, die automatisch die Instance auch dem aktiven Entitites hinzufügt
+    
     <T extends PaintableEntity> T getNewPaintableEntityInstance(PaintableEntityFactory<T> factory);
     
     void storePaintableEntity(PaintableEntity paintableEntity);

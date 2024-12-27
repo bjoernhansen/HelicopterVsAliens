@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.PaintableEntityActivation;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -11,6 +11,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,9 @@ public class Scenery extends PaintableEntity
         MAXIMUM_NUMBER_OF_SCENERY_OBJECTS = 20,
         ACTIVATION_PAUSE_DURATION = 20,
         X_LIMIT_FOR_REMOVAL = -50;
+    
+    private static final SceneryObjectFactory
+        sceneryObjectFactory = new SceneryObjectFactory();
     
     // TODO sollte eigentlich eine Instanz-Variable sein
     public static boolean
@@ -57,39 +61,35 @@ public class Scenery extends PaintableEntity
     
     public void reset()
     {
-        getSceneryObjects().get(CollectionSubgroupType.INACTIVE).addAll(getSceneryObjects().get(CollectionSubgroupType.ACTIVE));
-        getSceneryObjects().get(CollectionSubgroupType.ACTIVE).clear();
+        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects().get(CollectionSubgroupType.ACTIVE);
+        getGameRessourceProvider().storeAllPaintableEntities(activeSceneryObjects);
+        activeSceneryObjects.clear();
         createInitialSceneryObjects();
         cloudX = 135;
     }
     
     public void createInitialSceneryObjects()
     {
-        Iterator<SceneryObject> iterator = getSceneryObjects().get(CollectionSubgroupType.INACTIVE).iterator();
-        
-        SceneryObject firstCactus;
-        if(iterator.hasNext()){firstCactus = iterator.next(); iterator.remove();}
-        else{firstCactus = new SceneryObject();}
+        SceneryObject firstCactus = getSceneryObject();
         firstCactus.makeFirstCactus();
-        getSceneryObjects().get(CollectionSubgroupType.ACTIVE).add(firstCactus);
-    
-        SceneryObject firstHill;
-        if(iterator.hasNext()){firstHill = iterator.next(); iterator.remove();}
-        else{firstHill = new SceneryObject();}
+        SceneryObject firstHill = getSceneryObject();
         firstHill.makeFirstHill();
-        getSceneryObjects().get(CollectionSubgroupType.ACTIVE).add(firstHill);
-    
-        SceneryObject firstDesert;
-        if(iterator.hasNext()){firstDesert = iterator.next(); iterator.remove();}
-        else{firstDesert = new SceneryObject();}
+        SceneryObject firstDesert = getSceneryObject();
         firstDesert.makeFirstDesert();
-        getSceneryObjects().get(CollectionSubgroupType.ACTIVE).add(firstDesert);
+        Collection<SceneryObject> firstSceneryObjects = List.of(firstCactus, firstHill, firstDesert);
+        getSceneryObjects().get(CollectionSubgroupType.ACTIVE).addAll(firstSceneryObjects);
+    }
+    
+    private SceneryObject getSceneryObject()
+    {
+        return getGameRessourceProvider().getNewPaintableEntityInstance(sceneryObjectFactory);
     }
     
     public void update(GameRessourceProvider gameRessourceProvider)
     {
         backgroundMoves = isBackgroundMoving(gameRessourceProvider);
-        for(Iterator<SceneryObject> iterator = getSceneryObjects().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
+        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects().get(CollectionSubgroupType.ACTIVE);
+        for(Iterator<SceneryObject> iterator = activeSceneryObjects.iterator(); iterator.hasNext();)
         {
             SceneryObject sceneryObject = iterator.next();
             if (backgroundMoves)
@@ -100,7 +100,7 @@ public class Scenery extends PaintableEntity
             {
                 sceneryObject.clearImage();
                 iterator.remove();
-                getSceneryObjects().get(CollectionSubgroupType.INACTIVE).add(sceneryObject);
+                gameRessourceProvider.storePaintableEntity(sceneryObject);
             }
         }
         if(arePrerequisitesForSceneryObjectsCreationMet())
@@ -152,14 +152,7 @@ public class Scenery extends PaintableEntity
     private void generateNewSceneryObject()
     {
         SceneryObject.generalObjectTimer = ACTIVATION_PAUSE_DURATION;
-        Iterator<SceneryObject> iterator = getSceneryObjects().get(CollectionSubgroupType.INACTIVE).iterator();
-        SceneryObject sceneryObject;
-        if (iterator.hasNext())
-        {
-            sceneryObject = iterator.next();
-            iterator.remove();
-        }
-        else{sceneryObject = new SceneryObject();}
+        SceneryObject sceneryObject = getSceneryObject();
         sceneryObject.preset();
         getSceneryObjects().get(CollectionSubgroupType.ACTIVE).add(sceneryObject);
     }
