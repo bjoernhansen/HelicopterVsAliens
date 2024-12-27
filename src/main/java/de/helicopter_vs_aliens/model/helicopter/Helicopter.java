@@ -414,8 +414,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
             }
             else if(isInTheAir && location.getY() == 407d)
             {
-                crashed(gameRessourceProvider.getActivePaintableEntityManager()
-                                             .getExplosions());
+                crashed();
             }
         }
         if(isRotorSystemActive)
@@ -763,9 +762,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
                      .incrementNumberOfCrashes();
         if(location.getY() == 407d)
         {
-            crashed(GameResources.getProvider()
-                                 .getActivePaintableEntityManager()
-                                 .getExplosions());
+            crashed();
         }
         else
         {
@@ -773,14 +770,14 @@ public abstract class Helicopter extends RectangularPaintableEntity
         }
     }
     
-    private void crashed(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
+    private void crashed()
     {
         isActive = false;
         powerUpController.startDecayOfAllActivePowerUps();
-        if(Events.level < 51 && explosions != null)
+        if(Events.level < 51)
         {
             Audio.play(Audio.explosion3);
-            Explosion.start(explosions,
+            Explosion.start(getGameRessourceProvider(),
                             this,
                             (int)(getX()
                                 + (isMovingLeft

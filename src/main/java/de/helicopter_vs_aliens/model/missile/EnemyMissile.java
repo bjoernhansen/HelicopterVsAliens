@@ -67,18 +67,17 @@ public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
 										   	this.location.getX() + this.diameter/2f,
 											this.location.getY() + this.diameter))
         {
-			this.hit(helicopter);
+			this.hit(getGameRessourceProvider(), helicopter);
 		}		
     }
     
-    private void hit(Helicopter helicopter)
+    private void hit(GameRessourceProvider gameRessourceProvider, Helicopter helicopter)
     {    	
     	if(this.type == BUSTER)
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-    		Explosion.start(GameResources.getProvider().getActivePaintableEntityManager()
-										 .getExplosions(),
+    		Explosion.start(gameRessourceProvider,
     						helicopter,
 							(int)(helicopter.getX()
 									+ (helicopter.isMovingLeft

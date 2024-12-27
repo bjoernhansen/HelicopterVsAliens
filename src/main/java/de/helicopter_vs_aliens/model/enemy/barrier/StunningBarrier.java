@@ -49,8 +49,7 @@ public final class StunningBarrier extends Barrier
         super.performLocationAdaptionAction(gameRessourceProvider);
         if (isStaticallyCharged())
         {
-            startStaticDischarge(gameRessourceProvider.getActivePaintableEntityManager()
-                                                      .getExplosions());
+            startStaticDischarge(gameRessourceProvider);
         }
     }
     
@@ -59,12 +58,18 @@ public final class StunningBarrier extends Barrier
         return staticChargeTimer == READY && snoozeTimer <= SNOOZE_TIME;
     }
     
-    private void startStaticDischarge(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
+    private void startStaticDischarge(GameRessourceProvider gameRessourceProvider)
     {
         staticChargeTimer = STATIC_CHARGE_TIME;
         getHelicopter().receiveStaticCharge(ENERGY_CONSUMPTION_FACTOR);
         Audio.play(Audio.emp);
-        Explosion.start(explosions, getHelicopter(), (int)getCenterX(), (int)getCenterY(), ExplosionType.STUNNING, false, this);
+        Explosion.start(gameRessourceProvider,
+                        getHelicopter(),
+                        (int)getCenterX(),
+                        (int)getCenterY(),
+                        ExplosionType.STUNNING,
+                        false,
+                        this);
     }
     
     @Override

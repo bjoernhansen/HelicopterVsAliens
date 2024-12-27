@@ -28,6 +28,8 @@ import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 public class Explosion extends PaintableEntity implements GroupTypeOwner
 {
+	private static final ExplosionFactory explosionFactory = new ExplosionFactory();
+	
     private int
 		time;
 		
@@ -65,7 +67,7 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 		type;		// Standard, Plasma, EMP, etc.
 
 
-    private Explosion(){}    
+    Explosion(){}
     
     private Explosion(int x, int y)
     {
@@ -80,26 +82,26 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 	   
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<Explosion> i = gameRessourceProvider.getActivePaintableEntityManager()
-														 .getExplosions().get(CollectionSubgroupType.ACTIVE).iterator(); i.hasNext();)
+		Queue<Explosion> explosions = gameRessourceProvider.getActivePaintableEntityManager()
+														   .getExplosions()
+														   .get(CollectionSubgroupType.ACTIVE);
+		for(Iterator<Explosion> explosionIterator = explosions.iterator(); explosionIterator.hasNext(); )
 		{
-			Explosion exp = i.next();
-			exp.update();
-			
-			if(exp.time >= exp.maxTime)
+			Explosion explosion = explosionIterator.next();
+			explosion.update();
+			if(explosion.time >= explosion.maxTime)
 			{
-				i.remove();
+				explosionIterator.remove();
 				// TODO irgendwie auslagern in Pegasus und ggf. auch Methode in Explosion
-				if(exp.type == ExplosionType.EMP)
+				if(explosion.type == ExplosionType.EMP)
 				{
 					((Pegasus)gameRessourceProvider.getHelicopter()).empWave = null;
-					if(exp.kills > 1)
+					if(explosion.kills > 1)
 					{
-						Events.extraReward(exp.kills, exp.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
+						Events.extraReward(explosion.kills, explosion.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
-				gameRessourceProvider.getActivePaintableEntityManager()
-									 .getExplosions().get(CollectionSubgroupType.INACTIVE).add(exp);
+				gameRessourceProvider.storePaintableEntity(explosion);
 	        }
 		}		
 	}
@@ -159,59 +161,59 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 		}
 	}
 	
-	public static void start(Map<CollectionSubgroupType, Queue<Explosion>> explosions,
+	public static void start(GameRessourceProvider gameRessourceProvider,
 							 Helicopter helicopter,
 							 double x, double y,
 							 ExplosionType explosionType,
 							 boolean extraDamage)
     {
-    	start(explosions, helicopter, x, y, explosionType, extraDamage, null);
+    	start(gameRessourceProvider, helicopter, x, y, explosionType, extraDamage, null);
     }
 	
-	public static void start(Map<CollectionSubgroupType, Queue<Explosion>> explosions,
+	public static void start(GameRessourceProvider gameRessourceProvider,
 							 Helicopter helicopter,
 							 double x, double y,
 							 ExplosionType explosionType,
 							 boolean extraDamage,
 							 Enemy source)
     {
-    	Iterator<Explosion> iterator = explosions.get(CollectionSubgroupType.INACTIVE).iterator();
-		Explosion exp;
-		if(iterator.hasNext()){exp = iterator.next(); iterator.remove();}
-		else{exp = new Explosion();}
-		exp.center.setLocation(x, y);
-		exp.time = 0;
+		Explosion explosion = gameRessourceProvider.getNewPaintableEntityInstance(explosionFactory);
+		explosion.center.setLocation(x, y);
+		explosion.time = 0;
 		// kann wahrscheinlich in den EMP spezifischen bereich verschoben werden
-		helicopter.becomesCenterOf(exp);
-		exp.type = explosionType;
-		exp.source = source;
+		helicopter.becomesCenterOf(explosion);
+		explosion.type = explosionType;
+		explosion.source = source;
 		if(explosionType != ExplosionType.EMP)
 		{
-			exp.maxTime = 35;
-			exp.maxRadius = 65 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
-	    	exp.broadness =  50 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
+			explosion.maxTime = 35;
+			explosion.maxRadius = 65 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
+	    	explosion.broadness =  50 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
 		}
 		else
 		{
 			// EMP-Shockwave
 			if(WindowManager.window == START_SCREEN)
 			{
-				exp.maxTime = 20;
-				exp.maxRadius = 50;
-				exp.broadness = 36;	    	
+				explosion.maxTime = 20;
+				explosion.maxRadius = 50;
+				explosion.broadness = 36;
 			}
 			else
 			{
 				int level = helicopter.getUpgradeLevelOf(StandardUpgradeType.ENERGY_ABILITY);
-				exp.maxTime = 20 + level;
-				exp.maxRadius = 75 + (int)(19 + 3f * level * level);
-				exp.broadness = 30 + 3 * (level);
+				explosion.maxTime = 20 + level;
+				explosion.maxRadius = 75 + (int)(19 + 3f * level * level);
+				explosion.broadness = 30 + 3 * (level);
 			}
-			((Pegasus)helicopter).empWave = exp;
-	    	exp.earnedMoney = 0;
-	    	exp.kills = 0;
-		}			
-		explosions.get(CollectionSubgroupType.ACTIVE).add(exp);
+			((Pegasus)helicopter).empWave = explosion;
+	    	explosion.earnedMoney = 0;
+	    	explosion.kills = 0;
+		}
+		gameRessourceProvider.getActivePaintableEntityManager()
+							 .getExplosions()
+							 .get(CollectionSubgroupType.ACTIVE)
+							 .add(explosion);
     }
 	
 	public float[] getProgress()

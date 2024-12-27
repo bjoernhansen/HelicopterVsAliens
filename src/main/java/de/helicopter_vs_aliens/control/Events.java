@@ -27,6 +27,7 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.basic.BasicEnemy;
 import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
@@ -1164,13 +1165,7 @@ public class Events
         // gameRessourceProvider.getActivePaintableEntityManager().clearExplosions();
         
         // Explosions
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .getExplosions()
-                             .get(CollectionSubgroupType.INACTIVE)
-                             .addAll(gameRessourceProvider.getActivePaintableEntityManager()
-                                                          .getExplosions().get(CollectionSubgroupType.ACTIVE));
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
+        storeAndClearActiveExplosions(gameRessourceProvider);
         
         // Missiles
         storeAndClearActiveMissiles(gameRessourceProvider);
@@ -1190,6 +1185,15 @@ public class Events
             helicopter.adjustFireRate(false);
         }
         Window.collectedPowerUps.clear();
+    }
+    
+    private static void storeAndClearActiveExplosions(GameRessourceProvider gameRessourceProvider)
+    {
+        Queue<Explosion> explosions = gameRessourceProvider.getActivePaintableEntityManager()
+                                                           .getExplosions()
+                                                           .get(CollectionSubgroupType.ACTIVE);
+        gameRessourceProvider.storeAllPaintableEntities(explosions);
+        explosions.clear();
     }
     
     private static void storeAndClearActiveEnemyMissiles(GameRessourceProvider gameRessourceProvider)

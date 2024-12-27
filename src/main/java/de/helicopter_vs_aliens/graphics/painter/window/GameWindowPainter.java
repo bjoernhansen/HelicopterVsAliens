@@ -18,6 +18,7 @@ import de.helicopter_vs_aliens.gui.button.MainMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -563,10 +564,7 @@ public class GameWindowPainter extends WindowPainter
                                        .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Explosionen: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .getExplosions()
-                                       .get(CollectionSubgroupType.INACTIVE)
-                                       .size();
+                + gameRessourceProvider.numberOfInactivePaintableEntities(Explosion.class);
         }
         else if(Window.specialInfoSelection == 4)
         {

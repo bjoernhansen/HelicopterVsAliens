@@ -1191,8 +1191,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         if(hasHPsLeft())
         {
             performEmpWaveSurvivorActions();
-            Explosion.start(gameRessourceProvider.getActivePaintableEntityManager()
-                                                 .getExplosions(), pegasus,
+            Explosion.start(gameRessourceProvider,
+                            pegasus,
                             getCenterX(),
                             getCenterY(), ExplosionType.STUNNING, false);
         }
@@ -1682,7 +1682,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         return otherEnemy.navigationDevice.getDirectionY() == navigationDevice.getDirectionY();
     }
     
-    public void updateDead(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
+    public void updateDead(GameRessourceProvider gameRessourceProvider)
     {
         if(collisionDamageTimer > 0)
         {
@@ -1695,7 +1695,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         if(!hasCrashed
             && getMaxY() + speed.getY() >= crashPositionY)
         {
-            handleCrashToTheGround(explosions);
+            handleCrashToTheGround(gameRessourceProvider);
         }
         calculateSpeedDead();
         move();
@@ -1706,7 +1706,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         setPaintBounds();
     }
     
-    private void handleCrashToTheGround(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
+    private void handleCrashToTheGround(GameRessourceProvider gameRessourceProvider)
     {
         hasCrashed = true;
         stopMoving();
@@ -1716,7 +1716,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
             isMarkedForRemoval = true;
         }
         Audio.play(getCrashToTheGroundSound());
-        Explosion.start(explosions,
+        Explosion.start(gameRessourceProvider,
                         getHelicopter(),
                         getCenterX(),
                         getCenterY(),
@@ -2024,8 +2024,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         {
             explodingTimer = 7;
         }
-        Explosion.start(gameRessourceProvider.getActivePaintableEntityManager()
-                                             .getExplosions(),
+        Explosion.start(gameRessourceProvider,
                         gameRessourceProvider.getHelicopter(),
                         getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
                             ? (missileSpeed < 0 ? 2 : 1) * getWidth() / 3

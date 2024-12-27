@@ -93,16 +93,15 @@ public final class Pegasus extends Helicopter
     @Override
     public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        this.releaseEMP(gameRessourceProvider.getActivePaintableEntityManager()
-                                             .getExplosions());
+        this.releaseEMP(gameRessourceProvider);
     }
 
-    private void releaseEMP(Map<CollectionSubgroupType, Queue<Explosion>> explosions)
+    private void releaseEMP(GameRessourceProvider gameRessourceProvider)
     {
         this.empTimer.start();
         this.consumeSpellCosts();
         Audio.play(Audio.emp);
-        Explosion.start(explosions,
+        Explosion.start(gameRessourceProvider,
                 this,
                 (int)(this.getX()
                         + (this.isMovingLeft

@@ -320,9 +320,7 @@ public class EnemyController
                                                             .iterator(); iterator.hasNext(); )
         {
             Enemy enemy = iterator.next();
-            enemy.updateDead(gameRessourceProvider.getActivePaintableEntityManager()
-                                                  .getExplosions());
-            
+            enemy.updateDead(gameRessourceProvider);
             Helicopter helicopter = gameRessourceProvider.getHelicopter();
             if(helicopter.basicCollisionRequirementsSatisfied(enemy)
                 && !enemy.hasCrashed())
