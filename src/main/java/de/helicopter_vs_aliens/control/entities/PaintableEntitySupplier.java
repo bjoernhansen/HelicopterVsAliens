@@ -23,7 +23,7 @@ public final class PaintableEntitySupplier
         getPaintableEntityStore(paintableEntity.getClass()).store(paintableEntity);
     }
     
-    public <T extends PaintableEntity> void storeAll(Queue<T> gameEntities)
+    public void storeAll(Queue<? extends PaintableEntity> gameEntities)
     {
         gameEntities.forEach(this::store);
     }

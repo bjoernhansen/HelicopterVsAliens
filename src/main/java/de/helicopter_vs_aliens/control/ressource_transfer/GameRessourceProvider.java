@@ -22,15 +22,17 @@ public interface GameRessourceProvider
     
     Savegame getSaveGame();
     
+    // TODO eigentlich sollte hier mit dem Interface ActivePaintableEntityProvider
     ActivePaintableEntityManager getActivePaintableEntityManager();
     
     // TODO denkbar wäre eine Methode activatePaintableEntityInstance, die automatisch die Instance auch dem aktiven Entitites hinzufügt
     
+    // TODO an all diesen Stellen sollte eigentlich das Interface Paintable und nicht PaintableEntity verwendet werden
     <T extends PaintableEntity> T getNewPaintableEntityInstance(PaintableEntityFactory<T> factory);
     
     void storePaintableEntity(PaintableEntity paintableEntity);
     
-    <T extends PaintableEntity> void storeAllPaintableEntities(Queue<T> gameEntities);
+    void storeAllPaintableEntities(Queue<? extends PaintableEntity> gameEntities);
     
     <T extends PaintableEntity> int numberOfInactivePaintableEntities(Class<T> classOfPaintableEntity);
 

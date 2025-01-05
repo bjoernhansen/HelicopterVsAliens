@@ -53,7 +53,7 @@ public final class GameProgress implements GameRessourceProvider
         saveGame;
 
     private final ActivePaintableEntityManager
-        activePaintableEntityManager = ActivePaintableEntityManager.getInstance();
+        activePaintableEntityManager = new ActivePaintableEntityManager(this);
 
     private final WindowManager
         windowManager = new WindowManager();
@@ -146,7 +146,7 @@ public final class GameProgress implements GameRessourceProvider
     }
     
     @Override
-    public <T extends PaintableEntity> void storeAllPaintableEntities(Queue<T> paintableEntities)
+    public void storeAllPaintableEntities(Queue<? extends PaintableEntity> paintableEntities)
     {
         paintableEntitySupplier.storeAll(paintableEntities);
     }

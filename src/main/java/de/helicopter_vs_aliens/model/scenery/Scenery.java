@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.entities.PaintableEntityActivation;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.PaintableEntity;
@@ -59,9 +60,7 @@ public class Scenery extends PaintableEntity
     
     public void reset()
     {
-        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects();
-        getGameRessourceProvider().storeAllPaintableEntities(activeSceneryObjects);
-        activeSceneryObjects.clear();
+        getGameRessourceProvider().getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.SCENERY_OBJECT);
         createInitialSceneryObjects();
         cloudX = 135;
     }

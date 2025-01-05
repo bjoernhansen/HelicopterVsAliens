@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.PaintableEntityActivation;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.events.KeyEvent;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
 import de.helicopter_vs_aliens.control.events.SpecialKey;
@@ -27,14 +28,10 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.basic.BasicEnemy;
 import de.helicopter_vs_aliens.model.enemy.boss.BossEnemy;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.helicopter.Helios;
 import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.model.missile.EnemyMissile;
-import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.score.HighScore;
@@ -550,7 +547,7 @@ public class Events
 
                 if (!(level == 50 && helicopter.hasAllUpgrades()))
                 {
-                    storeAndClearIntactEnemies(gameRessourceProvider);
+                    gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.INTACT_ENEMY);
                     resetLevelAfterRepair();
                     LevelManager.adaptToLevel(helicopter, level, false); // TODO signatur der Methode ändern - zu viele Parameter und ein boolescher
                     if (level < 6)
@@ -559,7 +556,7 @@ public class Events
                                              .reset();
                     }
                     killsAfterLevelUp = 0;
-                    storeAndClearDestroyedEnemies(gameRessourceProvider);
+                    gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.DESTROYED_ENEMY);
                     Window.buttons.get(LeftSideRepairShopButtonType.REPAIR)
                                   .adjustCostsToZero();
                     EnemyController.currentRock = null;
@@ -787,22 +784,6 @@ public class Events
                     break;
                 }
             }
-    }
-
-    private static void storeAndClearIntactEnemies(GameRessourceProvider gameRessourceProvider)
-    {
-        Queue<Enemy> enemies = gameRessourceProvider.getActivePaintableEntityManager()
-                                                    .getIntactEnemies();
-        gameRessourceProvider.storeAllPaintableEntities(enemies);
-        enemies.clear();
-    }
-    
-    private static void storeAndClearDestroyedEnemies(GameRessourceProvider gameRessourceProvider)
-    {
-        Queue<Enemy> enemies = gameRessourceProvider.getActivePaintableEntityManager()
-                                                    .getDestroyedEnemies();
-        gameRessourceProvider.storeAllPaintableEntities(enemies);
-        enemies.clear();
     }
     
     private static void resetLevelAfterRepair()
@@ -1137,7 +1118,7 @@ public class Events
             }
             if (totalReset)
             {
-                storeAndClearIntactEnemies(gameRessourceProvider);
+                gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.INTACT_ENEMY);
                 EnemyController.currentRock = null;
             }
             else
@@ -1149,59 +1130,30 @@ public class Events
         if (totalReset)
         {
             killsAfterLevelUp = 0;
-            storeAndClearDestroyedEnemies(gameRessourceProvider);
+            gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.DESTROYED_ENEMY);
             if (level < 6)
             {
                 gameRessourceProvider.getScenery().reset();
             }
         }
-        // TODO vereinfachen und in die neuen Klassen (ActivePaintableEntityManager und PaintableEntitySupplier
-        // gameRessourceProvider.getActivePaintableEntityManager().clearExplosions();
         
         // Explosions
-        storeAndClearActiveExplosions(gameRessourceProvider);
+        gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.EXPLOSION);
         
         // Missiles
-        storeAndClearActiveMissiles(gameRessourceProvider);
+        gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.MISSILE);
         
         // EnemyMissiles
-        storeAndClearActiveEnemyMissiles(gameRessourceProvider);
+        gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.ENEMY_MISSILE);
         
         // PowerUps
-        Queue<PowerUp> activePowerUps = gameRessourceProvider.getActivePaintableEntityManager()
-                                                             .getPowerUps();
-        gameRessourceProvider.storeAllPaintableEntities(activePowerUps);
-        activePowerUps.clear();
+        gameRessourceProvider.getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.POWER_UP);
 
         if (Window.collectedPowerUps.containsKey(PowerUpType.BOOSTED_FIRE_RATE))
         {
             helicopter.adjustFireRate(false);
         }
         Window.collectedPowerUps.clear();
-    }
-    
-    private static void storeAndClearActiveExplosions(GameRessourceProvider gameRessourceProvider)
-    {
-        Queue<Explosion> explosions = gameRessourceProvider.getActivePaintableEntityManager()
-                                                           .getExplosions();
-        gameRessourceProvider.storeAllPaintableEntities(explosions);
-        explosions.clear();
-    }
-    
-    private static void storeAndClearActiveEnemyMissiles(GameRessourceProvider gameRessourceProvider)
-    {
-        Queue<EnemyMissile> activeEnemyMissiles = gameRessourceProvider.getActivePaintableEntityManager()
-                                                                       .getEnemyMissiles();
-        gameRessourceProvider.storeAllPaintableEntities(activeEnemyMissiles);
-        activeEnemyMissiles.clear();
-    }
-    
-    private static void storeAndClearActiveMissiles(GameRessourceProvider gameRessourceProvider)
-    {
-        Queue<Missile> activeMissiles = gameRessourceProvider.getActivePaintableEntityManager()
-                                                             .getMissiles();
-        gameRessourceProvider.storeAllPaintableEntities(activeMissiles);
-        activeMissiles.clear();
     }
     
     private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
