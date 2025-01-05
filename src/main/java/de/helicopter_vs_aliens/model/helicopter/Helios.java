@@ -1,10 +1,9 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
+import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.BossLevel;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
@@ -12,10 +11,9 @@ import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.util.Calculations;
 
-import java.util.Map;
 import java.util.Queue;
 
-import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.*;
+import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;
 
 
@@ -97,7 +95,7 @@ public final class Helios extends Helicopter
         this.activatePowerUpGenerator(gameRessourceProvider.getActivePaintableEntityManager().getPowerUps());
     }
 
-    private void activatePowerUpGenerator(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps)
+    private void activatePowerUpGenerator(Queue<PowerUp> powerUps)
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWER_UP_DURATION);
         this.consumeSpellCosts();

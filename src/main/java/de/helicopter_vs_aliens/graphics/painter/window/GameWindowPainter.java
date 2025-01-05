@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
@@ -90,8 +89,7 @@ public class GameWindowPainter extends WindowPainter
     private void paintAllDestroyedEnemies(GraphicsAdapter graphicsAdapter)
     {
         gameRessourceProvider.getActivePaintableEntityManager()
-                             .getEnemies()
-                             .get(CollectionSubgroupType.DESTROYED)
+                             .getDestroyedEnemies()
                              .forEach(enemy -> enemy.paint(graphicsAdapter));
     }
     
@@ -99,7 +97,6 @@ public class GameWindowPainter extends WindowPainter
     {
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getMissiles()
-                             .get(CollectionSubgroupType.ACTIVE)
                              .forEach(missile -> missile.paint(graphicsAdapter));
     }
     
@@ -110,8 +107,7 @@ public class GameWindowPainter extends WindowPainter
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
         for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
-                                               .getEnemies()
-                                               .get(CollectionSubgroupType.ACTIVE))
+                                               .getIntactEnemies())
         {
             if(enemy.isVisibleNonBarricadeVessel())
             {
@@ -125,7 +121,6 @@ public class GameWindowPainter extends WindowPainter
     {
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getEnemyMissiles()
-                             .get(CollectionSubgroupType.ACTIVE)
                              .forEach(enemyMissile -> enemyMissile.paint(graphicsAdapter));
     }
     
@@ -133,7 +128,6 @@ public class GameWindowPainter extends WindowPainter
     {
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getExplosions()
-                             .get(CollectionSubgroupType.ACTIVE)
                              .forEach(explosion -> explosion.paint(graphicsAdapter));
     }
     
@@ -141,7 +135,6 @@ public class GameWindowPainter extends WindowPainter
     {
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getPowerUps()
-                             .get(CollectionSubgroupType.ACTIVE)
                              .forEach(powerUp -> powerUp.paint(graphicsAdapter));
     }
     
@@ -153,8 +146,7 @@ public class GameWindowPainter extends WindowPainter
         
         // Objekte vor dem Helikopter
         Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getActivePaintableEntityManager()
-                                                                         .getSceneryObjects()
-                                                                         .get(CollectionSubgroupType.ACTIVE);
+                                                                         .getSceneryObjects();
         SceneryLayer.getForegroundLayers()
                     .forEach(layer -> activeSceneryObjects.stream()
                                                           .filter(sceneryObject -> sceneryObject.getLayer() == layer)
@@ -550,7 +542,6 @@ public class GameWindowPainter extends WindowPainter
             infoString = "Aktive PowerUps: "
                 + gameRessourceProvider.getActivePaintableEntityManager()
                                        .getPowerUps()
-                                       .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive PowerUps: "
                 + gameRessourceProvider.numberOfInactivePaintableEntities(PowerUp.class);
@@ -561,7 +552,6 @@ public class GameWindowPainter extends WindowPainter
                 // TODO all diese Aufrufe sollen gekapselt werden z.B. gameRessourceProvider.getActiveEntities(Explosions.class).size()
                 + gameRessourceProvider.getActivePaintableEntityManager()
                                        .getExplosions()
-                                       .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Explosionen: "
                 + gameRessourceProvider.numberOfInactivePaintableEntities(Explosion.class);
@@ -570,13 +560,11 @@ public class GameWindowPainter extends WindowPainter
         {
             infoString = "Aktive Gegner: "
                 + (gameRessourceProvider.getActivePaintableEntityManager()
-                                        .getEnemies()
-                                        .get(CollectionSubgroupType.ACTIVE)
+                                        .getIntactEnemies()
                                         .size() - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerst\u00F6rte Gegner: "
                 + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .getEnemies()
-                                       .get(CollectionSubgroupType.DESTROYED)
+                                       .getDestroyedEnemies()
                                        .size()
                 + ";   Hindernisse: "
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
@@ -588,7 +576,6 @@ public class GameWindowPainter extends WindowPainter
             infoString = "Aktive Raketen: "
                 + gameRessourceProvider.getActivePaintableEntityManager()
                                        .getMissiles()
-                                       .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Raketen: "
                 + gameRessourceProvider.numberOfInactivePaintableEntities(Missile.class);
@@ -598,7 +585,6 @@ public class GameWindowPainter extends WindowPainter
             infoString = "Aktive gegnerische Geschosse: "
                 + gameRessourceProvider.getActivePaintableEntityManager()
                                        .getEnemyMissiles()
-                                       .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive gegnerische Geschosse: "
                 + gameRessourceProvider.numberOfInactivePaintableEntities(EnemyMissile.class);
@@ -608,7 +594,6 @@ public class GameWindowPainter extends WindowPainter
             infoString = "Aktive Hintergrundobjekte: "
                 + gameRessourceProvider.getActivePaintableEntityManager()
                                        .getSceneryObjects()
-                                       .get(CollectionSubgroupType.ACTIVE)
                                        .size()
                 + ";   Inaktive Hintergrundobjekte: "
                 + gameRessourceProvider.numberOfInactivePaintableEntities(SceneryObject.class);

@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
@@ -42,9 +41,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Queue;
 
 
 public abstract class Enemy extends RectangularPaintableEntity implements GroupTypeOwner, Maneuverable
@@ -1443,7 +1439,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
         EnemyMissile enemyMissile = getGameRessourceProvider().getNewPaintableEntityInstance(enemyMissileFactory);
         getGameRessourceProvider().getActivePaintableEntityManager()
                                   .getEnemyMissiles()
-                                  .get(CollectionSubgroupType.ACTIVE)
                                   .add(enemyMissile);
         enemyMissile.launch(this, missileType, missileSpeed, shootingDirection);
         Audio.play(Audio.launch3);
@@ -2551,7 +2546,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     @Override
     public PaintableEntityGroupType getGroupType()
     {
-        return PaintableEntityGroupType.ENEMY;
+        return isDestroyed
+            ? PaintableEntityGroupType.DESTROYED_ENEMY
+            : PaintableEntityGroupType.INTACT_ENEMY;
     }
     
     protected boolean isMovingAwayFromHelicopter()

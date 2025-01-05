@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
@@ -270,7 +269,6 @@ public abstract class Helicopter extends RectangularPaintableEntity
         
         gameRessourceProvider.getActivePaintableEntityManager()
                              .getMissiles()
-                             .get(CollectionSubgroupType.ACTIVE)
                              .addAll(launchedMissiles);
         
         if(this.hasKillCountingMissiles())
@@ -1433,7 +1431,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         powerUpController.restartPowerUpTimer(powerUpType);
     }
     
-    public void switchPowerUpActivationState(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps,
+    public void switchPowerUpActivationState(Queue<PowerUp> powerUps,
                                              PowerUpType powerUpType)
     {
         powerUpController.switchPowerUpActivationState(powerUps, powerUpType);

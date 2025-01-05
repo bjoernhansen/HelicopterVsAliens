@@ -1,18 +1,16 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
+import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 
 import java.awt.geom.Point2D;
-import java.util.Map;
 import java.util.Queue;
 
 
@@ -48,11 +46,11 @@ public final class FourthBoss extends BossEnemy
     protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
     {
         boss4Action(gameRessourceProvider.getActivePaintableEntityManager()
-                                         .getEnemies());
+                                         .getIntactEnemies());
         super.performFlightManeuver(gameRessourceProvider);
     }
     
-    private void boss4Action(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
+    private void boss4Action(Queue<Enemy> enemies)
     {
         if(    getX() < 930
             && getX() > 150)
@@ -77,7 +75,7 @@ public final class FourthBoss extends BossEnemy
             {
                 stopMoving();
             }
-            if(enemies.get(CollectionSubgroupType.ACTIVE).size() < 15
+            if(enemies.size() < 15
                 && (    spawningHornetTimer == FIRST_SERVANT_CREATION_TIME
                         || spawningHornetTimer == SECOND_SERVANT_CREATION_TIME
                         || Calculations.tossUp(SPONTANEOUS_SERVANT_CREATION_PROBABILITY)))

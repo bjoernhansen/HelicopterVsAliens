@@ -1,27 +1,23 @@
 package de.helicopter_vs_aliens.model.missile;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
-import de.helicopter_vs_aliens.model.explosion.ExplosionType;
-import de.helicopter_vs_aliens.model.scenery.Scenery;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
+import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
+import de.helicopter_vs_aliens.model.scenery.Scenery;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.Queue;
 
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.BARRIER;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.CARGO;
-import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
+import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 
@@ -150,8 +146,7 @@ public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
 		Queue<EnemyMissile> enemyMissiles = gameRessourceProvider.getActivePaintableEntityManager()
-																 .getEnemyMissiles()
-																 .get(CollectionSubgroupType.ACTIVE);
+																 .getEnemyMissiles();
 		for(Iterator<EnemyMissile> enemyMissileIterator = enemyMissiles.iterator(); enemyMissileIterator.hasNext();)
 		{
 			EnemyMissile enemyMissile = enemyMissileIterator.next();

@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.control;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
@@ -14,7 +14,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Queue;
 
 
@@ -70,7 +69,7 @@ public class EnemyController
         if(isBossServantCreationApproved()){
             createBossServant(gameRessourceProvider);}
         else if(isEnemyCreationApproved(gameRessourceProvider.getActivePaintableEntityManager()
-                                                             .getEnemies()))
+                                                             .getIntactEnemies()))
         {
             creation(gameRessourceProvider);
         }
@@ -99,7 +98,7 @@ public class EnemyController
     private static void verifyCreationStop(GameRessourceProvider gameRessourceProvider)
     {
         if(	gameRessourceProvider.getActivePaintableEntityManager()
-                                    .getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
+                                    .getIntactEnemies().isEmpty()
             && carrierDestroyedJustNow == null
             && !(gameRessourceProvider.getHelicopter().isUnacceptablyBoostedForBossLevel()
             && Events.isCurrentLevelBossLevel()) )
@@ -144,9 +143,9 @@ public class EnemyController
         }
     }
     
-    private static boolean isEnemyCreationApproved(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
+    private static boolean isEnemyCreationApproved(Queue<Enemy> enemies)
     {
-        int numberOfEnemies = enemies.get(CollectionSubgroupType.ACTIVE).size();
+        int numberOfEnemies = enemies.size();
         return     !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
             && !isMajorBossActive(enemies)
             && !LevelManager.wasEnemyCreationPaused
@@ -160,9 +159,9 @@ public class EnemyController
         return numberOfEnemies >= LevelManager.maxNr + LevelManager.maxBarrierNr;
     }
     
-    private static boolean isMajorBossActive(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
+    private static boolean isMajorBossActive(Queue<Enemy> enemies)
     {
-        return !enemies.get(CollectionSubgroupType.ACTIVE).isEmpty() && enemies.get(CollectionSubgroupType.ACTIVE).element().getType().isMajorBoss();
+        return !enemies.isEmpty() && enemies.element().getType().isMajorBoss();
     }
     
     private static void createBoss2Servants(GameRessourceProvider gameRessourceProvider)
@@ -204,7 +203,7 @@ public class EnemyController
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {
         Queue<Enemy> activeEnemies = gameRessourceProvider.getActivePaintableEntityManager()
-                                                          .getEnemies().get(CollectionSubgroupType.ACTIVE);
+                                                          .getIntactEnemies();
         int activeEnemyCount = activeEnemies.size();
         PaintableEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
         Enemy enemy = gameRessourceProvider.getNewPaintableEntityInstance(enemyFactory);
@@ -287,10 +286,10 @@ public class EnemyController
         if(Scenery.backgroundMoves && barrierTimer > 0){
             barrierTimer--;}
         countBarriers(gameRessourceProvider.getActivePaintableEntityManager()
-                                           .getEnemies());
+                                           .getIntactEnemies());
         
         for(Iterator<Enemy> iterator = gameRessourceProvider.getActivePaintableEntityManager()
-                                                            .getEnemies().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
+                                                            .getIntactEnemies().iterator(); iterator.hasNext();)
         {
             Enemy enemy = iterator.next();
             if(enemy.isIntact() && !enemy.isMarkedForRemoval())
@@ -301,7 +300,7 @@ public class EnemyController
             {
                 iterator.remove();
                 gameRessourceProvider.getActivePaintableEntityManager()
-                                     .getEnemies().get(CollectionSubgroupType.DESTROYED).add(enemy);
+                                     .getDestroyedEnemies().add(enemy);
             }
             else
             {
@@ -315,8 +314,8 @@ public class EnemyController
     public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
     {
         for(Iterator<Enemy> iterator = gameRessourceProvider.getActivePaintableEntityManager()
-                                                            .getEnemies()
-                                                            .get(CollectionSubgroupType.DESTROYED)
+                                                            .getDestroyedEnemies()
+                                                            
                                                             .iterator(); iterator.hasNext(); )
         {
             Enemy enemy = iterator.next();
@@ -339,8 +338,7 @@ public class EnemyController
     public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
     {
         for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
-                                               .getEnemies()
-                                               .get(CollectionSubgroupType.ACTIVE))
+                                               .getIntactEnemies())
         {
             if(enemy.getModel() == EnemyModelType.BARRIER && enemy.isOnScreen())
             {
@@ -354,11 +352,11 @@ public class EnemyController
         }
     }
     
-    private static void countBarriers(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
+    private static void countBarriers(Queue<Enemy> enemies)
     {
         Arrays.fill(livingBarrier, null);
         currentNumberOfBarriers = 0;
-        for(Enemy enemy  : enemies.get(CollectionSubgroupType.ACTIVE))
+        for(Enemy enemy  : enemies)
         {
             if (enemy.getModel() == EnemyModelType.BARRIER
                 && enemy.isIntact()

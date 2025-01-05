@@ -275,7 +275,6 @@ public final class GameProgress implements GameRessourceProvider
     private void setHelicopter(Helicopter helicopter)
     {
         this.helicopter = helicopter;
-        // TODO nicht mehr nötig, wenn Helicopter über den InstanceSupplier bezogen wird (wie Enemy)
         helicopter.setGameRessourceProvider(this);
         Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
     }

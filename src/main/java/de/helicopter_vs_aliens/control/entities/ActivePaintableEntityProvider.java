@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.control.entities;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
@@ -8,20 +7,21 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
-import java.util.Map;
 import java.util.Queue;
 
 public interface ActivePaintableEntityProvider
 {
-    Map<CollectionSubgroupType, Queue<Enemy>> getEnemies();
+    Queue<Enemy> getIntactEnemies();
     
-    Map<CollectionSubgroupType, Queue<Missile>> getMissiles();
+    Queue<Enemy> getDestroyedEnemies();
     
-    Map<CollectionSubgroupType, Queue<Explosion>> getExplosions();
+    Queue<Missile> getMissiles();
     
-    Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects();
+    Queue<Explosion> getExplosions();
     
-    Map<CollectionSubgroupType, Queue<EnemyMissile>> getEnemyMissiles();
+    Queue<SceneryObject> getSceneryObjects();
     
-    Map<CollectionSubgroupType, Queue<PowerUp>> getPowerUps();
+    Queue<EnemyMissile> getEnemyMissiles();
+    
+    Queue<PowerUp> getPowerUps();
 }

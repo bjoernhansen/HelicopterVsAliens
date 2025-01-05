@@ -1,17 +1,15 @@
 package de.helicopter_vs_aliens.control.entities;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.scenery.SceneryObject;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -31,23 +29,26 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
     // TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
     // TODO das lässt sich vielleicht auch über eine Map abbilden , eine EnumMap (PaintableEntityGroupType) von EnumMaps (Collection Subgroup)
     
-    private final Map<CollectionSubgroupType, Queue<Enemy>>
-        enemies = new EnumMap<>(CollectionSubgroupType.class);
+    private final Queue<Enemy>
+        intactEnemies = new ArrayDeque<>();
     
-    private final Map<CollectionSubgroupType, Queue<Missile>>
-        missiles = new EnumMap<>(CollectionSubgroupType.class);
+    private final Queue<Enemy>
+        destroyedEnemies = new ArrayDeque<>();
     
-    private final Map<CollectionSubgroupType, Queue<Explosion>>
-        explosions = new EnumMap<>(CollectionSubgroupType.class);
+    private final Queue<Missile>
+        missiles = new ArrayDeque<>();
     
-    private final Map<CollectionSubgroupType, Queue<SceneryObject>>
-        sceneryObjects = new EnumMap<>(CollectionSubgroupType.class);
+    private final Queue<Explosion>
+        explosions = new ArrayDeque<>();
     
-    private final Map<CollectionSubgroupType, Queue<EnemyMissile>>
-        enemyMissiles = new EnumMap<>(CollectionSubgroupType.class);
+    private final Queue<SceneryObject>
+        sceneryObjects = new ArrayDeque<>();
     
-    private final Map<CollectionSubgroupType, Queue<PowerUp>>
-        powerUps = new EnumMap<>(CollectionSubgroupType.class);
+    private final Queue<EnemyMissile>
+        enemyMissiles = new ArrayDeque<>();
+    
+    private final Queue<PowerUp>
+        powerUps = new ArrayDeque<>();
     
     
     private static ActivePaintableEntityManager
@@ -62,57 +63,46 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
     
     private ActivePaintableEntityManager()
     {
-        initializeLists();
-    }
-    
-    private void initializeLists()
-    {
-        // TODO alle Listen von inaktivierten überführen in PaintableEntityRecycler, auch die BackgroundObjects berücksichtigen
-        // TODO die Verwaltung der Listen für aktive in eine eigene Klasse überführen
-        CollectionSubgroupType.getStandardSubgroupTypes()
-                              .forEach(standardSubgroupTypes -> {
-                                  enemies.put(standardSubgroupTypes, new ArrayDeque<>());
-                                  missiles.put(standardSubgroupTypes, new ArrayDeque<>());
-                                  explosions.put(standardSubgroupTypes, new ArrayDeque<>());
-                                  sceneryObjects.put(standardSubgroupTypes, new ArrayDeque<>());
-                                  enemyMissiles.put(standardSubgroupTypes, new ArrayDeque<>());
-                                  powerUps.put(standardSubgroupTypes, new ArrayDeque<>());
-                              });
-        enemies.put(CollectionSubgroupType.DESTROYED, new ArrayDeque<>());
     }
     
     @Override
-    public Map<CollectionSubgroupType, Queue<Enemy>> getEnemies()
+    public Queue<Enemy> getIntactEnemies()
     {
-        return enemies;
+        return intactEnemies;
     }
     
     @Override
-    public Map<CollectionSubgroupType, Queue<Missile>> getMissiles()
+    public Queue<Enemy> getDestroyedEnemies()
+    {
+        return destroyedEnemies;
+    }
+    
+    @Override
+    public Queue<Missile> getMissiles()
     {
         return missiles;
     }
     
     @Override
-    public Map<CollectionSubgroupType, Queue<Explosion>> getExplosions()
+    public Queue<Explosion> getExplosions()
     {
         return explosions;
     }
     
     @Override
-    public Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects()
+    public Queue<SceneryObject> getSceneryObjects()
     {
         return sceneryObjects;
     }
     
     @Override
-    public Map<CollectionSubgroupType, Queue<EnemyMissile>> getEnemyMissiles()
+    public Queue<EnemyMissile> getEnemyMissiles()
     {
         return enemyMissiles;
     }
     
     @Override
-    public Map<CollectionSubgroupType, Queue<PowerUp>> getPowerUps()
+    public Queue<PowerUp> getPowerUps()
     {
         return powerUps;
     }
@@ -120,8 +110,8 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
     public void clearExplosions()
     {
         // TODO Implementieren - vergleiche wie das bei Enemies gelöst wurde
-        // gameRessourceProvider.getExplosions().get(CollectionSubgroupType.INACTIVE).addAll(gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE));
-        // gameRessourceProvider.getExplosions().get(CollectionSubgroupType.ACTIVE).clear();
+        // gameRessourceProvider.getExplosions().get(CollectionSubgroupType.INACTIVE).addAll(gameRessourceProvider.getExplosions());
+        // gameRessourceProvider.getExplosions().clear();
     }
     
     // nur Vorbereitung für späteren Umbau
@@ -130,15 +120,15 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
         paintableEntityQueues = Arrays.stream(PaintableEntityGroupType.values())
                                       .collect(Collectors.toUnmodifiableMap(Function.identity(),
                                                                             groupType -> new ArrayDeque<>()));
-    
+
     public void add(GroupTypeOwner groupTypeOwner)
-    // TODO verwenden oder entfernen
     {
         paintableEntityQueues.get(groupTypeOwner.getGroupType())
                              .add(groupTypeOwner);
     }
     
-    public void forEachOfGroupType(PaintableEntityGroupType paintableEntityGroupType, Consumer<? super GroupTypeOwner> action)
+    public void forEachOfGroupType(PaintableEntityGroupType paintableEntityGroupType,
+                                   Consumer<? super GroupTypeOwner> action)
     // TODO verwenden oder entfernen
     {
         paintableEntityQueues.get(paintableEntityGroupType)
@@ -165,7 +155,8 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
         return paintableEntityQueues.get(groupType);
     }
     
-    public Collection<GroupTypeOwner> getPaintableEntities(PaintableEntityGroupType groupType, Predicate<? super GroupTypeOwner> condition)
+    public Collection<GroupTypeOwner> getPaintableEntities(PaintableEntityGroupType groupType,
+                                                           Predicate<? super GroupTypeOwner> condition)
     // TODO verwenden oder entfernen
     {
         return paintableEntityQueues.get(groupType)

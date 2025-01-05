@@ -550,7 +550,7 @@ public class Events
 
                 if (!(level == 50 && helicopter.hasAllUpgrades()))
                 {
-                    storeAndClearActiveEnemies(gameRessourceProvider);
+                    storeAndClearIntactEnemies(gameRessourceProvider);
                     resetLevelAfterRepair();
                     LevelManager.adaptToLevel(helicopter, level, false); // TODO signatur der Methode ändern - zu viele Parameter und ein boolescher
                     if (level < 6)
@@ -624,13 +624,11 @@ public class Events
                 Window.updateRepairShopButtonsAfterSpotlightPurchase();
 
                 gameRessourceProvider.getActivePaintableEntityManager()
-                                     .getEnemies()
-                                     .get(CollectionSubgroupType.DESTROYED)
+                                     .getDestroyedEnemies()
                                      .forEach(Enemy::repaint);
 
                 gameRessourceProvider.getActivePaintableEntityManager()
-                                     .getEnemies()
-                                     .get(CollectionSubgroupType.ACTIVE)
+                                     .getIntactEnemies()
                                      .stream()
                                      .filter(Predicate.not(Enemy::isRock))
                                      .forEach(Enemy::dimmedRepaint);
@@ -791,25 +789,22 @@ public class Events
             }
     }
 
-    private static void storeAndClearActiveEnemies(GameRessourceProvider gameRessourceProvider)
-    {
-        storeAndClearEnemies(gameRessourceProvider, CollectionSubgroupType.ACTIVE);
-    }
-
-    private static void storeAndClearDestroyedEnemies(GameRessourceProvider gameRessourceProvider)
-    {
-        storeAndClearEnemies(gameRessourceProvider, CollectionSubgroupType.DESTROYED);
-    }
-
-    private static void storeAndClearEnemies(GameRessourceProvider gameRessourceProvider, CollectionSubgroupType collectionSubgroupType)
+    private static void storeAndClearIntactEnemies(GameRessourceProvider gameRessourceProvider)
     {
         Queue<Enemy> enemies = gameRessourceProvider.getActivePaintableEntityManager()
-                                                    .getEnemies()
-                                                    .get(collectionSubgroupType);
+                                                    .getIntactEnemies();
         gameRessourceProvider.storeAllPaintableEntities(enemies);
         enemies.clear();
     }
-
+    
+    private static void storeAndClearDestroyedEnemies(GameRessourceProvider gameRessourceProvider)
+    {
+        Queue<Enemy> enemies = gameRessourceProvider.getActivePaintableEntityManager()
+                                                    .getDestroyedEnemies();
+        gameRessourceProvider.storeAllPaintableEntities(enemies);
+        enemies.clear();
+    }
+    
     private static void resetLevelAfterRepair()
     {
         level = level - ((level - 1) % 5);
@@ -1127,10 +1122,9 @@ public class Events
 
         // kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
         if (!gameRessourceProvider.getActivePaintableEntityManager()
-                                  .getEnemies().get(CollectionSubgroupType.ACTIVE).isEmpty()
+                                  .getIntactEnemies().isEmpty()
             && !(!totalReset && gameRessourceProvider.getActivePaintableEntityManager()
-                                                     .getEnemies()
-                                                     .get(CollectionSubgroupType.ACTIVE)
+                                                     .getIntactEnemies()
                                                      .element()
                                                      .getType() == EnemyType.BOSS_2_SERVANT))
         {
@@ -1143,7 +1137,7 @@ public class Events
             }
             if (totalReset)
             {
-                storeAndClearActiveEnemies(gameRessourceProvider);
+                storeAndClearIntactEnemies(gameRessourceProvider);
                 EnemyController.currentRock = null;
             }
             else
@@ -1175,8 +1169,7 @@ public class Events
         
         // PowerUps
         Queue<PowerUp> activePowerUps = gameRessourceProvider.getActivePaintableEntityManager()
-                                                             .getPowerUps()
-                                                             .get(CollectionSubgroupType.ACTIVE);
+                                                             .getPowerUps();
         gameRessourceProvider.storeAllPaintableEntities(activePowerUps);
         activePowerUps.clear();
 
@@ -1190,8 +1183,7 @@ public class Events
     private static void storeAndClearActiveExplosions(GameRessourceProvider gameRessourceProvider)
     {
         Queue<Explosion> explosions = gameRessourceProvider.getActivePaintableEntityManager()
-                                                           .getExplosions()
-                                                           .get(CollectionSubgroupType.ACTIVE);
+                                                           .getExplosions();
         gameRessourceProvider.storeAllPaintableEntities(explosions);
         explosions.clear();
     }
@@ -1199,8 +1191,7 @@ public class Events
     private static void storeAndClearActiveEnemyMissiles(GameRessourceProvider gameRessourceProvider)
     {
         Queue<EnemyMissile> activeEnemyMissiles = gameRessourceProvider.getActivePaintableEntityManager()
-                                                                       .getEnemyMissiles()
-                                                                       .get(CollectionSubgroupType.ACTIVE);
+                                                                       .getEnemyMissiles();
         gameRessourceProvider.storeAllPaintableEntities(activeEnemyMissiles);
         activeEnemyMissiles.clear();
     }
@@ -1208,8 +1199,7 @@ public class Events
     private static void storeAndClearActiveMissiles(GameRessourceProvider gameRessourceProvider)
     {
         Queue<Missile> activeMissiles = gameRessourceProvider.getActivePaintableEntityManager()
-                                                             .getMissiles()
-                                                             .get(CollectionSubgroupType.ACTIVE);
+                                                             .getMissiles();
         gameRessourceProvider.storeAllPaintableEntities(activeMissiles);
         activeMissiles.clear();
     }
@@ -1217,15 +1207,13 @@ public class Events
     private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
     {
         Queue<Enemy> activeEnemies = gameRessourceProvider.getActivePaintableEntityManager()
-                                                          .getEnemies()
-                                                          .get(CollectionSubgroupType.ACTIVE);
+                                                          .getIntactEnemies();
         activeEnemies.stream()
                      .filter(Enemy::isDisappearingAfterEnteringRepairShop)
                      .forEach(gameRessourceProvider::storePaintableEntity);
         
         gameRessourceProvider.getActivePaintableEntityManager()
-                             .getEnemies()
-                             .get(CollectionSubgroupType.ACTIVE)
+                             .getIntactEnemies()
                              .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
     }
 

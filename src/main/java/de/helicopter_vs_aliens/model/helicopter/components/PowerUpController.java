@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.helicopter.components;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Phoenix;
@@ -95,7 +94,7 @@ public class PowerUpController
                    });
     }
     
-    public void switchPowerUpActivationState(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps,
+    public void switchPowerUpActivationState(Queue<PowerUp> powerUps,
                                              PowerUpType powerUpType)
     {
         if(isPowerUpActive(powerUpType))
@@ -116,7 +115,7 @@ public class PowerUpController
         }
     }
     
-    public void activatePowerUp(Map<CollectionSubgroupType, Queue<PowerUp>> powerUps, PowerUpType powerUpType)
+    public void activatePowerUp(Queue<PowerUp> powerUps, PowerUpType powerUpType)
     {
         if(!Window.collectedPowerUps.containsKey(powerUpType))
         {

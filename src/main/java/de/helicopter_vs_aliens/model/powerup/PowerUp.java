@@ -1,11 +1,10 @@
 package de.helicopter_vs_aliens.model.powerup;
 
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
@@ -18,7 +17,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Queue;
 
 
@@ -51,7 +49,7 @@ public class PowerUp extends RectangularPaintableEntity implements GroupTypeOwne
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
     	for(Iterator<PowerUp> iterator = gameRessourceProvider.getActivePaintableEntityManager()
-															  .getPowerUps().get(CollectionSubgroupType.ACTIVE).iterator(); iterator.hasNext();)
+															  .getPowerUps().iterator(); iterator.hasNext();)
 		{
 			PowerUp powerUp = iterator.next();
 			powerUp.update(gameRessourceProvider.getHelicopter());
@@ -219,11 +217,11 @@ public class PowerUp extends RectangularPaintableEntity implements GroupTypeOwne
 		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 	
-	public void activateAndMoveToStatusBar(	Map<CollectionSubgroupType, Queue<PowerUp>> powerUps)
+	public void activateAndMoveToStatusBar(Queue<PowerUp> powerUps)
 	{
 		this.initialize();
 		this.moveToStatusbar();
-		powerUps.get(CollectionSubgroupType.ACTIVE).add(this);
+		powerUps.add(this);
 	}
 
 	public static void activateInstance(GameRessourceProvider gameRessourceProvider, Enemy enemy)
@@ -233,7 +231,7 @@ public class PowerUp extends RectangularPaintableEntity implements GroupTypeOwne
 		PowerUp powerUp = PowerUp.getInstance(powerUpType);
 		powerUp.initialize(enemy, powerUpDirection);
 		gameRessourceProvider.getActivePaintableEntityManager()
-							 .getPowerUps().get(CollectionSubgroupType.ACTIVE).add(powerUp);
+							 .getPowerUps().add(powerUp);
 	}
 
 	public static PowerUp getInstance(PowerUpType powerUpType)

@@ -1,29 +1,25 @@
 package de.helicopter_vs_aliens.model.explosion;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
+import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
+import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Queue;
 
 import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
-import static de.helicopter_vs_aliens.gui.window.Window.HELICOPTER_DISTANCE;
-import static de.helicopter_vs_aliens.gui.window.Window.START_SCREEN_HELICOPTER_OFFSET_Y;
-import static de.helicopter_vs_aliens.gui.window.Window.START_SCREEN_OFFSET_X;
+import static de.helicopter_vs_aliens.gui.window.Window.*;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
 public class Explosion extends PaintableEntity implements GroupTypeOwner
@@ -83,8 +79,7 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
 		Queue<Explosion> explosions = gameRessourceProvider.getActivePaintableEntityManager()
-														   .getExplosions()
-														   .get(CollectionSubgroupType.ACTIVE);
+														   .getExplosions();
 		for(Iterator<Explosion> explosionIterator = explosions.iterator(); explosionIterator.hasNext(); )
 		{
 			Explosion explosion = explosionIterator.next();
@@ -212,7 +207,6 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 		}
 		gameRessourceProvider.getActivePaintableEntityManager()
 							 .getExplosions()
-							 .get(CollectionSubgroupType.ACTIVE)
 							 .add(explosion);
     }
 	

@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
 import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
@@ -116,7 +115,6 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	{
 		for(Iterator<Missile> missileIterator = gameRessourceProvider.getActivePaintableEntityManager()
 																	 .getMissiles()
-																	 .get(CollectionSubgroupType.ACTIVE)
 																	 .iterator(); missileIterator.hasNext(); )
 		{
 			Missile missile = missileIterator.next();
@@ -180,7 +178,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
 		for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
-											   .getEnemies().get(CollectionSubgroupType.ACTIVE))
+											   .getIntactEnemies())
 		{
 			if (enemy.isHittable(this))
 			{

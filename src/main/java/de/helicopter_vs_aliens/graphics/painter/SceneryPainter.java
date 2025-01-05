@@ -1,12 +1,11 @@
 package de.helicopter_vs_aliens.graphics.painter;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.TimeOfDay;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 import de.helicopter_vs_aliens.util.Colorations;
-import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -69,7 +68,6 @@ public class SceneryPainter extends Painter<Scenery>
     private void paintAllBackgroundSceneryObjects(GraphicsAdapter graphicsAdapter)
     {
         scenery.getSceneryObjects()
-               .get(CollectionSubgroupType.ACTIVE)
                .stream()
                .filter(SceneryObject::isInBackground)
                .forEach(sceneryObject -> sceneryObject.paint(graphicsAdapter));

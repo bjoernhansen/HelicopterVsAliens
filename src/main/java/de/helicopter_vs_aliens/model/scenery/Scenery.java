@@ -1,6 +1,5 @@
 package de.helicopter_vs_aliens.model.scenery;
 
-import de.helicopter_vs_aliens.control.CollectionSubgroupType;
 import de.helicopter_vs_aliens.control.entities.PaintableEntityActivation;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.RectangularPaintableEntity.GROUND_Y;
@@ -61,7 +59,7 @@ public class Scenery extends PaintableEntity
     
     public void reset()
     {
-        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects().get(CollectionSubgroupType.ACTIVE);
+        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects();
         getGameRessourceProvider().storeAllPaintableEntities(activeSceneryObjects);
         activeSceneryObjects.clear();
         createInitialSceneryObjects();
@@ -77,7 +75,7 @@ public class Scenery extends PaintableEntity
         SceneryObject firstDesert = getSceneryObject();
         firstDesert.makeFirstDesert();
         Collection<SceneryObject> firstSceneryObjects = List.of(firstCactus, firstHill, firstDesert);
-        getSceneryObjects().get(CollectionSubgroupType.ACTIVE).addAll(firstSceneryObjects);
+        getSceneryObjects().addAll(firstSceneryObjects);
     }
     
     private SceneryObject getSceneryObject()
@@ -88,7 +86,7 @@ public class Scenery extends PaintableEntity
     public void update(GameRessourceProvider gameRessourceProvider)
     {
         backgroundMoves = isBackgroundMoving(gameRessourceProvider);
-        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects().get(CollectionSubgroupType.ACTIVE);
+        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects();
         for(Iterator<SceneryObject> iterator = activeSceneryObjects.iterator(); iterator.hasNext();)
         {
             SceneryObject sceneryObject = iterator.next();
@@ -119,14 +117,14 @@ public class Scenery extends PaintableEntity
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         return helicopter.isRotorSystemActive
             && !isMajorBossActive(gameRessourceProvider.getActivePaintableEntityManager()
-                                                       .getEnemies())
+                                                       .getIntactEnemies())
             && helicopter.tractor == null;
     }
     
-    private boolean isMajorBossActive(Map<CollectionSubgroupType, Queue<Enemy>> enemies)
+    private boolean isMajorBossActive(Queue<Enemy> enemies)
     {
-        return !enemies.get(CollectionSubgroupType.ACTIVE).isEmpty()
-             && enemies.get(CollectionSubgroupType.ACTIVE)
+        return !enemies.isEmpty()
+             && enemies
                        .element().getType().isMajorBoss();
     }
     
@@ -146,7 +144,7 @@ public class Scenery extends PaintableEntity
     
     private int numberOfMissingSceneryObjects()
     {
-        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getSceneryObjects().get(CollectionSubgroupType.ACTIVE).size();
+        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getSceneryObjects().size();
     }
     
     private void generateNewSceneryObject()
@@ -154,7 +152,7 @@ public class Scenery extends PaintableEntity
         SceneryObject.generalObjectTimer = ACTIVATION_PAUSE_DURATION;
         SceneryObject sceneryObject = getSceneryObject();
         sceneryObject.preset();
-        getSceneryObjects().get(CollectionSubgroupType.ACTIVE).add(sceneryObject);
+        getSceneryObjects().add(sceneryObject);
     }
     
     private void moveCloud()
@@ -177,7 +175,7 @@ public class Scenery extends PaintableEntity
         return cloudX;
     }
     
-    public Map<CollectionSubgroupType, Queue<SceneryObject>> getSceneryObjects()
+    public Queue<SceneryObject> getSceneryObjects()
     {
         return getGameRessourceProvider().getActivePaintableEntityManager()
                                          .getSceneryObjects();
