@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.powerup;
 
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public enum PowerUpType implements PaintableEntityFactory<PowerUp>
+public enum PowerUpType implements ManageablePaintableFactory<PowerUp>
 {
     TRIPLE_DAMAGE(4, Color.magenta, Color.black),
     INVINCIBLE(3, Color.green, Color.yellow),

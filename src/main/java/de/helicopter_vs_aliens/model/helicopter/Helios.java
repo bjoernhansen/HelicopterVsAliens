@@ -92,7 +92,7 @@ public final class Helios extends Helicopter
     @Override
     public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        this.activatePowerUpGenerator(gameRessourceProvider.getActivePaintableEntityManager().getPowerUps());
+        this.activatePowerUpGenerator(gameRessourceProvider.getActiveManageablePaintableController().getPowerUps());
     }
 
     private void activatePowerUpGenerator(Queue<PowerUp> powerUps)

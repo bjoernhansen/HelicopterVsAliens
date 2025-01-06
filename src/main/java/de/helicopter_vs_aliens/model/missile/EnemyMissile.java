@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -22,7 +22,7 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 
 
-public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
+public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 {      	
 	public static final int 	
 		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
@@ -145,7 +145,7 @@ public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		Queue<EnemyMissile> enemyMissiles = gameRessourceProvider.getActivePaintableEntityManager()
+		Queue<EnemyMissile> enemyMissiles = gameRessourceProvider.getActiveManageablePaintableController()
 																 .getEnemyMissiles();
 		for(Iterator<EnemyMissile> enemyMissileIterator = enemyMissiles.iterator(); enemyMissileIterator.hasNext();)
 		{
@@ -158,7 +158,7 @@ public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
 				|| enemyMissile.hasHit)
 			{
 				enemyMissileIterator.remove();
-				gameRessourceProvider.storePaintableEntity(enemyMissile);
+				gameRessourceProvider.storeManageablePaintable(enemyMissile);
 			}
 		}		
 	}
@@ -184,8 +184,8 @@ public class EnemyMissile extends PaintableEntity implements GroupTypeOwner
 	}
 	
 	@Override
-	public PaintableEntityGroupType getGroupType()
+	public ManageablePaintableGroupType getGroupType()
 	{
-		return PaintableEntityGroupType.ENEMY_MISSILE;
+		return ManageablePaintableGroupType.ENEMY_MISSILE;
 	}
 }

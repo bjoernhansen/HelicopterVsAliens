@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.control.entities;
 
-public enum PaintableEntityGroupType
+public enum ManageablePaintableGroupType
 {
     INTACT_ENEMY,
     DESTROYED_ENEMY,

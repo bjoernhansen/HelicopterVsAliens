@@ -4,8 +4,8 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.LevelManager;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -87,25 +87,13 @@ public class GameWindowPainter extends WindowPainter
                              .paint(graphicsAdapter);
     }
     
-    private void paintAllDestroyedEnemies(GraphicsAdapter graphicsAdapter)
-    {
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .forEachActiveEntity(PaintableEntityGroupType.DESTROYED_ENEMY, enemy -> enemy.paint(graphicsAdapter));
-    }
-    
-    private void paintAllMissiles(GraphicsAdapter graphicsAdapter)
-    {
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .forEachActiveEntity(PaintableEntityGroupType.MISSILE, missile -> missile.paint(graphicsAdapter));
-    }
-    
     private void paintAllActiveEnemies(GraphicsAdapter graphicsAdapter)
     {
         for(int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
+        for(Enemy enemy : gameRessourceProvider.getActiveManageablePaintableController()
                                                .getIntactEnemies())
         {
             if(enemy.isVisibleNonBarricadeVessel())
@@ -115,23 +103,35 @@ public class GameWindowPainter extends WindowPainter
         }
     }
     
-    // TODO für diese Methoden sollte es auch etwas passenderes geben, eine Aktion die übergeben und dann für alle ausgeführt wird
-    private void paintAllEnemyMissiles(GraphicsAdapter graphicsAdapter)
+    // TODO gleichartige Methoden ablösen und iterieren über ein Subset von ManageablePaintableGroupType
+    private void paintAllDestroyedEnemies(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .forEachActiveEntity(PaintableEntityGroupType.ENEMY_MISSILE, enemyMissile -> enemyMissile.paint(graphicsAdapter));
+        gameRessourceProvider.getActiveManageablePaintableController()
+                             .forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY, enemy -> enemy.paint(graphicsAdapter));
+    }
+    
+    private void paintAllMissiles(GraphicsAdapter graphicsAdapter)
+    {
+        gameRessourceProvider.getActiveManageablePaintableController()
+                             .forEachActiveEntity(ManageablePaintableGroupType.MISSILE, missile -> missile.paint(graphicsAdapter));
     }
     
     private void paintAllExplosions(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .forEachActiveEntity(PaintableEntityGroupType.EXPLOSION, explosion -> explosion.paint(graphicsAdapter));
+        gameRessourceProvider.getActiveManageablePaintableController()
+                             .forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION, explosion -> explosion.paint(graphicsAdapter));
+    }
+   
+    private void paintAllEnemyMissiles(GraphicsAdapter graphicsAdapter)
+    {
+        gameRessourceProvider.getActiveManageablePaintableController()
+                             .forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE, enemyMissile -> enemyMissile.paint(graphicsAdapter));
     }
     
     private void paintAllPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActivePaintableEntityManager()
-                             .forEachActiveEntity(PaintableEntityGroupType.POWER_UP, powerUp -> powerUp.paint(graphicsAdapter));
+        gameRessourceProvider.getActiveManageablePaintableController()
+                             .forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, powerUp -> powerUp.paint(graphicsAdapter));
     }
     
     private void paintForeground(GraphicsAdapter graphicsAdapter)
@@ -141,7 +141,7 @@ public class GameWindowPainter extends WindowPainter
         graphicsAdapter.fillRect(0, GROUND_Y, VIRTUAL_DIMENSION.getWidth(), 35);
         
         // Objekte vor dem Helikopter
-        Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getActivePaintableEntityManager()
+        Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getActiveManageablePaintableController()
                                                                          .getSceneryObjects();
         SceneryLayer.getForegroundLayers()
                     .forEach(layer -> activeSceneryObjects.stream()
@@ -536,27 +536,27 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 2)
         {
             infoString = "Aktive PowerUps: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .numberOfActiveEntities(PaintableEntityGroupType.POWER_UP)
+                + gameRessourceProvider.getActiveManageablePaintableController()
+                                       .numberOfActiveEntities(ManageablePaintableGroupType.POWER_UP)
                 + ";   Inaktive PowerUps: "
-                + gameRessourceProvider.numberOfInactivePaintableEntities(PowerUp.class);
+                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(PowerUp.class);
         }
         else if(Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .numberOfActiveEntities(PaintableEntityGroupType.EXPLOSION)
+                + gameRessourceProvider.getActiveManageablePaintableController()
+                                       .numberOfActiveEntities(ManageablePaintableGroupType.EXPLOSION)
                 + ";   Inaktive Explosionen: "
-                + gameRessourceProvider.numberOfInactivePaintableEntities(Explosion.class);
+                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(Explosion.class);
         }
         else if(Window.specialInfoSelection == 4)
         {
             infoString = "Aktive Gegner: "
-                + (gameRessourceProvider.getActivePaintableEntityManager()
-                                        .numberOfActiveEntities(PaintableEntityGroupType.INTACT_ENEMY) - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
+                + (gameRessourceProvider.getActiveManageablePaintableController()
+                                        .numberOfActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY) - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerst\u00F6rte Gegner: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .numberOfActiveEntities(PaintableEntityGroupType.DESTROYED_ENEMY)
+                + gameRessourceProvider.getActiveManageablePaintableController()
+                                       .numberOfActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY)
                 + ";   Hindernisse: "
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
@@ -565,26 +565,26 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .numberOfActiveEntities(PaintableEntityGroupType.MISSILE)
+                + gameRessourceProvider.getActiveManageablePaintableController()
+                                       .numberOfActiveEntities(ManageablePaintableGroupType.MISSILE)
                 + ";   Inaktive Raketen: "
-                + gameRessourceProvider.numberOfInactivePaintableEntities(Missile.class);
+                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(Missile.class);
         }
         else if(Window.specialInfoSelection == 6)
         {
             infoString = "Aktive gegnerische Geschosse: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .numberOfActiveEntities(PaintableEntityGroupType.ENEMY_MISSILE)
+                + gameRessourceProvider.getActiveManageablePaintableController()
+                                       .numberOfActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE)
                 + ";   Inaktive gegnerische Geschosse: "
-                + gameRessourceProvider.numberOfInactivePaintableEntities(EnemyMissile.class);
+                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(EnemyMissile.class);
         }
         else if(Window.specialInfoSelection == 7)
         {
             infoString = "Aktive Hintergrundobjekte: "
-                + gameRessourceProvider.getActivePaintableEntityManager()
-                                       .numberOfActiveEntities(PaintableEntityGroupType.SCENERY_OBJECT)
+                + gameRessourceProvider.getActiveManageablePaintableController()
+                                       .numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT)
                 + ";   Inaktive Hintergrundobjekte: "
-                + gameRessourceProvider.numberOfInactivePaintableEntities(SceneryObject.class);
+                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(SceneryObject.class);
         }
         else if(Window.specialInfoSelection == 8)
         {
@@ -645,8 +645,8 @@ public class GameWindowPainter extends WindowPainter
         return EnemyType.getValues()
                         .stream()
                         .filter(Predicate.not(EnemyType.getBarrierTypes()::contains))
-                        .map(PaintableEntityFactory::getCorrespondingClass)
-                        .map(gameRessourceProvider::numberOfInactivePaintableEntities)
+                        .map(ManageablePaintableFactory::getCorrespondingClass)
+                        .map(gameRessourceProvider::numberOfInactiveManageablePaintableInstances)
                         .mapToInt(Integer::intValue)
                         .sum();
     }

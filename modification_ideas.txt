@@ -1,7 +1,13 @@
 Jira: https://bjoern-hansen.atlassian.net/jira/software/projects/KAN/boards/1
 
-nächste ToDos:
-Refactoring Missile abschließen
+nächste To-dos:
+
+activateManageablePaintable
+Zusammenführen der Methoden in ActiveManageablePaintableManager für Beziehen von ManageableEntities
+alle Stellen refactorn, welche direkt die ManageableEntities beziehen
+gleichartige Methoden ablösen und iterieren über ein Subset von ManageablePaintableGroupType in Klasse GameWindowPainter (TODO)
+
+
 getRessource() konsequent nutzen und auch die Creater für die Instanzen der GameENtities entsprechend erzeugen (dependency Injection nutzen)
 Manover für Enemies
 

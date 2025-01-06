@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.explosion;
 
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.PaintableEntity;
@@ -22,7 +22,7 @@ import static de.helicopter_vs_aliens.gui.WindowType.START_SCREEN;
 import static de.helicopter_vs_aliens.gui.window.Window.*;
 import static de.helicopter_vs_aliens.model.scenery.SceneryObject.BG_SPEED;
 
-public class Explosion extends PaintableEntity implements GroupTypeOwner
+public class Explosion extends PaintableEntity implements ManageablePaintable
 {
 	private static final ExplosionFactory explosionFactory = new ExplosionFactory();
 	
@@ -78,7 +78,7 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 	   
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		Queue<Explosion> explosions = gameRessourceProvider.getActivePaintableEntityManager()
+		Queue<Explosion> explosions = gameRessourceProvider.getActiveManageablePaintableController()
 														   .getExplosions();
 		for(Iterator<Explosion> explosionIterator = explosions.iterator(); explosionIterator.hasNext(); )
 		{
@@ -96,7 +96,7 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 						Events.extraReward(explosion.kills, explosion.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
-				gameRessourceProvider.storePaintableEntity(explosion);
+				gameRessourceProvider.storeManageablePaintable(explosion);
 	        }
 		}		
 	}
@@ -172,7 +172,7 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 							 boolean extraDamage,
 							 Enemy source)
     {
-		Explosion explosion = gameRessourceProvider.getNewPaintableEntityInstance(explosionFactory);
+		Explosion explosion = gameRessourceProvider.getNewManageablePaintableInstance(explosionFactory);
 		explosion.center.setLocation(x, y);
 		explosion.time = 0;
 		// kann wahrscheinlich in den EMP spezifischen bereich verschoben werden
@@ -205,7 +205,7 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 	    	explosion.earnedMoney = 0;
 	    	explosion.kills = 0;
 		}
-		gameRessourceProvider.getActivePaintableEntityManager()
+		gameRessourceProvider.getActiveManageablePaintableController()
 							 .getExplosions()
 							 .add(explosion);
     }
@@ -251,9 +251,9 @@ public class Explosion extends PaintableEntity implements GroupTypeOwner
 	}
 	
 	@Override
-	public PaintableEntityGroupType getGroupType()
+	public ManageablePaintableGroupType getGroupType()
 	{
-		return PaintableEntityGroupType.EXPLOSION;
+		return ManageablePaintableGroupType.EXPLOSION;
 	}
 	
 	public void countKill()

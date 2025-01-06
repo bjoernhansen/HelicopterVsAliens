@@ -267,7 +267,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
             launchedMissiles.add(missile);
         }
         
-        gameRessourceProvider.getActivePaintableEntityManager()
+        gameRessourceProvider.getActiveManageablePaintableController()
                              .getMissiles()
                              .addAll(launchedMissiles);
         
@@ -307,7 +307,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
     
     private Missile getMissileInstance()
     {
-        Missile missile = getGameRessourceProvider().getNewPaintableEntityInstance(missileFactory);
+        Missile missile = getGameRessourceProvider().getNewManageablePaintableInstance(missileFactory);
         resetMissile(missile);
         return missile;
     }

@@ -3,7 +3,6 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HeliosPainter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.KamaitachiPainter;
@@ -25,7 +24,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 
-public enum HelicopterType implements PaintableEntityFactory<Helicopter>
+public enum HelicopterType
 {
     PHOENIX(
         Phoenix.class,
@@ -88,7 +87,9 @@ public enum HelicopterType implements PaintableEntityFactory<Helicopter>
         FIFTH_SPECIAL_KEY_PREFIX = "upgrades.special.fifth.";
     
     private static final int[]
-        SPELL_COSTS= {50, 30, 20, 200, 75, 250},  // Energiekosten für das Energie-Upgrade
+        SPELL_COSTS= {50, 30, 20, 200, 75, 250}; // Energiekosten für das Energie-Upgrade
+    
+    private static final int[]
         // TODO integer Max_VALUE anders lösen
         EFFECT_TIMES = {55, 85, 80, 100, Integer.MAX_VALUE, 65};
     
@@ -154,7 +155,7 @@ public enum HelicopterType implements PaintableEntityFactory<Helicopter>
     private final Supplier<? extends Helicopter>
         instanceSupplier;
     
-    private final Supplier<? extends Painter<? extends Helicopter>>
+    private final Supplier<? extends Painter<Helicopter>>
         painterInstanceSupplier;
     
     private final Class<? extends Helicopter>
@@ -169,7 +170,7 @@ public enum HelicopterType implements PaintableEntityFactory<Helicopter>
     
     HelicopterType(Class<? extends Helicopter> helicopterClass,
                    Supplier<? extends Helicopter> instanceSupplier,
-                   Supplier<? extends Painter<? extends Helicopter>> painterInstanceSupplier,
+                   Supplier<? extends Painter<Helicopter>> painterInstanceSupplier,
                    Supplier<List<HelicopterType>> unlockerTypes,
                    Supplier<Clip> specialSound)
     {
@@ -312,22 +313,18 @@ public enum HelicopterType implements PaintableEntityFactory<Helicopter>
         String key = String.format("%d%d%d", this.ordinal(), this.getPriceLevelFor(standardUpgradeType).ordinal(), upgradeLevel);
         return Optional.ofNullable(ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
     }
-    
-    @Override
+
     public Helicopter makeInstance()
     {
         return instanceSupplier.get();
     }
     
-    @Override
-    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Class<? extends Helicopter> getCorrespondingClass()
     {
         return helicopterClass;
     }
     
-    // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
-    public Painter<? extends Helicopter> makePainterInstance()
+    public Painter<Helicopter> makePainterInstance()
     {
         return painterInstanceSupplier.get();
     }
@@ -369,9 +366,15 @@ public enum HelicopterType implements PaintableEntityFactory<Helicopter>
     private static class Unlocker
     {
         private static final List<HelicopterType>
-            EMPTY = Collections.emptyList(),
-            FOR_OROCHI =List.of(HelicopterType.PHOENIX, HelicopterType.PEGASUS),
-            FOR_KAMAITACHI = List.of(HelicopterType.ROCH, HelicopterType.PEGASUS),
+            EMPTY = Collections.emptyList();
+        
+        private static final List<HelicopterType>
+            FOR_OROCHI =List.of(HelicopterType.PHOENIX, HelicopterType.PEGASUS);
+        
+        private static final List<HelicopterType>
+            FOR_KAMAITACHI = List.of(HelicopterType.ROCH, HelicopterType.PEGASUS);
+        
+        private static final List<HelicopterType>
             FOR_PEGASUS = List.of(HelicopterType.OROCHI, HelicopterType.KAMAITACHI);
         
         static List<HelicopterType> getEmpty()

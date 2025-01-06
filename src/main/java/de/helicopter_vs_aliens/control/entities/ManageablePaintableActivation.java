@@ -5,7 +5,7 @@ import de.helicopter_vs_aliens.util.Calculations;
 import java.util.List;
 
 
-public final class PaintableEntityActivation
+public final class ManageablePaintableActivation
 {
     private static final int
         STANDARD_PROBABILITY_REDUCTION_FACTOR = 1;
@@ -30,7 +30,7 @@ public final class PaintableEntityActivation
         return Calculations.random(probabilityReductionFactor * PROBABILITIES.get(index)) == 0;
     }
     
-    private PaintableEntityActivation()
+    private ManageablePaintableActivation()
     {
         throw new UnsupportedOperationException("Utility-Klasse ist nicht für die Instanziierung vorgesehen.");
     }

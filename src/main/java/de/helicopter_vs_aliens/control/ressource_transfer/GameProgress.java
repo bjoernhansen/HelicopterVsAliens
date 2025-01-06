@@ -3,14 +3,14 @@ package de.helicopter_vs_aliens.control.ressource_transfer;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.entities.ActivePaintableEntityManager;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
-import de.helicopter_vs_aliens.control.entities.PaintableEntitySupplier;
+import de.helicopter_vs_aliens.control.entities.ActiveManageablePaintableController;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableSupplier;
 import de.helicopter_vs_aliens.control.timer.TimerManager;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
-import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
@@ -52,14 +52,14 @@ public final class GameProgress implements GameRessourceProvider
     private Savegame
         saveGame;
 
-    private final ActivePaintableEntityManager
-        activePaintableEntityManager = new ActivePaintableEntityManager(this);
+    private final ActiveManageablePaintableController
+        activeManageablePaintableController = new ActiveManageablePaintableController(this);
 
     private final WindowManager
         windowManager = new WindowManager();
 
-    private final PaintableEntitySupplier
-        paintableEntitySupplier = new PaintableEntitySupplier();
+    private final ManageablePaintableSupplier
+        manageablePaintableSupplier = new ManageablePaintableSupplier();
 
     private final GameStatisticsCalculator
         gameStatisticsCalculator = new GameStatisticsCalculator();
@@ -128,33 +128,33 @@ public final class GameProgress implements GameRessourceProvider
     }
 
     @Override
-    public ActivePaintableEntityManager getActivePaintableEntityManager()
+    public ActiveManageablePaintableController getActiveManageablePaintableController()
     {
-        return activePaintableEntityManager;
+        return activeManageablePaintableController;
     }
 
     @Override
-    public <T extends PaintableEntity> T getNewPaintableEntityInstance(PaintableEntityFactory<T> factory)
+    public <T extends ManageablePaintable> T getNewManageablePaintableInstance(ManageablePaintableFactory<T> factory)
     {
-        return paintableEntitySupplier.retrieve(factory);
+        return manageablePaintableSupplier.retrieve(factory);
     }
     
     @Override
-    public void storePaintableEntity(PaintableEntity paintableEntity)
+    public void storeManageablePaintable(ManageablePaintable manageablePaintable)
     {
-        paintableEntitySupplier.store(paintableEntity);
+        manageablePaintableSupplier.store(manageablePaintable);
     }
     
     @Override
-    public void storeAllPaintableEntities(Queue<? extends PaintableEntity> paintableEntities)
+    public void storeAllManageablePaintableInstances(Queue<? extends ManageablePaintable> manageablePaintableInstances)
     {
-        paintableEntitySupplier.storeAll(paintableEntities);
+        manageablePaintableSupplier.storeAll(manageablePaintableInstances);
     }
     
     @Override
-    public <T extends PaintableEntity> int numberOfInactivePaintableEntities(Class<T> classOfPaintableEntity)
+    public <T extends ManageablePaintable> int numberOfInactiveManageablePaintableInstances(Class<T> classOfManageablePaintable)
     {
-        return paintableEntitySupplier.sizeOf(classOfPaintableEntity);
+        return manageablePaintableSupplier.sizeOf(classOfManageablePaintable);
     }
     
     @Override

@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.control.entities;
 
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
@@ -17,10 +16,10 @@ import java.util.function.Consumer;
 
 // TODO finish implementation
 
-public final class ActivePaintableEntityManager implements ActivePaintableEntityProvider
+public final class ActiveManageablePaintableController implements ActiveManageablePaintableProvider
 {
     // TODO Verwaltung anders lösen, eventuell wie in der Klasse PaintableEntitySupplier
-    // ggf. ist auch eine Zusammenführung oder eine Verwaltung über eine übergeordnete Klasse denkbar
+    // TODO ggf. ist auch eine Zusammenführung oder eine Verwaltung über eine übergeordnete Klasse denkbar
     // TODO sobald die inaktiven hier nicht mehr nötig sind, kann der Umbau beginnen
     // TODO die ungenutzten Methoden in dieser Klasse kommen dann ggf. zum Einsatz
     // TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
@@ -29,6 +28,7 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
     private final GameRessourceProvider
         gameRessourceProvider;
     
+    // TODO ggf. ist es möglich nur noch einen Queue-Typ Queue<ManageablePaintable> zu haben
     private final Queue<Enemy>
         intactEnemies = new ArrayDeque<>();
     
@@ -51,21 +51,23 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
         powerUps = new ArrayDeque<>();
     
     
-    private final Map<PaintableEntityGroupType, Queue<? extends PaintableEntity>>
-        paintableEntityQueues = new EnumMap<>(PaintableEntityGroupType.class);
+    private final Map<ManageablePaintableGroupType, Queue<? extends ManageablePaintable>>
+        paintableQueues = new EnumMap<>(ManageablePaintableGroupType.class);
     
     
-    public ActivePaintableEntityManager(GameRessourceProvider gameRessourceProvider)
+    public ActiveManageablePaintableController(GameRessourceProvider gameRessourceProvider)
     {
         this.gameRessourceProvider = gameRessourceProvider;
-        paintableEntityQueues.put(PaintableEntityGroupType.INTACT_ENEMY, intactEnemies);
-        paintableEntityQueues.put(PaintableEntityGroupType.DESTROYED_ENEMY, destroyedEnemies);
-        paintableEntityQueues.put(PaintableEntityGroupType.MISSILE, missiles);
-        paintableEntityQueues.put(PaintableEntityGroupType.EXPLOSION, explosions);
-        paintableEntityQueues.put(PaintableEntityGroupType.SCENERY_OBJECT, sceneryObjects);
-        paintableEntityQueues.put(PaintableEntityGroupType.ENEMY_MISSILE, enemyMissiles);
-        paintableEntityQueues.put(PaintableEntityGroupType.POWER_UP, powerUps);
+        paintableQueues.put(ManageablePaintableGroupType.INTACT_ENEMY, intactEnemies);
+        paintableQueues.put(ManageablePaintableGroupType.DESTROYED_ENEMY, destroyedEnemies);
+        paintableQueues.put(ManageablePaintableGroupType.MISSILE, missiles);
+        paintableQueues.put(ManageablePaintableGroupType.EXPLOSION, explosions);
+        paintableQueues.put(ManageablePaintableGroupType.SCENERY_OBJECT, sceneryObjects);
+        paintableQueues.put(ManageablePaintableGroupType.ENEMY_MISSILE, enemyMissiles);
+        paintableQueues.put(ManageablePaintableGroupType.POWER_UP, powerUps);
     }
+    
+    // TODO eventuell ist es möglich all diese Methoden zusammenzuführen durch eine Methode getManageablePaintable(ManageablePaintableGroupType groupType)
     
     @Override
     public Queue<Enemy> getIntactEnemies()
@@ -160,21 +162,21 @@ public final class ActivePaintableEntityManager implements ActivePaintableEntity
                                     .toList();
     }*/
     
-    public void clearActiveEntities(PaintableEntityGroupType groupType)
+    public void clearActiveEntities(ManageablePaintableGroupType groupType)
     {
-        Queue<? extends PaintableEntity> groupTypeOwners = paintableEntityQueues.get(groupType);
-        gameRessourceProvider.storeAllPaintableEntities(groupTypeOwners);
+        Queue<? extends ManageablePaintable> groupTypeOwners = paintableQueues.get(groupType);
+        gameRessourceProvider.storeAllManageablePaintableInstances(groupTypeOwners);
         groupTypeOwners.clear();
     }
     
-    public int numberOfActiveEntities(PaintableEntityGroupType groupType)
+    public int numberOfActiveEntities(ManageablePaintableGroupType groupType)
     {
-        return paintableEntityQueues.get(groupType).size();
+        return paintableQueues.get(groupType).size();
     }
     
-    public void forEachActiveEntity(PaintableEntityGroupType groupType, Consumer<PaintableEntity> action)
+    public void forEachActiveEntity(ManageablePaintableGroupType groupType, Consumer<ManageablePaintable> action)
     {
-        paintableEntityQueues.get(groupType).forEach(action);
+        paintableQueues.get(groupType).forEach(action);
     }
 /*
     public <T extends PaintableEntity> T activatePaintable(PaintableEntityFactory<T> factory)

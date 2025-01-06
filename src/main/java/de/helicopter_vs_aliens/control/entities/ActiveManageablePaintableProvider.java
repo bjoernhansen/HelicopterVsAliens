@@ -9,7 +9,7 @@ import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.util.Queue;
 
-public interface ActivePaintableEntityProvider
+public interface ActiveManageablePaintableProvider
 {
     Queue<Enemy> getIntactEnemies();
     

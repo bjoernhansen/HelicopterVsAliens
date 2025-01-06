@@ -2,8 +2,8 @@ package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
-import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 
 // TODO Alles Allgemeines zu Backgrounds, was sich nicht auf die Background-Objekte bezieht in eigene Klasse
 // TODO diese Klasse bekommt dann auch einen eigenen Painter
-public class SceneryObject extends RectangularPaintableEntity implements GroupTypeOwner
+public class SceneryObject extends RectangularPaintableEntity implements ManageablePaintable
 {
 	private static final int
 		// Häufigkeit mit der Hintergrundobjekte eines bestimmten Typs erscheinen
@@ -300,8 +300,8 @@ public class SceneryObject extends RectangularPaintableEntity implements GroupTy
 	}
 	
 	@Override
-	public PaintableEntityGroupType getGroupType()
+	public ManageablePaintableGroupType getGroupType()
 	{
-		return PaintableEntityGroupType.SCENERY_OBJECT;
+		return ManageablePaintableGroupType.SCENERY_OBJECT;
 	}
 }

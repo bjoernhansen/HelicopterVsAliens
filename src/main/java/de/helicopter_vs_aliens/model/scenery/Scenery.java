@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.model.scenery;
 
-import de.helicopter_vs_aliens.control.entities.PaintableEntityActivation;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableActivation;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.PaintableEntity;
@@ -60,7 +60,7 @@ public class Scenery extends PaintableEntity
     
     public void reset()
     {
-        getGameRessourceProvider().getActivePaintableEntityManager().clearActiveEntities(PaintableEntityGroupType.SCENERY_OBJECT);
+        getGameRessourceProvider().getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
         createInitialSceneryObjects();
         cloudX = 135;
     }
@@ -79,7 +79,7 @@ public class Scenery extends PaintableEntity
     
     private SceneryObject getSceneryObject()
     {
-        return getGameRessourceProvider().getNewPaintableEntityInstance(sceneryObjectFactory);
+        return getGameRessourceProvider().getNewManageablePaintableInstance(sceneryObjectFactory);
     }
     
     public void update(GameRessourceProvider gameRessourceProvider)
@@ -97,7 +97,7 @@ public class Scenery extends PaintableEntity
             {
                 sceneryObject.clearImage();
                 iterator.remove();
-                gameRessourceProvider.storePaintableEntity(sceneryObject);
+                gameRessourceProvider.storeManageablePaintable(sceneryObject);
             }
         }
         if(arePrerequisitesForSceneryObjectsCreationMet())
@@ -115,7 +115,7 @@ public class Scenery extends PaintableEntity
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         return helicopter.isRotorSystemActive
-            && !isMajorBossActive(gameRessourceProvider.getActivePaintableEntityManager()
+            && !isMajorBossActive(gameRessourceProvider.getActiveManageablePaintableController()
                                                        .getIntactEnemies())
             && helicopter.tractor == null;
     }
@@ -130,8 +130,8 @@ public class Scenery extends PaintableEntity
     private boolean arePrerequisitesForSceneryObjectsCreationMet()
     {
         return areSceneryObjectsMissing()
-            && PaintableEntityActivation.isApproved(numberOfMissingSceneryObjects(),
-                                                    SceneryObject.probabilityReductionFactor)
+            && ManageablePaintableActivation.isApproved(numberOfMissingSceneryObjects(),
+                                                        SceneryObject.probabilityReductionFactor)
             && SceneryObject.generalObjectTimer == 0
             && backgroundMoves;
     }
@@ -176,7 +176,7 @@ public class Scenery extends PaintableEntity
     
     public Queue<SceneryObject> getSceneryObjects()
     {
-        return getGameRessourceProvider().getActivePaintableEntityManager()
+        return getGameRessourceProvider().getActiveManageablePaintableController()
                                          .getSceneryObjects();
     }
 }

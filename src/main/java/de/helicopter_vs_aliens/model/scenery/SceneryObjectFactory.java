@@ -1,9 +1,9 @@
 package de.helicopter_vs_aliens.model.scenery;
 
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 
 
-public final class SceneryObjectFactory implements PaintableEntityFactory<SceneryObject>
+public final class SceneryObjectFactory implements ManageablePaintableFactory<SceneryObject>
 {
     @Override
     public SceneryObject makeInstance()

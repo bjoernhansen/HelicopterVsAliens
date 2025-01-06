@@ -4,8 +4,8 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -43,7 +43,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 
 
-public abstract class Enemy extends RectangularPaintableEntity implements GroupTypeOwner, Maneuverable
+public abstract class Enemy extends RectangularPaintableEntity implements ManageablePaintable, Maneuverable
     // TODO Klasse zerschlagen
 {
     public static final int
@@ -1436,8 +1436,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     public void shoot(EnemyMissileType missileType,
                       double missileSpeed)
     {
-        EnemyMissile enemyMissile = getGameRessourceProvider().getNewPaintableEntityInstance(enemyMissileFactory);
-        getGameRessourceProvider().getActivePaintableEntityManager()
+        EnemyMissile enemyMissile = getGameRessourceProvider().getNewManageablePaintableInstance(enemyMissileFactory);
+        getGameRessourceProvider().getActiveManageablePaintableController()
                                   .getEnemyMissiles()
                                   .add(enemyMissile);
         enemyMissile.launch(this, missileType, missileSpeed, shootingDirection);
@@ -2544,11 +2544,11 @@ public abstract class Enemy extends RectangularPaintableEntity implements GroupT
     }
     
     @Override
-    public PaintableEntityGroupType getGroupType()
+    public ManageablePaintableGroupType getGroupType()
     {
         return isDestroyed
-            ? PaintableEntityGroupType.DESTROYED_ENEMY
-            : PaintableEntityGroupType.INTACT_ENEMY;
+            ? ManageablePaintableGroupType.DESTROYED_ENEMY
+            : ManageablePaintableGroupType.INTACT_ENEMY;
     }
     
     protected boolean isMovingAwayFromHelicopter()

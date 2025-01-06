@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.control;
 
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
@@ -68,7 +68,7 @@ public class EnemyController
             verifyCreationStop(gameRessourceProvider);}
         if(isBossServantCreationApproved()){
             createBossServant(gameRessourceProvider);}
-        else if(isEnemyCreationApproved(gameRessourceProvider.getActivePaintableEntityManager()
+        else if(isEnemyCreationApproved(gameRessourceProvider.getActiveManageablePaintableController()
                                                              .getIntactEnemies()))
         {
             creation(gameRessourceProvider);
@@ -97,7 +97,7 @@ public class EnemyController
     
     private static void verifyCreationStop(GameRessourceProvider gameRessourceProvider)
     {
-        if(	gameRessourceProvider.getActivePaintableEntityManager()
+        if(	gameRessourceProvider.getActiveManageablePaintableController()
                                     .getIntactEnemies().isEmpty()
             && carrierDestroyedJustNow == null
             && !(gameRessourceProvider.getHelicopter().isUnacceptablyBoostedForBossLevel()
@@ -202,11 +202,11 @@ public class EnemyController
     
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {
-        Queue<Enemy> activeEnemies = gameRessourceProvider.getActivePaintableEntityManager()
+        Queue<Enemy> activeEnemies = gameRessourceProvider.getActiveManageablePaintableController()
                                                           .getIntactEnemies();
         int activeEnemyCount = activeEnemies.size();
-        PaintableEntityFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
-        Enemy enemy = gameRessourceProvider.getNewPaintableEntityInstance(enemyFactory);
+        ManageablePaintableFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
+        Enemy enemy = gameRessourceProvider.getNewManageablePaintableInstance(enemyFactory);
         enemy.reset();
         activeEnemies.add(enemy);
         if(enemy.countsForTotalAmountOfEnemiesSeen())
@@ -217,7 +217,7 @@ public class EnemyController
         enemy.initialize();
     }
     
-    private static PaintableEntityFactory<Enemy> getEnemyFactory(int activeEnemyCount)
+    private static ManageablePaintableFactory<Enemy> getEnemyFactory(int activeEnemyCount)
     {
         if(wasCarrierDestroyedJustNow()){return EnemyType.ESCAPED_SPEEDER;}
         if(barrierCreationApproved(activeEnemyCount)){return getNextBarrierType();}
@@ -285,10 +285,10 @@ public class EnemyController
             rockTimer--;}
         if(Scenery.backgroundMoves && barrierTimer > 0){
             barrierTimer--;}
-        countBarriers(gameRessourceProvider.getActivePaintableEntityManager()
+        countBarriers(gameRessourceProvider.getActiveManageablePaintableController()
                                            .getIntactEnemies());
         
-        for(Iterator<Enemy> iterator = gameRessourceProvider.getActivePaintableEntityManager()
+        for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveManageablePaintableController()
                                                             .getIntactEnemies().iterator(); iterator.hasNext();)
         {
             Enemy enemy = iterator.next();
@@ -299,21 +299,21 @@ public class EnemyController
             else if(enemy.isDestroyed())
             {
                 iterator.remove();
-                gameRessourceProvider.getActivePaintableEntityManager()
+                gameRessourceProvider.getActiveManageablePaintableController()
                                      .getDestroyedEnemies().add(enemy);
             }
             else
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.storePaintableEntity(enemy);
+                gameRessourceProvider.storeManageablePaintable(enemy);
             }
         }
     }
     
     public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
     {
-        for(Iterator<Enemy> iterator = gameRessourceProvider.getActivePaintableEntityManager()
+        for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveManageablePaintableController()
                                                             .getDestroyedEnemies()
                                                             
                                                             .iterator(); iterator.hasNext(); )
@@ -330,14 +330,14 @@ public class EnemyController
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.storePaintableEntity(enemy);
+                gameRessourceProvider.storeManageablePaintable(enemy);
             }
         }
     }
     
     public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
     {
-        for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
+        for(Enemy enemy : gameRessourceProvider.getActiveManageablePaintableController()
                                                .getIntactEnemies())
         {
             if(enemy.getModel() == EnemyModelType.BARRIER && enemy.isOnScreen())

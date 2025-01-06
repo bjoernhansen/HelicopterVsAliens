@@ -1,10 +1,10 @@
 package de.helicopter_vs_aliens.control.ressource_transfer;
 
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.entities.ActivePaintableEntityManager;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.entities.ActiveManageablePaintableController;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
-import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
@@ -23,18 +23,17 @@ public interface GameRessourceProvider
     Savegame getSaveGame();
     
     // TODO eigentlich sollte hier mit dem Interface ActivePaintableEntityProvider
-    ActivePaintableEntityManager getActivePaintableEntityManager();
+    ActiveManageablePaintableController getActiveManageablePaintableController();
     
-    // TODO denkbar wäre eine Methode activatePaintableEntityInstance, die automatisch die Instance auch dem aktiven Entitites hinzufügt
+    // TODO denkbar wäre eine Methode activatePaintableEntityInstance, die automatisch die Instance auch dem aktiven Entities hinzufügt
     
-    // TODO an all diesen Stellen sollte eigentlich das Interface Paintable und nicht PaintableEntity verwendet werden
-    <T extends PaintableEntity> T getNewPaintableEntityInstance(PaintableEntityFactory<T> factory);
+    <T extends ManageablePaintable> T getNewManageablePaintableInstance(ManageablePaintableFactory<T> factory);
     
-    void storePaintableEntity(PaintableEntity paintableEntity);
+    void storeManageablePaintable(ManageablePaintable manageablePaintable);
     
-    void storeAllPaintableEntities(Queue<? extends PaintableEntity> gameEntities);
+    void storeAllManageablePaintableInstances(Queue<? extends ManageablePaintable> manageablePaintableInstances);
     
-    <T extends PaintableEntity> int numberOfInactivePaintableEntities(Class<T> classOfPaintableEntity);
+    <T extends ManageablePaintable> int numberOfInactiveManageablePaintableInstances(Class<T> classOfManageablePaintable);
 
     boolean isFpsDisplayVisible();
 

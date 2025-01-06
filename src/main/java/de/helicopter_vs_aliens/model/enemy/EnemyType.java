@@ -1,6 +1,6 @@
 package de.helicopter_vs_aliens.model.enemy;
 
-import de.helicopter_vs_aliens.control.entities.PaintableEntityFactory;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.model.enemy.barrier.BigBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.CloakedBarrier;
 import de.helicopter_vs_aliens.model.enemy.barrier.DiggerBarrier;
@@ -59,7 +59,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
-public enum EnemyType implements PaintableEntityFactory<Enemy>
+public enum EnemyType implements ManageablePaintableFactory<Enemy>
 {
     TINY( // ab Level 1
           TinyVessel::new,

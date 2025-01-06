@@ -2,8 +2,8 @@ package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
-import de.helicopter_vs_aliens.control.entities.GroupTypeOwner;
-import de.helicopter_vs_aliens.control.entities.PaintableEntityGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -21,7 +21,7 @@ import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 
 
-public class Missile extends RectangularPaintableEntity implements GroupTypeOwner
+public class Missile extends RectangularPaintableEntity implements ManageablePaintable
 {
 	private static final float
 		STANDARD_DAMAGE_FACTOR = 1.0f;
@@ -113,7 +113,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Missile> missileIterator = gameRessourceProvider.getActivePaintableEntityManager()
+		for(Iterator<Missile> missileIterator = gameRessourceProvider.getActiveManageablePaintableController()
 																	 .getMissiles()
 																	 .iterator(); missileIterator.hasNext(); )
 		{
@@ -155,7 +155,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 			Grantable reward = helicopter.getMultipleHitsExtraReward(this);
 			missileClusterManager.inactivateWith(reward);
 		}
-		gameRessourceProvider.storePaintableEntity(this);
+		gameRessourceProvider.storeManageablePaintable(this);
 	}
 	
 	private boolean canHit(Helicopter helicopter)
@@ -177,7 +177,7 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
 	private void checkIfMissileHitEnemy(GameRessourceProvider gameRessourceProvider)
 	{
 		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		for(Enemy enemy : gameRessourceProvider.getActivePaintableEntityManager()
+		for(Enemy enemy : gameRessourceProvider.getActiveManageablePaintableController()
 											   .getIntactEnemies())
 		{
 			if (enemy.isHittable(this))
@@ -284,9 +284,9 @@ public class Missile extends RectangularPaintableEntity implements GroupTypeOwne
     }
 	
 	@Override
-	public PaintableEntityGroupType getGroupType()
+	public ManageablePaintableGroupType getGroupType()
 	{
-		return PaintableEntityGroupType.MISSILE;
+		return ManageablePaintableGroupType.MISSILE;
 	}
     
     public boolean isStunning()
