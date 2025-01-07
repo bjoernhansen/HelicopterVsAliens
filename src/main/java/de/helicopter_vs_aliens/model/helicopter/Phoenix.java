@@ -49,8 +49,13 @@ public final class Phoenix extends Helicopter
 
     private boolean
         hasShortRangeRadiation;        // = true: Helikopter verfügt über Nahkampfbestrahlung
-
-
+    
+    
+    Phoenix(GameRessourceProvider gameRessourceProvider)
+    {
+        super(gameRessourceProvider);
+    }
+    
     @Override
     public HelicopterType getType()
     {

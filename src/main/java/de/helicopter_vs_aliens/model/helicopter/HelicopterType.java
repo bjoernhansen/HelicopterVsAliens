@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.helicopter;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.BossLevel;
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HeliosPainter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.KamaitachiPainter;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
@@ -152,7 +154,7 @@ public enum HelicopterType
     private final String
         fifthSpecialDictionaryKey;
     
-    private final Supplier<? extends Helicopter>
+    private final Function<GameRessourceProvider, ? extends Helicopter>
         instanceSupplier;
     
     private final Supplier<? extends Painter<Helicopter>>
@@ -169,7 +171,7 @@ public enum HelicopterType
        
     
     HelicopterType(Class<? extends Helicopter> helicopterClass,
-                   Supplier<? extends Helicopter> instanceSupplier,
+                   Function<GameRessourceProvider, ? extends Helicopter> instanceSupplier,
                    Supplier<? extends Painter<Helicopter>> painterInstanceSupplier,
                    Supplier<List<HelicopterType>> unlockerTypes,
                    Supplier<Clip> specialSound)
@@ -314,9 +316,9 @@ public enum HelicopterType
         return Optional.ofNullable(ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
     }
 
-    public Helicopter makeInstance()
+    public Helicopter makeInstance(GameRessourceProvider gameRessourceProvider)
     {
-        return instanceSupplier.get();
+        return instanceSupplier.apply(gameRessourceProvider);
     }
     
     public Class<? extends Helicopter> getCorrespondingClass()

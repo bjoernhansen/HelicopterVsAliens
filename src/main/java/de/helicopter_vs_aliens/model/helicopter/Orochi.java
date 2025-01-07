@@ -26,6 +26,11 @@ public final class Orochi extends Helicopter
         isNextMissileStunner;   // = true: die nächste abgeschossene Rakete wird eine Stopp-Rakete
     
     
+    Orochi(GameRessourceProvider gameRessourceProvider)
+    {
+        super(gameRessourceProvider);
+    }
+    
     @Override
     public HelicopterType getType()
     {

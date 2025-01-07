@@ -269,24 +269,19 @@ public class Events
                 // TODO übergabe von powerUps anders regeln
                 else if (keyEvent.isKeyEqualTo('d'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveManageablePaintableController()
-                                                                                 .getPowerUps(),
-                                                            PowerUpType.TRIPLE_DAMAGE);
+                    helicopter.switchPowerUpActivationState(PowerUpType.TRIPLE_DAMAGE);
                 }
                 else if (keyEvent.isKeyEqualTo('i'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveManageablePaintableController()
-                                                                                 .getPowerUps(), PowerUpType.INVINCIBLE);
+                    helicopter.switchPowerUpActivationState(PowerUpType.INVINCIBLE);
                 }
                 else if (keyEvent.isKeyEqualTo('c'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveManageablePaintableController()
-                                                                                 .getPowerUps(), PowerUpType.UNLIMITED_ENERGY);
+                    helicopter.switchPowerUpActivationState(PowerUpType.UNLIMITED_ENERGY);
                 }
                 else if (keyEvent.isKeyEqualTo('y'))
                 {
-                    helicopter.switchPowerUpActivationState(gameRessourceProvider.getActiveManageablePaintableController()
-                                                                                 .getPowerUps(), PowerUpType.BOOSTED_FIRE_RATE);
+                    helicopter.switchPowerUpActivationState(PowerUpType.BOOSTED_FIRE_RATE);
                 }
                 else if (keyEvent.isKeyEqualTo('a'))
                 {

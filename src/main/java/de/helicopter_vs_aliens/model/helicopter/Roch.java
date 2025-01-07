@@ -44,6 +44,11 @@ public final class Roch extends Helicopter
         isPowerShieldActivated;        // = true: Power-Shield ist aktiviert
     
     
+    Roch(GameRessourceProvider gameRessourceProvider)
+    {
+        super(gameRessourceProvider);
+    }
+    
     @Override
     public HelicopterType getType()
     {

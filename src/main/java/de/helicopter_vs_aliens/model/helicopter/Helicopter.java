@@ -174,7 +174,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         battery = Battery.createFor(getType());
     
     final PowerUpController
-        powerUpController = new PowerUpController(this);
+        powerUpController;
     
     public final Point2D
         location = new Point2D.Float();            // exakter Aufenthaltsort
@@ -197,9 +197,12 @@ public abstract class Helicopter extends RectangularPaintableEntity
     private boolean
         isCrashing;            // Helikopter befindet sich im Sturzflug
     
-    protected Helicopter()
+    protected Helicopter(GameRessourceProvider gameRessourceProvider)
     {
+        setGameRessourceProvider(gameRessourceProvider);
         paintBounds.setSize(HELICOPTER_SIZE);
+        powerUpController = new PowerUpController(gameRessourceProvider);
+        // TODO wirklich nötig? Die Instanz ist doch frisch initialisiert worden.
         powerUpController.turnOfAllBoosters();
     }
     
@@ -1431,10 +1434,9 @@ public abstract class Helicopter extends RectangularPaintableEntity
         powerUpController.restartPowerUpTimer(powerUpType);
     }
     
-    public void switchPowerUpActivationState(Queue<PowerUp> powerUps,
-                                             PowerUpType powerUpType)
+    public void switchPowerUpActivationState(PowerUpType powerUpType)
     {
-        powerUpController.switchPowerUpActivationState(powerUps, powerUpType);
+        powerUpController.switchPowerUpActivationState(powerUpType);
     }
     
     public void partialReset()

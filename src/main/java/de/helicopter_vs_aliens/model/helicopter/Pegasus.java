@@ -36,6 +36,10 @@ public final class Pegasus extends Helicopter
         hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator
     
     
+    Pegasus(GameRessourceProvider gameRessourceProvider)
+    {
+        super(gameRessourceProvider);
+    }
     
     @Override
     public HelicopterType getType()

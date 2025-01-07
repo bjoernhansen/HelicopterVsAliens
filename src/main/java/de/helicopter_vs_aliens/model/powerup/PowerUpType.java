@@ -74,9 +74,7 @@ public enum PowerUpType implements ManageablePaintableFactory<PowerUp>
     @Override
     public PowerUp makeInstance()
     {
-        PowerUp powerUp = new PowerUp();
-        powerUp.setType(this);
-        return powerUp;
+        return new PowerUp();
     }
     
     @Override

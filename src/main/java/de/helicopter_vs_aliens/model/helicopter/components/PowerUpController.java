@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.helicopter.components;
 
 import de.helicopter_vs_aliens.audio.Audio;
+import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Phoenix;
@@ -9,7 +10,6 @@ import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Queue;
 
 
 public class PowerUpController
@@ -17,16 +17,21 @@ public class PowerUpController
     private final Map<PowerUpType, Integer>
         powerUpTimers = new EnumMap<>(PowerUpType.class); // Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
     
+    private final GameRessourceProvider
+        gameRessourceProvider;
+    
     private final Helicopter
         helicopter;
     
-    public PowerUpController(Helicopter helicopter)
+    public PowerUpController(GameRessourceProvider gameRessourceProvider)
     {
-        this.helicopter = helicopter;
+        this.gameRessourceProvider = gameRessourceProvider;
+        this.helicopter = gameRessourceProvider.getHelicopter();
     }
     
     public void turnOfAllBoosters()
     {
+        // TODO Methode eventuell unnötig
         PowerUpType.getStatusBarPowerUpTypes()
                    .forEach(this::turnOfPowerUp);
     }
@@ -94,8 +99,7 @@ public class PowerUpController
                    });
     }
     
-    public void switchPowerUpActivationState(Queue<PowerUp> powerUps,
-                                             PowerUpType powerUpType)
+    public void switchPowerUpActivationState(PowerUpType powerUpType)
     {
         if(isPowerUpActive(powerUpType))
         {
@@ -111,16 +115,17 @@ public class PowerUpController
         {
             Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);
             becomeBoosteredPermanently(powerUpType);
-            activatePowerUp(powerUps, powerUpType);
+            activatePowerUp(powerUpType);
         }
     }
     
-    public void activatePowerUp(Queue<PowerUp> powerUps, PowerUpType powerUpType)
+    public void activatePowerUp(PowerUpType powerUpType)
     {
         if(!Window.collectedPowerUps.containsKey(powerUpType))
         {
-            PowerUp powerUp = PowerUp.getInstance(powerUpType);
-            powerUp.activateAndMoveToStatusBar(powerUps);
+            PowerUp powerUp = PowerUp.getInstance(gameRessourceProvider, powerUpType);
+            powerUp.initialize();
+            powerUp.moveToStatusbar();
             if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
             {
                 helicopter.adjustFireRate(true);

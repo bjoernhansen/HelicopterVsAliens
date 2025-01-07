@@ -152,14 +152,14 @@ public final class ActiveManageablePaintableController implements ActiveManageab
         return paintableEntityQueues.get(groupType);
     }
     
-    public Collection<GroupTypeOwner> getPaintableEntities(PaintableEntityGroupType groupType,
-                                                           Predicate<? super GroupTypeOwner> condition)
+    public Queue<ManageablePaintable> getPaintableEntities(ManageablePaintableGroupType groupType,
+                                                          Predicate<? super ManageablePaintable> condition)
     // TODO verwenden oder entfernen
     {
-        return paintableEntityQueues.get(groupType)
-                                    .stream()
-                                    .filter(condition)
-                                    .toList();
+        return paintableQueues.get(groupType)
+                              .stream()
+                              .filter(condition)
+                              .collect(Collectors.toCollection(ArrayDeque::new));
     }*/
     
     public void clearActiveEntities(ManageablePaintableGroupType groupType)
@@ -178,17 +178,20 @@ public final class ActiveManageablePaintableController implements ActiveManageab
     {
         paintableQueues.get(groupType).forEach(action);
     }
-/*
-    public <T extends PaintableEntity> T activatePaintable(PaintableEntityFactory<T> factory)
+   
+    public <T extends ManageablePaintable> T activatePaintableEntity(ManageablePaintableFactory<T> factory)
     {
-        T newPaintableEntityInstance = gameRessourceProvider.getNewPaintableEntityInstance(factory);
-        paintableEntityQueues.get(newPaintableEntityInstance.)
-    
-        getGameRessourceProvider().getActivePaintableEntityManager()
-                                  .getEnemyMissiles()
-                                  .add(enemyMissile);
-        
-        
-        return newPaintableEntityInstance;
-    }*/
+        T manageablePaintable = gameRessourceProvider.getNewManageablePaintableInstance(factory);
+        switch (manageablePaintable.getGroupType())
+        {
+            case INTACT_ENEMY -> intactEnemies.add((Enemy) manageablePaintable);
+            case DESTROYED_ENEMY -> destroyedEnemies.add((Enemy) manageablePaintable);
+            case MISSILE -> missiles.add((Missile) manageablePaintable);
+            case EXPLOSION -> explosions.add((Explosion) manageablePaintable);
+            case SCENERY_OBJECT -> sceneryObjects.add((SceneryObject) manageablePaintable);
+            case ENEMY_MISSILE -> enemyMissiles.add((EnemyMissile) manageablePaintable);
+            case POWER_UP -> powerUps.add((PowerUp) manageablePaintable);
+        }
+        return manageablePaintable;
+    }
 }

@@ -17,7 +17,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.Queue;
 
 
 public class PowerUp extends RectangularPaintableEntity implements ManageablePaintable
@@ -118,7 +117,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		return POWERUP_STOP_POSITION < (this.getX() - this.speed.getX() + 20);
 	}
 	
-	private void initialize()
+	public void initialize()
 	{
 		this.initialize(0, 0, 0, 0);
 	}
@@ -217,27 +216,18 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 	
-	public void activateAndMoveToStatusBar(Queue<PowerUp> powerUps)
-	{
-		this.initialize();
-		this.moveToStatusbar();
-		powerUps.add(this);
-	}
-
 	public static void activateInstance(GameRessourceProvider gameRessourceProvider, Enemy enemy)
 	{
 		PowerUpType powerUpType = enemy.getTypeOfRandomlyDroppedPowerUp();
 		int powerUpDirection = PowerUp.getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
-		PowerUp powerUp = PowerUp.getInstance(powerUpType);
+		PowerUp powerUp = PowerUp.getInstance(gameRessourceProvider, powerUpType);
 		powerUp.initialize(enemy, powerUpDirection);
-		gameRessourceProvider.getActiveManageablePaintableController()
-							 .getPowerUps().add(powerUp);
 	}
 
-	public static PowerUp getInstance(PowerUpType powerUpType)
+	public static PowerUp getInstance(GameRessourceProvider gameRessourceProvider, PowerUpType powerUpType)
 	{
-		PowerUp powerUp = GameResources.getProvider()
-									   .getNewManageablePaintableInstance(powerUpType);
+		PowerUp powerUp = gameRessourceProvider.getActiveManageablePaintableController()
+											   .activatePaintableEntity(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;
 	}

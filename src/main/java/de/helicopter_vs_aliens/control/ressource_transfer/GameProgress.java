@@ -44,7 +44,7 @@ public final class GameProgress implements GameRessourceProvider
     private Helicopter
         // TODO ... eigentlich sollte Helicopter hier noch gar nicht initialisiert werden müssen, muss er aber -> Checken
         helicopter = HelicopterType.getDefault()
-                                   .makeInstance();
+                                   .makeInstance(this);
 
     private final Scenery
         scenery;
@@ -63,6 +63,9 @@ public final class GameProgress implements GameRessourceProvider
 
     private final GameStatisticsCalculator
         gameStatisticsCalculator = new GameStatisticsCalculator();
+    
+    private final HelicopterFactory
+        helicopterFactory = new HelicopterFactory(this);
 
     private boolean
         isMouseCursorInWindow = true;
@@ -91,7 +94,7 @@ public final class GameProgress implements GameRessourceProvider
             restoreHelicopter();
             Events.restore(saveGame);
         }
-        Window.initialize();
+        Window.initialize(this);
         Window.updateButtonLabels(helicopter);
         scenery.createInitialSceneryObjects();
     }
@@ -261,21 +264,20 @@ public final class GameProgress implements GameRessourceProvider
     public void restoreHelicopter()
     {
         Objects.requireNonNull(saveGame);
-        Helicopter savedHelicopter = HelicopterFactory.createFromSavegame(saveGame);
+        Helicopter savedHelicopter = helicopterFactory.createFromSavegame(saveGame);
         setHelicopter(savedHelicopter);
     }
     
     @Override
     public void setNewHelicopter(HelicopterType nextHelicopterType)
     {
-        Helicopter newHelicopter = HelicopterFactory.createForNewGame(nextHelicopterType);
+        Helicopter newHelicopter = helicopterFactory.createForNewGame(nextHelicopterType);
         setHelicopter(newHelicopter);
     }
     
     private void setHelicopter(Helicopter helicopter)
     {
         this.helicopter = helicopter;
-        helicopter.setGameRessourceProvider(this);
         Window.dictionary.switchHelicopterTypeTo(helicopter.getType());
     }
 }

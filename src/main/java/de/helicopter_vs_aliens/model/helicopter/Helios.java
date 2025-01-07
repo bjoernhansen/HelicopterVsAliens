@@ -32,6 +32,12 @@ public final class Helios extends Helicopter
     private boolean
         hasPowerUpImmobilizer;  // = true: Helikopter verfügt über einen Interphasen-Generator
     
+    
+    Helios(GameRessourceProvider gameRessourceProvider)
+    {
+        super(gameRessourceProvider);
+    }
+    
     @Override
     public HelicopterType getType()
     {
@@ -92,10 +98,10 @@ public final class Helios extends Helicopter
     @Override
     public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        this.activatePowerUpGenerator(gameRessourceProvider.getActiveManageablePaintableController().getPowerUps());
+        this.activatePowerUpGenerator();
     }
 
-    private void activatePowerUpGenerator(Queue<PowerUp> powerUps)
+    private void activatePowerUpGenerator()
     {
         this.powerUpGeneratorTimer = (int)(0.4f * POWER_UP_DURATION);
         this.consumeSpellCosts();
@@ -119,7 +125,7 @@ public final class Helios extends Helicopter
                     Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);
                 }
                 powerUpController.restartPowerUpTimer(powerUpType);
-                powerUpController.activatePowerUp(powerUps, powerUpType);
+                powerUpController.activatePowerUp(powerUpType);
             }
             if(Calculations.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}
         }

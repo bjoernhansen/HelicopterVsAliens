@@ -1436,10 +1436,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     public void shoot(EnemyMissileType missileType,
                       double missileSpeed)
     {
-        EnemyMissile enemyMissile = getGameRessourceProvider().getNewManageablePaintableInstance(enemyMissileFactory);
-        getGameRessourceProvider().getActiveManageablePaintableController()
-                                  .getEnemyMissiles()
-                                  .add(enemyMissile);
+        EnemyMissile enemyMissile = getGameRessourceProvider().getActiveManageablePaintableController()
+                                                              .activatePaintableEntity(enemyMissileFactory);
         enemyMissile.launch(this, missileType, missileSpeed, shootingDirection);
         Audio.play(Audio.launch3);
     }

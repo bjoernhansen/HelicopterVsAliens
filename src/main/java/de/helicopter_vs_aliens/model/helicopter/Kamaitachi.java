@@ -30,6 +30,12 @@ public final class Kamaitachi extends Helicopter
     private boolean
         hasRapidFire;
     
+    
+    Kamaitachi(GameRessourceProvider gameRessourceProvider)
+    {
+        super(gameRessourceProvider);
+    }
+    
     @Override
     public HelicopterType getType()
     {

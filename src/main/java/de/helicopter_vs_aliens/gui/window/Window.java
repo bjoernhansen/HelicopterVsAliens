@@ -179,14 +179,12 @@ public abstract class Window implements Paintable
 	{
 		GraphicsManager.getInstance().paint(this);
 	}
-	
-	// Initialization
-	
-    public static void initialize()
+		
+    public static void initialize(GameRessourceProvider gameRessourceProvider)
     {
     	for(HelicopterType helicopterType : HelicopterType.getValues())
 		{
-			helicopterDummies.put(helicopterType, helicopterType.makeInstance());
+			helicopterDummies.put(helicopterType, helicopterType.makeInstance(gameRessourceProvider));
 		}
     	
     	helicopterSelection = (3 + Calculations.random(HelicopterType.count()-1))
