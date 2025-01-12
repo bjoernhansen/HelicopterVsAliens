@@ -74,7 +74,6 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
     		Explosion.start(gameRessourceProvider,
-    						helicopter,
 							(int)(helicopter.getX()
 									+ (helicopter.isMovingLeft
 										? Helicopter.FOCAL_POINT_X_LEFT

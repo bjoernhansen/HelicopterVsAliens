@@ -157,58 +157,64 @@ public class Explosion extends PaintableEntity implements ManageablePaintable
 	}
 	
 	public static void start(GameRessourceProvider gameRessourceProvider,
-							 Helicopter helicopter,
 							 double x, double y,
 							 ExplosionType explosionType,
 							 boolean extraDamage)
     {
-    	start(gameRessourceProvider, helicopter, x, y, explosionType, extraDamage, null);
+    	start(gameRessourceProvider, x, y, explosionType, extraDamage, null);
     }
 	
 	public static void start(GameRessourceProvider gameRessourceProvider,
-							 Helicopter helicopter,
 							 double x, double y,
 							 ExplosionType explosionType,
 							 boolean extraDamage,
 							 Enemy source)
     {
-		Explosion explosion = gameRessourceProvider.getNewManageablePaintableInstance(explosionFactory);
-		explosion.center.setLocation(x, y);
-		explosion.time = 0;
+		Explosion explosion = gameRessourceProvider.getActiveManageablePaintableController().activatePaintableEntity(explosionFactory);
+		explosion.initialize(x, y, explosionType, extraDamage, source);
+	}
+	
+	private void initialize(
+								  double x,
+								  double y,
+								  ExplosionType explosionType,
+								  boolean extraDamage,
+								  Enemy source)
+	{
+		center.setLocation(x, y);
+		time = 0;
 		// kann wahrscheinlich in den EMP spezifischen bereich verschoben werden
-		helicopter.becomesCenterOf(explosion);
-		explosion.type = explosionType;
-		explosion.source = source;
+		Helicopter helicopter = getHelicopter();
+		helicopter.becomesCenterOf(this);
+		type = explosionType;
+		this.source = source;
 		if(explosionType != ExplosionType.EMP)
 		{
-			explosion.maxTime = 35;
-			explosion.maxRadius = 65 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
-	    	explosion.broadness =  50 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
+			maxTime = 35;
+			maxRadius = 65 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 20 : 0) + (extraDamage ? 20 : 0);
+	    	broadness =  50 + (explosionType == ExplosionType.JUMBO  || explosionType == ExplosionType.PHASE_SHIFT  ? 25 : 0) + (extraDamage ? 25 : 0);
 		}
 		else
 		{
 			// EMP-Shockwave
 			if(WindowManager.window == START_SCREEN)
 			{
-				explosion.maxTime = 20;
-				explosion.maxRadius = 50;
-				explosion.broadness = 36;
+				maxTime = 20;
+				maxRadius = 50;
+				broadness = 36;
 			}
 			else
 			{
 				int level = helicopter.getUpgradeLevelOf(StandardUpgradeType.ENERGY_ABILITY);
-				explosion.maxTime = 20 + level;
-				explosion.maxRadius = 75 + (int)(19 + 3f * level * level);
-				explosion.broadness = 30 + 3 * (level);
+				maxTime = 20 + level;
+				maxRadius = 75 + (int)(19 + 3f * level * level);
+				broadness = 30 + 3 * (level);
 			}
-			((Pegasus)helicopter).empWave = explosion;
-	    	explosion.earnedMoney = 0;
-	    	explosion.kills = 0;
+			((Pegasus)helicopter).empWave = this;
+	    	earnedMoney = 0;
+	    	kills = 0;
 		}
-		gameRessourceProvider.getActiveManageablePaintableController()
-							 .getExplosions()
-							 .add(explosion);
-    }
+	}
 	
 	public float[] getProgress()
 	{

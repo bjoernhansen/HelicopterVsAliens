@@ -22,7 +22,6 @@ import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
 import de.helicopter_vs_aliens.model.missile.Grantable;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.missile.MissileFactory;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.score.Savegame;
 import de.helicopter_vs_aliens.score.ScoreScreenTimes;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 
 public abstract class Helicopter extends RectangularPaintableEntity
@@ -265,15 +263,11 @@ public abstract class Helicopter extends RectangularPaintableEntity
         List<Missile> launchedMissiles = new ArrayList<>();
         for(int i = 0; i < numberOfCannons; i++)
         {
-            Missile missile = getMissileInstance();
+            Missile missile = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(missileFactory);
+            resetMissile(missile);
             missile.launch(this, CANNON_Y_POSITIONS[i]);
             launchedMissiles.add(missile);
         }
-        
-        gameRessourceProvider.getActiveManageablePaintableController()
-                             .getMissiles()
-                             .addAll(launchedMissiles);
-        
         if(this.hasKillCountingMissiles())
         {
             clusterMissiles(launchedMissiles);
@@ -306,13 +300,6 @@ public abstract class Helicopter extends RectangularPaintableEntity
         {
             Audio.play(Audio.launch1);
         }
-    }
-    
-    private Missile getMissileInstance()
-    {
-        Missile missile = getGameRessourceProvider().getNewManageablePaintableInstance(missileFactory);
-        resetMissile(missile);
-        return missile;
     }
     
     void resetMissile(Missile missile)
@@ -779,7 +766,6 @@ public abstract class Helicopter extends RectangularPaintableEntity
         {
             Audio.play(Audio.explosion3);
             Explosion.start(getGameRessourceProvider(),
-                            this,
                             (int)(getX()
                                 + (isMovingLeft
                                 ? FOCAL_POINT_X_LEFT

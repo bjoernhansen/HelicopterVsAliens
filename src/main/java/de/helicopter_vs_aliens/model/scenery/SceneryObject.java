@@ -101,7 +101,7 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 	
     void preset()
     {        
-    	this.x = GraphicsAdapter.VIRTUAL_DIMENSION.getWidth() + 25;
+    	x = GraphicsAdapter.VIRTUAL_DIMENSION.getWidth() + 25;
     	
     	// Sicherstellen, dass zwischen dem Erscheinen von zwei Kakteen bzw. 
     	// zwei Steinen eine gewisse Mindestzeit vergangen ist
@@ -120,37 +120,37 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
         if( random >= 0 && random < CACTUS_FREQUENCY)
         {           
             // Kaktus
-        	this.type = SceneryObjectType.CACTUS;
-            this.width = 50;
-            this.layer = SceneryLayer.getRandomLayer();
+        	type = SceneryObjectType.CACTUS;
+            width = 50;
+            layer = SceneryLayer.getRandomLayer();
             cactusTimer = 125;
         }                
         else if( random >= CACTUS_FREQUENCY && random < UP_TO_STONE_FREQUENCY)
         {   
         	// Steine
-        	if(random < UP_TO_STONE_FREQUENCY - STONE_FREQUENCY/2 && !(hillTimer > 0)){this.layer = SceneryLayer.BACKGROUND;}
-        	else{this.layer = SceneryLayer.FOREGROUND_OUTER;}
-            this.type = SceneryObjectType.STONE;
-            this.coordinatesOfComponents[0][0] = 0; 					   // position (x)
-            this.coordinatesOfComponents[0][3] = 35; 					   // width
-            this.coordinatesOfComponents[0][2] = 50 + Calculations.random(75); // height
-            this.coordinatesOfComponents[0][1] = 12;  				   // position (y)
-            this.width = 125 + this.coordinatesOfComponents[0][2];
+        	if(random < UP_TO_STONE_FREQUENCY - STONE_FREQUENCY/2 && !(hillTimer > 0)){layer = SceneryLayer.BACKGROUND;}
+        	else{layer = SceneryLayer.FOREGROUND_OUTER;}
+            type = SceneryObjectType.STONE;
+            coordinatesOfComponents[0][0] = 0; 					   // position (x)
+            coordinatesOfComponents[0][3] = 35; 					   // width
+            coordinatesOfComponents[0][2] = 50 + Calculations.random(75); // height
+            coordinatesOfComponents[0][1] = 12;  				   // position (y)
+            width = 125 + coordinatesOfComponents[0][2];
             stoneTimer = 75;
         } 
         else if( random >= UP_TO_STONE_FREQUENCY && random < UP_TO_PALM_FREQUENCY)
         { 
             // Palme
-        	this.type = SceneryObjectType.PALM;
-            this.width = 225;
-			this.layer = SceneryLayer.getRandomLayer();
+        	type = SceneryObjectType.PALM;
+            width = 225;
+			layer = SceneryLayer.getRandomLayer();
             int a, b, c;
             a = 184 + Calculations.random(12);
             b = 150 + Calculations.random(12);
             c = 104 + Calculations.random(12);
-            this.colors[1] = new Color(a, b,c);
-            this.colors[0] = Colorations.adjustBrightness(this.colors[1], Colorations.NIGHT_DIM_FACTOR);
-            this.coordinatesOfComponents[0][0] = 20 + Calculations.random(70);
+            colors[1] = new Color(a, b,c);
+            colors[0] = Colorations.adjustBrightness(colors[1], Colorations.NIGHT_DIM_FACTOR);
+            coordinatesOfComponents[0][0] = 20 + Calculations.random(70);
             cactusTimer = 140;
 			sceneryObjectPainter.paintPalmStemImage(this);
 			clearColors();
@@ -158,39 +158,39 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
         else if( random >= UP_TO_PALM_FREQUENCY && random < UP_TO_HILL_FREQUENCY)
         {            
             // Hügel
-        	this.type = SceneryObjectType.HILL;
-            this.layer = SceneryLayer.BACKGROUND;
+        	type = SceneryObjectType.HILL;
+            layer = SceneryLayer.BACKGROUND;
             for(int i = 0; i < 2; i++)
             {
-            	this.coordinatesOfComponents[i][3] = 75 + Calculations.random(120); 			 // height
-            	this.coordinatesOfComponents[i][2] = (int)((1 + Math.random()/3)
-            										 *this.coordinatesOfComponents[i][3]); // width
-            	this.coordinatesOfComponents[i][1] = -this.coordinatesOfComponents[i][3]/4+8; 	 // position (y)
+            	coordinatesOfComponents[i][3] = 75 + Calculations.random(120); 			 // height
+            	coordinatesOfComponents[i][2] = (int)((1 + Math.random()/3)
+            										 *coordinatesOfComponents[i][3]); // width
+            	coordinatesOfComponents[i][1] = -coordinatesOfComponents[i][3]/4+8; 	 // position (y)
             }              
-            this.coordinatesOfComponents[0][0] = 0; 										 // position (x)
-            this.coordinatesOfComponents[1][0] = this.coordinatesOfComponents[0][2]/3
-            							   + Calculations.random(this.coordinatesOfComponents[0][2]/2);
-            this.width = Math.max(this.coordinatesOfComponents[1][0]
-                                  + this.coordinatesOfComponents[1][2],
-                                  this.coordinatesOfComponents[0][2]);
+            coordinatesOfComponents[0][0] = 0; 										 // position (x)
+            coordinatesOfComponents[1][0] = coordinatesOfComponents[0][2]/3
+            							   + Calculations.random(coordinatesOfComponents[0][2]/2);
+            width = Math.max(coordinatesOfComponents[1][0]
+                                  + coordinatesOfComponents[1][2],
+                                  coordinatesOfComponents[0][2]);
             backgroundObjectSelection = UP_TO_HILL_FREQUENCY;
-            if(mutualExclusionFactor < this.width/2)
+            if(mutualExclusionFactor < width/2)
             {
-            	mutualExclusionFactor = this.width/2;
+            	mutualExclusionFactor = width/2;
             } 
-            if(hillTimer < this.width/2){
-				hillTimer = this.width/2;}
+            if(hillTimer < width/2){
+				hillTimer = width/2;}
         }
         else if( random >= UP_TO_HILL_FREQUENCY && random < TOTAL_FREQUENCY)
         {            
             // Sand
-        	this.type = SceneryObjectType.DESERT;
-            this.layer = SceneryLayer.FOREGROUND_INNER;
-            this.width = 600 + Calculations.random(400);
+        	type = SceneryObjectType.DESERT;
+            layer = SceneryLayer.FOREGROUND_INNER;
+            width = 600 + Calculations.random(400);
             probabilityReductionFactor = 17;
-            if(mutualExclusionFactor < this.width/2)
+            if(mutualExclusionFactor < width/2)
             {
-            	mutualExclusionFactor = this.width/2;
+            	mutualExclusionFactor = width/2;
             }
             generalObjectTimer = 0;
             backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
@@ -202,41 +202,41 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 	{
 		for(int i = 0; i < 2; i++)
 		{
-			this.colors[i] = null;
+			colors[i] = null;
 		}
 	}
 	
-	void makeFirstCactus()
+	void initializeAsFirstCactus()
     {
-		this.x = 436;
-		this.type = SceneryObjectType.CACTUS;
-		this.layer = SceneryLayer.FOREGROUND_MIDDLE;
+		x = 436;
+		type = SceneryObjectType.CACTUS;
+		layer = SceneryLayer.FOREGROUND_MIDDLE;
     }
     
-    void makeFirstHill()
+    void initializeAsFirstHill()
     {
-		this.layer = SceneryLayer.BACKGROUND;
-		this.x = 638;
-		this.type = SceneryObjectType.HILL;
-		this.width = 151;		
-		this.coordinatesOfComponents[0][0] = 60;
-		this.coordinatesOfComponents[0][1] = -9;
-		this.coordinatesOfComponents[0][2] = 151;
-		this.coordinatesOfComponents[0][3] = 75;
-		this.coordinatesOfComponents[1][0] = 0;
-		this.coordinatesOfComponents[1][1] = -28;
-		this.coordinatesOfComponents[1][2] = 151;
-		this.coordinatesOfComponents[1][3] = 112;
+		layer = SceneryLayer.BACKGROUND;
+		x = 638;
+		type = SceneryObjectType.HILL;
+		width = 151;
+		coordinatesOfComponents[0][0] = 60;
+		coordinatesOfComponents[0][1] = -9;
+		coordinatesOfComponents[0][2] = 151;
+		coordinatesOfComponents[0][3] = 75;
+		coordinatesOfComponents[1][0] = 0;
+		coordinatesOfComponents[1][1] = -28;
+		coordinatesOfComponents[1][2] = 151;
+		coordinatesOfComponents[1][3] = 112;
     }
     
-    void makeFirstDesert()
+    void initializeAsFirstDesert()
     {
-        this.x = 1000;
-        this.type = SceneryObjectType.DESERT;
-        this.layer = SceneryLayer.FOREGROUND_INNER;
-        this.width = 800;            
+        x = 1000;
+        type = SceneryObjectType.DESERT;
+        layer = SceneryLayer.FOREGROUND_INNER;
+        width = 800;
         probabilityReductionFactor = 17;
-        mutualExclusionFactor = this.width/2;
+        mutualExclusionFactor = width/2;
         generalObjectTimer = 0;
         backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
         sceneryObjectPainter.paintDesertImage(this);
@@ -244,8 +244,8 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
     
     void clearImage()
     {
-    	this.images[0] = null;
-        this.images[1] = null;
+    	images[0] = null;
+        images[1] = null;
     }
 
 	public int getCoordinateOfComponent(int i, int j)
@@ -281,7 +281,7 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 	
 	public void setImage(int index, BufferedImage image)
 	{
-		this.images[index] = image;
+		images[index] = image;
 	}
 
 	public Color getColor(int index)

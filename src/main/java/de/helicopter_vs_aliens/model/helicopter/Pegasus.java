@@ -30,7 +30,7 @@ public final class Pegasus extends Helicopter
         empTimer = new Timer(EMP_TIMER_DURATION);   // Timer stellt sicher, dass eine Mindestzeit zwischen zwei ausgelösten EMPs liegt
 
     private final VariableTimer
-        interphaseGeneratorTimer = new VariableTimer(this.shiftTime);   // Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
+        interphaseGeneratorTimer = new VariableTimer(shiftTime);   // Zeit [frames] seit der letzten Offensiv-Aktion; bestimmt, ob der Interphasengenerator aktiviert ist
 
     private boolean
         hasInterphaseGenerator;		// = true: Helikopter verfügt über einen Interphasen-Generator
@@ -50,25 +50,25 @@ public final class Pegasus extends Helicopter
     @Override
     void updateTimer()
     {
-        //if(this.empTimer > 0){this.empTimer--;}
+        //if(empTimer > 0){empTimer--;}
         super.updateTimer();
-        if(this.hasInterphaseGenerator && !this.isDamaged)
+        if(hasInterphaseGenerator && !isDamaged)
         {
-            this.updateInterphaseGenerator();
+            updateInterphaseGenerator();
         }
     }
 
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasInterphaseGenerator;
+        return hasInterphaseGenerator;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.hasInterphaseGenerator = true;
-        this.adjustFireRate(this.hasBoostedFireRate());
+        hasInterphaseGenerator = true;
+        adjustFireRate(hasBoostedFireRate());
     }
 
     @Override
@@ -87,42 +87,41 @@ public final class Pegasus extends Helicopter
     @Override
     public boolean isEnergyAbilityActivatable()
     {
-        return !this.empTimer.isActive() && this.hasEnoughEnergyForAbility();
+        return !empTimer.isActive() && hasEnoughEnergyForAbility();
     }
 
     @Override
     public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        this.releaseEMP(gameRessourceProvider);
+        releaseEMP(gameRessourceProvider);
     }
 
     private void releaseEMP(GameRessourceProvider gameRessourceProvider)
     {
-        this.empTimer.start();
-        this.consumeSpellCosts();
+        empTimer.start();
+        consumeSpellCosts();
         Audio.play(Audio.emp);
         Explosion.start(gameRessourceProvider,
-                this,
-                (int)(this.getX()
-                        + (this.isMovingLeft
+                (int)(getX()
+                        + (isMovingLeft
                         ? FOCAL_POINT_X_LEFT
                         : FOCAL_POINT_X_RIGHT)),
-                (int)(this.getY()
+                (int)(getY()
                         + FOCAL_POINT_Y_EXP),
                 ExplosionType.EMP,
                 false);
-        this.restartInterphaseGenerator();
+        restartInterphaseGenerator();
     }
 
     private void restartInterphaseGenerator()
     {
-        this.interphaseGeneratorTimer.start(this.shiftTime);
+        interphaseGeneratorTimer.start(shiftTime);
     }
 
     @Override
     public boolean canBeStoppedByTractorBeam()
     {
-        return this.isInPhase()
+        return isInPhase()
                && super.canBeStoppedByTractorBeam();
     }
 
@@ -137,9 +136,9 @@ public final class Pegasus extends Helicopter
     public void adjustFireRate(boolean poweredUp)
     {
         super.adjustFireRate(poweredUp);
-        if(this.hasInterphaseGenerator)
+        if(hasInterphaseGenerator)
         {
-            this.shiftTime = shiftTime(this.calculateSumOfFireRateBooster(poweredUp));
+            shiftTime = shiftTime(calculateSumOfFireRateBooster(poweredUp));
         }
     }
     
@@ -153,62 +152,62 @@ public final class Pegasus extends Helicopter
     void shoot(GameRessourceProvider gameRessourceProvider)
     {
         super.shoot(gameRessourceProvider);
-        if(this.hasInterphaseGenerator)
+        if(hasInterphaseGenerator)
         {
             Audio.phaseShift.stop();
-            this.restartInterphaseGenerator();
+            restartInterphaseGenerator();
         }
     }
 
     @Override
     boolean isShootingStunningMissile()
     {
-        return !this.isInPhase();
+        return !isInPhase();
     }
     
     @Override
     void resetFifthSpecial()
     {
-        this.hasInterphaseGenerator = false;
+        hasInterphaseGenerator = false;
     }
     
     @Override
     public boolean basicCollisionRequirementsSatisfied(Enemy enemy)
     {
-        return this.isInPhase()
+        return isInPhase()
                 && super.basicCollisionRequirementsSatisfied(enemy);
     }
 
     public boolean isInPhase()
     {
-        return this.interphaseGeneratorTimer.isActive() || !this.hasInterphaseGenerator || WindowManager.window != WindowType.GAME;
+        return interphaseGeneratorTimer.isActive() || !hasInterphaseGenerator || WindowManager.window != WindowType.GAME;
     }
 
     @Override
     public void crash()
     {
-        if(this.hasInterphaseGenerator){Audio.phaseShift.stop();}
+        if(hasInterphaseGenerator){Audio.phaseShift.stop();}
         super.crash();
     }
     
     @Override
     public boolean isFifthSpecialOnMaximumStrength()
     {
-        return this.hasMaximumUpgradeLevelFor(StandardUpgradeType.FIRE_RATE);
+        return hasMaximumUpgradeLevelFor(StandardUpgradeType.FIRE_RATE);
     }
     
     @Override
     public boolean canBeHit()
     {
-        return this.isInPhase();
+        return isInPhase();
     }
     
     private void updateInterphaseGenerator()
     {
-        if(this.interphaseGeneratorTimer.hasExpired())
+        if(interphaseGeneratorTimer.hasExpired())
         {
             Audio.play(Audio.phaseShift);
-            if(this.tractor != null){this.stopTractor();}
+            if(tractor != null){stopTractor();}
         }
     }
     
@@ -216,7 +215,7 @@ public final class Pegasus extends Helicopter
     public boolean isLocationAdaptionApproved(Enemy enemy)
     {
         return  super.isLocationAdaptionApproved(enemy)
-                && this.isInPhase();
+                && isInPhase();
     }
     
     @Override
@@ -224,41 +223,41 @@ public final class Pegasus extends Helicopter
     {
         super.initMenuEffect(position);
         // TODO empWave sollte nach Menu ausgelagert werden, da es nur hier verwendet wird - wirklich? Überprüfen!
-        this.empWave = Explosion.createStartScreenExplosion(position);
+        empWave = Explosion.createStartScreenExplosion(position);
     }
     
     @Override
     public void stopMenuEffect()
     {
-        this.empWave = null;
+        empWave = null;
     }
     
     @Override
     public String getTypeSpecificDebuggingOutput()
     {
-        return String.format("emp Timer: %d; phaseShift Timer: %d", this.empTimer.getTimeLeft(), this.interphaseGeneratorTimer.getTimeLeft());
+        return String.format("emp Timer: %d; phaseShift Timer: %d", empTimer.getTimeLeft(), interphaseGeneratorTimer.getTimeLeft());
     }
     
     @Override
     public void resetStateTypeSpecific()
     {
-        this.empTimer.reset();
-        this.empWave = null;
-        this.restartInterphaseGenerator();
+        empTimer.reset();
+        empWave = null;
+        restartInterphaseGenerator();
     }
     
     @Override
     public void prepareForMission()
     {
         super.prepareForMission();
-        this.restartInterphaseGenerator();
+        restartInterphaseGenerator();
     }
     
     @Override
     void generalInitialization()
     {
         super.generalInitialization();
-        this.empWave = null;
+        empWave = null;
     }
     
     @Override

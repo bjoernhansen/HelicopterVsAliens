@@ -118,32 +118,31 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 																	 .iterator(); missileIterator.hasNext(); )
 		{
 			Missile missile = missileIterator.next();
-			missile.update(gameRessourceProvider, missileIterator);
+			missile.update();
+			if(!missile.flying)
+			{
+				missileIterator.remove();
+				missile.inactivate(gameRessourceProvider);
+			}
 		}
 	}
-
-	private void update(GameRessourceProvider gameRessourceProvider, Iterator<Missile> missileIterator)
+	
+	private void update()
 	{
-		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		setX(getX()
-					+ speed
-					+ (Scenery.backgroundMoves ? - SceneryObject.BG_SPEED : 0));
-				
+		double newX = getX() + speed + (Scenery.backgroundMoves ? -SceneryObject.BG_SPEED : 0);
+		setX(newX);
+		
+		
 		if(getX() > 1175 || getX() + 20 < 0)
 		{
 			flying = false;
 		}
-		else if(canHit(helicopter))
+		else if(canHit(getHelicopter()))
 		{
-			hit(helicopter);
+			hit(getHelicopter());
 		}
-		checkIfMissileHitEnemy(gameRessourceProvider);
-		if(!flying)
-		{
-			missileIterator.remove();
-			inactivate(gameRessourceProvider);
-			
-		}
+		checkIfMissileHitEnemy();
+
 		setPaintBounds();
 	}
 	
@@ -174,14 +173,14 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 		helicopter.takeMissileDamage();
 	}
 	
-	private void checkIfMissileHitEnemy(GameRessourceProvider gameRessourceProvider)
+	private void checkIfMissileHitEnemy()
 	{
-		Helicopter helicopter = gameRessourceProvider.getHelicopter();
-		for(Enemy enemy : gameRessourceProvider.getActiveManageablePaintableController()
+		for(Enemy enemy : getGameRessourceProvider().getActiveManageablePaintableController()
 											   .getIntactEnemies())
 		{
 			if (enemy.isHittable(this))
 			{
+				Helicopter helicopter = getHelicopter();
 				if (enemy.teleportTimer == 0
 					&& !enemy.isStunned()
 					&& enemy.empSlowedTimer == 0)
@@ -190,7 +189,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 				}
 				else if (!enemy.isInvincible())
 				{
-					enemy.hitByMissile(gameRessourceProvider, this);
+					enemy.hitByMissile(getGameRessourceProvider(), this);
 				}
 				else if (!bounced
 					&& enemy.teleportTimer < 1
@@ -211,7 +210,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 				}
 				else
 				{
-					enemy.dieByMissile(gameRessourceProvider, this);
+					enemy.dieByMissile(getGameRessourceProvider(), this);
 					
 					if (helicopter.deservesMantisReward(launchingTime))
 					{

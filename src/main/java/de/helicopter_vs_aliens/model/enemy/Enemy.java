@@ -1188,7 +1188,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         {
             performEmpWaveSurvivorActions();
             Explosion.start(gameRessourceProvider,
-                            pegasus,
                             getCenterX(),
                             getCenterY(), ExplosionType.STUNNING, false);
         }
@@ -1710,7 +1709,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
         Audio.play(getCrashToTheGroundSound());
         Explosion.start(gameRessourceProvider,
-                        getHelicopter(),
                         getCenterX(),
                         getCenterY(),
                         getExplosionType(),
@@ -2018,7 +2016,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             explodingTimer = 7;
         }
         Explosion.start(gameRessourceProvider,
-                        gameRessourceProvider.getHelicopter(),
                         getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
                             ? (missileSpeed < 0 ? 2 : 1) * getWidth() / 3
                             : getWidth() / 2),

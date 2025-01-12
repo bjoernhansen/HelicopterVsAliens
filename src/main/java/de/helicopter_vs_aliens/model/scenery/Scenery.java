@@ -67,19 +67,12 @@ public class Scenery extends PaintableEntity
     
     public void createInitialSceneryObjects()
     {
-        SceneryObject firstCactus = getSceneryObject();
-        firstCactus.makeFirstCactus();
-        SceneryObject firstHill = getSceneryObject();
-        firstHill.makeFirstHill();
-        SceneryObject firstDesert = getSceneryObject();
-        firstDesert.makeFirstDesert();
-        Collection<SceneryObject> firstSceneryObjects = List.of(firstCactus, firstHill, firstDesert);
-        getSceneryObjects().addAll(firstSceneryObjects);
-    }
-    
-    private SceneryObject getSceneryObject()
-    {
-        return getGameRessourceProvider().getNewManageablePaintableInstance(sceneryObjectFactory);
+        SceneryObject firstCactus = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
+        firstCactus.initializeAsFirstCactus();
+        SceneryObject firstHill = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
+        firstHill.initializeAsFirstHill();
+        SceneryObject firstDesert = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
+        firstDesert.initializeAsFirstDesert();
     }
     
     public void update(GameRessourceProvider gameRessourceProvider)
@@ -143,15 +136,14 @@ public class Scenery extends PaintableEntity
     
     private int numberOfMissingSceneryObjects()
     {
-        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getSceneryObjects().size();
+        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getGameRessourceProvider().getActiveManageablePaintableController().numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
     }
     
     private void generateNewSceneryObject()
     {
         SceneryObject.generalObjectTimer = ACTIVATION_PAUSE_DURATION;
-        SceneryObject sceneryObject = getSceneryObject();
+        SceneryObject sceneryObject = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
         sceneryObject.preset();
-        getSceneryObjects().add(sceneryObject);
     }
     
     private void moveCloud()

@@ -617,9 +617,7 @@ public class Events
 
                 Window.updateRepairShopButtonsAfterSpotlightPurchase();
 
-                gameRessourceProvider.getActiveManageablePaintableController()
-                                     .getDestroyedEnemies()
-                                     .forEach(Enemy::repaint);
+                gameRessourceProvider.getActiveManageablePaintableController().forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY, enemy -> ((Enemy)enemy).repaint());
 
                 gameRessourceProvider.getActiveManageablePaintableController()
                                      .getIntactEnemies()

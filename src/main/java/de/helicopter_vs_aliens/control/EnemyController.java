@@ -315,7 +315,6 @@ public class EnemyController
     {
         for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveManageablePaintableController()
                                                             .getDestroyedEnemies()
-                                                            
                                                             .iterator(); iterator.hasNext(); )
         {
             Enemy enemy = iterator.next();

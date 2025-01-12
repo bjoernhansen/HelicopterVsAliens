@@ -60,7 +60,6 @@ public final class StunningBarrier extends Barrier
         getHelicopter().receiveStaticCharge(ENERGY_CONSUMPTION_FACTOR);
         Audio.play(Audio.emp);
         Explosion.start(gameRessourceProvider,
-                        getHelicopter(),
                         (int)getCenterX(),
                         (int)getCenterY(),
                         ExplosionType.STUNNING,
