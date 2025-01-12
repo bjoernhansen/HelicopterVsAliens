@@ -4,7 +4,6 @@ import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
@@ -16,7 +15,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
 
 
 public class PowerUp extends RectangularPaintableEntity implements ManageablePaintable
@@ -47,21 +45,14 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-    	for(Iterator<PowerUp> iterator = gameRessourceProvider.getActiveManageablePaintableController()
-															  .getPowerUps().iterator(); iterator.hasNext();)
-		{
-			PowerUp powerUp = iterator.next();
-			powerUp.update(gameRessourceProvider.getHelicopter());
-			if(powerUp.wasCollected)
-			{
-				iterator.remove();
-				gameRessourceProvider.storeManageablePaintable(powerUp);
-			}
-		}		
+		var paintableController = gameRessourceProvider.getActiveManageablePaintableController();
+		paintableController.forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, powerUp -> ((PowerUp)powerUp).update());
+		paintableController.removeIf(ManageablePaintableGroupType.POWER_UP, powerUp -> ((PowerUp)powerUp).wasCollected);
 	}
 
-	private void update(Helicopter helicopter)
-	{		
+	private void update()
+	{
+		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
 		if(this.intersects(helicopter))
 		{
 			this.collect(helicopter);

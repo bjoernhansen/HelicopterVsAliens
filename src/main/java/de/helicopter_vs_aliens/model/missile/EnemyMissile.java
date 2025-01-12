@@ -14,8 +14,6 @@ import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
-import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.*;
 import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.BUSTER;
@@ -52,8 +50,9 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 	{
 	}
 	
-	private void update(Helicopter helicopter)
-    {    		
+	private void update()
+    {
+		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
     	this.determineColor();
 		this.location.setLocation( this.location.getX() + this.speed.getX() - (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
 								   this.location.getY() + this.speed.getY() );	
@@ -144,23 +143,22 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		Queue<EnemyMissile> enemyMissiles = gameRessourceProvider.getActiveManageablePaintableController()
-																 .getEnemyMissiles();
-		for(Iterator<EnemyMissile> enemyMissileIterator = enemyMissiles.iterator(); enemyMissileIterator.hasNext();)
-		{
-			EnemyMissile enemyMissile = enemyMissileIterator.next();
-			enemyMissile.update(gameRessourceProvider.getHelicopter());
-			if(    enemyMissile.location.getX() + 80 < 0
-				|| enemyMissile.location.getX() > 1050
-				|| enemyMissile.location.getY() + 20 < 0
-				|| enemyMissile.location.getY() > 515
-				|| enemyMissile.hasHit)
-			{
-				enemyMissileIterator.remove();
-				gameRessourceProvider.storeManageablePaintable(enemyMissile);
-			}
-		}		
+		var paintableController = gameRessourceProvider.getActiveManageablePaintableController();
+		paintableController.forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE,
+												enemyMissile -> ((EnemyMissile)enemyMissile).update());
+		paintableController.removeIf(ManageablePaintableGroupType.ENEMY_MISSILE,
+									 enemyMissile -> ((EnemyMissile)enemyMissile).isOutOfSight());
 	}
+	
+	private boolean isOutOfSight()
+	{
+		return location.getX() + 80 < 0
+			|| location.getX() > 1050
+			|| location.getY() + 20 < 0
+			|| location.getY() > 515
+			|| hasHit;
+	}
+	
 	
 	public Point2D getLocation()
 	{

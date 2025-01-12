@@ -10,9 +10,11 @@ import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.util.ArrayDeque;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 // TODO finish implementation
 
@@ -178,7 +180,17 @@ public final class ActiveManageablePaintableController implements ActiveManageab
     {
         paintableQueues.get(groupType).forEach(action);
     }
-   
+    
+    public void removeIf(ManageablePaintableGroupType manageablePaintableGroupType,
+                         Predicate<ManageablePaintable> removeCondition)
+    {
+        Queue<? extends ManageablePaintable> manageablePaintables = paintableQueues.get(manageablePaintableGroupType);
+        List<? extends ManageablePaintable> toRemove = manageablePaintables.stream()
+                                                                           .filter(removeCondition).toList();
+        manageablePaintables.removeIf(removeCondition);
+        toRemove.forEach(gameRessourceProvider::storeManageablePaintable);
+    }
+    
     public <T extends ManageablePaintable> T activatePaintableEntity(ManageablePaintableFactory<T> factory)
     {
         T manageablePaintable = gameRessourceProvider.getNewManageablePaintableInstance(factory);
