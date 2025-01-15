@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.control.entities;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
 
 public final class ManageablePaintableSupplier
 {
@@ -21,7 +20,7 @@ public final class ManageablePaintableSupplier
         getManageablePaintableStore(paintableEntity.getClass()).store(paintableEntity);
     }
     
-    public void storeAll(Queue<? extends ManageablePaintable> gameEntities)
+    public void storeAll(Iterable<? extends ManageablePaintable> gameEntities)
     {
         gameEntities.forEach(this::store);
     }

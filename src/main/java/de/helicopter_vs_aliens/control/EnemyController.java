@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
@@ -21,14 +22,14 @@ public class EnemyController
 {
     private static final int
         MIN_BARRIER_LEVEL = 2,
-        MIN_FUTURE_LEVEL  = 8,
-        MIN_KABOOM_LEVEL  = 12,
-        MIN_ROCK_LEVEL    = 27,
+        MIN_FUTURE_LEVEL = 8,
+        MIN_KABOOM_LEVEL = 12,
+        MIN_ROCK_LEVEL = 27,
         ROCK_FREE_TIME = 250,    // Zeit die mind. vergeht, bis ein neuer Hindernis-Gegner erscheint
         MAX_BARRIER_NUMBER = 3;
     
     private static final float
-        ROCK_PROB   = 0.05f,	// Rate mit der Rock-Gegner erscheinen
+        ROCK_PROB = 0.05f,    // Rate mit der Rock-Gegner erscheinen
         KABOOM_PROB = 0.02f;    // Rate mit der Kaboom-Gegner erscheinen
     
     private static final EnemySelector
@@ -42,7 +43,7 @@ public class EnemyController
     public static final EnumSet<FinalBossServantType>
         missingFinalBossServants = EnumSet.noneOf(FinalBossServantType.class);
     
-    public static int barrierTimer;		// reguliert das Erscheinen von Hindernis-Gegnern
+    public static int barrierTimer;        // reguliert das Erscheinen von Hindernis-Gegnern
     
     public static int rockTimer;            // reguliert das Erscheinen von "Rock"-Gegnern
     
@@ -54,7 +55,7 @@ public class EnemyController
         carrierDestroyedJustNow;    // Referenz auf den zuletzt zerstörten Carrier-Gegner
     
     public static final Enemy[]
-        livingBarrier = new Enemy [MAX_BARRIER_NUMBER];
+        livingBarrier = new Enemy[MAX_BARRIER_NUMBER];
     
     public static int currentNumberOfBarriers; // aktuelle Anzahl von "lebenden" Hindernis-Gegnern
     
@@ -62,12 +63,18 @@ public class EnemyController
     public static void generateNewEnemies(GameRessourceProvider gameRessourceProvider)
     {
         Events.lastCreationTimer++;
-        if(wasCarrierDestroyedJustNow()){
-            createCarrierServants(gameRessourceProvider);}
-        else if(LevelManager.wasEnemyCreationPaused){
-            verifyCreationStop(gameRessourceProvider);}
-        if(isBossServantCreationApproved()){
-            createBossServant(gameRessourceProvider);}
+        if(wasCarrierDestroyedJustNow())
+        {
+            createCarrierServants(gameRessourceProvider);
+        }
+        else if(LevelManager.wasEnemyCreationPaused)
+        {
+            verifyCreationStop(gameRessourceProvider);
+        }
+        if(isBossServantCreationApproved())
+        {
+            createBossServant(gameRessourceProvider);
+        }
         else if(isEnemyCreationApproved(gameRessourceProvider.getActiveManageablePaintableController()
                                                              .getIntactEnemies()))
         {
@@ -97,11 +104,13 @@ public class EnemyController
     
     private static void verifyCreationStop(GameRessourceProvider gameRessourceProvider)
     {
-        if(	gameRessourceProvider.getActiveManageablePaintableController()
-                                    .getIntactEnemies().isEmpty()
+        if(gameRessourceProvider.getActiveManageablePaintableController()
+                                .getIntactEnemies()
+                                .isEmpty()
             && carrierDestroyedJustNow == null
-            && !(gameRessourceProvider.getHelicopter().isUnacceptablyBoostedForBossLevel()
-            && Events.isCurrentLevelBossLevel()) )
+            && !(gameRessourceProvider.getHelicopter()
+                                      .isUnacceptablyBoostedForBossLevel()
+            && Events.isCurrentLevelBossLevel()))
         {
             LevelManager.wasEnemyCreationPaused = false;
             if(Events.isCurrentLevelBossLevel())
@@ -146,7 +155,7 @@ public class EnemyController
     private static boolean isEnemyCreationApproved(Queue<Enemy> enemies)
     {
         int numberOfEnemies = enemies.size();
-        return     !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
+        return !hasNumberOfEnemiesReachedLimit(numberOfEnemies)
             && !isMajorBossActive(enemies)
             && !LevelManager.wasEnemyCreationPaused
             && !Events.wasMaximumLevelExceeded()
@@ -161,7 +170,9 @@ public class EnemyController
     
     private static boolean isMajorBossActive(Queue<Enemy> enemies)
     {
-        return !enemies.isEmpty() && enemies.element().getType().isMajorBoss();
+        return !enemies.isEmpty() && enemies.element()
+                                            .getType()
+                                            .isMajorBoss();
     }
     
     private static void createBoss2Servants(GameRessourceProvider gameRessourceProvider)
@@ -170,7 +181,7 @@ public class EnemyController
         LevelManager.wasEnemyCreationPaused = true;
         LevelManager.nextBossEnemyType = EnemyType.BOSS_2_SERVANT;
         LevelManager.maxNr = 12;
-        for (int m = 0; m < LevelManager.maxNr; m++)
+        for(int m = 0; m < LevelManager.maxNr; m++)
         {
             creation(gameRessourceProvider);
         }
@@ -181,17 +192,18 @@ public class EnemyController
     private static void createAllFinalBossServants(GameRessourceProvider gameRessourceProvider)
     {
         makeAllFinalBossServants = false;
-        FinalBossServantType.getValues().forEach(servantType -> {
-            LevelManager.nextBossEnemyType = servantType.getEnemyType();
-            creation(gameRessourceProvider);
-        });
+        FinalBossServantType.getValues()
+                            .forEach(servantType -> {
+                                LevelManager.nextBossEnemyType = servantType.getEnemyType();
+                                creation(gameRessourceProvider);
+                            });
     }
     
     private static void createMissingFinalBossServants(GameRessourceProvider gameRessourceProvider)
     {
         FinalBossServantType.getValues()
                             .forEach(servantType -> {
-                                if (missingFinalBossServants.contains(servantType))
+                                if(missingFinalBossServants.contains(servantType))
                                 {
                                     missingFinalBossServants.remove(servantType);
                                     LevelManager.nextBossEnemyType = servantType.getEnemyType();
@@ -202,16 +214,16 @@ public class EnemyController
     
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {
-        Queue<Enemy> activeEnemies = gameRessourceProvider.getActiveManageablePaintableController()
-                                                          .getIntactEnemies();
-        int activeEnemyCount = activeEnemies.size();
+        int activeEnemyCount = gameRessourceProvider.getActiveManageablePaintableController()
+                                                    .numberOfActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY);
         ManageablePaintableFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
-        Enemy enemy = gameRessourceProvider.getNewManageablePaintableInstance(enemyFactory);
+        Enemy enemy = gameRessourceProvider.getActiveManageablePaintableController()
+                                            .activatePaintableEntity(enemyFactory);
         enemy.reset();
-        activeEnemies.add(enemy);
         if(enemy.countsForTotalAmountOfEnemiesSeen())
         {
-            gameRessourceProvider.getGameStatisticsCalculator().incrementNumberOfEnemiesSeen();
+            gameRessourceProvider.getGameStatisticsCalculator()
+                                 .incrementNumberOfEnemiesSeen();
         }
         Events.lastCreationTimer = 0;
         enemy.initialize();
@@ -219,11 +231,26 @@ public class EnemyController
     
     private static ManageablePaintableFactory<Enemy> getEnemyFactory(int activeEnemyCount)
     {
-        if(wasCarrierDestroyedJustNow()){return EnemyType.ESCAPED_SPEEDER;}
-        if(barrierCreationApproved(activeEnemyCount)){return getNextBarrierType();}
-        if(rockCreationApproved()){return EnemyType.ROCK;}
-        if(kaboomCreationApproved()){return EnemyType.KABOOM;}
-        if(isBossEnemyToBeCreated()){return LevelManager.nextBossEnemyType;}
+        if(wasCarrierDestroyedJustNow())
+        {
+            return EnemyType.ESCAPED_SPEEDER;
+        }
+        if(barrierCreationApproved(activeEnemyCount))
+        {
+            return getNextBarrierType();
+        }
+        if(rockCreationApproved())
+        {
+            return EnemyType.ROCK;
+        }
+        if(kaboomCreationApproved())
+        {
+            return EnemyType.KABOOM;
+        }
+        if(isBossEnemyToBeCreated())
+        {
+            return LevelManager.nextBossEnemyType;
+        }
         return getNextDefaultEnemyType();
     }
     
@@ -240,11 +267,13 @@ public class EnemyController
     private static EnemyType getNextBarrierType()
     {
         int randomBarrierSelectionModifier = isBarrierFromFutureCreationApproved()
-                                                ? Calculations.random(3)
-                                                : 0;
-        int selectedBarrierIndex = Calculations.random(Math.min(LevelManager.selectionBarrier + randomBarrierSelectionModifier, EnemyType.getBarrierTypes().size()));
-        return (EnemyType) EnemyType.getBarrierTypes()
-                                    .toArray()[selectedBarrierIndex];
+            ? Calculations.random(3)
+            : 0;
+        int selectedBarrierIndex = Calculations.random(Math.min(LevelManager.selectionBarrier + randomBarrierSelectionModifier,
+                                                                EnemyType.getBarrierTypes()
+                                                                         .size()));
+        return (EnemyType)EnemyType.getBarrierTypes()
+                                   .toArray()[selectedBarrierIndex];
     }
     
     private static boolean isBarrierFromFutureCreationApproved()
@@ -281,15 +310,20 @@ public class EnemyController
     // TODO gehört in eine eigene Klasse
     public static void updateAllActive(GameRessourceProvider gameRessourceProvider)
     {
-        if(rockTimer > 0){
-            rockTimer--;}
-        if(Scenery.backgroundMoves && barrierTimer > 0){
-            barrierTimer--;}
+        if(rockTimer > 0)
+        {
+            rockTimer--;
+        }
+        if(Scenery.backgroundMoves && barrierTimer > 0)
+        {
+            barrierTimer--;
+        }
         countBarriers(gameRessourceProvider.getActiveManageablePaintableController()
                                            .getIntactEnemies());
         
         for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveManageablePaintableController()
-                                                            .getIntactEnemies().iterator(); iterator.hasNext();)
+                                                            .getIntactEnemies()
+                                                            .iterator(); iterator.hasNext(); )
         {
             Enemy enemy = iterator.next();
             if(enemy.isIntact() && !enemy.isMarkedForRemoval())
@@ -300,7 +334,8 @@ public class EnemyController
             {
                 iterator.remove();
                 gameRessourceProvider.getActiveManageablePaintableController()
-                                     .getDestroyedEnemies().add(enemy);
+                                     .getDestroyedEnemies()
+                                     .add(enemy);
             }
             else
             {
@@ -341,8 +376,8 @@ public class EnemyController
         {
             if(enemy.getModel() == EnemyModelType.BARRIER && enemy.isOnScreen())
             {
-                enemy.explode(gameRessourceProvider);
-                enemy.destroyByHelicopter(gameRessourceProvider);
+                enemy.explode();
+                enemy.destroyByHelicopter();
             }
             else if(!enemy.isOnScreen())
             {
@@ -355,9 +390,9 @@ public class EnemyController
     {
         Arrays.fill(livingBarrier, null);
         currentNumberOfBarriers = 0;
-        for(Enemy enemy  : enemies)
+        for(Enemy enemy : enemies)
         {
-            if (enemy.getModel() == EnemyModelType.BARRIER
+            if(enemy.getModel() == EnemyModelType.BARRIER
                 && enemy.isIntact()
                 && !enemy.isMarkedForRemoval())
             {

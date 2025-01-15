@@ -1756,8 +1756,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             && !isInvincible()
             && isIntact())
         {
-            explode(gameRessourceProvider,
-                    0,
+            explode(0,
                     getExplosionType(),
                     dealsExtraCollisionDamage());
             
@@ -1766,7 +1765,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             {
                 grantRewards(gameRessourceProvider, null, helicopter.hasPerformedTeleportKill());
             }
-            destroyByHelicopter(gameRessourceProvider);
+            destroyByHelicopter();
         }
         if(helicopter.isDestinedToCrash())
         {
@@ -1855,8 +1854,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     public void hitByMissile(GameRessourceProvider gameRessourceProvider, Missile missile)
     {
-        gameRessourceProvider.getGameStatisticsCalculator()
-                             .incrementHitCounter();
+        getGameStatisticsCalculator().incrementHitCounter();
         // TODO Audio.playExplosionSound(boolean isGreatExplosion)
         if(missile.hasGreatExplosivePower())
         {
@@ -1887,7 +1885,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         {
             Audio.play(Audio.stun);
         }
-        explode(gameRessourceProvider, missile);
+        explode(missile);
         nonStunnableTimer = (int)(type.isMainBoss() || type.isFinalBossServant()
             ? 2.25f * Events.level
             : 0);
@@ -1995,18 +1993,17 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return DEFAULT_TURN_PROBABILITY;
     }
     
-    public void explode(GameRessourceProvider gameRessourceProvider)
+    public void explode()
     {
-        explode(gameRessourceProvider, 0, ExplosionType.ORDINARY, false);
+        explode(0, ExplosionType.ORDINARY, false);
     }
     
-    private void explode(GameRessourceProvider gameRessourceProvider, Missile missile)
+    private void explode(Missile missile)
     {
-        explode(gameRessourceProvider, missile.getSpeed(), missile.getTypeOfExplosion(), missile.inflictsExtraDamage());
+        explode(missile.getSpeed(), missile.getTypeOfExplosion(), missile.inflictsExtraDamage());
     }
     
-    private void explode(GameRessourceProvider gameRessourceProvider,
-                         double missileSpeed,
+    private void explode(double missileSpeed,
                          ExplosionType explosionType,
                          boolean extraDamage)
     {
@@ -2015,7 +2012,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         {
             explodingTimer = 7;
         }
-        Explosion.start(gameRessourceProvider,
+        Explosion.start(getGameRessourceProvider(),
                         getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
                             ? (missileSpeed < 0 ? 2 : 1) * getWidth() / 3
                             : getWidth() / 2),
@@ -2024,15 +2021,15 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                         extraDamage);
     }
     
-    public void destroyByHelicopter(GameRessourceProvider gameRessourceProvider)
+    public void destroyByHelicopter()
     {
-        writeDestructionStatistics(gameRessourceProvider.getGameStatisticsCalculator());
+        writeDestructionStatistics();
         beDestroyed();
     }
     
-    protected void writeDestructionStatistics(GameStatisticsCalculator gameStatisticsCalculator)
+    protected void writeDestructionStatistics()
     {
-        gameStatisticsCalculator.incrementNumberOfEnemiesKilled();
+        getGameStatisticsCalculator().incrementNumberOfEnemiesKilled();
     }
     
     void destroyByCrash(GameRessourceProvider gameRessourceProvider)
@@ -2117,7 +2114,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     public void die(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
     {
         grantRewards(gameRessourceProvider, missile, beamKill);
-        destroyByHelicopter(gameRessourceProvider);
+        destroyByHelicopter();
         
         if(cloakingDevice.isEnabled())
         {
@@ -2126,11 +2123,11 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         
         if(missile == null)
         {
-            explode(gameRessourceProvider);
+            explode();
         }
         else if(!missile.isStunning())
         {
-            explode(gameRessourceProvider, missile);
+            explode(missile);
         }
         
         evaluateBossDestructionEffect(gameRessourceProvider);
@@ -2632,5 +2629,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     public boolean hasCrashed()
     {
         return hasCrashed;
+    }
+    
+    protected final GameStatisticsCalculator getGameStatisticsCalculator()
+    {
+        return getGameRessourceProvider().getGameStatisticsCalculator();
     }
 }

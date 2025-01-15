@@ -75,21 +75,16 @@ public abstract class BasicEnemy extends StandardEnemy
         }
     }
     
-    private GameStatisticsCalculator getGameStatisticsCalculator()
-    {
-        return getGameRessourceProvider().getGameStatisticsCalculator();
-    }
-    
     private boolean isToBecomeCloakableMiniBoss()
     {
         return hasCanonReadyToFire() || (getType().isCloakableAsMiniBoss() && Calculations.tossUp(0.2f));
     }
     
     @Override
-    protected void writeDestructionStatistics(GameStatisticsCalculator gameStatisticsCalculator)
+    protected void writeDestructionStatistics()
     {
-        super.writeDestructionStatistics(gameStatisticsCalculator);
-        if(isMiniBoss){gameStatisticsCalculator.incrementNumberOfMiniBossKilled();}
+        super.writeDestructionStatistics();
+        if(isMiniBoss){getGameStatisticsCalculator().incrementNumberOfMiniBossKilled();}
     }
     
     private void resizeToMiniBossDimension()

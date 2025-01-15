@@ -13,7 +13,7 @@ final class ManageablePaintableStore<T extends ManageablePaintable>
         entities = new ArrayDeque<>();
     
     
-    public T retrieve(ManageablePaintableFactory<? extends T> factory)
+    T retrieve(ManageablePaintableFactory<? extends T> factory)
     {
         return Optional.ofNullable(entities.poll())
                        .orElseGet(() -> makeInstanceWithDependenciesUsing(factory));
@@ -26,12 +26,12 @@ final class ManageablePaintableStore<T extends ManageablePaintable>
         return paintableEntity;
     }
     
-    public void store(T paintableEntity)
+    void store(T paintableEntity)
     {
         entities.add(paintableEntity);
     }
     
-    public int size()
+    int size()
     {
         return entities.size();
     }

@@ -1,7 +1,9 @@
 package de.helicopter_vs_aliens.model.enemy.boss;
 
 import de.helicopter_vs_aliens.control.Events;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.StandardEnemy;
 import de.helicopter_vs_aliens.util.Calculations;
 
@@ -63,14 +65,17 @@ public abstract class BossEnemy extends StandardEnemy
     protected void killOwnServants(GameRessourceProvider gameRessourceProvider)
     {
         gameRessourceProvider.getActiveManageablePaintableController()
-                             .getIntactEnemies()
-                             .forEach(enemy -> {
-                                 enemy.explode(gameRessourceProvider);
-                                 if(enemy != this)
-                                 {
-                                     enemy.destroyByHelicopter(gameRessourceProvider);
-                                 }
-                             });
+                             .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
+                                                  enemy -> this.killServant((Enemy)enemy));
+    }
+    
+    public void killServant(Enemy enemy)
+    {
+        enemy.explode();
+        if(enemy != this)
+        {
+            enemy.destroyByHelicopter();
+        }
     }
     
     @Override

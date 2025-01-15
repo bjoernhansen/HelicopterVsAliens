@@ -154,6 +154,7 @@ public final class GameProgress implements GameRessourceProvider
         manageablePaintableSupplier.storeAll(manageablePaintableInstances);
     }
     
+    // TODO diese Methode sollte vielleicht nur noch über den ActiveEntityManager zur Verfügung stehen und dieser sollte dann vielleicht auch nicht mehr Active im Namen tragen
     @Override
     public <T extends ManageablePaintable> int numberOfInactiveManageablePaintableInstances(Class<T> classOfManageablePaintable)
     {

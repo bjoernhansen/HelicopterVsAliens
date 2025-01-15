@@ -270,7 +270,7 @@ public abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void writeDestructionStatistics(GameStatisticsCalculator gameStatisticsCalculator)
+    protected void writeDestructionStatistics()
     {
     }
     

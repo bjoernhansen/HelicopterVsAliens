@@ -10,7 +10,6 @@ import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.util.ArrayDeque;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.function.Consumer;
@@ -173,36 +172,38 @@ public final class ActiveManageablePaintableController implements ActiveManageab
     
     public int numberOfActiveEntities(ManageablePaintableGroupType groupType)
     {
-        return paintableQueues.get(groupType).size();
+        return paintableQueues.get(groupType)
+                              .size();
     }
     
-    public void forEachActiveEntity(ManageablePaintableGroupType groupType, Consumer<ManageablePaintable> action)
+    public void forEachActiveEntity(ManageablePaintableGroupType groupType, Consumer<? super ManageablePaintable> action)
     {
-        paintableQueues.get(groupType).forEach(action);
+        paintableQueues.get(groupType)
+                       .forEach(action);
     }
     
     public void removeIf(ManageablePaintableGroupType manageablePaintableGroupType,
-                         Predicate<ManageablePaintable> removeCondition)
+                         Predicate<? super ManageablePaintable> removeCondition)
     {
         Queue<? extends ManageablePaintable> manageablePaintables = paintableQueues.get(manageablePaintableGroupType);
-        List<? extends ManageablePaintable> toRemove = manageablePaintables.stream()
-                                                                           .filter(removeCondition).toList();
+        manageablePaintables.stream()
+                            .filter(removeCondition)
+                            .forEach(gameRessourceProvider::storeManageablePaintable);
         manageablePaintables.removeIf(removeCondition);
-        toRemove.forEach(gameRessourceProvider::storeManageablePaintable);
     }
     
     public <T extends ManageablePaintable> T activatePaintableEntity(ManageablePaintableFactory<T> factory)
     {
         T manageablePaintable = gameRessourceProvider.getNewManageablePaintableInstance(factory);
-        switch (manageablePaintable.getGroupType())
+        switch(manageablePaintable.getGroupType())
         {
-            case INTACT_ENEMY -> intactEnemies.add((Enemy) manageablePaintable);
-            case DESTROYED_ENEMY -> destroyedEnemies.add((Enemy) manageablePaintable);
-            case MISSILE -> missiles.add((Missile) manageablePaintable);
-            case EXPLOSION -> explosions.add((Explosion) manageablePaintable);
-            case SCENERY_OBJECT -> sceneryObjects.add((SceneryObject) manageablePaintable);
-            case ENEMY_MISSILE -> enemyMissiles.add((EnemyMissile) manageablePaintable);
-            case POWER_UP -> powerUps.add((PowerUp) manageablePaintable);
+            case INTACT_ENEMY -> intactEnemies.add((Enemy)manageablePaintable);
+            case DESTROYED_ENEMY -> destroyedEnemies.add((Enemy)manageablePaintable);
+            case MISSILE -> missiles.add((Missile)manageablePaintable);
+            case EXPLOSION -> explosions.add((Explosion)manageablePaintable);
+            case SCENERY_OBJECT -> sceneryObjects.add((SceneryObject)manageablePaintable);
+            case ENEMY_MISSILE -> enemyMissiles.add((EnemyMissile)manageablePaintable);
+            case POWER_UP -> powerUps.add((PowerUp)manageablePaintable);
         }
         return manageablePaintable;
     }
