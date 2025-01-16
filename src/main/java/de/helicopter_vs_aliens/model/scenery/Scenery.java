@@ -90,7 +90,7 @@ public class Scenery extends PaintableEntity
             {
                 sceneryObject.clearImage();
                 iterator.remove();
-                gameRessourceProvider.storeManageablePaintable(sceneryObject);
+                gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(sceneryObject);
             }
         }
         if(arePrerequisitesForSceneryObjectsCreationMet())

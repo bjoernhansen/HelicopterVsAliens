@@ -341,7 +341,7 @@ public class EnemyController
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.storeManageablePaintable(enemy);
+                gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(enemy);
             }
         }
     }
@@ -364,12 +364,12 @@ public class EnemyController
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.storeManageablePaintable(enemy);
+                gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(enemy);
             }
         }
     }
     
-    public static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
+    static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
     {
         for(Enemy enemy : gameRessourceProvider.getActiveManageablePaintableController()
                                                .getIntactEnemies())

@@ -96,7 +96,7 @@ public class Explosion extends PaintableEntity implements ManageablePaintable
 						Events.extraReward(explosion.kills, explosion.earnedMoney, 0.35f, 0.5f, 2.85f); // 0.5f, 0.5f, 3.0f
 					}
 				}
-				gameRessourceProvider.storeManageablePaintable(explosion);
+				gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(explosion);
 	        }
 		}		
 	}

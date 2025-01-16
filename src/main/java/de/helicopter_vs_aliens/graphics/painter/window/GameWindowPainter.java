@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.LevelManager;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.timer.Timer;
@@ -522,6 +523,7 @@ public class GameWindowPainter extends WindowPainter
     // TODO Erzeugung der SpezialInfo in eigene Klasse auslagern
     {
         // TODO deutsche Strings eventuell auch in Dictionary überführen? Das wäre für UnitTests hilfreich.
+        ManageablePaintableController manageablePaintableController = gameRessourceProvider.getActiveManageablePaintableController();
         GameStatisticsCalculator gameStatisticsCalculator = gameRessourceProvider.getGameStatisticsCalculator();
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
@@ -536,27 +538,27 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 2)
         {
             infoString = "Aktive PowerUps: "
-                + gameRessourceProvider.getActiveManageablePaintableController()
-                                       .numberOfActiveEntities(ManageablePaintableGroupType.POWER_UP)
+                + manageablePaintableController
+                .numberOfActiveEntities(ManageablePaintableGroupType.POWER_UP)
                 + ";   Inaktive PowerUps: "
-                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(PowerUp.class);
+                + manageablePaintableController.numberOfInactiveEntities(PowerUp.class);
         }
         else if(Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
-                + gameRessourceProvider.getActiveManageablePaintableController()
-                                       .numberOfActiveEntities(ManageablePaintableGroupType.EXPLOSION)
+                + manageablePaintableController
+                .numberOfActiveEntities(ManageablePaintableGroupType.EXPLOSION)
                 + ";   Inaktive Explosionen: "
-                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(Explosion.class);
+                + manageablePaintableController.numberOfInactiveEntities(Explosion.class);
         }
         else if(Window.specialInfoSelection == 4)
         {
             infoString = "Aktive Gegner: "
-                + (gameRessourceProvider.getActiveManageablePaintableController()
-                                        .numberOfActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY) - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
+                + (manageablePaintableController
+                .numberOfActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY) - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerst\u00F6rte Gegner: "
-                + gameRessourceProvider.getActiveManageablePaintableController()
-                                       .numberOfActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY)
+                + manageablePaintableController
+                .numberOfActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY)
                 + ";   Hindernisse: "
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
@@ -565,26 +567,26 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
-                + gameRessourceProvider.getActiveManageablePaintableController()
-                                       .numberOfActiveEntities(ManageablePaintableGroupType.MISSILE)
+                + manageablePaintableController
+                .numberOfActiveEntities(ManageablePaintableGroupType.MISSILE)
                 + ";   Inaktive Raketen: "
-                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(Missile.class);
+                + manageablePaintableController.numberOfInactiveEntities(Missile.class);
         }
         else if(Window.specialInfoSelection == 6)
         {
             infoString = "Aktive gegnerische Geschosse: "
-                + gameRessourceProvider.getActiveManageablePaintableController()
-                                       .numberOfActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE)
+                + manageablePaintableController
+                .numberOfActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE)
                 + ";   Inaktive gegnerische Geschosse: "
-                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(EnemyMissile.class);
+                + manageablePaintableController.numberOfInactiveEntities(EnemyMissile.class);
         }
         else if(Window.specialInfoSelection == 7)
         {
             infoString = "Aktive Hintergrundobjekte: "
-                + gameRessourceProvider.getActiveManageablePaintableController()
-                                       .numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT)
+                + manageablePaintableController
+                .numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT)
                 + ";   Inaktive Hintergrundobjekte: "
-                + gameRessourceProvider.numberOfInactiveManageablePaintableInstances(SceneryObject.class);
+                + manageablePaintableController.numberOfInactiveEntities(SceneryObject.class);
         }
         else if(Window.specialInfoSelection == 8)
         {
@@ -646,7 +648,7 @@ public class GameWindowPainter extends WindowPainter
                         .stream()
                         .filter(Predicate.not(EnemyType.getBarrierTypes()::contains))
                         .map(ManageablePaintableFactory::getCorrespondingClass)
-                        .map(gameRessourceProvider::numberOfInactiveManageablePaintableInstances)
+                        .map(gameRessourceProvider.getActiveManageablePaintableController()::numberOfInactiveEntities)
                         .mapToInt(Integer::intValue)
                         .sum();
     }

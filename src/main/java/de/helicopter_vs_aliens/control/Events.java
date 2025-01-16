@@ -1157,7 +1157,7 @@ public class Events
                                                           .getIntactEnemies();
         activeEnemies.stream()
                      .filter(Enemy::isDisappearingAfterEnteringRepairShop)
-                     .forEach(gameRessourceProvider::storeManageablePaintable);
+                     .forEach(gameRessourceProvider.getActiveManageablePaintableController()::storeManageablePaintable);
         
         gameRessourceProvider.getActiveManageablePaintableController()
                              .getIntactEnemies()

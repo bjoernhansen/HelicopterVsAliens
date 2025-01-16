@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 
 // TODO finish implementation
 
-public final class ActiveManageablePaintableController implements ActiveManageablePaintableProvider
+public final class ManageablePaintableController implements ActiveManageablePaintableProvider
 {
     // TODO Verwaltung anders lösen, eventuell wie in der Klasse PaintableEntitySupplier
     // TODO ggf. ist auch eine Zusammenführung oder eine Verwaltung über eine übergeordnete Klasse denkbar
@@ -28,6 +28,9 @@ public final class ActiveManageablePaintableController implements ActiveManageab
     
     private final GameRessourceProvider
         gameRessourceProvider;
+    
+    private final ManageablePaintableSupplier
+        manageablePaintableSupplier;
     
     // TODO ggf. ist es möglich nur noch einen Queue-Typ Queue<ManageablePaintable> zu haben
     private final Queue<Enemy>
@@ -56,9 +59,11 @@ public final class ActiveManageablePaintableController implements ActiveManageab
         paintableQueues = new EnumMap<>(ManageablePaintableGroupType.class);
     
     
-    public ActiveManageablePaintableController(GameRessourceProvider gameRessourceProvider)
+    public ManageablePaintableController(GameRessourceProvider gameRessourceProvider)
     {
         this.gameRessourceProvider = gameRessourceProvider;
+        DependencyInjector dependencyInjector = DependencyInjector.instanceFor(gameRessourceProvider);
+        manageablePaintableSupplier = new ManageablePaintableSupplier(dependencyInjector);
         paintableQueues.put(ManageablePaintableGroupType.INTACT_ENEMY, intactEnemies);
         paintableQueues.put(ManageablePaintableGroupType.DESTROYED_ENEMY, destroyedEnemies);
         paintableQueues.put(ManageablePaintableGroupType.MISSILE, missiles);
@@ -166,7 +171,7 @@ public final class ActiveManageablePaintableController implements ActiveManageab
     public void clearActiveEntities(ManageablePaintableGroupType groupType)
     {
         Queue<? extends ManageablePaintable> groupTypeOwners = paintableQueues.get(groupType);
-        gameRessourceProvider.storeAllManageablePaintableInstances(groupTypeOwners);
+        manageablePaintableSupplier.storeAll(groupTypeOwners);
         groupTypeOwners.clear();
     }
     
@@ -174,6 +179,11 @@ public final class ActiveManageablePaintableController implements ActiveManageab
     {
         return paintableQueues.get(groupType)
                               .size();
+    }
+    
+    public <T extends ManageablePaintable> int numberOfInactiveEntities(Class<T> classOfManageablePaintable)
+    {
+        return manageablePaintableSupplier.sizeOf(classOfManageablePaintable);
     }
     
     public void forEachActiveEntity(ManageablePaintableGroupType groupType, Consumer<? super ManageablePaintable> action)
@@ -188,13 +198,13 @@ public final class ActiveManageablePaintableController implements ActiveManageab
         Queue<? extends ManageablePaintable> manageablePaintables = paintableQueues.get(manageablePaintableGroupType);
         manageablePaintables.stream()
                             .filter(removeCondition)
-                            .forEach(gameRessourceProvider::storeManageablePaintable);
+                            .forEach(gameRessourceProvider.getActiveManageablePaintableController()::storeManageablePaintable);
         manageablePaintables.removeIf(removeCondition);
     }
     
     public <T extends ManageablePaintable> T activatePaintableEntity(ManageablePaintableFactory<T> factory)
     {
-        T manageablePaintable = gameRessourceProvider.getNewManageablePaintableInstance(factory);
+        T manageablePaintable = manageablePaintableSupplier.retrieve(factory);;
         switch(manageablePaintable.getGroupType())
         {
             case INTACT_ENEMY -> intactEnemies.add((Enemy)manageablePaintable);
@@ -206,5 +216,10 @@ public final class ActiveManageablePaintableController implements ActiveManageab
             case POWER_UP -> powerUps.add((PowerUp)manageablePaintable);
         }
         return manageablePaintable;
+    }
+  
+    public void storeManageablePaintable(ManageablePaintable manageablePaintable)
+    {
+        manageablePaintableSupplier.store(manageablePaintable);
     }
 }

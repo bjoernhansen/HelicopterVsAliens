@@ -154,7 +154,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 			Grantable reward = helicopter.getMultipleHitsExtraReward(this);
 			missileClusterManager.inactivateWith(reward);
 		}
-		gameRessourceProvider.storeManageablePaintable(this);
+		gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(this);
 	}
 	
 	private boolean canHit(Helicopter helicopter)

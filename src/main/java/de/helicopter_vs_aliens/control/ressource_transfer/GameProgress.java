@@ -3,10 +3,7 @@ package de.helicopter_vs_aliens.control.ressource_transfer;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
-import de.helicopter_vs_aliens.control.entities.ActiveManageablePaintableController;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableSupplier;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.timer.TimerManager;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -25,7 +22,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import java.util.Objects;
-import java.util.Queue;
 
 import static de.helicopter_vs_aliens.gui.WindowType.GAME;
 
@@ -52,14 +48,11 @@ public final class GameProgress implements GameRessourceProvider
     private Savegame
         saveGame;
 
-    private final ActiveManageablePaintableController
-        activeManageablePaintableController = new ActiveManageablePaintableController(this);
+    private final ManageablePaintableController
+        manageablePaintableController = new ManageablePaintableController(this);
 
     private final WindowManager
         windowManager = new WindowManager();
-
-    private final ManageablePaintableSupplier
-        manageablePaintableSupplier = new ManageablePaintableSupplier();
 
     private final GameStatisticsCalculator
         gameStatisticsCalculator = new GameStatisticsCalculator();
@@ -131,34 +124,9 @@ public final class GameProgress implements GameRessourceProvider
     }
 
     @Override
-    public ActiveManageablePaintableController getActiveManageablePaintableController()
+    public ManageablePaintableController getActiveManageablePaintableController()
     {
-        return activeManageablePaintableController;
-    }
-
-    @Override
-    public <T extends ManageablePaintable> T getNewManageablePaintableInstance(ManageablePaintableFactory<T> factory)
-    {
-        return manageablePaintableSupplier.retrieve(factory);
-    }
-    
-    @Override
-    public void storeManageablePaintable(ManageablePaintable manageablePaintable)
-    {
-        manageablePaintableSupplier.store(manageablePaintable);
-    }
-    
-    @Override
-    public void storeAllManageablePaintableInstances(Queue<? extends ManageablePaintable> manageablePaintableInstances)
-    {
-        manageablePaintableSupplier.storeAll(manageablePaintableInstances);
-    }
-    
-    // TODO diese Methode sollte vielleicht nur noch über den ActiveEntityManager zur Verfügung stehen und dieser sollte dann vielleicht auch nicht mehr Active im Namen tragen
-    @Override
-    public <T extends ManageablePaintable> int numberOfInactiveManageablePaintableInstances(Class<T> classOfManageablePaintable)
-    {
-        return manageablePaintableSupplier.sizeOf(classOfManageablePaintable);
+        return manageablePaintableController;
     }
     
     @Override
