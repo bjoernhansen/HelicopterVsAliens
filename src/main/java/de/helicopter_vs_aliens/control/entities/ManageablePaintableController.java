@@ -207,8 +207,7 @@ public final class ManageablePaintableController implements ActiveManageablePain
         T manageablePaintable = manageablePaintableSupplier.retrieve(factory);;
         switch(manageablePaintable.getGroupType())
         {
-            case INTACT_ENEMY -> intactEnemies.add((Enemy)manageablePaintable);
-            case DESTROYED_ENEMY -> destroyedEnemies.add((Enemy)manageablePaintable);
+            case INTACT_ENEMY, DESTROYED_ENEMY -> intactEnemies.add((Enemy)manageablePaintable);
             case MISSILE -> missiles.add((Missile)manageablePaintable);
             case EXPLOSION -> explosions.add((Explosion)manageablePaintable);
             case SCENERY_OBJECT -> sceneryObjects.add((SceneryObject)manageablePaintable);
