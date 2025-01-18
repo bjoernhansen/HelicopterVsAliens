@@ -94,7 +94,7 @@ public class GameWindowPainter extends WindowPainter
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        for(Enemy enemy : gameRessourceProvider.getActiveManageablePaintableController()
+        for(Enemy enemy : gameRessourceProvider.getManageablePaintableController()
                                                .getIntactEnemies())
         {
             if(enemy.isVisibleNonBarricadeVessel())
@@ -107,31 +107,31 @@ public class GameWindowPainter extends WindowPainter
     // TODO gleichartige Methoden ablösen und iterieren über ein Subset von ManageablePaintableGroupType
     private void paintAllDestroyedEnemies(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActiveManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableController()
                              .forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY, enemy -> enemy.paint(graphicsAdapter));
     }
     
     private void paintAllMissiles(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActiveManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableController()
                              .forEachActiveEntity(ManageablePaintableGroupType.MISSILE, missile -> missile.paint(graphicsAdapter));
     }
     
     private void paintAllExplosions(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActiveManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableController()
                              .forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION, explosion -> explosion.paint(graphicsAdapter));
     }
    
     private void paintAllEnemyMissiles(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActiveManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableController()
                              .forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE, enemyMissile -> enemyMissile.paint(graphicsAdapter));
     }
     
     private void paintAllPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getActiveManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableController()
                              .forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, powerUp -> powerUp.paint(graphicsAdapter));
     }
     
@@ -142,7 +142,7 @@ public class GameWindowPainter extends WindowPainter
         graphicsAdapter.fillRect(0, GROUND_Y, VIRTUAL_DIMENSION.getWidth(), 35);
         
         // Objekte vor dem Helikopter
-        Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getActiveManageablePaintableController()
+        Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getManageablePaintableController()
                                                                          .getSceneryObjects();
         SceneryLayer.getForegroundLayers()
                     .forEach(layer -> activeSceneryObjects.stream()
@@ -523,7 +523,7 @@ public class GameWindowPainter extends WindowPainter
     // TODO Erzeugung der SpezialInfo in eigene Klasse auslagern
     {
         // TODO deutsche Strings eventuell auch in Dictionary überführen? Das wäre für UnitTests hilfreich.
-        ManageablePaintableController manageablePaintableController = gameRessourceProvider.getActiveManageablePaintableController();
+        ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
         GameStatisticsCalculator gameStatisticsCalculator = gameRessourceProvider.getGameStatisticsCalculator();
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
@@ -648,7 +648,7 @@ public class GameWindowPainter extends WindowPainter
                         .stream()
                         .filter(Predicate.not(EnemyType.getBarrierTypes()::contains))
                         .map(ManageablePaintableFactory::getCorrespondingClass)
-                        .map(gameRessourceProvider.getActiveManageablePaintableController()::numberOfInactiveEntities)
+                        .map(gameRessourceProvider.getManageablePaintableController()::numberOfInactiveEntities)
                         .mapToInt(Integer::intValue)
                         .sum();
     }

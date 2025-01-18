@@ -9,6 +9,7 @@ import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionController;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -60,6 +61,10 @@ public final class GameProgress implements GameRessourceProvider
     private final HelicopterFactory
         helicopterFactory = new HelicopterFactory(this);
 
+    private final ExplosionController
+        explosionController = new ExplosionController(this);
+    
+    
     private boolean
         isMouseCursorInWindow = true;
 
@@ -112,7 +117,7 @@ public final class GameProgress implements GameRessourceProvider
                 Events.checkForLevelUp(this);
                 EnemyController.generateNewEnemies(this);
                 helicopter.update(this);
-                Explosion.updateAll(this);
+                explosionController.updateAll();
                 PowerUp.updateAll(this);
             }
         }
@@ -124,7 +129,7 @@ public final class GameProgress implements GameRessourceProvider
     }
 
     @Override
-    public ManageablePaintableController getActiveManageablePaintableController()
+    public ManageablePaintableController getManageablePaintableController()
     {
         return manageablePaintableController;
     }
@@ -242,6 +247,12 @@ public final class GameProgress implements GameRessourceProvider
     {
         Helicopter newHelicopter = helicopterFactory.createForNewGame(nextHelicopterType);
         setHelicopter(newHelicopter);
+    }
+    
+    @Override
+    public ExplosionController getExplosionController()
+    {
+        return explosionController;
     }
     
     private void setHelicopter(Helicopter helicopter)

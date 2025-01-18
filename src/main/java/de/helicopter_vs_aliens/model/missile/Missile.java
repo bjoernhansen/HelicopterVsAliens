@@ -113,7 +113,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		for(Iterator<Missile> missileIterator = gameRessourceProvider.getActiveManageablePaintableController()
+		for(Iterator<Missile> missileIterator = gameRessourceProvider.getManageablePaintableController()
 																	 .getMissiles()
 																	 .iterator(); missileIterator.hasNext(); )
 		{
@@ -154,7 +154,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 			Grantable reward = helicopter.getMultipleHitsExtraReward(this);
 			missileClusterManager.inactivateWith(reward);
 		}
-		gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(this);
+		gameRessourceProvider.getManageablePaintableController().store(this);
 	}
 	
 	private boolean canHit(Helicopter helicopter)
@@ -175,7 +175,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	
 	private void checkIfMissileHitEnemy()
 	{
-		for(Enemy enemy : getGameRessourceProvider().getActiveManageablePaintableController()
+		for(Enemy enemy : getGameRessourceProvider().getManageablePaintableController()
 											   .getIntactEnemies())
 		{
 			if (enemy.isHittable(this))

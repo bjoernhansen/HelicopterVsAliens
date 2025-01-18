@@ -192,17 +192,27 @@ public final class ManageablePaintableController implements ActiveManageablePain
                        .forEach(action);
     }
     
-    public void removeIf(ManageablePaintableGroupType manageablePaintableGroupType,
+    public void forEachActiveEntityIf(ManageablePaintableGroupType groupType,
+                                      Consumer<? super ManageablePaintable> action,
+                                      Predicate<? super ManageablePaintable> applyCondition)
+    {
+        paintableQueues.get(groupType)
+                       .stream()
+                       .filter(applyCondition)
+                       .forEach(action);
+    }
+    
+    public void removeIf(ManageablePaintableGroupType groupType,
                          Predicate<? super ManageablePaintable> removeCondition)
     {
-        Queue<? extends ManageablePaintable> manageablePaintables = paintableQueues.get(manageablePaintableGroupType);
+        Queue<? extends ManageablePaintable> manageablePaintables = paintableQueues.get(groupType);
         manageablePaintables.stream()
                             .filter(removeCondition)
-                            .forEach(gameRessourceProvider.getActiveManageablePaintableController()::storeManageablePaintable);
+                            .forEach(gameRessourceProvider.getManageablePaintableController()::store);
         manageablePaintables.removeIf(removeCondition);
     }
     
-    public <T extends ManageablePaintable> T activatePaintableEntity(ManageablePaintableFactory<T> factory)
+    public <T extends ManageablePaintable> T activateEntity(ManageablePaintableFactory<T> factory)
     {
         T manageablePaintable = manageablePaintableSupplier.retrieve(factory);;
         switch(manageablePaintable.getGroupType())
@@ -217,7 +227,9 @@ public final class ManageablePaintableController implements ActiveManageablePain
         return manageablePaintable;
     }
   
-    public void storeManageablePaintable(ManageablePaintable manageablePaintable)
+    // TODO wenn eine entitiy "gestored" wird, dann sollte sie automatisch aus den aktiven Entities verschwinden
+    // TODO hierbei beachten, dass keine concurrentModificationException auftritt
+    public void store(ManageablePaintable manageablePaintable)
     {
         manageablePaintableSupplier.store(manageablePaintable);
     }

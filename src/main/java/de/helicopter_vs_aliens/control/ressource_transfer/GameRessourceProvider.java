@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.control.ressource_transfer;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
+import de.helicopter_vs_aliens.model.explosion.ExplosionController;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
@@ -19,7 +20,7 @@ public interface GameRessourceProvider
     Savegame getSaveGame();
     
     // TODO eigentlich sollte hier mit dem Interface ActivePaintableEntityProvider gearbeitet werden
-    ManageablePaintableController getActiveManageablePaintableController();
+    ManageablePaintableController getManageablePaintableController();
     
     boolean isFpsDisplayVisible();
 
@@ -46,4 +47,6 @@ public interface GameRessourceProvider
     void restoreHelicopter();
     
     void setNewHelicopter(HelicopterType nextHelicopterType);
+    
+    ExplosionController getExplosionController();
 }

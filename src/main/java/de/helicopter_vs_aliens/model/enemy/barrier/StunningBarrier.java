@@ -2,7 +2,7 @@ package de.helicopter_vs_aliens.model.enemy.barrier;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
+import de.helicopter_vs_aliens.model.explosion.ExplosionController;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 
 public final class StunningBarrier extends Barrier
@@ -10,7 +10,7 @@ public final class StunningBarrier extends Barrier
     private static final int
         STATIC_CHARGE_TIME = 110;
     
-    public static final float
+    private static final float
         ENERGY_CONSUMPTION_FACTOR = 2.5f;
     
     private int
@@ -45,26 +45,27 @@ public final class StunningBarrier extends Barrier
         super.performLocationAdaptionAction(gameRessourceProvider);
         if (isStaticallyCharged())
         {
-            startStaticDischarge(gameRessourceProvider);
+            startStaticDischarge();
         }
     }
     
-    public boolean isStaticallyCharged()
+    private boolean isStaticallyCharged()
     {
         return staticChargeTimer == READY && snoozeTimer <= SNOOZE_TIME;
     }
     
-    private void startStaticDischarge(GameRessourceProvider gameRessourceProvider)
+    private void startStaticDischarge()
     {
         staticChargeTimer = STATIC_CHARGE_TIME;
         getHelicopter().receiveStaticCharge(ENERGY_CONSUMPTION_FACTOR);
         Audio.play(Audio.emp);
-        Explosion.start(gameRessourceProvider,
-                        (int)getCenterX(),
-                        (int)getCenterY(),
-                        ExplosionType.STUNNING,
-                        false,
-                        this);
+        ExplosionController explosionController = getGameRessourceProvider().getExplosionController();
+        explosionController.start(
+            (int)getCenterX(),
+            (int)getCenterY(),
+            ExplosionType.STUNNING,
+            false,
+            this);
     }
     
     @Override

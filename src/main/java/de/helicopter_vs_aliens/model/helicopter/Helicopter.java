@@ -263,7 +263,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         List<Missile> launchedMissiles = new ArrayList<>();
         for(int i = 0; i < numberOfCannons; i++)
         {
-            Missile missile = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(missileFactory);
+            Missile missile = getGameRessourceProvider().getManageablePaintableController().activateEntity(missileFactory);
             resetMissile(missile);
             missile.launch(this, CANNON_Y_POSITIONS[i]);
             launchedMissiles.add(missile);
@@ -765,14 +765,15 @@ public abstract class Helicopter extends RectangularPaintableEntity
         if(Events.level < 51)
         {
             Audio.play(Audio.explosion3);
-            Explosion.start(getGameRessourceProvider(),
-                            (int)(getX()
-                                + (isMovingLeft
-                                ? FOCAL_POINT_X_LEFT
-                                : FOCAL_POINT_X_RIGHT)),
-                            (int)(getY() + FOCAL_POINT_Y_EXP),
-                            ExplosionType.ORDINARY,
-                            false);
+            getGameRessourceProvider().getExplosionController()
+                                      .start(
+                                          (int)(getX()
+                                              + (isMovingLeft
+                                              ? FOCAL_POINT_X_LEFT
+                                              : FOCAL_POINT_X_RIGHT)),
+                                          (int)(getY() + FOCAL_POINT_Y_EXP),
+                                          ExplosionType.ORDINARY,
+                                          false);
         }
         Events.isRestartWindowVisible = true;
         isCrashing = false;
@@ -1247,11 +1248,11 @@ public abstract class Helicopter extends RectangularPaintableEntity
     {
         if(isEnergyAbilityActivatable())
         {
-            useEnergyAbility(gameRessourceProvider);
+            useEnergyAbility();
         }
     }
     
-    public abstract void useEnergyAbility(GameRessourceProvider gameRessourceProvider);
+    public abstract void useEnergyAbility();
     
     public int getUpgradeLevelOf(StandardUpgradeType standardUpgradeType)
     {
@@ -1264,7 +1265,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         setUpgradeLevelOf(standardUpgradeType, currentLevelOfUpgrade + 1);
     }
     
-    public void setUpgradeLevelOf(StandardUpgradeType standardUpgradeType, Integer upgradeLevel)
+    private void setUpgradeLevelOf(StandardUpgradeType standardUpgradeType, Integer upgradeLevel)
     {
         levelsOfStandardUpgrades.put(standardUpgradeType, upgradeLevel);
         
@@ -1443,5 +1444,9 @@ public abstract class Helicopter extends RectangularPaintableEntity
     public Grantable getMultipleHitsExtraReward(Missile missile)
     {
         return () -> {};
+    }
+    
+    public void handleExplosionEnd()
+    {
     }
 }

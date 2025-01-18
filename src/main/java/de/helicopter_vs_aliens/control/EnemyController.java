@@ -75,7 +75,7 @@ public class EnemyController
         {
             createBossServant(gameRessourceProvider);
         }
-        else if(isEnemyCreationApproved(gameRessourceProvider.getActiveManageablePaintableController()
+        else if(isEnemyCreationApproved(gameRessourceProvider.getManageablePaintableController()
                                                              .getIntactEnemies()))
         {
             creation(gameRessourceProvider);
@@ -104,7 +104,7 @@ public class EnemyController
     
     private static void verifyCreationStop(GameRessourceProvider gameRessourceProvider)
     {
-        if(gameRessourceProvider.getActiveManageablePaintableController()
+        if(gameRessourceProvider.getManageablePaintableController()
                                 .getIntactEnemies()
                                 .isEmpty()
             && carrierDestroyedJustNow == null
@@ -214,11 +214,11 @@ public class EnemyController
     
     public static void creation(GameRessourceProvider gameRessourceProvider)
     {
-        int activeEnemyCount = gameRessourceProvider.getActiveManageablePaintableController()
+        int activeEnemyCount = gameRessourceProvider.getManageablePaintableController()
                                                     .numberOfActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY);
         ManageablePaintableFactory<Enemy> enemyFactory = getEnemyFactory(activeEnemyCount);
-        Enemy enemy = gameRessourceProvider.getActiveManageablePaintableController()
-                                            .activatePaintableEntity(enemyFactory);
+        Enemy enemy = gameRessourceProvider.getManageablePaintableController()
+                                            .activateEntity(enemyFactory);
         enemy.reset();
         if(enemy.countsForTotalAmountOfEnemiesSeen())
         {
@@ -318,10 +318,10 @@ public class EnemyController
         {
             barrierTimer--;
         }
-        countBarriers(gameRessourceProvider.getActiveManageablePaintableController()
+        countBarriers(gameRessourceProvider.getManageablePaintableController()
                                            .getIntactEnemies());
         
-        for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveManageablePaintableController()
+        for(Iterator<Enemy> iterator = gameRessourceProvider.getManageablePaintableController()
                                                             .getIntactEnemies()
                                                             .iterator(); iterator.hasNext(); )
         {
@@ -333,7 +333,7 @@ public class EnemyController
             else if(enemy.isDestroyed())
             {
                 iterator.remove();
-                gameRessourceProvider.getActiveManageablePaintableController()
+                gameRessourceProvider.getManageablePaintableController()
                                      .getDestroyedEnemies()
                                      .add(enemy);
             }
@@ -341,14 +341,14 @@ public class EnemyController
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(enemy);
+                gameRessourceProvider.getManageablePaintableController().store(enemy);
             }
         }
     }
     
     public static void updateAllDestroyed(GameRessourceProvider gameRessourceProvider)
     {
-        for(Iterator<Enemy> iterator = gameRessourceProvider.getActiveManageablePaintableController()
+        for(Iterator<Enemy> iterator = gameRessourceProvider.getManageablePaintableController()
                                                             .getDestroyedEnemies()
                                                             .iterator(); iterator.hasNext(); )
         {
@@ -364,14 +364,14 @@ public class EnemyController
             {
                 enemy.clearImage();
                 iterator.remove();
-                gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(enemy);
+                gameRessourceProvider.getManageablePaintableController().store(enemy);
             }
         }
     }
     
     static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
     {
-        for(Enemy enemy : gameRessourceProvider.getActiveManageablePaintableController()
+        for(Enemy enemy : gameRessourceProvider.getManageablePaintableController()
                                                .getIntactEnemies())
         {
             if(enemy.getModel() == EnemyModelType.BARRIER && enemy.isOnScreen())

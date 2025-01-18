@@ -66,24 +66,24 @@ public final class Phoenix extends Helicopter
     void updateTimer()
     {
         super.updateTimer();
-        if(this.enhancedRadiationTimer > 0)
+        if(enhancedRadiationTimer > 0)
         {
-            this.enhancedRadiationTimer--;
+            enhancedRadiationTimer--;
         }
-        this.evaluateBonusKills();
+        evaluateBonusKills();
     }
 
     private void evaluateBonusKills()
     {
-        if(this.bonusKillsTimer > 0)
+        if(bonusKillsTimer > 0)
         {
-            this.bonusKillsTimer--;
-            if(this.bonusKillsTimer == NICE_CATCH_TIME - TELEPORT_KILL_TIME
-                && this.bonusKills > 1)
+            bonusKillsTimer--;
+            if(bonusKillsTimer == NICE_CATCH_TIME - TELEPORT_KILL_TIME
+                && bonusKills > 1)
             {
                 Events.extraReward(
-                    this.bonusKills,
-                    this.bonusKillsMoney,
+                    bonusKills,
+                    bonusKillsMoney,
                     0.75f, 0.75f, 3.5f);
             }
         }
@@ -92,7 +92,7 @@ public final class Phoenix extends Helicopter
     @Override
     void resetFifthSpecial()
     {
-        this.hasShortRangeRadiation = false;
+        hasShortRangeRadiation = false;
     }
 
     @Override
@@ -104,20 +104,20 @@ public final class Phoenix extends Helicopter
     @Override
     public void obtainSomeUpgrades()
     {
-        this.platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
+        platingDurabilityFactor = GOLIATH_PLATING_STRENGTH;
         super.obtainSomeUpgrades();
     }
 
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasShortRangeRadiation;
+        return hasShortRangeRadiation;
     }
 
     @Override
     public void obtainFifthSpecial()
     {
-        this.hasShortRangeRadiation = true;
+        hasShortRangeRadiation = true;
     }
 
     @Override
@@ -132,26 +132,26 @@ public final class Phoenix extends Helicopter
     @Override
     public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
     {
-        if(this.isEnergyAbilityActivatable())
+        if(isEnergyAbilityActivatable())
         {
-            useEnergyAbility(gameRessourceProvider);
+            useEnergyAbility();
         }
     }
 
     @Override
-    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void useEnergyAbility()
     {
-        this.prepareTeleportation();
+        prepareTeleportation();
     }
 
     private void prepareTeleportation()
     {
-        this.isSearchingForTeleportDestination = true;
-        this.priorTeleportLocation.setLocation(
-            this.getX() + (this.isMovingLeft
+        isSearchingForTeleportDestination = true;
+        priorTeleportLocation.setLocation(
+            getX() + (isMovingLeft
                 ? FOCAL_POINT_X_LEFT
                 : FOCAL_POINT_X_RIGHT),
-            this.getY() + FOCAL_PNT_Y_POS);
+            getY() + FOCAL_PNT_Y_POS);
     }
 
     @Override
@@ -160,7 +160,7 @@ public final class Phoenix extends Helicopter
                                           boolean playCollisionSound)
     {
         super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
-        if(this.hasShortRangeRadiation)
+        if(hasShortRangeRadiation)
         {
             enemy.reactToRadiation(gameRessourceProvider);
         }
@@ -169,7 +169,7 @@ public final class Phoenix extends Helicopter
     @Override
     void startRecentDamageTimer()
     {
-        if(this.enhancedRadiationTimer == 0)
+        if(enhancedRadiationTimer == 0)
         {
             super.startRecentDamageTimer();
         }
@@ -177,17 +177,17 @@ public final class Phoenix extends Helicopter
 
     private boolean enhancedRadiationApproved(Enemy enemy)
     {
-        return this.hasShortRangeRadiation
+        return hasShortRangeRadiation
             && enemy.collisionDamageTimer == 0
             && enemy.getType() != KABOOM
-            && this.enhancedRadiationTimer == 0
+            && enhancedRadiationTimer == 0
             && Calculations.tossUp(ENHANCED_RADIATION_PROB);
     }
 
     @Override
     public float getProtectionFactor()
     {
-        return this.enhancedRadiationTimer == 0
+        return enhancedRadiationTimer == 0
             ? super.getProtectionFactor()
             : 0.0f;
     }
@@ -195,32 +195,32 @@ public final class Phoenix extends Helicopter
     @Override
     public boolean isFifthSpecialOnMaximumStrength()
     {
-        return this.hasMaximumUpgradeLevelFor(FIREPOWER);
+        return hasMaximumUpgradeLevelFor(FIREPOWER);
     }
 
     @Override
     public void initMenuEffect(int i)
     {
         super.initMenuEffect(i);
-        this.gainInvincibilityPermanently();
+        gainInvincibilityPermanently();
     }
 
     @Override
     public void stopMenuEffect()
     {
-        this.turnOfInvincibility();
+        turnOfInvincibility();
     }
 
     @Override
     public boolean isTakingKaboomDamageFrom(Enemy enemy)
     {
-        return super.isTakingKaboomDamageFrom(enemy) && !this.hasShortRangeRadiation;
+        return super.isTakingKaboomDamageFrom(enemy) && !hasShortRangeRadiation;
     }
 
     @Override
     Clip getCollisionAudio()
     {
-        return this.enhancedRadiationTimer == 0
+        return enhancedRadiationTimer == 0
             ? Audio.explosion1
             : Audio.explosion2;
     }
@@ -229,73 +229,73 @@ public final class Phoenix extends Helicopter
     public void rightMouseButtonReleaseAction(MouseEvent mouseEvent, double scalingFactor)
     {
         Dimension displayShift = getGameRessourceProvider().getDisplayShift();
-        this.tryToTeleportTo(
+        tryToTeleportTo(
             (int)(mouseEvent.getX()/scalingFactor) - displayShift.getWidth(),
             (int)(mouseEvent.getY()/scalingFactor) - displayShift.getHeight());
     }
 
     public void tryToTeleportTo(int x, int y)
     {
-        this.isSearchingForTeleportDestination = false;
-        this.destination.setLocation(x, y);
+        isSearchingForTeleportDestination = false;
+        destination.setLocation(x, y);
 
-        if(this.canTeleportTo(x, y))
+        if(canTeleportTo(x, y))
         {
             Audio.play(Audio.teleport1);
 
-            this.consumeSpellCosts();
-            this.pastTeleportTime = System.currentTimeMillis();
+            consumeSpellCosts();
+            pastTeleportTime = System.currentTimeMillis();
 
-            this.nextLocation.setLocation(x, y);
-            this.correctAndSetCoordinates();
+            nextLocation.setLocation(x, y);
+            correctAndSetCoordinates();
 
-            if(!this.isActive || !this.isRotorSystemActive)
+            if(!isActive || !isRotorSystemActive)
             {
-                this.activate();
+                activate();
             }
-            if(this.tractor != null)
+            if(tractor != null)
             {
-                this.stopTractor();
+                stopTractor();
             }
 
-            this.powerUpController.activateInvinciblePowerUpBriefly();
+            powerUpController.activateInvinciblePowerUpBriefly();
 
-            this.bonusKills = 0;
-            this.enhancedRadiationTimer = TELEPORT_INVULNERABILITY_TIME;
-            this.bonusKillsTimer = NICE_CATCH_TIME;
-            this.bonusKillsMoney = 0;
+            bonusKills = 0;
+            enhancedRadiationTimer = TELEPORT_INVULNERABILITY_TIME;
+            bonusKillsTimer = NICE_CATCH_TIME;
+            bonusKillsMoney = 0;
         }
     }
 
     private boolean canTeleportTo(int x, int y)
     {
-        return this.hasEnoughEnergyForAbility()
-            && !this.isDamaged
+        return hasEnoughEnergyForAbility()
+            && !isDamaged
             && !Window.isMenuVisible
-            && this.hasValidTeleportDestination(x, y);
+            && hasValidTeleportDestination(x, y);
     }
 
     private boolean hasValidTeleportDestination(int x, int y)
     {
-        return !(this.getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y && y >= GROUND_Y)
-            && !(x > this.getX() + 33
-            && x < this.getX() + 133
-            && y > this.getY() + 6
-            && y < this.getY() + 106);
+        return !(getMaxY() + NO_COLLISION_HEIGHT >= GROUND_Y && y >= GROUND_Y)
+            && !(x > getX() + 33
+            && x < getX() + 133
+            && y > getY() + 6
+            && y < getY() + 106);
     }
 
     @Override
     public boolean canObtainCollisionReward()
     {
-        return this.hasShortRangeRadiation;
+        return hasShortRangeRadiation;
     }
 
     @Override
     void startRecentDamageEffect(Enemy enemy)
     {
-        if(this.enhancedRadiationApproved(enemy))
+        if(enhancedRadiationApproved(enemy))
         {
-            this.enhancedRadiationTimer = NO_COLLISION_DAMAGE_TIME;
+            enhancedRadiationTimer = NO_COLLISION_DAMAGE_TIME;
         }
         else super.startRecentDamageEffect(enemy);
     }
@@ -303,15 +303,15 @@ public final class Phoenix extends Helicopter
     @Override
     public void resetStateTypeSpecific()
     {
-        this.enhancedRadiationTimer = 0;
-        this.isSearchingForTeleportDestination = false;
+        enhancedRadiationTimer = 0;
+        isSearchingForTeleportDestination = false;
     }
 
     @Override
     public boolean deservesMantisReward(long missileLaunchingTime)
     {
-        return this.bonusKillsTimer > 0
-            && missileLaunchingTime > this.pastTeleportTime;
+        return bonusKillsTimer > 0
+            && missileLaunchingTime > pastTeleportTime;
     }
 
     @Override
@@ -319,8 +319,8 @@ public final class Phoenix extends Helicopter
     {
         if(beamKill)
         {
-            this.bonusKills++;
-            this.bonusKillsMoney += Events.lastBonus;
+            bonusKills++;
+            bonusKillsMoney += Events.lastBonus;
         }
     }
     
@@ -346,7 +346,7 @@ public final class Phoenix extends Helicopter
     public int calculateCollisionDamage()
     {
         return (int) (currentBaseFirepower
-            * (this.bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
+            * (bonusKillsTimer > NICE_CATCH_TIME - TELEPORT_KILL_TIME
             ? TELEPORT_DAMAGE_FACTOR
             : RADIATION_DAMAGE_FACTOR));
     }

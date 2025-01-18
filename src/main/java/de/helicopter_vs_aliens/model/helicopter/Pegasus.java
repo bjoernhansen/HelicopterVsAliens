@@ -21,6 +21,7 @@ public final class Pegasus extends Helicopter
         EMP_TIMER_DURATION = 67;
     
     public Explosion
+        // TODO sollte private werden
         empWave;			// Pegasus-Klasse: Referenz auf zuletzt ausgelöste EMP-Schockwelle
     
     private int
@@ -91,9 +92,9 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void useEnergyAbility()
     {
-        releaseEMP(gameRessourceProvider);
+        releaseEMP(getGameRessourceProvider());
     }
 
     private void releaseEMP(GameRessourceProvider gameRessourceProvider)
@@ -101,15 +102,16 @@ public final class Pegasus extends Helicopter
         empTimer.start();
         consumeSpellCosts();
         Audio.play(Audio.emp);
-        Explosion.start(gameRessourceProvider,
-                (int)(getX()
-                        + (isMovingLeft
-                        ? FOCAL_POINT_X_LEFT
-                        : FOCAL_POINT_X_RIGHT)),
-                (int)(getY()
-                        + FOCAL_POINT_Y_EXP),
-                ExplosionType.EMP,
-                false);
+        gameRessourceProvider.getExplosionController()
+                             .start(
+                                 (int)(getX()
+                                     + (isMovingLeft
+                                     ? FOCAL_POINT_X_LEFT
+                                     : FOCAL_POINT_X_RIGHT)),
+                                 (int)(getY()
+                                     + FOCAL_POINT_Y_EXP),
+                                 ExplosionType.EMP,
+                                 false);
         restartInterphaseGenerator();
     }
 
@@ -142,7 +144,7 @@ public final class Pegasus extends Helicopter
         }
     }
     
-    public static int shiftTime(int n)
+    private static int shiftTime(int n)
     {
         if(n > 1 && n < 14){return SHIFT_TIME[n-2];}
         return 500;
@@ -223,7 +225,7 @@ public final class Pegasus extends Helicopter
     {
         super.initMenuEffect(position);
         // TODO empWave sollte nach Menu ausgelagert werden, da es nur hier verwendet wird - wirklich? Überprüfen!
-        empWave = Explosion.createStartScreenExplosion(position);
+        empWave = getGameRessourceProvider().getExplosionController().createStartScreenExplosion(position);
     }
     
     @Override
@@ -270,5 +272,11 @@ public final class Pegasus extends Helicopter
     {
         empWave.countKill();
         empWave.increaseRewardBy(reward);
+    }
+    
+    @Override
+    public void handleExplosionEnd()
+    {
+        empWave = null;
     }
 }

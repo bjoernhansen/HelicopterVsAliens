@@ -11,7 +11,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -60,18 +59,18 @@ public class Scenery extends PaintableEntity
     
     public void reset()
     {
-        getGameRessourceProvider().getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
+        getGameRessourceProvider().getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
         createInitialSceneryObjects();
         cloudX = 135;
     }
     
     public void createInitialSceneryObjects()
     {
-        SceneryObject firstCactus = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
+        SceneryObject firstCactus = getGameRessourceProvider().getManageablePaintableController().activateEntity(sceneryObjectFactory);
         firstCactus.initializeAsFirstCactus();
-        SceneryObject firstHill = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
+        SceneryObject firstHill = getGameRessourceProvider().getManageablePaintableController().activateEntity(sceneryObjectFactory);
         firstHill.initializeAsFirstHill();
-        SceneryObject firstDesert = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
+        SceneryObject firstDesert = getGameRessourceProvider().getManageablePaintableController().activateEntity(sceneryObjectFactory);
         firstDesert.initializeAsFirstDesert();
     }
     
@@ -90,7 +89,7 @@ public class Scenery extends PaintableEntity
             {
                 sceneryObject.clearImage();
                 iterator.remove();
-                gameRessourceProvider.getActiveManageablePaintableController().storeManageablePaintable(sceneryObject);
+                gameRessourceProvider.getManageablePaintableController().store(sceneryObject);
             }
         }
         if(arePrerequisitesForSceneryObjectsCreationMet())
@@ -108,7 +107,7 @@ public class Scenery extends PaintableEntity
     {
         Helicopter helicopter = gameRessourceProvider.getHelicopter();
         return helicopter.isRotorSystemActive
-            && !isMajorBossActive(gameRessourceProvider.getActiveManageablePaintableController()
+            && !isMajorBossActive(gameRessourceProvider.getManageablePaintableController()
                                                        .getIntactEnemies())
             && helicopter.tractor == null;
     }
@@ -136,13 +135,13 @@ public class Scenery extends PaintableEntity
     
     private int numberOfMissingSceneryObjects()
     {
-        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getGameRessourceProvider().getActiveManageablePaintableController().numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
+        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getGameRessourceProvider().getManageablePaintableController().numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
     }
     
     private void generateNewSceneryObject()
     {
         SceneryObject.generalObjectTimer = ACTIVATION_PAUSE_DURATION;
-        SceneryObject sceneryObject = getGameRessourceProvider().getActiveManageablePaintableController().activatePaintableEntity(sceneryObjectFactory);
+        SceneryObject sceneryObject = getGameRessourceProvider().getManageablePaintableController().activateEntity(sceneryObjectFactory);
         sceneryObject.preset();
     }
     
@@ -168,7 +167,7 @@ public class Scenery extends PaintableEntity
     
     public Queue<SceneryObject> getSceneryObjects()
     {
-        return getGameRessourceProvider().getActiveManageablePaintableController()
+        return getGameRessourceProvider().getManageablePaintableController()
                                          .getSceneryObjects();
     }
 }

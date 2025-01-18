@@ -72,14 +72,15 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-    		Explosion.start(gameRessourceProvider,
-							(int)(helicopter.getX()
-									+ (helicopter.isMovingLeft
-										? Helicopter.FOCAL_POINT_X_LEFT
-										: Helicopter.FOCAL_POINT_X_RIGHT)),
-							(int)(helicopter.getY() + Helicopter.FOCAL_POINT_Y_EXP),
-                    ExplosionType.ORDINARY,
-							false);
+			gameRessourceProvider.getExplosionController()
+								 .start(
+									 (int)(helicopter.getX()
+										 + (helicopter.isMovingLeft
+										 ? Helicopter.FOCAL_POINT_X_LEFT
+										 : Helicopter.FOCAL_POINT_X_RIGHT)),
+									 (int)(helicopter.getY() + Helicopter.FOCAL_POINT_Y_EXP),
+									 ExplosionType.ORDINARY,
+									 false);
     	}
     	else 
     	{
@@ -143,7 +144,7 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 	
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		var paintableController = gameRessourceProvider.getActiveManageablePaintableController();
+		var paintableController = gameRessourceProvider.getManageablePaintableController();
 		paintableController.forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE,
 												enemyMissile -> ((EnemyMissile)enemyMissile).update());
 		paintableController.removeIf(ManageablePaintableGroupType.ENEMY_MISSILE,

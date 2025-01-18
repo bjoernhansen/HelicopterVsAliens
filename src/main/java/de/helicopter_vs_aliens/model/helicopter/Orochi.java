@@ -114,7 +114,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider) {}
+    public void useEnergyAbility() {}
     
     @Override
     boolean canRegenerateEnergy()

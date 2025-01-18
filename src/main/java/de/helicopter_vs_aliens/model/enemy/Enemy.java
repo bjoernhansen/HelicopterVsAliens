@@ -1187,9 +1187,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         if(hasHPsLeft())
         {
             performEmpWaveSurvivorActions();
-            Explosion.start(gameRessourceProvider,
-                            getCenterX(),
-                            getCenterY(), ExplosionType.STUNNING, false);
+            gameRessourceProvider.getExplosionController()
+                                 .start(
+                                     getCenterX(),
+                                     getCenterY(), ExplosionType.STUNNING, false);
         }
         else
         {
@@ -1435,8 +1436,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     public void shoot(EnemyMissileType missileType,
                       double missileSpeed)
     {
-        EnemyMissile enemyMissile = getGameRessourceProvider().getActiveManageablePaintableController()
-                                                              .activatePaintableEntity(enemyMissileFactory);
+        EnemyMissile enemyMissile = getGameRessourceProvider().getManageablePaintableController()
+                                                              .activateEntity(enemyMissileFactory);
         enemyMissile.launch(this, missileType, missileSpeed, shootingDirection);
         Audio.play(Audio.launch3);
     }
@@ -1708,11 +1709,12 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             isMarkedForRemoval = true;
         }
         Audio.play(getCrashToTheGroundSound());
-        Explosion.start(gameRessourceProvider,
-                        getCenterX(),
-                        getCenterY(),
-                        getExplosionType(),
-                        isDetonatingExtraStrong());
+        gameRessourceProvider.getExplosionController()
+                             .start(
+                                 getCenterX(),
+                                 getCenterY(),
+                                 getExplosionType(),
+                                 isDetonatingExtraStrong());
     }
     
     protected boolean isDetonatingExtraStrong()
@@ -2012,13 +2014,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         {
             explodingTimer = 7;
         }
-        Explosion.start(getGameRessourceProvider(),
-                        getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
-                            ? (missileSpeed < 0 ? 2 : 1) * getWidth() / 3
-                            : getWidth() / 2),
-                        getY() + getHeight() / 2,
-                        explosionType,
-                        extraDamage);
+        getGameRessourceProvider().getExplosionController()
+                                  .start(
+                                      getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
+                                          ? (missileSpeed < 0 ? 2 : 1) * getWidth() / 3
+                                          : getWidth() / 2),
+                                      getY() + getHeight() / 2,
+                                      explosionType,
+                                      extraDamage);
     }
     
     public void destroyByHelicopter()

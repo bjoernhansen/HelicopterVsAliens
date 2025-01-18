@@ -45,21 +45,21 @@ public final class Kamaitachi extends Helicopter
     @Override
     public ExplosionType getCurrentExplosionTypeOfMissiles()
     {
-        if(this.plasmaActivationTimer > 0){return PLASMA;}
+        if(plasmaActivationTimer > 0){return PLASMA;}
         return ORDINARY;
     }
 
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasRapidFire; // this.rapidfire == RAPIDFIRE_AMOUNT;
+        return hasRapidFire; // this.rapidfire == RAPIDFIRE_AMOUNT;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.hasRapidFire = true;
-        this.adjustFireRate(this.hasBoostedFireRate());
+        hasRapidFire = true;
+        adjustFireRate(hasBoostedFireRate());
     }
 
     @Override
@@ -72,52 +72,52 @@ public final class Kamaitachi extends Helicopter
     }
 
     @Override
-    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void useEnergyAbility()
     {
-        this.activatePlasma();
+        activatePlasma();
     }
 
     private void activatePlasma()
     {
         Audio.play(Audio.plasmaOn);
-        this.consumeSpellCosts();
-        this.plasmaActivationTimer = POWER_UP_DURATION;
+        consumeSpellCosts();
+        plasmaActivationTimer = POWER_UP_DURATION;
     }
 
     @Override
     void updateTimer()
     {
         super.updateTimer();
-        this.updatePlasmaActivationTimer();
-        this.evaluateBonusKills();
+        updatePlasmaActivationTimer();
+        evaluateBonusKills();
     }
     
     private void updatePlasmaActivationTimer()
     {
-        if(this.plasmaActivationTimer > 0)
+        if(plasmaActivationTimer > 0)
         {
-            this.plasmaActivationTimer--;
-            if(this.plasmaActivationTimer == 30){
+            plasmaActivationTimer--;
+            if(plasmaActivationTimer == 30){
                 Audio.play(Audio.plasmaOff);}
         }
     }
     
     public void evaluateBonusKills()
     {
-        if(this.bonusKillsTimer > 0)
+        if(bonusKillsTimer > 0)
         {
-            this.bonusKillsTimer--;
-            if(this.bonusKillsTimer == 0)
+            bonusKillsTimer--;
+            if(bonusKillsTimer == 0)
             {
-                if(this.bonusKills > 1)
+                if(bonusKills > 1)
                 {
                     Events.extraReward(
-                        this.bonusKills,
-                        this.bonusKillsMoney,
+                        bonusKills,
+                        bonusKillsMoney,
                         0.5f, 0.75f, 3.5f); // 0.25f, 0.5f, 3.0f);
                 }
-                this.bonusKillsMoney = 0;
-                this.bonusKills = 0;
+                bonusKillsMoney = 0;
+                bonusKills = 0;
             }
         }
     }
@@ -125,20 +125,20 @@ public final class Kamaitachi extends Helicopter
     @Override
     void resetFifthSpecial()
     {
-        this.hasRapidFire = false;
+        hasRapidFire = false;
     }
     
     @Override
     public int calculateSumOfFireRateBooster(boolean poweredUp)
     {
         return super.calculateSumOfFireRateBooster(poweredUp)
-                + (this.hasRapidFire ? RAPID_FIRE_AMOUNT : 0);
+                + (hasRapidFire ? RAPID_FIRE_AMOUNT : 0);
     }
     
     @Override
     public void crash()
     {
-        this.plasmaActivationTimer = 0;
+        plasmaActivationTimer = 0;
         super.crash();
     }
     
@@ -146,18 +146,18 @@ public final class Kamaitachi extends Helicopter
     public void initMenuEffect(int i)
     {
         super.initMenuEffect(i);
-        this.plasmaActivationTimer = Integer.MAX_VALUE;
+        plasmaActivationTimer = Integer.MAX_VALUE;
     }
     
     @Override
     public void updateMenuEffect()
     {
         super.updateMenuEffect();
-        if(Window.effectTimer[this.getType().ordinal()] == 65)
+        if(Window.effectTimer[getType().ordinal()] == 65)
         {
-            this.plasmaActivationTimer = POWER_UP_FADE_TIME;
+            plasmaActivationTimer = POWER_UP_FADE_TIME;
         }
-        else if(Window.effectTimer[this.getType().ordinal()] == 30)
+        else if(Window.effectTimer[getType().ordinal()] == 30)
         {
             Audio.play(Audio.plasmaOff);
         }
@@ -166,7 +166,7 @@ public final class Kamaitachi extends Helicopter
     @Override
     public void stopMenuEffect()
     {
-        this.plasmaActivationTimer = 0;
+        plasmaActivationTimer = 0;
     }
     
 
@@ -175,9 +175,9 @@ public final class Kamaitachi extends Helicopter
     public float getBaseDamage()
     {
         return  super.getBaseDamage()
-                * ((this.plasmaActivationTimer == 0)
+                * ((plasmaActivationTimer == 0)
                     ? 1
-                    : this.plasmaDamageFactor(this.getUpgradeLevelOf(ENERGY_ABILITY)));
+                    : plasmaDamageFactor(getUpgradeLevelOf(ENERGY_ABILITY)));
     }
     
     private float plasmaDamageFactor(int n)
@@ -192,15 +192,15 @@ public final class Kamaitachi extends Helicopter
     @Override
     public void resetStateTypeSpecific()
     {
-        this.plasmaActivationTimer = 0;
+        plasmaActivationTimer = 0;
     }
 
     @Override
     public void typeSpecificRewards(Enemy enemy, Missile missile, boolean beamKill)
     {
-        this.bonusKillsTimer += SPEED_KILL_BONUS_TIME;
-        this.bonusKills++;
-        this.bonusKillsMoney += Events.lastBonus;
+        bonusKillsTimer += SPEED_KILL_BONUS_TIME;
+        bonusKills++;
+        bonusKillsMoney += Events.lastBonus;
     }
     
     public int getPlasmaActivationTimer()

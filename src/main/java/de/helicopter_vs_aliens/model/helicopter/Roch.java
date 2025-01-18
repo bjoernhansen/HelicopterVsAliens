@@ -123,7 +123,7 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void useEnergyAbility()
     {
         turnOnPowerShield();
     }

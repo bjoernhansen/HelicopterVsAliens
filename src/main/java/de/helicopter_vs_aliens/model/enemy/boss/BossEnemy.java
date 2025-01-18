@@ -64,7 +64,7 @@ public abstract class BossEnemy extends StandardEnemy
     
     protected void killOwnServants(GameRessourceProvider gameRessourceProvider)
     {
-        gameRessourceProvider.getActiveManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableController()
                              .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
                                                   enemy -> this.killServant((Enemy)enemy));
     }

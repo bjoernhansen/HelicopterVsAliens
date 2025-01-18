@@ -47,14 +47,15 @@ public final class Helios extends Helicopter
     @Override
     void updateTimer()
     {
-        if(this.powerUpGeneratorTimer > 0){this.powerUpGeneratorTimer--;}
+        if(powerUpGeneratorTimer > 0){
+            powerUpGeneratorTimer--;}
         super.updateTimer();
     }
     
     @Override
     void resetFifthSpecial()
     {
-        this.hasPowerUpImmobilizer = false;
+        hasPowerUpImmobilizer = false;
     }
     
     @Override
@@ -77,13 +78,13 @@ public final class Helios extends Helicopter
     @Override
     public boolean hasFifthSpecial()
     {
-        return this.hasPowerUpImmobilizer;
+        return hasPowerUpImmobilizer;
     }
     
     @Override
     public void obtainFifthSpecial()
     {
-        this.hasPowerUpImmobilizer = true;
+        hasPowerUpImmobilizer = true;
     }
 
     @Override
@@ -92,19 +93,19 @@ public final class Helios extends Helicopter
     @Override
     public boolean isEnergyAbilityActivatable()
     {
-        return this.powerUpGeneratorTimer == 0 && this.hasEnoughEnergyForAbility();
+        return powerUpGeneratorTimer == 0 && hasEnoughEnergyForAbility();
     }
 
     @Override
-    public void useEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void useEnergyAbility()
     {
-        this.activatePowerUpGenerator();
+        activatePowerUpGenerator();
     }
 
     private void activatePowerUpGenerator()
     {
-        this.powerUpGeneratorTimer = (int)(0.4f * POWER_UP_DURATION);
-        this.consumeSpellCosts();
+        powerUpGeneratorTimer = (int)(0.4f * POWER_UP_DURATION);
+        consumeSpellCosts();
         Calculations.randomize();
         for(int i = 0; i < 3; i++) // TODO 3 is magic number
         {
@@ -115,7 +116,7 @@ public final class Helios extends Helicopter
                 {
                     Audio.play(Audio.powerAnnouncer[REPARATION.ordinal()]);
                 }
-                this.useReparationPowerUp();
+                useReparationPowerUp();
             }
             else
             {
@@ -134,7 +135,7 @@ public final class Helios extends Helicopter
     @Override
     public boolean canImmobilizePowerUp()
     {
-        return this.hasPowerUpImmobilizer;
+        return hasPowerUpImmobilizer;
     }
     
     @Override
@@ -142,13 +143,13 @@ public final class Helios extends Helicopter
     {
         super.initMenuEffect(i);
         // TODO analysieren, ob man nicht direkt die richtige Zeit für den Effekt wählen kann
-        this.gainTripleDamagePermanently();
+        gainTripleDamagePermanently();
     }
     
     @Override
     public void stopMenuEffect()
     {
-        this.turnOfTripleDamage();
+        turnOfTripleDamage();
     }
     
     private void turnOfTripleDamage()
@@ -159,7 +160,7 @@ public final class Helios extends Helicopter
     @Override
     public void resetStateTypeSpecific()
     {
-        this.powerUpGeneratorTimer = 0;
+        powerUpGeneratorTimer = 0;
     }
 
     @Override

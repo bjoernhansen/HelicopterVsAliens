@@ -542,7 +542,7 @@ public class Events
 
                 if (!(level == 50 && helicopter.hasAllUpgrades()))
                 {
-                    gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(
+                    gameRessourceProvider.getManageablePaintableController().clearActiveEntities(
                         ManageablePaintableGroupType.INTACT_ENEMY);
                     resetLevelAfterRepair();
                     LevelManager.adaptToLevel(helicopter, level, false); // TODO signatur der Methode ändern - zu viele Parameter und ein boolescher
@@ -552,7 +552,7 @@ public class Events
                                              .reset();
                     }
                     killsAfterLevelUp = 0;
-                    gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(
+                    gameRessourceProvider.getManageablePaintableController().clearActiveEntities(
                         ManageablePaintableGroupType.DESTROYED_ENEMY);
                     Window.buttons.get(LeftSideRepairShopButtonType.REPAIR)
                                   .adjustCostsToZero();
@@ -617,9 +617,9 @@ public class Events
 
                 Window.updateRepairShopButtonsAfterSpotlightPurchase();
 
-                gameRessourceProvider.getActiveManageablePaintableController().forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY, enemy -> ((Enemy)enemy).repaint());
+                gameRessourceProvider.getManageablePaintableController().forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY, enemy -> ((Enemy)enemy).repaint());
 
-                gameRessourceProvider.getActiveManageablePaintableController()
+                gameRessourceProvider.getManageablePaintableController()
                                      .getIntactEnemies()
                                      .stream()
                                      .filter(Predicate.not(Enemy::isRock))
@@ -1097,9 +1097,9 @@ public class Events
         Window.conditionalReset();
 
         // kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-        if (!gameRessourceProvider.getActiveManageablePaintableController()
+        if (!gameRessourceProvider.getManageablePaintableController()
                                   .getIntactEnemies().isEmpty()
-            && !(!totalReset && gameRessourceProvider.getActiveManageablePaintableController()
+            && !(!totalReset && gameRessourceProvider.getManageablePaintableController()
                                                      .getIntactEnemies()
                                                      .element()
                                                      .getType() == EnemyType.BOSS_2_SERVANT))
@@ -1113,7 +1113,7 @@ public class Events
             }
             if (totalReset)
             {
-                gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY);
+                gameRessourceProvider.getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY);
                 EnemyController.currentRock = null;
             }
             else
@@ -1125,7 +1125,7 @@ public class Events
         if (totalReset)
         {
             killsAfterLevelUp = 0;
-            gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY);
+            gameRessourceProvider.getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY);
             if (level < 6)
             {
                 gameRessourceProvider.getScenery().reset();
@@ -1133,16 +1133,16 @@ public class Events
         }
         
         // Explosions
-        gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.EXPLOSION);
+        gameRessourceProvider.getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.EXPLOSION);
         
         // Missiles
-        gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.MISSILE);
+        gameRessourceProvider.getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.MISSILE);
         
         // EnemyMissiles
-        gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE);
+        gameRessourceProvider.getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE);
         
         // PowerUps
-        gameRessourceProvider.getActiveManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.POWER_UP);
+        gameRessourceProvider.getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.POWER_UP);
 
         if (Window.collectedPowerUps.containsKey(PowerUpType.BOOSTED_FIRE_RATE))
         {
@@ -1153,13 +1153,13 @@ public class Events
     
     private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
     {
-        Queue<Enemy> activeEnemies = gameRessourceProvider.getActiveManageablePaintableController()
+        Queue<Enemy> activeEnemies = gameRessourceProvider.getManageablePaintableController()
                                                           .getIntactEnemies();
         activeEnemies.stream()
                      .filter(Enemy::isDisappearingAfterEnteringRepairShop)
-                     .forEach(gameRessourceProvider.getActiveManageablePaintableController()::storeManageablePaintable);
+                     .forEach(gameRessourceProvider.getManageablePaintableController()::store);
         
-        gameRessourceProvider.getActiveManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableController()
                              .getIntactEnemies()
                              .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
     }
