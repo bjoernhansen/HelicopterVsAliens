@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.missile;
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
@@ -13,9 +14,8 @@ import de.helicopter_vs_aliens.model.helicopter.StandardUpgradeType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
 import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
@@ -48,14 +48,14 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	private boolean
 		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
-	private final Set<Enemy>
+	private final Collection<Enemy>
 		hits = new HashSet<>();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
 	
 	private ExplosionType
 		typeOfExplosion;
 	
 	private boolean
-		flying = true;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
+		isFlying = true;					// = true: Rakete fliegt; wird gleich false gesetzt, wenn Rakete den sichtbaren Bildschirmbereich verlässt oder trifft
 	
 	// nur für Roch- und Orochi-Klasse relevant
 	private final MissileClusterManager
@@ -81,7 +81,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	{
 		dangerous = false;
 		bounced = false;
-		flying = true;
+		isFlying = true;
 		hits.clear();
 	}
 	
@@ -111,50 +111,46 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 							* (inflictsExtraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 	
+	// TODO gibt es immer "updateAll"? --> wenn ja Zusammenführen!
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
+		// TODO Fehler finden und dann verwenden anstelle von updateAll
 	{
-		for(Iterator<Missile> missileIterator = gameRessourceProvider.getManageablePaintableController()
-																	 .getMissiles()
-																	 .iterator(); missileIterator.hasNext(); )
-		{
-			Missile missile = missileIterator.next();
-			missile.update();
-			if(!missile.flying)
-			{
-				missileIterator.remove();
-				missile.inactivate(gameRessourceProvider);
-			}
-		}
+		ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
+		// TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
+		manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.MISSILE,
+														  missile -> ((Missile)missile).update());
+		manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.MISSILE,
+															missile -> !((Missile)missile).isFlying,
+															missile -> ((Missile)missile).inactivate());
+		manageablePaintableController.removeIf(ManageablePaintableGroupType.MISSILE,
+											   missile -> !((Missile)missile).isFlying);
 	}
 	
+	// TODO wenn alle ManagablePaintables eine Update-Methode haben, dann könnte diese Methode teil des Interfaces werden und dann könnte in der KLasse ManagePaintableController das sehr elegant gelöst werden
 	private void update()
 	{
 		double newX = getX() + speed + (Scenery.backgroundMoves ? -SceneryObject.BG_SPEED : 0);
 		setX(newX);
-		
-		
 		if(getX() > 1175 || getX() + 20 < 0)
 		{
-			flying = false;
+			isFlying = false;
 		}
 		else if(canHit(getHelicopter()))
 		{
 			hit(getHelicopter());
 		}
 		checkIfMissileHitEnemy();
-
 		setPaintBounds();
 	}
 	
-	private void inactivate(GameRessourceProvider gameRessourceProvider)
+	private void inactivate()
 	{
-		Helicopter helicopter = gameRessourceProvider.getHelicopter();
+		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
 		if(helicopter.hasKillCountingMissiles())
 		{
 			Grantable reward = helicopter.getMultipleHitsExtraReward(this);
 			missileClusterManager.inactivateWith(reward);
 		}
-		gameRessourceProvider.getManageablePaintableController().store(this);
 	}
 	
 	private boolean canHit(Helicopter helicopter)
@@ -168,7 +164,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 		dangerous = false;
 		if(!helicopter.hasPiercingWarheads)
 		{
-			flying = false;
+			isFlying = false;
 		}
 		helicopter.takeMissileDamage();
 	}
@@ -225,7 +221,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 				if (!helicopter.hasPiercingWarheads
 					&& !enemy.isInvincible())
 				{
-					flying = false;
+					isFlying = false;
 					break;
 				}
 			}

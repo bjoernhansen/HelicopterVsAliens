@@ -53,69 +53,70 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 	private void update()
 	{
 		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
-		if(this.intersects(helicopter))
+		if(intersects(helicopter))
 		{
-			this.collect(helicopter);
+			collect(helicopter);
 		}
-		if(!this.hasStopped
+		if(!hasStopped
 		   && helicopter.canImmobilizePowerUp()
-		   && this.hasReachedStopPosition())
+		   && hasReachedStopPosition())
 		{
-			this.stop();
+			stop();
 		}
 		
-		if(!this.isInStatusBar)
+		if(!isInStatusBar)
 		{
-			if(!this.hasStopped)
+			if(!hasStopped)
 			{
-				double newSpeedY = 0.20 * this.direction * this.speed.getX();
-				this.speed.setLocation(0.25 * this.direction + this.speed.getX(), 
+				double newSpeedY = 0.20 * direction * speed.getX();
+				speed.setLocation(0.25 * direction + speed.getX(),
 										helicopter.canImmobilizePowerUp()
-											? Math.min(newSpeedY, 0.03*(this.getCenterY()-30))
+											? Math.min(newSpeedY, 0.03*(getCenterY()-30))
 											: newSpeedY);
 			}	
 			else if(isAboveGround())
 			{
-				this.speed.setLocation(this.speed.getX(), this.speed.getY() - 0.35);
+				speed.setLocation(speed.getX(), speed.getY() - 0.35);
 			}
-			else{this.speed.setLocation(0, 0);}
+			else{
+				speed.setLocation(0, 0);}
 			
 			// TODO unverständlich, in Methoden auslagern
 			setBounds(
-					this.getX()
-						- this.speed.getX()
+					getX()
+						- speed.getX()
 						- (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
-					Math.min(this.getY() - this.speed.getY(),
-							GROUND_Y - this.getHeight()),
+					Math.min(getY() - speed.getY(),
+							 GROUND_Y - getHeight()),
                     SIZE, SIZE);
 			
-			if(   (this.speed.getX() == 0 && this.getMaxX() < 0)
-			    ||(this.speed.getX() != 0 && this.getMaxY() < 0))
+			if(   (speed.getX() == 0 && getMaxX() < 0)
+			    ||(speed.getX() != 0 && getMaxY() < 0))
 			{
-				this.setCollected();
+				setCollected();
 			}
-			this.setPaintBounds();
+			setPaintBounds();
 		}		
 	}
 	
 	private boolean isAboveGround()
 	{
-		return this.getMaxY() < GROUND_Y;
+		return getMaxY() < GROUND_Y;
 	}
 	
 	private boolean hasReachedStopPosition()
 	{
-		return POWERUP_STOP_POSITION < (this.getX() - this.speed.getX() + 20);
+		return POWERUP_STOP_POSITION < (getX() - speed.getX() + 20);
 	}
 	
 	public void initialize()
 	{
-		this.initialize(0, 0, 0, 0);
+		initialize(0, 0, 0, 0);
 	}
 	
 	private void initialize(Enemy enemy, int powerUpDirection)
 	{
-		this.initialize( enemy.getX(),
+		initialize( enemy.getX(),
 					     enemy.getY(),
 					     enemy.getBounty(),
 					     powerUpDirection );
@@ -124,46 +125,46 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 	private void initialize(double x, double y, int powerUpWorth, int powerUpDirection)
 	{
 		setBounds(x, y, SIZE, SIZE);
-		this.setPaintBounds(SIZE, SIZE);
-		this.wasCollected = false;
-		this.hasStopped = false;
-		this.isInStatusBar = false;
-		this.speed.setLocation(0, 0);
-		this.direction = powerUpDirection;
-        this.surfaceColor = this.type.getSurfaceColor();
-        this.crossColor = this.type.getCrossColor();
-		if(this.type == PowerUpType.BONUS_INCOME)
+		setPaintBounds(SIZE, SIZE);
+		wasCollected = false;
+		hasStopped = false;
+		isInStatusBar = false;
+		speed.setLocation(0, 0);
+		direction = powerUpDirection;
+        surfaceColor = type.getSurfaceColor();
+        crossColor = type.getCrossColor();
+		if(type == PowerUpType.BONUS_INCOME)
 		{
-            this.worth = powerUpWorth;
+            worth = powerUpWorth;
 		}
 	}
     
     public void setCollected()
     {
-        this.wasCollected = true;
+        wasCollected = true;
     }
 	
 	private void collect(Helicopter helicopter)
 	{
 		setCollected();
-		if(!PowerUpType.getStatusBarPowerUpTypes().contains(this.type) || !helicopter.isBoosted(this.type))
+		if(!PowerUpType.getStatusBarPowerUpTypes().contains(type) || !helicopter.isBoosted(type))
 		{
-			Audio.play(Audio.powerAnnouncer[this.type.ordinal()]);
+			Audio.play(Audio.powerAnnouncer[type.ordinal()]);
 		}
 		
-		if(this.type == PowerUpType.TRIPLE_DAMAGE)
+		if(type == PowerUpType.TRIPLE_DAMAGE)
 		{
 			Audio.play(Audio.shieldUp);
 			if(!Events.isCurrentLevelBossLevel()){
 				Window.updateCollectedPowerUps(helicopter, this);}
 		}
-		else if(this.type == PowerUpType.INVINCIBLE)
+		else if(type == PowerUpType.INVINCIBLE)
 		{
 			Audio.play(Audio.teleport1);
 			if(!Events.isCurrentLevelBossLevel()){
 				Window.updateCollectedPowerUps(helicopter, this);}
 		}
-		else if(this.type == PowerUpType.UNLIMITED_ENERGY)
+		else if(type == PowerUpType.UNLIMITED_ENERGY)
 		{
 			Audio.play(Audio.shieldUp);
 			if(!Events.isCurrentLevelBossLevel())
@@ -172,7 +173,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 				Window.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
-		else if(this.type == PowerUpType.BOOSTED_FIRE_RATE)
+		else if(type == PowerUpType.BOOSTED_FIRE_RATE)
 		{
 			Audio.play(Audio.shieldUp);
 			if(!Events.isCurrentLevelBossLevel())
@@ -181,16 +182,16 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 				Window.updateCollectedPowerUps(helicopter, this);
 			}				
 		}
-		else if(this.type == PowerUpType.REPARATION)
+		else if(type == PowerUpType.REPARATION)
 		{
 			helicopter.useReparationPowerUp();
 		}
-		else if(this.type == PowerUpType.BONUS_INCOME)
+		else if(type == PowerUpType.BONUS_INCOME)
 		{
 			Audio.play(Audio.cash);
 			Events.lastExtraBonus = 0;
 			Window.moneyDisplayTimer = Events.START;
-			Events.lastBonus = helicopter.getBonusFactor() * this.worth;
+			Events.lastBonus = helicopter.getBonusFactor() * worth;
 			Events.money += Events.lastBonus;
 			Events.overallEarnings += Events.lastBonus;
 			Events.extraBonusCounter += Events.lastBonus;
@@ -199,19 +200,19 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 
 	public void moveToStatusbar()
 	{
-		Window.collectedPowerUps.put(this.type, this);
-		this.speed.setLocation(0, 0);
-		this.isInStatusBar = true;
-		this.wasCollected = false;
+		Window.collectedPowerUps.put(type, this);
+		speed.setLocation(0, 0);
+		isInStatusBar = true;
+		wasCollected = false;
 		setBounds(100, 432, Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
-		this.setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
+		setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 	
 	public static void activateInstance(GameRessourceProvider gameRessourceProvider, Enemy enemy)
 	{
 		PowerUpType powerUpType = enemy.getTypeOfRandomlyDroppedPowerUp();
-		int powerUpDirection = PowerUp.getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
-		PowerUp powerUp = PowerUp.getInstance(gameRessourceProvider, powerUpType);
+		int powerUpDirection = getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
+		PowerUp powerUp = getInstance(gameRessourceProvider, powerUpType);
 		powerUp.initialize(enemy, powerUpDirection);
 	}
 
@@ -235,8 +236,8 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 	
 	private void stop()
 	{
-		this.hasStopped = true;
-		this.speed.setLocation(0, 0);
+		hasStopped = true;
+		speed.setLocation(0, 0);
 	}
     
     public PowerUpType getType()
@@ -246,14 +247,14 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
     
     public void setOpaque()
     {
-        this.surfaceColor = Colorations.setOpaque(this.surfaceColor);
-        this.crossColor = Colorations.setOpaque(this.crossColor);
+        surfaceColor = Colorations.setOpaque(surfaceColor);
+        crossColor = Colorations.setOpaque(crossColor);
     }
     
     public void setAlpha(int alpha)
     {
-        this.surfaceColor = Colorations.setAlpha(this.surfaceColor, alpha);
-        this.crossColor = Colorations.setAlpha(this.crossColor, alpha);
+        surfaceColor = Colorations.setAlpha(surfaceColor, alpha);
+        crossColor = Colorations.setAlpha(crossColor, alpha);
     }
     
     public Color getSurfaceColor()

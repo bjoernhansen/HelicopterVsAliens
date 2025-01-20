@@ -26,7 +26,8 @@ public final class Calculations
 	
 	public static void randomize()
     {        
-		int random, temp;
+		int random;
+		int temp;
 		for(int i = 0; i < randomOrder.length; i++)
 		{
 			temp = randomOrder[i];

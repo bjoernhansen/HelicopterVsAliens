@@ -193,8 +193,8 @@ public final class ManageablePaintableController implements ActiveManageablePain
     }
     
     public void forEachActiveEntityIf(ManageablePaintableGroupType groupType,
-                                      Consumer<? super ManageablePaintable> action,
-                                      Predicate<? super ManageablePaintable> applyCondition)
+                                      Predicate<? super ManageablePaintable> applyCondition,
+                                      Consumer<? super ManageablePaintable> action)
     {
         paintableQueues.get(groupType)
                        .stream()
@@ -214,7 +214,7 @@ public final class ManageablePaintableController implements ActiveManageablePain
     
     public <T extends ManageablePaintable> T activateEntity(ManageablePaintableFactory<T> factory)
     {
-        T manageablePaintable = manageablePaintableSupplier.retrieve(factory);;
+        T manageablePaintable = manageablePaintableSupplier.retrieve(factory);
         switch(manageablePaintable.getGroupType())
         {
             case INTACT_ENEMY, DESTROYED_ENEMY -> intactEnemies.add((Enemy)manageablePaintable);
@@ -227,7 +227,7 @@ public final class ManageablePaintableController implements ActiveManageablePain
         return manageablePaintable;
     }
   
-    // TODO wenn eine entitiy "gestored" wird, dann sollte sie automatisch aus den aktiven Entities verschwinden
+    // TODO wenn eine Entity "gestored" wird, dann sollte sie automatisch aus den aktiven Entities verschwinden
     // TODO hierbei beachten, dass keine concurrentModificationException auftritt
     public void store(ManageablePaintable manageablePaintable)
     {

@@ -55,10 +55,10 @@ public class GameWindowPainter extends WindowPainter
     private static final int
         ENEMY_HEALTH_BAR_WIDTH = 206;
     
-    public static final int
+    private static final int
         IN_GAME_MENU_LEFT = 363;
     
-    public static final int
+    private static final int
         IN_GAME_MENU_WIDTH = 256;
     
     
@@ -538,16 +538,14 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 2)
         {
             infoString = "Aktive PowerUps: "
-                + manageablePaintableController
-                .numberOfActiveEntities(ManageablePaintableGroupType.POWER_UP)
+                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.POWER_UP)
                 + ";   Inaktive PowerUps: "
                 + manageablePaintableController.numberOfInactiveEntities(PowerUp.class);
         }
         else if(Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
-                + manageablePaintableController
-                .numberOfActiveEntities(ManageablePaintableGroupType.EXPLOSION)
+                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.EXPLOSION)
                 + ";   Inaktive Explosionen: "
                 + manageablePaintableController.numberOfInactiveEntities(Explosion.class);
         }
@@ -557,8 +555,7 @@ public class GameWindowPainter extends WindowPainter
                 + (manageablePaintableController
                 .numberOfActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY) - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerst\u00F6rte Gegner: "
-                + manageablePaintableController
-                .numberOfActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY)
+                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY)
                 + ";   Hindernisse: "
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
@@ -567,24 +564,21 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
-                + manageablePaintableController
-                .numberOfActiveEntities(ManageablePaintableGroupType.MISSILE)
+                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.MISSILE)
                 + ";   Inaktive Raketen: "
                 + manageablePaintableController.numberOfInactiveEntities(Missile.class);
         }
         else if(Window.specialInfoSelection == 6)
         {
             infoString = "Aktive gegnerische Geschosse: "
-                + manageablePaintableController
-                .numberOfActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE)
+                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE)
                 + ";   Inaktive gegnerische Geschosse: "
                 + manageablePaintableController.numberOfInactiveEntities(EnemyMissile.class);
         }
         else if(Window.specialInfoSelection == 7)
         {
             infoString = "Aktive Hintergrundobjekte: "
-                + manageablePaintableController
-                .numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT)
+                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT)
                 + ";   Inaktive Hintergrundobjekte: "
                 + manageablePaintableController.numberOfInactiveEntities(SceneryObject.class);
         }
@@ -621,7 +615,7 @@ public class GameWindowPainter extends WindowPainter
                 + "; Hit counter: "
                 + gameStatisticsCalculator.getHitCounter()
                 + "; Hit rate: "
-                + percentage;
+                + percentage + "%)";
         }
         else if(Window.specialInfoSelection == 13)
         {

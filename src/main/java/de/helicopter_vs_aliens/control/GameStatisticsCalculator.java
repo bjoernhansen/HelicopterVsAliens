@@ -5,18 +5,15 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 public final class GameStatisticsCalculator
 {
-    private int
-        numberOfEnemiesKilled,              // Anzahl der vernichteten Gegner
-        numberOfEnemiesSeen,                // Anzahl der erschienenen Gegner
-        numberOfMiniBossKilled,             // Anzahl der vernichteten Mini-Bosse
-        numberOfMiniBossSeen,               // Anzahl der erschienenen Mini-Bosse
-        hitCounter,                         // Anzahl der getroffenen Gegner
-        missileCounter,                     // Anzahl der abgeschossenen Raketen
-        numberOfRepairs,                    // Anzahl der Reparaturen
-        numberOfCrashes;                    // Anzahl der Abstürze
-
- 
-    public GameStatisticsCalculator() {}
+    private int numberOfEnemiesKilled; // Anzahl der vernichteten Gegner
+    private int numberOfEnemiesSeen; // Anzahl der erschienenen Gegner
+    private int numberOfMiniBossKilled; // Anzahl der vernichteten Mini-Bosse
+    private int numberOfMiniBossSeen; // Anzahl der erschienenen Mini-Bosse
+    private int hitCounter; // Anzahl der getroffenen Gegner
+    private int missileCounter; // Anzahl der abgeschossenen Raketen
+    private int numberOfRepairs; // Anzahl der Reparaturen
+    private int numberOfCrashes; // Anzahl der Abstürze
+    
     
     public void restoreFrom(Savegame savegame)
     {
@@ -32,24 +29,24 @@ public final class GameStatisticsCalculator
     
     public void resetCounterForHighscore()
     {
-        this.numberOfCrashes = 0;
-        this.numberOfRepairs = 0;
-        this.missileCounter = 0;
-        this.hitCounter = 0;
-        this.numberOfEnemiesSeen = 0;
-        this.numberOfEnemiesKilled = 0;
-        this.numberOfMiniBossSeen = 0;
-        this.numberOfMiniBossKilled = 0;
+        numberOfCrashes = 0;
+        numberOfRepairs = 0;
+        missileCounter = 0;
+        hitCounter = 0;
+        numberOfEnemiesSeen = 0;
+        numberOfEnemiesKilled = 0;
+        numberOfMiniBossSeen = 0;
+        numberOfMiniBossKilled = 0;
     }
     
-    public void incrementNumberOfEnemiesSeen()
+    void incrementNumberOfEnemiesSeen()
     {
         numberOfEnemiesSeen++;
     }
     
     public int getKillRate()
     {
-        return Calculations.percentage(numberOfEnemiesSeen, numberOfEnemiesKilled);
+        return Calculations.percentage(numberOfEnemiesKilled, numberOfEnemiesSeen);
     }
     
     public int getNumberOfEnemiesSeen()

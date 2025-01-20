@@ -20,9 +20,12 @@ import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 public class ScoreScreenWindowPainter extends WindowPainter
 {
     private static final int
-        SPACE_BETWEEN_ROWS = 30,
-        X_POS_1 = 351,
-        X_POS_2 = 633,
+        SPACE_BETWEEN_ROWS = 30;
+    private static final int
+        X_POS_1 = 351;
+    private static final int
+        X_POS_2 = 633;
+    private static final int
         Y_POS = 129;
 
     @Override
