@@ -26,6 +26,10 @@ public final class ManageablePaintableController implements ActiveManageablePain
     // TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
     // TODO das lässt sich vielleicht auch über eine Map abbilden , eine EnumMap (PaintableEntityGroupType) von EnumMaps (Collection Subgroup)
     
+    // TODO API erstellen, durch die Anfragen wie folgt möglich sind:
+    // TODO ManageablePaintableController manageablePaintableController = getGameRessourceProvider().getManageablePaintableController();
+    // TODO manageablePaintableController.manageType(ManageablePaintableGroupType.SCENERY_OBJECT).forEach( ... ).forEachHaving( ... ).do( ... ).forEachHaving( ... ).do( ... ).removeIf( ... ).execute();
+    
     private final GameRessourceProvider
         gameRessourceProvider;
     
@@ -85,36 +89,6 @@ public final class ManageablePaintableController implements ActiveManageablePain
     public Queue<Enemy> getDestroyedEnemies()
     {
         return destroyedEnemies;
-    }
-    
-    @Override
-    public Queue<Missile> getMissiles()
-    {
-        return missiles;
-    }
-    
-    @Override
-    public Queue<Explosion> getExplosions()
-    {
-        return explosions;
-    }
-    
-    @Override
-    public Queue<SceneryObject> getSceneryObjects()
-    {
-        return sceneryObjects;
-    }
-    
-    @Override
-    public Queue<EnemyMissile> getEnemyMissiles()
-    {
-        return enemyMissiles;
-    }
-    
-    @Override
-    public Queue<PowerUp> getPowerUps()
-    {
-        return powerUps;
     }
     
     // nur Vorbereitung für späteren Umbau
@@ -227,8 +201,7 @@ public final class ManageablePaintableController implements ActiveManageablePain
         return manageablePaintable;
     }
   
-    // TODO wenn eine Entity "gestored" wird, dann sollte sie automatisch aus den aktiven Entities verschwinden
-    // TODO hierbei beachten, dass keine concurrentModificationException auftritt
+    // TODO sollte zukünftig private sein und nur noch in dieser Klasse verwendet werden. --> wird aufgerufen, wenn in dieser Klasse eine Entity aus den aktiven verschwindet
     public void store(ManageablePaintable manageablePaintable)
     {
         manageablePaintableSupplier.store(manageablePaintable);

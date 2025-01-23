@@ -45,7 +45,7 @@ public class EnemyController
     
     public static int barrierTimer;        // reguliert das Erscheinen von Hindernis-Gegnern
     
-    public static int rockTimer;            // reguliert das Erscheinen von "Rock"-Gegnern
+    private static int rockTimer;            // reguliert das Erscheinen von "Rock"-Gegnern
     
     public static Enemy
         currentRock,                    // Referenz auf den aktiven Rock-Gegner
@@ -353,7 +353,7 @@ public class EnemyController
                                                             .iterator(); iterator.hasNext(); )
         {
             Enemy enemy = iterator.next();
-            enemy.updateDead(gameRessourceProvider);
+            enemy.updateDead();
             Helicopter helicopter = gameRessourceProvider.getHelicopter();
             if(helicopter.basicCollisionRequirementsSatisfied(enemy)
                 && !enemy.hasCrashed())

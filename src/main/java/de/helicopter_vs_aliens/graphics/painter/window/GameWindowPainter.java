@@ -142,12 +142,11 @@ public class GameWindowPainter extends WindowPainter
         graphicsAdapter.fillRect(0, GROUND_Y, VIRTUAL_DIMENSION.getWidth(), 35);
         
         // Objekte vor dem Helikopter
-        Queue<SceneryObject> activeSceneryObjects = gameRessourceProvider.getManageablePaintableController()
-                                                                         .getSceneryObjects();
         SceneryLayer.getForegroundLayers()
-                    .forEach(layer -> activeSceneryObjects.stream()
-                                                          .filter(sceneryObject -> sceneryObject.getLayer() == layer)
-                                                          .forEach(sceneryObject -> sceneryObject.paint(graphicsAdapter)));
+                    .forEach(layer -> gameRessourceProvider.getManageablePaintableController()
+                                                           .forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
+                                                                                  sceneryObject -> ((SceneryObject)sceneryObject).getLayer() == layer,
+                                                                                  sceneryObject -> sceneryObject.paint(graphicsAdapter)));
     }
     
     private void paintForegroundDisplays(GraphicsAdapter graphicsAdapter)

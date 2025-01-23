@@ -1675,7 +1675,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return otherEnemy.navigationDevice.getDirectionY() == navigationDevice.getDirectionY();
     }
     
-    public void updateDead(GameRessourceProvider gameRessourceProvider)
+    public void updateDead()
     {
         if(collisionDamageTimer > 0)
         {
@@ -1688,7 +1688,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         if(!hasCrashed
             && getMaxY() + speed.getY() >= crashPositionY)
         {
-            handleCrashToTheGround(gameRessourceProvider);
+            handleCrashToTheGround();
         }
         calculateSpeedDead();
         move();
@@ -1699,7 +1699,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         setPaintBounds();
     }
     
-    private void handleCrashToTheGround(GameRessourceProvider gameRessourceProvider)
+    private void handleCrashToTheGround()
     {
         hasCrashed = true;
         stopMoving();
@@ -1709,12 +1709,12 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             isMarkedForRemoval = true;
         }
         Audio.play(getCrashToTheGroundSound());
-        gameRessourceProvider.getExplosionController()
-                             .start(
-                                 getCenterX(),
-                                 getCenterY(),
-                                 getExplosionType(),
-                                 isDetonatingExtraStrong());
+        getGameRessourceProvider().getExplosionController()
+                                  .start(
+                                      getCenterX(),
+                                      getCenterY(),
+                                      getExplosionType(),
+                                      isDetonatingExtraStrong());
     }
     
     protected boolean isDetonatingExtraStrong()

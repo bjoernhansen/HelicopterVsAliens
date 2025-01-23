@@ -67,9 +67,6 @@ public class SceneryPainter extends Painter<Scenery>
     
     private void paintAllBackgroundSceneryObjects(GraphicsAdapter graphicsAdapter)
     {
-        scenery.getSceneryObjects()
-               .stream()
-               .filter(SceneryObject::isInBackground)
-               .forEach(sceneryObject -> sceneryObject.paint(graphicsAdapter));
+        scenery.paintAllBackgroundSceneryObjects(graphicsAdapter);
     }
 }

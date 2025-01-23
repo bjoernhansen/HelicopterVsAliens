@@ -8,7 +8,6 @@ import de.helicopter_vs_aliens.control.timer.TimerManager;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.gui.window.WindowManager;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionController;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
@@ -107,7 +106,7 @@ public final class GameProgress implements GameRessourceProvider
             if(!Window.isMenuVisible)
             {
                 Colorations.calculateVariableGameColors(gameLoopCount);
-                scenery.update(this);
+                scenery.update();
                 Events.updateTimer();
                 Window.updateDisplays(this);
                 EnemyController.updateAllDestroyed(this);

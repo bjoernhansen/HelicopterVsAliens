@@ -1,6 +1,7 @@
 package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableActivation;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -11,7 +12,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 
@@ -74,24 +74,23 @@ public class Scenery extends PaintableEntity
         firstDesert.initializeAsFirstDesert();
     }
     
-    public void update(GameRessourceProvider gameRessourceProvider)
+    public void update()
     {
-        backgroundMoves = isBackgroundMoving(gameRessourceProvider);
-        Queue<SceneryObject> activeSceneryObjects = getSceneryObjects();
-        for(Iterator<SceneryObject> iterator = activeSceneryObjects.iterator(); iterator.hasNext();)
+        backgroundMoves = isBackgroundMoving();
+        ManageablePaintableController manageablePaintableController = getGameRessourceProvider().getManageablePaintableController();
+        if(backgroundMoves)
         {
-            SceneryObject sceneryObject = iterator.next();
-            if (backgroundMoves)
-            {
-                sceneryObject.move();
-            }
-            if(sceneryObject.getSceneryObjectMaxX() < X_LIMIT_FOR_REMOVAL)
-            {
-                sceneryObject.clearImage();
-                iterator.remove();
-                gameRessourceProvider.getManageablePaintableController().store(sceneryObject);
-            }
+            manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.SCENERY_OBJECT,
+                                                              sceneryObject -> ((SceneryObject)sceneryObject).move());
         }
+        manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
+                                                            sceneryObject -> ((SceneryObject)sceneryObject).getSceneryObjectMaxX() < X_LIMIT_FOR_REMOVAL,
+                                                            sceneryObject -> ((SceneryObject)sceneryObject).clearImage());
+        // TODO eventuell könnte noch eine postSet Methode ins Interface aufgenommen werden für das clear image,
+        manageablePaintableController.removeIf(ManageablePaintableGroupType.SCENERY_OBJECT,
+                                               
+                                               sceneryObject -> ((SceneryObject)sceneryObject).getSceneryObjectMaxX() < X_LIMIT_FOR_REMOVAL);
+        
         if(arePrerequisitesForSceneryObjectsCreationMet())
         {
             generateNewSceneryObject();
@@ -103,11 +102,11 @@ public class Scenery extends PaintableEntity
         moveCloud();
     }
     
-    private boolean isBackgroundMoving(GameRessourceProvider gameRessourceProvider)
+    private boolean isBackgroundMoving()
     {
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getHelicopter();
         return helicopter.isRotorSystemActive
-            && !isMajorBossActive(gameRessourceProvider.getManageablePaintableController()
+            && !isMajorBossActive(getGameRessourceProvider().getManageablePaintableController()
                                                        .getIntactEnemies())
             && helicopter.tractor == null;
     }
@@ -165,9 +164,11 @@ public class Scenery extends PaintableEntity
         return cloudX;
     }
     
-    public Queue<SceneryObject> getSceneryObjects()
+    public void paintAllBackgroundSceneryObjects(GraphicsAdapter graphicsAdapter)
     {
-        return getGameRessourceProvider().getManageablePaintableController()
-                                         .getSceneryObjects();
+        getGameRessourceProvider().getManageablePaintableController()
+                                  .forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
+                                                         sceneryObject -> ((SceneryObject)sceneryObject).isInBackground(),
+                                                         sceneryObject -> sceneryObject.paint(graphicsAdapter));
     }
 }
