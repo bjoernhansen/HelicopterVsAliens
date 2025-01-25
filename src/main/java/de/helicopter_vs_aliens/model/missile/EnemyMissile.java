@@ -6,7 +6,6 @@ import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.PaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
@@ -22,22 +21,28 @@ import static de.helicopter_vs_aliens.model.missile.EnemyMissileType.DISCHARGER;
 
 public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 {      	
-	public static final int 	
-		DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
+	public static final int
+		BASE_DIAMETER = 10;		// Durchmesser der gegnerischen Geschosse
 	private static final float
 		STUNNING_MISSILE_ENERGY_CONSUMPTION_FACTOR = 1.0f;
 	
 	private final Point2D
-		location = new Point2D.Float(),
+		location = new Point2D.Float();
+	
+	private final Point2D
 		speed    = new Point2D.Float(); // Geschwindigkeit der gegnerischen Geschosse
 	
 	private int
-		rgbColorValue,	// aktueller Integer-Farbwert für die RGB-Rotkomponente der Geschoss-Farbe [0-255]
+		rgbColorValue;
+	
+	private int
 		diameter;		// Geschoss-Durchmesser
     
 	private boolean
-		hasHit,			// = true: Hat den Helikopter getroffen und kann entsorgt werden
-    	lightUpColor; 	// = true: Farbe der grünen Geschosse wird heller, sonst dunkler
+		hasHit;
+	
+	private boolean
+		lightUpColor; 	// = true: Farbe der grünen Geschosse wird heller, sonst dunkler
     
 	private Color
         variableColor;  // variable grüne Farbe der gegnerischen Geschosse
@@ -53,26 +58,27 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 	private void update()
     {
 		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
-    	this.determineColor();
-		this.location.setLocation( this.location.getX() + this.speed.getX() - (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
-								   this.location.getY() + this.speed.getY() );	
+    	determineColor();
+		location.setLocation( location.getX() + speed.getX() - (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
+								   location.getY() + speed.getY() );
 		if(	helicopter.canBeHit()
-			&& helicopter.intersectsLine( 	this.location.getX() + this.diameter/2f,
-											this.location.getY(),
-										   	this.location.getX() + this.diameter/2f,
-											this.location.getY() + this.diameter))
+			&& helicopter.intersectsLine( 	location.getX() + diameter/2f,
+											location.getY(),
+										   	location.getX() + diameter/2f,
+											location.getY() + diameter))
         {
-			this.hit(getGameRessourceProvider(), helicopter);
+			hit();
 		}		
     }
     
-    private void hit(GameRessourceProvider gameRessourceProvider, Helicopter helicopter)
-    {    	
-    	if(this.type == BUSTER)
+    private void hit()
+    {
+		Helicopter helicopter = getHelicopter();
+    	if(type == BUSTER)
     	{
     		Audio.play(Audio.explosion2);
     		helicopter.takeMissileDamage();
-			gameRessourceProvider.getExplosionController()
+			getGameRessourceProvider().getExplosionController()
 								 .start(
 									 (int)(helicopter.getX()
 										 + (helicopter.isMovingLeft
@@ -87,61 +93,64 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
     		Audio.play(Audio.explosion5);
     		helicopter.receiveStaticCharge(STUNNING_MISSILE_ENERGY_CONSUMPTION_FACTOR);
     	}
-        this.hasHit = true;
+        hasHit = true;
     }
     
     private void determineColor()
     {
-        if(this.lightUpColor)
+        if(lightUpColor)
         {
-            this.rgbColorValue = Math.min(this.rgbColorValue + 25, 255);
+            rgbColorValue = Math.min(rgbColorValue + 25, 255);
         }
         else
         {
-            this.rgbColorValue = Math.max(this.rgbColorValue - 25, 0);
+            rgbColorValue = Math.max(rgbColorValue - 25, 0);
         }        
-        if(this.type == DISCHARGER)
+        if(type == DISCHARGER)
         {
-        	this.variableColor = new Color(this.rgbColorValue, 255, 0);
+        	variableColor = new Color(rgbColorValue, 255, 0);
         }
         else
         {
-        	this.variableColor = new Color(255, this.rgbColorValue, (int)(0.65f * this.rgbColorValue));
+        	variableColor = new Color(255, rgbColorValue, (int)(0.65f * rgbColorValue));
         }  
-        if(this.rgbColorValue == 0){this.lightUpColor = true;}
-        else if(this.rgbColorValue == 255){this.lightUpColor = false;}
+        if(rgbColorValue == 0){
+			lightUpColor = true;}
+        else if(rgbColorValue == 255){
+			lightUpColor = false;}
     }
     
     public void launch(Enemy enemy, EnemyMissileType missileType, double shootingSpeed, Point2D shootingDirection)
     {
-    	this.type = missileType;
+    	type = missileType;
     	    	
     	if(enemy.getModel() == BARRIER)
     	{
-    		this.location.setLocation(enemy.getX() + (enemy.getWidth() -this.diameter)/2,
-					  				  enemy.getY() + (enemy.getHeight()-this.diameter)/2);
-    		this.speed.setLocation(	shootingSpeed * shootingDirection.getX(),
+    		location.setLocation(enemy.getX() + (enemy.getWidth() - diameter)/2,
+					  				  enemy.getY() + (enemy.getHeight()- diameter)/2);
+    		speed.setLocation(	shootingSpeed * shootingDirection.getX(),
 		 							shootingSpeed * shootingDirection.getY());
     	}
     	else
     	{
-    		this.speed.setLocation(	shootingSpeed * (enemy.isFlyingLeft() ? -1f : 1f), 0);
+    		speed.setLocation(	shootingSpeed * (enemy.isFlyingLeft() ? -1f : 1f), 0);
     		    		
     		if(enemy.getModel() == TIT)
     		{
-    			this.location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()), enemy.getY() );
+    			location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()), enemy.getY() );
     		}
 	    	else if(enemy.getModel() == CARGO)
 	    	{
-	    		this.location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()),
-	    								  enemy.getY() + (enemy.getHeight()-this.diameter)/2);
+	    		location.setLocation(enemy.getX() + (enemy.isFlyingLeft() ? 0 : enemy.getWidth()),
+	    								  enemy.getY() + (enemy.getHeight()- diameter)/2);
 	    	}
     	}    	
-    	this.diameter = ((this.type == DISCHARGER) ? DIAMETER : (DIAMETER + 2));
-		this.hasHit = false;
-		this.lightUpColor = true;
+    	diameter = ((type == DISCHARGER) ? BASE_DIAMETER : (BASE_DIAMETER + 2));
+		hasHit = false;
+		lightUpColor = true;
     }
 	
+	// TODO auslagern in eigene Klasse und dann GameressourceProvider im Konstruktor übergeben
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
 		var paintableController = gameRessourceProvider.getManageablePaintableController();

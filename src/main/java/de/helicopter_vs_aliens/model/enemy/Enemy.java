@@ -1405,7 +1405,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                                         getX() + Integer.MIN_VALUE / 2f,
                                         getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth() / 2) - FIELD_OF_FIRE_TOLERANCE_Y,
                                         Integer.MAX_VALUE / 2f,
-                                        EnemyMissile.DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))
+                                        EnemyMissile.BASE_DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))
             ||
             (isFlyingRight()
                 && gameRessourceProvider.getHelicopter()
@@ -1413,7 +1413,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                                             getX() + 0,
                                             getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth() / 2) - FIELD_OF_FIRE_TOLERANCE_Y,
                                             Integer.MAX_VALUE / 2f,
-                                            EnemyMissile.DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))))
+                                            EnemyMissile.BASE_DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))))
         {
             shoot(hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
                   shotSpeed + 3 * Math.random() + 5);
