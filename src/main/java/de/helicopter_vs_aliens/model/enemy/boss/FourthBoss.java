@@ -93,9 +93,9 @@ public final class FourthBoss extends BossEnemy
     }
     
     @Override
-    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    protected void bossTypeSpecificDestructionEffect()
     {
-        killOwnServants(gameRessourceProvider);
+        killOwnServants();
     }
     
     @Override

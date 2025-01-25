@@ -49,24 +49,24 @@ public abstract class BossEnemy extends StandardEnemy
     }
     
     @Override
-    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    protected void evaluateBossDestructionEffect()
     {
-        bossTypeSpecificDestructionEffect(gameRessourceProvider);
+        bossTypeSpecificDestructionEffect();
         bossInactivationEvent();
     }
     
-    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider) {}
+    protected void bossTypeSpecificDestructionEffect() {}
     
     protected void bossInactivationEvent()
     {
         Events.boss = null;
     }
     
-    protected void killOwnServants(GameRessourceProvider gameRessourceProvider)
+    void killOwnServants()
     {
-        gameRessourceProvider.getManageablePaintableController()
+        getGameRessourceProvider().getManageablePaintableController()
                              .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
-                                                  enemy -> this.killServant((Enemy)enemy));
+                                                  enemy -> killServant((Enemy)enemy));
     }
     
     public void killServant(Enemy enemy)

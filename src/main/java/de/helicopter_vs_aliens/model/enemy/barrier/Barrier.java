@@ -341,7 +341,7 @@ public abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider) {}
+    protected void evaluateBossDestructionEffect() {}
     
     @Override
     public Color getBarColor(boolean isImagePaint)

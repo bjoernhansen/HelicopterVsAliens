@@ -9,21 +9,21 @@ public final class SecondBoss extends BossEnemy
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.canMoveChaotic = true;
-        this.shootTimer = 0;
-        this.shootingRate = 5;
-        this.shotSpeed = 3;
-        this.canInstantlyTurnAround = true;
+        canMoveChaotic = true;
+        shootTimer = 0;
+        shootingRate = 5;
+        shotSpeed = 3;
+        canInstantlyTurnAround = true;
         Events.boss = this;
     
         super.doTypeSpecificInitialization();
     }
     
     @Override
-    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    protected void bossTypeSpecificDestructionEffect()
     {
-        boss.setLocation(this.getCenterX(),
-            this.getCenterY());
+        boss.setLocation(getCenterX(),
+                         getCenterY());
         EnemyController.makeBossTwoServants = true;
     }
 }

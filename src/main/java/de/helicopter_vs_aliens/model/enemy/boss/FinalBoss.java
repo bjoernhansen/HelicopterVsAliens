@@ -119,14 +119,14 @@ public final class FinalBoss extends BossEnemy
     protected void bossInactivationEvent() {}
     
     @Override
-    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    protected void bossTypeSpecificDestructionEffect()
     {
-        killOwnServants(gameRessourceProvider);
+        killOwnServants();
         
         Events.isRestartWindowVisible = true;
         Events.level = Events.maxLevel = 51;
         
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getHelicopter();
         helicopter.isDamaged = true;
         // TODO Konstanten definieren
         helicopter.destination.setLocation(helicopter.getX() + 40, 520.0);

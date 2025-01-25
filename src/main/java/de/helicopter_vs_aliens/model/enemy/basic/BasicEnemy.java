@@ -192,7 +192,7 @@ public abstract class BasicEnemy extends StandardEnemy
     }
     
     @Override
-    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    protected void evaluateBossDestructionEffect()
     {
         if(isMiniBoss)
         {

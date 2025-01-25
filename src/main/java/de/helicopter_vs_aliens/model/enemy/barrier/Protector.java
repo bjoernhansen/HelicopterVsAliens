@@ -93,7 +93,7 @@ public final class Protector extends BurrowingBarrier implements FinalBossAcquai
     }
     
     @Override
-    protected void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    protected void evaluateBossDestructionEffect()
     {
         finalBossServantRemoval();
     }

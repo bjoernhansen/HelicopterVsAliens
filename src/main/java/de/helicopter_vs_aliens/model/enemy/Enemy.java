@@ -17,7 +17,6 @@ import de.helicopter_vs_aliens.model.enemy.devices.CloakingDevice;
 import de.helicopter_vs_aliens.model.enemy.devices.NavigationDevice;
 import de.helicopter_vs_aliens.model.enemy.maneuver.ManeuverManger;
 import de.helicopter_vs_aliens.model.enemy.maneuver.Maneuverable;
-import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
@@ -2099,7 +2098,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     }
     
     // TODO null und false sollten keine Eingabeargumente sein, hier die Implementierung anpassen
-    public void dieFromEmpWave(GameRessourceProvider gameRessourceProvider)
+    private void dieFromEmpWave(GameRessourceProvider gameRessourceProvider)
     {
         die(gameRessourceProvider, null, false);
     }
@@ -2109,7 +2108,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         die(gameRessourceProvider, missile, false);
     }
     
-    public void dieFromRadiation(GameRessourceProvider gameRessourceProvider, boolean beamKill)
+    private void dieFromRadiation(GameRessourceProvider gameRessourceProvider, boolean beamKill)
     {
         die(gameRessourceProvider, null, beamKill);
     }
@@ -2133,7 +2132,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             explode(missile);
         }
         
-        evaluateBossDestructionEffect(gameRessourceProvider);
+        evaluateBossDestructionEffect();
         if(missile != null)
         {
             missile.forgetHitting(this);
@@ -2196,7 +2195,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     }
     
     // TODO sobald die Voraussetzungen dafür hergestellt sind, sollte diese Methode als abstrakte Methode in die Klasse Standard-Enemy wandern
-    protected abstract void evaluateBossDestructionEffect(GameRessourceProvider gameRessourceProvider);
+    protected abstract void evaluateBossDestructionEffect();
     
     public void dodge(Missile missile)
     {

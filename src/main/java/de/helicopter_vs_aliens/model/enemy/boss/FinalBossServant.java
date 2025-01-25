@@ -16,7 +16,7 @@ public abstract class FinalBossServant extends BossServant implements FinalBossA
     }
     
     @Override
-    protected void bossTypeSpecificDestructionEffect(GameRessourceProvider gameRessourceProvider)
+    protected void bossTypeSpecificDestructionEffect()
     {
         finalBossServantRemoval();
     }
