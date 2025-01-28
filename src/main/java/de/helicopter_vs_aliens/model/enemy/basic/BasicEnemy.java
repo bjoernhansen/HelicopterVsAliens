@@ -153,9 +153,9 @@ public abstract class BasicEnemy extends StandardEnemy
     }
     
     @Override
-    public void grantGeneralRewards(GameRessourceProvider gameRessourceProvider)
+    public void grantGeneralRewards()
     {
-        super.grantGeneralRewards(gameRessourceProvider);
+        super.grantGeneralRewards();
         if(isMiniBoss)
         {
             Audio.play(Audio.applause2);

@@ -20,9 +20,9 @@ public final class Carrier extends BasicEnemy
     }
     
     @Override
-    public void die(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
+    public void die(Missile missile, boolean beamKill)
     {
-        super.die(gameRessourceProvider, missile, beamKill);
+        super.die(missile, beamKill);
         EnemyController.carrierDestroyedJustNow = this;
     }
     

@@ -43,14 +43,13 @@ public final class FourthBoss extends BossEnemy
     }
     
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
-        boss4Action(gameRessourceProvider.getManageablePaintableController()
-                                         .getIntactEnemies());
-        super.performFlightManeuver(gameRessourceProvider);
+        boss4Action();
+        super.performFlightManeuver();
     }
     
-    private void boss4Action(Queue<Enemy> enemies)
+    private void boss4Action()
     {
         if(    getX() < 930
             && getX() > 150)
@@ -75,15 +74,22 @@ public final class FourthBoss extends BossEnemy
             {
                 stopMoving();
             }
-            if(enemies.size() < 15
-                && (    spawningHornetTimer == FIRST_SERVANT_CREATION_TIME
-                        || spawningHornetTimer == SECOND_SERVANT_CREATION_TIME
-                        || Calculations.tossUp(SPONTANEOUS_SERVANT_CREATION_PROBABILITY)))
+            if(isReadyToCreateServant())
             {
                 boss.setLocation(getCenterX(), getCenterY());
                 EnemyController.makeBoss4Servant = true;
             }
         }
+    }
+    
+    private boolean isReadyToCreateServant()
+    {
+        return getGameRessourceProvider().getManageablePaintableController()
+                                         .getIntactEnemies()
+                                         .size() < 15
+            && (spawningHornetTimer == FIRST_SERVANT_CREATION_TIME
+            || spawningHornetTimer == SECOND_SERVANT_CREATION_TIME
+            || Calculations.tossUp(SPONTANEOUS_SERVANT_CREATION_PROBABILITY));
     }
     
     @Override
@@ -112,10 +118,10 @@ public final class FourthBoss extends BossEnemy
     }
     
     @Override
-    protected void empShock(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
+    protected void empShock(Pegasus pegasus)
     {
         resetSpawningHornetTimer();
-        super.empShock(gameRessourceProvider, pegasus);
+        super.empShock(pegasus);
     }
     
     private void resetSpawningHornetTimer()

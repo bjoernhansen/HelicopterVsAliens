@@ -20,9 +20,9 @@ public final class CapturingEnemy extends BasicEnemy
     }
     
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
-        super.performFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver();
  				
         if(isAbleToStopHelicopterByTractorBeam())
         {

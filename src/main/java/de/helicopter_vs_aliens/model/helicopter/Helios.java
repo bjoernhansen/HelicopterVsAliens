@@ -7,11 +7,8 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.util.Calculations;
-
-import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.helicopter.HelicopterType.ROCH;
 import static de.helicopter_vs_aliens.model.powerup.PowerUpType.REPARATION;

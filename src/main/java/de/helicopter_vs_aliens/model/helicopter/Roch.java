@@ -278,9 +278,9 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void update(GameRessourceProvider gameRessourceProviderontroller)
+    public void update()
     {
-        super.update(gameRessourceProviderontroller);
+        super.update();
         if(isPowerShieldActivated && battery.isDischarged())
         {
             shutDownPowerShield();

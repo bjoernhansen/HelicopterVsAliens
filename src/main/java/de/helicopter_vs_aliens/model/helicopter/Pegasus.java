@@ -151,9 +151,9 @@ public final class Pegasus extends Helicopter
     }
 
     @Override
-    void shoot(GameRessourceProvider gameRessourceProvider)
+    void shoot()
     {
-        super.shoot(gameRessourceProvider);
+        super.shoot();
         if(hasInterphaseGenerator)
         {
             Audio.phaseShift.stop();
@@ -263,9 +263,9 @@ public final class Pegasus extends Helicopter
     }
     
     @Override
-    public void typeSpecificActionOn(Enemy enemy, GameRessourceProvider gameRessourceProvider)
+    public void typeSpecificActionOn(Enemy enemy)
     {
-        enemy.checkForEmpStrike(gameRessourceProvider, this);
+        enemy.checkForEmpStrike(this);
     }
     
     public void rewardAndCountEmpKill(int reward)

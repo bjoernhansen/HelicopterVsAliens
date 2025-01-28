@@ -85,7 +85,7 @@ public enum HelicopterType
         }
     };
     
-    public static final String
+    private static final String
         FIFTH_SPECIAL_KEY_PREFIX = "upgrades.special.fifth.";
     
     private static final int[]
@@ -176,11 +176,11 @@ public enum HelicopterType
                    Supplier<List<HelicopterType>> unlockerTypes,
                    Supplier<Clip> specialSound)
     {
-        this.number = ordinal()+1;
+        number = ordinal()+1;
         this.helicopterClass = helicopterClass;
         this.instanceSupplier = instanceSupplier;
         this.painterInstanceSupplier = painterInstanceSupplier;
-        this.fifthSpecialDictionaryKey = FIFTH_SPECIAL_KEY_PREFIX + this.getDesignation();
+        fifthSpecialDictionaryKey = FIFTH_SPECIAL_KEY_PREFIX + getDesignation();
         this.unlockerTypes = unlockerTypes;
         this.specialSound = specialSound;
     }
@@ -197,10 +197,10 @@ public enum HelicopterType
 
     public List<HelicopterType> getUnlockerTypes()
     {
-        return this.unlockerTypes.get();
+        return unlockerTypes.get();
     }
     
-    public static Set<HelicopterType> getNormalModeHelicopters(){
+    static Set<HelicopterType> getNormalModeHelicopters(){
         return NORMAL_MODE_HELICOPTERS;
     }
     
@@ -211,32 +211,32 @@ public enum HelicopterType
     
     public String getDesignation()
     {
-        return this.name().toLowerCase();
+        return name().toLowerCase();
     }
 
-    public int getSpellCosts()
+    int getSpellCosts()
     {
-        return SPELL_COSTS[this.ordinal()];
+        return SPELL_COSTS[ordinal()];
     }
     
     public int getEffectTime()
     {
-        return EFFECT_TIMES[this.ordinal()];
+        return EFFECT_TIMES[ordinal()];
     }
 
     public int getMaximumUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
     {
-        return this.getPriceLevelFor(standardUpgradeType).getMaximumUpgradeLevel();
+        return getPriceLevelFor(standardUpgradeType).getMaximumUpgradeLevel();
     }
 
     public PriceLevel getPriceLevelFor(StandardUpgradeType standardUpgradeType)
     {
-        return PriceLevel.getValues()[COSTS[this.ordinal()][standardUpgradeType.ordinal()]];
+        return PriceLevel.getValues()[COSTS[ordinal()][standardUpgradeType.ordinal()]];
     }
 
     public int getInitialUpgradeLevelFor(StandardUpgradeType standardUpgradeType)
     {
-        return this.getPriceLevelFor(standardUpgradeType).isCheap() ? 2 : 1;
+        return getPriceLevelFor(standardUpgradeType).isCheap() ? 2 : 1;
     }
 
     public boolean isUnlocked()
@@ -247,22 +247,22 @@ public enum HelicopterType
 
     public Color getStandardPrimaryHullColor()
     {
-        return helicopterColor[this.ordinal()][0];
+        return helicopterColor[ordinal()][0];
     }
 
-    public Color getStandardSecondaryHullColor()
+    Color getStandardSecondaryHullColor()
     {
-        return helicopterColor[this.ordinal()][1];
+        return helicopterColor[ordinal()][1];
     }
 
-    public Color getPlatedPrimaryHullColor()
+    Color getPlatedPrimaryHullColor()
     {
-        return helicopterColor[this.ordinal()][2];
+        return helicopterColor[ordinal()][2];
     }
 
-    public Color getPlatedSecondaryHullColor()
+    Color getPlatedSecondaryHullColor()
     {
-        return helicopterColor[this.ordinal()][3];
+        return helicopterColor[ordinal()][3];
     }
     
     public String getFifthSpecialDictionaryKey()
@@ -310,9 +310,9 @@ public enum HelicopterType
         return Map.copyOf(additionalCosts);
     }
     
-    public int getAdditionalCosts(StandardUpgradeType standardUpgradeType, int upgradeLevel)
+    int getAdditionalCosts(StandardUpgradeType standardUpgradeType, int upgradeLevel)
     {
-        String key = String.format("%d%d%d", this.ordinal(), this.getPriceLevelFor(standardUpgradeType).ordinal(), upgradeLevel);
+        String key = String.format("%d%d%d", ordinal(), getPriceLevelFor(standardUpgradeType).ordinal(), upgradeLevel);
         return Optional.ofNullable(ADDITIONAL_STANDARD_UPGRADE_COSTS.get(key)).orElse(0);
     }
 
@@ -343,7 +343,7 @@ public enum HelicopterType
     
     public boolean hasPassed(BossLevel bossLevel)
     {
-        return !this.getRecordTime(bossLevel).equals(0L);
+        return !getRecordTime(bossLevel).equals(0L);
     }
     
     public Long getRecordTime(BossLevel bossLevel)
@@ -352,7 +352,7 @@ public enum HelicopterType
     }
     
     public int getNumber(){
-        return this.number;
+        return number;
     }
     
     public boolean hasReachedLevel20()
@@ -365,19 +365,20 @@ public enum HelicopterType
         return specialSound.get();
     }
     
-    private static class Unlocker
+    private enum Unlocker
     {
+        ;
         private static final List<HelicopterType>
             EMPTY = Collections.emptyList();
         
         private static final List<HelicopterType>
-            FOR_OROCHI =List.of(HelicopterType.PHOENIX, HelicopterType.PEGASUS);
+            FOR_OROCHI =List.of(PHOENIX, PEGASUS);
         
         private static final List<HelicopterType>
-            FOR_KAMAITACHI = List.of(HelicopterType.ROCH, HelicopterType.PEGASUS);
+            FOR_KAMAITACHI = List.of(ROCH, PEGASUS);
         
         private static final List<HelicopterType>
-            FOR_PEGASUS = List.of(HelicopterType.OROCHI, HelicopterType.KAMAITACHI);
+            FOR_PEGASUS = List.of(OROCHI, KAMAITACHI);
         
         static List<HelicopterType> getEmpty()
         {
@@ -394,7 +395,7 @@ public enum HelicopterType
             return FOR_KAMAITACHI;
         }
         
-        public static List<HelicopterType> getForPegasus()
+        static List<HelicopterType> getForPegasus()
         {
             return FOR_PEGASUS;
         }

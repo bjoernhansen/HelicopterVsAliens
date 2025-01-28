@@ -58,38 +58,38 @@ public abstract class ShieldMaker extends FinalBossServant
     abstract FinalBossServantType getShieldingBrotherServantType();
     
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
-        if(this.stampedeTimer != DISABLED)
+        if(stampedeTimer != DISABLED)
         {
-            this.performStampede();
+            performStampede();
         }
-        super.performFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver();
     }
     
     private void performStampede()
     {
-        this.stampedeTimer++;
-        if(this.stampedeTimer > 100)
+        stampedeTimer++;
+        if(stampedeTimer > 100)
         {
-            if(this.stampedeTimer == 101)
+            if(stampedeTimer == 101)
             {
-                this.calmDown();
+                calmDown();
             }
-            this.correctDirection();
-            if(this.canStartShielding())
+            correctDirection();
+            if(canStartShielding())
             {
-                this.startShielding();
+                startShielding();
             }
         }
     }
     
     private void calmDown()
     {
-        this.getSpeedLevel()
+        getSpeedLevel()
             .setLocation(CALM_DOWN_SPEED);
-        this.targetSpeedLevel.setLocation(CALM_DOWN_SPEED);
-        this.canMoveChaotic = false;
+        targetSpeedLevel.setLocation(CALM_DOWN_SPEED);
+        canMoveChaotic = false;
     }
     
     // TODO Bedingungen in Methoden auslagern
@@ -136,7 +136,7 @@ public abstract class ShieldMaker extends FinalBossServant
     private boolean canStartShielding()
     {
         FinalBoss finalBoss = getFinalBoss();
-        return this.stampedeTimer > 200
+        return stampedeTimer > 200
             && !isRecoveringSpeed
             && TARGET_DISTANCE_VARIANCE.x
             > Math.abs(finalBoss.getCenterX()
@@ -184,13 +184,13 @@ public abstract class ShieldMaker extends FinalBossServant
     }
     
     @Override
-    public void die(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
+    public void die(Missile missile, boolean beamKill)
     {
         if(isShielding)
         {
             stopShielding();
         }
-        super.die(gameRessourceProvider, missile, beamKill);
+        super.die(missile, beamKill);
     }
     
     private void stopShielding()

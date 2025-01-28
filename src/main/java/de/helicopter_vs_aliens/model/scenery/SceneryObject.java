@@ -264,7 +264,7 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 		return width;
 	}
 	
-	public float getSceneryObjectMaxX()
+	float getSceneryObjectMaxX()
 	{
 		return x + width;
 	}
@@ -289,12 +289,12 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 		return colors[index];
 	}
 	
-	public boolean isInBackground()
+	boolean isInBackground()
 	{
 		return layer.isBackgroundLayer();
 	}
 	
-	public void move()
+	void move()
 	{
 		x -= BG_SPEED;
 	}

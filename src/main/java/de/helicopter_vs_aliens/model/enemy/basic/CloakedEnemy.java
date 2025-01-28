@@ -68,21 +68,21 @@ public final class CloakedEnemy extends BasicEnemy
     }
     
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
-        if(isLearningKamikazeOn(gameRessourceProvider.getHelicopter()))
+        if(isLearningKamikazeOn())
         {
             startKamikazeMode();
             getNavigationDevice().turnLeft();
         }
-        super.performFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver();
     }
     
-    private boolean isLearningKamikazeOn(Helicopter helicopter)
+    private boolean isLearningKamikazeOn()
     {
         return isMovingAwayFromHelicopter()
                 && turnTimer == READY
-                && getDistanceOfMinX(helicopter) < KAMIKAZE_RANGE;
+                && getDistanceOfMinX(getHelicopter()) < KAMIKAZE_RANGE;
     }
     
     private double getDistanceOfMinX(RectangularPaintableEntity paintableEntity)

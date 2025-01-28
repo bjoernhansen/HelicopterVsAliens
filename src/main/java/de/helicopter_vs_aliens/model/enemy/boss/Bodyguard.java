@@ -18,10 +18,10 @@ public final class Bodyguard extends FinalBossServant
     }
     
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
         bodyguardAction();
-        super.performFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver();
     }
     
     private void bodyguardAction()

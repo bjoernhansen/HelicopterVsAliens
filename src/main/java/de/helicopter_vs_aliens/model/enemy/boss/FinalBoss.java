@@ -64,10 +64,10 @@ public final class FinalBoss extends BossEnemy
     }
     
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
         finalBossAction();
-        super.performFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver();
     }
     
     private void finalBossAction()

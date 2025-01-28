@@ -45,10 +45,10 @@ import java.awt.image.RescaleOp;
 public abstract class Enemy extends RectangularPaintableEntity implements ManageablePaintable, Maneuverable
     // TODO Klasse zerschlagen
 {
-    public static final int
+    protected static final int
         KAMIKAZE_RANGE = 620;
     
-    public static final int
+    protected static final int
         TIMER_ALMOST_OVER = 1;
     
     public static final int
@@ -133,7 +133,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                                        - SAVE_ZONE_WIDTH
                                        - 2 * TURN_DISTANCE.y);
     
-    // für die Tarnung nötige Variablen
     public static final float[]
         scales = {1f, 1f, 1f, RADAR_DETECTABILITY};
     public static final float[]
@@ -148,31 +147,47 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     private static final EnemyMissileFactory
         enemyMissileFactory = new EnemyMissileFactory();
     
-    /*
-     * 	Attribute der Enemy-Objekte
-     */
     
     public int
-        startingHitPoints,                // Anfangs-HitPoints (bei Erstellung des Gegners)
-        invincibleTimer,                // reguliert die Zeit, die ein Gegner unverwundbar ist
-        teleportTimer,                    // Zeit [frames], bis der Gegner sich erneut teleportieren kann
-        shield,                            // nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
-        burrowTimer,
-        untouchedCounter,
-        stunningTimer,
-        empSlowedTimer,            // reguliert die Länge der Verlangsamung nach EMP-Treffer (Pegasus-Klasse)
+        startingHitPoints;                // Anfangs-HitPoints (bei Erstellung des Gegners)
+    
+    protected int
+        invincibleTimer;                // reguliert die Zeit, die ein Gegner unverwundbar ist
+    
+    public int
+        teleportTimer;                    // Zeit [frames], bis der Gegner sich erneut teleportieren kann
+    
+    public int
+        shield;                            // nur für Boss 5 relevant; kann die Werte 0 (kein Schild), 1 oder 2 annehmen
+    
+    public int
+        burrowTimer;
+    
+    public int
+        untouchedCounter;
+    
+    public int
+        stunningTimer;
+    
+    public int
+        empSlowedTimer;            // reguliert die Länge der Verlangsamung nach EMP-Treffer (Pegasus-Klasse)
+    
+    public int
         collisionDamageTimer;    // Timer zur überwachung der Zeit zwischen zwei Helikopter-HP-Abzügen;
     
     public boolean
-        isTouchingHelicopter,
+        isTouchingHelicopter;
+    
+    public boolean
         hasUnresolvedIntersection;
-    
-    
+        
     private final EnemyType
         type;
     
     public BarrierPositionType
-        touchedSite,
+        touchedSite;
+    
+    public BarrierPositionType
         lastTouchedSite;
     
     // Farben
@@ -181,16 +196,11 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private Color
         secondaryColor;
-    
 
-    
-    // TODO is wird of -direction.x (minus) übergeben, unlogisch, implementieren hier verständlicher machen. ggf. enemy übergeben und dann isMovingLeft etc. aufrufen
-    
-    
     Enemy
         stoppingBarrier;
     
-    Enemy
+    private Enemy
         isPreviousStoppingBarrier;
     
     private int
@@ -198,16 +208,19 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private int
         lifetime;                // Anzahl der Frames seit Erstellung des Gegners; und vergangene Zeit seit Erstellung, Zeit
+    
     private int
         crashPositionY;                // Bestimmt wie tief ein Gegner nach Absturz im Boden versinken kann
+    
     private int
         collisionTimer;
+    
     private int
         turnAudioTimer;
+    
     private int
         explodingTimer;            // Timer zur überwachung der Zeit zwischen Abschuss und Absturz
     
-
     protected int
         callBack;
     private int
@@ -223,22 +236,31 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     protected int
         dodgeTimer;            // Zeit [frames], bis ein Gegner erneut ausweichen kann
     
-    
     protected int// nur für Hindernis-Gegner relevant
         rotorColor;    // TODO Color als int?? umbenennen!
-    protected int barrierShootTimer;
-    protected int barrierTeleportTimer;
-    protected int shootPause;
-    protected int shootingRate;
-    protected int shotsPerCycle;
-    protected int shootingCycleLength;
-    protected int shotSpeed;
-    protected int shotRotationSpeed;
+    protected int
+        barrierShootTimer;
+    protected int
+        barrierTeleportTimer;
+    protected int
+        shootPause;
+    protected int
+        shootingRate;
+    protected int
+        shotsPerCycle;
+    protected int
+        shootingCycleLength;
+    protected int
+        shotSpeed;
+    protected int
+        shotRotationSpeed;
     
     private int// Regulation des Stun-Effektes nach Treffer durch Stopp-Rakete der Orochi-Klasse
         nonStunnableTimer;
-    private int totalStunningTime;
-    private int knockBackDirection;
+    private int
+        totalStunningTime;
+    private int
+        knockBackDirection;
     
     protected float
         deactivationProbability;
@@ -418,7 +440,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         navigationDevice.setRandomDirectionY();
     }
     
-    public void performLocationAdaptionAction(GameRessourceProvider gameRessourceProvider)
+    public void performLocationAdaptionAction()
     {
     }
     
@@ -570,7 +592,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return isShooter() && !hasCanonReadyToFire();
     }
     
-    public int getShootTimer()
+    private int getShootTimer()
     {
         return shootTimer;
     }
@@ -760,7 +782,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
      * Unter Berücksichtigung jeglicher Eventualitäten (Spezial-Manöver, Ausweichbewegungen, ...)
      * werden die neuen Koordinaten berechnet.
      */
-    public final void update(GameRessourceProvider gameRessourceProvider)
+    public final void update()
     {
         lifetime++;
         updateTimer();
@@ -771,19 +793,19 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         checkForBarrierCollision();
         if(!isStunned())
         {
-            performStoppableActions(gameRessourceProvider);
+            performStoppableActions();
         }
         calculateSpeed();
         move();
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getHelicopter();
         if(helicopter.isCollidingWith(this))
         {
-            collision(gameRessourceProvider);
+            collision();
         }
-        helicopter.typeSpecificActionOn(this, gameRessourceProvider);
+        helicopter.typeSpecificActionOn(this);
         if(hasDeadlyGroundContact())
         {
-            destroyByCrash(gameRessourceProvider);
+            destroyByCrash();
         }
         if(isToBeRemoved())
         {
@@ -867,13 +889,13 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    protected void performStoppableActions(GameRessourceProvider gameRessourceProvider)
+    protected void performStoppableActions()
     {
-        performFlightManeuver(gameRessourceProvider);
+        performFlightManeuver();
         validateTurns();
     }
     
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
         maneuverManger.performAll();
         
@@ -915,7 +937,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         // Shooting
         if(isShooter())
         {
-            evaluateShooting(gameRessourceProvider);
+            evaluateShooting();
         }
         
         // Sinus- und Loop-Flug
@@ -931,7 +953,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
         
         //Chaos-SpeedUp
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getHelicopter();
         if(canChaosSpeedup
             && !isTargetSpeedExceededX()
             && helicopter.getX() - getX() > -350)
@@ -1024,7 +1046,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    boolean hasLateralFaceTouchWith(Enemy barrier)
+    private boolean hasLateralFaceTouchWith(Enemy barrier)
     {
         return
             Calculations.getIntersectionLength(getMinX(),
@@ -1162,13 +1184,13 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    public void checkForEmpStrike(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
+    public void checkForEmpStrike(Pegasus pegasus)
     {
         if(pegasus.empWave != null)
         {
             if(isEmpShockable(pegasus))
             {
-                empShock(gameRessourceProvider, pegasus);
+                empShock(pegasus);
             }
         }
         else
@@ -1177,7 +1199,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    protected void empShock(GameRessourceProvider gameRessourceProvider, Pegasus pegasus)
+    protected void empShock(Pegasus pegasus)
     {
         takeDamage((int)getEmpVulnerabilityFactor() * pegasus.getEmpDamage());
         isEmpShocked = true;
@@ -1186,7 +1208,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         if(hasHPsLeft())
         {
             performEmpWaveSurvivorActions();
-            gameRessourceProvider.getExplosionController()
+            getGameRessourceProvider().getExplosionController()
                                  .start(
                                      getCenterX(),
                                      getCenterY(), ExplosionType.STUNNING, false);
@@ -1196,7 +1218,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             Audio.play(Audio.explosion2);
             int reward = calculateReward();
             pegasus.rewardAndCountEmpKill(reward);
-            dieFromEmpWave(gameRessourceProvider);
+            dieFromEmpWave();
         }
     }
     
@@ -1351,7 +1373,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    protected void makeKamikazeWithHelicopter()
+    private void makeKamikazeWithHelicopter()
     {
         adaptSpeedLevelForKamikaze();
         if(isFlyingDown() && isFurtherDownThanHelicopter())
@@ -1391,16 +1413,17 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     }
     
     
-    private void evaluateShooting(GameRessourceProvider gameRessourceProvider)
+    private void evaluateShooting()
     {
         // TODO if-Bedingung in mehrere(!) Methoden auslagern
+        Helicopter helicopter = getHelicopter();
         if(hasCanonReadyToFire()
             && !isEmpSlowed()
             && Calculations.tossUp(0.1f)
             && getX() + getWidth() > 0
             && !isCompletelyCloaked()
             && ((isFlyingLeft()
-            && gameRessourceProvider.getHelicopter()
+            && helicopter
                                     .intersects(
                                         getX() + Integer.MIN_VALUE / 2f,
                                         getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth() / 2) - FIELD_OF_FIRE_TOLERANCE_Y,
@@ -1408,7 +1431,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                                         EnemyMissile.BASE_DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))
             ||
             (isFlyingRight()
-                && gameRessourceProvider.getHelicopter()
+                && helicopter
                                         .intersects(
                                             getX() + 0,
                                             getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth() / 2) - FIELD_OF_FIRE_TOLERANCE_Y,
@@ -1432,8 +1455,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     }
     
     
-    public void shoot(EnemyMissileType missileType,
-                      double missileSpeed)
+    protected void shoot(EnemyMissileType missileType,
+                         double missileSpeed)
     {
         EnemyMissile enemyMissile = getGameRessourceProvider().getManageablePaintableController()
                                                               .activateEntity(enemyMissileFactory);
@@ -1741,11 +1764,11 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return isBoss() && isIntact();
     }
     
-    public void collision(GameRessourceProvider gameRessourceProvider)
+    public void collision()
     {
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getGameRessourceProvider().getHelicopter();
         boolean playCollisionSound = collisionTimer == READY;
-        helicopter.beAffectedByCollisionWith(this, gameRessourceProvider, playCollisionSound);
+        helicopter.beAffectedByCollisionWith(this, getGameRessourceProvider(), playCollisionSound);
         
         if(playCollisionSound)
         {
@@ -1764,7 +1787,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             if(helicopter.canObtainCollisionReward()
                 && grantsCollisionReward())
             {
-                grantRewards(gameRessourceProvider, null, helicopter.hasPerformedTeleportKill());
+                grantRewards(null, helicopter.hasPerformedTeleportKill());
             }
             destroyByHelicopter();
         }
@@ -1784,16 +1807,15 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return true;
     }
     
-    private void grantRewards(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
+    private void grantRewards(Missile missile, boolean beamKill)
     {
-        gameRessourceProvider.getHelicopter()
-                             .receiveRewardFor(this, missile, beamKill);
-        grantGeneralRewards(gameRessourceProvider);
+        getHelicopter().receiveRewardFor(this, missile, beamKill);
+        grantGeneralRewards();
     }
     
-    public void reactToRadiation(GameRessourceProvider gameRessourceProvider)
+    public void reactToRadiation()
     {
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getHelicopter();
         if(teleportTimer == READY)
         {
             teleport();
@@ -1809,7 +1831,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             else
             {
                 boolean beamKill = helicopter.bonusKillsTimer > 0;
-                dieFromRadiation(gameRessourceProvider, beamKill);
+                dieFromRadiation(beamKill);
             }
         }
     }
@@ -1844,7 +1866,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             : 0.65f);
     }
     
-    void takeDamage(int dmg)
+    private void takeDamage(int dmg)
     {
         hitPoints -= dmg;
         if(!hasHPsLeft())
@@ -2034,17 +2056,17 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         getGameStatisticsCalculator().incrementNumberOfEnemiesKilled();
     }
     
-    void destroyByCrash(GameRessourceProvider gameRessourceProvider)
+    private void destroyByCrash()
     {
-        evaluatePowerUpDrop(gameRessourceProvider);
+        evaluatePowerUpDrop();
         beDestroyed();
     }
     
-    private void evaluatePowerUpDrop(GameRessourceProvider gameRessourceProvider)
+    private void evaluatePowerUpDrop()
     {
         if(areALlRequirementsForPowerUpDropMet())
         {
-            dropRandomPowerUp(gameRessourceProvider);
+            dropRandomPowerUp();
         }
     }
     
@@ -2098,24 +2120,24 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     }
     
     // TODO null und false sollten keine Eingabeargumente sein, hier die Implementierung anpassen
-    private void dieFromEmpWave(GameRessourceProvider gameRessourceProvider)
+    private void dieFromEmpWave()
     {
-        die(gameRessourceProvider, null, false);
+        die(null, false);
     }
     
-    public void dieByMissile(GameRessourceProvider gameRessourceProvider, Missile missile)
+    public void dieByMissile(Missile missile)
     {
-        die(gameRessourceProvider, missile, false);
+        die(missile, false);
     }
     
-    private void dieFromRadiation(GameRessourceProvider gameRessourceProvider, boolean beamKill)
+    private void dieFromRadiation(boolean beamKill)
     {
-        die(gameRessourceProvider, null, beamKill);
+        die(null, beamKill);
     }
     
-    public void die(GameRessourceProvider gameRessourceProvider, Missile missile, boolean beamKill)
+    public void die(Missile missile, boolean beamKill)
     {
-        grantRewards(gameRessourceProvider, missile, beamKill);
+        grantRewards(missile, beamKill);
         destroyByHelicopter();
         
         if(cloakingDevice.isEnabled())
@@ -2149,9 +2171,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return false;
     }
     
-    public void dropRandomPowerUp(GameRessourceProvider gameRessourceProvider)
+    private void dropRandomPowerUp()
     {
-        PowerUp.activateInstance(gameRessourceProvider, this);
+        PowerUp.activateInstance(getGameRessourceProvider(), this);
     }
     
     public PowerUpType getTypeOfRandomlyDroppedPowerUp()
@@ -2338,13 +2360,13 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return false;
     }
     
-    public void grantGeneralRewards(GameRessourceProvider gameRessourceProvider)
+    public void grantGeneralRewards()
     {
         if(canCountForKillsAfterLevelUp())
         {
             Events.killsAfterLevelUp++;
         }
-        evaluatePowerUpDrop(gameRessourceProvider);
+        evaluatePowerUpDrop();
     }
     
     public boolean isRock()
@@ -2515,13 +2537,13 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         setSpeedLevelX(0);
     }
     
-    public void setSpeedLevelX(double x)
+    private void setSpeedLevelX(double x)
     {
         double y = speedLevel.getY();
         speedLevel.setLocation(x, y);
     }
     
-    protected void increaseSpeedLevelY(double increment)
+    private void increaseSpeedLevelY(double increment)
     {
         setSpeedLevelY(speedLevel.getY() + increment);
     }
@@ -2531,7 +2553,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         setSpeedLevelY(0);
     }
     
-    public void setSpeedLevelY(double y)
+    private void setSpeedLevelY(double y)
     {
         double x = speedLevel.getX();
         speedLevel.setLocation(x, y);

@@ -75,9 +75,9 @@ public abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
-        super.performFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver();
         
         // Vergraben
         if(burrowTimer != DISABLED && snoozeTimer <= 0)
@@ -88,7 +88,7 @@ public abstract class Barrier extends Enemy
         // Shooting Barrier
         if(barrierShootTimer != DISABLED)
         {
-            evaluateBarrierShooting(gameRessourceProvider);
+            evaluateBarrierShooting();
         }
         
         // Snooze bei Hindernissen
@@ -145,9 +145,9 @@ public abstract class Barrier extends Enemy
         return burrowTimer == READY && Calculations.tossUp(0.004f);
     }
     
-    private void evaluateBarrierShooting(GameRessourceProvider gameRessourceProvider)
+    private void evaluateBarrierShooting()
     {
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getHelicopter();
         if(barrierShootTimer == 0)
         {
             barrierShootTimer = shootingCycleLength;
@@ -384,10 +384,10 @@ public abstract class Barrier extends Enemy
     }
     
     @Override
-    protected void performStoppableActions(GameRessourceProvider gameRessourceProvider)
+    protected void performStoppableActions()
     {
         updateStoppableTimer();
-        super.performStoppableActions(gameRessourceProvider);
+        super.performStoppableActions();
     }
     
     private void updateStoppableTimer()

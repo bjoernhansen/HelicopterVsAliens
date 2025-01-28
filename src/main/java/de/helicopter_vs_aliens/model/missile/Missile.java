@@ -206,7 +206,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 				}
 				else
 				{
-					enemy.dieByMissile(getGameRessourceProvider(), this);
+					enemy.dieByMissile( this);
 					
 					if (helicopter.deservesMantisReward(launchingTime))
 					{

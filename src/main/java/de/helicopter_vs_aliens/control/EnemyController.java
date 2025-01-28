@@ -328,7 +328,7 @@ public class EnemyController
             Enemy enemy = iterator.next();
             if(enemy.isIntact() && !enemy.isMarkedForRemoval())
             {
-                enemy.update(gameRessourceProvider);
+                enemy.update();
             }
             else if(enemy.isDestroyed())
             {
@@ -358,7 +358,7 @@ public class EnemyController
             if(helicopter.basicCollisionRequirementsSatisfied(enemy)
                 && !enemy.hasCrashed())
             {
-                enemy.collision(gameRessourceProvider);
+                enemy.collision();
             }
             if(enemy.isMarkedForRemoval())
             {

@@ -42,12 +42,12 @@ public abstract class RectangularPaintableEntity extends PaintableEntity
 		return bounds;
 	}
 	
-	public boolean isLeftOf(RectangularPaintableEntity rectangularPaintableEntity)
+	protected boolean isLeftOf(RectangularPaintableEntity rectangularPaintableEntity)
 	{
 		return getMaxX() < rectangularPaintableEntity.getMinX();
 	}
 	
-	public boolean isRightOf(RectangularPaintableEntity paintableEntityEntity)
+	protected boolean isRightOf(RectangularPaintableEntity paintableEntityEntity)
 	{
 		return getMinX() > paintableEntityEntity.getMaxX();
 	}

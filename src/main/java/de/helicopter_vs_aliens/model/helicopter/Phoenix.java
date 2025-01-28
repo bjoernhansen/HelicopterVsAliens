@@ -162,7 +162,7 @@ public final class Phoenix extends Helicopter
         super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
         if(hasShortRangeRadiation)
         {
-            enemy.reactToRadiation(gameRessourceProvider);
+            enemy.reactToRadiation();
         }
     }
 

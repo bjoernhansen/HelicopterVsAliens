@@ -105,6 +105,7 @@ public final class GameProgress implements GameRessourceProvider
             fpsCalculator.calculateFps();
             if(!Window.isMenuVisible)
             {
+                // TODO die Update-All-Methoden auslagern in Controller-Klassen
                 Colorations.calculateVariableGameColors(gameLoopCount);
                 scenery.update();
                 Events.updateTimer();
@@ -115,7 +116,7 @@ public final class GameProgress implements GameRessourceProvider
                 EnemyMissile.updateAll(this);
                 Events.checkForLevelUp(this);
                 EnemyController.generateNewEnemies(this);
-                helicopter.update(this);
+                helicopter.update();
                 explosionController.updateAll();
                 PowerUp.updateAll(this);
             }

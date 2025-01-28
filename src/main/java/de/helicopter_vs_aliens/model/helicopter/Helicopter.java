@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public abstract class Helicopter extends RectangularPaintableEntity
+public abstract sealed class Helicopter extends RectangularPaintableEntity permits Phoenix, Roch, Orochi, Kamaitachi, Pegasus, Helios
     // TODO Klasse zerschlagen
 {
     // TODO alles public fields genau prüfen, ob sie public sein müssen, und wenn ja mit Setter-Methoden arbeiten, sonst private
@@ -63,41 +63,41 @@ public abstract class Helicopter extends RectangularPaintableEntity
         CHEAP_SPECIAL_COSTS = 10000;
     
     public static final double
-        FOCAL_POINT_X_LEFT = 39,
-        FOCAL_POINT_X_RIGHT = 83,
-        FOCAL_POINT_Y_EXP = 44,
-        FOCAL_PNT_Y_POS = 56;
+        FOCAL_POINT_X_LEFT = 39;
+    public static final double FOCAL_POINT_X_RIGHT = 83;
+    public static final double FOCAL_POINT_Y_EXP = 44;
+    static final double FOCAL_PNT_Y_POS = 56;
     
     static final int
-        GOLIATH_PLATING_STRENGTH = 2,
-        STANDARD_GOLIATH_COSTS = 75000,
-        NO_COLLISION_HEIGHT = 6;
+        GOLIATH_PLATING_STRENGTH = 2;
+    static final int STANDARD_GOLIATH_COSTS = 75000;
+    static final int NO_COLLISION_HEIGHT = 6;
     
-    static final int[]
+    private static final int[]
         CANNON_Y_POSITIONS = {56, 28, 42};
     
     static final float
-        ENEMY_MISSILE_DAMAGE_FACTOR = 0.5f,
-        STANDARD_MISSILE_DAMAGE_FACTOR = 1.0f;
+        ENEMY_MISSILE_DAMAGE_FACTOR = 0.5f;
+    static final float STANDARD_MISSILE_DAMAGE_FACTOR = 1.0f;
     
     private static final int
-        RECENT_DAMAGE_TIME = 50,        // Zeitrate in der die Lebenspunktleiste nach Kollisionen blinkt
-        SLOW_TIME = 100,
-        FIRE_RATE_POWERUP_LEVEL = 3,    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
-        STATIC_CHARGE_ENERGY_DRAIN = 45,              // Energieabzug für den Helikopter bei Treffer
-        STANDARD_PLATING_STRENGTH = 1,
-        SLOW_ROTATIONAL_SPEED = 7,
-        FAST_ROTATIONAL_SPEED = 12,
-        DAY_BONUS_FACTOR = 60,
-        NIGHT_BONUS_FACTOR = 90,
-        SPOTLIGHT_COSTS = 35000;
+        RECENT_DAMAGE_TIME = 50;        // Zeitrate in der die Lebenspunktleiste nach Kollisionen blinkt
+        private static final int SLOW_TIME = 100;
+    private static final int FIRE_RATE_POWERUP_LEVEL = 3;    // so vielen zusätzlichen Upgrades der Feuerrate entspricht die temporäre Steigerung der Feuerrate durch das entsprechende PowerUp
+        private static final int STATIC_CHARGE_ENERGY_DRAIN = 45;              // Energieabzug für den Helikopter bei Treffer
+        private static final int STANDARD_PLATING_STRENGTH = 1;
+    private static final int SLOW_ROTATIONAL_SPEED = 7;
+    private static final int FAST_ROTATIONAL_SPEED = 12;
+    private static final int DAY_BONUS_FACTOR = 60;
+    private static final int NIGHT_BONUS_FACTOR = 90;
+    private static final int SPOTLIGHT_COSTS = 35000;
     
     private static final float
-        NOSEDIVE_SPEED = 12f,            // Geschwindigkeit des Helikopters bei Absturz
-        INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION / 100.0f,
-        STANDARD_PROTECTION_FACTOR = 1.0f,
-        STANDARD_BASE_PROTECTION_FACTOR = 1.0f,
-        PLATING_MULTIPLIER = 1.3f;
+        NOSEDIVE_SPEED = 12f;            // Geschwindigkeit des Helikopters bei Absturz
+        private static final float INVULNERABILITY_PROTECTION_FACTOR = 1.0f - INVULNERABILITY_DAMAGE_REDUCTION / 100.0f;
+    private static final float STANDARD_PROTECTION_FACTOR = 1.0f;
+    private static final float STANDARD_BASE_PROTECTION_FACTOR = 1.0f;
+    private static final float PLATING_MULTIPLIER = 1.3f;
     
     public static final Point
         HELICOPTER_MENU_PAINT_POS = new Point(692, 360);
@@ -116,11 +116,11 @@ public abstract class Helicopter extends RectangularPaintableEntity
     private static final MissileFactory missileFactory = new MissileFactory();
     
     public int
-        missileDrive,                        // Geschwindigkeit [Pixel pro Frame] der Raketen
-        currentBaseFirepower,                // aktuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des eventuell erforschten Jumbo-Raketen-Spezial-Upgrades
-        platingDurabilityFactor = STANDARD_PLATING_STRENGTH,    // SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
-        numberOfCannons = 1,                // Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
-        recentDamageTimer;                    // aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
+        missileDrive;                        // Geschwindigkeit [Pixel pro Frame] der Raketen
+    int currentBaseFirepower;                // aktuelle Feuerkraft unter Berücksichtigung des Upgrade-Levels und des eventuell erforschten Jumbo-Raketen-Spezial-Upgrades
+    public int platingDurabilityFactor = STANDARD_PLATING_STRENGTH;    // SpezialUpgrade; = 2, wenn erforscht, sonst = 1; Faktor, der die Standardpanzerung erhöht
+        public int numberOfCannons = 1;                // Anzahl der Kanonen; mögliche Werte: 1, 2 und 3
+    public int recentDamageTimer;                    // aktiv, wenn Helicopter kürzlich Schaden genommen hat; für Animation der HitPoint-Leiste
     
     // für die Spielstatistik
     
@@ -141,15 +141,15 @@ public abstract class Helicopter extends RectangularPaintableEntity
         spellCosts;                            // Energiekosten für die Nutzung des Energie-Upgrades
     
     public boolean
-        hasSpotlights,                        // = true: Helikopter hat Scheinwerfer
-        hasPiercingWarheads,                // = true: Helikopter-Raketen werden mit Durchstoß-Sprengköpfen bestückt
-        isActive,                            // = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
-        isDamaged,                            // = true: Helikopter hat einen Totalschaden erlitten
-    // TODO kann eventuell genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
-    isRotorSystemActive,                // = true: Propeller dreht sich / Helikopter fliegt
-        isContinuousFireEnabled,            // = true: Dauerfeuer aktiv
-        isMovingLeft,
-        isPlayedWithCheats = true;            // = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
+        hasSpotlights;                        // = true: Helikopter hat Scheinwerfer
+        public boolean hasPiercingWarheads;                // = true: Helikopter-Raketen werden mit Durchstoß-Sprengköpfen bestückt
+        public boolean isActive;                            // = false: Helikopter ist nicht in Bewegung und kann auch nicht starten, Raketen abschießen, etc. (vor dem ersten Start oder nach Absturz = false)
+        public boolean isDamaged;                            // = true: Helikopter hat einen Totalschaden erlitten
+    public boolean// TODO kann eventuell genutzt werden, um Malen des Helicopters und Drehen des Propellers zu trennen
+    isRotorSystemActive;                // = true: Propeller dreht sich / Helikopter fliegt
+        public boolean isContinuousFireEnabled;            // = true: Dauerfeuer aktiv
+        public boolean isMovingLeft;
+    public boolean isPlayedWithCheats = true;            // = true: Spielstand kann in die Highscore übernommen werden, da keine cheats angewendet wurden
     
     public final Point
         destination = new Point();                // dorthin fliegt der Helikopter
@@ -161,12 +161,12 @@ public abstract class Helicopter extends RectangularPaintableEntity
     public boolean
         isSearchingForTeleportDestination;        // = true: es wird gerade der Zielort der Teleportation ausgewählt
     
-    public int
+    int
         // nur für Phönix- und Kamaitachi-Klasse
         // TODO auslagern in Phönix- und Kamaitachi-Klasse
-        bonusKills,                            // Anzahl der Kills, für den aktuellen MultiKill-Award
-        bonusKillsMoney,                    // Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen MultiKill-Awards ohne Bonus
-        bonusKillsTimer;                    // reguliert die Zeit, innerhalb welcher Kills für den MultiKill-Award berücksichtigt werden
+        bonusKills;                            // Anzahl der Kills, für den aktuellen MultiKill-Award
+    int bonusKillsMoney;                    // Gesamtverdienst am Abschuss aller Gegner innerhalb des aktuellen MultiKill-Awards ohne Bonus
+        public int bonusKillsTimer;                    // reguliert die Zeit, innerhalb welcher Kills für den MultiKill-Award berücksichtigt werden
     
     final Battery
         battery = Battery.createFor(getType());
@@ -184,13 +184,13 @@ public abstract class Helicopter extends RectangularPaintableEntity
         tractor;            // Referenz auf den Gegner, der den Helikopter mit einem Traktorstrahl festhält
     
     private int
-        fireRateTimer,    // reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
-        timeBetweenTwoShots,// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
-        slowedTimer;        // reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
+        fireRateTimer;    // reguliert die Zeit [frames], die mind. vergehen muss, bis wieder geschossen werden kann
+        private int timeBetweenTwoShots;// Zeit [frames], die mindestens verstreichen muss, bis wieder geschossen werden kann
+        private int slowedTimer;        // reguliert die Verlangsamung des Helicopters durch gegnerische Geschosse
     
     private float
-        speed,                // aktuelle Geschwindigkeit des Helikopters
-        currentPlating;        // aktuelle Panzerung (immer <= maximale Panzerung)
+        speed;                // aktuelle Geschwindigkeit des Helikopters
+        private float currentPlating;        // aktuelle Panzerung (immer <= maximale Panzerung)
     
     private boolean
         isCrashing;            // Helikopter befindet sich im Sturzflug
@@ -204,15 +204,15 @@ public abstract class Helicopter extends RectangularPaintableEntity
         powerUpController.turnOfAllBoosters();
     }
     
-    public void update(GameRessourceProvider gameRessourceProvider)
+    public void update()
     {
         updateTimer();
         if(canRegenerateEnergy())
         {
             battery.recharge();
         }
-        evaluateFire(gameRessourceProvider);
-        move(gameRessourceProvider);
+        evaluateFire();
+        move();
     }
     
     public boolean hasSpotlightsTurnedOn()
@@ -235,11 +235,11 @@ public abstract class Helicopter extends RectangularPaintableEntity
         powerUpController.evaluatePowerUpActivationStates();
     }
     
-    private void evaluateFire(GameRessourceProvider gameRessourceProvider)
+    private void evaluateFire()
     {
         if(isReadyForShooting())
         {
-            shoot(gameRessourceProvider);
+            shoot();
         }
         fireRateTimer++;
     }
@@ -252,23 +252,24 @@ public abstract class Helicopter extends RectangularPaintableEntity
             && fireRateTimer >= timeBetweenTwoShots;
     }
     
-    void shoot(GameRessourceProvider gameRessourceProvider)
+    void shoot()
     {
         playShootingSound();
         fireRateTimer = 0;
+        GameRessourceProvider gameRessourceProvider = getGameRessourceProvider();
         gameRessourceProvider.getGameStatisticsCalculator()
-                             .incrementMissileCounterBy(numberOfCannons);
+                              .incrementMissileCounterBy(numberOfCannons);
         consumeEnergyForShoot();
         
         List<Missile> launchedMissiles = new ArrayList<>();
         for(int i = 0; i < numberOfCannons; i++)
         {
-            Missile missile = getGameRessourceProvider().getManageablePaintableController().activateEntity(missileFactory);
+            Missile missile = gameRessourceProvider.getManageablePaintableController().activateEntity(missileFactory);
             resetMissile(missile);
             missile.launch(this, CANNON_Y_POSITIONS[i]);
             launchedMissiles.add(missile);
         }
-        if(this.hasKillCountingMissiles())
+        if(hasKillCountingMissiles())
         {
             clusterMissiles(launchedMissiles);
         }
@@ -309,7 +310,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
     
     protected void consumeEnergyForShoot() {}
     
-    private void move(GameRessourceProvider gameRessourceProvider)
+    private void move()
     {
         if(isOnTheGround())
         {
@@ -360,7 +361,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
                 {
                     adaptPosTo(enemy);
                     correctAndSetCoordinates();
-                    enemy.performLocationAdaptionAction(gameRessourceProvider);
+                    enemy.performLocationAdaptionAction();
                 }
                 else
                 {
@@ -422,7 +423,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return enemy.isPushingHelicopter(this);
     }
     
-    void adaptPosTo(Enemy enemy)
+    private void adaptPosTo(Enemy enemy)
     {
         double
             x = getCenterX() - enemy.getCenterX(),
@@ -491,7 +492,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
     }
     
     // TODO in Methoden auslagern
-    void setBounds()
+    private void setBounds()
     {
         setBounds(location.getX()
                       - (isMovingLeft
@@ -571,7 +572,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         scoreScreenTimes.clear();
     }
     
-    public void resetStateGeneral()
+    private void resetStateGeneral()
     {
         inactivate();
         isCrashing = false;
@@ -709,7 +710,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         rotatePropeller(SLOW_ROTATIONAL_SPEED);
     }
     
-    public void rotatePropellerFast()
+    private void rotatePropellerFast()
     {
         rotatePropeller(FAST_ROTATIONAL_SPEED);
     }
@@ -789,7 +790,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         }
     }
     
-    public boolean hasDestroyedPlating()
+    private boolean hasDestroyedPlating()
     {
         return currentPlating <= 0;
     }
@@ -832,7 +833,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         isRotorSystemActive = false;
     }
     
-    public void adjustFireRate()
+    private void adjustFireRate()
     {
         adjustFireRate(false);
     }
@@ -884,7 +885,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return platingDurabilityFactor * getBasePlating();
     }
     
-    public float getBasePlating()
+    private float getBasePlating()
     {
         return getBasePlating(getPlatingLevel());
     }
@@ -905,7 +906,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         setRelativePlatingDisplayColor();
     }
     
-    public float getLastPlatingDurabilityIncrease()
+    private float getLastPlatingDurabilityIncrease()
     {
         return platingDurabilityFactor * (getBasePlating() - getPreviousBasePlating());
     }
@@ -1063,7 +1064,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return false;
     }
     
-    public void setCurrentBaseFirepower()
+    void setCurrentBaseFirepower()
     {
         currentBaseFirepower = (int)(getMissileDamageFactor() * getFirepower());
     }
@@ -1116,7 +1117,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return hasSpotlights ? NIGHT_BONUS_FACTOR : DAY_BONUS_FACTOR;
     }
     
-    public void resetRotorPosition()
+    private void resetRotorPosition()
     {
         rotorPosition = 0;
     }
@@ -1214,12 +1215,12 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return battery.getRegenerationRate();
     }
     
-    protected void consumeSpellCosts()
+    void consumeSpellCosts()
     {
         battery.drain(getEffectiveSpellCosts());
     }
     
-    protected float getEffectiveSpellCosts()
+    private float getEffectiveSpellCosts()
     {
         return hasUnlimitedEnergy() ? 0.0f : spellCosts;
     }
@@ -1401,17 +1402,17 @@ public abstract class Helicopter extends RectangularPaintableEntity
         return isBoosted(PowerUpType.BOOSTED_FIRE_RATE);
     }
     
-    public void turnOfInvincibility()
+    void turnOfInvincibility()
     {
         powerUpController.turnOfInvinciblePowerUp();
     }
     
-    public void gainTripleDamagePermanently()
+    void gainTripleDamagePermanently()
     {
         powerUpController.activateTripleDamagePowerUpPermanently();
     }
     
-    public void gainInvincibilityPermanently()
+    void gainInvincibilityPermanently()
     {
         powerUpController.activateInvinciblePowerUpPermanently();
     }
@@ -1432,7 +1433,7 @@ public abstract class Helicopter extends RectangularPaintableEntity
         resetStateTypeSpecific();
     }
     
-    public void typeSpecificActionOn(Enemy enemy, GameRessourceProvider gameRessourceProvider)
+    public void typeSpecificActionOn(Enemy enemy)
     {
     }
     

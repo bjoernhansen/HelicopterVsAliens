@@ -40,9 +40,8 @@ public final class StunningBarrier extends Barrier
     }
     
     @Override
-    public void performLocationAdaptionAction(GameRessourceProvider gameRessourceProvider)
+    public void performLocationAdaptionAction()
     {
-        super.performLocationAdaptionAction(gameRessourceProvider);
         if (isStaticallyCharged())
         {
             startStaticDischarge();

@@ -12,19 +12,19 @@ public final class Healer extends FinalBossServant
     @Override
     protected void doTypeSpecificInitialization()
     {
-        this.canDodge = true;
+        canDodge = true;
     
         super.doTypeSpecificInitialization();
     }
 
     @Override
-    protected void performFlightManeuver(GameRessourceProvider gameRessourceProvider)
+    protected void performFlightManeuver()
     {
         if(dodgeTimer == READY)
         {
-            this.healerAction();
+            healerAction();
         }
-        super.performFlightManeuver(gameRessourceProvider);
+        super.performFlightManeuver();
     }
     
     private void healerAction()
@@ -82,7 +82,7 @@ public final class Healer extends FinalBossServant
     public void dodge(Missile missile)
     {
         super.dodge(missile);
-        this.canDodge = false;
+        canDodge = false;
     }
     
     @Override
