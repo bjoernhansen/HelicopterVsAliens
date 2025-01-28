@@ -6,7 +6,6 @@ import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
@@ -1875,7 +1874,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    public void hitByMissile(GameRessourceProvider gameRessourceProvider, Missile missile)
+    public void hitByMissile(Missile missile)
     {
         getGameStatisticsCalculator().incrementHitCounter();
         // TODO Audio.playExplosionSound(boolean isGreatExplosion)
@@ -1891,7 +1890,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         takeDamage(missile.getDamageEffect());
         if(areStunningRequirementsMet(missile))
         {
-            stun(gameRessourceProvider, missile);
+            stun(missile);
         }
     }
     
@@ -1902,7 +1901,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             && nonStunnableTimer == READY;
     }
     
-    private void stun(GameRessourceProvider gameRessourceProvider, Missile missile)
+    private void stun(Missile missile)
     {
         if(hasHPsLeft())
         {
@@ -1914,7 +1913,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             : 0);
         knockBackDirection = missile.getSpeed() > 0 ? 1 : -1;
         
-        Helicopter helicopter = gameRessourceProvider.getHelicopter();
+        Helicopter helicopter = getHelicopter();
         // TODO in Methoden auslagern, Code verständlicher machen
         speedLevel.setLocation(
             (knockBackDirection == navigationDevice.getDirectionX() ? 1 : -1)

@@ -419,9 +419,9 @@ public abstract class Barrier extends Enemy
     }
     
     @Override
-    public void hitByMissile(GameRessourceProvider gameRessourceProvider, Missile missile)
+    public void hitByMissile(Missile missile)
     {
-        super.hitByMissile(gameRessourceProvider, missile);
+        super.hitByMissile(missile);
         if(missile.hasGreatExplosivePower()
             && Calculations.tossUp(0.5f
                                        * deactivationProbability

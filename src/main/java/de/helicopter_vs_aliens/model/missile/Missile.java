@@ -185,7 +185,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 				}
 				else if (!enemy.isInvincible())
 				{
-					enemy.hitByMissile(getGameRessourceProvider(), this);
+					enemy.hitByMissile(this);
 				}
 				else if (!bounced
 					&& enemy.teleportTimer < 1
