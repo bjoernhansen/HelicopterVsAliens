@@ -1768,7 +1768,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     {
         Helicopter helicopter = getGameRessourceProvider().getHelicopter();
         boolean playCollisionSound = collisionTimer == READY;
-        helicopter.beAffectedByCollisionWith(this, getGameRessourceProvider(), playCollisionSound);
+        helicopter.beAffectedByCollisionWith(this, playCollisionSound);
         
         if(playCollisionSound)
         {

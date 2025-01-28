@@ -393,7 +393,7 @@ public class Events
         {
             if (mouseEvent.isRightButtonClicked())
             {
-                helicopter.tryToUseEnergyAbility(gameRessourceProvider);
+                helicopter.tryToUseEnergyAbility();
             }
             else
             {

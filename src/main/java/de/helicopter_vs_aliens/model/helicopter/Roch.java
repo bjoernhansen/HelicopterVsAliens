@@ -110,7 +110,7 @@ public final class Roch extends Helicopter
     }
     
     @Override
-    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void tryToUseEnergyAbility()
     {
         if(isPowerShieldActivated)
         {
@@ -118,7 +118,7 @@ public final class Roch extends Helicopter
         }
         else
         {
-            super.tryToUseEnergyAbility(gameRessourceProvider);
+            super.tryToUseEnergyAbility();
         }
     }
     
@@ -136,12 +136,11 @@ public final class Roch extends Helicopter
     
     @Override
     public void beAffectedByCollisionWith(Enemy enemy,
-                                          GameRessourceProvider gameRessourceProvider,
                                           boolean playCollisionSound)
     {
         if(!isPowerShieldProtected(enemy))
         {
-            super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
+            super.beAffectedByCollisionWith(enemy, playCollisionSound);
             if(isPowerShieldActivated)
             {
                 shutDownPowerShield();

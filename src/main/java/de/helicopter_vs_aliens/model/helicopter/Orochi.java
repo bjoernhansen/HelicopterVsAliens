@@ -104,7 +104,7 @@ public final class Orochi extends Helicopter
     }
     
     @Override
-    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void tryToUseEnergyAbility()
     {
         if(!isNextMissileStunner)
         {

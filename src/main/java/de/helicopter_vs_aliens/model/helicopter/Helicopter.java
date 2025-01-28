@@ -986,7 +986,6 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
     }
     
     public void beAffectedByCollisionWith(Enemy enemy,
-                                          GameRessourceProvider gameRessourceProvider,
                                           boolean playCollisionSound)
     {
         startRecentDamageEffect(enemy);
@@ -1245,7 +1244,7 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
         battery.upgradeTo(getUpgradeLevelOf(StandardUpgradeType.ENERGY_ABILITY));
     }
     
-    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
+    public void tryToUseEnergyAbility()
     {
         if(isEnergyAbilityActivatable())
         {

@@ -130,15 +130,6 @@ public final class Phoenix extends Helicopter
     }
 
     @Override
-    public void tryToUseEnergyAbility(GameRessourceProvider gameRessourceProvider)
-    {
-        if(isEnergyAbilityActivatable())
-        {
-            useEnergyAbility();
-        }
-    }
-
-    @Override
     public void useEnergyAbility()
     {
         prepareTeleportation();
@@ -156,10 +147,9 @@ public final class Phoenix extends Helicopter
 
     @Override
     public void beAffectedByCollisionWith(Enemy enemy,
-                                          GameRessourceProvider gameRessourceProvider,
                                           boolean playCollisionSound)
     {
-        super.beAffectedByCollisionWith(enemy, gameRessourceProvider, playCollisionSound);
+        super.beAffectedByCollisionWith(enemy, playCollisionSound);
         if(hasShortRangeRadiation)
         {
             enemy.reactToRadiation();
