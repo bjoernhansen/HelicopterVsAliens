@@ -8,6 +8,4 @@ public interface ActiveManageablePaintableProvider
 {
     // TODO hier werden anderen Methoden aus ManageablePaintableController aufgenommen und dann immer gegen das Interface entwickelt
     Queue<Enemy> getIntactEnemies();
-    
-    Queue<Enemy> getDestroyedEnemies();
 }

@@ -58,7 +58,6 @@ public final class ManageablePaintableController implements ActiveManageablePain
     private final Queue<PowerUp>
         powerUps = new ArrayDeque<>();
     
-    
     private final Map<ManageablePaintableGroupType, Queue<? extends ManageablePaintable>>
         paintableQueues = new EnumMap<>(ManageablePaintableGroupType.class);
     
@@ -83,12 +82,6 @@ public final class ManageablePaintableController implements ActiveManageablePain
     public Queue<Enemy> getIntactEnemies()
     {
         return intactEnemies;
-    }
-    
-    @Override
-    public Queue<Enemy> getDestroyedEnemies()
-    {
-        return destroyedEnemies;
     }
     
     // nur Vorbereitung für späteren Umbau
@@ -155,6 +148,11 @@ public final class ManageablePaintableController implements ActiveManageablePain
                               .size();
     }
     
+    public boolean isEmptyFor(ManageablePaintableGroupType groupType)
+    {
+        return numberOfActiveEntities(groupType) == 0;
+    }
+    
     public <T extends ManageablePaintable> int numberOfInactiveEntities(Class<T> classOfManageablePaintable)
     {
         return manageablePaintableSupplier.sizeOf(classOfManageablePaintable);
@@ -186,6 +184,16 @@ public final class ManageablePaintableController implements ActiveManageablePain
         manageablePaintables.removeIf(removeCondition);
     }
     
+    public void removeEnemyToBackgroundIf(Predicate<? super ManageablePaintable> removeCondition)
+    {
+        Queue<? extends ManageablePaintable> intactEnemies = paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY);
+        intactEnemies.stream()
+                     .filter(removeCondition)
+                     .forEach(enemy -> destroyedEnemies.add((Enemy)enemy));
+        intactEnemies.removeIf(removeCondition);
+    }
+    
+    
     public <T extends ManageablePaintable> T activateEntity(ManageablePaintableFactory<T> factory)
     {
         T manageablePaintable = manageablePaintableSupplier.retrieve(factory);
@@ -205,5 +213,15 @@ public final class ManageablePaintableController implements ActiveManageablePain
     public void store(ManageablePaintable manageablePaintable)
     {
         manageablePaintableSupplier.store(manageablePaintable);
+    }
+    
+    public boolean isMajorBossActive()
+    {
+        return paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY)
+                              .stream()
+                              .findFirst()
+                              .filter(e -> ((Enemy)e).getType()
+                                                     .isMajorBoss())
+                              .isPresent();
     }
 }

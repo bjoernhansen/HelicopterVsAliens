@@ -466,6 +466,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     protected abstract boolean isMeetingRequirementsForGlowingEyes();
     
+    // TODO, das ist so eine Methode, die in einer abschließenden postset Methode aufgerufen werden könnte (könnte Teil des Interfaces werden für MangablePaintableEntity
     public void clearImage()
     {
         for(int i = 0; i < image.length; i++)
@@ -2649,7 +2650,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return secondaryColor;
     }
     
-    public boolean hasCrashed()
+    private boolean hasCrashed()
     {
         return hasCrashed;
     }
@@ -2657,5 +2658,20 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     protected final GameStatisticsCalculator getGameStatisticsCalculator()
     {
         return getGameRessourceProvider().getGameStatisticsCalculator();
+    }
+    
+    public boolean hasCollisionWithHelicopter()
+    {
+        return getHelicopter().basicCollisionRequirementsSatisfied(this) && !hasCrashed();
+    }
+    
+    public boolean isIntactAndNotForRemoval()
+    {
+        return isIntact() && !isMarkedForRemoval();
+    }
+    
+    public boolean shouldBeRemoved()
+    {
+        return isIntact() && isMarkedForRemoval();
     }
 }

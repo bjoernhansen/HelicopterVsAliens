@@ -59,7 +59,10 @@ public final class GameProgress implements GameRessourceProvider
     
     private final HelicopterFactory
         helicopterFactory = new HelicopterFactory(this);
-
+    
+    private final EnemyController
+        enemyController = new EnemyController(this);
+    
     private final ExplosionController
         explosionController = new ExplosionController(this);
     
@@ -110,12 +113,12 @@ public final class GameProgress implements GameRessourceProvider
                 scenery.update();
                 Events.updateTimer();
                 Window.updateDisplays(this);
-                EnemyController.updateAllDestroyed(this);
+                enemyController.updateAllDestroyed();
                 Missile.updateAll(this);
-                EnemyController.updateAllActive(this);
+                enemyController.updateAllActive();
                 EnemyMissile.updateAll(this);
                 Events.checkForLevelUp(this);
-                EnemyController.generateNewEnemies(this);
+                enemyController.generateNewEnemies();
                 helicopter.update();
                 explosionController.updateAll();
                 PowerUp.updateAll(this);
