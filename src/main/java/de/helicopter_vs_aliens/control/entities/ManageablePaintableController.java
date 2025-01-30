@@ -84,57 +84,6 @@ public final class ManageablePaintableController implements ActiveManageablePain
         return intactEnemies;
     }
     
-    // nur Vorbereitung für späteren Umbau
-    // TODO Umbau
-  /*  private final Map<PaintableEntityGroupType, Queue<GroupTypeOwner>>
-        paintableEntityQueues = Arrays.stream(PaintableEntityGroupType.values())
-                                      .collect(Collectors.toUnmodifiableMap(Function.identity(),
-                                                                            groupType -> new ArrayDeque<>()));
-
-    public void add(GroupTypeOwner groupTypeOwner)
-    {
-        paintableEntityQueues.get(groupTypeOwner.getGroupType())
-                             .add(groupTypeOwner);
-    }
-    
-    public void forEachOfGroupType(PaintableEntityGroupType paintableEntityGroupType,
-                                   Consumer<? super GroupTypeOwner> action)
-    // TODO verwenden oder entfernen
-    {
-        paintableEntityQueues.get(paintableEntityGroupType)
-                             .forEach(action);
-    }
-    
-    public void remove(GroupTypeOwner groupTypeOwner)
-    // TODO verwenden oder entfernen
-    {
-        paintableEntityQueues.get(groupTypeOwner.getGroupType())
-                             .remove(groupTypeOwner);
-    }
-    
-    public void removeEachOfGroupTypeIf(GroupTypeOwner groupTypeOwner, Predicate<? super GroupTypeOwner> filter)
-    // TODO verwenden oder entfernen
-    {
-        paintableEntityQueues.get(groupTypeOwner.getGroupType())
-                             .removeIf(filter);
-    }
-    
-    public Collection<GroupTypeOwner> getPaintableEntities(PaintableEntityGroupType groupType)
-    // TODO verwenden oder entfernen
-    {
-        return paintableEntityQueues.get(groupType);
-    }
-    
-    public Queue<ManageablePaintable> getPaintableEntities(ManageablePaintableGroupType groupType,
-                                                          Predicate<? super ManageablePaintable> condition)
-    // TODO verwenden oder entfernen
-    {
-        return paintableQueues.get(groupType)
-                              .stream()
-                              .filter(condition)
-                              .collect(Collectors.toCollection(ArrayDeque::new));
-    }*/
-    
     public void clearActiveEntities(ManageablePaintableGroupType groupType)
     {
         Queue<? extends ManageablePaintable> groupTypeOwners = paintableQueues.get(groupType);
