@@ -85,7 +85,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 			setBounds(
 					getX()
 						- speed.getX()
-						- (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
+						- (Scenery.isBackgroundMoving ? SceneryObject.BG_SPEED : 0),
 					Math.min(getY() - speed.getY(),
 							 GROUND_Y - getHeight()),
                     SIZE, SIZE);

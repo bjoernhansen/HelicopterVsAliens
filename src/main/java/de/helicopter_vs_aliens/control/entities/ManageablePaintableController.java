@@ -113,7 +113,9 @@ public final class ManageablePaintableController implements ActiveManageablePain
                        .forEach(action);
     }
     
-    public void forEachActiveEntityIf(ManageablePaintableGroupType groupType,
+    // TODO durch ein class.object als Parameter CLass<T> könnte die Typ-Casts beim Aufruf der Methode wegfallen, denkbar, dass der Enum-Typ noch eine Klasse erhält und diese dann übergeben wird. Das  Enum bräuchte dann eine Map um von der Klasse zum Enum-Element zu kommen
+    public void forEachActiveEntityIf(
+                                        ManageablePaintableGroupType groupType,
                                       Predicate<? super ManageablePaintable> applyCondition,
                                       Consumer<? super ManageablePaintable> action)
     {
@@ -135,13 +137,12 @@ public final class ManageablePaintableController implements ActiveManageablePain
     
     public void removeEnemyToBackgroundIf(Predicate<? super ManageablePaintable> removeCondition)
     {
-        Queue<? extends ManageablePaintable> intactEnemies = paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY);
-        intactEnemies.stream()
+        Queue<? extends ManageablePaintable> enemies = paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY);
+        enemies.stream()
                      .filter(removeCondition)
                      .forEach(enemy -> destroyedEnemies.add((Enemy)enemy));
-        intactEnemies.removeIf(removeCondition);
+        enemies.removeIf(removeCondition);
     }
-    
     
     public <T extends ManageablePaintable> T activateEntity(ManageablePaintableFactory<T> factory)
     {

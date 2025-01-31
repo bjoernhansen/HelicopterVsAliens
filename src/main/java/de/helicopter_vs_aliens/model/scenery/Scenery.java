@@ -6,14 +6,11 @@ import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.PaintableEntity;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 import static de.helicopter_vs_aliens.model.RectangularPaintableEntity.GROUND_Y;
 
@@ -31,7 +28,7 @@ public class Scenery extends PaintableEntity
     
     // TODO sollte eigentlich eine Instanz-Variable sein
     public static boolean
-        backgroundMoves; // = true: bewegter Hintergrund
+        isBackgroundMoving; // = true: bewegter Hintergrund
     
     private float
         cloudX = 135; // x-Koordinate der Wolke
@@ -76,9 +73,9 @@ public class Scenery extends PaintableEntity
     
     public void update()
     {
-        backgroundMoves = isBackgroundMoving();
+        isBackgroundMoving = isBackgroundMoving();
         ManageablePaintableController manageablePaintableController = getGameRessourceProvider().getManageablePaintableController();
-        if(backgroundMoves)
+        if(isBackgroundMoving)
         {
             manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.SCENERY_OBJECT,
                                                               sceneryObject -> ((SceneryObject)sceneryObject).move());
@@ -95,7 +92,7 @@ public class Scenery extends PaintableEntity
         {
             generateNewSceneryObject();
         }
-        if (backgroundMoves)
+        if (isBackgroundMoving)
         {
             SceneryObject.updateBackgroundTimer();
         }
@@ -104,18 +101,13 @@ public class Scenery extends PaintableEntity
     
     private boolean isBackgroundMoving()
     {
-        Helicopter helicopter = getHelicopter();
-        return helicopter.isRotorSystemActive
-            && !isMajorBossActive(getGameRessourceProvider().getManageablePaintableController()
-                                                       .getIntactEnemies())
-            && helicopter.tractor == null;
+        return getHelicopter().isMoving() && !isMajorBossActive();
     }
     
-    private boolean isMajorBossActive(Queue<Enemy> enemies)
+    private boolean isMajorBossActive()
     {
-        return !enemies.isEmpty()
-             && enemies
-                       .element().getType().isMajorBoss();
+        return getGameRessourceProvider().getManageablePaintableController()
+                                         .isMajorBossActive();
     }
     
     private boolean arePrerequisitesForSceneryObjectsCreationMet()
@@ -124,7 +116,7 @@ public class Scenery extends PaintableEntity
             && ManageablePaintableActivation.isApproved(numberOfMissingSceneryObjects(),
                                                         SceneryObject.probabilityReductionFactor)
             && SceneryObject.generalObjectTimer == 0
-            && backgroundMoves;
+            && isBackgroundMoving;
     }
     
     private boolean areSceneryObjectsMissing()
@@ -146,7 +138,7 @@ public class Scenery extends PaintableEntity
     
     private void moveCloud()
     {
-        cloudX -= backgroundMoves ? 0.5f : 0.125f;
+        cloudX -= isBackgroundMoving ? 0.5f : 0.125f;
         if (cloudX < -250)
         {
             cloudX = 1000;

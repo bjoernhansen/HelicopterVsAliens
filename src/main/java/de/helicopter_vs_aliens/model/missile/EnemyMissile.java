@@ -59,7 +59,7 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
     {
 		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
     	determineColor();
-		location.setLocation( location.getX() + speed.getX() - (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
+		location.setLocation( location.getX() + speed.getX() - (Scenery.isBackgroundMoving ? SceneryObject.BG_SPEED : 0),
 								   location.getY() + speed.getY() );
 		if(	helicopter.canBeHit()
 			&& helicopter.intersectsLine( 	location.getX() + diameter/2f,

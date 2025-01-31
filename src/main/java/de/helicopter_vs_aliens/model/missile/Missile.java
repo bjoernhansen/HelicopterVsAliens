@@ -129,7 +129,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	// TODO wenn alle ManagablePaintables eine Update-Methode haben, dann könnte diese Methode teil des Interfaces werden und dann könnte in der KLasse ManagePaintableController das sehr elegant gelöst werden
 	private void update()
 	{
-		double newX = getX() + speed + (Scenery.backgroundMoves ? -SceneryObject.BG_SPEED : 0);
+		double newX = getX() + speed + (Scenery.isBackgroundMoving ? -SceneryObject.BG_SPEED : 0);
 		setX(newX);
 		if(getX() > 1175 || getX() + 20 < 0)
 		{

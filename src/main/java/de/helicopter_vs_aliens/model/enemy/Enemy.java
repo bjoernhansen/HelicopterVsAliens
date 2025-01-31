@@ -1521,12 +1521,12 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private void move()
     {
-        if(!speed.equals(ZERO_SPEED) || Scenery.backgroundMoves)
+        if(!speed.equals(ZERO_SPEED) || Scenery.isBackgroundMoving)
         {
             setLocation(
                 getX()
                     + navigationDevice.getDirectionX() * speed.getX()
-                    - (Scenery.backgroundMoves ? SceneryObject.BG_SPEED : 0),
+                    - (Scenery.isBackgroundMoving ? SceneryObject.BG_SPEED : 0),
                 Math.max(getModel() == EnemyModelType.BARRIER ? 0 : Integer.MIN_VALUE,
                          type == EnemyType.ROCK
                              ? getY()
@@ -2665,13 +2665,37 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return getHelicopter().basicCollisionRequirementsSatisfied(this) && !hasCrashed();
     }
     
+    public boolean shouldBeRemoved()
+    {
+        return isIntact() && isMarkedForRemoval();
+    }
+    
+    public boolean isIntactBarrierAndNotForRemoval()
+    {
+        return getModel() == EnemyModelType.BARRIER
+            && isIntactAndNotForRemoval();
+    }
+    
     public boolean isIntactAndNotForRemoval()
     {
         return isIntact() && !isMarkedForRemoval();
     }
     
-    public boolean shouldBeRemoved()
+    public void handleBossLevelDespawn()
     {
-        return isIntact() && isMarkedForRemoval();
+        if(isBarrierOnScreen())
+        {
+            explode();
+            destroyByHelicopter();
+        }
+        else if(!isOnScreen())
+        {
+            markForRemoval();
+        }
+    }
+    
+    public boolean isBarrierOnScreen()
+    {
+        return getModel() == EnemyModelType.BARRIER && isOnScreen();
     }
 }

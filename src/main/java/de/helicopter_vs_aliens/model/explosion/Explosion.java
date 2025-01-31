@@ -104,7 +104,7 @@ public class Explosion extends PaintableEntity implements ManageablePaintable
 	
 	private void updatePosition()
 	{
-		if(Scenery.backgroundMoves)
+		if(Scenery.isBackgroundMoving)
 		{
 			center.setLocation(center.getX() - BG_SPEED,
 									center.getY());

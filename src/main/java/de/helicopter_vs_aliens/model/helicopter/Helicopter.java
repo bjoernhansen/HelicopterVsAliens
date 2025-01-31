@@ -1449,4 +1449,9 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
     public void handleExplosionEnd()
     {
     }
+    
+    public boolean isMoving()
+    {
+        return isRotorSystemActive && tractor == null;
+    }
 }

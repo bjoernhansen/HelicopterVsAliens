@@ -1366,7 +1366,7 @@ public class Events
         if (!Window.isMenuVisible)
         {
             Window.isMenuVisible = true;
-            Scenery.backgroundMoves = false;
+            Scenery.isBackgroundMoving = false;
             playingTime += System.currentTimeMillis() - lastCurrentTime;
         }
         else

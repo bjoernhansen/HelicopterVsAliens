@@ -53,6 +53,7 @@ public class EnemyController
     public static Carrier
         carrierDestroyedJustNow;    // Referenz auf den zuletzt zerstörten Carrier-Gegner
     
+    // TODO über Liste abbilden
     public static final Enemy[]
         livingBarrier = new Enemy[MAX_BARRIER_NUMBER];
     
@@ -324,7 +325,7 @@ public class EnemyController
         {
             rockTimer--;
         }
-        if(Scenery.backgroundMoves && barrierTimer > 0)
+        if(Scenery.isBackgroundMoving && barrierTimer > 0)
         {
             barrierTimer--;
         }
@@ -359,37 +360,22 @@ public class EnemyController
     
     static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
     {
-        for(Enemy enemy : gameRessourceProvider.getManageablePaintableController()
-                                               .getIntactEnemies())
-        {
-            if(enemy.getModel() == EnemyModelType.BARRIER && enemy.isOnScreen())
-            {
-                enemy.explode();
-                enemy.destroyByHelicopter();
-            }
-            else if(!enemy.isOnScreen())
-            {
-                enemy.markForRemoval();
-            }
-        }
+        gameRessourceProvider.getManageablePaintableController()
+                             .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
+                                                  enemy -> ((Enemy)enemy).handleBossLevelDespawn());
     }
     
     private void countBarriers()
     {
-        Queue<Enemy> intactEnemies = gameRessourceProvider.getManageablePaintableController()
-                                                          .getIntactEnemies();
         Arrays.fill(livingBarrier, null);
         currentNumberOfBarriers = 0;
-        for(Enemy enemy : intactEnemies)
-        {
-            if(enemy.getModel() == EnemyModelType.BARRIER
-                && enemy.isIntact()
-                && !enemy.isMarkedForRemoval())
-            {
-                livingBarrier[currentNumberOfBarriers] = enemy;
-                currentNumberOfBarriers++;
-            }
-        }
+        gameRessourceProvider.getManageablePaintableController()
+                             .forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
+                                                    enemy -> ((Enemy)enemy).isIntactBarrierAndNotForRemoval(),
+                                                    enemy -> {
+                                                        livingBarrier[currentNumberOfBarriers] = (Enemy)enemy;
+                                                        currentNumberOfBarriers++;
+                                                    });
     }
     
     public static void removeCurrentRock()
