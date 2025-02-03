@@ -32,7 +32,6 @@ import de.helicopter_vs_aliens.util.Colorations;
 import java.awt.Color;
 import java.util.List;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
@@ -137,16 +136,23 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintForeground(GraphicsAdapter graphicsAdapter)
     {
-        // der Boden
+        // Der Boden
         graphicsAdapter.setPaint(Colorations.gradientGround[Events.timeOfDay.ordinal()]);
         graphicsAdapter.fillRect(0, GROUND_Y, VIRTUAL_DIMENSION.getWidth(), 35);
         
         // Objekte vor dem Helikopter
         SceneryLayer.getForegroundLayers()
-                    .forEach(layer -> gameRessourceProvider.getManageablePaintableController()
-                                                           .forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
-                                                                                  sceneryObject -> ((SceneryObject)sceneryObject).getLayer() == layer,
-                                                                                  sceneryObject -> sceneryObject.paint(graphicsAdapter)));
+                    .forEach(layer -> paintSceneryObjectsForLayer(graphicsAdapter, layer));
+    }
+    
+    private void paintSceneryObjectsForLayer(GraphicsAdapter graphicsAdapter, SceneryLayer layer)
+    {
+        gameRessourceProvider.getManageablePaintableController()
+                             .forEachActiveEntityIf(
+                                 ManageablePaintableGroupType.SCENERY_OBJECT,
+                                 (SceneryObject sceneryObject) -> sceneryObject.belongsToLayer(layer),
+                                 sceneryObject -> sceneryObject.paint(graphicsAdapter)
+                             );
     }
     
     private void paintForegroundDisplays(GraphicsAdapter graphicsAdapter)

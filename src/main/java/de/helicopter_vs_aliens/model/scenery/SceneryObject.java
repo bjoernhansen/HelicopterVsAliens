@@ -1,16 +1,17 @@
 package de.helicopter_vs_aliens.model.scenery;
 
-import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
+import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.util.Calculations;
 import de.helicopter_vs_aliens.util.Colorations;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+
 
 // TODO Alles Allgemeines zu Backgrounds, was sich nicht auf die Background-Objekte bezieht in eigene Klasse
 // TODO diese Klasse bekommt dann auch einen eigenen Painter
@@ -28,6 +29,9 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 		UP_TO_PALM_FREQUENCY = 	UP_TO_STONE_FREQUENCY + PALM_FREQUENCY,
 		UP_TO_HILL_FREQUENCY = 	UP_TO_PALM_FREQUENCY + HILL_FREQUENCY,
 		TOTAL_FREQUENCY =		UP_TO_HILL_FREQUENCY + DESERT_FREQUENCY;
+		
+	private static final int
+		X_LIMIT_FOR_REMOVAL = -50;
 	
 	public static final	float
 		BG_SPEED = 2.0f;
@@ -264,14 +268,9 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 		return width;
 	}
 	
-	float getSceneryObjectMaxX()
+	private float getSceneryObjectMaxX()
 	{
 		return x + width;
-	}
-
-	public SceneryLayer getLayer()
-	{
-		return layer;
 	}
 	
 	public BufferedImage getImage(int index)
@@ -303,5 +302,15 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 	public ManageablePaintableGroupType getGroupType()
 	{
 		return ManageablePaintableGroupType.SCENERY_OBJECT;
+	}
+    
+    boolean isOutOfSight()
+    {
+		return getSceneryObjectMaxX() < X_LIMIT_FOR_REMOVAL;
+	}
+	
+	public boolean belongsToLayer(SceneryLayer layer)
+	{
+		return this.layer == layer;
 	}
 }

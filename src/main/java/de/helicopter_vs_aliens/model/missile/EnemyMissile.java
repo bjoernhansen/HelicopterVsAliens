@@ -155,9 +155,9 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 	{
 		var paintableController = gameRessourceProvider.getManageablePaintableController();
 		paintableController.forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE,
-												enemyMissile -> ((EnemyMissile)enemyMissile).update());
+												EnemyMissile::update);
 		paintableController.removeIf(ManageablePaintableGroupType.ENEMY_MISSILE,
-									 enemyMissile -> ((EnemyMissile)enemyMissile).isOutOfSight());
+									 EnemyMissile::isOutOfSight);
 	}
 	
 	private boolean isOutOfSight()

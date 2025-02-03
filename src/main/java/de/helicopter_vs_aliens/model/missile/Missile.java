@@ -118,12 +118,12 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 		ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
 		// TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
 		manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.MISSILE,
-														  missile -> ((Missile)missile).update());
+														  Missile::update);
 		manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.MISSILE,
-															missile -> !((Missile)missile).isFlying,
-															missile -> ((Missile)missile).inactivate());
+															Missile::hasStopped,
+															Missile::inactivate);
 		manageablePaintableController.removeIf(ManageablePaintableGroupType.MISSILE,
-											   missile -> !((Missile)missile).isFlying);
+											   Missile::hasStopped);
 	}
 	
 	// TODO wenn alle ManagablePaintables eine Update-Methode haben, dann könnte diese Methode teil des Interfaces werden und dann könnte in der KLasse ManagePaintableController das sehr elegant gelöst werden
@@ -347,5 +347,10 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	public ExplosionType getTypeOfExplosion()
 	{
 		return typeOfExplosion;
+	}
+	
+	private boolean hasStopped()
+	{
+		return !isFlying;
 	}
 }

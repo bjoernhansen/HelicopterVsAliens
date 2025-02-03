@@ -5,7 +5,6 @@ import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
-import de.helicopter_vs_aliens.model.enemy.EnemyModelType;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.enemy.FinalBossServantType;
 import de.helicopter_vs_aliens.model.enemy.basic.Carrier;
@@ -14,7 +13,6 @@ import de.helicopter_vs_aliens.util.Calculations;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Queue;
 
 
 public class EnemyController
@@ -35,9 +33,9 @@ public class EnemyController
         ENEMY_SELECTOR = new EnemySelector();
     
     public static boolean
-        makeBossTwoServants = false,    // make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
-        makeBoss4Servant = false,
-        makeAllFinalBossServants = false;
+        makeBossTwoServants,    // make-Variablen: bestimmen, ob ein bestimmter Boss-Gegner zu erzeugen ist
+        makeBoss4Servant,
+        makeAllFinalBossServants;
     
     public static final EnumSet<FinalBossServantType>
         missingFinalBossServants = EnumSet.noneOf(FinalBossServantType.class);
@@ -333,36 +331,29 @@ public class EnemyController
         
         ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
         manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
-                                                            enemy -> ((Enemy)enemy).isIntactAndNotForRemoval(),
-                                                            enemy -> ((Enemy)enemy).update());
-        manageablePaintableController.removeEnemyToBackgroundIf(e -> ((Enemy)e).isDestroyed());
+                                                            Enemy::isIntactAndNotForRemoval,
+                                                            Enemy::update);
+        manageablePaintableController.removeEnemyToBackgroundIf(Enemy::isDestroyed);
         manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
-                                                            enemy -> ((Enemy)enemy).shouldBeRemoved(),
-                                                            enemy -> ((Enemy)enemy).clearImage());
+                                                            Enemy::shouldBeRemoved,
+                                                            Enemy::clearImage);
         manageablePaintableController.removeIf(ManageablePaintableGroupType.INTACT_ENEMY,
-                                               enemy -> ((Enemy)enemy).shouldBeRemoved());
+                                               Enemy::shouldBeRemoved);
     }
     
     public void updateAllDestroyed()
     {
         ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
         manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                                          enemy -> ((Enemy)enemy).updateDead());
+                                                          Enemy::updateDead);
         manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                                            enemy -> ((Enemy)enemy).hasCollisionWithHelicopter(),
-                                                            enemy -> ((Enemy)enemy).collision());
+                                                            Enemy::hasCollisionWithHelicopter,
+                                                            Enemy::collision);
         manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                                            enemy -> ((Enemy)enemy).isMarkedForRemoval(),
-                                                            enemy -> ((Enemy)enemy).clearImage());
+                                                            Enemy::isMarkedForRemoval,
+                                                            Enemy::clearImage);
         manageablePaintableController.removeIf(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                               enemy -> ((Enemy)enemy).isMarkedForRemoval());
-    }
-    
-    static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
-    {
-        gameRessourceProvider.getManageablePaintableController()
-                             .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
-                                                  enemy -> ((Enemy)enemy).handleBossLevelDespawn());
+                                               Enemy::isMarkedForRemoval);
     }
     
     private void countBarriers()
@@ -371,9 +362,9 @@ public class EnemyController
         currentNumberOfBarriers = 0;
         gameRessourceProvider.getManageablePaintableController()
                              .forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
-                                                    enemy -> ((Enemy)enemy).isIntactBarrierAndNotForRemoval(),
+                                                    Enemy::isIntactBarrierAndNotForRemoval,
                                                     enemy -> {
-                                                        livingBarrier[currentNumberOfBarriers] = (Enemy)enemy;
+                                                        livingBarrier[currentNumberOfBarriers] = enemy;
                                                         currentNumberOfBarriers++;
                                                     });
     }

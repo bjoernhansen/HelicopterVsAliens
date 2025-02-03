@@ -20,17 +20,25 @@ import java.awt.geom.Point2D;
 public class PowerUp extends RectangularPaintableEntity implements ManageablePaintable
 {
     private static final int
-        SIZE = 30,
+        SIZE = 30;
+	
+	private static final int
 		POWERUP_STOP_POSITION = 1004;
 		
 	private int
-		direction,
-        worth;		    // nur für PowerUps vom Typ BONUS_INCOME; bestimmt, wie viel Geld der Spieler für das Einsammeln erhält
+		direction;
+	
+	private int
+		worth;		    // nur für PowerUps vom Typ BONUS_INCOME; bestimmt, wie viel Geld der Spieler für das Einsammeln erhält
     
     private boolean
-        wasCollected,   // = true: PowerUp kann in die LinkedList für inaktive PowerUps verschoben werden
-        hasStopped,	    // nur Helios-Klasse; = true: PowerUp fällt zu Boden
-		isInStatusBar;	// = true: PowerUp befindet sich in der Statusbar
+        wasCollected;
+	
+	private boolean
+		isFlying;
+	
+	private boolean
+		isOutsideOfStatusBar;	// = true: PowerUp befindet sich in der Statusbar
     
     private PowerUpType
 		type;
@@ -39,15 +47,17 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		speed = new Point2D.Float();	// Geschwindigkeit des PowerUps
     
     private Color
-        surfaceColor,	// Farben des PowerUps, hängen vom Typ ab
+        surfaceColor;
+	
+	private Color
 		crossColor;
 
 		
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
 		var paintableController = gameRessourceProvider.getManageablePaintableController();
-		paintableController.forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, powerUp -> ((PowerUp)powerUp).update());
-		paintableController.removeIf(ManageablePaintableGroupType.POWER_UP, powerUp -> ((PowerUp)powerUp).wasCollected);
+		paintableController.forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, PowerUp::update);
+		paintableController.removeIf(ManageablePaintableGroupType.POWER_UP, PowerUp::wasCollected);
 	}
 
 	private void update()
@@ -57,16 +67,16 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		{
 			collect(helicopter);
 		}
-		if(!hasStopped
+		if(isFlying
 		   && helicopter.canImmobilizePowerUp()
 		   && hasReachedStopPosition())
 		{
 			stop();
 		}
 		
-		if(!isInStatusBar)
+		if(isOutsideOfStatusBar)
 		{
-			if(!hasStopped)
+			if(isFlying)
 			{
 				double newSpeedY = 0.20 * direction * speed.getX();
 				speed.setLocation(0.25 * direction + speed.getX(),
@@ -127,8 +137,8 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		setBounds(x, y, SIZE, SIZE);
 		setPaintBounds(SIZE, SIZE);
 		wasCollected = false;
-		hasStopped = false;
-		isInStatusBar = false;
+		isFlying = true;
+		isOutsideOfStatusBar = true;
 		speed.setLocation(0, 0);
 		direction = powerUpDirection;
         surfaceColor = type.getSurfaceColor();
@@ -202,7 +212,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 	{
 		Window.collectedPowerUps.put(type, this);
 		speed.setLocation(0, 0);
-		isInStatusBar = true;
+		isOutsideOfStatusBar = false;
 		wasCollected = false;
 		setBounds(100, 432, Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 		setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
@@ -236,7 +246,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 	
 	private void stop()
 	{
-		hasStopped = true;
+		isFlying = false;
 		speed.setLocation(0, 0);
 	}
     
@@ -271,5 +281,10 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 	public ManageablePaintableGroupType getGroupType()
 	{
 		return ManageablePaintableGroupType.POWER_UP;
+	}
+	
+	public boolean wasCollected()
+	{
+		return wasCollected;
 	}
 }

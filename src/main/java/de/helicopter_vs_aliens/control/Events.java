@@ -614,11 +614,11 @@ public class Events
                 money -= helicopter.getSpotlightCosts();
                 helicopter.hasSpotlights = true;
                 timeOfDay = TimeOfDay.NIGHT;
-
                 Window.updateRepairShopButtonsAfterSpotlightPurchase();
-
-                gameRessourceProvider.getManageablePaintableController().forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY, enemy -> ((Enemy)enemy).repaint());
-
+                
+                gameRessourceProvider.getManageablePaintableController()
+                                     .forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY,
+                                                          Enemy::repaint);
                 gameRessourceProvider.getManageablePaintableController()
                                      .getIntactEnemies()
                                      .stream()
@@ -1301,7 +1301,7 @@ public class Events
 
         if (isCurrentLevelBossLevel())
         {
-            EnemyController.getRidOfSomeEnemies(gameRessourceProvider);
+            getRidOfSomeEnemies(gameRessourceProvider);
         }
 
         if (isCurrentLevelBossLevel() || isBossLevel(previousLevel) || level == 49)
@@ -1315,10 +1315,19 @@ public class Events
         Window.levelDisplayTimer.start();
         LevelManager.adaptToLevel(helicopter, level, true);
     }
+    
+    
+    private static void getRidOfSomeEnemies(GameRessourceProvider gameRessourceProvider)
+    {
+        gameRessourceProvider.getManageablePaintableController()
+                             .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
+                                                  Enemy::handleBossLevelDespawn);
+    }
 
     // Stellt sicher, dass mit dem Besiegen des End-Gegners direkt das nächste Level erreicht wird
-    public static void setBossLevelUpConditions()
+    static void setBossLevelUpConditions()
     {
+        // TODO ggf. hier mit einem BossLevel-Enum arbeiten
         if (level == 10)
         {
             killsAfterLevelUp = 14;

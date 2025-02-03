@@ -36,12 +36,12 @@ public class ExplosionController
         ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
         // TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
         manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION,
-                                                          explosion -> ((Explosion)explosion).update());
+                                                          Explosion::update);
         manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.EXPLOSION,
-                                                            explosion -> ((Explosion)explosion).hasExpired(),
-                                                            explosion -> ((Explosion)explosion).onExplosionEnd());
+                                                            Explosion::hasExpired,
+                                                            Explosion::onExplosionEnd);
         manageablePaintableController.removeIf(ManageablePaintableGroupType.EXPLOSION,
-                                               explosion -> ((Explosion)explosion).hasExpired());
+                                               Explosion::hasExpired);
     }
     
     public void start(double x, double y,

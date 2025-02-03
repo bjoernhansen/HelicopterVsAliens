@@ -9,6 +9,7 @@ import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Queue;
@@ -107,40 +108,50 @@ public final class ManageablePaintableController implements ActiveManageablePain
         return manageablePaintableSupplier.sizeOf(classOfManageablePaintable);
     }
     
-    public void forEachActiveEntity(ManageablePaintableGroupType groupType, Consumer<? super ManageablePaintable> action)
-    {
-        paintableQueues.get(groupType)
-                       .forEach(action);
-    }
-    
-    // TODO durch ein class.object als Parameter CLass<T> könnte die Typ-Casts beim Aufruf der Methode wegfallen, denkbar, dass der Enum-Typ noch eine Klasse erhält und diese dann übergeben wird. Das  Enum bräuchte dann eine Map um von der Klasse zum Enum-Element zu kommen
-    public void forEachActiveEntityIf(
-                                        ManageablePaintableGroupType groupType,
-                                      Predicate<? super ManageablePaintable> applyCondition,
-                                      Consumer<? super ManageablePaintable> action)
+    public <T extends ManageablePaintable> void forEachActiveEntity(
+        ManageablePaintableGroupType groupType,
+        Consumer<T> action)
     {
         paintableQueues.get(groupType)
                        .stream()
+                       .map(groupType.<T>getBaseClass()::cast)
+                       .forEach(action);
+    }
+    
+    
+    // TODO durch ein class.object als Parameter CLass<T> könnte die Typ-Casts beim Aufruf der Methode wegfallen, denkbar, dass der Enum-Typ noch eine Klasse erhält und diese dann übergeben wird. Das  Enum bräuchte dann eine Map um von der Klasse zum Enum-Element zu kommen
+    public <T extends ManageablePaintable> void forEachActiveEntityIf(ManageablePaintableGroupType groupType,
+                                                                      Predicate<T> applyCondition,
+                                                                      Consumer<T> action)
+    {
+        paintableQueues.get(groupType)
+                       .stream()
+                       .map(groupType.<T>getBaseClass()::cast)
                        .filter(applyCondition)
                        .forEach(action);
     }
     
-    public void removeIf(ManageablePaintableGroupType groupType,
-                         Predicate<? super ManageablePaintable> removeCondition)
+    public <T extends ManageablePaintable> void removeIf(ManageablePaintableGroupType groupType,
+                                                         Predicate<T> removeCondition)
     {
-        Queue<? extends ManageablePaintable> manageablePaintables = paintableQueues.get(groupType);
-        manageablePaintables.stream()
-                            .filter(removeCondition)
-                            .forEach(gameRessourceProvider.getManageablePaintableController()::store);
+        @SuppressWarnings("unchecked")
+        Collection<T> manageablePaintables = (Collection<T>)paintableQueues.get(groupType);
+        manageablePaintables
+            .stream()
+            .map(groupType.<T>getBaseClass()::cast)
+            .filter(removeCondition)
+            .forEach(gameRessourceProvider.getManageablePaintableController()::store);
         manageablePaintables.removeIf(removeCondition);
     }
     
-    public void removeEnemyToBackgroundIf(Predicate<? super ManageablePaintable> removeCondition)
+    public void removeEnemyToBackgroundIf(Predicate<? super Enemy> removeCondition)
     {
-        Queue<? extends ManageablePaintable> enemies = paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY);
+        @SuppressWarnings("unchecked")
+        Collection<Enemy> enemies = (Collection<Enemy>)paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY);
         enemies.stream()
-                     .filter(removeCondition)
-                     .forEach(enemy -> destroyedEnemies.add((Enemy)enemy));
+               .map(Enemy.class::cast)
+               .filter(removeCondition)
+               .forEach(destroyedEnemies::add);
         enemies.removeIf(removeCondition);
     }
     
