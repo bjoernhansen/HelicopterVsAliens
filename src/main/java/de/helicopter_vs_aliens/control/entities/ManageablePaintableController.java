@@ -178,11 +178,15 @@ public final class ManageablePaintableController implements ActiveManageablePain
     
     public boolean isMajorBossActive()
     {
+        return isPrimaryEnemyQualifying(e -> e.getType().isMajorBoss());
+    }
+    
+    public boolean isPrimaryEnemyQualifying(Predicate<Enemy> selectionCondition)
+    {
         return paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY)
                               .stream()
                               .findFirst()
-                              .filter(e -> ((Enemy)e).getType()
-                                                     .isMajorBoss())
+                              .filter(e -> selectionCondition.test((Enemy)e))
                               .isPresent();
     }
 }

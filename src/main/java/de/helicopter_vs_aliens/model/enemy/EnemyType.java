@@ -767,4 +767,9 @@ public enum EnemyType implements ManageablePaintableFactory<Enemy>
     {
         return maneuverTypes;
     }
+    
+    public boolean isTypeOf(Enemy enemy)
+    {
+        return enemy.getType() == this;
+    }
 }

@@ -93,14 +93,10 @@ public class GameWindowPainter extends WindowPainter
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        for(Enemy enemy : gameRessourceProvider.getManageablePaintableController()
-                                               .getIntactEnemies())
-        {
-            if(enemy.isVisibleNonBarricadeVessel())
-            {
-                enemy.paint(graphicsAdapter);
-            }
-        }
+        gameRessourceProvider.getManageablePaintableController()
+                             .forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
+                                                    Enemy::isVisibleNonBarricadeVessel,
+                                                    enemy -> enemy.paint(graphicsAdapter));
     }
     
     // TODO gleichartige Methoden ablösen und iterieren über ein Subset von ManageablePaintableGroupType

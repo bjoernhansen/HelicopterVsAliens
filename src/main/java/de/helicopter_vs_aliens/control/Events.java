@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableActivation;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.events.KeyEvent;
 import de.helicopter_vs_aliens.control.events.MouseEvent;
@@ -619,11 +620,11 @@ public class Events
                 gameRessourceProvider.getManageablePaintableController()
                                      .forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY,
                                                           Enemy::repaint);
+                
                 gameRessourceProvider.getManageablePaintableController()
-                                     .getIntactEnemies()
-                                     .stream()
-                                     .filter(Predicate.not(Enemy::isRock))
-                                     .forEach(Enemy::dimmedRepaint);
+                                     .forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
+                                                            Predicate.not(Enemy::isRock),
+                                                            Enemy::dimmedRepaint);
             }
         }
         // Goliath-Panzerung
@@ -1097,12 +1098,7 @@ public class Events
         Window.conditionalReset();
 
         // kein "active enemy"-Reset, wenn Boss-Gegner 2 Servants aktiv
-        if (!gameRessourceProvider.getManageablePaintableController()
-                                  .getIntactEnemies().isEmpty()
-            && !(!totalReset && gameRessourceProvider.getManageablePaintableController()
-                                                     .getIntactEnemies()
-                                                     .element()
-                                                     .getType() == EnemyType.BOSS_2_SERVANT))
+        if (isBoss2ServantActiveWithoutTotalReset(gameRessourceProvider, totalReset))
         {
             // Boss-Level 4 oder 5: nach Werkstatt-Besuch erscheint wieder der Hauptendgegner
             if (level == 40 || level == 50)
@@ -1151,17 +1147,19 @@ public class Events
         Window.collectedPowerUps.clear();
     }
     
+    private static boolean isBoss2ServantActiveWithoutTotalReset(GameRessourceProvider gameRessourceProvider, boolean totalReset)
+    {
+        return !gameRessourceProvider.getManageablePaintableController()
+                                     .isEmptyFor(ManageablePaintableGroupType.INTACT_ENEMY)
+            && !(!totalReset && gameRessourceProvider.getManageablePaintableController()
+                                                     .isPrimaryEnemyQualifying(EnemyType.BOSS_2_SERVANT::isTypeOf));
+    }
+    
     private static void storeAndClearDisappearingEnemies(GameRessourceProvider gameRessourceProvider)
     {
-        Queue<Enemy> activeEnemies = gameRessourceProvider.getManageablePaintableController()
-                                                          .getIntactEnemies();
-        activeEnemies.stream()
-                     .filter(Enemy::isDisappearingAfterEnteringRepairShop)
-                     .forEach(gameRessourceProvider.getManageablePaintableController()::store);
-        
         gameRessourceProvider.getManageablePaintableController()
-                             .getIntactEnemies()
-                             .removeIf(Enemy::isDisappearingAfterEnteringRepairShop);
+                             .removeIf(ManageablePaintableGroupType.INTACT_ENEMY,
+                                       Enemy::isDisappearingAfterEnteringRepairShop);
     }
 
     private static void resetEvents()

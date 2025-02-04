@@ -3,6 +3,7 @@ package de.helicopter_vs_aliens.model.enemy.boss;
 import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.LevelManager;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
@@ -84,9 +85,10 @@ public final class FourthBoss extends BossEnemy
     
     private boolean isReadyToCreateServant()
     {
-        return getGameRessourceProvider().getManageablePaintableController()
-                                         .getIntactEnemies()
-                                         .size() < 15
+        int numberOfIntactEnemies = getGameRessourceProvider().getManageablePaintableController()
+                                                              .numberOfActiveEntities(
+                                                                  ManageablePaintableGroupType.INTACT_ENEMY);
+        return numberOfIntactEnemies < 15
             && (spawningHornetTimer == FIRST_SERVANT_CREATION_TIME
             || spawningHornetTimer == SECOND_SERVANT_CREATION_TIME
             || Calculations.tossUp(SPONTANEOUS_SERVANT_CREATION_PROBABILITY));
