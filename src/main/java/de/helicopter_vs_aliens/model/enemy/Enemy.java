@@ -153,7 +153,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     protected int
         invincibleTimer;                // reguliert die Zeit, die ein Gegner unverwundbar ist
     
-    public int
+    protected int
         teleportTimer;                    // Zeit [frames], bis der Gegner sich erneut teleportieren kann
     
     public int
@@ -2694,8 +2694,75 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    public boolean isBarrierOnScreen()
+    private boolean isBarrierOnScreen()
     {
         return getModel() == EnemyModelType.BARRIER && isOnScreen();
+    }
+    
+    private boolean isReadyToTeleport()
+    {
+        return teleportTimer == 0
+            && !isStunned()
+            && empSlowedTimer == 0;
+    }
+    
+    public boolean canDeflectMissile()
+    {
+        return teleportTimer < 1;
+    }
+    
+    public void handleMissileImpact(Missile missile)
+    {
+        if(missile.isFlying())
+        {
+            if (isHittable(missile))
+            {
+                Helicopter helicopter = getHelicopter();
+                if (isReadyToTeleport())
+                {
+                    teleport();
+                }
+                else if (!isInvincible())
+                {
+                    hitByMissile(missile);
+                }
+                else if (!missile.wasDeflected()
+                    && canDeflectMissile())
+                {
+                    missile.deflect();
+                }
+                
+                if (hasHPsLeft())
+                {
+                    if (!isStunned())
+                    {
+                        reactToHit(missile);
+                    }
+                }
+                else
+                {
+                    dieByMissile(missile);
+                    if (helicopter.deservesMantisReward(missile.getLaunchingTime()))
+                    {
+                        Events.extraReward(1,
+                                           getEffectiveStrength() * helicopter.getBonusFactor(),
+                                           1.25f,
+                                           0f,
+                                           1.25f);
+                    }
+                    
+                }
+                
+                if (!helicopter.hasPiercingWarheads
+                    && !isInvincible())
+                {
+                    missile.stopFlying();
+                }
+            }
+            if (missile.couldHit(this) && isReadyToDodge())
+            {
+                dodge(missile);
+            }
+        }
     }
 }

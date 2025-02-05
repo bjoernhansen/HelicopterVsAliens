@@ -7,6 +7,8 @@ import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
 
+import java.util.List;
+
 
 public enum ManageablePaintableGroupType {
     INTACT_ENEMY(Enemy.class),
@@ -17,6 +19,10 @@ public enum ManageablePaintableGroupType {
     ENEMY_MISSILE(EnemyMissile.class),
     POWER_UP(PowerUp.class);
     
+    
+    private static final List<ManageablePaintableGroupType>
+        VALUES = List.of(values());
+        
     private final Class<? extends ManageablePaintable> baseClass;
     
     ManageablePaintableGroupType(Class<? extends ManageablePaintable> baseClass) {
@@ -26,5 +32,10 @@ public enum ManageablePaintableGroupType {
     @SuppressWarnings("unchecked")
     <T extends ManageablePaintable> Class<T> getBaseClass() {
         return (Class<T>)baseClass;
+    }
+    
+    public static List<ManageablePaintableGroupType> getValues()
+    {
+        return VALUES;
     }
 }

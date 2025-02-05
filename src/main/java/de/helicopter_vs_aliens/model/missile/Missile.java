@@ -1,7 +1,6 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
-import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
@@ -18,7 +17,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import static de.helicopter_vs_aliens.model.enemy.EnemyModelType.TIT;
-import static de.helicopter_vs_aliens.model.enemy.EnemyType.BOSS_2_SERVANT;
 
 
 public class Missile extends RectangularPaintableEntity implements ManageablePaintable
@@ -46,7 +44,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 		dangerous;		// = true: kann den Helicopter beschädigen
 	
 	private boolean
-		bounced;		// = true: ist an unverwundbaren Gegner abgeprallt
+		wasDeflected;		// = true: ist an unverwundbaren Gegner abgeprallt
 	
 	private final Collection<Enemy>
 		hits = new HashSet<>();	// HashMap zur Speicherung, welche Gegner bereits von der Rakete getroffen wurden (jede Rakete kann jeden Gegner nur einmal treffen)
@@ -80,7 +78,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	public void reset()
 	{
 		dangerous = false;
-		bounced = false;
+		wasDeflected = false;
 		isFlying = true;
 		hits.clear();
 	}
@@ -131,15 +129,15 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	{
 		double newX = getX() + speed + (Scenery.isBackgroundMoving ? -SceneryObject.BG_SPEED : 0);
 		setX(newX);
+		handleImpactOnEnemies();
 		if(getX() > 1175 || getX() + 20 < 0)
 		{
-			isFlying = false;
+			stopFlying();
 		}
 		else if(canHit(getHelicopter()))
 		{
 			hit(getHelicopter());
 		}
-		checkIfMissileHitEnemy();
 		setPaintBounds();
 	}
 	
@@ -164,72 +162,24 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 		dangerous = false;
 		if(!helicopter.hasPiercingWarheads)
 		{
-			isFlying = false;
+			stopFlying();
 		}
 		helicopter.takeMissileDamage();
 	}
 	
-	private void checkIfMissileHitEnemy()
+	private void handleImpactOnEnemies()
 	{
-		for(Enemy enemy : getGameRessourceProvider().getManageablePaintableController()
-											   .getIntactEnemies())
-		{
-			if (enemy.isHittable(this))
-			{
-				Helicopter helicopter = getHelicopter();
-				if (enemy.teleportTimer == 0
-					&& !enemy.isStunned()
-					&& enemy.empSlowedTimer == 0)
-				{
-					enemy.teleport();
-				}
-				else if (!enemy.isInvincible())
-				{
-					enemy.hitByMissile(this);
-				}
-				else if (!bounced
-					&& enemy.teleportTimer < 1
-					&& enemy.getType() != BOSS_2_SERVANT)
-				{
-					Audio.play(Audio.rebound);
-					speed = -Math.signum(speed) * StandardUpgradeType.MISSILE_DRIVE.getMagnitude(1);
-					dangerous = true;
-					bounced = true;
-				}
-				
-				if (enemy.hasHPsLeft())
-				{
-					if (!enemy.isStunned())
-					{
-						enemy.reactToHit(this);
-					}
-				}
-				else
-				{
-					enemy.dieByMissile( this);
-					
-					if (helicopter.deservesMantisReward(launchingTime))
-					{
-						Events.extraReward(1,
-							enemy.getEffectiveStrength() * helicopter.getBonusFactor(),
-							1.25f,
-							0f,
-							1.25f);
-					}
-					
-				}
-				if (!helicopter.hasPiercingWarheads
-					&& !enemy.isInvincible())
-				{
-					isFlying = false;
-					break;
-				}
-			}
-			if (couldHit(enemy) && enemy.isReadyToDodge())
-			{
-				enemy.dodge(this);
-			}
-		}
+		getGameRessourceProvider().getManageablePaintableController()
+								  .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
+													   (Enemy enemy) -> enemy.handleMissileImpact(this));
+	}
+	
+	public void deflect()
+	{
+		Audio.play(Audio.rebound);
+		speed = -Math.signum(speed) * StandardUpgradeType.MISSILE_DRIVE.getMagnitude(1);
+		dangerous = true;
+		wasDeflected = true;
 	}
 	
 	public boolean intersects(Enemy enemy)
@@ -249,7 +199,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 									getMaxY());
 	}
 
-	private boolean couldHit(Enemy enemy)
+	public boolean couldHit(Enemy enemy)
 	{
 		return 	  (speed > 0
 				   && enemy.intersects(	getX(),
@@ -352,5 +302,25 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	private boolean hasStopped()
 	{
 		return !isFlying;
+	}
+	
+	public boolean wasDeflected()
+	{
+		return wasDeflected;
+	}
+	
+	public long getLaunchingTime()
+	{
+		return launchingTime;
+	}
+	
+	public void stopFlying()
+	{
+		isFlying = false;
+	}
+	
+	public boolean isFlying()
+	{
+		return isFlying;
 	}
 }

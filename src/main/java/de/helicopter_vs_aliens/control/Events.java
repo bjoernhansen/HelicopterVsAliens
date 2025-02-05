@@ -1349,6 +1349,7 @@ public class Events
     }
 
     // Bonus-Verdienst bei Multi-Kill
+    // TODO die Methoden sollten sprechende Namen bekommen für die verschiedenen Boni, die Konstanten sollten dann hier privat sein
     public static void extraReward(int kills, int earnedMoney, float basis,
                                    float increase, float limit)
     {

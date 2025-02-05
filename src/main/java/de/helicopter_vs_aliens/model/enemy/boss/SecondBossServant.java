@@ -16,4 +16,10 @@ public final class SecondBossServant extends BossServant
     {
         return true;
     }
+    
+    @Override
+    public boolean canDeflectMissile()
+    {
+        return false;
+    }
 }
