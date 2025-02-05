@@ -55,7 +55,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		var paintableController = gameRessourceProvider.getManageablePaintableController();
+		var paintableController = gameRessourceProvider.getManageablePaintableService();
 		paintableController.forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, PowerUp::update);
 		paintableController.removeIf(ManageablePaintableGroupType.POWER_UP, PowerUp::wasCollected);
 	}
@@ -228,7 +228,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 
 	public static PowerUp getInstance(GameRessourceProvider gameRessourceProvider, PowerUpType powerUpType)
 	{
-		PowerUp powerUp = gameRessourceProvider.getManageablePaintableController()
+		PowerUp powerUp = gameRessourceProvider.getManageablePaintableService()
 											   .activateEntity(powerUpType);
 		powerUp.setType(powerUpType);
 		return powerUp;

@@ -4,15 +4,12 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.LevelManager;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
-import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
 import de.helicopter_vs_aliens.model.helicopter.Pegasus;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.util.Calculations;
 
 import java.awt.geom.Point2D;
-import java.util.Queue;
 
 
 public final class FourthBoss extends BossEnemy
@@ -85,7 +82,7 @@ public final class FourthBoss extends BossEnemy
     
     private boolean isReadyToCreateServant()
     {
-        int numberOfIntactEnemies = getGameRessourceProvider().getManageablePaintableController()
+        int numberOfIntactEnemies = getGameRessourceProvider().getManageablePaintableService()
                                                               .numberOfActiveEntities(
                                                                   ManageablePaintableGroupType.INTACT_ENEMY);
         return numberOfIntactEnemies < 15

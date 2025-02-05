@@ -2,8 +2,8 @@ package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.audio.Audio;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
@@ -113,14 +113,14 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 		// TODO Fehler finden und dann verwenden anstelle von updateAll
 	{
-		ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
+		ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
 		// TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
-		manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.MISSILE,
+		manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.MISSILE,
 														  Missile::update);
-		manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.MISSILE,
+		manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.MISSILE,
 															Missile::hasStopped,
 															Missile::inactivate);
-		manageablePaintableController.removeIf(ManageablePaintableGroupType.MISSILE,
+		manageablePaintableService.removeIf(ManageablePaintableGroupType.MISSILE,
 											   Missile::hasStopped);
 	}
 	
@@ -169,7 +169,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 	
 	private void handleImpactOnEnemies()
 	{
-		getGameRessourceProvider().getManageablePaintableController()
+		getGameRessourceProvider().getManageablePaintableService()
 								  .forEachActiveEntity(ManageablePaintableGroupType.INTACT_ENEMY,
 													   (Enemy enemy) -> enemy.handleMissileImpact(this));
 	}

@@ -153,7 +153,7 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 	// TODO auslagern in eigene Klasse und dann GameressourceProvider im Konstruktor übergeben
 	public static void updateAll(GameRessourceProvider gameRessourceProvider)
 	{
-		var paintableController = gameRessourceProvider.getManageablePaintableController();
+		var paintableController = gameRessourceProvider.getManageablePaintableService();
 		paintableController.forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE,
 												EnemyMissile::update);
 		paintableController.removeIf(ManageablePaintableGroupType.ENEMY_MISSILE,

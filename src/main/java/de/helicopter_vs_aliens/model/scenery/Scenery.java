@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableActivation;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.PaintableEntity;
@@ -59,20 +59,20 @@ public class Scenery extends PaintableEntity
     
     public void reset()
     {
-        getGameRessourceProvider().getManageablePaintableController().clearActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
+        getGameRessourceProvider().getManageablePaintableService().clearActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
         createInitialSceneryObjects();
         cloudX = 135;
     }
     
     public void createInitialSceneryObjects()
     {
-        SceneryObject firstCactus = getGameRessourceProvider().getManageablePaintableController().activateEntity(
+        SceneryObject firstCactus = getGameRessourceProvider().getManageablePaintableService().activateEntity(
             SCENERY_OBJECT_FACTORY);
         firstCactus.initializeAsFirstCactus();
-        SceneryObject firstHill = getGameRessourceProvider().getManageablePaintableController().activateEntity(
+        SceneryObject firstHill = getGameRessourceProvider().getManageablePaintableService().activateEntity(
             SCENERY_OBJECT_FACTORY);
         firstHill.initializeAsFirstHill();
-        SceneryObject firstDesert = getGameRessourceProvider().getManageablePaintableController().activateEntity(
+        SceneryObject firstDesert = getGameRessourceProvider().getManageablePaintableService().activateEntity(
             SCENERY_OBJECT_FACTORY);
         firstDesert.initializeAsFirstDesert();
     }
@@ -80,17 +80,17 @@ public class Scenery extends PaintableEntity
     public void update()
     {
         isBackgroundMoving = isBackgroundMoving();
-        ManageablePaintableController manageablePaintableController = getGameRessourceProvider().getManageablePaintableController();
+        ManageablePaintableService manageablePaintableService = getGameRessourceProvider().getManageablePaintableService();
         if(isBackgroundMoving)
         {
-            manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.SCENERY_OBJECT,
+            manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.SCENERY_OBJECT,
                                                               SceneryObject::move);
         }
-        manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
+        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
                                                             SceneryObject::isOutOfSight,
                                                             SceneryObject::clearImage);
         // TODO eventuell könnte noch eine postSet Methode ins Interface aufgenommen werden für das clear image,
-        manageablePaintableController.removeIf(ManageablePaintableGroupType.SCENERY_OBJECT,
+        manageablePaintableService.removeIf(ManageablePaintableGroupType.SCENERY_OBJECT,
                                                SceneryObject::isOutOfSight);
         
         if(arePrerequisitesForSceneryObjectsCreationMet())
@@ -111,7 +111,7 @@ public class Scenery extends PaintableEntity
     
     private boolean isMajorBossActive()
     {
-        return getGameRessourceProvider().getManageablePaintableController()
+        return getGameRessourceProvider().getManageablePaintableService()
                                          .isMajorBossActive();
     }
     
@@ -131,13 +131,13 @@ public class Scenery extends PaintableEntity
     
     private int numberOfMissingSceneryObjects()
     {
-        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getGameRessourceProvider().getManageablePaintableController().numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
+        return MAXIMUM_NUMBER_OF_SCENERY_OBJECTS - getGameRessourceProvider().getManageablePaintableService().numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT);
     }
     
     private void generateNewSceneryObject()
     {
         SceneryObject.generalObjectTimer = ACTIVATION_PAUSE_DURATION;
-        SceneryObject sceneryObject = getGameRessourceProvider().getManageablePaintableController().activateEntity(
+        SceneryObject sceneryObject = getGameRessourceProvider().getManageablePaintableService().activateEntity(
             SCENERY_OBJECT_FACTORY);
         sceneryObject.preset();
     }
@@ -164,7 +164,7 @@ public class Scenery extends PaintableEntity
     
     public void paintAllBackgroundSceneryObjects(GraphicsAdapter graphicsAdapter)
     {
-        getGameRessourceProvider().getManageablePaintableController()
+        getGameRessourceProvider().getManageablePaintableService()
                                   .forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
                                                          SceneryObject::isInBackground,
                                                          sceneryObject -> sceneryObject.paint(graphicsAdapter));

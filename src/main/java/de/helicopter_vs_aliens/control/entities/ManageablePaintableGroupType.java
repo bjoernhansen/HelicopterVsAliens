@@ -34,7 +34,7 @@ public enum ManageablePaintableGroupType {
         return (Class<T>)baseClass;
     }
     
-    public static List<ManageablePaintableGroupType> getValues()
+    static List<ManageablePaintableGroupType> getValues()
     {
         return VALUES;
     }

@@ -2,21 +2,14 @@ Jira: https://bjoern-hansen.atlassian.net/jira/software/projects/KAN/boards/1
 
 nächste To-dos:
 
-alle acessoren ausbauen im ManagablePaitable Controller
-da wo ein forEachIf benutzer wird chekcne , ob auch mit forEach ohne if gearbeitet werden kann
 Controller für die statischen UpdateAll methoden einführen
 Die methoden die zur initialisierung, und abbau genutzt werden sollten ins Interface und standardmäßig aufgerufen werden
 
-
-GameRessourceProvider ausbauen als Parameter in den Methoden von ManagblePaintableEntity und Helicopter
-alle Stellen refactorn, welche direkt die ManageableEntities beziehen
-MangabelEntityController überarbeiten: typen ändern wenn die getter auf die Collections weg (getEnemies ... ) und dann API anbieten
-(intern wird dann ein Iterator verwendet )
 alle nötigen Wanrings an --> alle Klassen kontrollieren
 
 gleichartige Methoden ablösen und iterieren über ein Subset von ManageablePaintableGroupType in Klasse GameWindowPainter (TODO)
 
-getRessource() konsequent nutzen und auch die Creater für die Instanzen der GameENtities entsprechend erzeugen (dependency Injection nutzen)
+-------------------------------------------------------------
 Manover für Enemies
 
 

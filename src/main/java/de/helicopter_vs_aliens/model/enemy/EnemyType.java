@@ -562,8 +562,9 @@ public enum EnemyType implements ManageablePaintableFactory<Enemy>
         VALUES = List.of(values());
     
     private static class Constants
+    // TODO diese Klasse sollte überflüssig sein --> Konstante in Hauptklasse
     {
-        public static final int
+        static final int
             COUNTLESS_HIT_POINTS = Integer.MAX_VALUE;
     }
     

@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.timer.TimerManager;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -48,7 +49,7 @@ public final class GameProgress implements GameRessourceProvider
     private Savegame
         saveGame;
 
-    private final ManageablePaintableController
+    private final ManageablePaintableService
         manageablePaintableController = new ManageablePaintableController(this);
 
     private final WindowManager
@@ -132,7 +133,7 @@ public final class GameProgress implements GameRessourceProvider
     }
 
     @Override
-    public ManageablePaintableController getManageablePaintableController()
+    public ManageablePaintableService getManageablePaintableService()
     {
         return manageablePaintableController;
     }

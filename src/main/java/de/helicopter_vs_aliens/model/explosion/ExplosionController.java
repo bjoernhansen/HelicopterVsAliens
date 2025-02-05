@@ -1,8 +1,8 @@
 package de.helicopter_vs_aliens.model.explosion;
 
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
@@ -33,14 +33,14 @@ public class ExplosionController
     
     public void updateAll()
     {
-        ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
+        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
         // TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
-        manageablePaintableController.forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION,
+        manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION,
                                                           Explosion::update);
-        manageablePaintableController.forEachActiveEntityIf(ManageablePaintableGroupType.EXPLOSION,
+        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.EXPLOSION,
                                                             Explosion::hasExpired,
                                                             Explosion::onExplosionEnd);
-        manageablePaintableController.removeIf(ManageablePaintableGroupType.EXPLOSION,
+        manageablePaintableService.removeIf(ManageablePaintableGroupType.EXPLOSION,
                                                Explosion::hasExpired);
     }
     
@@ -57,7 +57,7 @@ public class ExplosionController
         boolean extraDamage,
         Enemy source)
     {
-        Explosion explosion = gameRessourceProvider.getManageablePaintableController()
+        Explosion explosion = gameRessourceProvider.getManageablePaintableService()
                                                    .activateEntity(EXPLOSION_FACTORY);
         explosion.initialize(x, y, explosionType, extraDamage, source);
     }

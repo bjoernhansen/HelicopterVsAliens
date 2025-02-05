@@ -4,9 +4,9 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.LevelManager;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
@@ -93,7 +93,7 @@ public class GameWindowPainter extends WindowPainter
         {
             EnemyController.livingBarrier[i].paint(graphicsAdapter);
         }
-        gameRessourceProvider.getManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableService()
                              .forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
                                                     Enemy::isVisibleNonBarricadeVessel,
                                                     enemy -> enemy.paint(graphicsAdapter));
@@ -102,31 +102,31 @@ public class GameWindowPainter extends WindowPainter
     // TODO gleichartige Methoden ablösen und iterieren über ein Subset von ManageablePaintableGroupType
     private void paintAllDestroyedEnemies(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableService()
                              .forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY, enemy -> enemy.paint(graphicsAdapter));
     }
     
     private void paintAllMissiles(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableService()
                              .forEachActiveEntity(ManageablePaintableGroupType.MISSILE, missile -> missile.paint(graphicsAdapter));
     }
     
     private void paintAllExplosions(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableService()
                              .forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION, explosion -> explosion.paint(graphicsAdapter));
     }
    
     private void paintAllEnemyMissiles(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableService()
                              .forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE, enemyMissile -> enemyMissile.paint(graphicsAdapter));
     }
     
     private void paintAllPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        gameRessourceProvider.getManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableService()
                              .forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, powerUp -> powerUp.paint(graphicsAdapter));
     }
     
@@ -143,7 +143,7 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintSceneryObjectsForLayer(GraphicsAdapter graphicsAdapter, SceneryLayer layer)
     {
-        gameRessourceProvider.getManageablePaintableController()
+        gameRessourceProvider.getManageablePaintableService()
                              .forEachActiveEntityIf(
                                  ManageablePaintableGroupType.SCENERY_OBJECT,
                                  (SceneryObject sceneryObject) -> sceneryObject.belongsToLayer(layer),
@@ -524,7 +524,7 @@ public class GameWindowPainter extends WindowPainter
     // TODO Erzeugung der SpezialInfo in eigene Klasse auslagern
     {
         // TODO deutsche Strings eventuell auch in Dictionary überführen? Das wäre für UnitTests hilfreich.
-        ManageablePaintableController manageablePaintableController = gameRessourceProvider.getManageablePaintableController();
+        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
         GameStatisticsCalculator gameStatisticsCalculator = gameRessourceProvider.getGameStatisticsCalculator();
         graphicsAdapter.setColor(Colorations.red);
         graphicsAdapter.setFont(fontProvider.getPlain(22));
@@ -539,24 +539,24 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 2)
         {
             infoString = "Aktive PowerUps: "
-                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.POWER_UP)
+                + manageablePaintableService.numberOfActiveEntities(ManageablePaintableGroupType.POWER_UP)
                 + ";   Inaktive PowerUps: "
-                + manageablePaintableController.numberOfInactiveEntities(PowerUp.class);
+                + manageablePaintableService.numberOfInactiveEntities(PowerUp.class);
         }
         else if(Window.specialInfoSelection == 3)
         {
             infoString = "Aktive Explosionen: "
-                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.EXPLOSION)
+                + manageablePaintableService.numberOfActiveEntities(ManageablePaintableGroupType.EXPLOSION)
                 + ";   Inaktive Explosionen: "
-                + manageablePaintableController.numberOfInactiveEntities(Explosion.class);
+                + manageablePaintableService.numberOfInactiveEntities(Explosion.class);
         }
         else if(Window.specialInfoSelection == 4)
         {
             infoString = "Aktive Gegner: "
-                + (manageablePaintableController
+                + (manageablePaintableService
                 .numberOfActiveEntities(ManageablePaintableGroupType.INTACT_ENEMY) - EnemyController.currentNumberOfBarriers) + " / " + (LevelManager.maxNr)
                 + ";   Zerst\u00F6rte Gegner: "
-                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY)
+                + manageablePaintableService.numberOfActiveEntities(ManageablePaintableGroupType.DESTROYED_ENEMY)
                 + ";   Hindernisse: "
                 + EnemyController.currentNumberOfBarriers + " / " + LevelManager.maxBarrierNr
                 + ";   Inaktive Gegner: "
@@ -565,23 +565,23 @@ public class GameWindowPainter extends WindowPainter
         else if(Window.specialInfoSelection == 5)
         {
             infoString = "Aktive Raketen: "
-                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.MISSILE)
+                + manageablePaintableService.numberOfActiveEntities(ManageablePaintableGroupType.MISSILE)
                 + ";   Inaktive Raketen: "
-                + manageablePaintableController.numberOfInactiveEntities(Missile.class);
+                + manageablePaintableService.numberOfInactiveEntities(Missile.class);
         }
         else if(Window.specialInfoSelection == 6)
         {
             infoString = "Aktive gegnerische Geschosse: "
-                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE)
+                + manageablePaintableService.numberOfActiveEntities(ManageablePaintableGroupType.ENEMY_MISSILE)
                 + ";   Inaktive gegnerische Geschosse: "
-                + manageablePaintableController.numberOfInactiveEntities(EnemyMissile.class);
+                + manageablePaintableService.numberOfInactiveEntities(EnemyMissile.class);
         }
         else if(Window.specialInfoSelection == 7)
         {
             infoString = "Aktive Hintergrundobjekte: "
-                + manageablePaintableController.numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT)
+                + manageablePaintableService.numberOfActiveEntities(ManageablePaintableGroupType.SCENERY_OBJECT)
                 + ";   Inaktive Hintergrundobjekte: "
-                + manageablePaintableController.numberOfInactiveEntities(SceneryObject.class);
+                + manageablePaintableService.numberOfInactiveEntities(SceneryObject.class);
         }
         else if(Window.specialInfoSelection == 8)
         {
@@ -643,7 +643,7 @@ public class GameWindowPainter extends WindowPainter
                         .stream()
                         .filter(Predicate.not(EnemyType.getBarrierTypes()::contains))
                         .map(ManageablePaintableFactory::getCorrespondingClass)
-                        .map(gameRessourceProvider.getManageablePaintableController()::numberOfInactiveEntities)
+                        .map(gameRessourceProvider.getManageablePaintableService()::numberOfInactiveEntities)
                         .mapToInt(Integer::intValue)
                         .sum();
     }

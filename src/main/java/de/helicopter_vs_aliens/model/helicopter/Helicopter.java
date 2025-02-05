@@ -264,7 +264,7 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
         List<Missile> launchedMissiles = new ArrayList<>();
         for(int i = 0; i < numberOfCannons; i++)
         {
-            Missile missile = gameRessourceProvider.getManageablePaintableController().activateEntity(missileFactory);
+            Missile missile = gameRessourceProvider.getManageablePaintableService().activateEntity(missileFactory);
             resetMissile(missile);
             missile.launch(this, CANNON_Y_POSITIONS[i]);
             launchedMissiles.add(missile);

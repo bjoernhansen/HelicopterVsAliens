@@ -14,14 +14,8 @@ import java.util.function.Predicate;
 
 // TODO finish implementation
 
-public final class ManageablePaintableController implements ActiveManageablePaintableProvider
+public final class ManageablePaintableController implements ManageablePaintableService
 {
-    // TODO Verwaltung anders lösen, eventuell wie in der Klasse PaintableEntitySupplier
-    // TODO ggf. ist auch eine Zusammenführung oder eine Verwaltung über eine übergeordnete Klasse denkbar
-    // TODO sobald die inaktiven hier nicht mehr nötig sind, kann der Umbau beginnen
-    // TODO die ungenutzten Methoden in dieser Klasse kommen dann ggf. zum Einsatz
-    // TODO hier auch nicht die SceneryObjects ehemals BackGroundObject vergessen
-    // TODO das lässt sich vielleicht auch über eine Map abbilden , eine EnumMap (PaintableEntityGroupType) von EnumMaps (Collection Subgroup)
     // TODO API erstellen, durch die Anfragen wie folgt möglich sind:
     // TODO ManageablePaintableController manageablePaintableController = getGameRessourceProvider().getManageablePaintableController();
     // TODO manageablePaintableController.manageType(ManageablePaintableGroupType.SCENERY_OBJECT).forEach( ... ).forEachHaving( ... ).do( ... ).forEachHaving( ... ).do( ... ).removeIf( ... ).execute();
@@ -47,29 +41,34 @@ public final class ManageablePaintableController implements ActiveManageablePain
         return tempPaintableQueues;
     }
     
+    @Override
     public void clearActiveEntities(ManageablePaintableGroupType groupType)
     {
-        Queue<? extends ManageablePaintable> groupTypeOwners = paintableQueues.get(groupType);
+        Queue<ManageablePaintable> groupTypeOwners = paintableQueues.get(groupType);
         manageablePaintableSupplier.storeAll(groupTypeOwners);
         groupTypeOwners.clear();
     }
     
+    @Override
     public int numberOfActiveEntities(ManageablePaintableGroupType groupType)
     {
         return paintableQueues.get(groupType)
                               .size();
     }
     
+    @Override
     public boolean isEmptyFor(ManageablePaintableGroupType groupType)
     {
         return numberOfActiveEntities(groupType) == 0;
     }
     
+    @Override
     public <T extends ManageablePaintable> int numberOfInactiveEntities(Class<T> classOfManageablePaintable)
     {
         return manageablePaintableSupplier.sizeOf(classOfManageablePaintable);
     }
     
+    @Override
     public <T extends ManageablePaintable> void forEachActiveEntity(
         ManageablePaintableGroupType groupType,
         Consumer<T> action)
@@ -80,6 +79,7 @@ public final class ManageablePaintableController implements ActiveManageablePain
                        .forEach(action);
     }
     
+    @Override
     public <T extends ManageablePaintable> void forEachActiveEntityIf(ManageablePaintableGroupType groupType,
                                                                       Predicate<T> applyCondition,
                                                                       Consumer<T> action)
@@ -91,6 +91,7 @@ public final class ManageablePaintableController implements ActiveManageablePain
                        .forEach(action);
     }
     
+    @Override
     public <T extends ManageablePaintable> void removeIf(ManageablePaintableGroupType groupType,
                                                          Predicate<T> removeCondition)
     {
@@ -104,7 +105,8 @@ public final class ManageablePaintableController implements ActiveManageablePain
         manageablePaintables.removeIf(removeCondition);
     }
     
-    public void removeEnemyToBackgroundIf(Predicate<? super Enemy> removeCondition)
+    @Override
+    public void removeEnemyToBackgroundIf(Predicate<Enemy> removeCondition)
     {
         Queue<ManageablePaintable> intactEnemies = paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY);
         intactEnemies.stream()
@@ -114,6 +116,7 @@ public final class ManageablePaintableController implements ActiveManageablePain
         intactEnemies.removeIf(intactEnemy -> removeCondition.test((Enemy)intactEnemy));
     }
     
+    @Override
     public <T extends ManageablePaintable> T activateEntity(ManageablePaintableFactory<T> factory)
     {
         T manageablePaintable = manageablePaintableSupplier.retrieve(factory);
@@ -135,11 +138,13 @@ public final class ManageablePaintableController implements ActiveManageablePain
         return manageablePaintable;
     }
     
+    @Override
     public boolean isMajorBossActive()
     {
         return isPrimaryEnemyQualifying(e -> e.getType().isMajorBoss());
     }
     
+    @Override
     public boolean isPrimaryEnemyQualifying(Predicate<Enemy> selectionCondition)
     {
         return paintableQueues.get(ManageablePaintableGroupType.INTACT_ENEMY)
