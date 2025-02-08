@@ -34,4 +34,6 @@ public interface ManageablePaintableService
     boolean isMajorBossActive();
     
     boolean isPrimaryEnemyQualifying(Predicate<Enemy> selectionCondition);
+    
+    void updateAll(ManageablePaintableGroupType groupType);
 }

@@ -51,16 +51,9 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 	
 	private Color
 		crossColor;
+	
 
-		
-	public static void updateAll(GameRessourceProvider gameRessourceProvider)
-	{
-		var paintableController = gameRessourceProvider.getManageablePaintableService();
-		paintableController.forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, PowerUp::update);
-		paintableController.removeIf(ManageablePaintableGroupType.POWER_UP, PowerUp::wasCollected);
-	}
-
-	private void update()
+	void update()
 	{
 		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
 		if(intersects(helicopter))

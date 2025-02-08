@@ -6,7 +6,7 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Phoenix;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
-import de.helicopter_vs_aliens.model.powerup.PowerUpController;
+import de.helicopter_vs_aliens.model.powerup.PowerUpInstantiationController;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 
 import java.util.EnumMap;
@@ -128,7 +128,7 @@ public class PowerUpStateController
         }
         else
         {
-            PowerUp powerUp = PowerUpController.getInstance(gameRessourceProvider, powerUpType);
+            PowerUp powerUp = PowerUpInstantiationController.getInstance(gameRessourceProvider, powerUpType);
             powerUp.initialize();
             powerUp.moveToStatusbar();
             if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)

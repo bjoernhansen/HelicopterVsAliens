@@ -4,6 +4,7 @@ import de.helicopter_vs_aliens.control.EnemyController;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.control.GameStatisticsCalculator;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableController;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.timer.TimerManager;
 import de.helicopter_vs_aliens.graphics.GraphicsApiType;
@@ -13,11 +14,6 @@ import de.helicopter_vs_aliens.model.explosion.ExplosionController;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
-import de.helicopter_vs_aliens.model.missile.EnemyMissile;
-import de.helicopter_vs_aliens.model.missile.EnemyMissileController;
-import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.missile.MissileController;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.platform_specific.awt.BackgroundRepaintTimer;
 import de.helicopter_vs_aliens.score.Savegame;
@@ -46,14 +42,14 @@ public final class GameProgress implements GameRessourceProvider
                                    .makeInstance(this);
 
     private final Scenery
-        scenery;
+        scenery = new Scenery(this);
 
     private Savegame
         saveGame;
 
     private final ManageablePaintableService
         manageablePaintableController = new ManageablePaintableController(this);
-
+    
     private final WindowManager
         windowManager = new WindowManager();
 
@@ -65,15 +61,9 @@ public final class GameProgress implements GameRessourceProvider
     
     private final EnemyController
         enemyController = new EnemyController(this);
-    
+        
     private final ExplosionController
         explosionController = new ExplosionController(this);
-    
-    private final MissileController
-        missileController = new MissileController(this);
-    
-    private final EnemyMissileController
-        enemyMissileController = new EnemyMissileController(this);
     
     private boolean
         isMouseCursorInWindow = true;
@@ -90,7 +80,6 @@ public final class GameProgress implements GameRessourceProvider
     GameProgress(GraphicsApiType graphicsApiType)
     {
         this.graphicsApiType = graphicsApiType;
-        scenery = new Scenery(this);
     }
 
     void initialize()
@@ -116,21 +105,21 @@ public final class GameProgress implements GameRessourceProvider
             fpsCalculator.calculateFps();
             if(!Window.isMenuVisible)
             {
-                // TODO die Update-All-Methoden auslagern in Controller-Klassen
-                // TODO gibt es immer "updateAll"? --> wenn ja Zusammenführen!
+                // TODO: kann die Reihenfolge so geändert werden, dass alle UpdateAufrufe nach einander stattfinden?
                 Colorations.calculateVariableGameColors(gameLoopCount);
                 scenery.update();
                 Events.updateTimer();
                 Window.updateDisplays(this);
-                enemyController.updateAllDestroyed();
-                missileController.updateAll();
-                enemyController.updateAllActive();
-                enemyMissileController.updateAll();
+                manageablePaintableController.updateAll(ManageablePaintableGroupType.DESTROYED_ENEMY);
+                manageablePaintableController.updateAll(ManageablePaintableGroupType.MISSILE);
+                enemyController.updateTimerAndStatistics();
+                manageablePaintableController.updateAll(ManageablePaintableGroupType.INTACT_ENEMY);
+                manageablePaintableController.updateAll(ManageablePaintableGroupType.ENEMY_MISSILE);
                 Events.checkForLevelUp(this);
                 enemyController.generateNewEnemies();
                 helicopter.update();
-                explosionController.updateAll();
-                PowerUp.updateAll(this);
+                manageablePaintableController.updateAll(ManageablePaintableGroupType.EXPLOSION);
+                manageablePaintableController.updateAll(ManageablePaintableGroupType.POWER_UP);
             }
         }
         else

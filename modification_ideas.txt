@@ -2,8 +2,8 @@ Jira: https://bjoern-hansen.atlassian.net/jira/software/projects/KAN/boards/1
 
 nächste To-dos:
 
-Controller für die statischen UpdateAll methoden einführen
-Die methoden die zur initialisierung, und abbau genutzt werden sollten ins Interface und standardmäßig aufgerufen werden
+Die methoden die zur initialisierung, und Abbau genutzt werden sollten ins Interface und standardmäßig aufgerufen werden
+Ähnlich könnte es auch mit der Update methode gemacht werden.
 fluent API für Managable Paintable Controller schreiben -->
 
 alle nötigen Wanrings an --> alle Klassen kontrollieren
@@ -21,7 +21,7 @@ Die E-Mail-Adresse info@helicopter-vs-aliens.de in Betrieb nehmen oder hansen_bj
 
 Bug-Report:
 
-Bug: Die beschleunigenden Flitzer drehen zu schnell hin und her an Barriers? Kehrtwende unterbinden innerhalb gewisser
+Bug: Die beschleunigenden Flitzer drehen an den Barriers zu schnell hin und her? Kehrtwenden unterbinden innerhalb gewisser
 Zeit, wenn gedreht an Barrier.
 
 Strategy Pattern verwenden für Flugmanöver
@@ -315,7 +315,7 @@ o	Hindernisse
 6) macht Gegner kurzfristig unverwundbar (Schild für Gegner)
 	- helltürkis
 	- Iterator wie bei der Methode verwenden
-7) kann sich tarnen, taucht immer in Nähe des Heli auf, schießt in Richtung Heli – tarnfarbe
+7) kann sich tarnen, taucht immer in Nähe des Helicopters auf, schießt in Richtung Heli – tarnfarbe
 Hindernis höchste Stufe: zufälliger Wechsel zwischen Schussarten und Geschwindigkeit,
 zielt mit jedem Schuss auf den Heli
 beamt sich in den Bereich des Helicopters (begrenzte Werte), beamt sich dann wieder weg

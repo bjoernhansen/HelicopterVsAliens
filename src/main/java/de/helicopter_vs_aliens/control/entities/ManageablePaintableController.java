@@ -25,11 +25,16 @@ public final class ManageablePaintableController implements ManageablePaintableS
     private final Map<ManageablePaintableGroupType, Queue<ManageablePaintable>>
         paintableQueues;
     
+    private final ManageablePaintableGroupUpdateController
+        updateController;
+    
+    
     public ManageablePaintableController(GameRessourceProvider gameRessourceProvider)
     {
         DependencyInjector dependencyInjector = DependencyInjector.instanceFor(gameRessourceProvider);
         manageablePaintableSupplier = new ManageablePaintableSupplier(dependencyInjector);
         paintableQueues = Collections.unmodifiableMap(createPaintableQueuesEnumMap());
+        updateController = new ManageablePaintableGroupUpdateController(gameRessourceProvider);
     }
     
     private static Map<ManageablePaintableGroupType, Queue<ManageablePaintable>> createPaintableQueuesEnumMap()
@@ -151,5 +156,11 @@ public final class ManageablePaintableController implements ManageablePaintableS
                               .findFirst()
                               .filter(e -> selectionCondition.test((Enemy)e))
                               .isPresent();
+    }
+    
+    @Override
+    public void updateAll(ManageablePaintableGroupType groupType)
+    {
+        updateController.updateAll(groupType);
     }
 }

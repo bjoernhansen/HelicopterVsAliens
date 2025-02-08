@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.control;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.enemy.EnemyType;
@@ -315,9 +314,7 @@ public class EnemyController
     {
         this.gameRessourceProvider = gameRessourceProvider;
     }
-    
-    // TODO gehört in eine eigene Klasse
-    public void updateAllActive()
+    public void updateTimerAndStatistics()
     {
         if(rockTimer > 0)
         {
@@ -328,32 +325,6 @@ public class EnemyController
             barrierTimer--;
         }
         countBarriers();
-        
-        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
-        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
-                                                            Enemy::isIntactAndNotForRemoval,
-                                                            Enemy::update);
-        manageablePaintableService.removeEnemyToBackgroundIf(Enemy::isDestroyed);
-        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.INTACT_ENEMY,
-                                                            Enemy::shouldBeRemoved,
-                                                            Enemy::clearImage);
-        manageablePaintableService.removeIf(ManageablePaintableGroupType.INTACT_ENEMY,
-                                               Enemy::shouldBeRemoved);
-    }
-    
-    public void updateAllDestroyed()
-    {
-        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
-        manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                                          Enemy::updateDead);
-        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                                            Enemy::hasCollisionWithHelicopter,
-                                                            Enemy::collision);
-        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                                            Enemy::isMarkedForRemoval,
-                                                            Enemy::clearImage);
-        manageablePaintableService.removeIf(ManageablePaintableGroupType.DESTROYED_ENEMY,
-                                               Enemy::isMarkedForRemoval);
     }
     
     private void countBarriers()

@@ -5,14 +5,8 @@ import de.helicopter_vs_aliens.model.enemy.Enemy;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 
 
-public class PowerUpController
+public final class PowerUpInstantiationController
 {
-    private final GameRessourceProvider gameRessourceProvider;
-    
-    public PowerUpController(GameRessourceProvider gameRessourceProvider) {
-        this.gameRessourceProvider = gameRessourceProvider;
-    }
-    
     public static void activateInstance(GameRessourceProvider gameRessourceProvider, Enemy enemy)
     {
         PowerUpType powerUpType = enemy.getTypeOfRandomlyDroppedPowerUp();
@@ -32,5 +26,10 @@ public class PowerUpController
                                                .activateEntity(powerUpType);
         powerUp.setType(powerUpType);
         return powerUp;
+    }
+    
+    private PowerUpInstantiationController()
+    {
+        throw new UnsupportedOperationException("Class " + getClass().getSimpleName() + " is not be instantiated.");
     }
 }

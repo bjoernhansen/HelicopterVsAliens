@@ -2,7 +2,6 @@ package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableActivation;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.model.PaintableEntity;
@@ -38,6 +37,7 @@ public class Scenery extends PaintableEntity
     
     private List<Point>
         stars = new ArrayList<>(NR_OF_STARS);
+    
     
     public Scenery(GameRessourceProvider gameRessourceProvider)
     {
@@ -80,19 +80,7 @@ public class Scenery extends PaintableEntity
     public void update()
     {
         isBackgroundMoving = isBackgroundMoving();
-        ManageablePaintableService manageablePaintableService = getGameRessourceProvider().getManageablePaintableService();
-        if(isBackgroundMoving)
-        {
-            manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.SCENERY_OBJECT,
-                                                              SceneryObject::move);
-        }
-        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.SCENERY_OBJECT,
-                                                            SceneryObject::isOutOfSight,
-                                                            SceneryObject::clearImage);
-        // TODO eventuell könnte noch eine postSet Methode ins Interface aufgenommen werden für das clear image,
-        manageablePaintableService.removeIf(ManageablePaintableGroupType.SCENERY_OBJECT,
-                                               SceneryObject::isOutOfSight);
-        
+        getGameRessourceProvider().getManageablePaintableService().updateAll(ManageablePaintableGroupType.SCENERY_OBJECT);
         if(arePrerequisitesForSceneryObjectsCreationMet())
         {
             generateNewSceneryObject();
@@ -103,6 +91,8 @@ public class Scenery extends PaintableEntity
         }
         moveCloud();
     }
+    
+
     
     private boolean isBackgroundMoving()
     {

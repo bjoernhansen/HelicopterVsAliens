@@ -1,8 +1,6 @@
 package de.helicopter_vs_aliens.model.explosion;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableFactory;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.model.enemy.Enemy;
 
@@ -29,19 +27,6 @@ public class ExplosionController
                 + i * HELICOPTER_DISTANCE,
             310
                 + START_SCREEN_HELICOPTER_OFFSET_Y);
-    }
-    
-    public void updateAll()
-    {
-        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
-        // TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
-        manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION,
-                                                          Explosion::update);
-        manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.EXPLOSION,
-                                                            Explosion::hasExpired,
-                                                            Explosion::onExplosionEnd);
-        manageablePaintableService.removeIf(ManageablePaintableGroupType.EXPLOSION,
-                                               Explosion::hasExpired);
     }
     
     public void start(double x, double y,
