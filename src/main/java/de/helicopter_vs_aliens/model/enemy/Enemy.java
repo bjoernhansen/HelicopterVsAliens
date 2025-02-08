@@ -24,7 +24,7 @@ import de.helicopter_vs_aliens.model.missile.EnemyMissile;
 import de.helicopter_vs_aliens.model.missile.EnemyMissileFactory;
 import de.helicopter_vs_aliens.model.missile.EnemyMissileType;
 import de.helicopter_vs_aliens.model.missile.Missile;
-import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpController;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.model.scenery.SceneryObject;
@@ -2173,7 +2173,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private void dropRandomPowerUp()
     {
-        PowerUp.activateInstance(getGameRessourceProvider(), this);
+        PowerUpController.activateInstance(getGameRessourceProvider(), this);
     }
     
     public PowerUpType getTypeOfRandomlyDroppedPowerUp()

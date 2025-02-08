@@ -109,23 +109,8 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 							* (inflictsExtraDamage ? POWERUP_DAMAGE_FACTOR : 1));
 	}
 	
-	// TODO gibt es immer "updateAll"? --> wenn ja Zusammenführen!
-	public static void updateAll(GameRessourceProvider gameRessourceProvider)
-		// TODO Fehler finden und dann verwenden anstelle von updateAll
-	{
-		ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
-		// TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
-		manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.MISSILE,
-														  Missile::update);
-		manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.MISSILE,
-															Missile::hasStopped,
-															Missile::inactivate);
-		manageablePaintableService.removeIf(ManageablePaintableGroupType.MISSILE,
-											   Missile::hasStopped);
-	}
-	
 	// TODO wenn alle ManagablePaintables eine Update-Methode haben, dann könnte diese Methode teil des Interfaces werden und dann könnte in der KLasse ManagePaintableController das sehr elegant gelöst werden
-	private void update()
+	void update()
 	{
 		double newX = getX() + speed + (Scenery.isBackgroundMoving ? -SceneryObject.BG_SPEED : 0);
 		setX(newX);
@@ -141,7 +126,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 		setPaintBounds();
 	}
 	
-	private void inactivate()
+	void inactivate()
 	{
 		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
 		if(helicopter.hasKillCountingMissiles())
@@ -299,7 +284,7 @@ public class Missile extends RectangularPaintableEntity implements ManageablePai
 		return typeOfExplosion;
 	}
 	
-	private boolean hasStopped()
+	boolean hasStopped()
 	{
 		return !isFlying;
 	}

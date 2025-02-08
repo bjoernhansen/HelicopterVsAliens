@@ -14,7 +14,9 @@ import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterFactory;
 import de.helicopter_vs_aliens.model.helicopter.HelicopterType;
 import de.helicopter_vs_aliens.model.missile.EnemyMissile;
+import de.helicopter_vs_aliens.model.missile.EnemyMissileController;
 import de.helicopter_vs_aliens.model.missile.Missile;
+import de.helicopter_vs_aliens.model.missile.MissileController;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
 import de.helicopter_vs_aliens.model.scenery.Scenery;
 import de.helicopter_vs_aliens.platform_specific.awt.BackgroundRepaintTimer;
@@ -67,6 +69,11 @@ public final class GameProgress implements GameRessourceProvider
     private final ExplosionController
         explosionController = new ExplosionController(this);
     
+    private final MissileController
+        missileController = new MissileController(this);
+    
+    private final EnemyMissileController
+        enemyMissileController = new EnemyMissileController(this);
     
     private boolean
         isMouseCursorInWindow = true;
@@ -110,14 +117,15 @@ public final class GameProgress implements GameRessourceProvider
             if(!Window.isMenuVisible)
             {
                 // TODO die Update-All-Methoden auslagern in Controller-Klassen
+                // TODO gibt es immer "updateAll"? --> wenn ja Zusammenführen!
                 Colorations.calculateVariableGameColors(gameLoopCount);
                 scenery.update();
                 Events.updateTimer();
                 Window.updateDisplays(this);
                 enemyController.updateAllDestroyed();
-                Missile.updateAll(this);
+                missileController.updateAll();
                 enemyController.updateAllActive();
-                EnemyMissile.updateAll(this);
+                enemyMissileController.updateAll();
                 Events.checkForLevelUp(this);
                 enemyController.generateNewEnemies();
                 helicopter.update();

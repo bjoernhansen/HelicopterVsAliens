@@ -601,7 +601,7 @@ public abstract class Window implements Paintable
 		updateWindow(helicopter, gameRessourceProvider.getGameLoopCount());
 	}
 
-	protected static void updateWindow(Helicopter helicopter, int gameLoopCount)
+	private static void updateWindow(Helicopter helicopter, int gameLoopCount)
 	{
 		if(WindowManager.window  == REPAIR_SHOP)
 		{

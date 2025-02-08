@@ -122,8 +122,8 @@ public final class Helios extends Helicopter
                 {
                     Audio.play(Audio.powerAnnouncer[powerUpType.ordinal()]);
                 }
-                powerUpController.restartPowerUpTimer(powerUpType);
-                powerUpController.activatePowerUp(powerUpType);
+                powerUpStateController.restartPowerUpTimer(powerUpType);
+                powerUpStateController.activatePowerUp(powerUpType);
             }
             if(Calculations.tossUp(END_OF_POWERUP_GENERATION_PROBABILITY)){break;}
         }
@@ -151,7 +151,7 @@ public final class Helios extends Helicopter
     
     private void turnOfTripleDamage()
     {
-        powerUpController.turnOfTripeDamagePowerUp();
+        powerUpStateController.turnOfTripeDamagePowerUp();
     }
     
     @Override

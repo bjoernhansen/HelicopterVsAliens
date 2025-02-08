@@ -12,14 +12,13 @@ import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-// TODO finish implementation
 
 public final class ManageablePaintableController implements ManageablePaintableService
 {
     // TODO API erstellen, durch die Anfragen wie folgt möglich sind:
     // TODO ManageablePaintableController manageablePaintableController = getGameRessourceProvider().getManageablePaintableController();
     // TODO manageablePaintableController.manageType(ManageablePaintableGroupType.SCENERY_OBJECT).forEach( ... ).forEachHaving( ... ).do( ... ).forEachHaving( ... ).do( ... ).removeIf( ... ).execute();
-    
+    // TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
     private final ManageablePaintableSupplier
         manageablePaintableSupplier;
     

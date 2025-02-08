@@ -55,7 +55,7 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 	{
 	}
 	
-	private void update()
+	void update()
     {
 		Helicopter helicopter = getGameRessourceProvider().getHelicopter();
     	determineColor();
@@ -150,17 +150,7 @@ public class EnemyMissile extends PaintableEntity implements ManageablePaintable
 		lightUpColor = true;
     }
 	
-	// TODO auslagern in eigene Klasse und dann GameressourceProvider im Konstruktor übergeben
-	public static void updateAll(GameRessourceProvider gameRessourceProvider)
-	{
-		var paintableController = gameRessourceProvider.getManageablePaintableService();
-		paintableController.forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE,
-												EnemyMissile::update);
-		paintableController.removeIf(ManageablePaintableGroupType.ENEMY_MISSILE,
-									 EnemyMissile::isOutOfSight);
-	}
-	
-	private boolean isOutOfSight()
+	boolean isOutOfSight()
 	{
 		return location.getX() + 80 < 0
 			|| location.getX() > 1050

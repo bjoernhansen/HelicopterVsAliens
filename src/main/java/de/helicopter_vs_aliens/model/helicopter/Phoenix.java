@@ -248,7 +248,7 @@ public final class Phoenix extends Helicopter
                 stopTractor();
             }
 
-            powerUpController.activateInvinciblePowerUpBriefly();
+            powerUpStateController.activateInvinciblePowerUpBriefly();
 
             bonusKills = 0;
             enhancedRadiationTimer = TELEPORT_INVULNERABILITY_TIME;

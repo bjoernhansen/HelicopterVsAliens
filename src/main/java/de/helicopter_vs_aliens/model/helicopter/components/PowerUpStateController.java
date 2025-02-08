@@ -6,13 +6,14 @@ import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
 import de.helicopter_vs_aliens.model.helicopter.Phoenix;
 import de.helicopter_vs_aliens.model.powerup.PowerUp;
+import de.helicopter_vs_aliens.model.powerup.PowerUpController;
 import de.helicopter_vs_aliens.model.powerup.PowerUpType;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 
-public class PowerUpController
+public class PowerUpStateController
 {
     private final Map<PowerUpType, Integer>
         powerUpTimers = new EnumMap<>(PowerUpType.class); // Zeit [frames] in der das PowerUp (0: bonus dmg; 1: invincible; 2: endless energy; 3: bonus fire rate) noch aktiv ist
@@ -23,10 +24,10 @@ public class PowerUpController
     private final Helicopter
         helicopter;
     
-    public PowerUpController(GameRessourceProvider gameRessourceProvider)
+    public PowerUpStateController(GameRessourceProvider gameRessourceProvider)
     {
         this.gameRessourceProvider = gameRessourceProvider;
-        this.helicopter = gameRessourceProvider.getHelicopter();
+        helicopter = gameRessourceProvider.getHelicopter();
     }
     
     public void turnOfAllBoosters()
@@ -121,19 +122,19 @@ public class PowerUpController
     
     public void activatePowerUp(PowerUpType powerUpType)
     {
-        if(!Window.collectedPowerUps.containsKey(powerUpType))
+        if(Window.collectedPowerUps.containsKey(powerUpType))
         {
-            PowerUp powerUp = PowerUp.getInstance(gameRessourceProvider, powerUpType);
+            Window.collectedPowerUps.get(powerUpType).setOpaque();
+        }
+        else
+        {
+            PowerUp powerUp = PowerUpController.getInstance(gameRessourceProvider, powerUpType);
             powerUp.initialize();
             powerUp.moveToStatusbar();
             if(powerUpType == PowerUpType.BOOSTED_FIRE_RATE)
             {
                 helicopter.adjustFireRate(true);
             }
-        }
-        else
-        {
-            Window.collectedPowerUps.get(powerUpType).setOpaque();
         }
     }
     

@@ -18,7 +18,7 @@ import de.helicopter_vs_aliens.model.enemy.basic.CapturingEnemy;
 import de.helicopter_vs_aliens.model.explosion.Explosion;
 import de.helicopter_vs_aliens.model.explosion.ExplosionType;
 import de.helicopter_vs_aliens.model.helicopter.components.Battery;
-import de.helicopter_vs_aliens.model.helicopter.components.PowerUpController;
+import de.helicopter_vs_aliens.model.helicopter.components.PowerUpStateController;
 import de.helicopter_vs_aliens.model.missile.Grantable;
 import de.helicopter_vs_aliens.model.missile.Missile;
 import de.helicopter_vs_aliens.model.missile.MissileFactory;
@@ -171,8 +171,8 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
     final Battery
         battery = Battery.createFor(getType());
     
-    final PowerUpController
-        powerUpController;
+    final PowerUpStateController
+        powerUpStateController;
     
     public final Point2D
         location = new Point2D.Float();            // exakter Aufenthaltsort
@@ -199,9 +199,9 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
     {
         setGameRessourceProvider(gameRessourceProvider);
         paintBounds.setSize(HELICOPTER_SIZE);
-        powerUpController = new PowerUpController(gameRessourceProvider);
+        powerUpStateController = new PowerUpStateController(gameRessourceProvider);
         // TODO wirklich nötig? Die Instanz ist doch frisch initialisiert worden.
-        powerUpController.turnOfAllBoosters();
+        powerUpStateController.turnOfAllBoosters();
     }
     
     public void update()
@@ -232,7 +232,7 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
         {
             slowedTimer--;
         }
-        powerUpController.evaluatePowerUpActivationStates();
+        powerUpStateController.evaluatePowerUpActivationStates();
     }
     
     private void evaluateFire()
@@ -578,7 +578,7 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
         isCrashing = false;
         slowedTimer = 0;
         recentDamageTimer = 0;
-        powerUpController.reset();
+        powerUpStateController.reset();
         resetRotorPosition();
         fireRateTimer = timeBetweenTwoShots;
     }
@@ -762,7 +762,7 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
     private void crashed()
     {
         isActive = false;
-        powerUpController.startDecayOfAllActivePowerUps();
+        powerUpStateController.startDecayOfAllActivePowerUps();
         if(Events.level < 51)
         {
             Audio.play(Audio.explosion3);
@@ -1368,17 +1368,17 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
     // Method for interacting with PowerUpController class
     public void startDecayOfAllCurrentBooster()
     {
-        powerUpController.startDecayOfAllActivePowerUps();
+        powerUpStateController.startDecayOfAllActivePowerUps();
     }
     
     public boolean isUnacceptablyBoostedForBossLevel()
     {
-        return powerUpController.isAnyPowerUpForbiddenAtBossLevelActive();
+        return powerUpStateController.isAnyPowerUpForbiddenAtBossLevelActive();
     }
     
     public boolean isBoosted(PowerUpType powerUpType)
     {
-        return powerUpController.isPowerUpActive(powerUpType);
+        return powerUpStateController.isPowerUpActive(powerUpType);
     }
     
     public boolean hasTripleDamage()
@@ -1403,27 +1403,27 @@ public abstract sealed class Helicopter extends RectangularPaintableEntity permi
     
     void turnOfInvincibility()
     {
-        powerUpController.turnOfInvinciblePowerUp();
+        powerUpStateController.turnOfInvinciblePowerUp();
     }
     
     void gainTripleDamagePermanently()
     {
-        powerUpController.activateTripleDamagePowerUpPermanently();
+        powerUpStateController.activateTripleDamagePowerUpPermanently();
     }
     
     void gainInvincibilityPermanently()
     {
-        powerUpController.activateInvinciblePowerUpPermanently();
+        powerUpStateController.activateInvinciblePowerUpPermanently();
     }
     
     public void restartPowerUpTimer(PowerUpType powerUpType)
     {
-        powerUpController.restartPowerUpTimer(powerUpType);
+        powerUpStateController.restartPowerUpTimer(powerUpType);
     }
     
     public void switchPowerUpActivationState(PowerUpType powerUpType)
     {
-        powerUpController.switchPowerUpActivationState(powerUpType);
+        powerUpStateController.switchPowerUpActivationState(powerUpType);
     }
     
     public void partialReset()

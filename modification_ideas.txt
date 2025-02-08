@@ -4,6 +4,7 @@ nächste To-dos:
 
 Controller für die statischen UpdateAll methoden einführen
 Die methoden die zur initialisierung, und abbau genutzt werden sollten ins Interface und standardmäßig aufgerufen werden
+fluent API für Managable Paintable Controller schreiben -->
 
 alle nötigen Wanrings an --> alle Klassen kontrollieren
 

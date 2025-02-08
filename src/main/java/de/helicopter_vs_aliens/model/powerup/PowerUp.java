@@ -124,7 +124,7 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		initialize(0, 0, 0, 0);
 	}
 	
-	private void initialize(Enemy enemy, int powerUpDirection)
+	void initialize(Enemy enemy, int powerUpDirection)
 	{
 		initialize( enemy.getX(),
 					     enemy.getY(),
@@ -218,30 +218,10 @@ public class PowerUp extends RectangularPaintableEntity implements ManageablePai
 		setPaintBounds(Window.POWER_UP_SIZE, Window.POWER_UP_SIZE);
 	}
 	
-	public static void activateInstance(GameRessourceProvider gameRessourceProvider, Enemy enemy)
-	{
-		PowerUpType powerUpType = enemy.getTypeOfRandomlyDroppedPowerUp();
-		int powerUpDirection = getPowerUpDirection(gameRessourceProvider.getHelicopter(), enemy);
-		PowerUp powerUp = getInstance(gameRessourceProvider, powerUpType);
-		powerUp.initialize(enemy, powerUpDirection);
-	}
-
-	public static PowerUp getInstance(GameRessourceProvider gameRessourceProvider, PowerUpType powerUpType)
-	{
-		PowerUp powerUp = gameRessourceProvider.getManageablePaintableService()
-											   .activateEntity(powerUpType);
-		powerUp.setType(powerUpType);
-		return powerUp;
-	}
 	
 	public void setType(PowerUpType type)
 	{
 		this.type = type;
-	}
-	
-	private static int getPowerUpDirection(Helicopter helicopter, Enemy enemy)
-	{
-		return helicopter.getX() > enemy.getX() || helicopter.canImmobilizePowerUp() ? -1 : 1;
 	}
 	
 	private void stop()
