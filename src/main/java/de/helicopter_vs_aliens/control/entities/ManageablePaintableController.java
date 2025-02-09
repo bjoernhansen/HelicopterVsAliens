@@ -34,7 +34,7 @@ public final class ManageablePaintableController implements ManageablePaintableS
         DependencyInjector dependencyInjector = DependencyInjector.instanceFor(gameRessourceProvider);
         manageablePaintableSupplier = new ManageablePaintableSupplier(dependencyInjector);
         paintableQueues = Collections.unmodifiableMap(createPaintableQueuesEnumMap());
-        updateController = new ManageablePaintableGroupUpdateController(gameRessourceProvider);
+        updateController = new ManageablePaintableGroupUpdateController(this);
     }
     
     private static Map<ManageablePaintableGroupType, Queue<ManageablePaintable>> createPaintableQueuesEnumMap()

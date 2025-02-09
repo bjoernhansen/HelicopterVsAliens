@@ -35,11 +35,11 @@ public enum ManageablePaintableGroupType {
     private final Class<? extends ManageablePaintable>
         baseClass;
     
-    private final Function<GameRessourceProvider, ManageablePaintableUpdateController>
+    private final Function<ManageablePaintableService, ManageablePaintableUpdateController>
         updateControllerSupplier;
     
     
-    ManageablePaintableGroupType(Class<? extends ManageablePaintable> baseClass, Function<GameRessourceProvider, ManageablePaintableUpdateController> updateControllerSupplier) {
+    ManageablePaintableGroupType(Class<? extends ManageablePaintable> baseClass, Function<ManageablePaintableService, ManageablePaintableUpdateController> updateControllerSupplier) {
         this.baseClass = baseClass;
         this.updateControllerSupplier = updateControllerSupplier;
     }
@@ -54,7 +54,7 @@ public enum ManageablePaintableGroupType {
         return (Class<T>)baseClass;
     }
     
-    public Function<GameRessourceProvider, ManageablePaintableUpdateController> getUpdateControllerSupplier()
+    Function<ManageablePaintableService, ManageablePaintableUpdateController> getUpdateControllerSupplier()
     {
         return updateControllerSupplier;
     }

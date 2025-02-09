@@ -1,23 +1,22 @@
 package de.helicopter_vs_aliens.model.powerup;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableUpdateController;
 
 
 public class PowerUpUpdateController implements ManageablePaintableUpdateController
 {
-    private final GameRessourceProvider gameRessourceProvider;
+    private final ManageablePaintableService manageablePaintableService;
     
-    public PowerUpUpdateController(GameRessourceProvider gameRessourceProvider) {
-        this.gameRessourceProvider = gameRessourceProvider;
+    public PowerUpUpdateController(ManageablePaintableService manageablePaintableService) {
+        this.manageablePaintableService = manageablePaintableService;
     }
     
     @Override
     public void updateAll()
     {
-        var paintableController = gameRessourceProvider.getManageablePaintableService();
-        paintableController.forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, PowerUp::update);
-        paintableController.removeIf(ManageablePaintableGroupType.POWER_UP, PowerUp::wasCollected);
+        manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.POWER_UP, PowerUp::update);
+        manageablePaintableService.removeIf(ManageablePaintableGroupType.POWER_UP, PowerUp::wasCollected);
     }
 }

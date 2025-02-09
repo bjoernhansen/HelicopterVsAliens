@@ -1,25 +1,24 @@
 package de.helicopter_vs_aliens.model.missile;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
+import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableUpdateController;
 
 
 public class EnemyMissileUpdateController implements ManageablePaintableUpdateController
 {
-    private final GameRessourceProvider gameRessourceProvider;
+    private final ManageablePaintableService manageablePaintableService;
     
-    public EnemyMissileUpdateController(GameRessourceProvider gameRessourceProvider) {
-        this.gameRessourceProvider = gameRessourceProvider;
+    public EnemyMissileUpdateController(ManageablePaintableService manageablePaintableService) {
+        this.manageablePaintableService = manageablePaintableService;
     }
     
     @Override
     public void updateAll()
     {
-        var paintableController = gameRessourceProvider.getManageablePaintableService();
-        paintableController.forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE,
+        manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.ENEMY_MISSILE,
                                                 EnemyMissile::update);
-        paintableController.removeIf(ManageablePaintableGroupType.ENEMY_MISSILE,
+        manageablePaintableService.removeIf(ManageablePaintableGroupType.ENEMY_MISSILE,
                                      EnemyMissile::isOutOfSight);
     }
 }

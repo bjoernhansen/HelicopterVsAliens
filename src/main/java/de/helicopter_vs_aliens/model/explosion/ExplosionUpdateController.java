@@ -3,21 +3,19 @@ package de.helicopter_vs_aliens.model.explosion;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableUpdateController;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 
 
 public class ExplosionUpdateController implements ManageablePaintableUpdateController
 {
-    private final GameRessourceProvider gameRessourceProvider;
+    private final ManageablePaintableService manageablePaintableService;
     
-    public ExplosionUpdateController(GameRessourceProvider gameRessourceProvider) {
-        this.gameRessourceProvider = gameRessourceProvider;
+    public ExplosionUpdateController(ManageablePaintableService manageablePaintableService) {
+        this.manageablePaintableService = manageablePaintableService;
     }
     
     @Override
     public void updateAll()
     {
-        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
         // TODO der PaintableEntityController könnte ggf. eine Hilfsklasse zurückgeben, die dann bereits typ spezifisch ist, so müsste nicht jedes mal wieder der Group-Type übergeben werden
         manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.EXPLOSION,
                                                        Explosion::update);

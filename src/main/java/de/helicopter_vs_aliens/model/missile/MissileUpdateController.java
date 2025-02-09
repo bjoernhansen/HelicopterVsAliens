@@ -8,18 +8,16 @@ import de.helicopter_vs_aliens.control.entities.ManageablePaintableUpdateControl
 
 public class MissileUpdateController implements ManageablePaintableUpdateController
 {
-    private final GameRessourceProvider gameRessourceProvider;
+    private final ManageablePaintableService manageablePaintableService;
     
-    public MissileUpdateController(GameRessourceProvider gameRessourceProvider)
+    public MissileUpdateController(ManageablePaintableService manageablePaintableService)
     {
-        this.gameRessourceProvider = gameRessourceProvider;
+        this.manageablePaintableService = manageablePaintableService;
     }
     
     @Override
     public void updateAll()
     {
-        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
-        
         manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.MISSILE,
                                                        Missile::update);
         manageablePaintableService.forEachActiveEntityIf(ManageablePaintableGroupType.MISSILE,

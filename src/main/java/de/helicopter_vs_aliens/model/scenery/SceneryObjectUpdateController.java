@@ -3,21 +3,19 @@ package de.helicopter_vs_aliens.model.scenery;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableUpdateController;
-import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 
 
 public class SceneryObjectUpdateController implements ManageablePaintableUpdateController
 {
-    private final GameRessourceProvider gameRessourceProvider;
+    private final ManageablePaintableService manageablePaintableService;
     
-    public SceneryObjectUpdateController(GameRessourceProvider gameRessourceProvider) {
-        this.gameRessourceProvider = gameRessourceProvider;
+    public SceneryObjectUpdateController(ManageablePaintableService manageablePaintableService) {
+        this.manageablePaintableService = manageablePaintableService;
     }
     
     @Override
     public void updateAll()
     {
-        ManageablePaintableService manageablePaintableService = gameRessourceProvider.getManageablePaintableService();
         if(Scenery.isBackgroundMoving)
         {
             manageablePaintableService.forEachActiveEntity(ManageablePaintableGroupType.SCENERY_OBJECT,
