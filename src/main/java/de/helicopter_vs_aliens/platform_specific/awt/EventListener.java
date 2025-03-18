@@ -25,7 +25,7 @@ class EventListener implements KeyListener, MouseListener, MouseMotionListener
         gameRessourceProvider;
 
 
-    public EventListener(GameRessourceProvider gameRessourceProvider)
+    EventListener(GameRessourceProvider gameRessourceProvider)
     {
         this.gameRessourceProvider = gameRessourceProvider;
     }

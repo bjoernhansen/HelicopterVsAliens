@@ -30,7 +30,7 @@ public class StartScreenMenuWindowPainter extends WindowPainter
         graphicsAdapter.setColor(Color.white);
         graphicsAdapter.setFont(fontProvider.getPlain(29));
     
-        graphicsAdapter.drawString(this.getHeadline(), 40, 55);
+        graphicsAdapter.drawString(getHeadline(), 40, 55);
     
         GraphicalEntities.paintFrameLine(graphicsAdapter, 26, 67, 971);
         GraphicalEntities.paintFrame(graphicsAdapter, 26, 21, 971, 317);

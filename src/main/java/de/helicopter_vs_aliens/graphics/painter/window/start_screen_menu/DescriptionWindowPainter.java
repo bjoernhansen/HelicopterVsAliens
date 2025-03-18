@@ -28,7 +28,7 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
     private static final Point
         POSITION = new Point(52, 120);
     
-    public static final int
+    private static final int
         POWER_UP_DURATION_IN_SECONDS = Helicopter.POWER_UP_DURATION / 60;
     
     

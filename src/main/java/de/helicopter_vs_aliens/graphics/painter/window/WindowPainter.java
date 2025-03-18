@@ -25,10 +25,10 @@ public abstract class WindowPainter extends Painter<Window>
     private static final int
         UNLOCKED_DISPLAY_TIME = 300;
     
-    protected static final int
+    static final int
         STANDARD_UPGRADE_OFFSET_Y = 148;                // y-Verschiebung der Standard-Upgrades in der Statusanzeige (Werkstatt-Menü)
     
-    public static final Point
+    static final Point
         HELICOPTER_START_SCREEN_OFFSET = new Point(66, 262),
         HEALTH_BAR_POSITION = new Point(5, RectangularPaintableEntity.GROUND_Y + 5);
     
@@ -40,7 +40,7 @@ public abstract class WindowPainter extends Painter<Window>
     protected static Helicopter
         helicopter;
 
-    protected static void updateDependencies(){
+    static void updateDependencies(){
         // TODO warum muss dann immer wieder upgedated werden
         helicopter = gameRessourceProvider.getHelicopter();
     }
@@ -64,9 +64,9 @@ public abstract class WindowPainter extends Painter<Window>
         else return 789;
     }
     
-    protected static void paintHelicopterDisplay(GraphicsAdapter graphicsAdapter,
-                                               Helicopter helicopter,
-                                               int x, int y)
+    static void paintHelicopterDisplay(GraphicsAdapter graphicsAdapter,
+                                       Helicopter helicopter,
+                                       int x, int y)
     {
         GraphicalEntities.paintFrame(graphicsAdapter, 26 + x,  85 + y, 200, 173, WindowManager.window  != GAME ? null : Colorations.lightestGray);
         graphicsAdapter.setColor(Color.white);
@@ -116,7 +116,12 @@ public abstract class WindowPainter extends Painter<Window>
         }
     }
     
-    protected static void paintHealthBar(GraphicsAdapter graphicsAdapter, Helicopter helicopter, int x, int y, int length, boolean rahmen)
+    static void paintHealthBar(GraphicsAdapter graphicsAdapter,
+                               Helicopter helicopter,
+                               int x,
+                               int y,
+                               int length,
+                               boolean rahmen)
     {
         float relativeEnergy = helicopter.getRelativeEnergy();
         float relativePlating = helicopter.getRelativePlating();

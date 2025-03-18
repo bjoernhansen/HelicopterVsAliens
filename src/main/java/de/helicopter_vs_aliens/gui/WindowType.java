@@ -84,10 +84,10 @@ public enum WindowType
     private static final List<WindowType>
         VALUES = List.of(values());
     
-    public static final String
+    private static final String
         START_OF_START_SCREEN_MENU_BUTTON_LABEL_KEY_PREFIX = "buttonLabel.startScreenSub.";
 
-    public static final String
+    private static final String
         START_OF_START_SCREEN_MENU_TEXT_KEY_PREFIX = "menuText.startScreenSub.";
 
 
@@ -108,7 +108,7 @@ public enum WindowType
         menuInstance;
     
     private final Supplier<? extends Painter<? extends Paintable>>
-        painterInstance;
+        painterSupplier;
        
     private final Class<? extends Window>
         menuClass;
@@ -116,14 +116,14 @@ public enum WindowType
 
     WindowType(Class<? extends Window> menuClass,
                Supplier<? extends Window> menuInstance,
-               Supplier<? extends Painter<? extends Paintable>> painterInstance,
+               Supplier<? extends Painter<? extends Paintable>> painterSupplier,
                String endOfKeyPrefix)
     {
         this.menuClass = menuClass;
         this.menuInstance = menuInstance;
-        this.painterInstance = painterInstance;
-        this.buttonLabelKeyPrefix = START_OF_START_SCREEN_MENU_BUTTON_LABEL_KEY_PREFIX + endOfKeyPrefix;
-        this.startScreenMenuTextKeyPrefix = START_OF_START_SCREEN_MENU_TEXT_KEY_PREFIX + endOfKeyPrefix;
+        this.painterSupplier = painterSupplier;
+        buttonLabelKeyPrefix = START_OF_START_SCREEN_MENU_BUTTON_LABEL_KEY_PREFIX + endOfKeyPrefix;
+        startScreenMenuTextKeyPrefix = START_OF_START_SCREEN_MENU_TEXT_KEY_PREFIX + endOfKeyPrefix;
     }
     
     public static List<WindowType> getValues()
@@ -157,7 +157,7 @@ public enum WindowType
     // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
     public Painter<? extends Paintable> makePainterInstance()
     {
-        return painterInstance.get();
+        return painterSupplier.get();
     }
     
     // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
