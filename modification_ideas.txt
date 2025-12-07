@@ -1,6 +1,7 @@
-Jira: https://bjoern-hansen.atlassian.net/jira/software/projects/KAN/boards/1
-
 nächste To-dos:
+
+nicht mehr nachvollziehbare Änderung: Offenbar wolltest du die vielen Übergaben des GraphicsAdapters loswerden.
+Hier wurde die abstrakte Painter-Methode abgeändert (siehe auskommentierter Code).
 
 Die Methoden, die zur initialisierung, und Abbau genutzt werden sollten ins Interface und standardmäßig aufgerufen werden
 Ähnlich könnte es auch mit der Update methode gemacht werden.
@@ -10,11 +11,8 @@ alle nötigen Wanrings an --> alle Klassen kontrollieren
 
 gleichartige Methoden ablösen und iterieren über ein Subset von ManageablePaintableGroupType in Klasse GameWindowPainter (TODO)
 
-
-
 -------------------------------------------------------------
 Manover für Enemies
-
 
 evtl. ThreadLocalRandom.current().nextInt(set.size()) verwenden, soll effizienter sein
 
