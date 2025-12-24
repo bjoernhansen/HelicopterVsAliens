@@ -117,5 +117,6 @@ public class GraphicsManager
     public void setGraphics(GraphicsAdapter graphicsAdapter)
     {
         this.graphicsAdapter = graphicsAdapter;
+        PAINTERS.values().forEach(painter -> painter.setGraphicsAdapter(graphicsAdapter));
     }
 }

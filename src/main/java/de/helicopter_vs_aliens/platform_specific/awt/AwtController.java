@@ -136,8 +136,8 @@ public final class AwtController extends JPanel implements Controller, Runnable
     private BufferedImage createOffImage()
     {
         return new BufferedImage(
-            (int) GraphicsAdapter.VIRTUAL_DIMENSION.getWidth(),
-            (int) GraphicsAdapter.VIRTUAL_DIMENSION.getHeight(),
+            GraphicsAdapter.VIRTUAL_DIMENSION.getWidth(),
+            GraphicsAdapter.VIRTUAL_DIMENSION.getHeight(),
             BufferedImage.TYPE_INT_RGB);
     }
 
@@ -147,14 +147,7 @@ public final class AwtController extends JPanel implements Controller, Runnable
         frame.setBackground(Color.black);
         frame.add("Center", this);
         frame.addKeyListener(eventListener);
-        frame.addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                System.exit(0);
-            }
-        });
+        frame.addWindowListener(new ExitOnClosingWindowAdapter());
         frame.setSize(WINDOW_SIZE.asAwtDimension());
         frame.setResizable(false);
         frame.setVisible(true);
@@ -163,11 +156,11 @@ public final class AwtController extends JPanel implements Controller, Runnable
     @Override
     public void run()
     {
-        if(this.frameSkipStatus != FrameSkipStatusType.ACTIVE)
+        if(frameSkipStatus != FrameSkipStatusType.ACTIVE)
         {
             timeMillis = System.currentTimeMillis();
         }
-        while(Thread.currentThread() == this.animator)
+        while(Thread.currentThread() == animator)
         {
             repaint();
             try
@@ -176,7 +169,7 @@ public final class AwtController extends JPanel implements Controller, Runnable
                 long pauseTime = timeMillis - System.currentTimeMillis();
                 if(pauseTime < 1)
                 {
-                    this.frameSkipStatus = FrameSkipStatusType.ACTIVE;
+                    frameSkipStatus = FrameSkipStatusType.ACTIVE;
                 }
                 else
                 {
@@ -257,5 +250,14 @@ public final class AwtController extends JPanel implements Controller, Runnable
     public static Dimension getDisplayShift()
     {
         return DISPLAY_SHIFT;
+    }
+    
+    private static class ExitOnClosingWindowAdapter extends WindowAdapter
+    {
+        @Override
+        public void windowClosing(WindowEvent e)
+        {
+            System.exit(0);
+        }
     }
 }

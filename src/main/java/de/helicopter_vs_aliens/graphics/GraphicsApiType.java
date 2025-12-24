@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics;
 
 import de.helicopter_vs_aliens.platform_specific.awt.AwtController;
-import de.helicopter_vs_aliens.platform_specific.javafx.GameApplication;
+import de.helicopter_vs_aliens.platform_specific.javafx.JavaFxGameApplication;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
 
 import java.util.function.Supplier;
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public enum GraphicsApiType
 {
     GRAPHICS_2D(AwtController::getDisplayShift, 3, 1),
-    JAVAFX(GameApplication::getDisplayShift, 7, 5);
+    JAVAFX(JavaFxGameApplication::getDisplayShift, 7, 5);
 
 
     private final Supplier<Dimension>

@@ -24,7 +24,7 @@ import java.nio.IntBuffer;
 
 public class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext>
 {
-    public JavaFxAdapter(GraphicsContext graphics)
+    JavaFxAdapter(GraphicsContext graphics)
     {
         super(graphics);
     }

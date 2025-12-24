@@ -31,7 +31,7 @@ import java.awt.image.BufferedImage;
 import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
 
 
-public class GameApplication extends Application
+public class JavaFxGameApplication extends Application
 {
     private static final Dimension
         DISPLAY_SHIFT = Dimension.newInstance(0, 0);
@@ -49,7 +49,7 @@ public class GameApplication extends Application
         offImage;
 
 
-    public GameApplication()
+    public JavaFxGameApplication()
     {
         gameProgress = JavaFxController.gameProgress;
     }
@@ -115,36 +115,42 @@ public class GameApplication extends Application
         graphicsAdapter = Graphics2DAdapter.of(offImage);
         graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        new AnimationTimer()
-        {
-            @Override
-            public void handle(long now)
-            {
-                graphicsFxAdapter.drawImage(offImage, DISPLAY_SHIFT, scaledDimension);
-                updateGame();
-                graphicsAdapter.setColor(Colorations.bg);
-                graphicsAdapter.fillRect(0, 0, VIRTUAL_DIMENSION.getWidth(), VIRTUAL_DIMENSION.getHeight());
-                paintFrame(graphicsAdapter);
-            }
-        }.start();
-    }
-
-    private void updateGame()
-    {
-        gameProgress.updateGame();
-    }
-
-    // TODO dieselbe Methode ist auch in AwtController
-    private void paintFrame(GraphicsAdapter graphicsAdapter)
-    {
-        GraphicsManager.getInstance()
-                       .setGraphics(graphicsAdapter);
-        gameProgress.getWindowManager()
-                    .paintWindow(graphicsAdapter);
+        new GameAnimationTimer(scaledDimension).start();
     }
 
     public static Dimension getDisplayShift()
     {
         return DISPLAY_SHIFT;
+    }
+    
+    private final class GameAnimationTimer extends AnimationTimer
+    {
+        private final Dimension scaledDimension;
+        
+        private GameAnimationTimer(Dimension scaledDimension) {this.scaledDimension = scaledDimension;}
+        
+        @Override
+        public void handle(long now)
+        {
+            graphicsFxAdapter.drawImage(offImage, DISPLAY_SHIFT, scaledDimension);
+            updateGame();
+            graphicsAdapter.setColor(Colorations.bg);
+            graphicsAdapter.fillRect(0, 0, VIRTUAL_DIMENSION.getWidth(), VIRTUAL_DIMENSION.getHeight());
+            paintFrame(graphicsAdapter);
+        }
+        
+        private void updateGame()
+        {
+            gameProgress.updateGame();
+        }
+        
+        // TODO dieselbe Methode ist auch in AwtController
+        private void paintFrame(GraphicsAdapter graphicsAdapter)
+        {
+            GraphicsManager.getInstance()
+                           .setGraphics(graphicsAdapter);
+            gameProgress.getWindowManager()
+                        .paintWindow(graphicsAdapter);
+        }
     }
 }

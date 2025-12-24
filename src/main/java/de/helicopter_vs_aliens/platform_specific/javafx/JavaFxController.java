@@ -19,6 +19,6 @@ public class JavaFxController implements Controller
     @Override
     public void start()
     {
-        Application.launch(GameApplication.class);
+        Application.launch(JavaFxGameApplication.class);
     }
 }

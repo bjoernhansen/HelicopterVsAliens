@@ -15,7 +15,9 @@ import java.awt.GradientPaint;
 public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
 {
     private static final float
-        BORDER_SIZE = 0.23f,
+        BORDER_SIZE = 0.23f;
+    
+    private static final float
         EYE_SIZE = 0.08f;
     
     private static final boolean
