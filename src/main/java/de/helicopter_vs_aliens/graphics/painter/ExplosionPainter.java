@@ -9,8 +9,9 @@ import java.awt.BasicStroke;
 public class ExplosionPainter extends Painter<Explosion>
 {
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Explosion explosion)
+    public void paint(Explosion explosion)
     {
+        GraphicsAdapter graphicsAdapter = getGraphicsAdapter();
         graphicsAdapter.setPaint(explosion.getColor());
         graphicsAdapter.setStroke(new BasicStroke((int)(1+(explosion.getBroadness()-1)*(1-explosion.getProgress()[0]))));
         // TODO hier eine Methode in explosion erstellen. ... Ist dass ein Update in der PaintMethode?

@@ -101,10 +101,12 @@ public class GraphicsManager
         return instance;
     }
     
+    // TODO nachvollziehen: an zwei Stellen verwendet, aber dort wird der GraphicsAdapter übergeben. Unnötig?
     public <E extends Paintable> void paint(E paintableEntity)
     {
         Painter<E> painter = getPainter(paintableEntity.getClass());
-        painter.paint(graphicsAdapter, paintableEntity);
+        painter.setGraphicsAdapter(graphicsAdapter);
+        painter.paint(paintableEntity);
     }
     
     // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
@@ -117,6 +119,5 @@ public class GraphicsManager
     public void setGraphics(GraphicsAdapter graphicsAdapter)
     {
         this.graphicsAdapter = graphicsAdapter;
-        PAINTERS.values().forEach(painter -> painter.setGraphicsAdapter(graphicsAdapter));
     }
 }

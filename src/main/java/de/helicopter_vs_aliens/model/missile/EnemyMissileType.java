@@ -6,6 +6,7 @@ import java.awt.Color;
 
 public enum EnemyMissileType
 {
+	// TODO Verwendungen kontrollieren. Ggf. mit Hilfsmethoden Verwendung abläsen (z.B. isBuster() an Missile
 	DISCHARGER(Colorations.bleachedRed),
 	BUSTER(Colorations.bleachedViolet);
 	

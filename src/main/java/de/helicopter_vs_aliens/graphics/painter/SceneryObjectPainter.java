@@ -24,8 +24,10 @@ public class SceneryObjectPainter extends Painter<SceneryObject>
         PALM_CROWN_IMG = paintPalmCrownImage();
     
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, SceneryObject sceneryObject)
+    public void paint(SceneryObject sceneryObject)
     {
+        GraphicsAdapter graphicsAdapter = getGraphicsAdapter();
+        
         // Kaktus
         if(sceneryObject.type == CACTUS)
         {

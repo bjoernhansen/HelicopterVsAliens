@@ -22,8 +22,9 @@ public class ButtonPainter extends Painter<Button>
 
 
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Button button)
+    public void paint(Button button)
     {
+        GraphicsAdapter graphicsAdapter = getGraphicsAdapter();
         if(button.isVisible())
         {
             if((button.isHighlighted() && button.isEnabled()) || !button.isTranslucent())

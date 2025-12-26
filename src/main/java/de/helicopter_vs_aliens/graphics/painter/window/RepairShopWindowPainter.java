@@ -33,10 +33,10 @@ public class RepairShopWindowPainter extends WindowPainter
         SPECIAL_UPGRADE_OFFSET_Y = 328;                 // y-Verschiebung der Spezial-Upgrades in der Statusanzeige (Werkstatt-Menü)
         
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Window window)
+    public void paint(Window window)
     {
-        super.paint(graphicsAdapter, window);
-        paintRepairShop(graphicsAdapter, helicopter);
+        updateDependencies();
+        paintRepairShop(getGraphicsAdapter(), helicopter);
     }
     
     private static void paintRepairShop(GraphicsAdapter graphicsAdapter, Helicopter helicopter)

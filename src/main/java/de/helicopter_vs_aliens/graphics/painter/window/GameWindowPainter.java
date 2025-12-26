@@ -62,8 +62,9 @@ public class GameWindowPainter extends WindowPainter
     
     
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Window window)
+    public void paint(Window window)
     {
+        GraphicsAdapter graphicsAdapter = getGraphicsAdapter();
         paintBackground(graphicsAdapter);
         paintBackgroundDisplays(graphicsAdapter);
         Optional.ofNullable(EnemyController.currentRock)
@@ -76,7 +77,7 @@ public class GameWindowPainter extends WindowPainter
         paintAllExplosions(graphicsAdapter);
         paintAllPowerUps(graphicsAdapter);
         paintForeground(graphicsAdapter);
-        super.paint(graphicsAdapter, window);
+        updateDependencies();
         paintForegroundDisplays(graphicsAdapter);
         paintGui(graphicsAdapter);
     }

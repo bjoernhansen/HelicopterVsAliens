@@ -25,12 +25,12 @@ public class BarrierPainter <T extends Barrier> extends EnemyPainter<T>
     
     
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, T enemy)
+    public void paint(T enemy)
     {
-        super.paint(graphicsAdapter, enemy);
+        super.paint(enemy);
         if (SHOW_TESTING_INFO)
         {
-            paintTestingInfo(graphicsAdapter);
+            paintTestingInfo(getGraphicsAdapter());
         }
     }
     

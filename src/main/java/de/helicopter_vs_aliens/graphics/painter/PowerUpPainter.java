@@ -11,9 +11,9 @@ import java.awt.Color;
 public class PowerUpPainter extends Painter<PowerUp>
 {
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, PowerUp powerUp)
+    public void paint(PowerUp powerUp)
     {
-        paint(graphicsAdapter, powerUp, powerUp.getPaintBounds().x);
+        paint(getGraphicsAdapter(), powerUp, powerUp.getPaintBounds().x);
     }
     
     public void paint(GraphicsAdapter graphicsAdapter, PowerUp powerUp, int x)

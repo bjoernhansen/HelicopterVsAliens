@@ -16,9 +16,10 @@ public class SceneryPainter extends Painter<Scenery>
     private Scenery scenery;
     
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Scenery scenery)
+    public void paint(Scenery scenery)
     {
         setScenery(scenery);
+        GraphicsAdapter graphicsAdapter = getGraphicsAdapter();
         paintSunOrMoon(graphicsAdapter);
         if (Events.timeOfDay == TimeOfDay.NIGHT)
         {

@@ -22,8 +22,9 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
 
 
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, T enemy)
+    public void paint(T enemy)
     {
+        GraphicsAdapter graphicsAdapter = getGraphicsAdapter();
         setEnemy(enemy);
         
         if(!enemy.isCompletelyCloaked())
@@ -69,9 +70,10 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
     
     public void standardImagePaintForCorpus(GraphicsAdapter graphicsAdapter, T enemy, int directionX)
     {
-        Color mainColorLight, mainColorDark;
+        Color mainColorLight;
+        Color mainColorDark;
         
-        if(enemy.isDestroyed() && Events.timeOfDay == TimeOfDay.NIGHT)
+        if(isDestroyedEnemyAtNight(enemy))
         {
             mainColorLight = Colorations.adjustBrightness(enemy.getPrimaryColor(), DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
             mainColorDark  = Colorations.adjustBrightness(enemy.getSecondaryColor(), DESTROYED_ENEMY_NIGHT_DIM_FACTOR);
@@ -82,6 +84,11 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
             mainColorDark  = enemy.getSecondaryColor();
         }
         paintCorpus(graphicsAdapter, enemy, directionX, mainColorLight, mainColorDark, false, true);
+    }
+    
+    private boolean isDestroyedEnemyAtNight(T enemy)
+    {
+        return enemy.isDestroyed() && (Events.timeOfDay == TimeOfDay.NIGHT);
     }
     
     private void paintCorpus(GraphicsAdapter graphicsAdapter,
@@ -97,17 +104,19 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         
         if(enemy.isDestroyed())
         {
-            barColor = Colorations.adjustBrightness(barColor, Events.timeOfDay == TimeOfDay.NIGHT ? DESTROYED_ENEMY_NIGHT_DIM_FACTOR : 1);
-            inactiveNozzleColor = Colorations.adjustBrightness(inactiveNozzleColor, Events.timeOfDay == TimeOfDay.NIGHT ? DESTROYED_ENEMY_NIGHT_DIM_FACTOR : 1);
+            barColor = Colorations.adjustBrightness(barColor,
+                                                    (Events.timeOfDay == TimeOfDay.NIGHT) ? DESTROYED_ENEMY_NIGHT_DIM_FACTOR : 1);
+            inactiveNozzleColor = Colorations.adjustBrightness(inactiveNozzleColor,
+                                                               (Events.timeOfDay == TimeOfDay.NIGHT) ? DESTROYED_ENEMY_NIGHT_DIM_FACTOR : 1);
         }
         
         //Malen des Gegners
         int offsetX = (int)(isImagePaint
-            ? (directionX == 1 ? 0.028f * enemy.getPaintBounds().width : 0)
+            ? ((directionX == 1) ? (0.028f * enemy.getPaintBounds().width) : 0)
             : enemy.getPaintBounds().x),
             
             offsetY = (int)(isImagePaint
-                ? 0.25f * enemy.getPaintBounds().height
+                ? (0.25f * enemy.getPaintBounds().height)
                 : enemy.getPaintBounds().y);
         
         paintEnemy(graphicsAdapter, directionX, isCompletelyCloakedImagePaint, isImagePaint, offsetX, offsetY, mainColorLight, mainColorDark, barColor, inactiveNozzleColor);
@@ -118,8 +127,8 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         Enemy enemy = getEnemy();
         graphicsAdapter.drawImage(
             enemy.getCloakedImage(),
-            enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? enemy.getPaintBounds().width/36 : 0),
-            enemy.getPaintBounds().y - enemy.getPaintBounds().height/4);
+            enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? (enemy.getPaintBounds().width / 36) : 0),
+            enemy.getPaintBounds().y - (enemy.getPaintBounds().height / 4));
     }
     
     private void paintPartiallyCloaked(GraphicsAdapter graphicsAdapter)
@@ -128,16 +137,16 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         graphicsAdapter.drawImage(
             enemy.getStandardImage(),
             new RescaleOp(Enemy.scales, Enemy.offsets, null),
-            enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? enemy.getPaintBounds().width/36 : 0),
-            enemy.getPaintBounds().y - enemy.getPaintBounds().height/4);
+            enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? (enemy.getPaintBounds().width / 36) : 0),
+            enemy.getPaintBounds().y - (enemy.getPaintBounds().height / 4));
     }
     
     private void paintUncloaked(GraphicsAdapter graphicsAdapter)
     {
         graphicsAdapter.drawImage(
             enemy.getStandardImage(),
-            enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? enemy.getPaintBounds().width/36 : 0),
-            enemy.getPaintBounds().y - enemy.getPaintBounds().height/4);
+            enemy.getPaintBounds().x - (enemy.isFlyingLeft() ? (enemy.getPaintBounds().width / 36) : 0),
+            enemy.getPaintBounds().y - (enemy.getPaintBounds().height / 4));
     }
     
     void paintAnimatedElements(GraphicsAdapter graphicsAdapter)
@@ -151,7 +160,7 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         // Auspuff
         if(hasActivePropellingNozzle())
         {
-            this.paintActivePropellingNozzle(graphicsAdapter);
+            paintActivePropellingNozzle(graphicsAdapter);
         }
     }
     

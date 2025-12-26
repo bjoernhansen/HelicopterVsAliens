@@ -19,10 +19,10 @@ import static de.helicopter_vs_aliens.gui.window.Window.fontProvider;
 public class StartScreenMenuWindowPainter extends WindowPainter
 {
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Window window)
+    public void paint(Window window)
     {
-        super.paint(graphicsAdapter, window);
-        paintStartScreenMenu(graphicsAdapter);
+        updateDependencies();
+        paintStartScreenMenu(getGraphicsAdapter());
     }
     
     void paintStartScreenMenu(GraphicsAdapter graphicsAdapter)

@@ -29,10 +29,10 @@ public class ScoreScreenWindowPainter extends WindowPainter
         Y_POS = 129;
 
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Window window)
+    public void paint(Window window)
     {
-        super.paint(graphicsAdapter, window);
-        paintScoreScreen(graphicsAdapter, helicopter);
+        updateDependencies();
+        paintScoreScreen(getGraphicsAdapter(), helicopter);
     }
 
     private static void paintScoreScreen(GraphicsAdapter graphicsAdapter, Helicopter helicopter)

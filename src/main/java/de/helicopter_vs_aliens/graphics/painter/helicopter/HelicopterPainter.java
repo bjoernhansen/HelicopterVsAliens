@@ -51,9 +51,9 @@ public abstract class HelicopterPainter extends Painter<Helicopter>
     Helicopter helicopter;
     
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Helicopter helicopter)
+    public void paint(Helicopter helicopter)
     {
-        paint(graphicsAdapter, helicopter, helicopter.getPaintBounds().x, helicopter.getPaintBounds().y);
+        paint(getGraphicsAdapter(), helicopter, helicopter.getPaintBounds().x, helicopter.getPaintBounds().y);
     }
     
     private void paint(GraphicsAdapter graphicsAdapter, Helicopter helicopter, int left, int top)

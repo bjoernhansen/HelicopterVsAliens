@@ -29,10 +29,10 @@ public class StartScreenWindowPainter extends WindowPainter
         CROSS_MAX_DISPLAY_TIME = 60; // Maximale Anzeigezeit des Block-Kreuzes (StartScreen)
     
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Window window)
+    public void paint(Window window)
     {
-        super.paint(graphicsAdapter, window);
-        paintStartScreen(graphicsAdapter, helicopter);
+        updateDependencies();
+        paintStartScreen(getGraphicsAdapter(), helicopter);
     }
     
     private static void paintStartScreen(GraphicsAdapter graphicsAdapter, Helicopter helicopter)

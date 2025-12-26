@@ -40,15 +40,9 @@ public abstract class WindowPainter extends Painter<Window>
     protected static Helicopter
         helicopter;
 
-    static void updateDependencies(){
+    protected static void updateDependencies(){
         // TODO warum muss dann immer wieder upgedated werden
         helicopter = gameRessourceProvider.getHelicopter();
-    }
-    
-    @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Window window)
-    {
-        updateDependencies();
     }
     
     static int unlockedDisplayPosition(int timer)
