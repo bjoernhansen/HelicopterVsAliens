@@ -25,7 +25,6 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import static de.helicopter_vs_aliens.graphics.GraphicsAdapter.VIRTUAL_DIMENSION;
@@ -112,8 +111,7 @@ public class JavaFxGameApplication extends Application
         GraphicsContext graphicsContext2D = canvas.getGraphicsContext2D();
         graphicsFxAdapter = new JavaFxAdapter(graphicsContext2D);
         offImage = new BufferedImage(VIRTUAL_DIMENSION.getWidth(), VIRTUAL_DIMENSION.getHeight(), BufferedImage.TYPE_INT_RGB);
-        graphicsAdapter = Graphics2DAdapter.of(offImage);
-        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphicsAdapter = Graphics2DAdapter.withAntialiasingOf(offImage);
 
         new GameAnimationTimer(scaledDimension).start();
     }

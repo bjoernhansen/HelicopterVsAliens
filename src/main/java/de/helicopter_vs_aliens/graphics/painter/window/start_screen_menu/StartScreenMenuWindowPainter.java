@@ -59,7 +59,7 @@ public class StartScreenMenuWindowPainter extends WindowPainter
     void paintHelicopterInStartScreenMenu(GraphicsAdapter graphicsAdapter)
     {
         Helicopter startScreenSubHelicopter = Window.helicopterDummies.get(HelicopterType.getValues().get(Window.page.ordinal()-2));
-        HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(startScreenSubHelicopter.getClass());
+        HelicopterPainter helicopterPainter = GraphicsManager.getPainterFor(startScreenSubHelicopter.getClass()).with(graphicsAdapter);
         helicopterPainter.startScreenSubPaint(graphicsAdapter, startScreenSubHelicopter);
     }
 }

@@ -245,8 +245,7 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintCollectedPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        PowerUpPainter powerUpPainter = GraphicsManager.getInstance()
-                                                       .getPainter(PowerUp.class);
+        PowerUpPainter powerUpPainter = GraphicsManager.getPainterFor(PowerUp.class).with(graphicsAdapter);
         AtomicInteger statusBarPositionIndex = new AtomicInteger();
         PowerUpType.getStatusBarPowerUpTypes()
                    .stream()

@@ -104,7 +104,7 @@ public class StartScreenWindowPainter extends WindowPainter
             
             Helicopter nextStartScreenHelicopter = Window.helicopterDummies.get(HelicopterType.getValues()
                                                                                               .get((Window.helicopterSelection + i) % HelicopterType.count()));
-            HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(nextStartScreenHelicopter.getClass());
+            HelicopterPainter helicopterPainter = GraphicsManager.getPainterFor(nextStartScreenHelicopter.getClass()).with(graphicsAdapter);
             helicopterPainter.startScreenPaint(
                 graphicsAdapter,
                 nextStartScreenHelicopter,

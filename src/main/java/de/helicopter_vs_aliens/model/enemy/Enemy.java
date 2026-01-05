@@ -492,8 +492,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                 graphicsAdapters[j].setColor(Colorations.translucentDarkestBlack);
                 graphicsAdapters[j].fillRect(0, 0, image[j].getWidth(), image[j].getHeight());
             }
-            EnemyPainter enemyPainter = GraphicsManager.getInstance()
-                                                       .getPainter(getClass());
+            EnemyPainter enemyPainter = GraphicsManager.getPainterFor(getClass()).with(graphicsAdapters[j]);
             enemyPainter.standardImagePaintForCorpus(graphicsAdapters[j], this, 1 - (2 * j));
         }
     }
@@ -665,23 +664,22 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         for(int i = 0; i < 2; i++)
         {
             image[i] = getBufferedImage();
-            graphicsAdapters[i] = Graphics2DAdapter.withAntialiasing(image[i]);
-            //graphics[i].setComposite(AlphaComposite.Src);
-            
-            EnemyPainter enemyPainter = GraphicsManager.getInstance()
-                                                       .getPainter(getClass());
+            graphicsAdapters[i] = Graphics2DAdapter.withAntialiasingOf(image[i]);
+            EnemyPainter enemyPainter = GraphicsManager.getPainterFor(getClass()).with(graphicsAdapters[i]);
             enemyPainter.standardImagePaintForCorpus(graphicsAdapters[i], this, 1 - (2 * i));
             if(cloakingDevice.isEnabled() && (getHelicopter().getType() == HelicopterType.OROCHI))
             {
                 BufferedImage tempImage = getBufferedImage();
+                GraphicsAdapter graphicsAdapter = Graphics2DAdapter.withAntialiasingOf(tempImage);
+                EnemyPainter cloakableEnemyPainter = GraphicsManager.getPainterFor(getClass()).with(graphicsAdapter);
+                cloakableEnemyPainter.paintCorpus(graphicsAdapter,
+                                                  this,
+                                                  1 - (2 * i),
+                                                  Color.red,
+                                                  true,
+                                                  true);
                 image[2 + i] = getBufferedImage();
-                enemyPainter.paintCorpus(Graphics2DAdapter.withAntialiasing(tempImage),
-                                         this,
-                                         1 - (2 * i),
-                                         Color.red,
-                                         true,
-                                         true);
-                Graphics2DAdapter.withAntialiasing(image[2 + i])
+                Graphics2DAdapter.withAntialiasingOf(image[2 + i])
                                  .drawImage(tempImage, CLOAKED_ENEMY_RESCALE_OPERATOR, 0, 0);
             }
         }
@@ -693,7 +691,6 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                                  (int)(1.250f * paintBounds.height),
                                  BufferedImage.TYPE_INT_ARGB);
     }
-    
     
     private void placeNearHelicopter()
     {
@@ -1853,15 +1850,29 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     {
         Helicopter helicopter = getHelicopter();
         return helicopter.getProtectionFactor()
-            // TODO 0.65 und 1.0 in Konstanten auslagern
             * helicopter.getBaseProtectionFactor(isExplodingOnCollisions())
             * (helicopter.isTakingKaboomDamageFrom(this)
-            ? helicopter.kaboomDamage()
-            : ((isExplodingOnCollisions() && !isInvincible() && isIntact())
-            ? 1.0f
-            : ((collisionDamageTimer > 0)
-            ? 0.0325f
-            : 0.65f)));
+                ? helicopter.kaboomDamage()
+                : calculateBaseCollisionDamage());
+    }
+    
+    private float calculateBaseCollisionDamage()
+    {
+        // TODO Konstanten auslagern
+        if(canExplode())
+        {
+            return 1.0f;
+        }
+        if(collisionDamageTimer > 0)
+        {
+            return 0.0325f;
+        }
+        return 0.65f;
+    }
+    
+    private boolean canExplode()
+    {
+        return isExplodingOnCollisions() && !isInvincible() && isIntact();
     }
     
     private void takeDamage(int dmg)

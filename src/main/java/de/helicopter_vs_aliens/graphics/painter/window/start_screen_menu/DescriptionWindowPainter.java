@@ -44,8 +44,7 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
             String firstLine = getFirstLine();
             graphicsAdapter.drawString(firstLine, POSITION.x, POSITION.y - Y_OFFSET + TEXT_OFFSET);
             
-            PowerUpPainter powerUpPainter = GraphicsManager.getInstance()
-                                                           .getPainter(PowerUp.class);
+            PowerUpPainter powerUpPainter = GraphicsManager.getPainterFor(PowerUp.class).with(graphicsAdapter);
             List<String> powerUpTextLines = getPowerUpTextLines();
             
             for(PowerUpType powerUpType : PowerUpType.getValues())

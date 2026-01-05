@@ -18,7 +18,6 @@ import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
@@ -128,8 +127,7 @@ public final class AwtController extends JPanel implements Controller, Runnable
 
     private GraphicsAdapter createGraphicsAdapterFrom(Image offImage)
     {
-        GraphicsAdapter newGraphicsAdapter = Graphics2DAdapter.of(offImage);
-        newGraphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        GraphicsAdapter newGraphicsAdapter = Graphics2DAdapter.withAntialiasingOf(offImage);
         return newGraphicsAdapter;
     }
 
@@ -238,7 +236,7 @@ public final class AwtController extends JPanel implements Controller, Runnable
             originalDisplayMode.getHeight());
     }
 
-    // TODO dieselbe Methode ist auch in GameApplication
+    // TODO dieselbe Methode ist auch in JavaFxGameApplication
     private void paintFrame(GraphicsAdapter graphicsAdapter)
     {
         GraphicsManager.getInstance()

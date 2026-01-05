@@ -68,7 +68,7 @@ public abstract class WindowPainter extends Painter<Window>
         String typeName = Window.dictionary.typeName(helicopter.getType());
         graphicsAdapter.drawHorizontallyCenteredString(typeName, 28 + x, 196, 113 + y);
         
-        HelicopterPainter helicopterPainter = GraphicsManager.getInstance().getPainter(helicopter.getClass());
+        HelicopterPainter helicopterPainter = GraphicsManager.getPainterFor(helicopter.getClass()).with(graphicsAdapter);
         helicopterPainter.displayPaint(graphicsAdapter, helicopter, 59 + x, 141 + y);
     
         GraphicalEntities.paintFrameLine(graphicsAdapter, 28 + x, 126 + y, 196);

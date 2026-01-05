@@ -11,7 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -19,24 +18,18 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
 
-public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
+public final class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
 {
+    public static GraphicsAdapter withAntialiasingOf(Image image)
+    {
+        GraphicsAdapter graphicsAdapter = of(image.getGraphics());
+        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        return graphicsAdapter;
+    }
+    
     public static GraphicsAdapter of(Graphics graphics)
     {
         return new Graphics2DAdapter((Graphics2D) graphics);
-    }
-    
-    public static GraphicsAdapter of(Image image)
-    {
-        return Graphics2DAdapter.of(image.getGraphics());
-    }
-    
-    public static GraphicsAdapter withAntialiasing(Image image)
-    {
-        GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(image);
-        graphicsAdapter.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
-        return graphicsAdapter;
     }
     
     private Graphics2DAdapter(Graphics2D graphics2D)

@@ -2,6 +2,7 @@ package de.helicopter_vs_aliens.model.scenery;
 
 import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
+import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
@@ -69,18 +70,10 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 	
 	private final Color[]
 		colors = new Color[2];            // nur für Palmen: Stammfarbe;
-	
-	private final SceneryObjectPainter
-		sceneryObjectPainter = GraphicsManager.getInstance().getPainter(SceneryObject.class);
-	
+
 	private SceneryLayer
 		layer;	// Ebene, in welcher das Hintergrundobjekt gezeichnet wird
 	
-	
-	SceneryObject()
-	{
-	
-	}
 	
 	static void updateBackgroundTimer()
 	{
@@ -156,7 +149,7 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
             colors[0] = Colorations.adjustBrightness(colors[1], Colorations.NIGHT_DIM_FACTOR);
             coordinatesOfComponents[0][0] = 20 + Calculations.random(70);
             cactusTimer = 140;
-			sceneryObjectPainter.paintPalmStemImage(this);
+			paintPalmStemImage();
 			clearColors();
         }
         else if( random >= UP_TO_PALM_FREQUENCY && random < UP_TO_HILL_FREQUENCY)
@@ -198,9 +191,33 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
             }
             generalObjectTimer = 0;
             backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
-			sceneryObjectPainter.paintDesertImage(this);
+			paintDesertImages();
         }        
     }
+	
+	private void paintPalmStemImage()
+	{
+		// TODO image auf EnumMap TimeOfDay umstellen
+		for(int i = 0; i < 2; i++)
+		{
+			setImage(i, new BufferedImage(20, 80 + getCoordinateOfComponent(0,0) + 6, BufferedImage.TYPE_INT_ARGB));
+			GraphicsAdapter graphicsAdapter = Graphics2DAdapter.withAntialiasingOf(getImage(i));
+			SceneryObjectPainter painter = GraphicsManager.getPainterFor(SceneryObject.class).with(graphicsAdapter);
+			painter.paintPalmStem(this, i);
+		}
+	}
+	
+	private void paintDesertImages()
+	{
+		// TODO ist vermutlich loop für Tageszeiten hier entsprechend Enum-Datentypen verwenden
+		for(int i = 0; i < 2; i++)
+		{
+			setImage(i, new BufferedImage(getSceneryObjectWidth(), 35, BufferedImage.TYPE_INT_ARGB));
+			GraphicsAdapter graphicsAdapter = Graphics2DAdapter.withAntialiasingOf(getImage(i));
+			SceneryObjectPainter painter = GraphicsManager.getPainterFor(SceneryObject.class).with(graphicsAdapter);
+			painter.paintDesert(this, i);
+		}
+	}
 	
 	private void clearColors()
 	{
@@ -243,7 +260,7 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
         mutualExclusionFactor = width/2;
         generalObjectTimer = 0;
         backgroundObjectSelection = UP_TO_PALM_FREQUENCY;
-        sceneryObjectPainter.paintDesertImage(this);
+		paintDesertImages();
     }
     
     void clearImage()
