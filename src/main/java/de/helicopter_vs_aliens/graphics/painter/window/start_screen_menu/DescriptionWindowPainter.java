@@ -1,7 +1,7 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
 import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -44,7 +44,7 @@ public class DescriptionWindowPainter extends StartScreenMenuWindowPainter
             String firstLine = getFirstLine();
             graphicsAdapter.drawString(firstLine, POSITION.x, POSITION.y - Y_OFFSET + TEXT_OFFSET);
             
-            PowerUpPainter powerUpPainter = GraphicsManager.getPainterFor(PowerUp.class).with(graphicsAdapter);
+            PowerUpPainter powerUpPainter = PainterProvider.getPainterFor(PowerUp.class).with(graphicsAdapter);
             List<String> powerUpTextLines = getPowerUpTextLines();
             
             for(PowerUpType powerUpType : PowerUpType.getValues())

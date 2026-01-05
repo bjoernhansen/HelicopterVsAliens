@@ -1,10 +1,10 @@
 package de.helicopter_vs_aliens.graphics.painter.window;
 
-import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.control.Events;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.gui.button.StartScreenButtonType;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.model.helicopter.Helicopter;
@@ -104,7 +104,7 @@ public class StartScreenWindowPainter extends WindowPainter
             
             Helicopter nextStartScreenHelicopter = Window.helicopterDummies.get(HelicopterType.getValues()
                                                                                               .get((Window.helicopterSelection + i) % HelicopterType.count()));
-            HelicopterPainter helicopterPainter = GraphicsManager.getPainterFor(nextStartScreenHelicopter.getClass()).with(graphicsAdapter);
+            HelicopterPainter helicopterPainter = PainterProvider.getPainterFor(nextStartScreenHelicopter.getClass()).with(graphicsAdapter);
             helicopterPainter.startScreenPaint(
                 graphicsAdapter,
                 nextStartScreenHelicopter,

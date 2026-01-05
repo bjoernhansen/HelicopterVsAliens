@@ -8,7 +8,7 @@ import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
 import de.helicopter_vs_aliens.graphics.painter.enemy.EnemyPainter;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.model.enemy.barrier.BarrierPositionType;
@@ -492,7 +492,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                 graphicsAdapters[j].setColor(Colorations.translucentDarkestBlack);
                 graphicsAdapters[j].fillRect(0, 0, image[j].getWidth(), image[j].getHeight());
             }
-            EnemyPainter enemyPainter = GraphicsManager.getPainterFor(getClass()).with(graphicsAdapters[j]);
+            EnemyPainter enemyPainter = PainterProvider.getPainterFor(getClass()).with(graphicsAdapters[j]);
             enemyPainter.standardImagePaintForCorpus(graphicsAdapters[j], this, 1 - (2 * j));
         }
     }
@@ -665,13 +665,13 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         {
             image[i] = getBufferedImage();
             graphicsAdapters[i] = Graphics2DAdapter.withAntialiasingOf(image[i]);
-            EnemyPainter enemyPainter = GraphicsManager.getPainterFor(getClass()).with(graphicsAdapters[i]);
+            EnemyPainter enemyPainter = PainterProvider.getPainterFor(getClass()).with(graphicsAdapters[i]);
             enemyPainter.standardImagePaintForCorpus(graphicsAdapters[i], this, 1 - (2 * i));
             if(cloakingDevice.isEnabled() && (getHelicopter().getType() == HelicopterType.OROCHI))
             {
                 BufferedImage tempImage = getBufferedImage();
                 GraphicsAdapter graphicsAdapter = Graphics2DAdapter.withAntialiasingOf(tempImage);
-                EnemyPainter cloakableEnemyPainter = GraphicsManager.getPainterFor(getClass()).with(graphicsAdapter);
+                EnemyPainter cloakableEnemyPainter = PainterProvider.getPainterFor(getClass()).with(graphicsAdapter);
                 cloakableEnemyPainter.paintCorpus(graphicsAdapter,
                                                   this,
                                                   1 - (2 * i),

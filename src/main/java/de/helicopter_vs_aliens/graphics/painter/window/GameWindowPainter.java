@@ -10,7 +10,7 @@ import de.helicopter_vs_aliens.control.entities.ManageablePaintableService;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
 import de.helicopter_vs_aliens.graphics.painter.PowerUpPainter;
 import de.helicopter_vs_aliens.gui.MultiKillType;
 import de.helicopter_vs_aliens.gui.button.Button;
@@ -245,7 +245,7 @@ public class GameWindowPainter extends WindowPainter
     
     private void paintCollectedPowerUps(GraphicsAdapter graphicsAdapter)
     {
-        PowerUpPainter powerUpPainter = GraphicsManager.getPainterFor(PowerUp.class).with(graphicsAdapter);
+        PowerUpPainter powerUpPainter = PainterProvider.getPainterFor(PowerUp.class).with(graphicsAdapter);
         AtomicInteger statusBarPositionIndex = new AtomicInteger();
         PowerUpType.getStatusBarPowerUpTypes()
                    .stream()

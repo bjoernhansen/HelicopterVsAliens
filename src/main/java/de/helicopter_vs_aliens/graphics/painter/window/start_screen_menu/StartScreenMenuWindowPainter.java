@@ -1,9 +1,9 @@
 package de.helicopter_vs_aliens.graphics.painter.window.start_screen_menu;
 
-import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
+import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.graphics.painter.window.WindowPainter;
 import de.helicopter_vs_aliens.gui.button.StartScreenMenuButtonType;
 import de.helicopter_vs_aliens.gui.button.StartScreenSubCancelButtonType;
@@ -59,7 +59,7 @@ public class StartScreenMenuWindowPainter extends WindowPainter
     void paintHelicopterInStartScreenMenu(GraphicsAdapter graphicsAdapter)
     {
         Helicopter startScreenSubHelicopter = Window.helicopterDummies.get(HelicopterType.getValues().get(Window.page.ordinal()-2));
-        HelicopterPainter helicopterPainter = GraphicsManager.getPainterFor(startScreenSubHelicopter.getClass()).with(graphicsAdapter);
+        HelicopterPainter helicopterPainter = PainterProvider.getPainterFor(startScreenSubHelicopter.getClass()).with(graphicsAdapter);
         helicopterPainter.startScreenSubPaint(graphicsAdapter, startScreenSubHelicopter);
     }
 }

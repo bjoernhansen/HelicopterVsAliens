@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.control.entities.ManageablePaintable;
 import de.helicopter_vs_aliens.control.entities.ManageablePaintableGroupType;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
 import de.helicopter_vs_aliens.graphics.painter.SceneryObjectPainter;
 import de.helicopter_vs_aliens.model.RectangularPaintableEntity;
 import de.helicopter_vs_aliens.util.Calculations;
@@ -202,7 +202,7 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 		{
 			setImage(i, new BufferedImage(20, 80 + getCoordinateOfComponent(0,0) + 6, BufferedImage.TYPE_INT_ARGB));
 			GraphicsAdapter graphicsAdapter = Graphics2DAdapter.withAntialiasingOf(getImage(i));
-			SceneryObjectPainter painter = GraphicsManager.getPainterFor(SceneryObject.class).with(graphicsAdapter);
+			SceneryObjectPainter painter = PainterProvider.getPainterFor(SceneryObject.class).with(graphicsAdapter);
 			painter.paintPalmStem(this, i);
 		}
 	}
@@ -214,7 +214,7 @@ public class SceneryObject extends RectangularPaintableEntity implements Managea
 		{
 			setImage(i, new BufferedImage(getSceneryObjectWidth(), 35, BufferedImage.TYPE_INT_ARGB));
 			GraphicsAdapter graphicsAdapter = Graphics2DAdapter.withAntialiasingOf(getImage(i));
-			SceneryObjectPainter painter = GraphicsManager.getPainterFor(SceneryObject.class).with(graphicsAdapter);
+			SceneryObjectPainter painter = PainterProvider.getPainterFor(SceneryObject.class).with(graphicsAdapter);
 			painter.paintDesert(this, i);
 		}
 	}

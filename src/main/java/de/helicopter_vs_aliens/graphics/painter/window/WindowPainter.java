@@ -4,7 +4,7 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.graphics.GraphicalEntities;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
 import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.graphics.painter.helicopter.HelicopterPainter;
 import de.helicopter_vs_aliens.gui.window.Window;
@@ -68,7 +68,7 @@ public abstract class WindowPainter extends Painter<Window>
         String typeName = Window.dictionary.typeName(helicopter.getType());
         graphicsAdapter.drawHorizontallyCenteredString(typeName, 28 + x, 196, 113 + y);
         
-        HelicopterPainter helicopterPainter = GraphicsManager.getPainterFor(helicopter.getClass()).with(graphicsAdapter);
+        HelicopterPainter helicopterPainter = PainterProvider.getPainterFor(helicopter.getClass()).with(graphicsAdapter);
         helicopterPainter.displayPaint(graphicsAdapter, helicopter, 59 + x, 141 + y);
     
         GraphicalEntities.paintFrameLine(graphicsAdapter, 28 + x, 126 + y, 196);
