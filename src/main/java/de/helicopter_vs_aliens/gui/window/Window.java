@@ -6,7 +6,8 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameResources;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameRessourceProvider;
 import de.helicopter_vs_aliens.control.timer.Timer;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
+import de.helicopter_vs_aliens.graphics.PainterProvider;
+import de.helicopter_vs_aliens.graphics.painter.Painter;
 import de.helicopter_vs_aliens.gui.BlockMessage;
 import de.helicopter_vs_aliens.gui.FontProvider;
 import de.helicopter_vs_aliens.gui.button.Button;
@@ -177,7 +178,13 @@ public abstract class Window implements Paintable
 	@Override
 	public void paint(GraphicsAdapter graphicsAdapter)
 	{
-		GraphicsManager.getInstance().paint(this);
+		paint(graphicsAdapter, this);
+	}
+	
+	private <E extends Paintable> void paint(GraphicsAdapter graphicsAdapter, E paintableEntity)
+	{
+		Painter<E> painter = PainterProvider.getPainterFor(paintableEntity.getClass()).with(graphicsAdapter);
+		painter.paint(paintableEntity);
 	}
 		
     public static void initialize(GameRessourceProvider gameRessourceProvider)

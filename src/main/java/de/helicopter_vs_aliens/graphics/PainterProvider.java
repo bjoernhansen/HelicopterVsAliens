@@ -39,7 +39,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 
-public class PainterProvider
+public final class PainterProvider
 {
     public static GraphicsAdapterInserter getPainterFor(Class<? extends Paintable> classOfPaintableEntity)
     {
@@ -57,6 +57,15 @@ public class PainterProvider
         private GraphicsAdapterInserter(Class<? extends Paintable> classOfPaintableEntity)
         {
             this.classOfPaintableEntity = classOfPaintableEntity;
+        }
+        
+        // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
+        // TODO unchecked Cast beseitigen
+        public <E extends Painter<? extends Paintable>> E with(GraphicsAdapter graphicsAdapter)
+        {
+            E painter = (E) PAINTERS.get(classOfPaintableEntity);
+            painter.setGraphicsAdapter(graphicsAdapter);
+            return painter;
         }
         
         private static Map<Class<? extends Paintable>, Painter<? extends Paintable>> getPainterMap()
@@ -105,15 +114,6 @@ public class PainterProvider
                                      EnemyModelType::makePainterInstance,
                                      lastWriteWinsStrategy,
                                      () -> new EnumMap<>(EnemyModelType.class)));
-        }
-        
-        // TODO eingeschränkter Wildcard-Typ als Rückgabewert sollte immer vermieden werden (siehe Effective Java)
-        // TODO unchecked Cast beseitigen
-        public <E extends Painter<? extends Paintable>> E with(GraphicsAdapter graphicsAdapter)
-        {
-            E painter = (E) PAINTERS.get(classOfPaintableEntity);
-            painter.setGraphicsAdapter(graphicsAdapter);
-            return painter;
         }
     }
 }

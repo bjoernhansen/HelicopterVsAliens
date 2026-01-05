@@ -6,7 +6,6 @@ import de.helicopter_vs_aliens.control.FrameSkipStatusType;
 import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
@@ -239,8 +238,6 @@ public final class AwtController extends JPanel implements Controller, Runnable
     // TODO dieselbe Methode ist auch in JavaFxGameApplication
     private void paintFrame(GraphicsAdapter graphicsAdapter)
     {
-        GraphicsManager.getInstance()
-                       .setGraphics(graphicsAdapter);
         gameProgress.getWindowManager()
                     .paintWindow(graphicsAdapter);
     }

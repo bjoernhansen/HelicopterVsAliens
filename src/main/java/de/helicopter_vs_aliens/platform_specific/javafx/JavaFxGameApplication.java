@@ -6,7 +6,6 @@ import de.helicopter_vs_aliens.control.ressource_transfer.GameProgress;
 import de.helicopter_vs_aliens.control.events.EventFactory;
 import de.helicopter_vs_aliens.graphics.Graphics2DAdapter;
 import de.helicopter_vs_aliens.graphics.GraphicsAdapter;
-import de.helicopter_vs_aliens.graphics.GraphicsManager;
 import de.helicopter_vs_aliens.gui.window.Window;
 import de.helicopter_vs_aliens.util.Colorations;
 import de.helicopter_vs_aliens.util.geometry.Dimension;
@@ -145,8 +144,6 @@ public class JavaFxGameApplication extends Application
         // TODO dieselbe Methode ist auch in AwtController
         private void paintFrame(GraphicsAdapter graphicsAdapter)
         {
-            GraphicsManager.getInstance()
-                           .setGraphics(graphicsAdapter);
             gameProgress.getWindowManager()
                         .paintWindow(graphicsAdapter);
         }
