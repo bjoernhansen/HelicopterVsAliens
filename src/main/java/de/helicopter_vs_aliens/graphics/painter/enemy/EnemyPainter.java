@@ -113,11 +113,11 @@ public abstract class EnemyPainter <T extends Enemy> extends Painter<T>
         //Malen des Gegners
         int offsetX = (int)(isImagePaint
             ? ((directionX == 1) ? (0.028f * enemy.getPaintBounds().width) : 0)
-            : enemy.getPaintBounds().x),
-            
-            offsetY = (int)(isImagePaint
-                ? (0.25f * enemy.getPaintBounds().height)
-                : enemy.getPaintBounds().y);
+            : enemy.getPaintBounds().x);
+        
+        int offsetY = (int)(isImagePaint
+            ? (0.25f * enemy.getPaintBounds().height)
+            : enemy.getPaintBounds().y);
         
         paintEnemy(graphicsAdapter, directionX, isCompletelyCloakedImagePaint, isImagePaint, offsetX, offsetY, mainColorLight, mainColorDark, barColor, inactiveNozzleColor);
     }

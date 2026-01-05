@@ -127,10 +127,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         TURN_FRAME = new Rectangle(TURN_DISTANCE.x,
                                    TURN_DISTANCE.y,
                                    GraphicsAdapter.VIRTUAL_DIMENSION.getWidth()
-                                       - 2 * TURN_DISTANCE.x,
+                                       - (2 * TURN_DISTANCE.x),
                                    GROUND_Y
                                        - SAVE_ZONE_WIDTH
-                                       - 2 * TURN_DISTANCE.y);
+                                       - (2 * TURN_DISTANCE.y));
     
     public static final float[]
         scales = {1f, 1f, 1f, RADAR_DETECTABILITY};
@@ -168,7 +168,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     public int
         stunningTimer;
     
-    public int
+    private int
         empSlowedTimer;            // reguliert die Länge der Verlangsamung nach EMP-Treffer (Pegasus-Klasse)
     
     public int
@@ -467,7 +467,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     protected abstract boolean isMeetingRequirementsForGlowingEyes();
     
     // TODO, das ist so eine Methode, die in einer abschließenden postset Methode aufgerufen werden könnte (könnte Teil des Interfaces werden für MangablePaintableEntity
-    public void clearImage()
+    void clearImage()
     {
         for(int i = 0; i < image.length; i++)
         {
@@ -494,7 +494,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             }
             EnemyPainter enemyPainter = GraphicsManager.getInstance()
                                                        .getPainter(getClass());
-            enemyPainter.standardImagePaintForCorpus(graphicsAdapters[j], this, 1 - 2 * j);
+            enemyPainter.standardImagePaintForCorpus(graphicsAdapters[j], this, 1 - (2 * j));
         }
     }
     
@@ -654,7 +654,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     protected double calculateInitialY()
     {
-        return MIN_STARTING_Y + Math.random() * (MAX_STARTING_Y - getHeight());
+        return MIN_STARTING_Y + (Math.random() * (MAX_STARTING_Y - getHeight()));
     }
     
     // TODO Methode überarbeiten und Teile in kleinere Methoden auslagern
@@ -670,14 +670,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             
             EnemyPainter enemyPainter = GraphicsManager.getInstance()
                                                        .getPainter(getClass());
-            enemyPainter.standardImagePaintForCorpus(graphicsAdapters[i], this, 1 - 2 * i);
-            if(cloakingDevice.isEnabled() && getHelicopter().getType() == HelicopterType.OROCHI)
+            enemyPainter.standardImagePaintForCorpus(graphicsAdapters[i], this, 1 - (2 * i));
+            if(cloakingDevice.isEnabled() && (getHelicopter().getType() == HelicopterType.OROCHI))
             {
                 BufferedImage tempImage = getBufferedImage();
                 image[2 + i] = getBufferedImage();
                 enemyPainter.paintCorpus(Graphics2DAdapter.withAntialiasing(tempImage),
                                          this,
-                                         1 - 2 * i,
+                                         1 - (2 * i),
                                          Color.red,
                                          true,
                                          true);
@@ -698,20 +698,20 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     private void placeNearHelicopter()
     {
         Helicopter helicopter = getHelicopter();
-        boolean isLeftOfHelicopter = helicopter.getMaxX() + 0.5f * getWidth() + BARRIER_DISTANCE >= 1024;
+        boolean isLeftOfHelicopter = (helicopter.getMaxX() + (0.5f * getWidth()) + BARRIER_DISTANCE) >= 1024;
         
         int x;
-        int y = (int)(helicopter.getY()
-            + helicopter.getHeight() / 2
-            - getWidth()
-            + Calculations.random() * getWidth());
+        int y = (int)(((helicopter.getY()
+            + (helicopter.getHeight() / 2))
+            - getWidth())
+            + (Calculations.random() * getWidth()));
         
         if(isLeftOfHelicopter)
         {
-            x = (int)(helicopter.getX()
-                - 3 * getWidth() / 2
-                - 10
-                + Calculations.random() * (getWidth() / 3.0));
+            x = (int)((helicopter.getX()
+                - ((3 * getWidth()) / 2)
+                - 10)
+                + (Calculations.random() * (getWidth() / 3.0)));
         }
         else
         {
@@ -758,8 +758,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private static boolean turnaroundIsTurnAway(double direction, double enemyCenter, double barrierCenter)
     {
-        return direction == 1 && enemyCenter < barrierCenter
-            || direction == -1 && enemyCenter > barrierCenter;
+        return ((direction == 1) && (enemyCenter < barrierCenter))
+            || ((direction == -1) && (enemyCenter > barrierCenter));
     }
     
     public boolean isVisibleNonBarricadeVessel()
@@ -833,12 +833,12 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     protected void checkForBarrierCollision()
     {
         isPreviousStoppingBarrier = stoppingBarrier;
-        if(stoppingBarrier == null || !stoppingBarrier.intersects(this))
+        if((stoppingBarrier == null) || !stoppingBarrier.intersects(this))
         {
             stoppingBarrier = null;
             for(int i = 0; i < EnemyController.currentNumberOfBarriers; i++)
             {
-                if(EnemyController.livingBarrier[i] != this
+                if((EnemyController.livingBarrier[i] != this)
                     && EnemyController.livingBarrier[i].intersects(this))
                 
                 {
@@ -900,15 +900,15 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         maneuverManger.performAll();
         
         // Beschleunigung
-        if(speedup != DISABLED || canFrontalSpeedup)
+        if((speedup != DISABLED) || canFrontalSpeedup)
         {
             evaluateSpeedup();
         }
         
         // Chaos-Flug
         if(canMoveChaotic
-            && chaosTimer == READY
-            && dodgeTimer == READY)
+            && (chaosTimer == READY)
+            && (dodgeTimer == READY))
         {
             if(Calculations.tossUp(0.2f) && type.isShieldMaker())
             {
@@ -956,14 +956,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         Helicopter helicopter = getHelicopter();
         if(canChaosSpeedup
             && !isTargetSpeedExceededX()
-            && helicopter.getX() - getX() > -350)
+            && ((helicopter.getX() - getX()) > -350))
         {
             setSpeedLevelX(targetSpeedLevel.getX() + 6);
         }
-        if(canChaosSpeedup && (helicopter.getX() - getX()) > -160)
+        if(canChaosSpeedup && ((helicopter.getX() - getX()) > -160))
         {
             canMoveChaotic = true;
-            setSpeedLevelY(9 + 4.5 * Math.random());
+            setSpeedLevelY(9 + (4.5 * Math.random()));
         }
         
         // Ausweichen
@@ -990,12 +990,12 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isAbleToMakeKamikaze()
     {
-        return canKamikaze && teleportTimer <= 0;
+        return canKamikaze && (teleportTimer <= 0);
     }
     
     private boolean isTurningAroundEarly()
     {
-        return isAbleToTurnAroundEarly && getMinX() < 0.85 * GraphicsAdapter.VIRTUAL_DIMENSION.getWidth();
+        return isAbleToTurnAroundEarly && (getMinX() < (0.85 * GraphicsAdapter.VIRTUAL_DIMENSION.getWidth()));
     }
     
     private void validateTurns()
@@ -1016,7 +1016,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isTouchingBarrier()
     {
-        return stoppingBarrier != null && burrowTimer == DISABLED;
+        return (stoppingBarrier != null) && (burrowTimer == DISABLED);
     }
     
     private void tryToTurnAtBarrier()
@@ -1024,8 +1024,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         turnTimer = MIN_TURN_TIME;
         if(isOnScreen()
             && stoppingBarrier.isOnScreen()
-            && stoppingBarrier != isPreviousStoppingBarrier
-            && turnAudioTimer == READY)
+            && (stoppingBarrier != isPreviousStoppingBarrier)
+            && (turnAudioTimer == READY))
         {
             Audio.play(Audio.landing);
             turnAudioTimer = MIN_TURN_NOISELESS_TIME;
@@ -1076,8 +1076,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isTurningAtLateralBoundaries()
     {
-        return barrierTeleportTimer == DISABLED
-            && turnTimer == READY
+        return (barrierTeleportTimer == DISABLED)
+            && (turnTimer == READY)
             && isRemainingOnScreen()
             && isMovingOutOfLateralBoundaries();
     }
@@ -1134,7 +1134,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isTurningAtVerticalBoundaries()
     {
-        return burrowTimer == DISABLED
+        return (burrowTimer == DISABLED)
             && isMovingOutOfVerticalBoundaries();
     }
     
@@ -1256,13 +1256,12 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isToBeRemoved()
     {
-        return type != EnemyType.BOSS_2_SERVANT
-            && barrierTeleportTimer == DISABLED
+        return (type != EnemyType.BOSS_2_SERVANT)
+            && (barrierTeleportTimer == DISABLED)
             && !isDodging()
-            && (callBack == 0 || !speed.equals(ZERO_SPEED))
-            && ((getMinX() > GraphicsAdapter.VIRTUAL_DIMENSION.getWidth() + DISAPPEARANCE_DISTANCE
-            && isFlyingRight())
-            || (getMaxX() < -DISAPPEARANCE_DISTANCE));
+            && ((callBack == 0) || !speed.equals(ZERO_SPEED))
+            && (((getMinX() > (GraphicsAdapter.VIRTUAL_DIMENSION.getWidth() + DISAPPEARANCE_DISTANCE)) && isFlyingRight())
+                || (getMaxX() < -DISAPPEARANCE_DISTANCE));
     }
     
     private boolean isDodging()
@@ -1272,8 +1271,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     public boolean isOnScreen()
     {
-        return getMaxX() > 0
-            && getMinX() < GraphicsAdapter.VIRTUAL_DIMENSION.getWidth();
+        return (getMaxX() > 0) && (getMinX() < GraphicsAdapter.VIRTUAL_DIMENSION.getWidth());
     }
     
     public void markForRemoval()
@@ -1281,7 +1279,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         isMarkedForRemoval = true;
     }
     
-    public boolean isMarkedForRemoval()
+    boolean isMarkedForRemoval()
     {
         return isMarkedForRemoval;
     }
@@ -1291,28 +1289,28 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return !isEmpShocked
             && isIntact()
             && !isInvincible()
-            && !(barrierTeleportTimer != DISABLED && barrierShootTimer == DISABLED)
+            && !((barrierTeleportTimer != DISABLED) && (barrierShootTimer == DISABLED))
             && pegasus.empWave.getEllipse()
                               .intersects(getBounds());
     }
     
     private void evaluateSpeedup()
     {
-        if(speedLevel.getX() < (speedup == DISABLED ? 12 : 19)
-            && (speedup > 0 || canFrontalSpeedup))
+        if((speedLevel.getX() < ((speedup == DISABLED) ? 12 : 19))
+            && ((speedup > 0) || canFrontalSpeedup))
         {
             increaseSpeedLevelX(0.5);
         }
-        if(speedup == 0 && isAtEyeLevelWithHelicopter())
+        if((speedup == 0) && isAtEyeLevelWithHelicopter())
         {
             speedup = 1;
             canSinusMove = true;
         }
-        else if(speedup == 1 && !isAtEyeLevelWithHelicopter())
+        else if((speedup == 1) && !isAtEyeLevelWithHelicopter())
         {
             speedup = 2;
         }
-        else if(speedup == 2 && isAtEyeLevelWithHelicopter())
+        else if((speedup == 2) && isAtEyeLevelWithHelicopter())
         {
             speedup = 3;
             canSinusMove = false;
@@ -1360,9 +1358,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         {
             makeKamikazeWithHelicopter();
         }
-        else if(!canFrontalSpeedup && dodgeTimer == READY)
+        else if(!canFrontalSpeedup && (dodgeTimer == READY))
         {
-            if(type == EnemyType.BODYGUARD && Events.boss.shield < 1)
+            if((type == EnemyType.BODYGUARD) && (Events.boss.shield < 1))
             {
                 setSpeedLevelX(7.5);
             }
@@ -1420,26 +1418,26 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         if(hasCanonReadyToFire()
             && !isEmpSlowed()
             && Calculations.tossUp(0.1f)
-            && getX() + getWidth() > 0
+            && ((getX() + getWidth()) > 0)
             && !isCompletelyCloaked()
             && ((isFlyingLeft()
             && helicopter
-                                    .intersects(
-                                        getX() + Integer.MIN_VALUE / 2f,
-                                        getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth() / 2) - FIELD_OF_FIRE_TOLERANCE_Y,
-                                        Integer.MAX_VALUE / 2f,
-                                        EnemyMissile.BASE_DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))
+            .intersects(
+                getX() + (Integer.MIN_VALUE / 2f),
+                (getY() + ((getModel() == EnemyModelType.TIT) ? 0 : (getWidth() / 2))) - FIELD_OF_FIRE_TOLERANCE_Y,
+                Integer.MAX_VALUE / 2f,
+                EnemyMissile.BASE_DIAMETER + (2 * FIELD_OF_FIRE_TOLERANCE_Y)))
             ||
             (isFlyingRight()
                 && helicopter
-                                        .intersects(
-                                            getX() + 0,
-                                            getY() + (getModel() == EnemyModelType.TIT ? 0 : getWidth() / 2) - FIELD_OF_FIRE_TOLERANCE_Y,
-                                            Integer.MAX_VALUE / 2f,
-                                            EnemyMissile.BASE_DIAMETER + 2 * FIELD_OF_FIRE_TOLERANCE_Y))))
+                .intersects(
+                    getX() + 0,
+                    (getY() + ((getModel() == EnemyModelType.TIT) ? 0 : (getWidth() / 2))) - FIELD_OF_FIRE_TOLERANCE_Y,
+                    Integer.MAX_VALUE / 2f,
+                    EnemyMissile.BASE_DIAMETER + (2 * FIELD_OF_FIRE_TOLERANCE_Y)))))
         {
             shoot(hasDeadlyShots() ? EnemyMissileType.BUSTER : EnemyMissileType.DISCHARGER,
-                  shotSpeed + 3 * Math.random() + 5);
+                  shotSpeed + (3 * Math.random()) + 5);
             
             shootTimer = shootingRate;
         }
@@ -1467,7 +1465,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     protected void startBarrierUncloaking()
     {
-        barrierTeleportTimer = 2 * CloakingDevice.BOOT_AND_FADE_TIME + shootingRate * shotsPerCycle;
+        barrierTeleportTimer = (2 * CloakingDevice.BOOT_AND_FADE_TIME) + (shootingRate * shotsPerCycle);
         cloakingDevice.setToEndOfCloakedTime();
         placeNearHelicopter();
     }
@@ -1524,16 +1522,16 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         if(!speed.equals(ZERO_SPEED) || Scenery.isBackgroundMoving)
         {
             setLocation(
-                getX()
-                    + navigationDevice.getDirectionX() * speed.getX()
+                (getX()
+                    + (navigationDevice.getDirectionX() * speed.getX()))
                     - (Scenery.isBackgroundMoving ? SceneryObject.BG_SPEED : 0),
-                Math.max(getModel() == EnemyModelType.BARRIER ? 0 : Integer.MIN_VALUE,
-                         type == EnemyType.ROCK
+                Math.max((getModel() == EnemyModelType.BARRIER) ? 0 : Integer.MIN_VALUE,
+                         (type == EnemyType.ROCK)
                              ? getY()
                              : Math.min(canBePositionedBelowGround()
                                             ? Integer.MAX_VALUE
-                                            : GROUND_Y - getHeight(),
-                                        getY() + navigationDevice.getDirectionY() * speed.getY())));
+                                            : (GROUND_Y - getHeight()),
+                                        getY() + (navigationDevice.getDirectionY() * speed.getY()))));
         }
     }
     
@@ -1587,9 +1585,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
                     * ((double)(EMP_SLOW_TIME - empSlowedTimer) / EMP_SLOW_TIME));
         }
         
-        if(stoppingBarrier != null
-            && burrowTimer == DISABLED
-            && !(getModel() == EnemyModelType.BARRIER && type == EnemyType.BIG_BARRIER))
+        if((stoppingBarrier != null)
+            && (burrowTimer == DISABLED)
+            && !((getModel() == EnemyModelType.BARRIER) && (type == EnemyType.BIG_BARRIER)))
         {
             adjustSpeedToBarrier();
         }
@@ -1609,14 +1607,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     {
         if(isMoving()
             &&
-            (totalStunningTime - 13 == stunningTimer
-                || getMaxX()
+            (((totalStunningTime - 13) == stunningTimer)
+                || ((getMaxX()
                 + 18
-                + missileDrive / 2f > GraphicsAdapter.VIRTUAL_DIMENSION.getWidth()
-                + 2 * getWidth() / 3
-                || getMinX()
+                + (missileDrive / 2f)) > (GraphicsAdapter.VIRTUAL_DIMENSION.getWidth()
+                + ((2 * getWidth()) / 3)))
+                || ((getMinX()
                 - 18
-                - missileDrive / 2f < -2 * getWidth() / 3))
+                - (missileDrive / 2f)) < ((-2 * getWidth()) / 3))))
         {
             stopMoving();
         }
@@ -1632,7 +1630,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private void recoverSpeed()
     {
-        if(burrowTimer != DISABLED || hasReachedTargetSpeed())
+        if((burrowTimer != DISABLED) || hasReachedTargetSpeed())
         {
             isRecoveringSpeed = false;
             if(burrowTimer != DISABLED)
@@ -1657,27 +1655,27 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     private boolean hasReachedTargetSpeed()
     {
         return isTargetSpeedReachedOrExceededX()
-            && speedLevel.getY() >= targetSpeedLevel.getY();
+            && (speedLevel.getY() >= targetSpeedLevel.getY());
     }
     
     private void adjustSpeedToBarrier()
     {
         if(hasSameDirectionX(stoppingBarrier)
-            && stoppingBarrier.getCenterX() * navigationDevice.getDirectionX()
-            < getCenterX() * navigationDevice.getDirectionX()
-            && stoppingBarrier.speed.getX() > speed.getX())
+            && ((stoppingBarrier.getCenterX() * navigationDevice.getDirectionX())
+            < (getCenterX() * navigationDevice.getDirectionX()))
+            && (stoppingBarrier.speed.getX() > speed.getX()))
         {
-            speed.setLocation(stoppingBarrier.isOnScreen()
-                                  && !isOnScreen()
+            speed.setLocation((stoppingBarrier.isOnScreen()
+                                  && !isOnScreen())
                                   ? 0
                                   : stoppingBarrier.speed.getX(),
                               speed.getY());
         }
         else if(hasSameDirectionY(stoppingBarrier)
-            && stoppingBarrier.getCenterY() * navigationDevice.getDirectionY()
-            < getCenterY() * navigationDevice.getDirectionY()
-            && stoppingBarrier.speed.getY() > speed.getY()
-            && burrowTimer == DISABLED)
+            && ((stoppingBarrier.getCenterY() * navigationDevice.getDirectionY())
+            < (getCenterY() * navigationDevice.getDirectionY()))
+            && (stoppingBarrier.speed.getY() > speed.getY())
+            && (burrowTimer == DISABLED))
         {
             speed.setLocation(speed.getX(), stoppingBarrier.speed.getY());
             if(getHelicopter().tractor == this)
@@ -1697,7 +1695,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return otherEnemy.navigationDevice.getDirectionY() == navigationDevice.getDirectionY();
     }
     
-    public void updateDead()
+    void updateDead()
     {
         if(collisionDamageTimer > 0)
         {
@@ -1708,7 +1706,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             collisionTimer--;
         }
         if(!hasCrashed
-            && getMaxY() + speed.getY() >= crashPositionY)
+            && ((getMaxY() + speed.getY()) >= crashPositionY))
         {
             handleCrashToTheGround();
         }
@@ -1764,7 +1762,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return isBoss() && isIntact();
     }
     
-    public void collision()
+    void collision()
     {
         Helicopter helicopter = getGameRessourceProvider().getHelicopter();
         boolean playCollisionSound = collisionTimer == READY;
@@ -1847,8 +1845,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return isIntact()
             && !isExplodingOnCollisions()
             && !isInvincible()
-            && !(barrierTeleportTimer != DISABLED && barrierShootTimer == DISABLED)
-            && collisionTimer == READY;
+            && !((barrierTeleportTimer != DISABLED) && (barrierShootTimer == DISABLED))
+            && (collisionTimer == READY);
     }
     
     public float collisionDamage()
@@ -1859,11 +1857,11 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             * helicopter.getBaseProtectionFactor(isExplodingOnCollisions())
             * (helicopter.isTakingKaboomDamageFrom(this)
             ? helicopter.kaboomDamage()
-            : (isExplodingOnCollisions() && !isInvincible() && isIntact())
+            : ((isExplodingOnCollisions() && !isInvincible() && isIntact())
             ? 1.0f
-            : collisionDamageTimer > 0
+            : ((collisionDamageTimer > 0)
             ? 0.0325f
-            : 0.65f);
+            : 0.65f)));
     }
     
     private void takeDamage(int dmg)
@@ -1899,7 +1897,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     {
         return missile.isStunning()
             && isStunnable()
-            && nonStunnableTimer == READY;
+            && (nonStunnableTimer == READY);
     }
     
     private void stun(Missile missile)
@@ -1909,23 +1907,23 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             Audio.play(Audio.stun);
         }
         explode(missile);
-        nonStunnableTimer = (int)(type.isMainBoss() || type.isFinalBossServant()
-            ? 2.25f * Events.level
+        nonStunnableTimer = (int)((type.isMainBoss() || type.isFinalBossServant())
+            ? (2.25f * Events.level)
             : 0);
-        knockBackDirection = missile.getSpeed() > 0 ? 1 : -1;
+        knockBackDirection = (missile.getSpeed() > 0) ? 1 : -1;
         
         Helicopter helicopter = getHelicopter();
         // TODO in Methoden auslagern, Code verständlicher machen
         speedLevel.setLocation(
-            (knockBackDirection == navigationDevice.getDirectionX() ? 1 : -1)
-                * (type.isMainBoss() || type.isFinalBossServant()
-                ? (10f + helicopter.missileDrive) / (Events.level / 10f)
-                : 10f + helicopter.missileDrive),
+            ((knockBackDirection == navigationDevice.getDirectionX()) ? 1 : -1)
+                * ((type.isMainBoss() || type.isFinalBossServant())
+                ? ((10f + helicopter.missileDrive) / (Events.level / 10f))
+                : (10f + helicopter.missileDrive)),
             0);
         
         stunningTimer = totalStunningTime
-            = (int)(17 + STUNNING_TIME_BASIS
-            * (type.isMajorBoss() ? (10f / Events.level) : 2.5f));
+            = (int)(17 + (STUNNING_TIME_BASIS
+            * (type.isMajorBoss() ? (10f / Events.level) : 2.5f)));
         
         disableSiteEffects();
     }
@@ -1963,7 +1961,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
             Audio.play(Audio.cloak);
             cloakingDevice.activate();
         }
-        if(missile != null
+        if((missile != null)
             && missile.isStunning()
             && cloakingDevice.isEnabled())
         {
@@ -2006,9 +2004,9 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     private boolean canDoHitTriggeredTurn()
     {
         return canInstantlyTurnAround
-            || canTurn
+            || (canTurn
             && !isAbleToTurnAroundEarly
-            && Calculations.tossUp(getTurnProbability());
+            && Calculations.tossUp(getTurnProbability()));
     }
     
     protected float getTurnProbability()
@@ -2037,10 +2035,10 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
         getGameRessourceProvider().getExplosionController()
                                   .start(
-                                      getX() + ((explosionType != ExplosionType.EMP && getModel() != EnemyModelType.BARRIER)
-                                          ? (missileSpeed < 0 ? 2 : 1) * getWidth() / 3
-                                          : getWidth() / 2),
-                                      getY() + getHeight() / 2,
+                                      getX() + (((explosionType != ExplosionType.EMP) && (getModel() != EnemyModelType.BARRIER))
+                                          ? ((((missileSpeed < 0) ? 2 : 1) * getWidth()) / 3)
+                                          : (getWidth() / 2)),
+                                      getY() + (getHeight() / 2),
                                       explosionType,
                                       extraDamage);
     }
@@ -2092,7 +2090,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         empSlowedTimer = READY;
         crashPositionY = (int)(isIntersectingGroundLine()
             ? getMaxY()
-            : GROUND_Y + 1 + Calculations.random() * 0.25 * getHeight());
+            : (GROUND_Y + 1 + (Calculations.random() * 0.25 * getHeight())));
     }
     
     private void adjustBrightnessOfColors(float dimFactor)
@@ -2125,7 +2123,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         die(null, false);
     }
     
-    public void dieByMissile(Missile missile)
+    private void dieByMissile(Missile missile)
     {
         die(missile, false);
     }
@@ -2198,7 +2196,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     public int calculateReward()
     {
-        return getHelicopter().getBonusFactor() * getEffectiveStrength() + getRewardModifier();
+        return (getHelicopter().getBonusFactor() * getEffectiveStrength()) + getRewardModifier();
     }
     
     protected int getRewardModifier()
@@ -2206,7 +2204,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return 5 - Calculations.random(11);
     }
     
-    public int getEffectiveStrength()
+    private int getEffectiveStrength()
     {
         return type.getStrength() * getRewardFactor();
     }
@@ -2252,8 +2250,8 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean hasEnoughDistanceFromScreenBordersToDodgeAway()
     {
-        return (isFlyingLeft() && getMaxX() < DODGE_BORDER_DISTANCE_RIGHT)
-            || (isFlyingRight() && getMaxX() > DODGE_BORDER_DISTANCE_LEFT);
+        return (isFlyingLeft() && (getMaxX() < DODGE_BORDER_DISTANCE_RIGHT))
+            || (isFlyingRight() && (getMaxX() > DODGE_BORDER_DISTANCE_LEFT));
     }
     
     private boolean isFlyingTowardsMissile(Missile missile)
@@ -2263,20 +2261,20 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     }
     
     
-    public void teleport()
+    private void teleport()
     {
         Audio.play(Audio.teleport2);
-        setLocation(260.0 + Math.random() * (660.0 - getWidth()),
-                    20.0 + Math.random() * (270.0 - getHeight()));
+        setLocation(260.0 + (Math.random() * (660.0 - getWidth())),
+                    20.0 + (Math.random() * (270.0 - getHeight())));
         stopMoving();
         teleportTimer = 60;
         invincibleTimer = 40;
     }
     
-    public boolean isHittable(Missile missile)
+    private boolean isHittable(Missile missile)
     {
         return isIntact()
-            && !(barrierTeleportTimer != DISABLED && getAlpha() != 255) // in die Enemy-Unterklassen auslagern
+            && !((barrierTeleportTimer != DISABLED) && (getAlpha() != 255)) // in die Enemy-Unterklassen auslagern
             && missile.intersects(this)
             && !missile.hasHit(this);
     }
@@ -2284,7 +2282,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     public boolean isReadyToDodge()
     {
         return canDodge
-            && dodgeTimer == READY
+            && (dodgeTimer == READY)
             && !isEmpSlowed()
             && isIntact()
             && !(isWithinKamikazeRange()
@@ -2294,13 +2292,13 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isWithinKamikazeRange()
     {
-        return (getHelicopter().getX() - getMaxX() > -500)
-            && (getHelicopter().getX() - getMinX() < 150);
+        return ((getHelicopter().getX() - getMaxX()) > -500)
+            && ((getHelicopter().getX() - getMinX()) < 150);
     }
     
     public boolean isInvincible()
     {
-        return invincibleTimer > 0 || shield > 0;
+        return (invincibleTimer > 0) || (shield > 0);
     }
     
     public void evaluatePosAdaption()
@@ -2312,7 +2310,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         else
         {
             hasUnresolvedIntersection = false;
-            if(!isTouchingHelicopter && touchedSite != lastTouchedSite)
+            if(!isTouchingHelicopter && (touchedSite != lastTouchedSite))
             {
                 Audio.play(Audio.landing);
                 isTouchingHelicopter = true;
@@ -2320,7 +2318,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         }
     }
     
-    public boolean hasHPsLeft()
+    private boolean hasHPsLeft()
     {
         return hitPoints >= 1;
     }
@@ -2473,7 +2471,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     public boolean isPushingHelicopter(Helicopter helicopter)
     {
-        return intersects(helicopter) && getAlpha() == 255 && burrowTimer != 0;
+        return intersects(helicopter) && (getAlpha() == 255) && (burrowTimer != 0);
     }
     
     public boolean canCollide()
@@ -2505,7 +2503,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean qualifiesForBlinkingCannon()
     {
-        return getShootTimer() > 0 || generatesEnergieBeam();
+        return (getShootTimer() > 0) || generatesEnergieBeam();
     }
     
     protected boolean generatesEnergieBeam()
@@ -2590,7 +2588,7 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isWithinKamikazeRangeOf(RectangularPaintableEntity paintableEntity)
     {
-        return getDistanceOfMaxX(paintableEntity) < KAMIKAZE_RANGE
+        return (getDistanceOfMaxX(paintableEntity) < KAMIKAZE_RANGE)
             && ((!isLeftOf(paintableEntity) && isFlyingLeft())
             || (!isRightOf(paintableEntity) && isFlyingRight()));
     }
@@ -2660,23 +2658,23 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
         return getGameRessourceProvider().getGameStatisticsCalculator();
     }
     
-    public boolean hasCollisionWithHelicopter()
+    boolean hasCollisionWithHelicopter()
     {
         return getHelicopter().basicCollisionRequirementsSatisfied(this) && !hasCrashed();
     }
     
-    public boolean shouldBeRemoved()
+    boolean shouldBeRemoved()
     {
         return isIntact() && isMarkedForRemoval();
     }
     
     public boolean isIntactBarrierAndNotForRemoval()
     {
-        return getModel() == EnemyModelType.BARRIER
+        return (getModel() == EnemyModelType.BARRIER)
             && isIntactAndNotForRemoval();
     }
     
-    public boolean isIntactAndNotForRemoval()
+    boolean isIntactAndNotForRemoval()
     {
         return isIntact() && !isMarkedForRemoval();
     }
@@ -2696,14 +2694,14 @@ public abstract class Enemy extends RectangularPaintableEntity implements Manage
     
     private boolean isBarrierOnScreen()
     {
-        return getModel() == EnemyModelType.BARRIER && isOnScreen();
+        return (getModel() == EnemyModelType.BARRIER) && isOnScreen();
     }
     
     private boolean isReadyToTeleport()
     {
-        return teleportTimer == 0
+        return (teleportTimer == 0)
             && !isStunned()
-            && empSlowedTimer == 0;
+            && (empSlowedTimer == 0);
     }
     
     public boolean canDeflectMissile()
